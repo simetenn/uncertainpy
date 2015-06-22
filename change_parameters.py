@@ -6,7 +6,6 @@ filename = "Parameters.hoc"
 
 def changeParameters(parameters):
 
-
     parameterString = """
 rall =    $rall 
 cap =     $cap
@@ -36,7 +35,7 @@ gcanbar = $gcanbar
     
 if __name__ == "__main__":
     parameters = {
-        "rall" : 115,   
+        "rall" : 113,   
         "cap" : 1.1,
         "Rm" : 22000,
         "Vrest" : -63,
