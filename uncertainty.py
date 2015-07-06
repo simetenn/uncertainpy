@@ -1,37 +1,35 @@
+### TODO
+# Test out different types of polynomial chaos
+
+
 import time, subprocess, datetime
 t_start = time.time()
 
-import os, sys
+import os, sys, string
 import numpy as np
 import scipy as scp
 import scipy.interpolate
 
-os.chdir("./neuron_models/dLGN_modelDB/")
+filepath = os.path.abspath(__file__)
+filedir = os.path.dirname(filepath)
+modelfile = "INmodel.hoc"
+modelpath = "./neuron_models/dLGN_modelDB/"
+parameterfile = "Parameters.hoc" 
+
+os.chdir(modelpath)
 from neuron import h
+import neuron
 h("forall delete_section()")
-h.load_file("INmodel.hoc")
-os.chdir("../../")
+h.load_file(modelfile)
+os.chdir(filedir)
 
 import matplotlib.pyplot as plt
 import chaospy as cp
 
-import prettyplotlib as pp
 
-std_percentage = 0.01
-uniform_interval = 0.005
+# Global parameters
+interval = 0.05
 
-def record(ref_data):
-    data = h.Vector()
-    data.record(getattr(h, ref_data))
-    return data
-    
-
-def toArray(hocObject):
-    array = np.zeros(hocObject.size())
-    hocObject.to_python(array)
-    return array
-
-    
 
 parameters = {
     "rall" : 113,       # Taken from litterature 
@@ -102,6 +100,48 @@ def setParameters(parameters):
     h.finitialize()
 """
 
+def saveParameters(parameters = parameters):
+
+    parameterString = """
+rall =    $rall 
+cap =     $cap
+Rm =      $Rm
+Vrest =   $Vrest
+Epas =    $Epas
+gna =     $gna
+nash =    $nash
+gkdr =    $gkdr
+kdrsh =   $kdrsh
+gahp =    $gahp
+gcat =    $gcat
+gcal =    $gcal
+ghbar =   $ghbar
+catau =   $catau
+gcanbar = $gcanbar
+    """
+
+    parameterTemplate = string.Template(parameterString)
+
+    filledParameterString = parameterTemplate.substitute(parameters)
+
+    f = open(modelpath + parameterfile, "w")
+    f.write(filledParameterString)
+    f.close()
+
+def reloadModel():
+    print "reloading"
+
+    #h("forall delete_section()")
+    h.quit()
+    # h.topology()
+    print "sections"
+    os.chdir(modelpath)
+    h.load_file(1, modelfile)
+    os.chdir(filedir)
+
+    #h.load_file(modelfile)
+
+
 def setParameters(parameter_values, parameters = fitted_parameters):
     if parameter_values.size == 1:
         parameter_values = [parameter_values]
@@ -109,12 +149,30 @@ def setParameters(parameter_values, parameters = fitted_parameters):
     if len(parameters) != len(parameter_values):
         print "Error: Length of parameters and parameter_values are not equal"
         sys.exit(1)
-
+      
     for i in range(len(parameters)):
         setattr(h, parameters[i], parameter_values[i])
+
         
     h.finitialize()
 
+
+def changeParameters(parameters = parameters):
+    saveParameters(parameters)
+    reloadModel()
+    
+   
+def record(ref_data):
+    data = h.Vector()
+    data.record(getattr(h, ref_data))
+    return data
+    
+
+def toArray(hocObject):
+    array = np.zeros(hocObject.size())
+    hocObject.to_python(array)
+    return array
+ 
 
 def run(parameters):
 
@@ -124,6 +182,8 @@ def run(parameters):
     _t = toArray(t)
     _V = toArray(V)
     return _t,_V
+
+
 
     
 
@@ -148,8 +208,15 @@ def createPCExpansion(parameter_space, cvode_active=True):
     for s in nodes.T:
         sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
         sys.stdout.flush()
-  
-        setParameters(s, parameter_space.keys())
+
+        #New setparameters
+        tmpParameters = parameters.copy()
+        for parameter in parameter_space:
+            tmpParameters[parameter] = s
+        changeParameters(tmpParameters)
+
+        #setParameters(s, parameter_space.keys())
+
         h.run()
         
         V_ = toArray(V)
@@ -187,10 +254,8 @@ def createPCExpansion(parameter_space, cvode_active=True):
     return U_hat, dist, solves, t_max, P, nodes
 
 
-#subprocess.call(["rm figures/tmp_image_*"], shell=True)
 
-#parameter_space =  newParameterSpaceNormal(fitted_parameters)
-
+    
 
 def prettyPlot(x, y, title, xlabel, ylabel, color):
     
@@ -245,13 +310,100 @@ def prettyPlot(x, y, title, xlabel, ylabel, color):
     
 
 def Normal(parameter):
-    return cp.Normal(parameter, abs(std_percentage*parameter))
+    return cp.Normal(parameter, abs(interval*parameter))
 
 def Uniform(parameter):
-    return cp.Uniform(parameter - abs(uniform_interval*parameter),
-                      parameter + abs(uniform_interval*parameter))
+    return cp.Uniform(parameter - abs(interval*parameter),
+                      parameter + abs(interval*parameter))
+
+
+def singleParameters(parameters = parameters, distribution = Uniform, outputdir = figurepath):
+    for parameter in parameters:
+        sys.stdout.write("\r                                 ")
+        sys.stdout.write("\rRunning for " + parameter)
+        sys.stdout.flush()
+        print
+               
+        parameter_space =  newParameterSpace(parameter, distribution)
+        U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
+
+        color1 = 0
+        color2 = 8
+        E = cp.E(U_hat, dist)
+        Var =  cp.Var(U_hat, dist)
+
+        #Plot mean
+        prettyPlot(t_max, E,
+                   "Mean, " + parameter, "time", "voltage", color1)
+        plt.savefig(os.path.join(outputdir, parameter  + "_mean" + figureformat),
+                    bbox_inches="tight")
+        
+        prettyPlot(t_max, Var,
+                   "Variance, " + parameter, "time", "voltage", color2)
+        plt.savefig(os.path.join(outputdir, parameter  + "_variance" + figureformat),
+                    bbox_inches="tight")
+            
+
+        ax, tableau20 = prettyPlot(t_max, E,
+                                   "Mean and variance, " + parameter, "time", "voltage, mean", color1)
+        ax2 = ax.twinx()
+        ax2.tick_params(axis="y", which="both", right="on", left="off",  
+                        labelright="on", color=tableau20[color2], labelcolor=tableau20[color2],
+                        labelsize=14)
+        ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
+        ax.spines["right"].set_edgecolor(tableau20[color2])
+        
+        
+        ax2.set_xlim([min(t_max),max(t_max)])
+        ax2.set_ylim([min(Var),max(Var)])
+        
+
+        ax2.plot(t_max, Var, color=tableau20[color2], linewidth=2, antialiased=True)
+
+        ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
+        ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
+        ax.spines["left"].set_edgecolor(tableau20[color1])
+        plt.tight_layout()
+        plt.savefig(os.path.join(outputdir, parameter  + "_variance_mean" + figureformat), bbox_inches="tight")
+        
+        plt.close()
+
+    print
+
+
+
+def exploreSingleParameters(distributions, intervals, outputdir = figurepath):
+    global interval
+    for distribution in distributions:
+        #current_outputdir = os.path.join(outputdir, distribution.__name__.lower())
+        #if not os.path.isdir(current_outputdir):
+        #    os.mkdir(current_outputdir)
+        
+        print "Running for distribution: " + distribution.__name__
+        for inter in intervals[distribution.__name__]:
+            folder_name =  distribution.__name__.lower() + "_" + str(inter)
+            current_outputdir = os.path.join(outputdir, folder_name)
+
+            if not os.path.isdir(current_outputdir):
+                os.mkdir(current_outputdir)
+                  
+            interval = inter
+
+            print "Running for interval: %2.4f" % (interval) 
+            singleParameters(distribution = distribution, outputdir = current_outputdir)
+
+
+singleParameters()
+#n_intervals = 10
+#interval_range = {"Normal": np.linspace(0.001, 0.1, n_intervals), "Uniform":np.linspace(0.0005, 0.05, n_intervals)} 
+#distributions = [Uniform, Normal]
+#exploreSingleParameters(distributions, interval_range)       
+
 
 """
+singleParameters()   
+
+
 parameter_space =  newParameterSpace(fitted_parameters, Uniform)
 U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
 #U_hat_const, dist_const, solves_const, t_max_const, P_const, nodes_const  = createPCExpansion(parameter_space, cvode_active=False)
@@ -275,83 +427,8 @@ plt.ylabel("Voltage")
 plt.show()
 """
 
-def singleParameters(parameters = parameters):
-    for parameter in parameters:
-        sys.stdout.write("\r                                 ")
-        sys.stdout.write("\rRunning for " + parameter)
-        sys.stdout.flush()
-        print
-
-               
-        parameter_space =  newParameterSpace(parameter, Uniform)
-        U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
-
-        color1 = 0
-        color2 = 8
-        E = cp.E(U_hat, dist)
-        Var =  cp.Var(U_hat, dist)
-
-        #Plot mean
-        prettyPlot(t_max, E,
-                   "Mean, " + parameter, "time", "voltage", color1)
-        plt.savefig(figurepath + parameter  + "_mean" + figureformat,
-                    box_inches="tight")
-        
-        prettyPlot(t_max, Var,
-                   "Variance, " + parameter, "time", "voltage", color2)
-        plt.savefig(figurepath + parameter  + "_variance" + figureformat,
-                    box_inches="tight")
-            
-
-        ax, tableau20 = prettyPlot(t_max, E,
-                                   "Mean and variance, " + parameter, "time", "voltage, mean", color1)
-        ax2 = ax.twinx()
-        ax2.tick_params(axis="y", which="both", right="on", left="off",  
-                        labelright="on", color=tableau20[color2], labelcolor=tableau20[color2],
-                        labelsize=14)
-        ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
-        ax.spines["right"].set_edgecolor(tableau20[color2])
-        
-        
-        ax2.set_xlim([min(t_max),max(t_max)])
-        ax2.set_ylim([min(Var),max(Var)])
-        
-
-        ax2.plot(t_max, Var, color=tableau20[color2], linewidth=2, antialiased=True)
-
-        ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
-        ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
-        ax.spines["left"].set_edgecolor(tableau20[color1])
-        plt.tight_layout()
-        plt.savefig(figurepath + "uniform_" + "" + parameter  + "_variance_mean" + figureformat, bbox_inches="tight")
-        
-        plt.close()
-
-        
-        
-        """
-        plt.clf()
-        plt.plot(t_max, cp.E(U_hat, dist))
-        plt.title("Mean, " + parameter )
-        plt.xlabel("Time")
-        plt.ylabel("Voltage")
-        #plt.savefig(figurepath + parameter  + "_mean" + figureformat)
-        plt.show()
-        plt.clf()
-        plt.plot(t_max, cp.Var(U_hat, dist))
-        plt.title("Variance, " + parameter)
-        plt.xlabel("Time")
-        plt.ylabel("Voltage")
-        #plt.savefig(figurepath + parameter + "_variance" + figureformat, box_inches="tight")
-        """
-    print
-        
-singleParameters()   
-
 t_end = time.time()
 
 subprocess.Popen(["play","-q","ship_bell.wav"])
 
-#print "Interpolation time is: %g" % (t_constant_dt_end - t_interpolation_end)
-#print "Interpolation time is: %g" % (t_interpolation_end - t_interpolation_start)
 print "The total runtime is: " + str(datetime.timedelta(seconds=(t_end-t_start)))
