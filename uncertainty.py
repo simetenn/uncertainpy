@@ -13,18 +13,18 @@ import scipy.interpolate
 filepath = os.path.abspath(__file__)
 filedir = os.path.dirname(filepath)
 modelfile = "INmodel.hoc"
-modelpath = "./neuron_models/dLGN_modelDB/"
+modelpath = "neuron_models/dLGN_modelDB/"
 parameterfile = "Parameters.hoc" 
 
 os.chdir(modelpath)
 from neuron import h
-import neuron
-h("forall delete_section()")
-h.load_file(modelfile)
+#h("forall delete_section()")
+h.load_file(1, modelfile)
 os.chdir(filedir)
 
-import matplotlib.pyplot as plt
 import chaospy as cp
+
+
 
 
 # Global parameters
@@ -59,6 +59,103 @@ figurepath = "figures/"
 fitted_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat",
                        "gcal", "ghbar", "catau", "gcanbar"]
 
+
+class Simulation():
+    def __init__(self, parameters, modelfile = modelfile, modelpath = modelpath, cvode_active = True):
+        self.parameters = parameters
+        self.modelfile = modelfile
+        self.modelpath = modelpath
+        self.cvode_active = cvode_active
+        self.filepath = os.path.abspath(__file__)
+        self.filedir = os.path.dirname(self.filepath)
+
+        os.chdir(self.modelpath)
+        self.saveParameters()
+
+        
+        import neuron
+        self.h = neuron.h
+
+        self.h.load_file(self.modelfile)
+        os.chdir(self.filedir)
+
+        if cvode_active:
+            ""
+            #self.h("cvode_active(1)")
+        else:
+            self.h("cvode_active(0)")
+
+
+            
+            
+    def saveParameters(self):
+        parameter_string = """
+rall =    $rall 
+cap =     $cap
+Rm =      $Rm
+Vrest =   $Vrest
+Epas =    $Epas
+gna =     $gna
+nash =    $nash
+gkdr =    $gkdr
+kdrsh =   $kdrsh
+gahp =    $gahp
+gcat =    $gcat
+gcal =    $gcal
+ghbar =   $ghbar
+catau =   $catau
+gcanbar = $gcanbar
+        """
+        
+        parameter_template = string.Template(parameter_string)
+        filled_parameter_string = parameter_template.substitute(self.parameters)
+
+        if os.path.samefile(os.getcwd(), os.path.join(self.filedir, self.modelpath)):
+            f = open(parameterfile, "w")
+        else:
+            f = open(modelpath + parameterfile, "w")
+        f.write(filled_parameter_string)
+        f.close()
+
+
+        ### Be really careful with these. Need to make sure that all references to neuron are isnide this class
+    def record(self, ref_data):
+        data = self.h.Vector()
+        data.record(getattr(self.h, ref_data))
+        return data
+    
+
+    def toArray(self, hocObject):
+        array = np.zeros(hocObject.size())
+        hocObject.to_python(array)
+        return array
+
+
+    def recordV(self):
+        for sec in self.h.allsec():
+            self.V = self.h.Vector()
+            self.V.record(sec(0.5)._ref_v)
+            break
+
+            
+    def recordT(self):
+        self.t = self.record("_ref_t")
+
+
+    def run(self):
+        self.h.finitialize()
+        self.h.run()
+
+        
+    def getT(self):
+        return self.toArray(self.t)
+
+        
+    def getV(self):
+        return self.toArray(self.V)
+
+
+        
 #Quick and dirty parameter space things
 def newParameterSpaceNormal(fitted_parameters, parameters=parameters):
     parameter_space = {}
@@ -100,33 +197,7 @@ def setParameters(parameters):
     h.finitialize()
 """
 
-def saveParameters(parameters = parameters):
 
-    parameterString = """
-rall =    $rall 
-cap =     $cap
-Rm =      $Rm
-Vrest =   $Vrest
-Epas =    $Epas
-gna =     $gna
-nash =    $nash
-gkdr =    $gkdr
-kdrsh =   $kdrsh
-gahp =    $gahp
-gcat =    $gcat
-gcal =    $gcal
-ghbar =   $ghbar
-catau =   $catau
-gcanbar = $gcanbar
-    """
-
-    parameterTemplate = string.Template(parameterString)
-
-    filledParameterString = parameterTemplate.substitute(parameters)
-
-    f = open(modelpath + parameterfile, "w")
-    f.write(filledParameterString)
-    f.close()
 
 def reloadModel():
     print "reloading"
@@ -157,53 +228,43 @@ def setParameters(parameter_values, parameters = fitted_parameters):
     h.finitialize()
 
 
-def changeParameters(parameters = parameters):
-    saveParameters(parameters)
-    reloadModel()
+#def changeParameters(parameters = parameters):
+#    saveParameters(parameters)
+#    reloadModel()
     
    
-def record(ref_data):
-    data = h.Vector()
-    data.record(getattr(h, ref_data))
-    return data
+#def record(ref_data):
+#    data = h.Vector()
+#    data.record(getattr(h, ref_data))
+#    return data
     
 
-def toArray(hocObject):
-    array = np.zeros(hocObject.size())
-    hocObject.to_python(array)
-    return array
+#def toArray(hocObject):
+#    array = np.zeros(hocObject.size())
+#    hocObject.to_python(array)
+#    return array
  
 
-def run(parameters):
+#def run(parameters):
 
-    setParameters(parameters)
-    h.run()
+#    setParameters(parameters)
+#    h.run()
 
-    _t = toArray(t)
-    _V = toArray(V)
-    return _t,_V
+#    _t = toArray(t)
+#    _V = toArray(V)
+#    return _t,_V
 
 
 
     
 
 def createPCExpansion(parameter_space, cvode_active=True):
-        
-    if not cvode_active:
-        h("cvode_active(0)")
-    
-    for sec in h.allsec():
-        V = h.Vector()
-        V.record(sec(0.5)._ref_v)
-        break
-
-    t = record("_ref_t")
-    
+ 
     dist = cp.J(*parameter_space.values())
     P = cp.orth_ttr(2, dist)
     nodes = dist.sample(2*len(P), "M")
     solves = []
-
+    
     i = 0.
     for s in nodes.T:
         sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
@@ -213,20 +274,26 @@ def createPCExpansion(parameter_space, cvode_active=True):
         tmpParameters = parameters.copy()
         for parameter in parameter_space:
             tmpParameters[parameter] = s
-        changeParameters(tmpParameters)
 
-        #setParameters(s, parameter_space.keys())
+        sim = Simulation(tmpParameters, cvode_active = cvode_active)
 
-        h.run()
+        sim.recordT()
+        sim.recordV()
+
+        sim.run()
+        #h.run()
         
-        V_ = toArray(V)
-        t_ = toArray(t)
+        V = sim.getV()
+        t = sim.getT()
 
+        #del sim
+        sim = None
+        
         if cvode_active:
-            inter = scipy.interpolate.InterpolatedUnivariateSpline(t_, V_, k=3)
-            solves.append((t_, V_, inter))
+            inter = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+            solves.append((t, V, inter))
         else:
-            solves.append((t_, V_))
+            solves.append((t, V))
 
         i += 1
         
@@ -256,9 +323,10 @@ def createPCExpansion(parameter_space, cvode_active=True):
 
 
     
-
+import matplotlib.pyplot as plt
 def prettyPlot(x, y, title, xlabel, ylabel, color):
     
+
     axis_grey = (0.5,0.5,0.5)
     titlesize = 18
     fontsize = 16
@@ -307,7 +375,6 @@ def prettyPlot(x, y, title, xlabel, ylabel, color):
 
     
     return ax, tableau20
-    
 
 def Normal(parameter):
     return cp.Normal(parameter, abs(interval*parameter))
