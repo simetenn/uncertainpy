@@ -1,5 +1,9 @@
 ### TODO
-# Test out different types of polynomial chaos
+# Test out different types of polynomial chaos methods
+# Add sensitivity analysis
+# Do dependent variable stuff
+# Do a mc analysis after u_hat is generated
+
 
 
 import time, subprocess, datetime, cPickle, scipy.interpolate, os, sys, string
@@ -109,7 +113,7 @@ def plotV_t(t, E, Var, parameter, outputdir, figureformat = figureformat):
 
 
 
-def newParameterSpace(fitted_parameters, distribution = lambda parameter: cp.Normal(parameter, abs(std_percentage*parameter)), parameters=parameters):
+def newParameterSpace(fitted_parameters, distribution):
     """
     Generalized parameter space creation
     """
@@ -246,9 +250,21 @@ class Distribution():
         self.function = function
         
     def __call__(self, parameter):
-        return function(self.interval, parameter)
+        return self.function(parameter, self.interval)
 
     
+def normal_function(parameter, interval):
+    return cp.Normal(parameter, abs(interval*parameter))
+
+    
+def uniform_function(parameter, interval):
+    return cp.Uniform(parameter - abs(interval*parameter),
+                      parameter + abs(interval*parameter))
+
+
+normal = Distribution(normal_function, interval)
+uniform = Distribution(uniform_function, interval)
+
 def Normal(parameter):
     return cp.Normal(parameter, abs(interval*parameter))
 
@@ -256,17 +272,11 @@ def Normal(parameter):
 def Uniform(parameter):
     return cp.Uniform(parameter - abs(interval*parameter),
                       parameter + abs(interval*parameter))
-
-#normal = Distribution(Normal, interval)
-
-#uniform = Distribution(Uniform, interval)
-
-
     
 
-def singleParameters(parameters = parameters, distribution = Uniform, outputdir = figurepath):
+def singleParameters(parameters = parameters, distribution = uniform, outputdir = figurepath):
     if not os.path.isdir(outputdir):
-        os.mkdir(outputdir)
+        os.makedirs(outputdir)
 
     for parameter in parameters:
         sys.stdout.write("\r                                 ")
@@ -274,7 +284,7 @@ def singleParameters(parameters = parameters, distribution = Uniform, outputdir 
         sys.stdout.flush()
         print
                
-        parameter_space =  newParameterSpace(parameter, distribution, interval)
+        parameter_space =  newParameterSpace(parameter, distribution)
         U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
         
         E = cp.E(U_hat, dist)
@@ -286,25 +296,23 @@ def singleParameters(parameters = parameters, distribution = Uniform, outputdir 
 
 
 
-def exploreSingleParameters(distributions, intervals, outputdir = figurepath):
-    global interval
-    for distribution in distributions:
-        print "Running for distribution: " + distribution.__name__
-        for inter in intervals[distribution.__name__]:
-            folder_name =  distribution.__name__.lower() + "_" + str(inter)
-            current_outputdir = os.path.join(outputdir, folder_name)
-                  
-            interval = inter
+def exploreSingleParameters(distribution_functions, intervals, outputdir = figurepath):
+    for distribution_function in distribution_functions:
+        print "Running for distribution: " + distribution_function.__name__.split("_")[0]
 
+        for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
+            folder_name =  distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
+            current_outputdir = os.path.join(outputdir, folder_name)
+            
             print "Running for interval: %2.4f" % (interval) 
-            singleParameters(distribution = distribution, outputdir = current_outputdir)
+            singleParameters(distribution = Distribution(distribution_function, interval), outputdir = current_outputdir)
 
 
 
             
-def allParameters(distribution = Uniform, outputdir = figurepath):
+def allParameters(distribution = uniform, outputdir = figurepath):
     if not os.path.isdir(outputdir):
-        os.mkdir(outputdir)
+        os.makedirs(outputdir)
 
     
     parameter_space =  newParameterSpace(parameters, distribution)
@@ -317,28 +325,36 @@ def allParameters(distribution = Uniform, outputdir = figurepath):
     plotV_t(t_max, E, Var, "all", outputdir)
     
 
-def exploreAllParameters(distributions, intervals, outputdir = figurepath):
-    global interval
-    for distribution in distributions:
-        print "Running for distribution: " + distribution.__name__
-        for inter in intervals[distribution.__name__]:
-            folder_name =  distribution.__name__.lower() + "_" + str(inter)
-            current_outputdir = os.path.join(outputdir, folder_name)
-                  
-            interval = inter
 
-            print "Running for interval: %2.4f" % (interval) 
-            singleParameters(distribution = distribution, outputdir = current_outputdir)
+def exploreAllParameters(distribution_functions, intervals, outputdir = figurepath):
+    for distribution_function in distribution_functions:
+        print "Running for distribution: " + distribution_function.__name__.split("_")[0]
+
+        for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
+            folder_name =  distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
+            current_outputdir = os.path.join(outputdir, folder_name)
+            
+            print "Running for interval: %2.4g" % (interval) 
+            allParameters(distribution = Distribution(distribution_function, interval), outputdir = current_outputdir)
 
 
     
-#singleParameters(outputdir = figurepath + "single")
-#n_intervals = 2
-#interval_range = {"Normal": np.linspace(0.001, 0.1, n_intervals), "Uniform":np.linspace(0.0005, 0.05, n_intervals)} 
-#distributions = [Uniform, Normal]
-#exploreSingleParameters(distributions, interval_range)       
+#singleParameters(outputdir = figurepath + "single/test")
+#allParameters(outputdir = figurepath + "all/test")
 
-allParameters(outputdir = figurepath + "all")
+
+n_intervals = 10
+distributions = [uniform_function, normal_function]
+interval_range = {"normal" : np.linspace(10**-4, 10**-1, n_intervals),
+                  "uniform" : np.linspace(5*10**-5, 5*10**-1, n_intervals)} 
+exploreSingleParameters(distributions, interval_range, figurepath + "single")
+
+
+n_intervals = 10
+interval_range = {"normal" : np.linspace(10**-7, 10**-5, n_intervals),
+                  "uniform" : np.linspace(5*10**-8, 5*10**-6, n_intervals)}
+exploreAllParameters(distributions, interval_range, figurepath + "all")
+
 
 
 
