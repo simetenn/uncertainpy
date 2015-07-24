@@ -17,7 +17,8 @@ from xvfbwrapper import Xvfb
 t_start = time.time()
 
 # Global parameters
-interval = 5*10**-7
+interval = 5*10**-4
+mc_samples = 10**5
 
 modelfile = "INmodel.hoc"
 modelpath = "neuron_models/dLGN_modelDB/"
@@ -128,6 +129,7 @@ def newParameterSpace(fitted_parameters, distribution):
             parameter_space[param] = distribution(parameters[param])
 
         return parameter_space
+        
 
         
 def saveParameters(parameters, parameterfile, modelpath, filedir):
@@ -214,9 +216,10 @@ def createPCExpansion(parameter_space, cvode_active=True):
             solves.append((t, V))
 
         i += 1
-        
-    sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
-    sys.stdout.flush()
+
+    print "\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100)
+#    sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
+#    sys.stdout.flush()
       
     solves = np.array(solves)
     if cvode_active:
@@ -262,6 +265,16 @@ def uniform_function(parameter, interval):
                       parameter + abs(interval*parameter))
 
 
+
+def confidenceInterval(U_hat, dist, nr_mc_samples):
+    samples = dist.sample(nr_mc_samples)
+    U_mc = U_hat(*samples)
+
+    p_10 = np.percentile(U_mc, 10, 1)
+    p_90 = np.percentile(U_mc, 90, 1)
+
+    return p_10, p_90
+    
 normal = Distribution(normal_function, interval)
 uniform = Distribution(uniform_function, interval)
 
@@ -274,25 +287,23 @@ def Uniform(parameter):
                       parameter + abs(interval*parameter))
     
 
-def singleParameters(parameters = parameters, distribution = uniform, outputdir = figurepath):
+def singleParameters(fitted_parameters = fitted_parameters, distribution = uniform, outputdir = figurepath):
     if not os.path.isdir(outputdir):
         os.makedirs(outputdir)
 
-    for parameter in parameters:
+    for fitted_parameter in fitted_parameters:
         sys.stdout.write("\r                                 ")
-        sys.stdout.write("\rRunning for " + parameter)
+        sys.stdout.write("\rRunning for " + fitted_parameter)
         sys.stdout.flush()
         print
                
-        parameter_space =  newParameterSpace(parameter, distribution)
+        parameter_space =  newParameterSpace(fitted_parameter, distribution)
         U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
         
         E = cp.E(U_hat, dist)
         Var =  cp.Var(U_hat, dist)
 
-        plotV_t(t_max, E, Var, parameter, outputdir)
-   
-    print
+        plotV_t(t_max, E, Var, fitted_parameter, outputdir)
 
 
 
@@ -304,18 +315,18 @@ def exploreSingleParameters(distribution_functions, intervals, outputdir = figur
             folder_name =  distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
             current_outputdir = os.path.join(outputdir, folder_name)
             
-            print "Running for interval: %2.4f" % (interval) 
+            print "Running for interval: %2.4g" % (interval) 
             singleParameters(distribution = Distribution(distribution_function, interval), outputdir = current_outputdir)
 
 
 
             
-def allParameters(distribution = uniform, outputdir = figurepath):
+def allParameters(fitted_parameters = fitted_parameters, distribution = uniform, outputdir = figurepath):
     if not os.path.isdir(outputdir):
         os.makedirs(outputdir)
 
     
-    parameter_space =  newParameterSpace(parameters, distribution)
+    parameter_space =  newParameterSpace(fitted_parameters, distribution)
     
     U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
         
@@ -323,9 +334,39 @@ def allParameters(distribution = uniform, outputdir = figurepath):
     Var =  cp.Var(U_hat, dist)
 
     plotV_t(t_max, E, Var, "all", outputdir)
+
+    sensitivity = cp.Sens_t(U_hat, dist)
+
+    for i in range(len(sensitivity)):
+        prettyPlot(t_max, sensitivity[i], parameter_space.keys()[i] + " sensitivity", "time", "sensitivity", i, True)
+        plt.title(parameter_space.keys()[i] + " sensitivity",)
+        plt.ylim([0, 1.05])
+        plt.savefig(os.path.join(outputdir, parameter_space.keys()[i] +"_sensitivity" + figureformat),
+                bbox_inches="tight")
+    plt.clf()
+   
+    for i in range(len(sensitivity)):
+        prettyPlot(t_max, sensitivity[i], "sensitivity", "time", "sensitivity", i, False)
+
+    plt.ylim([0, 1.05])
+    plt.xlim([t_max[0], 1.3*t_max[-1]])
+    plt.legend(parameter_space.keys())
+    plt.savefig(os.path.join(outputdir, "all_sensitivity" + figureformat),
+                bbox_inches="tight")
+
     
+    p_10, p_90 = confidenceInterval(U_hat, dist, mc_samples)
 
-
+    ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0)
+    plt.fill_between(t_max, p_10, p_90, alpha=0.2, facecolor = color[8])
+    prettyPlot(t_max, p_90, color = 8, new_figure = False)
+    prettyPlot(t_max, p_10, color = 9, new_figure = False)
+    ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0, False)
+    plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
+    plt.savefig(os.path.join(outputdir, "all_confidence_interval" + figureformat),
+                bbox_inches="tight")
+    plt.close()
+    
 def exploreAllParameters(distribution_functions, intervals, outputdir = figurepath):
     for distribution_function in distribution_functions:
         print "Running for distribution: " + distribution_function.__name__.split("_")[0]
@@ -338,11 +379,17 @@ def exploreAllParameters(distribution_functions, intervals, outputdir = figurepa
             allParameters(distribution = Distribution(distribution_function, interval), outputdir = current_outputdir)
 
 
+test_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
+
+test_parameters =   ["Rm", "Epas"]
+
     
 #singleParameters(outputdir = figurepath + "single/test")
-#allParameters(outputdir = figurepath + "all/test")
+allParameters(fitted_parameters = test_parameters, outputdir = figurepath + "all/test")
+#allParameters(fitted_parameters = fitted_parameters, outputdir = figurepath + "all/test")
 
 
+"""
 n_intervals = 10
 distributions = [uniform_function, normal_function]
 interval_range = {"normal" : np.linspace(10**-4, 10**-1, n_intervals),
@@ -351,10 +398,11 @@ exploreSingleParameters(distributions, interval_range, figurepath + "single")
 
 
 n_intervals = 10
-interval_range = {"normal" : np.linspace(10**-7, 10**-5, n_intervals),
-                  "uniform" : np.linspace(5*10**-8, 5*10**-6, n_intervals)}
+distributions = [uniform_function, normal_function]
+interval_range = {"normal" : np.linspace(10**-3, 10**-1, n_intervals),
+                  "uniform" : np.linspace(5*10**-4, 5*10**-2, n_intervals)}
 exploreAllParameters(distributions, interval_range, figurepath + "all")
-
+"""
 
 
 
