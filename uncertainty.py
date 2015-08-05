@@ -3,22 +3,27 @@
 # Add sensitivity analysis
 # Do dependent variable stuff
 # Do a mc analysis after u_hat is generated
+# Create a class of this stuff
+# 
 
 
 
 import time, subprocess, datetime, cPickle, scipy.interpolate, os, sys, string
 import numpy as np
 import scipy as scp
-import chaospy as cp  
+import chaospy as cp
 import matplotlib.pyplot as plt
 from prettyPlot import prettyPlot
 from xvfbwrapper import Xvfb
+from memory import Memory
 
 t_start = time.time()
 
+memory_report = Memory()
+
 # Global parameters
 interval = 5*10**-4
-mc_samples = 10**5
+nr_mc_samples = 10**5
 
 modelfile = "INmodel.hoc"
 modelpath = "neuron_models/dLGN_modelDB/"
@@ -26,8 +31,8 @@ parameterfile = "Parameters.hoc"
 
 filepath = os.path.abspath(__file__)
 filedir = os.path.dirname(filepath)
-
-
+memory_threshold = 95
+delta_poll = 1
 
 parameters = {
     "rall" : 113,       # Taken from litterature 
@@ -114,6 +119,43 @@ def plotV_t(t, E, Var, parameter, outputdir, figureformat = figureformat):
 
 
 
+def plotConfidenceInterval(t_max, E, p_10, p_90, filename, outputdir = figurepath):
+  
+    ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0)
+    plt.fill_between(t_max, p_10, p_90, alpha=0.2, facecolor = color[8])
+    prettyPlot(t_max, p_90, color = 8, new_figure = False)
+    prettyPlot(t_max, p_10, color = 9, new_figure = False)
+    ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0, False)
+
+    plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
+    plt.savefig(os.path.join(outputdir, filename + figureformat),
+                bbox_inches="tight")
+
+    plt.close()
+
+
+def plotSensitivity(t_max, sensitivity, parameter_space, outputdir = figurepath):
+
+    for i in range(len(sensitivity)):
+        prettyPlot(t_max, sensitivity[i], parameter_space.keys()[i] + " sensitivity", "time", "sensitivity", i, True)
+        plt.title(parameter_space.keys()[i] + " sensitivity",)
+        plt.ylim([0, 1.05])
+        plt.savefig(os.path.join(outputdir, parameter_space.keys()[i] +"_sensitivity" + figureformat),
+                bbox_inches="tight")
+    plt.close()
+   
+    for i in range(len(sensitivity)):
+        prettyPlot(t_max, sensitivity[i], "sensitivity", "time", "sensitivity", i, False)
+
+    plt.ylim([0, 1.05])
+    plt.xlim([t_max[0], 1.3*t_max[-1]])
+    plt.legend(parameter_space.keys())
+    plt.savefig(os.path.join(outputdir, "all_sensitivity" + figureformat),
+                bbox_inches="tight")
+
+
+    
+
 def newParameterSpace(fitted_parameters, distribution):
     """
     Generalized parameter space creation
@@ -191,18 +233,33 @@ def createPCExpansion(parameter_space, cvode_active=True):
         saveParameters(tmp_parameters, parameterfile, modelpath, filedir)
 
         cmd = ["python", "simulation.py", parameterfile, modelfile, modelpath, str(cvode_active)]
-        pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = pipe.communicate()
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        if pipe.returncode != 0:
-            print "Error when running Neuron:"
+        #Note this checks total memory used by all applications
+        while simulation.poll() == None:
+            memory_report.save()
+            memory_report.saveAll()
+            #            print memory_report.totalPercent(),  memory_report.totalUsed()/1024**2
+            if memory_report.totalPercent() > memory_threshold:
+                print "\nWARNING: memory threshold exceeded, aborting simulation"
+                simulation.terminate()
+                vdisplay.stop()
+                return None
+            time.sleep(delta_poll)
+
+            
+        ut, err = simulation.communicate()
+        
+        if simulation.returncode != 0:
+            print "Error when running simulation:"
             print err
             sys.exit(1)
         
 
         tmp_V = open("tmp_V.p", "r")
         tmp_t = open("tmp_t.p", "r")
-        
+
+        #Get the results from the neuron run
         V = cPickle.load(tmp_V)
         t = cPickle.load(tmp_t)
 
@@ -216,7 +273,7 @@ def createPCExpansion(parameter_space, cvode_active=True):
             solves.append((t, V))
 
         i += 1
-
+   
     print "\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100)
 #    sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
 #    sys.stdout.flush()
@@ -265,15 +322,6 @@ def uniform_function(parameter, interval):
                       parameter + abs(interval*parameter))
 
 
-
-def confidenceInterval(U_hat, dist, nr_mc_samples):
-    samples = dist.sample(nr_mc_samples)
-    U_mc = U_hat(*samples)
-
-    p_10 = np.percentile(U_mc, 10, 1)
-    p_90 = np.percentile(U_mc, 90, 1)
-
-    return p_10, p_90
     
 normal = Distribution(normal_function, interval)
 uniform = Distribution(uniform_function, interval)
@@ -287,25 +335,34 @@ def Uniform(parameter):
                       parameter + abs(interval*parameter))
     
 
-def singleParameters(fitted_parameters = fitted_parameters, distribution = uniform, outputdir = figurepath):
+def singleParameters(fitted_parameters = fitted_parameters,
+                     distribution = uniform, outputdir = figurepath):
     if not os.path.isdir(outputdir):
         os.makedirs(outputdir)
 
     for fitted_parameter in fitted_parameters:
-        sys.stdout.write("\r                                 ")
-        sys.stdout.write("\rRunning for " + fitted_parameter)
-        sys.stdout.flush()
-        print
+        print "\rRunning for " + fitted_parameter + "                     "
                
         parameter_space =  newParameterSpace(fitted_parameter, distribution)
-        U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
+        tmp_results = createPCExpansion(parameter_space, cvode_active=True)
+        if tmp_results == None:
+            print "Calculations aborted for " + fitted_parameter
+            break #continue
+        U_hat, dist, solves, t_max, P, nodes  = tmp_results
         
         E = cp.E(U_hat, dist)
         Var =  cp.Var(U_hat, dist)
 
         plotV_t(t_max, E, Var, fitted_parameter, outputdir)
 
+        samples = dist.sample(nr_mc_samples)
+        U_mc = U_hat(samples)
+       
+        p_10 = np.percentile(U_mc, 10, 1)
+        p_90 = np.percentile(U_mc, 90, 1)
 
+        plotConfidenceInterval(t_max, E, p_10, p_90, fitted_parameter + "_confidence_interval", outputdir)
+        
 
 def exploreSingleParameters(distribution_functions, intervals, outputdir = figurepath):
     for distribution_function in distribution_functions:
@@ -327,8 +384,11 @@ def allParameters(fitted_parameters = fitted_parameters, distribution = uniform,
 
     
     parameter_space =  newParameterSpace(fitted_parameters, distribution)
-    
-    U_hat, dist, solves, t_max, P, nodes  = createPCExpansion(parameter_space, cvode_active=True)
+    tmp_results = createPCExpansion(parameter_space, cvode_active=True)
+    if tmp_results == None:
+        print "Calculations aborted for " #Add which distribution when rewritten as class
+        return 1
+    U_hat, dist, solves, t_max, P, nodes  = tmp_results
         
     E = cp.E(U_hat, dist)
     Var =  cp.Var(U_hat, dist)
@@ -337,35 +397,17 @@ def allParameters(fitted_parameters = fitted_parameters, distribution = uniform,
 
     sensitivity = cp.Sens_t(U_hat, dist)
 
-    for i in range(len(sensitivity)):
-        prettyPlot(t_max, sensitivity[i], parameter_space.keys()[i] + " sensitivity", "time", "sensitivity", i, True)
-        plt.title(parameter_space.keys()[i] + " sensitivity",)
-        plt.ylim([0, 1.05])
-        plt.savefig(os.path.join(outputdir, parameter_space.keys()[i] +"_sensitivity" + figureformat),
-                bbox_inches="tight")
-    plt.clf()
-   
-    for i in range(len(sensitivity)):
-        prettyPlot(t_max, sensitivity[i], "sensitivity", "time", "sensitivity", i, False)
+    plotSensitivity(t_max, sensitivity, parameter_space, figurepath)
 
-    plt.ylim([0, 1.05])
-    plt.xlim([t_max[0], 1.3*t_max[-1]])
-    plt.legend(parameter_space.keys())
-    plt.savefig(os.path.join(outputdir, "all_sensitivity" + figureformat),
-                bbox_inches="tight")
 
-    
-    p_10, p_90 = confidenceInterval(U_hat, dist, mc_samples)
+    samples = dist.sample(nr_mc_samples)
+    U_mc = U_hat(*samples)
 
-    ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0)
-    plt.fill_between(t_max, p_10, p_90, alpha=0.2, facecolor = color[8])
-    prettyPlot(t_max, p_90, color = 8, new_figure = False)
-    prettyPlot(t_max, p_10, color = 9, new_figure = False)
-    ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0, False)
-    plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
-    plt.savefig(os.path.join(outputdir, "all_confidence_interval" + figureformat),
-                bbox_inches="tight")
-    plt.close()
+    p_10 = np.percentile(U_mc, 10, 1)
+    p_90 = np.percentile(U_mc, 90, 1)
+
+    plotConfidenceInterval(t_max, E, p_10, p_90, "all_confidence_interval",outputdir)
+                                    
     
 def exploreAllParameters(distribution_functions, intervals, outputdir = figurepath):
     for distribution_function in distribution_functions:
@@ -384,12 +426,11 @@ test_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
 test_parameters =   ["Rm", "Epas"]
 
     
-#singleParameters(outputdir = figurepath + "single/test")
-allParameters(fitted_parameters = test_parameters, outputdir = figurepath + "all/test")
-#allParameters(fitted_parameters = fitted_parameters, outputdir = figurepath + "all/test")
+#singleParameters(outputdir = figurepath + "test_single")
+#allParameters(fitted_parameters = test_parameters, outputdir = figurepath + "test_all")
+#allParameters(fitted_parameters = fitted_parameters, outputdir = figurepath + "test_all")
 
 
-"""
 n_intervals = 10
 distributions = [uniform_function, normal_function]
 interval_range = {"normal" : np.linspace(10**-4, 10**-1, n_intervals),
@@ -402,7 +443,6 @@ distributions = [uniform_function, normal_function]
 interval_range = {"normal" : np.linspace(10**-3, 10**-1, n_intervals),
                   "uniform" : np.linspace(5*10**-4, 5*10**-2, n_intervals)}
 exploreAllParameters(distributions, interval_range, figurepath + "all")
-"""
 
 
 
