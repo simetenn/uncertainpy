@@ -10,7 +10,11 @@ class Memory:
         self.filename = "memory.dat"
         self.total_filename= "memory_total.dat"
         self.f = open(self.filename, "w")
+        self.total_f = open(self.total_filename, "w")
+
+    def __del__(self):
         self.f.close()
+        self.total_f.close()
 
         
     def _VmB(self, VmKey):
@@ -64,18 +68,15 @@ class Memory:
         p = "%.2f" % (self.percent())
         if info:
            info = " : " + info 
-        f.write(t + " " + p + " " + memory_GB + info + "\n")
-        f.close()
-
+        self.f.write(t + " " + p + " " + memory_GB + info + "\n")
+        
     def saveAll(self, info = ""):
         memory_GB = "%.2f" % (self.totalUsed()/1024**3)
-        f = open(self.total_filename, "a")
         t = "%.2f" % (time.time()-self.t_start)
         p = "%.2f" % (self.totalPercent())
         if info:
            info = " : " + info 
-        f.write(t + " " + p + " " + memory_GB + info + "\n")
-        f.close()
+        self.total_f.write(t + " " + p + " " + memory_GB + info + "\n")
         
     def __str__(self):
         return "%.2f GB" % (self.memory()/1024.**3)
