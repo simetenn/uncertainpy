@@ -46,7 +46,7 @@ filedir = os.path.dirname(filepath)
 memory_threshold = 90
 delta_poll = 1
 
-M = 9
+M = 3
 
 parameters = {
     "rall" : 113,       # Taken from litterature 
