@@ -74,25 +74,6 @@ fitted_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat",
 
 
 
-"""
- #Quick and dirty parameter space things
-def newParameterSpaceNormal(fitted_parameters, parameters=parameters):
-    parameter_space = {}
-    for param in fitted_parameters:
-        parameter_space[param] = cp.Normal(parameters[param], abs(std_percentage*parameters[param]))
-    return parameter_space
-        
-
-def newParameterSpaceUniform(fitted_parameters, parameters=parameters):
-    parameter_space = {}
-    for param in fitted_parameters:
-        parameter_space[param] = cp.Uniform(parameters[param] - abs(uniform_interval*parameters[param]),
-                                             parameters[param] + abs(uniform_interval*parameters[param]))
-    return parameter_space
-
-"""
-
-
 def plotV_t(t, E, Var, parameter, outputdir, figureformat = figureformat):
     color1 = 0
     color2 = 8
@@ -299,8 +280,6 @@ def createPCExpansion(parameter_space, feature = None, cvode_active=True):
         i += 1
    
     print "\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100)
-#    sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
-#    sys.stdout.flush()
       
     solves = np.array(solves)
     if cvode_active:
@@ -346,19 +325,14 @@ def uniform_function(parameter, interval):
                       parameter + abs(interval*parameter))
 
 
-    
+
 normal = Distribution(normal_function, interval)
 uniform = Distribution(uniform_function, interval)
-"""
-def Normal(parameter):
-    return cp.Normal(parameter, abs(interval*parameter))
 
-    
-def Uniform(parameter):
-    return cp.Uniform(parameter - abs(interval*parameter),
-                      parameter + abs(interval*parameter))
-    
-"""
+
+
+
+
 def singleParameters(fitted_parameters = fitted_parameters,
                      distribution = uniform, outputdir = figurepath):
     if not os.path.isdir(outputdir):
