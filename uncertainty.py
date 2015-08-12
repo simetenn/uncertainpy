@@ -29,9 +29,6 @@ from xvfbwrapper import Xvfb
 from prettyPlot import prettyPlot
 from memory import Memory
 
-t_start = time.time()
-
-memory_report = Memory()
 
 # Global parameters
 interval = 5*10**-4
@@ -43,8 +40,6 @@ parameterfile = "Parameters.hoc"
 
 filepath = os.path.abspath(__file__)
 filedir = os.path.dirname(filepath)
-memory_threshold = 90
-delta_poll = 1
 
 M = 3
 
@@ -72,6 +67,30 @@ fitted_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat",
                         "gcal", "ghbar", "catau", "gcanbar"]
 
 
+
+class UncertaintyEstimation():
+    def __init__(self, ):
+        self.filepath = os.path.abspath(__file__)
+        self.filedir = os.path.dirname(filepath)
+
+        self.memory_threshold = 90
+        self.delta_poll = 1
+
+        self.t_start = time.time()
+        self.memory_report = Memory()
+        
+
+        self.initialize()
+
+
+    def initialize(self):
+        
+
+class Model():
+    def __init__(self, modelfile, modelpath):
+        self.modelfile = modelfile
+        self.modelpath = modelpath
+        
 
 
 def plotV_t(t, E, Var, parameter, outputdir, figureformat = figureformat):
@@ -226,7 +245,7 @@ def createPCExpansion(parameter_space, feature = None, cvode_active=True):
         for parameter in parameter_space:
             tmp_parameters[parameter] = s[j]
             j += 1
-           
+            
         saveParameters(tmp_parameters, parameterfile, modelpath, filedir)
 
         cmd = ["python", "simulation.py", parameterfile, modelfile, modelpath, str(cvode_active)]
