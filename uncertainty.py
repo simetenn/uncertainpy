@@ -65,10 +65,11 @@ fitted_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat",
 
 
 class UncertaintyEstimation():
-    def __init__(self, modelfile, modelpath, parameterfile, fitted_parameters, outputdir = "figures/"):
+    def __init__(self, modelfile, modelpath, parameterfile, parameters, fitted_parameters, outputdir = "figures/"):
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(filepath)
         self.outputdir = outputdir
+        self.parameters = parameters
         self.fitted_parameters = fitted_parameters
         self.figureformat = ".png"
         
@@ -78,21 +79,25 @@ class UncertaintyEstimation():
         self.memory_report = Memory()
         self.t_start = time.time()
         
-        self.model = Model(modelfile, modelpath)
+        self.model = Model(self.modelfile, self.modelpath, self.parameterfile, self.filedir)
 
         
-        def normal_function(parameter, interval):
-            return cp.Normal(parameter, abs(interval*parameter))
+#        def normal_function(parameter, interval):
+#            return cp.Normal(parameter, abs(interval*parameter))
+#
+#    
+#        def uniform_function(parameter, interval):
+#            return cp.Uniform(parameter - abs(interval*parameter),
+#                              parameter + abs(interval*parameter))
+#
+#
+#        self.Distribution = Distribution(interval)
+#        #self.normal = Distribution(normal_function, interval)
+#        #self.uniform = Distribution(uniform_function, interval)
+#        self.normal = self.Distribution.normal
+#        self.uniform = self.Distribution.uniform
 
-    
-        def uniform_function(parameter, interval):
-            return cp.Uniform(parameter - abs(interval*parameter),
-                              parameter + abs(interval*parameter))
-
-    
-        self.normal = Distribution(normal_function, interval)
-        self.uniform = Distribution(uniform_function, interval)
-
+        self.parameter_space = None
 
         self.cvode_active = True
         self.M = 3
@@ -102,36 +107,36 @@ class UncertaintyEstimation():
         self.t_max = None
         self.P = None
         self.nodes = None
+        self.sensitivity = None
 
 
-    def newParameterSpace(fitted_parameters, distribution):
+    def newParameterSpace(self, distribution):
         """
         Generalized parameter space creation
         """
 
         parameter_space = {}
 
-        if type(fitted_parameters) == str:
-            parameter_space[fitted_parameters] = distribution(parameters[fitted_parameters])
-            return parameter_space
+        if type(self.fitted_parameters) == str:
+            parameter_space[self.fitted_parameters] = distribution(self.parameters[self.fitted_parameters])
+            self.parameter_space = parameter_space
         else:
-            for param in fitted_parameters:
-                parameter_space[param] = distribution(parameters[param])
-                
-            return parameter_space
+            for param in self.fitted_parameters:
+                parameter_space[self.param] = distribution(self.parameters[param])
+
+            self.parameter_space = parameter_space
+            
 
 
 
+    def createPCExpansion(feature = None, cvode_active=True):
 
-    def createPCExpansion(parameter_space, feature = None, cvode_active=True):
+        self.dist = cp.J(*self.parameter_space.values())
+        self.P = cp.orth_ttr(self.M, self.dist)
+        self.nodes = self.dist.sample(2*len(P), "M")
+        self.solves = []
 
-        dist = cp.J(*parameter_space.values())
-        P = cp.orth_ttr(M, dist)
-        nodes = dist.sample(2*len(P), "M")
-        solves = []
 
-        vdisplay = Xvfb()
-        vdisplay.start()
 
         i = 0.
         for s in nodes.T:
@@ -149,31 +154,8 @@ class UncertaintyEstimation():
                 tmp_parameters[parameter] = s[j]
                 j += 1
 
-            saveParameters(tmp_parameters, parameterfile, modelpath, filedir)
-
-            cmd = ["python", "simulation.py", parameterfile, modelfile, modelpath, str(cvode_active)]
-            simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-            #Note this checks total memory used by all applications
-            while simulation.poll() == None:
-                memory_report.save()
-                memory_report.saveAll()
-                if memory_report.totalPercent() > memory_threshold:
-                    print "\nWARNING: memory threshold exceeded, aborting simulation"
-                    simulation.terminate()
-                    vdisplay.stop()
-                    return None
-
-                time.sleep(delta_poll)
-
-
-            ut, err = simulation.communicate()
-
-            if simulation.returncode != 0:
-                print "Error when running simulation:"
-                print err
-                sys.exit(1)
-
+            self.model.saveParameters(tmp_parameters)
+            self.model.run()
 
             tmp_V = open("tmp_V.p", "r")
             tmp_t = open("tmp_t.p", "r")
@@ -185,7 +167,6 @@ class UncertaintyEstimation():
             tmp_V.close()
             tmp_t.close()
 
-
             # Do a feature selection here. Make it so several feature
             # selections are performed at this step. Do this when
             # rewriting it as a class
@@ -195,9 +176,9 @@ class UncertaintyEstimation():
 
             if cvode_active:
                 inter = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-                solves.append((t, V, inter))
+                self.solves.append((t, V, inter))
             else:
-                solves.append((t, V))
+                self.solves.append((t, V))
 
             i += 1
 
@@ -206,26 +187,22 @@ class UncertaintyEstimation():
         solves = np.array(solves)
         if cvode_active:
             lengths = []
-            for s in solves[:,0]:
+            for s in self.solves[:,0]:
                 lengths.append(len(s))          
 
             index_max_len = np.argmax(lengths)
-            t_max = solves[index_max_len, 0]
+            self.t_max = self.solves[index_max_len, 0]
 
             interpolated_solves = []
-            for inter in solves[:,2]:
+            for inter in self.solves[:,2]:
                 interpolated_solves.append(inter(t_max))
 
         else:
-            t_max = solves[0, 0]
+            self.t_max = solves[0, 0]
             interpolated_solves = solves[:,1]
 
-
-        vdisplay.stop()
-
-        U_hat = cp.fit_regression(P, nodes, interpolated_solves, rule="LS")
-        return U_hat, dist, solves, t_max, P, nodes
-
+        self.U_hat = cp.fit_regression(P, nodes, interpolated_solves, rule="LS")
+        
 
 
 
@@ -234,22 +211,22 @@ class UncertaintyEstimation():
 
         
 
-    def plotV_t(t, E, Var, parameter, outputdir, figureformat = figureformat):
+    def plotV_t(parameter):
         color1 = 0
         color2 = 8
 
-        prettyPlot(t, E,
+        prettyPlot(self.t, self.E,
                    "Mean, " + parameter, "time", "voltage", color1)
-        plt.savefig(os.path.join(outputdir, parameter  + "_mean" + figureformat),
+        plt.savefig(os.path.join(self.outputdir, parameter  + "_mean" + self.figureformat),
                     bbox_inches="tight")
 
-        prettyPlot(t, Var,
+        prettyPlot(self.t, self.Var,
                    "Variance, " + parameter, "time", "voltage", color2)
-        plt.savefig(os.path.join(outputdir, parameter  + "_variance" + figureformat),
+        plt.savefig(os.path.join(self.outputdir, parameter  + "_variance" + self.figureformat),
                     bbox_inches="tight")
 
 
-        ax, tableau20 = prettyPlot(t, E,
+        ax, tableau20 = prettyPlot(self.t, self.E,
                                    "Mean and variance, " + parameter, "time", "voltage, mean", color1)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off",  
@@ -259,55 +236,56 @@ class UncertaintyEstimation():
         ax.spines["right"].set_edgecolor(tableau20[color2])
 
 
-        ax2.set_xlim([min(t),max(t)])
-        ax2.set_ylim([min(Var),max(Var)])
+        ax2.set_xlim([min(self.t),max(self.t)])
+        ax2.set_ylim([min(self.Var),max(self.Var)])
 
-        ax2.plot(t, Var, color=tableau20[color2], linewidth=2, antialiased=True)
+        ax2.plot(self.t, self.Var, color=tableau20[color2], linewidth=2, antialiased=True)
 
         ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
         ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
         ax.spines["left"].set_edgecolor(tableau20[color1])
         plt.tight_layout()
-        plt.savefig(os.path.join(outputdir, parameter  + "_variance_mean" + figureformat), bbox_inches="tight")
+        plt.savefig(os.path.join(self.outputdir, parameter  + "_variance_mean" + self.figureformat), bbox_inches="tight")
 
         plt.close()
 
 
 
-    def plotConfidenceInterval(t_max, E, p_10, p_90, filename, outputdir = figurepath):
+    def plotConfidenceInterval(filename):
 
-        ax, color = prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0)
-        plt.fill_between(t_max, p_10, p_90, alpha=0.2, facecolor = color[8])
-        prettyPlot(t_max, p_90, color = 8, new_figure = False)
-        prettyPlot(t_max, p_10, color = 9, new_figure = False)
-        prettyPlot(t_max, E, "Confidence interval", "time", "voltage", 0, False)
+        ax, color = prettyPlot(self.t_max, self.E, "Confidence interval", "time", "voltage", 0)
+        plt.fill_between(self.t_max, self.p_10, self.p_90, alpha=0.2, facecolor = color[8])
+        prettyPlot(self.t_max, self.p_90, color = 8, new_figure = False)
+        prettyPlot(self.t_max, self.p_10, color = 9, new_figure = False)
+        prettyPlot(self.t_max, self.E, "Confidence interval", "time", "voltage", 0, False)
 
-        plt.ylim([min([min(p_90), min(p_10), min(E)]), max([max(p_90), max(p_10), max(E)])])
+        plt.ylim([min([min(self.p_90), min(self.p_10), min(self.E)]),
+                  max([max(self.p_90), max(self.p_10), max(self.E)])])
 
         plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
-        plt.savefig(os.path.join(outputdir, filename + figureformat),
+        plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
                     bbox_inches="tight")
 
         plt.close()
 
 
-    def plotSensitivity(t_max, sensitivity, parameter_space, outputdir = figurepath):
+    def plotSensitivity(self):
 
-        for i in range(len(sensitivity)):
-            prettyPlot(t_max, sensitivity[i], parameter_space.keys()[i] + " sensitivity", "time", "sensitivity", i, True)
-            plt.title(parameter_space.keys()[i] + " sensitivity",)
+        for i in range(len(self.sensitivity)):
+            prettyPlot(self.t_max, self.sensitivity[i], self.parameter_space.keys()[i] + " sensitivity", "time", "sensitivity", i, True)
+            plt.title(self.parameter_space.keys()[i] + " sensitivity",)
             plt.ylim([0, 1.05])
-            plt.savefig(os.path.join(outputdir, parameter_space.keys()[i] +"_sensitivity" + figureformat),
+            plt.savefig(os.path.join(self.outputdir, self.parameter_space.keys()[i] +"_sensitivity" + self.figureformat),
                     bbox_inches="tight")
         plt.close()
 
-        for i in range(len(sensitivity)):
-            prettyPlot(t_max, sensitivity[i], "sensitivity", "time", "sensitivity", i, False)
+        for i in range(len(self.sensitivity)):
+            prettyPlot(self.t_max, self.sensitivity[i], "sensitivity", "time", "sensitivity", i, False)
 
         plt.ylim([0, 1.05])
-        plt.xlim([t_max[0], 1.3*t_max[-1]])
-        plt.legend(parameter_space.keys())
-        plt.savefig(os.path.join(outputdir, "all_sensitivity" + figureformat),
+        plt.xlim([self.t_max[0], 1.3*self.t_max[-1]])
+        plt.legend(self.parameter_space.keys())
+        plt.savefig(os.path.join(self.outputdir, "all_sensitivity" + self.figureformat),
                     bbox_inches="tight")
 
 
@@ -452,6 +430,9 @@ gcanbar = $gcanbar
         f.close()
 
     def run():
+        vdisplay = Xvfb()
+        vdisplay.start()
+
         cmd = ["python", "simulation.py", self.parameterfile, self.modelfile, self.modelpath, str(cvode_active)]
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -470,6 +451,8 @@ gcanbar = $gcanbar
         
 
         ut, err = simulation.communicate()
+
+        vdisplay.stop()
         
         if simulation.returncode != 0:
             print "Error when running simulation:"
@@ -481,13 +464,21 @@ class Distribution():
     def __init__(self, function, interval):
         self.interval = interval
         self.function = function
+
+    def __init__(self, interval):
+        self.interval = interval
         
     def __call__(self, parameter):
         return self.function(parameter, self.interval)
 
+        
+    def normal(self, parameter):
+        return cp.Normal(parameter, abs(self.interval*parameter))
 
-
-
+    
+    def uniform(self, parameter):
+        return cp.Uniform(parameter - abs(self.interval*parameter),
+                              parameter + abs(self.interval*parameter))
 
 
 test_parameters =   ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
