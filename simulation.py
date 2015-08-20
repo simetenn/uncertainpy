@@ -1,17 +1,20 @@
-import os, string, cPickle, sys
+import os
+import sys
 import numpy as np
 
 class Simulation():
-    def __init__(self, parameterfile, modelfile, modelpath, cvode_active = True):
+    def __init__(self, parameterfile, modelfile, modelpath, cvode_active=True):
         self.parameterfile = parameterfile
         self.modelfile = modelfile
         self.modelpath = modelpath
         self.cvode_active = cvode_active
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
+        self.U = None
+        self.t = None
 
         os.chdir(self.modelpath)
-        
+
         import neuron
         self.h = neuron.h
         self.h.load_file(1, self.modelfile)
@@ -23,13 +26,14 @@ class Simulation():
         else:
             self.h("cvode_active(0)")
 
-            
-        ### Be really careful with these. Need to make sure that all references to neuron are isnide this class
+
+    ### Be really careful with these. Need to make sure that all references to
+    ### neuron are inside this class
     def record(self, ref_data):
         data = self.h.Vector()
         data.record(getattr(self.h, ref_data))
         return data
-    
+
 
     def toArray(self, hocObject):
         array = np.zeros(hocObject.size())
@@ -43,7 +47,7 @@ class Simulation():
             self.V.record(sec(0.5)._ref_v)
             break
 
-            
+
     def recordT(self):
         self.t = self.record("_ref_t")
 
@@ -52,11 +56,11 @@ class Simulation():
         self.h.finitialize()
         self.h.run()
 
-        
+
     def getT(self):
         return self.toArray(self.t)
 
-        
+
     def getV(self):
         return self.toArray(self.V)
 
@@ -66,25 +70,20 @@ class Simulation():
 
         self.run()
 
+        self.U = sim.getV()
+        self.t = sim.getT()
+
+    def save(self):
+        np.save("tmp_U", self.U)
+        np.save("tmp_t", self.t)
+
 
 if __name__ == "__main__":
     parameterfile = str(sys.argv[1])
     modelfile = str(sys.argv[2])
     modelpath = str(sys.argv[3])
     cvode_active = str(sys.argv[4])
-    
+
     sim = Simulation(parameterfile, modelfile, modelpath, cvode_active)
-    
     sim.runSimulation()
-
-    V = sim.getV()
-    t = sim.getT()
-
-    tmp_V = open("tmp_V.p", "w")
-    tmp_t = open("tmp_t.p", "w")
-        
-    cPickle.dump(V, tmp_V)
-    cPickle.dump(t, tmp_t)
-
-    tmp_V.close()
-    tmp_t.close()
+    sim.save()
