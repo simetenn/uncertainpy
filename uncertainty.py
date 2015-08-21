@@ -33,31 +33,60 @@ from memory import Memory
 from distribution import Distribution
 from model import Model
 
+
+
 class UncertaintyEstimations():
-    def __init__(self):
+    def __init__(self, model, parameters, fitted_parameters, outputdir="figures/"):
+        self.UncertaintyEstimations = []
+
+        self.model = model
+        self.outputdir = outputdir
+        self.parameters = parameters
+        self.fitted_parameters = fitted_parameters
+
+        self.t_start = time.time()
+        self.memory_report = Memory()
+
+    def initialize(self):
+        for distribution_function in distribution_functions:
+            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
+
+            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
+                self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, self.parameters, self.fitted_parameters, self.memory_report))
+
+    def run(self):
+        for uncertaintyEstimation in UncertaintyEstimations:
+            uncertaintyEstimation.singleParameters()
+            uncertaintyEstimation.allParameters()
+
+
+    def exploreSingleParameters(self, distribution_functions, intervals):
+        for distribution_function in distribution_functions:
+            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
+
+            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
+                folder_name = distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
+                current_outputdir = os.path.join(outputdir, folder_name)
+
+                print "Running for interval: %2.4g" % (interval)
+                singleParameters(distribution=Distribution(distribution_function, interval),
+                                 outputdir=current_outputdir)
 
 
 
 class UncertaintyEstimation():
-    def __init__(self, modelfile, modelpath, parameterfile, parameters,
-                 fitted_parameters, outputdir="figures/"):
-        self.filepath = os.path.abspath(__file__)
-        self.filedir = os.path.dirname(self.filepath)
+    def __init__(self, model, parameters, fitted_parameters, outputdir="figures/"):
 
         self.outputdir = outputdir
         self.parameters = parameters
         self.fitted_parameters = fitted_parameters
+
         self.figureformat = ".png"
 
-        self.memory_threshold = 90
-        self.delta_poll = 1
-
-        self.memory_report = Memory()
+        self.memory_report = memory_report
         self.t_start = time.time()
 
-        self.cvode_active = True
-        self.model = Model(modelfile, modelpath, parameterfile, self.filedir,
-                           self.cvode_active)
+        self.model = model
 
 
         self.Distribution = Distribution(interval)
@@ -67,10 +96,7 @@ class UncertaintyEstimation():
         self.uniform = self.Distribution.uniform
 
         self.parameter_space = None
-
         self.feature = None
-
-
 
         self.M = 3
         self.U_hat = None
@@ -129,7 +155,6 @@ class UncertaintyEstimation():
             V = np.load("tmp_U.npy")
             t = np.load("tmp_t.npy")
 
-
             # Do a feature selection here. Make it so several feature
             # selections are performed at this step. Do this when
             # rewriting it as a class
@@ -137,11 +162,8 @@ class UncertaintyEstimation():
             if self.feature is not None:
                 V = self.feature(V)
 
-            if self.cvode_active:
-                inter = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-                solves.append((t, V, inter))
-            else:
-                solves.append((t, V))
+            inter = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+            solves.append((t, V, inter))
 
             i += 1
 
@@ -278,8 +300,7 @@ class UncertaintyEstimation():
                 self.p_10 = np.percentile(self.U_mc, 10, 1)
                 self.p_90 = np.percentile(self.U_mc, 90, 1)
 
-                self.plotConfidenceInterval(fitted_parameter +
-                                            "_confidence_interval")
+                self.plotConfidenceInterval(fitted_parameter + "_confidence_interval")
 
             except MemoryError:
                 print "Memory error, calculations aborted"
@@ -297,20 +318,7 @@ class UncertaintyEstimation():
                 current_outputdir = os.path.join(outputdir, folder_name)
 
                 print "Running for interval: %2.4g" % (interval)
-                singleParameters(distribution=Distribution(distribution_function, interval),
-                                 outputdir=current_outputdir)
-
-
-    def exploreSingleParameters(distribution_functions, intervals):
-        for distribution_function in distribution_functions:
-            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
-
-            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
-                folder_name = distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
-                current_outputdir = os.path.join(outputdir, folder_name)
-
-                print "Running for interval: %2.4g" % (interval)
-                singleParameters(distribution = Distribution(distribution_function, interval), outputdir = current_outputdir)
+                singleParameters(distribution=Distribution(distribution_function, interval), outputdir=current_outputdir)
 
 
     def allParameters(self):
@@ -347,21 +355,8 @@ class UncertaintyEstimation():
             return 1
 
         return 0
-    """
-    def exploreAllParameters(distribution_functions, intervals, outputdir = figurepath):
-        for distribution_function in distribution_functions:
-            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
-
-            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
-                folder_name =  distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
-                current_outputdir = os.path.join(outputdir, folder_name)
-
-                print "Running for interval: %2.4g" % (interval)
-                allParameters(distribution = Distribution(distribution_function, interval), outputdir = current_outputdir)
 
 
-
-    """
 
 
 if __name__ == "__main__":
@@ -392,6 +387,24 @@ if __name__ == "__main__":
         "gcanbar": 2e-8
     }
 
+    parameter_string_save = """rall =    $rall
+cap =     $cap
+Rm =      $Rm
+Vrest =   $Vrest
+Epas =    $Epas
+gna =     $gna
+nash =    $nash
+gkdr =    $gkdr
+kdrsh =   $kdrsh
+gahp =    $gahp
+gcat =    $gcat
+gcal =    $gcal
+ghbar =   $ghbar
+catau =   $catau
+gcanbar = $gcanbar
+        """
+
+
 
     fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
                          "ghbar", "catau", "gcanbar"]
@@ -407,9 +420,8 @@ if __name__ == "__main__":
     test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
 
     #test_parameters = ["Rm", "Epas"]
-
-    test = UncertaintyEstimation(modelfile, modelpath, parameterfile, parameters,
-                                 test_parameters, "figures/test")
+    model = Model(modelfile, modelpath, parameterfile, parameter_string_save)
+    test = UncertaintyEstimation(model, parameters, test_parameters, "figures/test")
     test.singleParameters()
     test.allParameters()
 

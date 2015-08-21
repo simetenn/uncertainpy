@@ -3,13 +3,13 @@ import sys
 import numpy as np
 
 class Simulation():
-    def __init__(self, parameterfile, modelfile, modelpath, cvode_active=True):
+    def __init__(self, parameterfile, modelfile, modelpath):
         self.parameterfile = parameterfile
         self.modelfile = modelfile
         self.modelpath = modelpath
-        self.cvode_active = cvode_active
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
+
         self.U = None
         self.t = None
 
@@ -20,11 +20,6 @@ class Simulation():
         self.h.load_file(1, self.modelfile)
 
         os.chdir(self.filedir)
-
-        if cvode_active:
-            self.h("cvode_active(1)")
-        else:
-            self.h("cvode_active(0)")
 
 
     ### Be really careful with these. Need to make sure that all references to
@@ -64,6 +59,7 @@ class Simulation():
     def getV(self):
         return self.toArray(self.V)
 
+
     def runSimulation(self):
         self.recordT()
         self.recordV()
@@ -82,8 +78,7 @@ if __name__ == "__main__":
     parameterfile = str(sys.argv[1])
     modelfile = str(sys.argv[2])
     modelpath = str(sys.argv[3])
-    cvode_active = str(sys.argv[4])
 
-    sim = Simulation(parameterfile, modelfile, modelpath, cvode_active)
+    sim = Simulation(parameterfile, modelfile, modelpath)
     sim.runSimulation()
     sim.save()
