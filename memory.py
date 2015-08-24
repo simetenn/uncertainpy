@@ -20,8 +20,9 @@ class Memory:
 
 
     def _VmB(self, VmKey):
-        '''Private.
-        '''
+        """
+        Private
+        """
         # get pseudo file  /proc/<pid>/status
         try:
             t = open(self._proc_status)

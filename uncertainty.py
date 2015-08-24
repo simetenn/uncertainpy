@@ -18,16 +18,21 @@
 
 # Use a recursive neural network
 
-import time
+# Compare with a pure MC calculation
 
+# Create a parameter class
+
+import time
 import datetime
 import scipy.interpolate
 import os
 import sys
 import subprocess
+
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
+
 from prettyPlot import prettyPlot
 from memory import Memory
 from distribution import Distribution
@@ -75,25 +80,40 @@ class UncertaintyEstimations():
 
 
 class UncertaintyEstimation():
-    def __init__(self, model, parameters, fitted_parameters, outputdir="figures/"):
+    def __init__(self, model, parameters, fitted_parameters,
+                 distribution_functions, outputdir="figures/"):
+        """
+        model: Model object
+        parameters: dict of all the default parameters the model has
+        fitted_parameters: list of all parameters that shall be examined
+        distribution_functions: a function that
+        outputdir: Where to save the results. Default = "figures/"
+        """
+
 
         self.outputdir = outputdir
         self.parameters = parameters
-        self.fitted_parameters = fitted_parameters
+
+
+        if type(fitted_parameters) is str:
+            self.fitted_parameter = [fitted_parameters]
+        else:
+            self.fitted_parameters = fitted_parameters
+
+
+
+        if hasattr(distribution_functions, '__call__'):
+            self.distribution_functions = {}
+            for param in self.fitted_parameters:
+                self.distribution_functions[param] = distribution_functions
+        else:
+            self.distribution_functions = distribution_functions
+
 
         self.figureformat = ".png"
-
-        self.memory_report = memory_report
         self.t_start = time.time()
 
         self.model = model
-
-
-        self.Distribution = Distribution(interval)
-#       self.normal = Distribution(normal_function, interval)
-#       self.uniform = Distribution(uniform_function, interval)
-        self.normal = self.Distribution.normal
-        self.uniform = self.Distribution.uniform
 
         self.parameter_space = None
         self.feature = None
@@ -108,23 +128,20 @@ class UncertaintyEstimation():
         self.nodes = None
         self.sensitivity = None
 
-    # def setDistribution(self, ):
+#    def initialize(self):
 
-    def newParameterSpace(self, distribution, fitted_parameters):
+
+
+
+    def newParameterSpace(self):
         """
         Generalized parameter space creation
         """
 
-        parameter_space = {}
+        self.parameter_space = {}
 
-        if type(fitted_parameters) is str:
-            parameter_space[fitted_parameters] = distribution(self.parameters[fitted_parameters])
-            self.parameter_space = parameter_space
-        else:
-            for param in self.fitted_parameters:
-                parameter_space[param] = distribution(self.parameters[param])
-
-            self.parameter_space = parameter_space
+        for param in self.fitted_parameters:
+            self.parameter_space[param] = self.distribution_functions[param](self.parameters[param])
 
     def createPCExpansion(self):
 
@@ -162,29 +179,24 @@ class UncertaintyEstimation():
             if self.feature is not None:
                 V = self.feature(V)
 
-            inter = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-            solves.append((t, V, inter))
+            interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+            solves.append((t, V, interpolation))
 
             i += 1
 
         print "\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100)
 
         solves = np.array(solves)
-        if self.cvode_active:
-            lengths = []
-            for s in solves[:, 0]:
-                lengths.append(len(s))
+        lengths = []
+        for s in solves[:, 0]:
+            lengths.append(len(s))
 
-            index_max_len = np.argmax(lengths)
-            self.t = solves[index_max_len, 0]
+        index_max_len = np.argmax(lengths)
+        self.t = solves[index_max_len, 0]
 
-            interpolated_solves = []
-            for inter in solves[:, 2]:
-                interpolated_solves.append(inter(self.t))
-
-        else:
-            self.t = solves[0, 0]
-            interpolated_solves = solves[:, 1]
+        interpolated_solves = []
+        for inter in solves[:, 2]:
+            interpolated_solves.append(inter(self.t))
 
         self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="LS")
 
@@ -281,7 +293,7 @@ class UncertaintyEstimation():
         for fitted_parameter in self.fitted_parameters:
             print "\rRunning for " + fitted_parameter + "                     "
 
-            self.newParameterSpace(self.Distribution.normal, fitted_parameter)
+            self.newParameterSpace()
             success = self.createPCExpansion()
 
             if success == -1:
@@ -295,7 +307,7 @@ class UncertaintyEstimation():
                 self.plotV_t(fitted_parameter)
 
                 samples = self.dist.sample(self.mc_samples, "M")
-                self.U_mc = self.U_hat(samples)
+                self.U_mc = self.U_hat(*samples)
 
                 self.p_10 = np.percentile(self.U_mc, 10, 1)
                 self.p_90 = np.percentile(self.U_mc, 90, 1)
@@ -309,23 +321,11 @@ class UncertaintyEstimation():
         return 0
 
 
-    def exploreSingleParameters(distribution_functions, intervals):
-        for distribution_function in distribution_functions:
-            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
-
-            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
-                folder_name = distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
-                current_outputdir = os.path.join(outputdir, folder_name)
-
-                print "Running for interval: %2.4g" % (interval)
-                singleParameters(distribution=Distribution(distribution_function, interval), outputdir=current_outputdir)
-
-
     def allParameters(self):
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
 
-        self.newParameterSpace(self.Distribution.normal, self.fitted_parameters)
+        self.newParameterSpace()
         success = self.createPCExpansion()
         if success == -1:
             # Add which distribution when rewritten as class
@@ -335,6 +335,7 @@ class UncertaintyEstimation():
         try:
             self.E = cp.E(self.U_hat, self.dist)
             self.Var = cp.Var(self.U_hat, self.dist)
+
 
             self.plotV_t("all")
 
@@ -357,11 +358,9 @@ class UncertaintyEstimation():
         return 0
 
 
-
-
 if __name__ == "__main__":
     # Global parameters
-    interval = 5*10**-3
+    interval = 5*10**-2
 
 
     modelfile = "INmodel.hoc"
@@ -387,41 +386,30 @@ if __name__ == "__main__":
         "gcanbar": 2e-8
     }
 
-    parameter_string_save = """rall =    $rall
-cap =     $cap
-Rm =      $Rm
-Vrest =   $Vrest
-Epas =    $Epas
-gna =     $gna
-nash =    $nash
-gkdr =    $gkdr
-kdrsh =   $kdrsh
-gahp =    $gahp
-gcat =    $gcat
-gcal =    $gcal
-ghbar =   $ghbar
-catau =   $catau
-gcanbar = $gcanbar
-        """
+    distributions = {
 
+    }
 
 
     fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
                          "ghbar", "catau", "gcanbar"]
 
-    def normal_function(parameter, interval):
-        return cp.Normal(parameter, abs(interval*parameter))
+    # def normal_function(parameter, interval):
+    #     return cp.Normal(parameter, abs(interval*parameter))
+    #
+    #
+    # def uniform_function(parameter, interval):
+    #     return cp.Uniform(parameter - abs(interval*parameter),
+    #                       parameter + abs(interval*parameter))
 
+    #test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
 
-    def uniform_function(parameter, interval):
-        return cp.Uniform(parameter - abs(interval*parameter),
-                          parameter + abs(interval*parameter))
-
-    test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
-
-    #test_parameters = ["Rm", "Epas"]
-    model = Model(modelfile, modelpath, parameterfile, parameter_string_save)
-    test = UncertaintyEstimation(model, parameters, test_parameters, "figures/test")
+    distribution_function = Distribution(interval).uniform
+    distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
+    test_parameters = ["Rm", "Epas"]
+    model = Model(modelfile, modelpath, parameterfile, parameters)
+    test = UncertaintyEstimation(model, parameters, test_parameters,
+                                 distribution_function, "figures/test")
     test.singleParameters()
     test.allParameters()
 
