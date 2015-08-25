@@ -11,7 +11,7 @@
 # feature based. For example, count the number of spikes, and the
 # average the number of spikes and time between spikes.
 
-# Make a data selection process before PC expansion to look at
+# Make a data seelection process before PC expansion to look at
 # specific features. This data selection should be the same as what is
 # done for handling spikes from experiments. One example is a low pass
 # filter and a high pass filter.
@@ -20,7 +20,6 @@
 
 # Compare with a pure MC calculation
 
-# Create a parameter class
 
 import time
 import datetime
@@ -98,12 +97,9 @@ class UncertaintyEstimation():
 
         self.model = model
 
-#        self.parameter_space = None
-        self.feature = None
-
         self.M = 3
         self.U_hat = None
-        self.dist = None
+        self.distribution = None
         self.solves = None
         self.mc_samples = 10**3
         self.t = None
@@ -111,26 +107,23 @@ class UncertaintyEstimation():
         self.nodes = None
         self.sensitivity = None
 
-#    def initialize(self):
+        if not os.path.isdir(self.outputdir):
+            os.makedirs(self.outputdir)
 
 
+    def createPCExpansion(self, parameter_name=None, feature=None):
+
+        if parameter_name is None:
+            parameter_space = self.parameters.getIfFitted("parameter_space")
+            parameter_name = self.parameters.getIfFitted("name")
+        else:
+            parameter_space = [self.parameters.get(parameter_name).parameter_space]
+            parameter_name = [parameter_name]
 
 
-    # def newParameterSpace(self):
-    #     """
-    #     Generalized parameter space creation
-    #     """
-    #
-    #     self.parameter_space = {}
-    #
-    #     for param in self.fitted_parameters:
-    #         self.parameter_space[param] = self.distribution_functions[param](self.parameters[param])
-
-    def createPCExpansion(self):
-
-        self.dist = cp.J(*self.parameters.getIfFitted("parameter_space"))
-        self.P = cp.orth_ttr(self.M, self.dist)
-        nodes = self.dist.sample(2*len(self.P), "M")
+        self.distribution = cp.J(*parameter_space)
+        self.P = cp.orth_ttr(self.M, self.distribution)
+        nodes = self.distribution.sample(2*len(self.P), "M")
         solves = []
 
         i = 0.
@@ -144,7 +137,7 @@ class UncertaintyEstimation():
             # New setparameters
             tmp_parameters = {}
             j = 0
-            for parameter in self.parameters.getIfFitted("name"):
+            for parameter in parameter_name:
                 tmp_parameters[parameter] = s[j]
                 j += 1
 
@@ -159,8 +152,8 @@ class UncertaintyEstimation():
             # selections are performed at this step. Do this when
             # rewriting it as a class
 
-            if self.feature is not None:
-                V = self.feature(V)
+            if feature is not None:
+                V = feature(V)
 
             interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
             solves.append((t, V, interpolation))
@@ -189,134 +182,22 @@ class UncertaintyEstimation():
         return time.time() - self.t_start
 
 
-    def plotV_t(self, filename):
-        color1 = 0
-        color2 = 8
-
-        prettyPlot(self.t, self.E, "Mean, " + filename, "time", "voltage", color1)
-        plt.savefig(os.path.join(self.outputdir, filename + "_mean" + self.figureformat),
-                    bbox_inches="tight")
-
-        prettyPlot(self.t, self.Var, "Variance, " + filename, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.outputdir, filename + "_variance" + self.figureformat),
-                    bbox_inches="tight")
-
-        ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + filename,
-                                   "time", "voltage, mean", color1)
-        ax2 = ax.twinx()
-        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
-        ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
-        ax.spines["right"].set_edgecolor(tableau20[color2])
-
-        ax2.set_xlim([min(self.t), max(self.t)])
-        ax2.set_ylim([min(self.Var), max(self.Var)])
-
-        ax2.plot(self.t, self.Var, color=tableau20[color2], linewidth=2, antialiased=True)
-
-        ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
-        ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
-        ax.spines["left"].set_edgecolor(tableau20[color1])
-        plt.tight_layout()
-        plt.savefig(os.path.join(self.outputdir,
-                    filename + "_variance_mean" + self.figureformat),
-                    bbox_inches="tight")
-
-        plt.close()
-
-    def plotConfidenceInterval(self, filename):
-
-        ax, color = prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0)
-        plt.fill_between(self.t, self.p_10, self.p_90, alpha=0.2, facecolor=color[8])
-        prettyPlot(self.t, self.p_90, color=8, new_figure=False)
-        prettyPlot(self.t, self.p_10, color=9, new_figure=False)
-        prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0, False)
-
-        plt.ylim([min([min(self.p_90), min(self.p_10), min(self.E)]),
-                  max([max(self.p_90), max(self.p_10), max(self.E)])])
-
-        plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
-        plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
-                    bbox_inches="tight")
-
-        plt.close()
-
-    def plotSensitivity(self):
-        parameter_names = self.parameters.get("name")
-
-        for i in range(len(self.sensitivity)):
-            prettyPlot(self.t, self.sensitivity[i],
-                       parameter_names[i] + " sensitivity", "time",
-                       "sensitivity", i, True)
-            plt.title(parameter_names[i] + " sensitivity")
-            plt.ylim([0, 1.05])
-            plt.savefig(os.path.join(self.outputdir,
-                                     parameter_names[i] +
-                                     "_sensitivity" + self.figureformat),
-                        bbox_inches="tight")
-        plt.close()
-
-        for i in range(len(self.sensitivity)):
-            prettyPlot(self.t, self.sensitivity[i], "sensitivity", "time",
-                       "sensitivity", i, False)
-
-        plt.ylim([0, 1.05])
-        plt.xlim([self.t[0], 1.3*self.t[-1]])
-        plt.legend(parameter_names)
-        plt.savefig(os.path.join(self.outputdir, "sensitivity" + self.figureformat),
-                    bbox_inches="tight")
-
-    def analysis(self, name):
-        """
-        Analysis
-        """
-
-        self.createPCExpansion()
-        if success == -1:
-            print "Calculations aborted for " + name
-            return 1
-
-        try:
-            self.E = cp.E(self.U_hat, self.dist)
-            self.Var = cp.Var(self.U_hat, self.dist)
-
-            self.plotV_t(name)
-
-            samples = self.dist.sample(self.mc_samples, "M")
-            self.U_mc = self.U_hat(*samples)
-
-            self.p_10 = np.percentile(self.U_mc, 10, 1)
-            self.p_90 = np.percentile(self.U_mc, 90, 1)
-
-            self.plotConfidenceInterval(name + "_confidence_interval")
-
-        except MemoryError:
-            print "Memory error, calculations aborted"
-            return -1
-
-
     def singleParameters(self):
-        if not os.path.isdir(self.outputdir):
-            os.makedirs(self.outputdir)
-
         for fitted_parameter in self.parameters.fitted_parameters:
             print "\rRunning for " + fitted_parameter + "                     "
 
-            #self.newParameterSpace()
-            success = self.createPCExpansion()
-
-            if success == -1:
+            if self.createPCExpansion(fitted_parameter) == -1:
                 print "Calculations aborted for " + fitted_parameter
-                continue
+                return -1
 
             try:
-                self.E = cp.E(self.U_hat, self.dist)
-                self.Var = cp.Var(self.U_hat, self.dist)
+                self.E = cp.E(self.U_hat, self.distribution)
+                self.Var = cp.Var(self.U_hat, self.distribution)
 
                 self.plotV_t(fitted_parameter)
 
-                samples = self.dist.sample(self.mc_samples, "M")
-                self.U_mc = self.U_hat(*samples)
+                samples = self.distribution.sample(self.mc_samples, "M")
+                self.U_mc = self.U_hat(samples)
 
                 self.p_10 = np.percentile(self.U_mc, 10, 1)
                 self.p_90 = np.percentile(self.U_mc, 90, 1)
@@ -325,34 +206,24 @@ class UncertaintyEstimation():
 
             except MemoryError:
                 print "Memory error, calculations aborted"
-                return 1
-
-        return 0
+                return -1
 
 
     def allParameters(self):
-        if not os.path.isdir(self.outputdir):
-            os.makedirs(self.outputdir)
-
-        #self.newParameterSpace()
-        success = self.createPCExpansion()
-        if success == -1:
-            # Add which distribution when rewritten as class
-            print "Calculations aborted for "
-            return 1
-
+        if self.createPCExpansion() == -1:
+            print "Calculations aborted for all"
+            return -1
         try:
-            self.E = cp.E(self.U_hat, self.dist)
-            self.Var = cp.Var(self.U_hat, self.dist)
-
+            self.E = cp.E(self.U_hat, self.distribution)
+            self.Var = cp.Var(self.U_hat, self.distribution)
 
             self.plotV_t("all")
 
-            self.sensitivity = cp.Sens_t(self.U_hat, self.dist)
+            self.sensitivity = cp.Sens_t(self.U_hat, self.distribution)
 
             self.plotSensitivity()
 
-            samples = self.dist.sample(self.mc_samples)
+            samples = self.distribution.sample(self.mc_samples)
 
             self.U_mc = self.U_hat(*samples)
             self.p_10 = np.percentile(self.U_mc, 10, 1)
@@ -362,9 +233,91 @@ class UncertaintyEstimation():
 
         except MemoryError:
             print "Memory error, calculations aborted"
-            return 1
 
-        return 0
+        #self.analysis()
+
+
+
+
+
+        def plotV_t(self, filename):
+            color1 = 0
+            color2 = 8
+
+            prettyPlot(self.t, self.E, "Mean, " + filename, "time", "voltage", color1)
+            plt.savefig(os.path.join(self.outputdir, filename + "_mean" + self.figureformat),
+                        bbox_inches="tight")
+
+            prettyPlot(self.t, self.Var, "Variance, " + filename, "time", "voltage", color2)
+            plt.savefig(os.path.join(self.outputdir, filename + "_variance" + self.figureformat),
+                        bbox_inches="tight")
+
+            ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + filename,
+                                       "time", "voltage, mean", color1)
+            ax2 = ax.twinx()
+            ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                            color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
+            ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
+            ax.spines["right"].set_edgecolor(tableau20[color2])
+
+            ax2.set_xlim([min(self.t), max(self.t)])
+            ax2.set_ylim([min(self.Var), max(self.Var)])
+
+            ax2.plot(self.t, self.Var, color=tableau20[color2], linewidth=2, antialiased=True)
+
+            ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
+            ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
+            ax.spines["left"].set_edgecolor(tableau20[color1])
+            plt.tight_layout()
+            plt.savefig(os.path.join(self.outputdir,
+                        filename + "_variance_mean" + self.figureformat),
+                        bbox_inches="tight")
+
+            plt.close()
+
+        def plotConfidenceInterval(self, filename):
+
+            ax, color = prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0)
+            plt.fill_between(self.t, self.p_10, self.p_90, alpha=0.2, facecolor=color[8])
+            prettyPlot(self.t, self.p_90, color=8, new_figure=False)
+            prettyPlot(self.t, self.p_10, color=9, new_figure=False)
+            prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0, False)
+
+            plt.ylim([min([min(self.p_90), min(self.p_10), min(self.E)]),
+                      max([max(self.p_90), max(self.p_10), max(self.E)])])
+
+            plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
+            plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
+                        bbox_inches="tight")
+
+            plt.close()
+
+        def plotSensitivity(self):
+            parameter_names = self.parameters.get("name")
+
+            for i in range(len(self.sensitivity)):
+                prettyPlot(self.t, self.sensitivity[i],
+                           parameter_names[i] + " sensitivity", "time",
+                           "sensitivity", i, True)
+                plt.title(parameter_names[i] + " sensitivity")
+                plt.ylim([0, 1.05])
+                plt.savefig(os.path.join(self.outputdir,
+                                         parameter_names[i] +
+                                         "_sensitivity" + self.figureformat),
+                            bbox_inches="tight")
+            plt.close()
+
+            for i in range(len(self.sensitivity)):
+                prettyPlot(self.t, self.sensitivity[i], "sensitivity", "time",
+                           "sensitivity", i, False)
+
+            plt.ylim([0, 1.05])
+            plt.xlim([self.t[0], 1.3*self.t[-1]])
+            plt.legend(parameter_names)
+            plt.savefig(os.path.join(self.outputdir, "sensitivity" + self.figureformat),
+                        bbox_inches="tight")
+
+
 
 
 if __name__ == "__main__":

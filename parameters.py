@@ -32,21 +32,6 @@ class Parameters():
                     self.parameters[parameter] = Parameter(parameter, parameters[parameter])
 
 
-    # def parameterSpace(self):
-    #     """
-    #     Generalized parameter space creation
-    #     """
-    #     if self.parameter_space is not None:
-    #         return self.parameter_space
-    #
-    #     self.parameter_space = []
-    #     for parameter in self.parameters:
-    #         if self.parameters[parameter].fitted:
-    #             self.parameter_space.append(self.parameters[parameter].parameter_space)
-    #
-    #     return self.parameter_space
-
-
     def getIfFitted(self, item):
         items = []
         for parameter in self.parameters.values():
@@ -60,6 +45,7 @@ class Parameters():
             return self.parameters[item]
 
         return [getattr(parameter, item) for parameter in self.parameters.values()]
+
 
 
 class Parameter():
