@@ -23,6 +23,8 @@
 # Atm parameter are both in the model object and in the parameter object.
 # Make it so they only are one place?
 
+# Can remove the fitted parameter and instead test if the parameter has a distribution function?
+
 import time
 import datetime
 import scipy.interpolate
@@ -49,7 +51,6 @@ class UncertaintyEstimations():
         self.fitted_parameters = fitted_parameters
         self.distributions = distributions
         self.outputdir = outputdir
-        self.memory_report = Memory()
 
         self.initialize()
 
@@ -282,7 +283,7 @@ class UncertaintyEstimation():
         plt.close()
 
     def plotSensitivity(self):
-        parameter_names = self.parameters.get("name")
+        parameter_names = self.parameters.getIfFitted("name")
 
         for i in range(len(self.sensitivity)):
             prettyPlot(self.t, self.sensitivity[i],
@@ -345,20 +346,23 @@ if __name__ == "__main__":
     distribution_function = Distribution(interval).uniform
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
 
-    test_parameters = ["Rm", "Epas"]
+    test_parameters = ["Rm", "gkdr", "Epas"]
 
+    memory_report = Memory()
     parameters = Parameters(original_parameters, distribution_function, test_parameters)
-    model = Model(modelfile, modelpath, parameterfile, original_parameters)
+    model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
 
 
     test = UncertaintyEstimation(model, parameters, "figures/test")
-    #test.singleParameters()
-    #test.allParameters()
+    test.singleParameters()
+    test.allParameters()
 
-    distributions = {"uniform": (0.01, 0.1), "normal": (0.01, 0.1)}
+    #test_distributions = {"uniform": (0.01, 0.02, 0.1), "normal": (0.01, 0.1)}
+    distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+    #exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    #exploration.exploreParameters()
 
-    exploration = UncertaintyEstimations(model, test_parameters, distributions)
-    exploration.exploreParameters()
+
 
     subprocess.Popen(["play", "-q", "ship_bell.wav"])
     print "The total runtime is: " + str(datetime.timedelta(seconds=(test.timePassed())))

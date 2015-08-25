@@ -1,4 +1,4 @@
-# Can remove the fitted parameter and test if the parameter has a distribution function?
+# Can remove the fitted parameter and instead test if the parameter has a distribution function?
 
 class Parameters():
     def __init__(self, parameters, distributions, fitted_parameters):
@@ -12,7 +12,7 @@ class Parameters():
         self.parameters = {}
         self.parameter_space = None
         self.distributions = distributions
-        #self.dist = None
+
 
         if type(fitted_parameters) is str:
             self.fitted_parameters = [fitted_parameters]
