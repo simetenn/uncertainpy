@@ -11,7 +11,8 @@ class Parameters():
 
         self.parameters = {}
         self.parameter_space = None
-        self.dist = None
+        self.distributions = distributions
+        #self.dist = None
 
         if type(fitted_parameters) is str:
             self.fitted_parameters = [fitted_parameters]

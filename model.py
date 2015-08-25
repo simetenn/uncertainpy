@@ -18,7 +18,7 @@ class Model():
         modelfile: Name of the modelfile
         modelpath: Path to the modelfile
         parameterfile: Name of file containing parameteres
-        parameters: Parameter object
+        parameters: Parameters as a dictionary
         memory_report: Memory object
         """
 
@@ -53,12 +53,11 @@ class Model():
         else:
             f = open(self.modelpath + self.parameterfile, "w")
 
-            ### This is where i am
-        for parameter in self.parameters.get("name"):
+        for parameter in self.parameters.keys():
             if parameter in new_parameters:
                 save_parameter = new_parameters[parameter]
             else:
-                save_parameter = self.parameters.get(parameter).value
+                save_parameter = self.parameters[parameter]
 
             f.write(parameter + " = " + str(save_parameter) + "\n")
 

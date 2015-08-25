@@ -12,5 +12,5 @@ class Distribution():
         return cp.Normal(parameter, abs(self.interval*parameter))
 
     def uniform(self, parameter):
-        return cp.Uniform(parameter - abs(self.interval*parameter),
-                          parameter + abs(self.interval*parameter))
+        return cp.Uniform(parameter - abs(self.interval/2.*parameter),
+                          parameter + abs(self.interval/2.*parameter))

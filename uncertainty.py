@@ -20,6 +20,8 @@
 
 # Compare with a pure MC calculation
 
+# Atm parameter are both in the model object and in the parameter object.
+# Make it so they only are one place?
 
 import time
 import datetime
@@ -40,41 +42,34 @@ from parameters import Parameters
 
 
 class UncertaintyEstimations():
-    def __init__(self, model, parameters, fitted_parameters, outputdir="figures/"):
+    def __init__(self, model, fitted_parameters, distributions, outputdir="figures/"):
         self.UncertaintyEstimations = []
 
         self.model = model
-        self.outputdir = outputdir
-        self.parameters = parameters
         self.fitted_parameters = fitted_parameters
-
-        self.t_start = time.time()
+        self.distributions = distributions
+        self.outputdir = outputdir
         self.memory_report = Memory()
 
+        self.initialize()
+
     def initialize(self):
-        for distribution_function in distribution_functions:
-            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
+        for distribution_function in self.distributions:
+            for interval in self.distributions[distribution_function]:
+                current_outputdir = os.path.join(self.outputdir,
+                                                 distribution_function + "_%g" % interval)
+                distribution = getattr(Distribution(interval), distribution_function)
+                parameters = Parameters(self.model.parameters, distribution, self.fitted_parameters)
+                self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
+                                                                         current_outputdir))
 
-            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
-                self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, self.parameters, self.fitted_parameters, self.memory_report))
+    def exploreParameters(self):
+        for uncertaintyEstimation in self.UncertaintyEstimations:
+            run_name = uncertaintyEstimation.outputdir.split("/")[-1].split("_")
+            print "Running for: " + run_name[0] + " " + run_name[1]
 
-    def run(self):
-        for uncertaintyEstimation in UncertaintyEstimations:
             uncertaintyEstimation.singleParameters()
             uncertaintyEstimation.allParameters()
-
-
-    def exploreSingleParameters(self, distribution_functions, intervals):
-        for distribution_function in distribution_functions:
-            print "Running for distribution: " + distribution_function.__name__.split("_")[0]
-
-            for interval in intervals[distribution_function.__name__.lower().split("_")[0]]:
-                folder_name = distribution_function.__name__.lower().split("_")[0] + "_" + str(interval)
-                current_outputdir = os.path.join(outputdir, folder_name)
-
-                print "Running for interval: %2.4g" % (interval)
-                singleParameters(distribution=Distribution(distribution_function, interval),
-                                 outputdir=current_outputdir)
 
 
 
@@ -83,14 +78,11 @@ class UncertaintyEstimation():
         """
         model: Model object
         parameters: Parameter object
-        distribution_functions: a function that
         outputdir: Where to save the results. Default = "figures/"
         """
 
-
         self.outputdir = outputdir
         self.parameters = parameters
-
 
         self.figureformat = ".png"
         self.t_start = time.time()
@@ -323,7 +315,7 @@ if __name__ == "__main__":
     modelpath = "neuron_models/dLGN_modelDB/"
     parameterfile = "Parameters.hoc"
 
-    parameters = {
+    original_parameters = {
         "rall": 113,       # Taken from litterature
         "cap": 1.1,        #
         "Rm": 22000,       # Estimated by hand
@@ -348,41 +340,25 @@ if __name__ == "__main__":
 
     interval = 5*10**-2
 
-    # def normal_function(parameter, interval):
-    #     return cp.Normal(parameter, abs(interval*parameter))
-    #
-    #
-    # def uniform_function(parameter, interval):
-    #     return cp.Uniform(parameter - abs(interval*parameter),
-    #                       parameter + abs(interval*parameter))
-
     #test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
 
     distribution_function = Distribution(interval).uniform
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
+
     test_parameters = ["Rm", "Epas"]
 
-    parameters = Parameters(parameters, distribution_function, test_parameters)
+    parameters = Parameters(original_parameters, distribution_function, test_parameters)
+    model = Model(modelfile, modelpath, parameterfile, original_parameters)
 
-    model = Model(modelfile, modelpath, parameterfile, parameters)
+
     test = UncertaintyEstimation(model, parameters, "figures/test")
-    test.singleParameters()
-    test.allParameters()
+    #test.singleParameters()
+    #test.allParameters()
 
-"""
-n_intervals = 10
-distributions = [uniform_function, normal_function]
-interval_range = {"normal" : np.linspace(10**-4, 10**-1, n_intervals),
-                  "uniform" : np.linspace(5*10**-5, 5*10**-2, n_intervals)}
-exploreSingleParameters(distributions, interval_range, figurepath + "single")
+    distributions = {"uniform": (0.01, 0.1), "normal": (0.01, 0.1)}
 
+    exploration = UncertaintyEstimations(model, test_parameters, distributions)
+    exploration.exploreParameters()
 
-n_intervals = 10
-distributions = [uniform_function, normal_function]
-interval_range = {"normal" : np.linspace(10**-3, 10**-1, n_intervals),
-                  "uniform" : np.linspace(5*10**-5, 5*10**-2, n_intervals)}
-exploreAllParameters(distributions, interval_range, figurepath + "all")
-"""
-
-subprocess.Popen(["play", "-q", "ship_bell.wav"])
-print "The total runtime is: " + str(datetime.timedelta(seconds=(test.timePassed())))
+    subprocess.Popen(["play", "-q", "ship_bell.wav"])
+    print "The total runtime is: " + str(datetime.timedelta(seconds=(test.timePassed())))
