@@ -234,9 +234,6 @@ class UncertaintyEstimation():
         except MemoryError:
             print "Memory error, calculations aborted"
 
-        #self.analysis()
-
-
 
 
 
@@ -321,14 +318,10 @@ class UncertaintyEstimation():
 
 
 if __name__ == "__main__":
-    # Global parameters
-    interval = 5*10**-2
-
 
     modelfile = "INmodel.hoc"
     modelpath = "neuron_models/dLGN_modelDB/"
     parameterfile = "Parameters.hoc"
-
 
     parameters = {
         "rall": 113,       # Taken from litterature
@@ -351,6 +344,9 @@ if __name__ == "__main__":
 
     fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
                          "ghbar", "catau", "gcanbar"]
+
+
+    interval = 5*10**-2
 
     # def normal_function(parameter, interval):
     #     return cp.Normal(parameter, abs(interval*parameter))
