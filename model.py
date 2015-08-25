@@ -18,6 +18,8 @@ class Model():
         modelfile: Name of the modelfile
         modelpath: Path to the modelfile
         parameterfile: Name of file containing parameteres
+        parameters: Parameter object
+        memory_report: Memory object
         """
 
 
@@ -80,15 +82,7 @@ class Model():
 
         ut, err = simulation.communicate()
 
-
         if simulation.returncode != 0:
             print "Error when running simulation:"
             print err
             sys.exit(1)
-
-
-    def getParameters(self, fitted_parameters=None):
-        if fitted_parameters:
-            return self.parameters[fitted_parameters]
-        else:
-            return self.parameters

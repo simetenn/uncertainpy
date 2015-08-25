@@ -237,82 +237,82 @@ class UncertaintyEstimation():
 
 
 
-        def plotV_t(self, filename):
-            color1 = 0
-            color2 = 8
+    def plotV_t(self, filename):
+        color1 = 0
+        color2 = 8
 
-            prettyPlot(self.t, self.E, "Mean, " + filename, "time", "voltage", color1)
-            plt.savefig(os.path.join(self.outputdir, filename + "_mean" + self.figureformat),
-                        bbox_inches="tight")
+        prettyPlot(self.t, self.E, "Mean, " + filename, "time", "voltage", color1)
+        plt.savefig(os.path.join(self.outputdir, filename + "_mean" + self.figureformat),
+                    bbox_inches="tight")
 
-            prettyPlot(self.t, self.Var, "Variance, " + filename, "time", "voltage", color2)
-            plt.savefig(os.path.join(self.outputdir, filename + "_variance" + self.figureformat),
-                        bbox_inches="tight")
+        prettyPlot(self.t, self.Var, "Variance, " + filename, "time", "voltage", color2)
+        plt.savefig(os.path.join(self.outputdir, filename + "_variance" + self.figureformat),
+                    bbox_inches="tight")
 
-            ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + filename,
-                                       "time", "voltage, mean", color1)
-            ax2 = ax.twinx()
-            ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                            color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
-            ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
-            ax.spines["right"].set_edgecolor(tableau20[color2])
+        ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + filename,
+                                   "time", "voltage, mean", color1)
+        ax2 = ax.twinx()
+        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                        color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
+        ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
+        ax.spines["right"].set_edgecolor(tableau20[color2])
 
-            ax2.set_xlim([min(self.t), max(self.t)])
-            ax2.set_ylim([min(self.Var), max(self.Var)])
+        ax2.set_xlim([min(self.t), max(self.t)])
+        ax2.set_ylim([min(self.Var), max(self.Var)])
 
-            ax2.plot(self.t, self.Var, color=tableau20[color2], linewidth=2, antialiased=True)
+        ax2.plot(self.t, self.Var, color=tableau20[color2], linewidth=2, antialiased=True)
 
-            ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
-            ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
-            ax.spines["left"].set_edgecolor(tableau20[color1])
-            plt.tight_layout()
-            plt.savefig(os.path.join(self.outputdir,
-                        filename + "_variance_mean" + self.figureformat),
-                        bbox_inches="tight")
+        ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
+        ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
+        ax.spines["left"].set_edgecolor(tableau20[color1])
+        plt.tight_layout()
+        plt.savefig(os.path.join(self.outputdir,
+                    filename + "_variance_mean" + self.figureformat),
+                    bbox_inches="tight")
 
-            plt.close()
+        plt.close()
 
-        def plotConfidenceInterval(self, filename):
+    def plotConfidenceInterval(self, filename):
 
-            ax, color = prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0)
-            plt.fill_between(self.t, self.p_10, self.p_90, alpha=0.2, facecolor=color[8])
-            prettyPlot(self.t, self.p_90, color=8, new_figure=False)
-            prettyPlot(self.t, self.p_10, color=9, new_figure=False)
-            prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0, False)
+        ax, color = prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0)
+        plt.fill_between(self.t, self.p_10, self.p_90, alpha=0.2, facecolor=color[8])
+        prettyPlot(self.t, self.p_90, color=8, new_figure=False)
+        prettyPlot(self.t, self.p_10, color=9, new_figure=False)
+        prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0, False)
 
-            plt.ylim([min([min(self.p_90), min(self.p_10), min(self.E)]),
-                      max([max(self.p_90), max(self.p_10), max(self.E)])])
+        plt.ylim([min([min(self.p_90), min(self.p_10), min(self.E)]),
+                  max([max(self.p_90), max(self.p_10), max(self.E)])])
 
-            plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
-            plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
-                        bbox_inches="tight")
+        plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
+        plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
+                    bbox_inches="tight")
 
-            plt.close()
+        plt.close()
 
-        def plotSensitivity(self):
-            parameter_names = self.parameters.get("name")
+    def plotSensitivity(self):
+        parameter_names = self.parameters.get("name")
 
-            for i in range(len(self.sensitivity)):
-                prettyPlot(self.t, self.sensitivity[i],
-                           parameter_names[i] + " sensitivity", "time",
-                           "sensitivity", i, True)
-                plt.title(parameter_names[i] + " sensitivity")
-                plt.ylim([0, 1.05])
-                plt.savefig(os.path.join(self.outputdir,
-                                         parameter_names[i] +
-                                         "_sensitivity" + self.figureformat),
-                            bbox_inches="tight")
-            plt.close()
-
-            for i in range(len(self.sensitivity)):
-                prettyPlot(self.t, self.sensitivity[i], "sensitivity", "time",
-                           "sensitivity", i, False)
-
+        for i in range(len(self.sensitivity)):
+            prettyPlot(self.t, self.sensitivity[i],
+                       parameter_names[i] + " sensitivity", "time",
+                       "sensitivity", i, True)
+            plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
-            plt.xlim([self.t[0], 1.3*self.t[-1]])
-            plt.legend(parameter_names)
-            plt.savefig(os.path.join(self.outputdir, "sensitivity" + self.figureformat),
+            plt.savefig(os.path.join(self.outputdir,
+                                     parameter_names[i] +
+                                     "_sensitivity" + self.figureformat),
                         bbox_inches="tight")
+        plt.close()
+
+        for i in range(len(self.sensitivity)):
+            prettyPlot(self.t, self.sensitivity[i], "sensitivity", "time",
+                       "sensitivity", i, False)
+
+        plt.ylim([0, 1.05])
+        plt.xlim([self.t[0], 1.3*self.t[-1]])
+        plt.legend(parameter_names)
+        plt.savefig(os.path.join(self.outputdir, "sensitivity" + self.figureformat),
+                    bbox_inches="tight")
 
 
 
@@ -362,19 +362,13 @@ if __name__ == "__main__":
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
     test_parameters = ["Rm", "Epas"]
 
-    parameters = Parameters(parameters, distribution_functions, test_parameters)
+    parameters = Parameters(parameters, distribution_function, test_parameters)
 
     model = Model(modelfile, modelpath, parameterfile, parameters)
     test = UncertaintyEstimation(model, parameters, "figures/test")
     test.singleParameters()
     test.allParameters()
 
-    # singleParameters(distribution = Distribution(normal_function, 0.01), outputdir = figurepath + "test_single")
-
-    # allParameters(fitted_parameters = test_parameters, outputdir = figurepath + "test_all")
-
-# allParameters(distribution = Distribution(normal_function, 0.1),
-#             fitted_parameters = fitted_parameters, outputdir = figurepath + "test_all")
 """
 n_intervals = 10
 distributions = [uniform_function, normal_function]

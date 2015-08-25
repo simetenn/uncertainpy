@@ -20,9 +20,12 @@ class Parameters():
 
 
         if hasattr(distributions, '__call__'):
-            for param in parameters:
-                self.parameter[param] = Parameter(param, parameters[param],
-                                                  distributions, param in fitted_parameters)
+            for parameter in parameters:
+                if parameter in fitted_parameters:
+                    self.parameters[parameter] = Parameter(parameter, parameters[parameter],
+                                                           distributions, True)
+                else:
+                    self.parameters[parameter] = Parameter(parameter, parameters[parameter])
         else:
             for parameter in parameters:
                 if parameter in fitted_parameters:
@@ -57,4 +60,8 @@ class Parameter():
         self.fitted = fitted
 
         if self.fitted:
-            self.parameter_space = self.distribution_function(self.value)
+            if hasattr(distribution_function, '__call__'):
+                self.parameter_space = self.distribution_function(self.value)
+            else:
+                print "Distribution function is not a function"
+                print "rewrite to use a general distribution instead of a function"

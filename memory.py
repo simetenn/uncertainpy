@@ -3,6 +3,9 @@ import time
 import psutil
 
 class Memory:
+    """
+    Class for reporting memory usage
+    """
     def __init__(self):
         self.t_start = time.time()
         self._proc_status = '/proc/%d/status' % os.getpid()
@@ -21,7 +24,7 @@ class Memory:
 
     def _VmB(self, VmKey):
         """
-        Private
+        Private.
         """
         # get pseudo file  /proc/<pid>/status
         try:
