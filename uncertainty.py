@@ -37,7 +37,7 @@ from prettyPlot import prettyPlot
 from memory import Memory
 from distribution import Distribution
 from model import Model
-
+from parameters import Parameters
 
 
 class UncertaintyEstimations():
@@ -80,12 +80,10 @@ class UncertaintyEstimations():
 
 
 class UncertaintyEstimation():
-    def __init__(self, model, parameters, fitted_parameters,
-                 distribution_functions, outputdir="figures/"):
+    def __init__(self, model, parameters, outputdir="figures/"):
         """
         model: Model object
-        parameters: dict of all the default parameters the model has
-        fitted_parameters: list of all parameters that shall be examined
+        parameters: Parameter object
         distribution_functions: a function that
         outputdir: Where to save the results. Default = "figures/"
         """
@@ -95,27 +93,12 @@ class UncertaintyEstimation():
         self.parameters = parameters
 
 
-        if type(fitted_parameters) is str:
-            self.fitted_parameter = [fitted_parameters]
-        else:
-            self.fitted_parameters = fitted_parameters
-
-
-
-        if hasattr(distribution_functions, '__call__'):
-            self.distribution_functions = {}
-            for param in self.fitted_parameters:
-                self.distribution_functions[param] = distribution_functions
-        else:
-            self.distribution_functions = distribution_functions
-
-
         self.figureformat = ".png"
         self.t_start = time.time()
 
         self.model = model
 
-        self.parameter_space = None
+#        self.parameter_space = None
         self.feature = None
 
         self.M = 3
@@ -133,19 +116,19 @@ class UncertaintyEstimation():
 
 
 
-    def newParameterSpace(self):
-        """
-        Generalized parameter space creation
-        """
-
-        self.parameter_space = {}
-
-        for param in self.fitted_parameters:
-            self.parameter_space[param] = self.distribution_functions[param](self.parameters[param])
+    # def newParameterSpace(self):
+    #     """
+    #     Generalized parameter space creation
+    #     """
+    #
+    #     self.parameter_space = {}
+    #
+    #     for param in self.fitted_parameters:
+    #         self.parameter_space[param] = self.distribution_functions[param](self.parameters[param])
 
     def createPCExpansion(self):
 
-        self.dist = cp.J(*self.parameter_space.values())
+        self.dist = cp.J(*self.parameters.getIfFitted("parameter_space"))
         self.P = cp.orth_ttr(self.M, self.dist)
         nodes = self.dist.sample(2*len(self.P), "M")
         solves = []
@@ -159,15 +142,15 @@ class UncertaintyEstimation():
             sys.stdout.flush()
 
             # New setparameters
-            tmp_parameters = self.parameters.copy()
-
+            tmp_parameters = {}
             j = 0
-            for parameter in self.parameter_space:
+            for parameter in self.parameters.getIfFitted("name"):
                 tmp_parameters[parameter] = s[j]
                 j += 1
 
             self.model.saveParameters(tmp_parameters)
-            self.model.run()
+            if self.model.run() == -1:
+                return -1
 
             V = np.load("tmp_U.npy")
             t = np.load("tmp_t.npy")
@@ -206,19 +189,19 @@ class UncertaintyEstimation():
         return time.time() - self.t_start
 
 
-    def plotV_t(self, parameter_name):
+    def plotV_t(self, filename):
         color1 = 0
         color2 = 8
 
-        prettyPlot(self.t, self.E, "Mean, " + parameter_name, "time", "voltage", color1)
-        plt.savefig(os.path.join(self.outputdir, parameter_name + "_mean" + self.figureformat),
+        prettyPlot(self.t, self.E, "Mean, " + filename, "time", "voltage", color1)
+        plt.savefig(os.path.join(self.outputdir, filename + "_mean" + self.figureformat),
                     bbox_inches="tight")
 
-        prettyPlot(self.t, self.Var, "Variance, " + parameter_name, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.outputdir, parameter_name + "_variance" + self.figureformat),
+        prettyPlot(self.t, self.Var, "Variance, " + filename, "time", "voltage", color2)
+        plt.savefig(os.path.join(self.outputdir, filename + "_variance" + self.figureformat),
                     bbox_inches="tight")
 
-        ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + parameter_name,
+        ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + filename,
                                    "time", "voltage, mean", color1)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
@@ -236,7 +219,7 @@ class UncertaintyEstimation():
         ax.spines["left"].set_edgecolor(tableau20[color1])
         plt.tight_layout()
         plt.savefig(os.path.join(self.outputdir,
-                    parameter_name + "_variance_mean" + self.figureformat),
+                    filename + "_variance_mean" + self.figureformat),
                     bbox_inches="tight")
 
         plt.close()
@@ -259,14 +242,16 @@ class UncertaintyEstimation():
         plt.close()
 
     def plotSensitivity(self):
+        parameter_names = self.parameters.get("name")
+
         for i in range(len(self.sensitivity)):
             prettyPlot(self.t, self.sensitivity[i],
-                       self.parameter_space.keys()[i] + " sensitivity", "time",
+                       parameter_names[i] + " sensitivity", "time",
                        "sensitivity", i, True)
-            plt.title(self.parameter_space.keys()[i] + " sensitivity")
+            plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
             plt.savefig(os.path.join(self.outputdir,
-                                     self.parameter_space.keys()[i] +
+                                     parameter_names[i] +
                                      "_sensitivity" + self.figureformat),
                         bbox_inches="tight")
         plt.close()
@@ -277,23 +262,47 @@ class UncertaintyEstimation():
 
         plt.ylim([0, 1.05])
         plt.xlim([self.t[0], 1.3*self.t[-1]])
-        plt.legend(self.parameter_space.keys())
+        plt.legend(parameter_names)
         plt.savefig(os.path.join(self.outputdir, "sensitivity" + self.figureformat),
                     bbox_inches="tight")
 
-    def analysis(self):
+    def analysis(self, name):
         """
         Analysis
         """
+
+        self.createPCExpansion()
+        if success == -1:
+            print "Calculations aborted for " + name
+            return 1
+
+        try:
+            self.E = cp.E(self.U_hat, self.dist)
+            self.Var = cp.Var(self.U_hat, self.dist)
+
+            self.plotV_t(name)
+
+            samples = self.dist.sample(self.mc_samples, "M")
+            self.U_mc = self.U_hat(*samples)
+
+            self.p_10 = np.percentile(self.U_mc, 10, 1)
+            self.p_90 = np.percentile(self.U_mc, 90, 1)
+
+            self.plotConfidenceInterval(name + "_confidence_interval")
+
+        except MemoryError:
+            print "Memory error, calculations aborted"
+            return -1
+
 
     def singleParameters(self):
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
 
-        for fitted_parameter in self.fitted_parameters:
+        for fitted_parameter in self.parameters.fitted_parameters:
             print "\rRunning for " + fitted_parameter + "                     "
 
-            self.newParameterSpace()
+            #self.newParameterSpace()
             success = self.createPCExpansion()
 
             if success == -1:
@@ -325,7 +334,7 @@ class UncertaintyEstimation():
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
 
-        self.newParameterSpace()
+        #self.newParameterSpace()
         success = self.createPCExpansion()
         if success == -1:
             # Add which distribution when rewritten as class
@@ -386,10 +395,6 @@ if __name__ == "__main__":
         "gcanbar": 2e-8
     }
 
-    distributions = {
-
-    }
-
 
     fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
                          "ghbar", "catau", "gcanbar"]
@@ -407,9 +412,11 @@ if __name__ == "__main__":
     distribution_function = Distribution(interval).uniform
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
     test_parameters = ["Rm", "Epas"]
+
+    parameters = Parameters(parameters, distribution_functions, test_parameters)
+
     model = Model(modelfile, modelpath, parameterfile, parameters)
-    test = UncertaintyEstimation(model, parameters, test_parameters,
-                                 distribution_function, "figures/test")
+    test = UncertaintyEstimation(model, parameters, "figures/test")
     test.singleParameters()
     test.allParameters()
 
