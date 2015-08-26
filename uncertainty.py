@@ -1,29 +1,30 @@
-# ## TODO
-# Test out different types of polynomial chaos methods
+# TODO Test out different types of polynomial chaos methods
 
-# Do dependent variable stuff
+# TODO Do dependent variable stuff
 
-# Do a mc analysis after u_hat is generated
+# TODO Do a mc analysis after u_hat is generated
 
-# Create a class of this stuff
 
-# Instead of giving results as an average of the response, make it
+# TODO Instead of giving results as an average of the response, make it
 # feature based. For example, count the number of spikes, and the
 # average the number of spikes and time between spikes.
 
-# Make a data seelection process before PC expansion to look at
+# TODO Make a data seelection process before PC expansion to look at
 # specific features. This data selection should be the same as what is
 # done for handling spikes from experiments. One example is a low pass
 # filter and a high pass filter.
 
-# Use a recursive neural network
+# TODO Use a recursive neural network
 
-# Compare with a pure MC calculation
+# TODO Compare with a pure MC calculation
 
-# Atm parameter are both in the model object and in the parameter object.
+# TODO Atm parameter are both in the model object and in the parameter object.
 # Make it so they only are one place?
 
-# Can remove the fitted parameter and instead test if the parameter has a distribution function?
+# TODO Can remove the fitted parameter and instead test if the parameter has a
+# distribution function?
+
+# TODO Parallelize the model evaluations
 
 import time
 import datetime
@@ -56,6 +57,7 @@ class UncertaintyEstimations():
 
     def initialize(self):
         for distribution_function in self.distributions:
+            print self.distributions[distribution_function]
             for interval in self.distributions[distribution_function]:
                 current_outputdir = os.path.join(self.outputdir,
                                                  distribution_function + "_%g" % interval)
@@ -71,6 +73,9 @@ class UncertaintyEstimations():
 
             uncertaintyEstimation.singleParameters()
             uncertaintyEstimation.allParameters()
+
+    def timePassed(self):
+        return self.UncertaintyEstimations[0].timePassed()
 
 
 
@@ -117,9 +122,11 @@ class UncertaintyEstimation():
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
         nodes = self.distribution.sample(2*len(self.P), "M")
+        #nodes, weights = cp.generate_quadrature(3, self.distribution)
         solves = []
 
         i = 0.
+        # TODO parallelize this loop
         for s in nodes.T:
             if isinstance(s, float) or isinstance(s, int):
                 s = [s]
@@ -167,8 +174,73 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="LS")
+        #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves,
+        #                               sparse=True, rule="C")
+        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T", order=1)
 
+
+
+    def pseudoMC(self, parameter_name=None, feature=None):
+        if parameter_name is None:
+            parameter_space = self.parameters.getIfFitted("parameter_space")
+            parameter_name = self.parameters.getIfFitted("name")
+        else:
+            parameter_space = [self.parameters.get(parameter_name).parameter_space]
+            parameter_name = [parameter_name]
+
+        self.distribution = cp.J(*parameter_space)
+        samples = self.distribution.sample(self.mc_samples, "M")
+
+        solves = []
+        i = 0.
+        for s in samples.T:
+            if isinstance(s, float) or isinstance(s, int):
+                s = [s]
+
+            sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(samples.T)*100))
+            sys.stdout.flush()
+
+            tmp_parameters = {}
+            j = 0
+            for parameter in parameter_name:
+                tmp_parameters[parameter] = s[j]
+                j += 1
+
+            self.model.saveParameters(tmp_parameters)
+            if self.model.run() == -1:
+                return -1
+
+            V = np.load("tmp_U.npy")
+            t = np.load("tmp_t.npy")
+
+            # Do a feature selection here. Make it so several feature
+            # selections are performed at this step. Do this when
+            # rewriting it as a class
+
+            if feature is not None:
+                V = feature(V)
+
+            interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+            solves.append((t, V, interpolation))
+
+            i += 1
+
+        print "\rRunning Neuron: %2.1f%%" % (i/len(samples.T)*100)
+
+        solves = np.array(solves)
+        lengths = []
+        for s in solves[:, 0]:
+            lengths.append(len(s))
+
+        index_max_len = np.argmax(lengths)
+        self.t = solves[index_max_len, 0]
+
+        interpolated_solves = []
+        for inter in solves[:, 2]:
+            interpolated_solves.append(inter(self.t))
+
+        self.E = (np.sum(interpolated_solves, 0).T/self.mc_samples).T
+        self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.mc_samples).T
 
 
     def timePassed(self):
@@ -304,7 +376,7 @@ class UncertaintyEstimation():
         plt.ylim([0, 1.05])
         plt.xlim([self.t[0], 1.3*self.t[-1]])
         plt.legend(parameter_names)
-        plt.savefig(os.path.join(self.outputdir, "sensitivity" + self.figureformat),
+        plt.savefig(os.path.join(self.outputdir, "all_sensitivity" + self.figureformat),
                     bbox_inches="tight")
 
 
@@ -339,26 +411,36 @@ if __name__ == "__main__":
                          "ghbar", "catau", "gcanbar"]
 
 
-    interval = 5*10**-2
 
     #test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
 
-    distribution_function = Distribution(interval).uniform
+    distribution_function = Distribution(0.05).uniform
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
 
-    test_parameters = ["Rm", "gkdr", "Epas"]
-
+    test_parameters = "Rm"  # ["Rm", "Epas"]
     memory_report = Memory()
-    parameters = Parameters(original_parameters, distribution_function, test_parameters)
+    parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
+
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
-
-
     test = UncertaintyEstimation(model, parameters, "figures/test")
+
+    # t1 = test.timePassed()
+    # test.pseudoMC("Rm")
+    # test.plotV_t("MC")
+    # t2 = test.timePassed()
+    # test.singleParameters()
+    # t3 = test.timePassed()
+    # print "MC ", t2-t1
+    # print "PC ", t3-t2
+
     test.singleParameters()
     test.allParameters()
 
-    #test_distributions = {"uniform": (0.01, 0.02, 0.1), "normal": (0.01, 0.1)}
-    distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+    #test_distributions = {"uniform": [0.05]}
+    #exploration = UncertaintyEstimations(model, fitted_parameters, test_distributions)
+    #exploration.exploreParameters()
+
+    #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
     #exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
     #exploration.exploreParameters()
 
