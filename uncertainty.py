@@ -4,13 +4,12 @@
 
 # TODO Do a mc analysis after u_hat is generated
 
-
 # TODO Instead of giving results as an average of the response, make it
 # feature based. For example, count the number of spikes, and the
 # average the number of spikes and time between spikes.
 
 # TODO Make a data seelection process before PC expansion to look at
-# specific features. This data selection should be the same as what is
+# specific features. This data selection should be the samde as what is
 # done for handling spikes from experiments. One example is a low pass
 # filter and a high pass filter.
 
@@ -121,7 +120,7 @@ class UncertaintyEstimation():
 
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
-        nodes = self.distribution.sample(2*len(self.P), "M")
+        nodes = self.distribution.sample(2*len(self.P) + 1, "M")
         #nodes, weights = cp.generate_quadrature(3, self.distribution)
         solves = []
 
@@ -176,7 +175,7 @@ class UncertaintyEstimation():
 
         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves,
         #                               sparse=True, rule="C")
-        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T", order=1)
+        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
 
@@ -290,7 +289,7 @@ class UncertaintyEstimation():
 
             samples = self.distribution.sample(self.mc_samples)
 
-            self.U_mc = self.U_hat(*samples)
+            self.U_mc = self.U_hat(samples)
             self.p_10 = np.percentile(self.U_mc, 10, 1)
             self.p_90 = np.percentile(self.U_mc, 90, 1)
 
@@ -419,7 +418,7 @@ if __name__ == "__main__":
 
     test_parameters = "Rm"  # ["Rm", "Epas"]
     memory_report = Memory()
-    parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
+    parameters = Parameters(original_parameters, distribution_function, test_parameters)
 
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
     test = UncertaintyEstimation(model, parameters, "figures/test")
