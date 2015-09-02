@@ -1,5 +1,5 @@
 ### TODO
-# Check if cvode is active, if it is inactive avopid doing the interpolation
+# Check if cvode is active, if it is inactive avoid doing the interpolation
 # Currently no way of testing if cvode is active. One way is to test if the amount of
 # numbers between two different simulations are different
 
@@ -18,7 +18,7 @@ class Model():
         modelfile: Name of the modelfile
         modelpath: Path to the modelfile
         parameterfile: Name of file containing parameteres
-        parameters: Parameters as a dictionary
+        parameters: Parameters as a dictionar
         memory_report: Memory object
         """
 
