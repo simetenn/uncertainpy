@@ -94,7 +94,7 @@ class UncertaintyEstimation():
 
         self.model = model
 
-        self.M = 3
+        self.M = 4
         self.U_hat = None
         self.distribution = None
         self.solves = None
@@ -103,6 +103,7 @@ class UncertaintyEstimation():
         self.P = None
         self.nodes = None
         self.sensitivity = None
+        self.Corr = None
 
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
@@ -120,8 +121,9 @@ class UncertaintyEstimation():
 
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
-        nodes = self.distribution.sample(2*len(self.P) + 1, "M")
-        #nodes, weights = cp.generate_quadrature(3, self.distribution)
+        nodes = self.distribution.sample(2*len(self.P), "M")
+        # TODO problems with rule="P","Z","J"
+        #nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="C", sparse=True)
         solves = []
 
         i = 0.
@@ -173,9 +175,11 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves,
-        #                               sparse=True, rule="C")
-        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+        #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        self.U_hat, c = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T", retall=True)
+        print "tada"
+        print self.U_hat.shape
+        print c.shape
 
 
 
@@ -261,10 +265,11 @@ class UncertaintyEstimation():
                 self.plotV_t(fitted_parameter)
 
                 samples = self.distribution.sample(self.mc_samples, "M")
+                print samples.shape
                 self.U_mc = self.U_hat(samples)
 
-                self.p_10 = np.percentile(self.U_mc, 10, 1)
-                self.p_90 = np.percentile(self.U_mc, 90, 1)
+                self.p_05 = np.percentile(self.U_mc, 5, 1)
+                self.p_95 = np.percentile(self.U_mc, 95, 1)
 
                 self.plotConfidenceInterval(fitted_parameter + "_confidence_interval")
 
@@ -274,6 +279,14 @@ class UncertaintyEstimation():
 
 
     def allParameters(self):
+        if len(self.parameters.fitted_parameters) <= 1:
+            print "Only 1 fitted parameter"
+            print "running allParameters() makes no sense"
+            if self.U_hat is None:
+                print "Running singleParameters() instead"
+                self.singleParameters()
+            return
+
         if self.createPCExpansion() == -1:
             print "Calculations aborted for all"
             return -1
@@ -287,13 +300,25 @@ class UncertaintyEstimation():
 
             self.plotSensitivity()
 
-            samples = self.distribution.sample(self.mc_samples)
+            samples = self.distribution.sample(self.mc_samples, "M")
 
-            self.U_mc = self.U_hat(samples)
-            self.p_10 = np.percentile(self.U_mc, 10, 1)
-            self.p_90 = np.percentile(self.U_mc, 90, 1)
+            print len(samples.shape)
+            self.U_mc = self.U_hat(*samples)
+            self.p_05 = np.percentile(self.U_mc, 5, 1)
+            self.p_95 = np.percentile(self.U_mc, 95, 1)
 
             self.plotConfidenceInterval("all_confidence_interval")
+
+            self.Corr = cp.Corr(self.P, self.distribution)
+
+            print self.U_hat.shape
+            print self.P.shape
+            print self.Corr
+            print self.distribution
+            print
+            print self.Corr.shape
+            print self.t.shape
+            print self.Corr[0].shape
 
         except MemoryError:
             print "Memory error, calculations aborted"
@@ -339,15 +364,15 @@ class UncertaintyEstimation():
     def plotConfidenceInterval(self, filename):
 
         ax, color = prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0)
-        plt.fill_between(self.t, self.p_10, self.p_90, alpha=0.2, facecolor=color[8])
-        prettyPlot(self.t, self.p_90, color=8, new_figure=False)
-        prettyPlot(self.t, self.p_10, color=9, new_figure=False)
+        plt.fill_between(self.t, self.p_05, self.p_95, alpha=0.2, facecolor=color[8])
+        prettyPlot(self.t, self.p_95, color=8, new_figure=False)
+        prettyPlot(self.t, self.p_05, color=9, new_figure=False)
         prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0, False)
 
-        plt.ylim([min([min(self.p_90), min(self.p_10), min(self.E)]),
-                  max([max(self.p_90), max(self.p_10), max(self.E)])])
+        plt.ylim([min([min(self.p_95), min(self.p_05), min(self.E)]),
+                  max([max(self.p_95), max(self.p_05), max(self.E)])])
 
-        plt.legend(["Mean", "$P_{90}$", "$P_{10}$"])
+        plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
         plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
                     bbox_inches="tight")
 
@@ -411,14 +436,16 @@ if __name__ == "__main__":
 
 
 
-    #test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
+    test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
 
-    distribution_function = Distribution(0.05).uniform
+    distribution_function = Distribution(0.1).uniform
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
 
-    test_parameters = "Rm"  # ["Rm", "Epas"]
+    #test_parameters = "Rm"
+    test_parameters = ["Rm", "Epas"]
     memory_report = Memory()
     parameters = Parameters(original_parameters, distribution_function, test_parameters)
+    #parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
 
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
     test = UncertaintyEstimation(model, parameters, "figures/test")
@@ -432,7 +459,7 @@ if __name__ == "__main__":
     # print "MC ", t2-t1
     # print "PC ", t3-t2
 
-    test.singleParameters()
+#    test.singleParameters()
     test.allParameters()
 
     #test_distributions = {"uniform": [0.05]}
