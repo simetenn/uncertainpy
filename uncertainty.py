@@ -8,7 +8,7 @@
 # feature based. For example, count the number of spikes, and the
 # average the number of spikes and time between spikes.
 
-# TODO Make a data seelection process before PC expansion to look at
+# TODO Make a data selection process before PC expansion to look at
 # specific features. This data selection should be the samde as what is
 # done for handling spikes from experiments. One example is a low pass
 # filter and a high pass filter.
@@ -122,6 +122,7 @@ class UncertaintyEstimation():
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
         nodes = self.distribution.sample(2*len(self.P), "M")
+        print nodes.shape
         # TODO problems with rule="P","Z","J"
         #nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="C", sparse=True)
         solves = []
@@ -176,10 +177,7 @@ class UncertaintyEstimation():
             interpolated_solves.append(inter(self.t))
 
         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        self.U_hat, c = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T", retall=True)
-        print "tada"
-        print self.U_hat.shape
-        print c.shape
+        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
 
