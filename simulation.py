@@ -1,10 +1,10 @@
 import os
 import sys
+import argparse
 import numpy as np
 
 class Simulation():
-    def __init__(self, parameterfile, modelfile, modelpath):
-        self.parameterfile = parameterfile
+    def __init__(self, modelfile, modelpath):
         self.modelfile = modelfile
         self.modelpath = modelpath
         self.filepath = os.path.abspath(__file__)
@@ -48,7 +48,6 @@ class Simulation():
 
 
     def run(self):
-        self.h.finitialize()
         self.h.run()
 
 
@@ -69,16 +68,37 @@ class Simulation():
         self.U = sim.getV()
         self.t = sim.getT()
 
+
     def save(self):
         np.save("tmp_U", self.U)
         np.save("tmp_t", self.t)
 
 
-if __name__ == "__main__":
-    parameterfile = str(sys.argv[1])
-    modelfile = str(sys.argv[2])
-    modelpath = str(sys.argv[3])
+    def set(self, parameters):
+        for parameter in parameters:
+            self.h(parameter + " = " + str(parameters[parameter]))
 
-    sim = Simulation(parameterfile, modelfile, modelpath)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run a neuron simulation")
+    parser.add_argument("modelfile")
+    parser.add_argument("modelpath")
+    parser.add_argument("--CPU", type=int)
+    args, parameter_args = parser.parse_known_args()
+
+    parameters = {}
+    if len(parameter_args) % 2 != 0:
+        print "ERROR: Number of parameters does not match number"
+        print "         of parametervalues sent to simulation.py"
+        sys.exit(1)
+
+    i = 0
+    while i < len(parameter_args):
+        parameters[parameter_args[i].strip("-")] = parameter_args[i+1]
+        i += 2
+
+
+    sim = Simulation(args.modelfile, args.modelpath)
+    sim.set(parameters)
     sim.runSimulation()
     sim.save()
