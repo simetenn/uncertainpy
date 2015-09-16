@@ -121,10 +121,10 @@ class UncertaintyEstimation():
 
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
-        nodes = self.distribution.sample(2*len(self.P), "M")
+        #nodes = self.distribution.sample(2*len(self.P), "M")
         print nodes.shape
         # TODO problems with rule="P","Z","J"
-        #nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="C", sparse=True)
+        nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="C", sparse=True)
         solves = []
 
         i = 0.
@@ -143,11 +143,7 @@ class UncertaintyEstimation():
                 tmp_parameters[parameter] = s[j]
                 j += 1
 
-            # if self.model.run(tmp_parameters) == -1:
-            #     return -1
-
-            self.model.saveParameters(tmp_parameters)
-            if self.model.run() == -1:
+            if self.model.run(tmp_parameters) == -1:
                 return -1
 
             V = np.load("tmp_U.npy")
@@ -179,8 +175,8 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+        self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        #self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
 
