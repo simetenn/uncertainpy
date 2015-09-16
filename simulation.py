@@ -68,10 +68,15 @@ class Simulation():
         self.U = sim.getV()
         self.t = sim.getT()
 
+    def save(self, CPU=None):
+        if CPU is None:
+            np.save("tmp_U", self.U)
+            np.save("tmp_t", self.t)
 
-    def save(self):
-        np.save("tmp_U", self.U)
-        np.save("tmp_t", self.t)
+        else:
+            np.save("tmp_U_%d" % CPU, self.U)
+            np.save("tmp_t_%d" % CPU, self.t)
+
 
 
     def set(self, parameters):
@@ -86,12 +91,12 @@ if __name__ == "__main__":
     parser.add_argument("--CPU", type=int)
     args, parameter_args = parser.parse_known_args()
 
-    parameters = {}
     if len(parameter_args) % 2 != 0:
         print "ERROR: Number of parameters does not match number"
         print "         of parametervalues sent to simulation.py"
         sys.exit(1)
 
+    parameters = {}
     i = 0
     while i < len(parameter_args):
         parameters[parameter_args[i].strip("-")] = parameter_args[i+1]
@@ -102,3 +107,4 @@ if __name__ == "__main__":
     sim.set(parameters)
     sim.runSimulation()
     sim.save()
+    sim.save(1)

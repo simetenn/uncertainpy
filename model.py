@@ -64,8 +64,13 @@ class Model():
         f.close()
 
 
-    def run(self):
-        cmd = ["python", "simulation.py", self.parameterfile, self.modelfile, self.modelpath]
+    def run(self, new_parameters={}):
+        cmd = ["python", "simulation.py", self.modelfile, self.modelpath]
+
+        for parameter in new_parameters:
+            cmd.append(parameter)
+            cmd.append(str(new_parameters[parameter]))
+
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Note this checks total memory used by all applications

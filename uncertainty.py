@@ -143,6 +143,9 @@ class UncertaintyEstimation():
                 tmp_parameters[parameter] = s[j]
                 j += 1
 
+            # if self.model.run(tmp_parameters) == -1:
+            #     return -1
+
             self.model.saveParameters(tmp_parameters)
             if self.model.run() == -1:
                 return -1
