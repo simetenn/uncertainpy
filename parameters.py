@@ -1,7 +1,7 @@
 # TODO Can remove the fitted parameter and test if the parameter has a distribution function?
 
 class Parameters():
-    def __init__(self, parameters, distributions, fitted_parameters):
+    def __init__(self, parameters, distributions, uncertain_parameters):
         """
         parameters: dict of all the default parameters the model has
         fitted_parameters: list of all parameters that shall be examined
@@ -14,32 +14,32 @@ class Parameters():
         self.distributions = distributions
 
 
-        if type(fitted_parameters) is str:
-            self.fitted_parameters = [fitted_parameters]
+        if type(uncertain_parameters) is str:
+            self.uncertain_parameters = [uncertain_parameters]
         else:
-            self.fitted_parameters = fitted_parameters
+            self.uncertain_parameters = uncertain_parameters
 
 
         if hasattr(distributions, '__call__'):
             for parameter in parameters:
-                if parameter in fitted_parameters:
+                if parameter in uncertain_parameters:
                     self.parameters[parameter] = Parameter(parameter, parameters[parameter],
                                                            distributions, True)
                 else:
                     self.parameters[parameter] = Parameter(parameter, parameters[parameter])
         else:
             for parameter in parameters:
-                if parameter in fitted_parameters:
+                if parameter in uncertain_parameters:
                     self.parameters[parameter] = Parameter(parameter, parameters[parameter],
                                                            distributions[parameter], True)
                 else:
                     self.parameters[parameter] = Parameter(parameter, parameters[parameter])
 
 
-    def getIfFitted(self, item):
+    def getUncertain(self, item):
         items = []
         for parameter in self.parameters.values():
-            if parameter.fitted:
+            if parameter.uncertain:
                 items.append(getattr(parameter, item))
         return items
 
@@ -53,14 +53,14 @@ class Parameters():
 
 
 class Parameter():
-    def __init__(self, name, value, distribution_function=None, fitted=False):
+    def __init__(self, name, value, distribution_function=None, uncertain=False):
 
         self.name = name
         self.value = value
         self.distribution_function = distribution_function
-        self.fitted = fitted
+        self.uncertain = uncertain
 
-        if self.fitted:
+        if self.uncertain:
             if hasattr(distribution_function, '__call__'):
                 self.parameter_space = self.distribution_function(self.value)
             else:

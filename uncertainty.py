@@ -9,7 +9,7 @@
 # average the number of spikes and time between spikes.
 
 # TODO Make a data selection process before PC expansion to look at
-# specific features. This data selection should be the samde as what is
+# specific features. This data selection should be the same as what is
 # done for handling spikes from experiments. One example is a low pass
 # filter and a high pass filter.
 
@@ -20,7 +20,7 @@
 # TODO Atm parameter are both in the model object and in the parameter object.
 # Make it so they only are one place?
 
-# TODO Can remove the fitted parameter and instead test if the parameter has a
+# TODO Can remove the uncertain parameter and instead test if the parameter has a
 # distribution function?
 
 # TODO Parallelize the model evaluations
@@ -35,6 +35,9 @@ import subprocess
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
+import multiprocess as mp
+
+from xvfbwrapper import Xvfb
 
 from prettyPlot import prettyPlot
 from memory import Memory
@@ -44,15 +47,17 @@ from parameters import Parameters
 
 
 class UncertaintyEstimations():
-    def __init__(self, model, fitted_parameters, distributions, outputdir="figures/"):
+    def __init__(self, model, uncertain_parameters, distributions, outputdir="figures/"):
+
         self.UncertaintyEstimations = []
 
         self.model = model
-        self.fitted_parameters = fitted_parameters
+        self.uncertain_parameters = uncertain_parameters
         self.distributions = distributions
         self.outputdir = outputdir
 
         self.initialize()
+
 
     def initialize(self):
         for distribution_function in self.distributions:
@@ -61,7 +66,8 @@ class UncertaintyEstimations():
                 current_outputdir = os.path.join(self.outputdir,
                                                  distribution_function + "_%g" % interval)
                 distribution = getattr(Distribution(interval), distribution_function)
-                parameters = Parameters(self.model.parameters, distribution, self.fitted_parameters)
+                parameters = Parameters(self.model.parameters, distribution,
+                                        self.uncertain_parameters)
                 self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
                                                                          current_outputdir))
 
@@ -79,7 +85,7 @@ class UncertaintyEstimations():
 
 
 class UncertaintyEstimation():
-    def __init__(self, model, parameters, outputdir="figures/"):
+    def __init__(self, model, parameters, outputdir="figures/", supress_output=True):
         """
         model: Model object
         parameters: Parameter object
@@ -89,16 +95,24 @@ class UncertaintyEstimation():
         self.outputdir = outputdir
         self.parameters = parameters
 
+        self.parameter_names = None
+        self.parameter_space = None
+
+        self.supress_output = supress_output
+
         self.figureformat = ".png"
         self.t_start = time.time()
 
         self.model = model
 
-        self.M = 4
+        self.features = []
+        self.M = 3
+        self.mc_samples = 10**3
+
+
         self.U_hat = None
         self.distribution = None
         self.solves = None
-        self.mc_samples = 10**3
         self.t = None
         self.P = None
         self.nodes = None
@@ -108,60 +122,128 @@ class UncertaintyEstimation():
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
 
+    def runParallel(self, node):
+        if isinstance(node, float) or isinstance(node, int):
+                node = [node]
 
-    def createPCExpansion(self, parameter_name=None, feature=None):
+        # New setparameters
+        tmp_parameters = {}
+        j = 0
+        for parameter in self.tmp_parameter_name:
+            tmp_parameters[parameter] = node[j]
+            j += 1
 
+        if self.supress_output:
+            vdisplay = Xvfb()
+            vdisplay.start()
+
+#        sim = Simulation(self.model.modelfile, self.model.modelpath)
+        self.model.runParallel(tmp_parameters)
+        #V, t = self.model.runParallel(tmp_parameters)
+        #self.model.run(tmp_parameters)
+
+        if self.supress_output:
+            vdisplay.stop()
+
+
+        V = np.load("tmp_U.npy")
+        t = np.load("tmp_t.npy")
+
+        # Do a feature selection here. Make it so several feature
+        # selections are performed at this step.
+        for feature in self.features:
+            V = feature(V)
+
+        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+        return (t, V, interpolation)
+
+
+    def createPCExpansion(self, parameter_name=None):
+
+        # TODO find a good way to solve the parameter_name poblem
         if parameter_name is None:
-            parameter_space = self.parameters.getIfFitted("parameter_space")
-            parameter_name = self.parameters.getIfFitted("name")
+            parameter_space = self.parameters.getUncertain("parameter_space")
+            self.tmp_parameter_name = self.parameters.getUncertain("name")
         else:
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
-            parameter_name = [parameter_name]
+            self.tmp_parameter_name = [parameter_name]
+
 
 
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
-        #nodes = self.distribution.sample(2*len(self.P), "M")
-        print nodes.shape
+        nodes = self.distribution.sample(2*len(self.P), "M")
         # TODO problems with rule="P","Z","J"
-        nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="C", sparse=True)
-        solves = []
+        #nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="J", sparse=True)
 
-        i = 0.
         # TODO parallelize this loop
-        for s in nodes.T:
-            if isinstance(s, float) or isinstance(s, int):
-                s = [s]
 
-            sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100))
-            sys.stdout.flush()
+
+        def f(nodes):
+            return nodes
+
+        def runParallelFunction(all_data):
+            """
+            all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
+            """
+
+            node = all_data[0]
+            tmp_parameter_name = all_data[1]
+            modelfile = all_data[2]
+            modelpath = all_data[3]
+            features = all_data[4]
+
+
+            print "haha"
+            print modelfile
+            print modelpath
+            if isinstance(node, float) or isinstance(node, int):
+                    node = [node]
 
             # New setparameters
             tmp_parameters = {}
             j = 0
-            for parameter in parameter_name:
-                tmp_parameters[parameter] = s[j]
+            for parameter in tmp_parameter_name:
+                tmp_parameters[parameter] = node[j]
                 j += 1
 
-            if self.model.run(tmp_parameters) == -1:
-                return -1
+            vdisplay = Xvfb()
+            vdisplay.start()
 
-            V = np.load("tmp_U.npy")
-            t = np.load("tmp_t.npy")
+            from simulation import Simulation
+            sim = Simulation(modelfile, modelpath)
+            sim.set(tmp_parameters)
+            sim.runSimulation()
+            V = sim.getV()
+            t = sim.getT()
+
+            vdisplay.stop()
 
             # Do a feature selection here. Make it so several feature
-            # selections are performed at this step. Do this when
-            # rewriting it as a class
-
-            if feature is not None:
+            # selections are performed at this step.
+            for feature in features:
                 V = feature(V)
 
             interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-            solves.append((t, V, interpolation))
+            return (t, V, interpolation)
 
-            i += 1
+        #pool = mp.Pool(1)
+        #solves = pool.map(self.parallel, nodes.T)
+        #solves = pool.map(f, nodes.T)
 
-        print "\rRunning Neuron: %2.1f%%" % (i/len(nodes.T)*100)
+
+        # Create all_data
+        all_data = []
+        for node in nodes.T:
+            all_data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
+
+        print all_data[0]
+
+        solves = []
+        # for node in nodes.T:
+        #     solves.append(self.runParallel(node))
+        for data in all_data:
+            solves.append(runParallelFunction(data))
 
         solves = np.array(solves)
         lengths = []
@@ -175,15 +257,15 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        #self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+        #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
 
     def pseudoMC(self, parameter_name=None, feature=None):
         if parameter_name is None:
-            parameter_space = self.parameters.getIfFitted("parameter_space")
-            parameter_name = self.parameters.getIfFitted("name")
+            parameter_space = self.parameters.getUncertain("parameter_space")
+            parameter_name = self.parameters.getUncertain("name")
         else:
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
             parameter_name = [parameter_name]
@@ -248,18 +330,18 @@ class UncertaintyEstimation():
 
 
     def singleParameters(self):
-        for fitted_parameter in self.parameters.fitted_parameters:
-            print "\rRunning for " + fitted_parameter + "                     "
+        for uncertain_parameter in self.parameters.uncertain_parameters:
+            print "\rRunning for " + uncertain_parameter + "                     "
 
-            if self.createPCExpansion(fitted_parameter) == -1:
-                print "Calculations aborted for " + fitted_parameter
+            if self.createPCExpansion(uncertain_parameter) == -1:
+                print "Calculations aborted for " + uncertain_parameter
                 return -1
 
             try:
                 self.E = cp.E(self.U_hat, self.distribution)
                 self.Var = cp.Var(self.U_hat, self.distribution)
 
-                self.plotV_t(fitted_parameter)
+                self.plotV_t(uncertain_parameter)
 
                 samples = self.distribution.sample(self.mc_samples, "M")
                 print samples.shape
@@ -268,7 +350,7 @@ class UncertaintyEstimation():
                 self.p_05 = np.percentile(self.U_mc, 5, 1)
                 self.p_95 = np.percentile(self.U_mc, 95, 1)
 
-                self.plotConfidenceInterval(fitted_parameter + "_confidence_interval")
+                self.plotConfidenceInterval(uncertain_parameter + "_confidence_interval")
 
             except MemoryError:
                 print "Memory error, calculations aborted"
@@ -276,8 +358,8 @@ class UncertaintyEstimation():
 
 
     def allParameters(self):
-        if len(self.parameters.fitted_parameters) <= 1:
-            print "Only 1 fitted parameter"
+        if len(self.parameters.uncertain_parameters) <= 1:
+            print "Only 1 uncertain parameter"
             print "running allParameters() makes no sense"
             if self.U_hat is None:
                 print "Running singleParameters() instead"
@@ -376,7 +458,7 @@ class UncertaintyEstimation():
         plt.close()
 
     def plotSensitivity(self):
-        parameter_names = self.parameters.getIfFitted("name")
+        parameter_names = self.parameters.getUncertain("name")
 
         for i in range(len(self.sensitivity)):
             prettyPlot(self.t, self.sensitivity[i],

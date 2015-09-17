@@ -10,10 +10,11 @@ import subprocess
 import time
 import sys
 from xvfbwrapper import Xvfb
+from simulation import Simulation
 
 class Model():
     def __init__(self, modelfile, modelpath, parameterfile, parameters,
-                 memory_report=None, supress_output=True):
+                 memory_report=None, supress_output=False):
         """
         modelfile: Name of the modelfile
         modelpath: Path to the modelfile
@@ -71,6 +72,7 @@ class Model():
             cmd.append(parameter)
             cmd.append(str(new_parameters[parameter]))
 
+
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Note this checks total memory used by all applications
@@ -90,3 +92,15 @@ class Model():
             print "Error when running simulation:"
             print err
             sys.exit(1)
+
+
+    def runParallel(self, new_parameters={}):
+
+        print os.getcwd()
+        sim = Simulation(self.modelfile, self.modelpath)
+        #sim.set(new_parameters)
+        #sim.runSimulation()
+        #V = sim.getV()
+        #t = sim.getT()
+
+        #return t, V

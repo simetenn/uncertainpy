@@ -3,6 +3,7 @@ import sys
 import argparse
 import numpy as np
 
+
 class Simulation():
     def __init__(self, modelfile, modelpath):
         self.modelfile = modelfile
@@ -20,7 +21,6 @@ class Simulation():
         self.h.load_file(1, self.modelfile)
 
         os.chdir(self.filedir)
-
 
     ### Be really careful with these. Need to make sure that all references to
     ### neuron are inside this class
@@ -65,8 +65,8 @@ class Simulation():
 
         self.run()
 
-        self.U = sim.getV()
-        self.t = sim.getT()
+        self.U = self.getV()
+        self.t = self.getT()
 
     def save(self, CPU=None):
         if CPU is None:
@@ -102,9 +102,7 @@ if __name__ == "__main__":
         parameters[parameter_args[i].strip("-")] = parameter_args[i+1]
         i += 2
 
-
     sim = Simulation(args.modelfile, args.modelpath)
     sim.set(parameters)
     sim.runSimulation()
     sim.save()
-    sim.save(1)
