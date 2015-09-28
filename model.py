@@ -9,8 +9,12 @@ import os
 import subprocess
 import time
 import sys
+
+import numpy as np
+import multiprocess as mp
+
 from xvfbwrapper import Xvfb
-from simulation import Simulation
+
 
 class Model():
     def __init__(self, modelfile, modelpath, parameterfile, parameters,
@@ -66,15 +70,22 @@ class Model():
 
 
     def run(self, new_parameters={}):
-        cmd = ["python", "simulation.py", self.modelfile, self.modelpath]
+        current_process = mp.current_process().name.split("-")
+        if current_process[0] == "PoolWorker":
+            current_process = str(current_process[-1])
+        else:
+            current_process = "0"
+
+        cmd = ["python", "simulation.py", self.modelfile, self.modelpath,
+               "--CPU", current_process]
 
         for parameter in new_parameters:
             cmd.append(parameter)
             cmd.append(str(new_parameters[parameter]))
 
-
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+        # TODO Bug here, seems i only check memory once
         # Note this checks total memory used by all applications
         if self.memory_report:
             self.memory_report.save()
@@ -93,14 +104,13 @@ class Model():
             print err
             sys.exit(1)
 
+        V = np.load("tmp_U_%s.npy" % current_process)
+        t = np.load("tmp_t_%s.npy" % current_process)
 
-    def runParallel(self, new_parameters={}):
+        return t, V
 
-        print os.getcwd()
+    def runParalell(self, new_parameters={}):
+        from simulation import Simulation
+
         sim = Simulation(self.modelfile, self.modelpath)
-        #sim.set(new_parameters)
-        #sim.runSimulation()
-        #V = sim.getV()
-        #t = sim.getT()
-
-        #return t, V
+        sim.set(new_parameters)

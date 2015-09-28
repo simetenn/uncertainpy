@@ -3,7 +3,6 @@ import sys
 import argparse
 import numpy as np
 
-
 class Simulation():
     def __init__(self, modelfile, modelpath):
         self.modelfile = modelfile
@@ -105,4 +104,4 @@ if __name__ == "__main__":
     sim = Simulation(args.modelfile, args.modelpath)
     sim.set(parameters)
     sim.runSimulation()
-    sim.save()
+    sim.save(args.CPU)

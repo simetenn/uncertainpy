@@ -1,3 +1,46 @@
+def evaluateNodeFunction(all_data):
+    """
+    all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
+    """
+
+    node = all_data[0]
+    tmp_parameter_name = all_data[1]
+    modelfile = all_data[2]
+    modelpath = all_data[3]
+    features = all_data[4]
+    if isinstance(node, float) or isinstance(node, int):
+            node = [node]
+
+    print "hahaha"
+    # New setparameters
+    tmp_parameters = {}
+    j = 0
+    for parameter in tmp_parameter_name:
+        tmp_parameters[parameter] = node[j]
+        j += 1
+    print tmp_parameters
+
+    vdisplay = Xvfb()
+    vdisplay.start()
+
+    from simulation import Simulation
+    sim = Simulation(modelfile, modelpath)
+    #sim.set(tmp_parameters)
+    #sim.runSimulation()
+    V = sim.getV()
+    t = sim.getT()
+
+    vdisplay.stop()
+
+    # Do a feature selection here. Make it so several feature
+    # selections are performed at this step.
+    for feature in features:
+        V = feature(V)
+
+    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+    return (t, V, interpolation)
+
+
 # TODO Test out different types of polynomial chaos methods
 
 # TODO Do dependent variable stuff
@@ -36,6 +79,7 @@ import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocess as mp
+import multiprocessing as mping
 
 from xvfbwrapper import Xvfb
 
@@ -85,7 +129,8 @@ class UncertaintyEstimations():
 
 
 class UncertaintyEstimation():
-    def __init__(self, model, parameters, outputdir="figures/", supress_output=True):
+    def __init__(self, model, parameters, outputdir="figures/", supress_output=True,
+                 parallelization=False):
         """
         model: Model object
         parameters: Parameter object
@@ -118,11 +163,16 @@ class UncertaintyEstimation():
         self.nodes = None
         self.sensitivity = None
         self.Corr = None
+        self.parallelization = parallelization
 
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
 
-    def runParallel(self, node):
+
+
+    # TODO Should this be written as a function instead of a method and use
+    # multiprocessing instead of multiprocess?
+    def evaluateNode(self, node):
         if isinstance(node, float) or isinstance(node, int):
                 node = [node]
 
@@ -137,17 +187,11 @@ class UncertaintyEstimation():
             vdisplay = Xvfb()
             vdisplay.start()
 
-#        sim = Simulation(self.model.modelfile, self.model.modelpath)
-        self.model.runParallel(tmp_parameters)
-        #V, t = self.model.runParallel(tmp_parameters)
-        #self.model.run(tmp_parameters)
+        t, V = self.model.run(tmp_parameters)
+        #self.model.runParalell(tmp_parameters)
 
         if self.supress_output:
             vdisplay.stop()
-
-
-        V = np.load("tmp_U.npy")
-        t = np.load("tmp_t.npy")
 
         # Do a feature selection here. Make it so several feature
         # selections are performed at this step.
@@ -155,6 +199,7 @@ class UncertaintyEstimation():
             V = feature(V)
 
         interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+
         return (t, V, interpolation)
 
 
@@ -168,8 +213,6 @@ class UncertaintyEstimation():
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
             self.tmp_parameter_name = [parameter_name]
 
-
-
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
         nodes = self.distribution.sample(2*len(self.P), "M")
@@ -178,74 +221,39 @@ class UncertaintyEstimation():
 
         # TODO parallelize this loop
 
-
-        def f(nodes):
-            return nodes
-
-        def runParallelFunction(all_data):
-            """
-            all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
-            """
-
-            node = all_data[0]
-            tmp_parameter_name = all_data[1]
-            modelfile = all_data[2]
-            modelpath = all_data[3]
-            features = all_data[4]
-
-
-            print "haha"
-            print modelfile
-            print modelpath
-            if isinstance(node, float) or isinstance(node, int):
-                    node = [node]
-
-            # New setparameters
-            tmp_parameters = {}
-            j = 0
-            for parameter in tmp_parameter_name:
-                tmp_parameters[parameter] = node[j]
-                j += 1
-
-            vdisplay = Xvfb()
-            vdisplay.start()
-
-            from simulation import Simulation
-            sim = Simulation(modelfile, modelpath)
-            sim.set(tmp_parameters)
-            sim.runSimulation()
-            V = sim.getV()
-            t = sim.getT()
-
-            vdisplay.stop()
-
-            # Do a feature selection here. Make it so several feature
-            # selections are performed at this step.
-            for feature in features:
-                V = feature(V)
-
-            interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-            return (t, V, interpolation)
-
-        #pool = mp.Pool(1)
-        #solves = pool.map(self.parallel, nodes.T)
-        #solves = pool.map(f, nodes.T)
-
+        # if self.parallelization:
+        #     pool = mp.Pool(processes=7)
+        #     solves = pool.map_async(self.evaluateNode, nodes.T)
+        # else:
+        #     solves = []
+        #     for node in nodes.T:
+        #         solves.append(self.evaluateNode(node))
 
         # Create all_data
         all_data = []
         for node in nodes.T:
             all_data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
 
-        print all_data[0]
 
+        self.parallelization = True
         solves = []
+        if self.parallelization:
+            pool = mp.Pool(processes=mp.cpu_count())
+            solves = pool.map(self.evaluateNode, nodes.T)
+
+        else:
+            for node in nodes.T:
+                solves.append(self.evaluateNode(node))
+
+        # for data in all_data:
+        #     solves.append(self.evaluateNode(data))
+
         # for node in nodes.T:
-        #     solves.append(self.runParallel(node))
-        for data in all_data:
-            solves.append(runParallelFunction(data))
+        #     solves.append(self.evaluateNode(node))
+
 
         solves = np.array(solves)
+
         lengths = []
         for s in solves[:, 0]:
             lengths.append(len(s))
