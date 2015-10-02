@@ -50,8 +50,15 @@ class Model():
 
 
     def __del__(self):
-        # self.clean()
+        current_process = mp.current_process().name.split("-")
+        if current_process[0] == "PoolWorker":
+            if current_process[-1] == 1:
+                self.delete()
+        else:
+            self.delete()
 
+    def delete(self):
+        self.clean()
         if self.supress_output:
             self.vdisplay.stop()
 
