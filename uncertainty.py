@@ -31,6 +31,7 @@ import datetime
 import scipy.interpolate
 import os
 import subprocess
+import sys
 
 import numpy as np
 import chaospy as cp
@@ -44,6 +45,62 @@ from memory import Memory
 from distribution import Distribution
 from model import Model
 from parameters import Parameters
+
+
+def evaluateNodeFunction(self, data):
+    """
+    all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
+    """
+
+    node = data[0]
+    tmp_parameter_name = data[1]
+    modelfile = data[2]
+    modelpath = data[3]
+    features = data[4]
+
+    if isinstance(node, float) or isinstance(node, int):
+            node = [node]
+
+    # New setparameters
+    tmp_parameters = {}
+    j = 0
+    for parameter in tmp_parameter_name:
+        tmp_parameters[parameter] = node[j]
+        j += 1
+
+    current_process = mp.current_process().name.split("-")
+    if current_process[0] == "PoolWorker":
+        current_process = str(current_process[-1])
+    else:
+        current_process = "0"
+
+    cmd = ["python", "simulation.py", modelfile, modelpath,
+           "--CPU", current_process]
+
+    for parameter in tmp_parameters:
+        cmd.append(parameter)
+        cmd.append(str(tmp_parameters[parameter]))
+
+    simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    ut, err = simulation.communicate()
+
+    if simulation.returncode != 0:
+        print "Error when running simulation:"
+        print err
+        sys.exit(1)
+
+
+    V = np.load("tmp_U_%s.npy" % current_process)
+    t = np.load("tmp_t_%s.npy" % current_process)
+
+    # Do a feature selection here. Make it so several feature
+    # selections are performed at this step.
+    for feature in features:
+        V = feature(V)
+
+    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+
+    return (t, V, interpolation)
 
 
 class UncertaintyEstimations():
@@ -135,21 +192,11 @@ class UncertaintyEstimation():
         self.t_start = time.time()
 
     def toList(self):
-        all_data = []
-        for node in nodes.T:
-            all_data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
+        data = []
+        for node in self.nodes.T:
+            data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
 
-    def fromList(self, list):
-        """
-        all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
-        """
-
-        node = all_data[0]
-        tmp_parameter_name = all_data[1]
-        modelfile = all_data[2]
-        modelpath = all_data[3]
-        features = all_data[4]
-
+        return data
 
 
     def evaluateNode(self, node):
@@ -306,7 +353,6 @@ class UncertaintyEstimation():
     def allParameters(self):
         if len(self.parameters.uncertain_parameters) <= 1:
             print "Only 1 uncertain parameter"
-            print "running allParameters() makes no sense"
             if self.U_hat is None:
                 print "Running singleParameters() instead"
                 self.singleParameters()
