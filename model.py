@@ -9,6 +9,7 @@ import os
 import subprocess
 import time
 import sys
+import glob
 
 import numpy as np
 import multiprocess as mp
@@ -26,7 +27,6 @@ class Model():
         parameters: Parameters as a dictionar
         memory_report: Memory object
         """
-
 
         self.modelfile = modelfile
         self.modelpath = modelpath
@@ -46,10 +46,21 @@ class Model():
             self.vdisplay = Xvfb()
             self.vdisplay.start()
 
+        self.clean()
+
 
     def __del__(self):
+        # self.clean()
+
         if self.supress_output:
             self.vdisplay.stop()
+
+    def clean(self):
+        for f in glob.glob("tmp_U_*.npy"):
+            os.remove(f)
+
+        for f in glob.glob("tmp_t_*.npy"):
+            os.remove(f)
 
 
     def saveParameters(self, new_parameters):
@@ -108,9 +119,3 @@ class Model():
         t = np.load("tmp_t_%s.npy" % current_process)
 
         return t, V
-
-    def runParalell(self, new_parameters={}):
-        from simulation import Simulation
-
-        sim = Simulation(self.modelfile, self.modelpath)
-        sim.set(new_parameters)

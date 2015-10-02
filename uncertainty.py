@@ -1,47 +1,7 @@
-def evaluateNodeFunction(all_data):
-    """
-    all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
-    """
-
-    node = all_data[0]
-    tmp_parameter_name = all_data[1]
-    modelfile = all_data[2]
-    modelpath = all_data[3]
-    features = all_data[4]
-    if isinstance(node, float) or isinstance(node, int):
-            node = [node]
-
-    print "hahaha"
-    # New setparameters
-    tmp_parameters = {}
-    j = 0
-    for parameter in tmp_parameter_name:
-        tmp_parameters[parameter] = node[j]
-        j += 1
-    print tmp_parameters
-
-    vdisplay = Xvfb()
-    vdisplay.start()
-
-    from simulation import Simulation
-    sim = Simulation(modelfile, modelpath)
-    #sim.set(tmp_parameters)
-    #sim.runSimulation()
-    V = sim.getV()
-    t = sim.getT()
-
-    vdisplay.stop()
-
-    # Do a feature selection here. Make it so several feature
-    # selections are performed at this step.
-    for feature in features:
-        V = feature(V)
-
-    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-    return (t, V, interpolation)
-
-
 # TODO Test out different types of polynomial chaos methods
+
+# TODO Test correlation
+
 
 # TODO Do dependent variable stuff
 
@@ -58,7 +18,6 @@ def evaluateNodeFunction(all_data):
 
 # TODO Use a recursive neural network
 
-# TODO Compare with a pure MC calculation
 
 # TODO Atm parameter are both in the model object and in the parameter object.
 # Make it so they only are one place?
@@ -66,20 +25,17 @@ def evaluateNodeFunction(all_data):
 # TODO Can remove the uncertain parameter and instead test if the parameter has a
 # distribution function?
 
-# TODO Parallelize the model evaluations
 
 import time
 import datetime
 import scipy.interpolate
 import os
-import sys
 import subprocess
 
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocess as mp
-import multiprocessing as mping
 
 from xvfbwrapper import Xvfb
 
@@ -91,7 +47,8 @@ from parameters import Parameters
 
 
 class UncertaintyEstimations():
-    def __init__(self, model, uncertain_parameters, distributions, outputdir="figures/"):
+    def __init__(self, model, uncertain_parameters, distributions, outputdir="figures/",
+                 supress_output=True, CPUs=mp.cpu_count()):
 
         self.UncertaintyEstimations = []
 
@@ -99,6 +56,10 @@ class UncertaintyEstimations():
         self.uncertain_parameters = uncertain_parameters
         self.distributions = distributions
         self.outputdir = outputdir
+
+        self.supress_output = supress_output
+        self.CPUs = CPUs
+
 
         self.initialize()
 
@@ -113,7 +74,9 @@ class UncertaintyEstimations():
                 parameters = Parameters(self.model.parameters, distribution,
                                         self.uncertain_parameters)
                 self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
-                                                                         current_outputdir))
+                                                                         current_outputdir,
+                                                                         self.supress_output,
+                                                                         self.CPUs))
 
     def exploreParameters(self):
         for uncertaintyEstimation in self.UncertaintyEstimations:
@@ -130,7 +93,7 @@ class UncertaintyEstimations():
 
 class UncertaintyEstimation():
     def __init__(self, model, parameters, outputdir="figures/", supress_output=True,
-                 parallelization=False):
+                 CPUs=mp.cpu_count()):
         """
         model: Model object
         parameters: Parameter object
@@ -140,20 +103,21 @@ class UncertaintyEstimation():
         self.outputdir = outputdir
         self.parameters = parameters
 
-        self.parameter_names = None
-        self.parameter_space = None
-
         self.supress_output = supress_output
-
-        self.figureformat = ".png"
-        self.t_start = time.time()
+        self.CPUs = CPUs
 
         self.model = model
 
+
+        self.figureformat = ".png"
+
         self.features = []
         self.M = 3
-        self.mc_samples = 10**3
+        self.nr_mc_samples = 10**2
 
+
+        self.parameter_names = None
+        self.parameter_space = None
 
         self.U_hat = None
         self.distribution = None
@@ -163,15 +127,31 @@ class UncertaintyEstimation():
         self.nodes = None
         self.sensitivity = None
         self.Corr = None
-        self.parallelization = parallelization
+
 
         if not os.path.isdir(self.outputdir):
             os.makedirs(self.outputdir)
 
+        self.t_start = time.time()
+
+    def toList(self):
+        all_data = []
+        for node in nodes.T:
+            all_data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
+
+    def fromList(self, list):
+        """
+        all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
+        """
+
+        node = all_data[0]
+        tmp_parameter_name = all_data[1]
+        modelfile = all_data[2]
+        modelpath = all_data[3]
+        features = all_data[4]
 
 
-    # TODO Should this be written as a function instead of a method and use
-    # multiprocessing instead of multiprocess?
+
     def evaluateNode(self, node):
         if isinstance(node, float) or isinstance(node, int):
                 node = [node]
@@ -183,15 +163,7 @@ class UncertaintyEstimation():
             tmp_parameters[parameter] = node[j]
             j += 1
 
-        if self.supress_output:
-            vdisplay = Xvfb()
-            vdisplay.start()
-
         t, V = self.model.run(tmp_parameters)
-        #self.model.runParalell(tmp_parameters)
-
-        if self.supress_output:
-            vdisplay.stop()
 
         # Do a feature selection here. Make it so several feature
         # selections are performed at this step.
@@ -215,42 +187,25 @@ class UncertaintyEstimation():
 
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
-        nodes = self.distribution.sample(2*len(self.P), "M")
+        self.nodes = self.distribution.sample(2*len(self.P)+1, "M")
         # TODO problems with rule="P","Z","J"
-        #nodes, weights = cp.generate_quadrature(3+1, self.distribution, rule="J", sparse=True)
+        #nodes, weights = cp.generate_quadrature(3, self.distribution, rule="C", sparse=True)
 
-        # TODO parallelize this loop
+        if self.supress_output:
+            vdisplay = Xvfb()
+            vdisplay.start()
 
-        # if self.parallelization:
-        #     pool = mp.Pool(processes=7)
-        #     solves = pool.map_async(self.evaluateNode, nodes.T)
-        # else:
-        #     solves = []
-        #     for node in nodes.T:
-        #         solves.append(self.evaluateNode(node))
-
-        # Create all_data
-        all_data = []
-        for node in nodes.T:
-            all_data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
-
-
-        self.parallelization = True
         solves = []
-        if self.parallelization:
-            pool = mp.Pool(processes=mp.cpu_count())
-            solves = pool.map(self.evaluateNode, nodes.T)
+        if self.CPUs > 0:
+            pool = mp.Pool(processes=self.CPUs)
+            solves = pool.map(self.evaluateNode, self.nodes.T)
 
         else:
-            for node in nodes.T:
+            for node in self.nodes.T:
                 solves.append(self.evaluateNode(node))
 
-        # for data in all_data:
-        #     solves.append(self.evaluateNode(data))
-
-        # for node in nodes.T:
-        #     solves.append(self.evaluateNode(node))
-
+        if self.supress_output:
+            vdisplay.stop()
 
         solves = np.array(solves)
 
@@ -266,56 +221,38 @@ class UncertaintyEstimation():
             interpolated_solves.append(inter(self.t))
 
         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+        self.U_hat = cp.fit_regression(self.P, self.nodes, interpolated_solves, rule="T")
 
 
 
-    def pseudoMC(self, parameter_name=None, feature=None):
+    def MC(self, parameter_name=None):
         if parameter_name is None:
             parameter_space = self.parameters.getUncertain("parameter_space")
-            parameter_name = self.parameters.getUncertain("name")
+            self.tmp_parameter_name = self.parameters.getUncertain("name")
         else:
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
-            parameter_name = [parameter_name]
+            self.tmp_parameter_name = [parameter_name]
 
         self.distribution = cp.J(*parameter_space)
-        samples = self.distribution.sample(self.mc_samples, "M")
+        samples = self.distribution.sample(self.nr_mc_samples, "M")
+
+        if self.supress_output:
+            vdisplay = Xvfb()
+            vdisplay.start()
 
         solves = []
-        i = 0.
-        for s in samples.T:
-            if isinstance(s, float) or isinstance(s, int):
-                s = [s]
 
-            sys.stdout.write("\rRunning Neuron: %2.1f%%" % (i/len(samples.T)*100))
-            sys.stdout.flush()
+        self.CPUs = 0
+        if self.CPUs > 0:
+            pool = mp.Pool(processes=self.CPUs)
+            solves = pool.map(self.evaluateNode, samples.T)
 
-            tmp_parameters = {}
-            j = 0
-            for parameter in parameter_name:
-                tmp_parameters[parameter] = s[j]
-                j += 1
+        else:
+            for sample in samples.T:
+                solves.append(self.evaluateNode(sample))
 
-            self.model.saveParameters(tmp_parameters)
-            if self.model.run() == -1:
-                return -1
-
-            V = np.load("tmp_U.npy")
-            t = np.load("tmp_t.npy")
-
-            # Do a feature selection here. Make it so several feature
-            # selections are performed at this step. Do this when
-            # rewriting it as a class
-
-            if feature is not None:
-                V = feature(V)
-
-            interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-            solves.append((t, V, interpolation))
-
-            i += 1
-
-        print "\rRunning Neuron: %2.1f%%" % (i/len(samples.T)*100)
+        if self.supress_output:
+            vdisplay.stop()
 
         solves = np.array(solves)
         lengths = []
@@ -329,8 +266,10 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        self.E = (np.sum(interpolated_solves, 0).T/self.mc_samples).T
-        self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.mc_samples).T
+        self.E = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
+        self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
+
+        self.plotV_t("MC")
 
 
     def timePassed(self):
@@ -351,8 +290,7 @@ class UncertaintyEstimation():
 
                 self.plotV_t(uncertain_parameter)
 
-                samples = self.distribution.sample(self.mc_samples, "M")
-                print samples.shape
+                samples = self.distribution.sample(self.nr_mc_samples, "M")
                 self.U_mc = self.U_hat(samples)
 
                 self.p_05 = np.percentile(self.U_mc, 5, 1)
@@ -387,9 +325,8 @@ class UncertaintyEstimation():
 
             self.plotSensitivity()
 
-            samples = self.distribution.sample(self.mc_samples, "M")
+            samples = self.distribution.sample(self.nr_mc_samples, "M")
 
-            print len(samples.shape)
             self.U_mc = self.U_hat(*samples)
             self.p_05 = np.percentile(self.U_mc, 5, 1)
             self.p_95 = np.percentile(self.U_mc, 95, 1)
@@ -398,14 +335,11 @@ class UncertaintyEstimation():
 
             self.Corr = cp.Corr(self.P, self.distribution)
 
-            print self.U_hat.shape
             print self.P.shape
-            print self.Corr
-            print self.distribution
-            print
             print self.Corr.shape
-            print self.t.shape
             print self.Corr[0].shape
+
+            print self.Corr
 
         except MemoryError:
             print "Memory error, calculations aborted"
@@ -535,8 +469,8 @@ if __name__ == "__main__":
     #parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
 
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
-    test = UncertaintyEstimation(model, parameters, "figures/test")
-
+    test = UncertaintyEstimation(model, parameters, "figures/test", CPUs=mp.cpu_count()-1)
+    #test.MC()
     # t1 = test.timePassed()
     # test.pseudoMC("Rm")
     # test.plotV_t("MC")
