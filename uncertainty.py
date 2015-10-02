@@ -209,7 +209,21 @@ class UncertaintyEstimation():
 
         index_max_len = np.argmax(lengths)
         self.t = solves[index_max_len, 0]
+        print max(lengths)
 
+        # TODO working here!
+
+        i = 0
+        print "ebfore test"
+        tmp_t = solves[0, 0]
+        print solves[0, 0].shape
+        print solves[0, 2].shape
+        while i < len(solves) - 1:
+            tmp_t = np.union1d(tmp_t, solves[0, i+1])
+            i += 1
+        print "after test"
+        print len(tmp_t)
+        #self.t = np.linspace(solves[0,0], solves[0,0])
         interpolated_solves = []
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
@@ -255,6 +269,9 @@ class UncertaintyEstimation():
 
         index_max_len = np.argmax(lengths)
         self.t = solves[index_max_len, 0]
+        print max(lengths)
+
+        #self.t = np.linspace(solves[0,0], solves[0,0])
 
         interpolated_solves = []
         for inter in solves[:, 2]:
@@ -457,6 +474,8 @@ if __name__ == "__main__":
 
     #test_parameters = "Rm"
     test_parameters = ["Rm", "Epas"]
+    #test_parameters = fitted_parameters
+
     memory_report = Memory()
     parameters = Parameters(original_parameters, distribution_function, test_parameters)
     #parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
