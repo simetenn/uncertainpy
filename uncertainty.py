@@ -51,7 +51,7 @@ from parameters import Parameters
 
 class UncertaintyEstimations():
     def __init__(self, model, uncertain_parameters, distributions, outputdir="figures/",
-                 supress_output=True, CPUs=mp.cpu_count()):
+                 supress_output=True, CPUs=mp.cpu_count(), interpolate_union=False):
 
         self.UncertaintyEstimations = []
 
@@ -62,7 +62,7 @@ class UncertaintyEstimations():
 
         self.supress_output = supress_output
         self.CPUs = CPUs
-
+        self.interpolate_union = interpolate_union
 
         self.initialize()
 
@@ -79,7 +79,8 @@ class UncertaintyEstimations():
                 self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
                                                                          current_outputdir,
                                                                          self.supress_output,
-                                                                         self.CPUs))
+                                                                         self.CPUs,
+                                                                         self.interpolate_union))
 
     def exploreParameters(self):
         for uncertaintyEstimation in self.UncertaintyEstimations:
@@ -96,7 +97,7 @@ class UncertaintyEstimations():
 
 class UncertaintyEstimation():
     def __init__(self, model, parameters, outputdir="figures/", supress_output=True,
-                 CPUs=mp.cpu_count()):
+                 CPUs=mp.cpu_count(), interpolate_union=False):
         """
         model: Model object
         parameters: Parameter object
@@ -111,6 +112,7 @@ class UncertaintyEstimation():
 
         self.model = model
 
+        self.interpolate_union = interpolate_union
 
         self.figureformat = ".png"
 
@@ -180,9 +182,9 @@ class UncertaintyEstimation():
 
         self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, self.distribution)
-        self.nodes = self.distribution.sample(2*len(self.P)+1, "M")
+        #nodes = self.distribution.sample(2*len(self.P)+1, "M")
         # TODO problems with rule="P","Z","J"
-        #nodes, weights = cp.generate_quadrature(3, self.distribution, rule="C", sparse=True)
+        nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
         if self.supress_output:
             vdisplay = Xvfb()
@@ -191,11 +193,11 @@ class UncertaintyEstimation():
         solves = []
         if self.CPUs > 0:
             pool = mp.Pool(processes=self.CPUs)
-            solves = pool.map(self.evaluateNode, self.nodes.T)
+            solves = pool.map(self.evaluateNode, nodes.T)
             # solves = pool.map(evaluateNodeFunction, self.toList())
 
         else:
-            for node in self.nodes.T:
+            for node in nodes.T:
                 solves.append(self.evaluateNode(node))
 
         if self.supress_output:
@@ -209,28 +211,26 @@ class UncertaintyEstimation():
 
         index_max_len = np.argmax(lengths)
         self.t = solves[index_max_len, 0]
-        print max(lengths)
 
-        # TODO working here!
-
+        # Use union to work on all time values when interpolation.
         i = 0
-        print "ebfore test"
-        tmp_t = solves[0, 0]
-        print solves[0, 0].shape
-        print solves[0, 2].shape
-        while i < len(solves) - 1:
-            tmp_t = np.union1d(tmp_t, solves[0, i+1])
-            i += 1
-        print "after test"
-        print len(tmp_t)
-        #self.t = np.linspace(solves[0,0], solves[0,0])
+        if self.interpolate_union:
+            tmp_t = solves[0, 0]
+            while i < len(solves) - 1:
+                tmp_t = np.union1d(tmp_t, solves[i+1, 0])
+                i += 1
+
+            self.t = tmp_t
+
         interpolated_solves = []
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        self.U_hat = cp.fit_regression(self.P, self.nodes, interpolated_solves, rule="T")
 
+
+        self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        #self.U_hat = cp.fit_regression(self.P, self.nodes, interpolated_solves, rule="T")
+        print self.U_hat
 
 
     def MC(self, parameter_name=None):
