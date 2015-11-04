@@ -30,6 +30,7 @@
 
 # TODO have the option of saving the exploration by parameters instead of by distribution
 
+# TODO WORKING ON THIS!!!!
 # TODO remove the plotting from this program, only save the data
 
 # Figures are always saved on the format:
@@ -187,6 +188,8 @@ class UncertaintyEstimation():
         os.makedirs(self.outputdir)
 
         self.t_start = time.time()
+
+
 
     def toList(self):
         data = []
@@ -385,18 +388,6 @@ class UncertaintyEstimation():
 
                 self.plotV_t(uncertain_parameter)
                 self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
-
-                if self.save_by_parameter:
-                    original_outputdir = self.outputdir
-                    folder, filename = self.outputdir.split("/")
-
-                    self.outputdir = os.path.join(folder, uncertain_parameter)
-
-                    if not os.path.isdir(self.outputdir):
-                        os.makedirs(self.outputdir)
-
-                    self.plotV_t(filename)
-                    self.outputdir = original_outputdir
 
 
             except MemoryError:
