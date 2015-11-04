@@ -5,6 +5,9 @@
 
 # TODO Do dependent variable stuff
 
+# TODO Do a regression analysis to figure out which variables are dependent on
+# each other
+
 # TODO Do a mc analysis after u_hat is generated
 
 # TODO Instead of giving results as an average of the response, make it
@@ -22,15 +25,25 @@
 # TODO Atm parameter are both in the model object and in the parameter object.
 # Make it so they only are one place?
 
-# TODO Can remove the uncertain parameter and instead test if the parameter has a
-# distribution function?
+# TODO Can remove the uncertain parameter and instead test if the parameter has
+# a distribution function?
 
+# TODO have the option of saving the exploration by parameters instead of by distribution
+
+# TODO remove the plotting from this program, only save the data
+
+# Figures are always saved on the format:
+# outputdir/distribution_interval/parameter_value-that-is-plotted.figure-extension
+
+# TODO use sumatra when starting runs
 
 import time
 import datetime
 import scipy.interpolate
 import os
 import subprocess
+import sys
+import shutil
 
 import numpy as np
 import chaospy as cp
@@ -50,8 +63,16 @@ from parameters import Parameters
 
 
 class UncertaintyEstimations():
-    def __init__(self, model, uncertain_parameters, distributions, outputdir="figures/",
-                 supress_output=True, CPUs=mp.cpu_count(), interpolate_union=False):
+    def __init__(self, model, uncertain_parameters, distributions,
+                 outputdir="figures/",
+                 figureformat=".png",
+                 supress_output=True,
+                 CPUs=mp.cpu_count(),
+                 interpolate_union=False,
+                 rosenblatt=False):
+
+        # Figures are always saved on the format:
+        # outputdir/distribution_interval/parameter_value-that-is-plotted.figure-format
 
         self.UncertaintyEstimations = []
 
@@ -63,12 +84,18 @@ class UncertaintyEstimations():
         self.supress_output = supress_output
         self.CPUs = CPUs
         self.interpolate_union = interpolate_union
+        self.rosenblatt = rosenblatt
+        self.figureformat = figureformat
 
         self.initialize()
+
+        self.t_start = time.time()
+
 
 
     def initialize(self):
         for distribution_function in self.distributions:
+            print distribution_function
             print self.distributions[distribution_function]
             for interval in self.distributions[distribution_function]:
                 current_outputdir = os.path.join(self.outputdir,
@@ -78,33 +105,53 @@ class UncertaintyEstimations():
                                         self.uncertain_parameters)
                 self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
                                                                          current_outputdir,
+                                                                         self.figureformat,
                                                                          self.supress_output,
                                                                          self.CPUs,
-                                                                         self.interpolate_union))
+                                                                         self.interpolate_union,
+                                                                         self.rosenblatt,
+                                                                         save_by_parameter=True))
 
     def exploreParameters(self):
         for uncertaintyEstimation in self.UncertaintyEstimations:
-            run_name = uncertaintyEstimation.outputdir.split("/")[-1].split("_")
-            print "Running for: " + run_name[0] + " " + run_name[1]
+            print uncertaintyEstimation.outputdir
+            distribution, interval = uncertaintyEstimation.outputdir.split("/")[-1].split("_")
+
+            print "Running for: " + distribution + " " + interval
 
             uncertaintyEstimation.singleParameters()
+            # uncertaintyEstimation.outputdir = os.path.join(self.outputdir)
+            # uncertaintyEstimation.plotAll()
             uncertaintyEstimation.allParameters()
 
+
+
     def timePassed(self):
-        return self.UncertaintyEstimations[0].timePassed()
+        return time.time() - self.t_start
 
 
 
 class UncertaintyEstimation():
-    def __init__(self, model, parameters, outputdir="figures/", supress_output=True,
-                 CPUs=mp.cpu_count(), interpolate_union=False):
+    def __init__(self, model, parameters,
+                 outputdir="figures/",
+                 figureformat=".png",
+                 supress_output=True,
+                 CPUs=mp.cpu_count(),
+                 interpolate_union=False,
+                 rosenblatt=False,
+                 save_by_parameter=False):
         """
         model: Model object
         parameters: Parameter object
         outputdir: Where to save the results. Default = "figures/"
+
+        Figures are always saved on the format:
+        outputdir/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
 
         self.outputdir = outputdir
+        self.figureformat = figureformat
+
         self.parameters = parameters
 
         self.supress_output = supress_output
@@ -113,8 +160,9 @@ class UncertaintyEstimation():
         self.model = model
 
         self.interpolate_union = interpolate_union
+        self.rosenblatt = rosenblatt
+        self.save_by_parameter = save_by_parameter
 
-        self.figureformat = ".png"
 
         self.features = []
         self.M = 3
@@ -134,8 +182,9 @@ class UncertaintyEstimation():
         self.Corr = None
 
 
-        if not os.path.isdir(self.outputdir):
-            os.makedirs(self.outputdir)
+        if os.path.isdir(self.outputdir):
+            shutil.rmtree(self.outputdir)
+        os.makedirs(self.outputdir)
 
         self.t_start = time.time()
 
@@ -180,11 +229,36 @@ class UncertaintyEstimation():
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
             self.tmp_parameter_name = [parameter_name]
 
-        self.distribution = cp.J(*parameter_space)
-        self.P = cp.orth_ttr(self.M, self.distribution)
-        #nodes = self.distribution.sample(2*len(self.P)+1, "M")
-        # TODO problems with rule="P","Z","J"
-        nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
+
+
+        if self.rosenblatt:
+            # Create the Multivariat normal distribution
+            dist_MvNormal = []
+            for parameter in self.parameters.getUncertain("value"):
+                dist_MvNormal.append(cp.Normal())
+
+            dist_MvNormal = cp.J(*dist_MvNormal)
+
+            self.distribution = cp.J(*parameter_space)
+            #self.P = cp.orth_ttr(self.M, self.distribution)
+            self.P = cp.orth_ttr(self.M, dist_MvNormal)
+
+            nodes_MvNormal = dist_MvNormal.sample(2*len(self.P)+1, "M")
+            # nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
+            #                                                           rule="J", sparse=True)
+
+            nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
+            # weights = weights_MvNormal*self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
+
+            self.distribution = dist_MvNormal
+
+        else:
+            self.distribution = cp.J(*parameter_space)
+            self.P = cp.orth_ttr(self.M, self.distribution)
+
+            nodes = self.distribution.sample(2*len(self.P)+1, "M")
+            # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
+
 
         if self.supress_output:
             vdisplay = Xvfb()
@@ -205,22 +279,24 @@ class UncertaintyEstimation():
 
         solves = np.array(solves)
 
-        lengths = []
-        for s in solves[:, 0]:
-            lengths.append(len(s))
-
-        index_max_len = np.argmax(lengths)
-        self.t = solves[index_max_len, 0]
-
         # Use union to work on all time values when interpolation.
-        i = 0
+        # If not use the t maximum amount of t values
         if self.interpolate_union:
+            i = 0
             tmp_t = solves[0, 0]
             while i < len(solves) - 1:
                 tmp_t = np.union1d(tmp_t, solves[i+1, 0])
                 i += 1
 
             self.t = tmp_t
+        else:
+            lengths = []
+            for s in solves[:, 0]:
+                lengths.append(len(s))
+
+            index_max_len = np.argmax(lengths)
+            self.t = solves[index_max_len, 0]
+
 
         interpolated_solves = []
         for inter in solves[:, 2]:
@@ -228,9 +304,12 @@ class UncertaintyEstimation():
 
 
 
-        self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        #self.U_hat = cp.fit_regression(self.P, self.nodes, interpolated_solves, rule="T")
-        print self.U_hat
+        if self.rosenblatt:
+            #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+            self.U_hat = cp.fit_regression(self.P, nodes_MvNormal, interpolated_solves, rule="T")
+        else:
+            #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+            self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
     def MC(self, parameter_name=None):
@@ -269,7 +348,6 @@ class UncertaintyEstimation():
 
         index_max_len = np.argmax(lengths)
         self.t = solves[index_max_len, 0]
-        print max(lengths)
 
         #self.t = np.linspace(solves[0,0], solves[0,0])
 
@@ -299,15 +377,27 @@ class UncertaintyEstimation():
                 self.E = cp.E(self.U_hat, self.distribution)
                 self.Var = cp.Var(self.U_hat, self.distribution)
 
-                self.plotV_t(uncertain_parameter)
-
                 samples = self.distribution.sample(self.nr_mc_samples, "M")
                 self.U_mc = self.U_hat(samples)
 
                 self.p_05 = np.percentile(self.U_mc, 5, 1)
                 self.p_95 = np.percentile(self.U_mc, 95, 1)
 
-                self.plotConfidenceInterval(uncertain_parameter + "_confidence_interval")
+                self.plotV_t(uncertain_parameter)
+                self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
+
+                if self.save_by_parameter:
+                    original_outputdir = self.outputdir
+                    folder, filename = self.outputdir.split("/")
+
+                    self.outputdir = os.path.join(folder, uncertain_parameter)
+
+                    if not os.path.isdir(self.outputdir):
+                        os.makedirs(self.outputdir)
+
+                    self.plotV_t(filename)
+                    self.outputdir = original_outputdir
+
 
             except MemoryError:
                 print "Memory error, calculations aborted"
@@ -341,21 +431,19 @@ class UncertaintyEstimation():
             self.p_05 = np.percentile(self.U_mc, 5, 1)
             self.p_95 = np.percentile(self.U_mc, 95, 1)
 
-            self.plotConfidenceInterval("all_confidence_interval")
+            self.plotConfidenceInterval("all_confidence-interval")
 
             self.Corr = cp.Corr(self.P, self.distribution)
-
-            print self.P.shape
-            print self.Corr.shape
-            print self.Corr[0].shape
-
-            print self.Corr
 
         except MemoryError:
             print "Memory error, calculations aborted"
 
 
 
+    def plotAll(self, filename):
+        self.plotConfidenceInterval(filename)
+        self.plotV_t(filename)
+        self.plotSensitivity(filename)
 
     def plotV_t(self, filename):
         color1 = 0
@@ -387,7 +475,7 @@ class UncertaintyEstimation():
         ax.spines["left"].set_edgecolor(tableau20[color1])
         plt.tight_layout()
         plt.savefig(os.path.join(self.outputdir,
-                    filename + "_variance_mean" + self.figureformat),
+                    filename + "_variance-mean" + self.figureformat),
                     bbox_inches="tight")
 
         plt.close()
@@ -409,7 +497,7 @@ class UncertaintyEstimation():
 
         plt.close()
 
-    def plotSensitivity(self):
+    def plotSensitivity(self, filename=""):
         parameter_names = self.parameters.getUncertain("name")
 
         for i in range(len(self.sensitivity)):
@@ -420,7 +508,7 @@ class UncertaintyEstimation():
             plt.ylim([0, 1.05])
             plt.savefig(os.path.join(self.outputdir,
                                      parameter_names[i] +
-                                     "_sensitivity" + self.figureformat),
+                                     "_sensitivity" + filename + self.figureformat),
                         bbox_inches="tight")
         plt.close()
 
@@ -431,7 +519,7 @@ class UncertaintyEstimation():
         plt.ylim([0, 1.05])
         plt.xlim([self.t[0], 1.3*self.t[-1]])
         plt.legend(parameter_names)
-        plt.savefig(os.path.join(self.outputdir, "all_sensitivity" + self.figureformat),
+        plt.savefig(os.path.join(self.outputdir, "all_sensitivity" + filename + self.figureformat),
                     bbox_inches="tight")
 
 
@@ -472,16 +560,18 @@ if __name__ == "__main__":
     distribution_function = Distribution(0.1).uniform
     distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
 
-    #test_parameters = "Rm"
+    test_parameters = "Rm"
+    #test_parameters = ["Rm", "Epas", "kdrsh", "catau"]
+    #test_parameters = ["gcat", "gcal",
+    #                   "ghbar", "gcanbar"]
     test_parameters = ["Rm", "Epas"]
-    #test_parameters = fitted_parameters
 
     memory_report = Memory()
     parameters = Parameters(original_parameters, distribution_function, test_parameters)
     #parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
 
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
-    test = UncertaintyEstimation(model, parameters, "figures/test", CPUs=mp.cpu_count()-1)
+    #test = UncertaintyEstimation(model, parameters, "figures/test", CPUs=mp.cpu_count()-1)
     #test.MC()
     # t1 = test.timePassed()
     # test.pseudoMC("Rm")
@@ -492,12 +582,13 @@ if __name__ == "__main__":
     # print "MC ", t2-t1
     # print "PC ", t3-t2
 
-#    test.singleParameters()
-    test.allParameters()
+    #test.singleParameters()
+#    test.allParameters()
 
-    #test_distributions = {"uniform": [0.05]}
-    #exploration = UncertaintyEstimations(model, fitted_parameters, test_distributions)
-    #exploration.exploreParameters()
+    test_distributions = {"uniform": [0.05, 0.06]}
+    #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
+    exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
+    exploration.exploreParameters()
 
     #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
     #exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
@@ -506,4 +597,4 @@ if __name__ == "__main__":
 
 
     subprocess.Popen(["play", "-q", "ship_bell.wav"])
-    print "The total runtime is: " + str(datetime.timedelta(seconds=(test.timePassed())))
+    print "The total runtime is: " + str(datetime.timedelta(seconds=(exploration.timePassed())))

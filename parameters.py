@@ -1,10 +1,12 @@
 # TODO Can remove the fitted parameter and test if the parameter has a distribution function?
 
+from distribution import Distribution
+
 class Parameters():
     def __init__(self, parameters, distributions, uncertain_parameters):
         """
         parameters: dict of all the default parameters the model has
-        fitted_parameters: list of all parameters that shall be examined
+        uncbertain_parameters: list of all parameters that shall be examined
         distribution_function: Either a function for all parameters, or a dictionary
                                with the distribution for each parameter
         """
@@ -53,7 +55,8 @@ class Parameters():
 
 
 class Parameter():
-    def __init__(self, name, value, distribution_function=None, uncertain=False):
+    def __init__(self, name, value, distribution_function=Distribution(0.1).normal,
+                 uncertain=False):
 
         self.name = name
         self.value = value
