@@ -34,9 +34,11 @@
 # TODO remove the plotting from this program, only save the data
 
 # Figures are always saved on the format:
-# outputdir/distribution_interval/parameter_value-that-is-plotted.figure-extension
+# output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
 
 # TODO use sumatra when starting runs
+
+# TODO save the entire class to file
 
 import time
 import datetime
@@ -45,6 +47,7 @@ import os
 import subprocess
 import sys
 import shutil
+import h5py
 
 import numpy as np
 import chaospy as cp
@@ -65,22 +68,24 @@ from parameters import Parameters
 
 class UncertaintyEstimations():
     def __init__(self, model, uncertain_parameters, distributions,
-                 outputdir="figures/",
+                 output_dir_figures="figures/",
                  figureformat=".png",
+                 output_dir_data="data/",
                  supress_output=True,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False):
 
         # Figures are always saved on the format:
-        # outputdir/distribution_interval/parameter_value-that-is-plotted.figure-format
+        # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
 
         self.UncertaintyEstimations = []
 
         self.model = model
         self.uncertain_parameters = uncertain_parameters
         self.distributions = distributions
-        self.outputdir = outputdir
+        self.output_dir_figures = output_dir_figures
+        self.output_dir_data = output_dir_data
 
         self.supress_output = supress_output
         self.CPUs = CPUs
@@ -99,30 +104,28 @@ class UncertaintyEstimations():
             print distribution_function
             print self.distributions[distribution_function]
             for interval in self.distributions[distribution_function]:
-                current_outputdir = os.path.join(self.outputdir,
-                                                 distribution_function + "_%g" % interval)
+                # TODO update this when figured out the saving stuff
+                current_output_dir_figures = os.path.join(self.output_dir_figures,
+                                                          distribution_function + "_%g" % interval)
                 distribution = getattr(Distribution(interval), distribution_function)
                 parameters = Parameters(self.model.parameters, distribution,
                                         self.uncertain_parameters)
                 self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
-                                                                         current_outputdir,
-                                                                         self.figureformat,
-                                                                         self.supress_output,
-                                                                         self.CPUs,
-                                                                         self.interpolate_union,
-                                                                         self.rosenblatt,
-                                                                         save_by_parameter=True))
+                                                                         output_dir_figures=current_output_dir_figures,
+                                                                         figureformat=self.figureformat,
+                                                                         output_dir_data=self.output_dir_data,
+                                                                         output_data_name=distribution_function + "_%g" % interval,
+                                                                         supress_output=self.supress_output,
+                                                                         CPUs=self.CPUs,
+                                                                         interpolate_union=self.interpolate_union,
+                                                                         rosenblatt=self.rosenblatt))
 
     def exploreParameters(self):
         for uncertaintyEstimation in self.UncertaintyEstimations:
-            print uncertaintyEstimation.outputdir
-            distribution, interval = uncertaintyEstimation.outputdir.split("/")[-1].split("_")
-
+            distribution, interval = uncertaintyEstimation.output_dir_figures.split("/")[-1].split("_")
             print "Running for: " + distribution + " " + interval
 
             uncertaintyEstimation.singleParameters()
-            # uncertaintyEstimation.outputdir = os.path.join(self.outputdir)
-            # uncertaintyEstimation.plotAll()
             uncertaintyEstimation.allParameters()
 
 
@@ -134,24 +137,30 @@ class UncertaintyEstimations():
 
 class UncertaintyEstimation():
     def __init__(self, model, parameters,
-                 outputdir="figures/",
+                 output_dir_figures="figures/",
                  figureformat=".png",
+                 save_data=True,
+                 output_dir_data="data/",
+                 output_data_name="uncertainty",
                  supress_output=True,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
-                 rosenblatt=False,
-                 save_by_parameter=False):
+                 rosenblatt=False):
         """
         model: Model object
         parameters: Parameter object
-        outputdir: Where to save the results. Default = "figures/"
+        output_dir_figures: Where to save the results. Default = "figures/"
 
         Figures are always saved on the format:
-        outputdir/distribution_interval/parameter_value-that-is-plotted.figure-format
+        output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
 
-        self.outputdir = outputdir
+        self.output_dir_figures = output_dir_figures
         self.figureformat = figureformat
+        self.save_data = save_data
+        #self.output_dir_data = output_dir_data
+        #self.output_data_name = output_data_name
+        self.output_file = os.path.join(output_dir_data, output_data_name)
 
         self.parameters = parameters
 
@@ -162,8 +171,6 @@ class UncertaintyEstimation():
 
         self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
-        self.save_by_parameter = save_by_parameter
-
 
         self.features = []
         self.M = 3
@@ -177,18 +184,32 @@ class UncertaintyEstimation():
         self.distribution = None
         self.solves = None
         self.t = None
-        self.P = None
-        self.nodes = None
+        self.E = None
+        self.Var = None
+        self.p_05 = None
+        self.p_95 = None
         self.sensitivity = None
         self.Corr = None
+        self.P = None
+        self.nodes = None
 
 
-        if os.path.isdir(self.outputdir):
-            shutil.rmtree(self.outputdir)
-        os.makedirs(self.outputdir)
+        if os.path.isdir(self.output_dir_figures):
+            shutil.rmtree(self.output_dir_figures)
+        os.makedirs(self.output_dir_figures)
+
+        if self.save_data:
+            if not os.path.isdir(output_dir_data):
+                os.makedirs(output_dir_data)
+            else:
+                if os.path.isfile(self.output_file):
+                    os.remove(self.output_file)
 
         self.t_start = time.time()
 
+
+    def __del__(self):
+        "delete"
 
 
     def toList(self):
@@ -386,6 +407,8 @@ class UncertaintyEstimation():
                 self.p_05 = np.percentile(self.U_mc, 5, 1)
                 self.p_95 = np.percentile(self.U_mc, 95, 1)
 
+                self.save(uncertain_parameter)
+
                 self.plotV_t(uncertain_parameter)
                 self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
 
@@ -410,11 +433,8 @@ class UncertaintyEstimation():
             self.E = cp.E(self.U_hat, self.distribution)
             self.Var = cp.Var(self.U_hat, self.distribution)
 
-            self.plotV_t("all")
-
             self.sensitivity = cp.Sens_t(self.U_hat, self.distribution)
 
-            self.plotSensitivity()
 
             samples = self.distribution.sample(self.nr_mc_samples, "M")
 
@@ -422,30 +442,30 @@ class UncertaintyEstimation():
             self.p_05 = np.percentile(self.U_mc, 5, 1)
             self.p_95 = np.percentile(self.U_mc, 95, 1)
 
+            self.save("all")
+
+            self.plotV_t("all")
+            self.plotSensitivity()
             self.plotConfidenceInterval("all_confidence-interval")
+
+
 
             self.Corr = cp.Corr(self.P, self.distribution)
 
         except MemoryError:
-            print "Memory error, calculations aborted"
+            print "Memory error: calculations aborted"
 
-
-
-    def plotAll(self, filename):
-        self.plotConfidenceInterval(filename)
-        self.plotV_t(filename)
-        self.plotSensitivity(filename)
 
     def plotV_t(self, filename):
         color1 = 0
         color2 = 8
 
         prettyPlot(self.t, self.E, "Mean, " + filename, "time", "voltage", color1)
-        plt.savefig(os.path.join(self.outputdir, filename + "_mean" + self.figureformat),
+        plt.savefig(os.path.join(self.output_dir_figures, filename + "_mean" + self.figureformat),
                     bbox_inches="tight")
 
         prettyPlot(self.t, self.Var, "Variance, " + filename, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.outputdir, filename + "_variance" + self.figureformat),
+        plt.savefig(os.path.join(self.output_dir_figures, filename + "_variance" + self.figureformat),
                     bbox_inches="tight")
 
         ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + filename,
@@ -465,7 +485,7 @@ class UncertaintyEstimation():
         ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
         ax.spines["left"].set_edgecolor(tableau20[color1])
         plt.tight_layout()
-        plt.savefig(os.path.join(self.outputdir,
+        plt.savefig(os.path.join(self.output_dir_figures,
                     filename + "_variance-mean" + self.figureformat),
                     bbox_inches="tight")
 
@@ -483,7 +503,7 @@ class UncertaintyEstimation():
                   max([max(self.p_95), max(self.p_05), max(self.E)])])
 
         plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
-        plt.savefig(os.path.join(self.outputdir, filename + self.figureformat),
+        plt.savefig(os.path.join(self.output_dir_figures, filename + self.figureformat),
                     bbox_inches="tight")
 
         plt.close()
@@ -497,7 +517,7 @@ class UncertaintyEstimation():
                        "sensitivity", i, True)
             plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
-            plt.savefig(os.path.join(self.outputdir,
+            plt.savefig(os.path.join(self.output_dir_figures,
                                      parameter_names[i] +
                                      "_sensitivity" + filename + self.figureformat),
                         bbox_inches="tight")
@@ -510,11 +530,34 @@ class UncertaintyEstimation():
         plt.ylim([0, 1.05])
         plt.xlim([self.t[0], 1.3*self.t[-1]])
         plt.legend(parameter_names)
-        plt.savefig(os.path.join(self.outputdir, "all_sensitivity" + filename + self.figureformat),
+        plt.savefig(os.path.join(self.output_dir_figures,
+                                 "all_sensitivity" + filename + self.figureformat),
                     bbox_inches="tight")
 
 
+    def save(self, group_name="default"):
+        ### TODO expand the save funcition to also save parameters and model information
 
+        f = h5py.File(self.output_file, 'a')
+        f.attrs["Uncertain parameters"] = self.parameters.getUncertain("name")
+        if group_name in f.keys():
+            del f[group_name]
+        group = f.create_group(group_name)
+
+        if self.t is not None:
+            group.create_dataset("t", data=self.t)
+        if self.E is not None:
+            group.create_dataset("E", data=self.E)
+        if self.Var is not None:
+            group.create_dataset("Var", data=self.Var)
+        if self.sensitivity is not None:
+            group.create_dataset("sensitivity", data=self.sensitivity)
+        if self.p_05 is not None:
+            group.create_dataset("p_05", data=self.p_05)
+        if self.p_95 is not None:
+            group.create_dataset("p_95", data=self.p_95)
+
+        f.close()
 
 if __name__ == "__main__":
 
@@ -580,7 +623,6 @@ if __name__ == "__main__":
     #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
     exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
     exploration.exploreParameters()
-
     #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
     #exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
     #exploration.exploreParameters()
