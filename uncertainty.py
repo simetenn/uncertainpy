@@ -101,8 +101,6 @@ class UncertaintyEstimations():
 
     def initialize(self):
         for distribution_function in self.distributions:
-            print distribution_function
-            print self.distributions[distribution_function]
             for interval in self.distributions[distribution_function]:
                 # TODO update this when figured out the saving stuff
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
@@ -158,8 +156,6 @@ class UncertaintyEstimation():
         self.output_dir_figures = output_dir_figures
         self.figureformat = figureformat
         self.save_data = save_data
-        #self.output_dir_data = output_dir_data
-        #self.output_data_name = output_data_name
         self.output_file = os.path.join(output_dir_data, output_data_name)
 
         self.parameters = parameters
@@ -508,7 +504,7 @@ class UncertaintyEstimation():
 
         plt.close()
 
-    def plotSensitivity(self, filename=""):
+    def plotSensitivity(self):
         parameter_names = self.parameters.getUncertain("name")
 
         for i in range(len(self.sensitivity)):
@@ -519,7 +515,7 @@ class UncertaintyEstimation():
             plt.ylim([0, 1.05])
             plt.savefig(os.path.join(self.output_dir_figures,
                                      parameter_names[i] +
-                                     "_sensitivity" + filename + self.figureformat),
+                                     "_sensitivity" + self.figureformat),
                         bbox_inches="tight")
         plt.close()
 
@@ -531,15 +527,20 @@ class UncertaintyEstimation():
         plt.xlim([self.t[0], 1.3*self.t[-1]])
         plt.legend(parameter_names)
         plt.savefig(os.path.join(self.output_dir_figures,
-                                 "all_sensitivity" + filename + self.figureformat),
+                                 "all_sensitivity" + self.figureformat),
                     bbox_inches="tight")
 
 
     def save(self, group_name="default"):
-        ### TODO expand the save funcition to also save parameters and model information
+        ### TODO expand the save funcition to also save parameters and model informationty
 
         f = h5py.File(self.output_file, 'a')
-        f.attrs["Uncertain parameters"] = self.parameters.getUncertain("name")
+
+        if "name" not in f.attrs.keys():
+            f.attrs["name"] = self.output_file.split("/")[-1]
+        if "Uncertain parameters" not in f.attrs.keys():
+            f.attrs["Uncertain parameters"] = self.parameters.getUncertain("name")
+
         if group_name in f.keys():
             del f[group_name]
         group = f.create_group(group_name)
