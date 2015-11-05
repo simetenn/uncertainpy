@@ -2,6 +2,7 @@ import os
 import h5py
 import sys
 import shutil
+import glob
 
 import matplotlib.pyplot as plt
 
@@ -25,11 +26,11 @@ class PlotUncertainty():
     def loadData(self, filename):
         self.f = h5py.File(os.path.join(self.data_dir, filename), 'r')
 
-        self.output_figures_dir = os.path.join(self.output_figures_dir, filename)
+        self.full_output_figures_dir = os.path.join(self.output_figures_dir, filename)
 
-        if os.path.isdir(self.output_figures_dir):
-            shutil.rmtree(self.output_figures_dir)
-        os.makedirs(self.output_figures_dir)
+        if os.path.isdir(self.full_output_figures_dir):
+            shutil.rmtree(self.full_output_figures_dir)
+        os.makedirs(self.full_output_figures_dir)
 
 
 
@@ -48,11 +49,11 @@ class PlotUncertainty():
 
 
         prettyPlot(t, E, "Mean, " + parameter, "time", "voltage", color1)
-        plt.savefig(os.path.join(self.output_figures_dir, parameter + "_mean" + self.figureformat),
+        plt.savefig(os.path.join(self.full_output_figures_dir, parameter + "_mean" + self.figureformat),
                     bbox_inches="tight")
 
         prettyPlot(t, Var, "Variance, " + parameter, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.output_figures_dir, parameter + "_variance" + self.figureformat),
+        plt.savefig(os.path.join(self.full_output_figures_dir, parameter + "_variance" + self.figureformat),
                     bbox_inches="tight")
 
         ax, tableau20 = prettyPlot(t, E, "Mean and variance, " + parameter,
@@ -73,7 +74,7 @@ class PlotUncertainty():
         ax.spines["left"].set_edgecolor(tableau20[color1])
         plt.tight_layout()
 
-        plt.savefig(os.path.join(self.output_figures_dir,
+        plt.savefig(os.path.join(self.full_output_figures_dir,
                     parameter + "_variance-mean" + self.figureformat),
                     bbox_inches="tight")
 
@@ -81,7 +82,6 @@ class PlotUncertainty():
 
 
     def confidenceInterval(self, parameter):
-
 
         t = self.f[parameter]["t"][:]
         E = self.f[parameter]["E"][:]
@@ -99,7 +99,7 @@ class PlotUncertainty():
                   max([max(p_95), max(p_05), max(E)])])
 
         plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
-        plt.savefig(os.path.join(self.output_figures_dir, parameter + self.figureformat),
+        plt.savefig(os.path.join(self.full_output_figures_dir, parameter + "_confidence-interval" + self.figureformat),
                     bbox_inches="tight")
 
         plt.close()
@@ -108,8 +108,6 @@ class PlotUncertainty():
 
         t = self.f["all"]["t"][:]
         sensitivity = self.f["all"]["sensitivity"][:]
-        print sensitivity
-
 
         parameter_names = self.f.attrs["Uncertain parameters"]
 
@@ -119,7 +117,7 @@ class PlotUncertainty():
                        "sensitivity", i, True)
             plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
-            plt.savefig(os.path.join(self.output_figures_dir,
+            plt.savefig(os.path.join(self.full_output_figures_dir,
                                      parameter_names[i] +
                                      "_sensitivity" + self.figureformat),
                         bbox_inches="tight")
@@ -132,7 +130,7 @@ class PlotUncertainty():
         plt.ylim([0, 1.05])
         plt.xlim([t[0], 1.3*t[-1]])
         plt.legend(parameter_names)
-        plt.savefig(os.path.join(self.output_figures_dir,
+        plt.savefig(os.path.join(self.full_output_figures_dir,
                                  "all_sensitivity" + self.figureformat),
                     bbox_inches="tight")
 
@@ -141,8 +139,13 @@ class PlotUncertainty():
         for parameter in self.f.keys():
             self.vt(parameter)
             self.confidenceInterval(parameter)
+
         self.sensitivity()
 
+    def allData(self):
+        for f in glob.glob(self.data_dir + "*"):
+            self.loadData(f.split("/")[-1])
+            self.all()
 
 if __name__ == "__main__":
     data_dir = "data/"
@@ -153,6 +156,5 @@ if __name__ == "__main__":
                            output_figures_dir=output_figures_dir,
                            figureformat=figureformat)
 
-    plot.loadData("uniform_0.05")
-    plot.all()
-    #plot.plotV_t("Rm")
+    #plot.loadData("uniform_0.05")
+    plot.allData()

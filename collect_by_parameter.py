@@ -6,9 +6,10 @@ import glob
 path = "figures/"
 outputpath = "figures/parameter_sorted"
 file_extension = ".png"
+current_path = os.getcwd()
 
 
-def saveByParameters():
+def saveByParameters(hardcopy=False):
     print "Copying files..."
 
     if os.path.isdir(outputpath):
@@ -25,7 +26,10 @@ def saveByParameters():
                 if not os.path.isdir(outputdir):
                      os.makedirs(outputdir)
 
-                shutil.copy(f, outputdir + "/" + interval + "_" + value + file_extension)
+                if hardcopy:
+                    shutil.copy(f, outputdir + "/" + interval + "_" + value + file_extension)
+                else:
+                    os.symlink(os.path.join(current_path, f), outputdir + "/" + interval + "_" + value)
 
 
 def createGIF():
@@ -51,4 +55,4 @@ def createGIF():
 
 if __name__ == '__main__':
         saveByParameters()
-        createGIF()
+        #createGIF()
