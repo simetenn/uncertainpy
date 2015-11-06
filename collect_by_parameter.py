@@ -9,7 +9,7 @@ file_extension = ".png"
 current_path = os.getcwd()
 
 
-def saveByParameters(hardcopy=False):
+def sortByParameters(path=path, outputpath=outputpath, ardcopy=False):
     print "Copying files..."
 
     if os.path.isdir(outputpath):
@@ -46,7 +46,7 @@ def createGIF():
                 values.append(value)
 
             for gif_value in set(values):
-                cmd = "convert -set delay 100 *_%s%s %s.gif" % ( gif_value, file_extension, gif_value)
+                cmd = "convert -set delay 100 *_%s%s %s.gif" % (gif_value, file_extension, gif_value)
                 os.system(cmd)
 
             os.chdir("..")
@@ -54,5 +54,5 @@ def createGIF():
     os.chdir("../..")
 
 if __name__ == '__main__':
-        saveByParameters()
+        sortByParameters()
         #createGIF()

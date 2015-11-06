@@ -26,11 +26,11 @@ def prettyPlot(x, y, title=None, xlabel=None, ylabel=None,
         r, g, b = tableau20[i]
         tableau20[i] = (r / 255., g / 255., b / 255.)
 
+    plt.rcParams["figure.figsize"] = figsize
     if plt.gcf() == "None":
         plt.figure(figsize=figsize)
     else:
         if new_figure:
-            plt.rcParams["figure.figsize"] = figsize
             plt.clf()
 
     ax = plt.subplot(111)
