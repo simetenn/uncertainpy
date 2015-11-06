@@ -7,18 +7,20 @@ import re
 
 import matplotlib.pyplot as plt
 
-from collect_by_parameter import sortByParameters, createGIF
 from prettyPlot import prettyPlot
+from collect_by_parameter import sortByParameters
 
-### TODO rewrite the gif to use less memory when creating GIF(Only load one dataset at the time)
+### TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
 
-### TODO restructure gif to be less xomplex and use more functions
+### TODO refactor gif() to be less complex and use more functions
+
+### TODO, it seems there are a bug in finding teh maximum and minimum values
 
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",
                  output_figures_dir="figures/",
-                 output_gif_dir="gif/",
+                 output_gif_dir="gifs/",
                  figureformat=".png"):
 
         self.data_dir = data_dir
@@ -150,6 +152,8 @@ class PlotUncertainty():
 
 
     def gif(self):
+        print "Creating gifs..."
+
         if os.path.isdir(self.output_gif_dir):
             shutil.rmtree(self.output_gif_dir)
         os.makedirs(self.output_gif_dir)
@@ -169,6 +173,7 @@ class PlotUncertainty():
                 else:
                     plotting_order[distribution] = [interval]
 
+
         uncertain_parameters = []
         for parameter in files[distribution + "_" + interval].keys():
             uncertain_parameters.append(parameter)
@@ -180,16 +185,18 @@ class PlotUncertainty():
                 shutil.rmtree(self.tmp_gif_output)
             os.makedirs(self.tmp_gif_output)
 
-            # Finding the max and min data point for all distributions for each parameter
-            max_data = {}
-            min_data = {}
+            # Create the plot for each parameter
             for parameter in uncertain_parameters:
+
+                # Finding the max and min data point for all distributions for each parameter
+                max_data = {}
+                min_data = {}
                 for interval in plotting_order[distribution]:
                     filename = distribution + "_" + interval
                     f = files[filename]
                     for datasett in f[parameter].keys():
                         if datasett == "sensitivity":
-                            break
+                            continue
 
                         max_value = max(f[parameter][datasett])
                         min_value = min(f[parameter][datasett])
@@ -204,8 +211,6 @@ class PlotUncertainty():
                             min_data[datasett] = min_value
 
 
-            # Create the plot for each parameter
-            for parameter in uncertain_parameters:
                 for interval in plotting_order[distribution]:
                     filename = distribution + "_" + interval
                     f = files[filename]
@@ -262,7 +267,6 @@ class PlotUncertainty():
 
                     save_name = parameter + "_" + interval + "_variance-mean" + self.figureformat
                     plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-
                     plt.close()
 
 
@@ -286,18 +290,18 @@ class PlotUncertainty():
                     if parameter == "all":
                         sensitivity = f[parameter]["sensitivity"][:]
 
-                        for i in range(len(sensitivity)):
-                            title = uncertain_parameters[i] + ": Sensitivity, " + distribution + " " + interval
+                        sensitivity_parameters = f.attrs["Uncertain parameters"]
+                        for i in range(len(sensitivity_parameters)):
+                            title = sensitivity_parameters[i] + ": Sensitivity, " + distribution + " " + interval
                             prettyPlot(t, sensitivity[i], title, "time", "sensitivity", i, True)
-                            #plt.title(title)
                             plt.ylim([0, 1.05])
-                            save_name = uncertain_parameters[i] + "_" + interval + "_sensitivity" + self.figureformat
+                            save_name = sensitivity_parameters[i] + "_" + interval + "_sensitivity" + self.figureformat
                             plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                             plt.close()
 
                         for i in range(len(sensitivity)):
                             title = "all: Sensitivity, " + distribution + " " + interval
-                            prettyPlot(t, sensitivity[i], "sensitivity", "time",
+                            prettyPlot(t, sensitivity[i], title, "time",
                                        "sensitivity", i, False)
 
                         plt.ylim([0, 1.05])
@@ -319,72 +323,23 @@ class PlotUncertainty():
                     final_name = os.path.join(outputdir, parameter + "_" + plot_type)
                     file_name = os.path.join(self.tmp_gif_output, "%s_*_%s%s" % (parameter, plot_type, self.figureformat))
                     cmd = "convert -set delay 100 %s %s.gif" % (file_name, final_name)
+
                     os.system(cmd)
 
             #shutil.rmtree(self.tmp_gif_output)
 
 
-
-        # for distribution in plotting_order:
-        #     data = {}
-        #     max_data = {}
-        #     parameters = files[]
-        #     for interval in plotting_order[distribution]:
-        #         filename = distribution + "_" + interval
-        #         f = files[filename]
-        #
-        #         for parameter in f.keys():
-        #             for datasett in f[parameter].keys():
-        #                 if datasett in max_data:
-        #
-        #                 else:
-        #                     max_data[datasett]
-        #                 print datasett
-
-                    # t = self.f[parameter]["t"][:]
-                    # E = self.f[parameter]["E"][:]
-                    # Var = self.f[parameter]["Var"][:]
-                    # p_05 = self.f[parameter]["p_05"][:]
-                    # p_95 = self.f[parameter]["p_95"][:]
-
-
-                    # V(t) plot
-
-                    # Confidence interval plot
-
-                    # # Sensitivity plot
-                    # if parameter == "all":
-                    #     sensitivity = self.f[parameter]["sensitivity"][:]
-
-
-
-
-
-                # for parameter in self.f.keys():
-                #     self.vt(parameter)
-                #     self.confidenceInterval(parameter)
-                # f.close()
-                # print interval
-
-
-        # for folder in os.listdir(path):
-        #     if re.search("._\d", folder):
-        #         distribution, interval = folder.split("_")
-        #         tmp_path = os.path.join(path, folder)
-        #
-        #
-        # self.f = h5py.File(os.path.join(self.data_dir, filename), 'r')
-        # self.full_output_figures_dir = os.path.join(self.output_figures_dir, filename)
-
 if __name__ == "__main__":
     data_dir = "data/"
     output_figures_dir = "figures/"
     figureformat = ".png"
+    output_gif_dir = "gifs/"
 
     plot = PlotUncertainty(data_dir=data_dir,
                            output_figures_dir=output_figures_dir,
-                           figureformat=figureformat)
+                           figureformat=figureformat,
+                           output_gif_dir=output_gif_dir)
 
-    #plot.loadData("uniform_0.05")
-    #plot.allData()
+    plot.allData()
     plot.gif()
+    sortByParameters()

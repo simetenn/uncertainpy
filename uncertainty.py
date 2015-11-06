@@ -57,11 +57,14 @@ import multiprocess as mp
 
 from xvfbwrapper import Xvfb
 
+# Imported from my own files
 from prettyPlot import prettyPlot
 from memory import Memory
 from distribution import Distribution
 from model import Model
 from parameters import Parameters
+from plotUncertainty import PlotUncertainty
+from collect_by_parameter import sortByParameters
 # from evaluateNodeFunction import evaluateNodeFunction
 
 
@@ -566,6 +569,11 @@ if __name__ == "__main__":
     modelpath = "neuron_models/dLGN_modelDB/"
     parameterfile = "Parameters.hoc"
 
+    data_dir = "data/"
+    output_figures_dir = "figures/"
+    figureformat = ".png"
+    output_gif_dir = "gifs/"
+
     original_parameters = {
         "rall": 113,       # Taken from litterature
         "cap": 1.1,        #
@@ -599,7 +607,7 @@ if __name__ == "__main__":
     #test_parameters = ["Rm", "Epas", "kdrsh", "catau"]
     #test_parameters = ["gcat", "gcal",
     #                   "ghbar", "gcanbar"]
-    test_parameters = ["Rm", "Epas"]
+    test_parameters = ["Rm", "Epas", "kdrsh"]
 
     memory_report = Memory()
     parameters = Parameters(original_parameters, distribution_function, test_parameters)
@@ -620,7 +628,7 @@ if __name__ == "__main__":
     #test.singleParameters()
 #    test.allParameters()
 
-    test_distributions = {"uniform": [0.05, 0.06]}
+    test_distributions = {"uniform": [0.04, 0.05, 0.06]}
     #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
     exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
     exploration.exploreParameters()
@@ -628,6 +636,14 @@ if __name__ == "__main__":
     #exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
     #exploration.exploreParameters()
 
+    plot = PlotUncertainty(data_dir=data_dir,
+                           output_figures_dir=output_figures_dir,
+                           figureformat=figureformat,
+                           output_gif_dir=output_gif_dir)
+
+    plot.allData()
+    plot.gif()
+    sortByParameters()
 
 
     subprocess.Popen(["play", "-q", "ship_bell.wav"])

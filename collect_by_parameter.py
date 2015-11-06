@@ -9,7 +9,7 @@ file_extension = ".png"
 current_path = os.getcwd()
 
 
-def sortByParameters(path=path, outputpath=outputpath, ardcopy=False):
+def sortByParameters(path=path, outputpath=outputpath, hardcopy=False):
     print "Copying files..."
 
     if os.path.isdir(outputpath):
