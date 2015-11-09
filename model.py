@@ -109,7 +109,8 @@ class Model():
             self.memory_report.save()
             self.memory_report.saveAll()
             if self.memory_report.totalPercent() > self.memory_threshold:
-                print "\nWARNING: memory threshold exceeded, aborting simulation"
+                print "\nWARNING: memory threshold exceeded, %g > % " % (self.memory_report.totalPercent(), self.memory_threshold)
+                print "           aborting simulation"
                 simulation.terminate()
                 return -1
 

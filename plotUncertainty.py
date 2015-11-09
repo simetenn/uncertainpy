@@ -14,8 +14,6 @@ from collect_by_parameter import sortByParameters
 
 ### TODO refactor gif() to be less complex and use more functions
 
-### TODO, it seems there are a bug in finding teh maximum and minimum values
-
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",
@@ -29,7 +27,7 @@ class PlotUncertainty():
         self.figureformat = figureformat
         self.f = None
 
-        self.tmp_gif_output = "tmp_gif_output/"
+        self.tmp_gif_output = ".tmp_gif_output/"
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
     def loadData(self, filename):
@@ -299,14 +297,14 @@ class PlotUncertainty():
                             plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                             plt.close()
 
-                        for i in range(len(sensitivity)):
+                        for i in range(len(sensitivity_parameters)):
                             title = "all: Sensitivity, " + distribution + " " + interval
                             prettyPlot(t, sensitivity[i], title, "time",
                                        "sensitivity", i, False)
 
                         plt.ylim([0, 1.05])
                         plt.xlim([t[0], 1.3*t[-1]])
-                        plt.legend(uncertain_parameters)
+                        plt.legend(sensitivity_parameters)
                         save_name = "all_" + interval + "_sensitivity" + self.figureformat
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
@@ -326,7 +324,7 @@ class PlotUncertainty():
 
                     os.system(cmd)
 
-            #shutil.rmtree(self.tmp_gif_output)
+            shutil.rmtree(self.tmp_gif_output)
 
 
 if __name__ == "__main__":

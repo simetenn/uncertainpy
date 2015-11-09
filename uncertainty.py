@@ -290,12 +290,17 @@ class UncertaintyEstimation():
         solves = []
         if self.CPUs > 0:
             pool = mp.Pool(processes=self.CPUs)
-            solves = pool.map(self.evaluateNode, nodes.T)
-            # solves = pool.map(evaluateNodeFunction, self.toList())
-
+            try :
+                solves = pool.map(self.evaluateNode, nodes.T)
+                # solves = pool.map(evaluateNodeFunction, self.toList())
+            except MemoryError:
+                return -1
         else:
             for node in nodes.T:
-                solves.append(self.evaluateNode(node))
+                try:
+                    solves.append(self.evaluateNode(node))
+                except MemoryError:
+                    return -1
 
         if self.supress_output:
             vdisplay.stop()
@@ -614,36 +619,30 @@ if __name__ == "__main__":
     #parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
 
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
-    #test = UncertaintyEstimation(model, parameters, "figures/test", CPUs=mp.cpu_count()-1)
-    #test.MC()
-    # t1 = test.timePassed()
-    # test.pseudoMC("Rm")
-    # test.plotV_t("MC")
-    # t2 = test.timePassed()
-    # test.singleParameters()
-    # t3 = test.timePassed()
-    # print "MC ", t2-t1
-    # print "PC ", t3-t2
 
-    #test.singleParameters()
-#    test.allParameters()
-
-    test_distributions = {"uniform": [0.04, 0.05, 0.06]}
+    #test_distributions = {"uniform": [0.04, 0.05], "normal": [0.04, 0.05]}
     #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
-    exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
+    test_distributions = {"normal": [0.06]}
+    exploration = UncertaintyEstimations(model, fitted_parameters, test_distributions)
     exploration.exploreParameters()
-    #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-    #exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    #exploration.exploreParameters()
 
-    plot = PlotUncertainty(data_dir=data_dir,
-                           output_figures_dir=output_figures_dir,
-                           figureformat=figureformat,
-                           output_gif_dir=output_gif_dir)
+    # percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
+    # #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+    # distributions = {"uniform": percentages, "normal": percentages}
+    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    # exploration.exploreParameters()
 
-    plot.allData()
-    plot.gif()
-    sortByParameters()
+
+
+
+    # plot = PlotUncertainty(data_dir=data_dir,
+    #                        output_figures_dir=output_figures_dir,
+    #                        figureformat=figureformat,
+    #                        output_gif_dir=output_gif_dir)
+    #
+    # plot.allData()
+    # plot.gif()
+    # sortByParameters()
 
 
     subprocess.Popen(["play", "-q", "ship_bell.wav"])
