@@ -17,15 +17,16 @@ import multiprocess as mp
 from xvfbwrapper import Xvfb
 
 
+
 class Model():
     def __init__(self, modelfile, modelpath, parameterfile, parameters,
-                 memory_report=None, supress_output=False):
+                 memory_threshold=None, supress_output=False):
         """
         modelfile: Name of the modelfile
         modelpath: Path to the modelfile
         parameterfile: Name of file containing parameteres
         parameters: Parameters as a dictionar
-        memory_report: Memory object
+        memory_limit: the percentage where the simulation aborts
         """
 
         self.modelfile = modelfile
@@ -33,18 +34,21 @@ class Model():
         self.parameterfile = parameterfile
         self.parameters = parameters
 
-        self.memory_report = memory_report
         self.supress_output = supress_output
 
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
 
-        self.memory_threshold = 95
-        self.delta_poll = 10
 
         if supress_output:
             self.vdisplay = Xvfb()
             self.vdisplay.start()
+
+        # if memory_threshold:
+        #     from memory import Memory
+        #     self.memory_report = Memory()
+        #     # self.memory_threshold = memory_threshold
+
 
         self.clean()
 
@@ -105,16 +109,16 @@ class Model():
 
         # TODO Bug here, seems i only check memory once
         # Note this checks total memory used by all applications
-        if self.memory_report:
-            if self.memory_report.totalPercent() > self.memory_threshold:
-                print "\nWARNING: memory threshold exceeded, %g > %g" % (self.memory_report.totalPercent(), self.memory_threshold)
-                print "           aborting simulation"
-                simulation.terminate()
-                raise MemoryError("memory threshold exceeded")
-                
-
-            time.sleep(self.delta_poll)
-
+        # if self.memory_threshold:
+        #     if self.memory_report.totalPercent() > self.memory_threshold:
+        #         print "\nWARNING: memory threshold exceeded, %g > %g" % (self.memory_report.totalPercent(), self.memory_threshold)
+        #         print "           aborting simulation"
+        #         simulation.terminate()
+        #         raise MemoryError("memory threshold exceeded")
+        #
+        #
+        #     time.sleep(self.memory_report.delta_poll)
+        #
         ut, err = simulation.communicate()
 
         if simulation.returncode != 0:

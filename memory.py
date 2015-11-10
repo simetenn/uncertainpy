@@ -1,26 +1,33 @@
 import os
 import time
 import psutil
+import multiprocess as mp
 
 class Memory:
     """
     Class for reporting memory usage
     """
-    def __init__(self):
+    def __init__(self, delta_poll=10):
+        self.delta_poll = delta_poll
+
         self.t_start = time.time()
         self._proc_status = '/proc/%d/status' % os.getpid()
 
         self._scale = {'kB': 1024.0, 'mB': 1024.0*1024.0,
                        'KB': 1024.0, 'MB': 1024.0*1024.0}
+
         self.filename = "memory.dat"
         self.total_filename = "memory_total.dat"
-        self.f = open(self.filename, "w")
-        self.total_f = open(self.total_filename, "w")
 
-    def __del__(self):
-        self.f.close()
-        self.total_f.close()
+        self.exit = mp.Event()
 
+
+    # def __del__(self):
+    #     #self.f.close()
+    #     try:
+    #         self.total_f.close()
+    #     except:
+    #         pass
 
     def _VmB(self, VmKey):
         """
@@ -65,8 +72,7 @@ class Memory:
     def percent(self):
         return self.memory()/psutil.virtual_memory().total*100
 
-
-    def save(self, info=""):
+    def saveCurrentProcess(self, info=""):
         memory_GB = "%.2f" % (self.memory()/1024**3)
         t = "%.2f" % (time.time()-self.t_start)
         p = "%.2f" % (self.percent())
@@ -74,7 +80,7 @@ class Memory:
             info = " : " + info
         self.f.write(t + " " + p + " " + memory_GB + info + "\n")
 
-    def saveAll(self, info=""):
+    def saveTotal(self, info=""):
         memory_GB = "%.2f" % (self.totalUsed()/1024**3)
         t = "%.2f" % (time.time()-self.t_start)
         p = "%.2f" % (self.totalPercent())
@@ -100,37 +106,42 @@ class Memory:
     def totalUsed(self):
         return psutil.virtual_memory().used
 
+    def log(self):
+        self.total_f = open(self.total_filename, "w")
+        self.t_start = time.time()
+        while not self.exit.is_set():
+            self.saveTotal()
+            time.sleep(self.delta_poll)
+
+        self.total_f.close()
+
+
+    def start(self):
+        self.p = mp.Process(target=self.log)
+        self.p.start()
+
+
+    def end(self):
+        # Is this necesary?
+        self.exit.set()
+        time.sleep(self.delta_poll + 1)
+        self.p.terminate()
+
 if __name__ == "__main__":
     import numpy as np
     import matplotlib.pyplot as plt
     from prettyPlot import prettyPlot
 
-    data = np.loadtxt("memory.dat", unpack=True)
-    t = data[0]
-    percentage = data[1]
-    memory = data[2]
-
-
     total_data = np.loadtxt("memory_total.dat", unpack=True)
-    total_time = data[0]
-    total_percentage = data[1]
-    total_memory = data[2]
+    total_time = total_data[0]
+    total_percentage = total_data[1]
+    total_memory = total_data[2]
 
 
-    prettyPlot(t, percentage, "Memory usage, percentage", "time, s", "percentage")
     prettyPlot(total_time, total_percentage, "Memory usage, percentage", "time, s",
                "percentage", 1, new_figure=False)
-    plt.legend(["self", "total"])
     plt.savefig("memory_percentage.png", bbox_inches="tight")
 
-    prettyPlot(t, memory, "Memory usage, GB", "time, s", "memory, GB")
     prettyPlot(total_time, total_memory, "Memory usage, GB", "time, s", "memory, GB",
                1, new_figure=False)
-    plt.legend(["self", "total"])
     plt.savefig("memory_GB.png", bbox_inches="tight")
-
-    #prettyPlot(total_time, total_memory, "Total memory usage, percentage", "time, s", "percentage")
-    #plt.savefig("memory_total_percentage.png", bbox_inches="tight")
-
-    #prettyPlot(total_time, total_memory, "Memory usage, GB", "time, s", "memory, GB")
-    #plt.savefig("memory_total_GB.png", bbox_inches="tight")

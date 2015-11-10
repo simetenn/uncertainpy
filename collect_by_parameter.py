@@ -24,7 +24,7 @@ def sortByParameters(path=path, outputpath=outputpath, hardcopy=False):
 
                 outputdir = os.path.join(outputpath, distribution, parameter)
                 if not os.path.isdir(outputdir):
-                     os.makedirs(outputdir)
+                    os.makedirs(outputdir)
 
                 if hardcopy:
                     shutil.copy(f, outputdir + "/" + interval + "_" + value + file_extension)
