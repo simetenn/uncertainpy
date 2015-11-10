@@ -2,6 +2,7 @@
 
 # TODO Test correlation
 
+# TODO to many npy files are created
 
 # TODO Do dependent variable stuff
 
@@ -29,9 +30,6 @@
 # a distribution function?
 
 # TODO have the option of saving the exploration by parameters instead of by distribution
-
-# TODO WORKING ON THIS!!!!
-# TODO remove the plotting from this program, only save the data
 
 # Figures are always saved on the format:
 # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
@@ -138,6 +136,7 @@ class UncertaintyEstimations():
 
 class UncertaintyEstimation():
     def __init__(self, model, parameters,
+                 save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
@@ -156,6 +155,7 @@ class UncertaintyEstimation():
         output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
 
+        self.save_figures = save_figures
         self.output_dir_figures = output_dir_figures
         self.figureformat = figureformat
         self.save_data = save_data
@@ -192,17 +192,12 @@ class UncertaintyEstimation():
         self.P = None
         self.nodes = None
 
-
-        if os.path.isdir(self.output_dir_figures):
-            shutil.rmtree(self.output_dir_figures)
-        os.makedirs(self.output_dir_figures)
-
-        if self.save_data:
+        if save_data:
             if not os.path.isdir(output_dir_data):
                 os.makedirs(output_dir_data)
-            else:
-                if os.path.isfile(self.output_file):
-                    os.remove(self.output_file)
+            # else:
+            #     if os.path.isfile(self.output_file):
+            #         os.remove(self.output_file)
 
         self.t_start = time.time()
 
@@ -411,10 +406,13 @@ class UncertaintyEstimation():
                 self.p_05 = np.percentile(self.U_mc, 5, 1)
                 self.p_95 = np.percentile(self.U_mc, 95, 1)
 
-                self.save(uncertain_parameter)
+                if self.save_data:
+                    self.save(uncertain_parameter)
 
-                self.plotV_t(uncertain_parameter)
-                self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
+                self.plotAll(uncertain_parameter, single_parameter=True)
+
+                # self.plotV_t(uncertain_parameter)
+                # self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
 
 
             except MemoryError:
@@ -446,18 +444,28 @@ class UncertaintyEstimation():
             self.p_05 = np.percentile(self.U_mc, 5, 1)
             self.p_95 = np.percentile(self.U_mc, 95, 1)
 
-            self.save("all")
+            if self.save_data:
+                self.save("all")
 
-            self.plotV_t("all")
-            self.plotSensitivity()
-            self.plotConfidenceInterval("all_confidence-interval")
+            if self.save_figures:
+                self.plotAll("all")
 
-
-
-            self.Corr = cp.Corr(self.P, self.distribution)
+            #self.Corr = cp.Corr(self.P, self.distribution)
 
         except MemoryError:
             print "Memory error: calculations aborted"
+
+
+    def plotAll(self, filename, single_parameter=False):
+        if os.path.isdir(self.output_dir_figures):
+            shutil.rmtree(self.output_dir_figures)
+        os.makedirs(self.output_dir_figures)
+
+        self.plotV_t(filename)
+        self.plotConfidenceInterval(filename + "_confidence-interval")
+
+        if not single_parameter:
+            self.plotSensitivity()
 
 
     def plotV_t(self, filename):
@@ -620,17 +628,20 @@ if __name__ == "__main__":
 
     model = Model(modelfile, modelpath, parameterfile, original_parameters, memory_report)
 
-    #test_distributions = {"uniform": [0.04, 0.05], "normal": [0.04, 0.05]}
+    test_distributions = {"uniform": [0.05, 0.06], "normal": [0.04, 0.05]}
     #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
-    test_distributions = {"normal": [0.06]}
+
+
+
+    test_distributions = {"normal": [0.05, 0.06]}
     exploration = UncertaintyEstimations(model, fitted_parameters, test_distributions)
     exploration.exploreParameters()
 
-    # percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-    # #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-    # distributions = {"uniform": percentages, "normal": percentages}
-    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    # exploration.exploreParameters()
+    percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
+    #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+    distributions = {"uniform": percentages, "normal": percentages}
+    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    exploration.exploreParameters()
 
 
 

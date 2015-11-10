@@ -39,8 +39,8 @@ class Model():
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
 
-        self.memory_threshold = 90
-        self.delta_poll = 1
+        self.memory_threshold = 95
+        self.delta_poll = 10
 
         if supress_output:
             self.vdisplay = Xvfb()
@@ -62,11 +62,11 @@ class Model():
         if self.supress_output:
             self.vdisplay.stop()
 
-    def clean(self):
-        for f in glob.glob("tmp_U_*.npy"):
+    def clean(self, process="*"):
+        for f in glob.glob("tmp_U_%s.npy" % (process)):
             os.remove(f)
 
-        for f in glob.glob("tmp_t_*.npy"):
+        for f in glob.glob("tmp_t_%s.npy" % (process)):
             os.remove(f)
 
 
@@ -106,13 +106,12 @@ class Model():
         # TODO Bug here, seems i only check memory once
         # Note this checks total memory used by all applications
         if self.memory_report:
-            self.memory_report.save()
-            self.memory_report.saveAll()
             if self.memory_report.totalPercent() > self.memory_threshold:
-                print "\nWARNING: memory threshold exceeded, %g > % " % (self.memory_report.totalPercent(), self.memory_threshold)
+                print "\nWARNING: memory threshold exceeded, %g > %g" % (self.memory_report.totalPercent(), self.memory_threshold)
                 print "           aborting simulation"
                 simulation.terminate()
-                return -1
+                raise MemoryError("memory threshold exceeded")
+                
 
             time.sleep(self.delta_poll)
 
@@ -125,5 +124,7 @@ class Model():
 
         V = np.load("tmp_U_%s.npy" % current_process)
         t = np.load("tmp_t_%s.npy" % current_process)
+
+        self.clean(current_process)
 
         return t, V
