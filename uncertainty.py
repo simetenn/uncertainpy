@@ -511,7 +511,7 @@ class UncertaintyEstimation():
             total_sensitivity += self.sensitivity_ranking[parameter]
         for parameter in self.sensitivity_ranking:
             self.sensitivity_ranking[parameter] /= total_sensitivity
-            print parameter, self.sensitivity_ranking[parameter]
+
 
     def plotV_t(self, parameter):
         if parameter not in self.E:
@@ -635,11 +635,19 @@ class UncertaintyEstimation():
         if parameter in self.p_95:
             group.create_dataset("p_95", data=self.p_95[parameter])
 
+
+        # TODO check if this saves correctly
         if self.sensitivity and parameter == "all":
             group.create_dataset("sensitivity", data=self.sensitivity[parameter])
-            # for parameter in self.parameters.getUncertain("name"):
-            #     if "Uncertain parameters" not in f.attrs.keys():
-            #         f.attrs["Uncertain parameters"] =
+
+            i = 0
+            for parameter in self.parameters.getUncertain("name"):
+                if parameter not in f.keys():
+                    f.create_group(parameter)
+
+                f[parameter].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
+                f[parameter].create_dataset("sensitivity", data=self.sensitivity["all"][i])
+                i += 1
 
 
         f.close()
@@ -674,7 +682,7 @@ if __name__ == "__main__":
     }
 
     memory = Memory(10)
-    memory.start()
+    # memory.start()
 
     fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
                          "ghbar", "catau", "gcanbar"]
@@ -690,7 +698,7 @@ if __name__ == "__main__":
     #test_parameters = ["Rm", "Epas", "kdrsh", "catau"]
     #test_parameters = ["gcat", "gcal",
     #                   "ghbar", "gcanbar"]
-    test_parameters = ["Rm", "Epas", "kdrsh"]
+    test_parameters = ["Rm", "Epas"]
 
     memory_report = Memory()
     parameters = Parameters(original_parameters, distribution_function, test_parameters)
@@ -708,17 +716,22 @@ if __name__ == "__main__":
     # exploration = UncertaintyEstimations(model, test_parameters, test_distributions, memory_log=True)
     # exploration.exploreParameters()
 
+    try:
+        #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
+        #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+        percentages = np.linspace(0.01, 0.1, 19)
+        percentages = [0.02, 0.03, 0.04]
+        distributions = {"uniform": percentages}
+        exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+        exploration.exploreParameters()
+        #
+        # distributions = {"normal": percentages}
+        # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+        # exploration.exploreParameters()
+        # memory.end()
 
-    percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-    #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-    distributions = {"uniform": percentages}
-    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    exploration.exploreParameters()
-    #
-    distributions = {"normal": percentages}
-    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    exploration.exploreParameters()
-    memory.end()
+    except:
+        memory.end()
 
 
 

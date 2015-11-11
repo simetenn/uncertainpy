@@ -17,17 +17,16 @@ class Memory:
                        'KB': 1024.0, 'MB': 1024.0*1024.0}
 
         self.filename = "memory.dat"
-        self.total_filename = "memory_total.dat"
 
         self.exit = mp.Event()
 
 
-    # def __del__(self):
-    #     #self.f.close()
-    #     try:
-    #         self.total_f.close()
-    #     except:
-    #         pass
+    def __del__(self):
+        #self.f.close()
+        try:
+            self.total_f.close()
+        except:
+            pass
 
     def _VmB(self, VmKey):
         """
@@ -132,7 +131,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from prettyPlot import prettyPlot
 
-    total_data = np.loadtxt("memory_total.dat", unpack=True)
+    total_data = np.loadtxt("memory.dat", unpack=True)
     total_time = total_data[0]
     total_percentage = total_data[1]
     total_memory = total_data[2]
@@ -144,4 +143,4 @@ if __name__ == "__main__":
 
     prettyPlot(total_time, total_memory, "Memory usage, GB", "time, s", "memory, GB",
                1, new_figure=False)
-    plt.savefig("memory_GB.png", bbox_inches="tight")
+    plt.savefig("memory_total.png", bbox_inches="tight")
