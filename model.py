@@ -107,7 +107,7 @@ class Model():
 
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # TODO Bug here, seems i only check memory once
+        # TODO Reintroduce this pice of code
         # Note this checks total memory used by all applications
         # if self.memory_threshold:
         #     if self.memory_report.totalPercent() > self.memory_threshold:
