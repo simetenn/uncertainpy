@@ -80,6 +80,8 @@ class UncertaintyEstimations():
                  rosenblatt=False,
                  memory_log=False):
 
+        print "Creating UncertaintyEstimation object"
+
         # Figures are always saved on the format:
         # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
 
@@ -99,22 +101,41 @@ class UncertaintyEstimations():
         self.memory_log = memory_log
 
 
-        self.initialize()
+        #self.initialize()
 
         self.t_start = time.time()
 
-        # if self.memory_log:
-        #     self.memory = Memory()
-        #     self.memory.start()
+
+    # def initialize(self):
+    #     for distribution_function in self.distributions:
+    #         for interval in self.distributions[distribution_function]:
+    #             # TODO update this when figured out the saving stuff
+    #             current_output_dir_figures = os.path.join(self.output_dir_figures,
+    #                                                       distribution_function + "_%g" % interval)
+    #             distribution = getattr(Distribution(interval), distribution_function)
+    #             parameters = Parameters(self.model.parameters, distribution,
+    #                                     self.uncertain_parameters)
+    #
+    #             self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
+    #                                                                      output_dir_figures=current_output_dir_figures,
+    #                                                                      figureformat=self.figureformat,
+    #                                                                      output_dir_data=self.output_dir_data,
+    #                                                                      output_data_name=distribution_function + "_%g" % interval,
+    #                                                                      supress_output=self.supress_output,
+    #                                                                      CPUs=self.CPUs,
+    #                                                                      interpolate_union=self.interpolate_union,
+    #                                                                      rosenblatt=self.rosenblatt))
+    #
+    # def exploreParameters(self):
+    #     for uncertaintyEstimation in self.UncertaintyEstimations:
+    #         distribution, interval = uncertaintyEstimation.output_dir_figures.split("/")[-1].split("_")
+    #         print "Running for: " + distribution + " " + interval
+    #
+    #         uncertaintyEstimation.singleParameters()
+    #         uncertaintyEstimation.allParameters()
 
 
-    # def __del__(self):
-    #     print "deleting "
-    #     if self.memory_log:
-    #         print "deleting "
-    #         self.memory.end()
-
-    def initialize(self):
+    def exploreParameters(self):
         for distribution_function in self.distributions:
             for interval in self.distributions[distribution_function]:
                 # TODO update this when figured out the saving stuff
@@ -123,25 +144,21 @@ class UncertaintyEstimations():
                 distribution = getattr(Distribution(interval), distribution_function)
                 parameters = Parameters(self.model.parameters, distribution,
                                         self.uncertain_parameters)
-                self.UncertaintyEstimations.append(UncertaintyEstimation(self.model, parameters,
-                                                                         output_dir_figures=current_output_dir_figures,
-                                                                         figureformat=self.figureformat,
-                                                                         output_dir_data=self.output_dir_data,
-                                                                         output_data_name=distribution_function + "_%g" % interval,
-                                                                         supress_output=self.supress_output,
-                                                                         CPUs=self.CPUs,
-                                                                         interpolate_union=self.interpolate_union,
-                                                                         rosenblatt=self.rosenblatt))
+                                        
+                print "Running for: " + distribution_function + " " + str(interval)
+                uncertainty_estimation = UncertaintyEstimation(self.model, parameters,
+                                                               output_dir_figures=current_output_dir_figures,
+                                                               figureformat=self.figureformat,
+                                                               output_dir_data=self.output_dir_data,
+                                                               output_data_name=distribution_function + "_%g" % interval,
+                                                               supress_output=self.supress_output,
+                                                               CPUs=self.CPUs,
+                                                               interpolate_union=self.interpolate_union,
+                                                               rosenblatt=self.rosenblatt)
 
-    def exploreParameters(self):
-        for uncertaintyEstimation in self.UncertaintyEstimations:
-            distribution, interval = uncertaintyEstimation.output_dir_figures.split("/")[-1].split("_")
-            print "Running for: " + distribution + " " + interval
-
-            uncertaintyEstimation.singleParameters()
-            uncertaintyEstimation.allParameters()
-
-
+                uncertainty_estimation.singleParameters()
+                uncertainty_estimation.allParameters()
+                del uncertainty_estimation
 
     def timePassed(self):
         return time.time() - self.t_start
@@ -234,7 +251,7 @@ class UncertaintyEstimation():
 
 
     def __del__(self):
-        "delete"
+        print "deleting UncertaintyEstimation object"
 
 
     def toList(self):
@@ -460,6 +477,7 @@ class UncertaintyEstimation():
             #self.singleParameters()
             return
 
+        print "\rRunning for all                     "
         if self.createPCExpansion() == -1:
             print "Calculations aborted for all"
             return -1
@@ -716,22 +734,21 @@ if __name__ == "__main__":
     # exploration = UncertaintyEstimations(model, test_parameters, test_distributions, memory_log=True)
     # exploration.exploreParameters()
 
-    try:
-        #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-        #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-        percentages = np.linspace(0.01, 0.1, 19)
-        percentages = [0.02, 0.03, 0.04]
-        distributions = {"uniform": percentages}
-        exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-        exploration.exploreParameters()
-        #
-        # distributions = {"normal": percentages}
-        # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-        # exploration.exploreParameters()
-        # memory.end()
+    #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+    #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
+    percentages = np.linspace(0.01, 0.1, 19)
+    percentages = [0.02, 0.03, 0.04]
+    distributions = {"uniform": percentages}
+    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    exploration.exploreParameters()
+    #
+    # distributions = {"normal": percentages}
+    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    # exploration.exploreParameters()
+    # memory.end()
 
-    except:
-        memory.end()
+
+    memory.end()
 
 
 
