@@ -183,7 +183,8 @@ class UncertaintyEstimation():
         self.resetValues()
 
 
-        if supress_output:
+        if self.supress_output:
+
             self.vdisplay = Xvfb()
             self.vdisplay.start()
 
