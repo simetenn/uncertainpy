@@ -106,7 +106,7 @@ class Memory:
         return psutil.virtual_memory().used
 
     def log(self):
-        self.total_f = open(self.total_filename, "w")
+        self.total_f = open(self.filename, "w")
         self.t_start = time.time()
         while not self.exit.is_set():
             self.saveTotal()
@@ -136,11 +136,10 @@ if __name__ == "__main__":
     total_percentage = total_data[1]
     total_memory = total_data[2]
 
-
     prettyPlot(total_time, total_percentage, "Memory usage, percentage", "time, s",
-               "percentage", 1, new_figure=False)
+               "percentage", 1)
     plt.savefig("memory_percentage.png", bbox_inches="tight")
 
     prettyPlot(total_time, total_memory, "Memory usage, GB", "time, s", "memory, GB",
-               1, new_figure=False)
+               1)
     plt.savefig("memory_total.png", bbox_inches="tight")

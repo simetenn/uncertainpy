@@ -7,7 +7,7 @@
 
 import os
 import subprocess
-import time
+#import time
 import sys
 import glob
 
@@ -132,3 +132,7 @@ class Model():
         self.clean(current_process)
 
         return t, V
+
+
+    def runNoCalculation(self, new_parameters={}):
+        pass
