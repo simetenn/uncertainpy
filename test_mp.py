@@ -1,10 +1,13 @@
 import multiprocess as mp
 
+from xvfbwrapper import Xvfb
+
 def f(x):
-    print mp.current_process().name.split("-")[-1]
-    return x**2
+    with Xvfb() as xvfb:
+        pass
 
 pool = mp.Pool(4)
-result = pool.map(f, range(1, 5))
-print mp.current_process()
-print mp.current_process().name.split("-")[-1]
+for i in range(500):
+
+    #with Xvfb() as xvfb:
+    pool.map(f, range(1, 9))

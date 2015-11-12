@@ -40,6 +40,9 @@
 
 # TODO Add suport for canceling a simulation when it is above a certain memory theeshold
 
+# TODO Pool is created to many times
+# TODO xvbf is taking alot of time to start and stop, fix this
+
 import time
 import datetime
 import scipy.interpolate
@@ -52,7 +55,7 @@ import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocess as mp
-# import multiprocessing as mp
+#import multiprocessing as mping
 
 from xvfbwrapper import Xvfb
 
@@ -66,6 +69,9 @@ from plotUncertainty import PlotUncertainty
 from collect_by_parameter import sortByParameters
 # from evaluateNodeFunction import evaluateNodeFunction
 
+
+def empty(node):
+    pass
 
 
 class UncertaintyEstimations():
@@ -122,9 +128,9 @@ class UncertaintyEstimations():
                                                                interpolate_union=self.interpolate_union,
                                                                rosenblatt=self.rosenblatt)
 
-                #uncertainty_estimation.singleParameters()
-                #uncertainty_estimation.allParameters()
-                uncertainty_estimation.noCalculations()
+                uncertainty_estimation.singleParameters()
+                uncertainty_estimation.allParameters()
+                #uncertainty_estimation.noCalculations()
                 del uncertainty_estimation
 
     def timePassed(self):
@@ -177,6 +183,14 @@ class UncertaintyEstimation():
         self.resetValues()
 
 
+        if supress_output:
+            self.vdisplay = Xvfb()
+            self.vdisplay.start()
+
+        # if self.CPUs > 1:
+        #     self.pool = mp.Pool(processes=self.CPUs)
+
+
         if save_data:
             if not os.path.isdir(output_dir_data):
                 os.makedirs(output_dir_data)
@@ -188,7 +202,22 @@ class UncertaintyEstimation():
 
 
     def __del__(self):
-        pass
+        if self.CPUs > 1 and hasattr(self, 'pool'):
+            self.pool.close()
+
+        if self.supress_output:
+            self.vdisplay.stop()
+
+
+    def __getstate__(self):
+        self_dict = self.__dict__.copy()
+        del self_dict['pool']
+        return self_dict
+
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+
 
     def resetValues(self):
         self.parameter_names = None
@@ -284,19 +313,19 @@ class UncertaintyEstimation():
             vdisplay.start()
 
         solves = []
-        if self.CPUs > 0:
-            pool = mp.Pool(processes=self.CPUs)
+        if self.CPUs > 1:
             try:
-                solves = pool.map(self.evaluateNode, nodes.T)
+                self.pool = mp.Pool(processes=self.CPUs)
+                solves = self.pool.map(self.evaluateNode, nodes.T)
                 # solves = pool.map(evaluateNodeFunction, self.toList())
             except MemoryError:
                 return -1
         else:
-            for node in nodes.T:
-                try:
+            try:
+                for node in nodes.T:
                     solves.append(self.evaluateNode(node))
-                except MemoryError:
-                    return -1
+            except MemoryError:
+                return -1
 
         if self.supress_output:
             vdisplay.stop()
@@ -355,8 +384,8 @@ class UncertaintyEstimation():
 
         #self.CPUs = 0
         if self.CPUs > 0:
-            pool = mp.Pool(processes=self.CPUs)
-            solves = pool.map(self.evaluateNode, samples.T)
+            #pool = mp.Pool(processes=self.CPUs)
+            solves = self.pool.map(self.evaluateNode, samples.T)
 
         else:
             for sample in samples.T:
@@ -462,30 +491,30 @@ class UncertaintyEstimation():
 
     def noCalculations(self):
         for uncertain_parameter in self.parameters.uncertain_parameters:
-
+            print "No calculations"
             parameter_space = [self.parameters.get(uncertain_parameter).parameter_space]
-
+            #
             self.distribution = cp.J(*parameter_space)
             self.P = cp.orth_ttr(self.M, self.distribution)
 
             nodes = self.distribution.sample(2*len(self.P)+1, "M")
 
-            if self.supress_output:
-                vdisplay = Xvfb()
-                vdisplay.start()
+            #
+            # if self.supress_output:
+            #     vdisplay = Xvfb()
+            #     vdisplay.start()
+            #
+            # self.pool = mping.Pool(processes=self.CPUs)
+            # pool.map(self.model.runNoCalculation(), nodes.T)
+            self.pool.map(empty, nodes.T)
+            #
+            #
+            #
+            # if self.supress_output:
+            #     vdisplay.stop()
 
-            solves = []
-
-            pool = mp.Pool(processes=self.CPUs)
-            pool.map(self.model.runNoCalculation(), nodes.T)
-
-
-
-            if self.supress_output:
-                vdisplay.stop()
-
-    def evaluateNodeNoCalculation(self, node):
-        self.model.runNoCalculation()
+    # def evaluateNodeNoCalculation(self, node):
+    #     self.model.runNoCalculation()
 
     def plotAll(self, parameter="all"):
         if os.path.isdir(self.output_dir_figures):
@@ -705,17 +734,17 @@ if __name__ == "__main__":
 
 
     #
-    percentages = np.linspace(0.01, 0.1, 50)
-    # test_distributions = {"uniform": percentages}
-    # exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
-    # exploration.exploreParameters()
+    percentages = np.linspace(0.01, 0.1, 9)
+    test_distributions = {"uniform": percentages}
+    exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
+    exploration.exploreParameters()
 
     #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
     #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
     # # percentages = [0.02, 0.03, 0.04, 0.05]
-    distributions = {"uniform": percentages}
-    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    exploration.exploreParameters()
+    # distributions = {"uniform": percentages}
+    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    # exploration.exploreParameters()
 
     # distributions = {"normal": percentages}
     # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
