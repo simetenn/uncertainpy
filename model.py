@@ -20,7 +20,7 @@ from xvfbwrapper import Xvfb
 
 class Model():
     def __init__(self, modelfile, modelpath, parameterfile, parameters,
-                 memory_threshold=None, supress_output=True):
+                 memory_threshold=None, supress_output=False):
         """
         modelfile: Name of the modelfile
         modelpath: Path to the modelfile
@@ -40,7 +40,7 @@ class Model():
         self.filedir = os.path.dirname(self.filepath)
 
 
-        if supress_output:
+        if self.supress_output:
             self.vdisplay = Xvfb()
             self.vdisplay.start()
 
@@ -54,21 +54,19 @@ class Model():
 
 
     def __del__(self):
-        self.delete()
-        if self.supress_output:
-            self.vdisplay.stop()
-        #self.vdisplay.stop()
-        current_process = mp.current_process().name.split("-")
-        if current_process[0] == "PoolWorker":
-            if current_process[-1] == 1:
-                self.delete()
-        else:
-            self.delete()
+        if mp.current_process().name == "MainProcess":
+            self.clean()
+            if self.supress_output:
+                self.vdisplay.stop()
 
-    def delete(self):
-        self.clean()
-        # if self.supress_output:
-        #     self.vdisplay.stop()
+    def startSupress(self):
+        self.supress_output = True
+        self.vdisplay = Xvfb()
+        self.vdisplay.start()
+
+    def endSupress(self):
+        self.supress_output = False
+        self.vdisplay.stop()
 
     def clean(self, process="*"):
         for f in glob.glob("tmp_U_%s.npy" % (process)):

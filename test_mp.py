@@ -6,6 +6,8 @@ def f(x):
     with Xvfb() as xvfb:
         pass
 
+print mp.current_process().name
+
 pool = mp.Pool(4)
 for i in range(500):
 

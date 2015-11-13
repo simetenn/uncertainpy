@@ -50,12 +50,12 @@ import os
 import subprocess
 import shutil
 import h5py
-
+import gc
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocess as mp
-#import multiprocessing as mping
+import multiprocessing as mping
 
 from xvfbwrapper import Xvfb
 
@@ -67,7 +67,7 @@ from model import Model
 from parameters import Parameters
 from plotUncertainty import PlotUncertainty
 from collect_by_parameter import sortByParameters
-# from evaluateNodeFunction import evaluateNodeFunction
+from evaluateNodeFunction import evaluateNodeFunction
 
 
 def empty(node):
@@ -131,7 +131,12 @@ class UncertaintyEstimations():
                 uncertainty_estimation.singleParameters()
                 uncertainty_estimation.allParameters()
                 #uncertainty_estimation.noCalculations()
-                del uncertainty_estimation
+                #print "closing pool"
+                #uncertainty_estimation.pool.close()
+                #del uncertainty_estimation
+
+                #gc.collect()
+                print gc.garbage
 
     def timePassed(self):
         return time.time() - self.t_start
@@ -182,14 +187,14 @@ class UncertaintyEstimation():
 
         self.resetValues()
 
-
         if self.supress_output:
+            self.model.startSupress()
 
-            self.vdisplay = Xvfb()
-            self.vdisplay.start()
+        if self.CPUs > 1:
+            print "starting pool"
+            self.pool = mp.Pool(processes=self.CPUs)
 
-        # if self.CPUs > 1:
-        #     self.pool = mp.Pool(processes=self.CPUs)
+
 
 
         if save_data:
@@ -203,11 +208,17 @@ class UncertaintyEstimation():
 
 
     def __del__(self):
-        if self.CPUs > 1 and hasattr(self, 'pool'):
+        # if self.CPUs > 1 and hasattr(self, 'pool'):
+        #     print "closing pool"
+        try:
             self.pool.close()
-
-        if self.supress_output:
-            self.vdisplay.stop()
+            print "closing pool object"
+        except:
+            pass
+        if mp.current_process().name == "MainProcess":
+            print "destructor"
+        # if self.supress_output:
+        #     self.vdisplay.stop()
 
 
     def __getstate__(self):
@@ -219,6 +230,13 @@ class UncertaintyEstimation():
     def __setstate__(self, state):
         self.__dict__.update(state)
 
+
+    # def startSupress(self):
+    #     self.vdisplay = Xvfb()
+    #     self.vdisplay.start()
+    #
+    # def stopSupress(self):
+    #     self.vdisplay.stop()
 
     def resetValues(self):
         self.parameter_names = None
@@ -248,6 +266,7 @@ class UncertaintyEstimation():
     def evaluateNode(self, node):
         if isinstance(node, float) or isinstance(node, int):
                 node = [node]
+
 
         # New setparameters
         tmp_parameters = {}
@@ -308,15 +327,14 @@ class UncertaintyEstimation():
             nodes = self.distribution.sample(2*len(self.P)+1, "M")
             # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
-
-        if self.supress_output:
-            vdisplay = Xvfb()
-            vdisplay.start()
+        #
+        # if self.supress_output:
+        #     vdisplay = Xvfb()
+        #     vdisplay.start()
 
         solves = []
         if self.CPUs > 1:
             try:
-                self.pool = mp.Pool(processes=self.CPUs)
                 solves = self.pool.map(self.evaluateNode, nodes.T)
                 # solves = pool.map(evaluateNodeFunction, self.toList())
             except MemoryError:
@@ -327,9 +345,9 @@ class UncertaintyEstimation():
                     solves.append(self.evaluateNode(node))
             except MemoryError:
                 return -1
-
-        if self.supress_output:
-            vdisplay.stop()
+        #
+        # if self.supress_output:
+        #     vdisplay.stop()
 
         solves = np.array(solves)
 
@@ -735,7 +753,8 @@ if __name__ == "__main__":
 
 
     #
-    percentages = np.linspace(0.01, 0.1, 9)
+    #percentages = np.linspace(0.01, 0.1, 9)
+    percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09]
     test_distributions = {"uniform": percentages}
     exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
     exploration.exploreParameters()
