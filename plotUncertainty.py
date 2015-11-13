@@ -192,12 +192,14 @@ class PlotUncertainty():
                 for interval in plotting_order[distribution]:
                     filename = distribution + "_" + interval
                     f = files[filename]
+
                     for datasett in f[parameter].keys():
-                        if datasett == "sensitivity":
+                        if datasett == "sensitivity" or datasett == "total sensitivity":
                             continue
 
                         max_value = max(f[parameter][datasett])
                         min_value = min(f[parameter][datasett])
+
 
                         if datasett in max_data:
                             if max_value > max_data[datasett]:
@@ -226,6 +228,8 @@ class PlotUncertainty():
                     ### V(t)
                     color1 = 0
                     color2 = 8
+
+                    print min_data.keys()
 
                     title = parameter + ": Mean, " + distribution + " " + interval
                     #plt.rcParams["figure.figsize"] = (10, 7.5)

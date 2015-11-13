@@ -4,12 +4,10 @@
 
 # TODO to many npy files are created
 
-# TODO Do dependent variable stuff
 
 # TODO Do a regression analysis to figure out which variables are dependent on
 # each other
 
-# TODO Do a mc analysis after u_hat is generated
 
 # TODO Instead of giving results as an average of the response, make it
 # feature based. For example, count the number of spikes, and the
@@ -21,10 +19,6 @@
 # filter and a high pass filter.
 
 # TODO Use a recursive neural network
-
-
-# TODO Atm parameter are both in the model object and in the parameter object.
-# Make it so they only are one place?
 
 # TODO Can remove the uncertain parameter and instead test if the parameter has
 # a distribution function?
@@ -43,6 +37,11 @@
 # TODO Pool is created to many times
 # TODO xvbf is taking alot of time to start and stop, fix this
 
+# TODO Remove the model class from uncertainty estimation as it is no longer used.
+# TODO Atm parameter are both in the model object and in the parameter object.
+# Make it so they only are one place?
+
+
 import time
 import datetime
 import scipy.interpolate
@@ -53,7 +52,7 @@ import h5py
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
-#import multiprocess as mp
+
 import multiprocessing as mp
 
 from xvfbwrapper import Xvfb
@@ -129,13 +128,7 @@ class UncertaintyEstimations():
 
                 uncertainty_estimation.singleParameters()
                 uncertainty_estimation.allParameters()
-                #uncertainty_estimation.noCalculations()
-                #print "closing pool"
-                #uncertainty_estimation.pool.close()
                 del uncertainty_estimation
-
-                #gc.collect()
-                #print gc.garbage
 
     def timePassed(self):
         return time.time() - self.t_start
@@ -187,7 +180,6 @@ class UncertaintyEstimation():
         self.resetValues()
 
         if self.supress_output:
-            print "starting display"
             self.vdisplay = Xvfb()
             self.vdisplay.start()
 
@@ -207,11 +199,9 @@ class UncertaintyEstimation():
 
     def __del__(self):
         if self.CPUs > 1:
-            print "destructor"
             self.pool.close()
 
         if self.supress_output:
-            print "stopping display"
             self.vdisplay.stop()
 
 
@@ -332,6 +322,7 @@ class UncertaintyEstimation():
             except MemoryError:
                 return -1
 
+
         solves = np.array(solves)
 
         # Use union to work on all time values when interpolation.
@@ -384,9 +375,7 @@ class UncertaintyEstimation():
 
         solves = []
 
-        #self.CPUs = 0
-        if self.CPUs > 0:
-            #pool = mp.Pool(processes=self.CPUs)
+        if self.CPUs > 1:
             solves = self.pool.map(self.evaluateNode, samples.T)
 
         else:
@@ -457,9 +446,6 @@ class UncertaintyEstimation():
     def allParameters(self):
         if len(self.parameters.uncertain_parameters) <= 1:
             print "Only 1 uncertain parameter"
-            # if self.U_hat is None:
-            #     print "Running singleParameters() instead"
-            #self.singleParameters()
             return
 
         print "\rRunning for all                     "
@@ -491,32 +477,6 @@ class UncertaintyEstimation():
             print "Memory error: calculations aborted"
 
 
-    def noCalculations(self):
-        for uncertain_parameter in self.parameters.uncertain_parameters:
-            print "No calculations"
-            parameter_space = [self.parameters.get(uncertain_parameter).parameter_space]
-            #
-            self.distribution = cp.J(*parameter_space)
-            self.P = cp.orth_ttr(self.M, self.distribution)
-
-            nodes = self.distribution.sample(2*len(self.P)+1, "M")
-
-            #
-            # if self.supress_output:
-            #     vdisplay = Xvfb()
-            #     vdisplay.start()
-            #
-            # self.pool = mping.Pool(processes=self.CPUs)
-            # pool.map(self.model.runNoCalculation(), nodes.T)
-            self.pool.map(empty, nodes.T)
-            #
-            #
-            #
-            # if self.supress_output:
-            #     vdisplay.stop()
-
-    # def evaluateNodeNoCalculation(self, node):
-    #     self.model.runNoCalculation()
 
     def plotAll(self, parameter="all"):
         if os.path.isdir(self.output_dir_figures):
@@ -633,11 +593,6 @@ class UncertaintyEstimation():
                     bbox_inches="tight")
 
 
-    def saveAll(self):
-        self.save()
-        for parameter in self.parameters.getUncertain("name"):
-            self.save(parameter)
-
     def save(self, parameter="all"):
         ### TODO expand the save funcition to also save parameters and model informationty
 
@@ -654,15 +609,15 @@ class UncertaintyEstimation():
             del f[parameter]
         group = f.create_group(parameter)
 
-        if parameter in self.t:
+        if self.t is not None:
             group.create_dataset("t", data=self.t)
-        if parameter in self.E:
+        if self.E is not None:
             group.create_dataset("E", data=self.E)
-        if parameter in self.Var:
+        if self.Var is not None:
             group.create_dataset("Var", data=self.Var)
-        if parameter in self.p_05:
+        if self.p_05 is not None:
             group.create_dataset("p_05", data=self.p_05)
-        if parameter in self.p_95:
+        if self.p_95 is not None:
             group.create_dataset("p_95", data=self.p_95)
 
 
@@ -736,22 +691,22 @@ if __name__ == "__main__":
 
 
     #
-    #percentages = np.linspace(0.01, 0.1, 9)
-    percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09]
-    test_distributions = {"uniform": percentages}
-    exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
-    exploration.exploreParameters()
+    percentages = np.linspace(0.01, 0.1, 41)
+    # percentages = [0.02, 0.03, 0.04]
+    # test_distributions = {"uniform": percentages}
+    # exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
+    # exploration.exploreParameters()
 
     #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
     #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
     # # percentages = [0.02, 0.03, 0.04, 0.05]
-    # distributions = {"uniform": percentages}
-    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    # exploration.exploreParameters()
+    distributions = {"uniform": percentages}
+    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    exploration.exploreParameters()
 
-    # distributions = {"normal": percentages}
-    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    # exploration.exploreParameters()
+    distributions = {"normal": percentages}
+    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    exploration.exploreParameters()
     memory.end()
 
 
