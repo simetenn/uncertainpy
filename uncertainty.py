@@ -54,8 +54,8 @@ import gc
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
-import multiprocess as mp
-import multiprocessing as mping
+#import multiprocess as mp
+import multiprocessing as mp
 
 from xvfbwrapper import Xvfb
 
@@ -335,8 +335,8 @@ class UncertaintyEstimation():
         solves = []
         if self.CPUs > 1:
             try:
-                solves = self.pool.map(self.evaluateNode, nodes.T)
-                # solves = pool.map(evaluateNodeFunction, self.toList())
+                #solves = self.pool.map(self.evaluateNode, nodes.T)
+                solves = self.pool.map(evaluateNodeFunction, self.toList())
             except MemoryError:
                 return -1
         else:
