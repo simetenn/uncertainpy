@@ -1,6 +1,7 @@
 import sys
 import subprocess
 import scipy
+import os
 
 import numpy as np
 import multiprocessing as mp
@@ -52,10 +53,14 @@ def evaluateNodeFunction(data):
     V = np.load("tmp_U_%s.npy" % current_process)
     t = np.load("tmp_t_%s.npy" % current_process)
 
-    # Do a feature selection here. Make it so several feature
+    os.remove("tmp_U_%s.npy" % current_process)
+    os.remove("tmp_t_%s.npy" % current_process)
+
+
+    # TODO Do a feature selection here. Make it so several feature
     # selections are performed at this step.
     for feature in features:
-        V = feature(V)
+        pass
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
 

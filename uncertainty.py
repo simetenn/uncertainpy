@@ -50,7 +50,6 @@ import os
 import subprocess
 import shutil
 import h5py
-import gc
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
@@ -133,7 +132,7 @@ class UncertaintyEstimations():
                 #uncertainty_estimation.noCalculations()
                 #print "closing pool"
                 #uncertainty_estimation.pool.close()
-                #del uncertainty_estimation
+                del uncertainty_estimation
 
                 #gc.collect()
                 #print gc.garbage
@@ -188,13 +187,12 @@ class UncertaintyEstimation():
         self.resetValues()
 
         if self.supress_output:
-            self.model.startSupress()
+            print "starting display"
+            self.vdisplay = Xvfb()
+            self.vdisplay.start()
 
         if self.CPUs > 1:
-            print "starting pool"
             self.pool = mp.Pool(processes=self.CPUs)
-
-
 
 
         if save_data:
@@ -208,39 +206,29 @@ class UncertaintyEstimation():
 
 
     def __del__(self):
-        # if self.CPUs > 1 and hasattr(self, 'pool'):
-        #     print "closing pool"
-        try:
-            self.pool.close()
-            print "closing pool object"
-        except:
-            pass
-        if mp.current_process().name == "MainProcess":
+        if self.CPUs > 1:
             print "destructor"
-        # if self.supress_output:
-        #     self.vdisplay.stop()
+            self.pool.close()
+
+        if self.supress_output:
+            print "stopping display"
+            self.vdisplay.stop()
 
 
-    def __getstate__(self):
-        self_dict = self.__dict__.copy()
-        del self_dict['pool']
-        return self_dict
-
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
-
-
-    # def startSupress(self):
-    #     self.vdisplay = Xvfb()
-    #     self.vdisplay.start()
+    # def __getstate__(self):
+    #     self_dict = self.__dict__.copy()
+    #     del self_dict['pool']
+    #     return self_dict
     #
-    # def stopSupress(self):
-    #     self.vdisplay.stop()
+    #
+    # def __setstate__(self, state):
+    #     self.__dict__.update(state)
+
 
     def resetValues(self):
         self.parameter_names = None
         self.parameter_space = None
+
 
         self.U_hat = None
         self.distribution = None
@@ -255,11 +243,10 @@ class UncertaintyEstimation():
         self.P = None
         self.nodes = None
 
-    def toList(self):
+    def evaluateNodeFunctionList(self, tmp_parameter_name, nodes):
         data = []
-        for node in self.nodes.T:
-            data.append((node, self.tmp_parameter_name, modelfile, modelpath, self.features))
-
+        for node in nodes:
+            data.append((node, tmp_parameter_name, self.model.modelfile, self.model.modelpath, self.features))
         return data
 
 
@@ -292,10 +279,10 @@ class UncertaintyEstimation():
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is "all":
             parameter_space = self.parameters.getUncertain("parameter_space")
-            self.tmp_parameter_name = self.parameters.getUncertain("name")
+            tmp_parameter_name = self.parameters.getUncertain("name")
         else:
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
-            self.tmp_parameter_name = [parameter_name]
+            tmp_parameter_name = [parameter_name]
 
 
 
@@ -327,27 +314,23 @@ class UncertaintyEstimation():
             nodes = self.distribution.sample(2*len(self.P)+1, "M")
             # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
-        #
-        # if self.supress_output:
-        #     vdisplay = Xvfb()
-        #     vdisplay.start()
 
         solves = []
         if self.CPUs > 1:
             try:
-                #solves = self.pool.map(self.evaluateNode, nodes.T)
-                solves = self.pool.map(evaluateNodeFunction, self.toList())
+                # solves = self.pool.map(self.evaluateNode, nodes.T)
+                solves = self.pool.map(evaluateNodeFunction,
+                                       self.evaluateNodeFunctionList(tmp_parameter_name, nodes.T))
             except MemoryError:
                 return -1
         else:
             try:
                 for node in nodes.T:
-                    solves.append(self.evaluateNode(node))
+                    # solves.append(self.evaluateNode(node))
+                    solves.append(evaluateNodeFunction,
+                                  self.evaluateNodeFunctionList(tmp_parameter_name, node))
             except MemoryError:
                 return -1
-        #
-        # if self.supress_output:
-        #     vdisplay.stop()
 
         solves = np.array(solves)
 

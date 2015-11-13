@@ -40,9 +40,9 @@ class Model():
         self.filedir = os.path.dirname(self.filepath)
 
 
-        if self.supress_output:
-            self.vdisplay = Xvfb()
-            self.vdisplay.start()
+        # if self.supress_output:
+        #     self.vdisplay = Xvfb()
+        #     self.vdisplay.start()
 
         # if memory_threshold:
         #     from memory import Memory
@@ -56,17 +56,17 @@ class Model():
     def __del__(self):
         if mp.current_process().name == "MainProcess":
             self.clean()
-            if self.supress_output:
-                self.vdisplay.stop()
+            # if self.supress_output:
+            #     self.vdisplay.stop()
 
-    def startSupress(self):
-        self.supress_output = True
-        self.vdisplay = Xvfb()
-        self.vdisplay.start()
-
-    def endSupress(self):
-        self.supress_output = False
-        self.vdisplay.stop()
+    # def startSupress(self):
+    #     self.supress_output = True
+    #     self.vdisplay = Xvfb()
+    #     self.vdisplay.start()
+    #
+    # def endSupress(self):
+    #     self.supress_output = False
+    #     self.vdisplay.stop()
 
     def clean(self, process="*"):
         for f in glob.glob("tmp_U_%s.npy" % (process)):
