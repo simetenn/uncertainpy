@@ -136,7 +136,7 @@ class UncertaintyEstimations():
                 #del uncertainty_estimation
 
                 #gc.collect()
-                print gc.garbage
+                #print gc.garbage
 
     def timePassed(self):
         return time.time() - self.t_start
