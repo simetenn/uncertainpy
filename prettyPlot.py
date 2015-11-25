@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def prettyPlot(x, y, title=None, xlabel=None, ylabel=None,
+def prettyPlot(x, y, title="", xlabel="", ylabel="",
                color=0, new_figure=True):
     """
     Creates pretty plots

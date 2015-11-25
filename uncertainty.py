@@ -34,10 +34,11 @@
 
 # TODO Add suport for canceling a simulation when it is above a certain memory theeshold
 
-# TODO Pool is created to many times
-# TODO xvbf is taking alot of time to start and stop, fix this
 
 # TODO Remove the model class from uncertainty estimation as it is no longer used.
+
+# TODO incorporate singleNeuronRun into a class of file
+
 # TODO Atm parameter are both in the model object and in the parameter object.
 # Make it so they only are one place?
 
@@ -49,11 +50,13 @@ import os
 import subprocess
 import shutil
 import h5py
+import sys
+
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
-
 import multiprocessing as mp
+
 
 from xvfbwrapper import Xvfb
 
@@ -504,9 +507,6 @@ class UncertaintyEstimation():
 
 
     def plotV_t(self, parameter):
-        if parameter not in self.E:
-            print "WARNING: %s have not been calculated" % (parameter)
-            return
 
         color1 = 0
         color2 = 8
@@ -666,7 +666,7 @@ if __name__ == "__main__":
         "gcanbar": 2e-8
     }
 
-    memory = Memory(1)
+    memory = Memory(10)
     memory.start()
 
     fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
@@ -691,22 +691,23 @@ if __name__ == "__main__":
 
 
     #
-    percentages = np.linspace(0.01, 0.1, 41)
-    # percentages = [0.02, 0.03, 0.04]
-    # test_distributions = {"uniform": percentages}
-    # exploration = UncertaintyEstimations(model, test_parameters, test_distributions)
-    # exploration.exploreParameters()
+    # percentages = np.linspace(0.01, 0.1, 41)[23:]
+    percentages = [0.02, 0.03, 0.04]
+    test_distributions = {"uniform": percentages}
+    exploration = UncertaintyEstimations(model, test_parameters, test_distributions,
+                                         output_dir_data="data/test")
+    exploration.exploreParameters()
 
     #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
     #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
     # # percentages = [0.02, 0.03, 0.04, 0.05]
-    distributions = {"uniform": percentages}
-    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    exploration.exploreParameters()
+    # distributions = {"uniform": percentages}
+    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    # exploration.exploreParameters()
 
-    distributions = {"normal": percentages}
-    exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    exploration.exploreParameters()
+    # distributions = {"normal": percentages}
+    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
+    # exploration.exploreParameters()
     memory.end()
 
 

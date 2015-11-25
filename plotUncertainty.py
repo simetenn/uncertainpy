@@ -144,6 +144,7 @@ class PlotUncertainty():
         self.sensitivity()
 
     def allData(self):
+        print "Plotting all data"
         for f in glob.glob(self.data_dir + "*"):
             self.loadData(f.split("/")[-1])
             self.all()
@@ -228,8 +229,6 @@ class PlotUncertainty():
                     ### V(t)
                     color1 = 0
                     color2 = 8
-
-                    print min_data.keys()
 
                     title = parameter + ": Mean, " + distribution + " " + interval
                     #plt.rcParams["figure.figsize"] = (10, 7.5)

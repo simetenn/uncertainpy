@@ -41,6 +41,8 @@ def evaluateNodeFunction(data):
         cmd.append(parameter)
         cmd.append(str(tmp_parameters[parameter]))
 
+    print cmd
+
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
