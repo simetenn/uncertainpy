@@ -1,140 +1,159 @@
-### TODO
-# Check if cvode is active, if it is inactive avoid doing the interpolation
-# Currently no way of testing if cvode is active. One way is to test if the amount of
-# numbers between two different simulations are different
-
-# Move parameter and parameter_string to uncertainty
-
 import os
-import subprocess
-#import time
 import sys
-import glob
-
+import argparse
 import numpy as np
-import multiprocess as mp
-
-from xvfbwrapper import Xvfb
-
-
 
 class Model():
-    def __init__(self, modelfile, modelpath, parameterfile, parameters,
-                 memory_threshold=None, supress_output=False):
-        """
-        modelfile: Name of the modelfile
-        modelpath: Path to the modelfile
-        parameterfile: Name of file containing parameteres
-        parameters: Parameters as a dictionar
-        memory_limit: the percentage where the simulation aborts
-        """
-
+    def __init__(self, modelfile, modelpath):
         self.modelfile = modelfile
         self.modelpath = modelpath
-        self.parameterfile = parameterfile
-        self.parameters = parameters
-
-        self.supress_output = supress_output
-
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
 
-
-        # if self.supress_output:
-        #     self.vdisplay = Xvfb()
-        #     self.vdisplay.start()
-
-        # if memory_threshold:
-        #     from memory import Memory
-        #     self.memory_report = Memory()
-        #     # self.memory_threshold = memory_threshold
+        self.U = None
+        self.t = None
 
 
-        self.clean()
+    def setParameters(self, parameters):
+        raise NotImplementedError("No setParameters function implemented")
+
+    def run(self):
+        raise NotImplementedError("No setParameters function implemented")
 
 
-    def __del__(self):
-        if mp.current_process().name == "MainProcess":
-            self.clean()
-            # if self.supress_output:
-            #     self.vdisplay.stop()
+    def save(self, CPU=None):
+        if self.t or self.U is None:
+            raise ValueError("t or U has not been calculated")
+        if CPU is None:
+            np.save("tmp_U", self.U)
+            np.save("tmp_t", self.t)
 
-    # def startSupress(self):
-    #     self.supress_output = True
-    #     self.vdisplay = Xvfb()
-    #     self.vdisplay.start()
-    #
-    # def endSupress(self):
-    #     self.supress_output = False
-    #     self.vdisplay.stop()
-
-    def clean(self, process="*"):
-        for f in glob.glob("tmp_U_%s.npy" % (process)):
-            os.remove(f)
-
-        for f in glob.glob("tmp_t_%s.npy" % (process)):
-            os.remove(f)
-
-
-    def saveParameters(self, new_parameters):
-        if os.path.samefile(os.getcwd(), os.path.join(self.filedir, self.modelpath)):
-            f = open(self.parameterfile, "w")
         else:
-            f = open(self.modelpath + self.parameterfile, "w")
+            np.save("tmp_U_%d" % CPU, self.U)
+            np.save("tmp_t_%d" % CPU, self.t)
 
-        for parameter in self.parameters.keys():
-            if parameter in new_parameters:
-                save_parameter = new_parameters[parameter]
-            else:
-                save_parameter = self.parameters[parameter]
+    def main():
+        parser = argparse.ArgumentParser(description="Run a neuron simulation")
+        parser.add_argument("modelfile")
+        parser.add_argument("modelpath")
+        parser.add_argument("--CPU", type=int)
+        args, parameter_args = parser.parse_known_args()
 
-            f.write(parameter + " = " + str(save_parameter) + "\n")
-
-        f.close()
-
-
-    def run(self, new_parameters={}):
-        current_process = mp.current_process().name.split("-")
-        if current_process[0] == "PoolWorker":
-            current_process = str(current_process[-1])
-        else:
-            current_process = "0"
-
-        cmd = ["python", "simulation.py", self.modelfile, self.modelpath,
-               "--CPU", current_process]
-
-        for parameter in new_parameters:
-            cmd.append(parameter)
-            cmd.append(str(new_parameters[parameter]))
-
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        # TODO Reintroduce this pice of code
-        # Note this checks total memory used by all applications
-        # if self.memory_threshold:
-        #     if self.memory_report.totalPercent() > self.memory_threshold:
-        #         print "\nWARNING: memory threshold exceeded, %g > %g" % (self.memory_report.totalPercent(), self.memory_threshold)
-        #         print "           aborting simulation"
-        #         simulation.terminate()
-        #         raise MemoryError("memory threshold exceeded")
-        #
-        #
-        #     time.sleep(self.memory_report.delta_poll)
-        #
-        ut, err = simulation.communicate()
-
-        if simulation.returncode != 0:
-            print "Error when running simulation:"
-            print err
+        if len(parameter_args) % 2 != 0:
+            print "ERROR: Number of parameters does not match number"
+            print "         of parametervalues sent to simulation.py"
             sys.exit(1)
 
-        V = np.load("tmp_U_%s.npy" % current_process)
-        t = np.load("tmp_t_%s.npy" % current_process)
+        parameters = {}
+        i = 0
+        while i < len(parameter_args):
+            parameters[parameter_args[i].strip("-")] = parameter_args[i+1]
+            i += 2
 
-        self.clean(current_process)
+        neuron_simulation = NeuronModel(args.modelfile, args.modelpath)
+        neuron_simulation.set(parameters)
+        neuron_simulation.runSimulation()
+        neuron_simulation.save(args.CPU)
 
-        return t, V
 
 
-    def runNoCalculation(self, new_parameters={}):
-        pass
+class NeuronModel():
+    def __init__(self, modelfile, modelpath):
+        self.modelfile = modelfile
+        self.modelpath = modelpath
+        self.filepath = os.path.abspath(__file__)
+        self.filedir = os.path.dirname(self.filepath)
+
+        self.U = None
+        self.t = None
+
+        os.chdir(self.modelpath)
+
+        import neuron
+        self.h = neuron.h
+        self.h.load_file(1, self.modelfile)
+
+        os.chdir(self.filedir)
+
+    ### Be really careful with these. Need to make sure that all references to
+    ### neuron are inside this class
+    def record(self, ref_data):
+        data = self.h.Vector()
+        data.record(getattr(self.h, ref_data))
+        return data
+
+
+    def toArray(self, hocObject):
+        array = np.zeros(hocObject.size())
+        hocObject.to_python(array)
+        return array
+
+
+    def recordV(self):
+        for sec in self.h.allsec():
+            self.V = self.h.Vector()
+            self.V.record(sec(0.5)._ref_v)
+            break
+
+
+    def recordT(self):
+        self.t = self.record("_ref_t")
+
+
+    def run(self):
+        self.recordT()
+        self.recordV()
+
+        self.h.run()
+
+        self.U = self.getV()
+        self.t = self.getT()
+
+
+
+    def getT(self):
+        return self.toArray(self.t)
+
+
+    def getV(self):
+        return self.toArray(self.V)
+
+
+    def save(self, CPU=None):
+        if CPU is None:
+            np.save("tmp_U", self.U)
+            np.save("tmp_t", self.t)
+
+        else:
+            np.save("tmp_U_%d" % CPU, self.U)
+            np.save("tmp_t_%d" % CPU, self.t)
+
+
+
+    def set(self, parameters):
+        for parameter in parameters:
+            self.h(parameter + " = " + str(parameters[parameter]))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run a neuron simulation")
+    parser.add_argument("modelfile")
+    parser.add_argument("modelpath")
+    parser.add_argument("--CPU", type=int)
+    args, parameter_args = parser.parse_known_args()
+
+    if len(parameter_args) % 2 != 0:
+        print "ERROR: Number of parameters does not match number"
+        print "         of parametervalues sent to simulation.py"
+        sys.exit(1)
+
+    parameters = {}
+    i = 0
+    while i < len(parameter_args):
+        parameters[parameter_args[i].strip("-")] = parameter_args[i+1]
+        i += 2
+
+    neuron_simulation = NeuronModel(args.modelfile, args.modelpath)
+    neuron_simulation.set(parameters)
+    neuron_simulation.runSimulation()
+    neuron_simulation.save(args.CPU)
