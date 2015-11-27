@@ -9,14 +9,13 @@ import multiprocessing as mp
 
 def evaluateNodeFunction(data):
     """
-    all_data = (node, tmp_parameter_name, modelfile, modelpath, features)
+    all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, features)
     """
 
-    node = data[0]
-    tmp_parameter_name = data[1]
-    modelfile = data[2]
-    modelpath = data[3]
-    features = data[4]
+    cmd = data[0]
+    node = data[1]
+    tmp_parameter_names = data[2]
+    features = data[3]
 
     if isinstance(node, float) or isinstance(node, int):
             node = [node]
@@ -24,7 +23,7 @@ def evaluateNodeFunction(data):
     # New setparameters
     tmp_parameters = {}
     j = 0
-    for parameter in tmp_parameter_name:
+    for parameter in tmp_parameter_names:
         tmp_parameters[parameter] = node[j]
         j += 1
 
@@ -34,18 +33,19 @@ def evaluateNodeFunction(data):
     else:
         current_process = "0"
 
-    cmd = ["python", "simulation.py", modelfile, modelpath,
-           "--CPU", current_process]
+    cmd = cmd + ["--CPU", current_process]
 
     for parameter in tmp_parameters:
         cmd.append(parameter)
         cmd.append(str(tmp_parameters[parameter]))
 
-    print cmd
+    print "running cmd"
 
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
+    print ut
+    
     if simulation.returncode != 0:
         print "Error when running simulation:"
         print err

@@ -62,21 +62,16 @@ from xvfbwrapper import Xvfb
 
 # Imported from my own files
 from prettyPlot import prettyPlot
-from memory import Memory
 from distribution import Distribution
-from model import Model
+from NeuronModel import NeuronModel
 from parameters import Parameters
 from plotUncertainty import PlotUncertainty
 from collect_by_parameter import sortByParameters
 from evaluateNodeFunction import evaluateNodeFunction
 
 
-def empty(node):
-    pass
-
-
 class UncertaintyEstimations():
-    def __init__(self, model, uncertain_parameters, distributions,
+    def __init__(self, model, original_parameters, uncertain_parameters, distributions,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  output_dir_data="data/",
@@ -92,6 +87,7 @@ class UncertaintyEstimations():
         self.UncertaintyEstimations = []
 
         self.model = model
+        self.original_parameters = original_parameters
         self.uncertain_parameters = uncertain_parameters
         self.distributions = distributions
         self.output_dir_figures = output_dir_figures
@@ -115,7 +111,7 @@ class UncertaintyEstimations():
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
                                                           distribution_function + "_%g" % interval)
                 distribution = getattr(Distribution(interval), distribution_function)
-                parameters = Parameters(self.model.parameters, distribution,
+                parameters = Parameters(self.original_parameters, distribution,
                                         self.uncertain_parameters)
 
                 print "Running for: " + distribution_function + " " + str(interval)
@@ -236,10 +232,10 @@ class UncertaintyEstimation():
         self.P = None
         self.nodes = None
 
-    def evaluateNodeFunctionList(self, tmp_parameter_name, nodes):
+    def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
         data = []
         for node in nodes:
-            data.append((node, tmp_parameter_name, self.model.modelfile, self.model.modelpath, self.features))
+            data.append((self.model.cmd(), node, tmp_parameter_names, self.features))
         return data
 
 
@@ -251,7 +247,7 @@ class UncertaintyEstimation():
         # New setparameters
         tmp_parameters = {}
         j = 0
-        for parameter in self.tmp_parameter_name:
+        for parameter in self.tmp_parameter_names:
             tmp_parameters[parameter] = node[j]
             j += 1
 
@@ -272,10 +268,10 @@ class UncertaintyEstimation():
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is "all":
             parameter_space = self.parameters.getUncertain("parameter_space")
-            tmp_parameter_name = self.parameters.getUncertain("name")
+            tmp_parameter_names = self.parameters.getUncertain("name")
         else:
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
-            tmp_parameter_name = [parameter_name]
+            tmp_parameter_names = [parameter_name]
 
 
 
@@ -313,7 +309,7 @@ class UncertaintyEstimation():
             try:
                 # solves = self.pool.map(self.evaluateNode, nodes.T)
                 solves = self.pool.map(evaluateNodeFunction,
-                                       self.evaluateNodeFunctionList(tmp_parameter_name, nodes.T))
+                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
             except MemoryError:
                 return -1
         else:
@@ -321,7 +317,7 @@ class UncertaintyEstimation():
                 for node in nodes.T:
                     # solves.append(self.evaluateNode(node))
                     solves.append(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(tmp_parameter_name, node))
+                                  self.evaluateNodeFunctionList(tmp_parameter_names, node))
             except MemoryError:
                 return -1
 
@@ -364,10 +360,10 @@ class UncertaintyEstimation():
     def MC(self, parameter_name="all"):
         if parameter_name is "all":
             parameter_space = self.parameters.getUncertain("parameter_space")
-            self.tmp_parameter_name = self.parameters.getUncertain("name")
+            self.tmp_parameter_names = self.parameters.getUncertain("name")
         else:
             parameter_space = [self.parameters.get(parameter_name).parameter_space]
-            self.tmp_parameter_name = [parameter_name]
+            self.tmp_parameter_names = [parameter_name]
 
         self.distribution = cp.J(*parameter_space)
         samples = self.distribution.sample(self.nr_mc_samples, "M")
@@ -636,91 +632,3 @@ class UncertaintyEstimation():
 
 
         f.close()
-
-if __name__ == "__main__":
-
-    modelfile = "INmodel.hoc"
-    modelpath = "neuron_models/dLGN_modelDB/"
-    parameterfile = "Parameters.hoc"
-
-    data_dir = "data/"
-    output_figures_dir = "figures/"
-    figureformat = ".png"
-    output_gif_dir = "gifs/"
-
-    original_parameters = {
-        "rall": 113,       # Taken from litterature
-        "cap": 1.1,        #
-        "Rm": 22000,       # Estimated by hand
-        "Vrest": -63,      # Experimentally measured
-        "Epas": -67,       # Estimated by hand
-        "gna": 0.09,
-        "nash": -52.6,
-        "gkdr": 0.37,
-        "kdrsh": -51.2,
-        "gahp": 6.4e-5,
-        "gcat": 1.17e-5,    # Estimated by hand
-        "gcal": 0.0009,
-        "ghbar": 0.00011,   # Estimated by hand
-        "catau": 50,
-        "gcanbar": 2e-8
-    }
-
-    memory = Memory(10)
-    memory.start()
-
-    fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
-                         "ghbar", "catau", "gcanbar"]
-
-    test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
-    test_parameters = ["Rm", "Epas"]
-
-    distribution_function = Distribution(0.1).uniform
-    distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
-
-
-
-    #parameters = Parameters(original_parameters, distribution_function, test_parameters)
-    parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
-
-    model = Model(modelfile, modelpath, parameterfile, original_parameters)
-
-    test_distributions = {"uniform": [0.05, 0.06], "normal": [0.04, 0.05]}
-    #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
-
-
-
-    #
-    # percentages = np.linspace(0.01, 0.1, 41)[23:]
-    percentages = [0.02, 0.03, 0.04]
-    test_distributions = {"uniform": percentages}
-    exploration = UncertaintyEstimations(model, test_parameters, test_distributions,
-                                         output_dir_data="data/test")
-    exploration.exploreParameters()
-
-    #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-    #percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-    # # percentages = [0.02, 0.03, 0.04, 0.05]
-    # distributions = {"uniform": percentages}
-    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    # exploration.exploreParameters()
-
-    # distributions = {"normal": percentages}
-    # exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-    # exploration.exploreParameters()
-    memory.end()
-
-
-
-    # plot = PlotUncertainty(data_dir=data_dir,
-    #                        output_figures_dir=output_figures_dir,
-    #                        figureformat=figureformat,
-    #                        output_gif_dir=output_gif_dir)
-    #
-    # plot.allData()
-    # plot.gif()
-    # sortByParameters()
-
-
-    subprocess.Popen(["play", "-q", "ship_bell.wav"])
-    print "The total runtime is: " + str(datetime.timedelta(seconds=(exploration.timePassed())))
