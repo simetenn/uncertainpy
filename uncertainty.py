@@ -56,6 +56,7 @@ import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 
+from collections import Iterable
 
 from xvfbwrapper import Xvfb
 
@@ -238,28 +239,28 @@ class UncertaintyEstimation():
         return data
 
 
-    def evaluateNode(self, node):
-        if isinstance(node, float) or isinstance(node, int):
-                node = [node]
-
-
-        # New setparameters
-        tmp_parameters = {}
-        j = 0
-        for parameter in self.tmp_parameter_names:
-            tmp_parameters[parameter] = node[j]
-            j += 1
-
-        t, V = self.model.run(tmp_parameters)
-
-        # Do a feature selection here. Make it so several feature
-        # selections are performed at this step.
-        for feature in self.features:
-            V = feature(V)
-
-        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-
-        return (t, V, interpolation)
+    # def evaluateNode(self, node):
+    #     if isinstance(node, float) or isinstance(node, int):
+    #             node = [node]
+    #
+    #
+    #     # New setparameters
+    #     tmp_parameters = {}
+    #     j = 0
+    #     for parameter in self.tmp_parameter_names:
+    #         tmp_parameters[parameter] = node[j]
+    #         j += 1
+    #
+    #     t, V = self.model.run(tmp_parameters)
+    #
+    #     # Do a feature selection here. Make it so several feature
+    #     # selections are performed at this step.
+    #     for feature in self.features:
+    #         V = feature(V)
+    #
+    #     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+    #
+    #     return (t, V, interpolation)
 
 
     def createPCExpansion(self, parameter_name="all"):
@@ -315,8 +316,7 @@ class UncertaintyEstimation():
             try:
                 for node in nodes.T:
                     # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(tmp_parameter_names, node))
+                    solves.append(evaluateNodeFunction([self.model.cmd(), node, tmp_parameter_names, self.features]))
             except MemoryError:
                 return -1
 

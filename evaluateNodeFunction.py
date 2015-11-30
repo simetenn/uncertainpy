@@ -11,7 +11,6 @@ def evaluateNodeFunction(data):
     """
     all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, features)
     """
-
     cmd = data[0]
     node = data[1]
     tmp_parameter_names = data[2]
