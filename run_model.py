@@ -23,10 +23,8 @@ def main():
     parameters = {}
     i = 0
     while i < len(tmp_parameters):
-        parameters[tmp_parameters[i]] = tmp_parameters[i+1]
+        parameters[tmp_parameters[i]] = float(tmp_parameters[i+1])
         i += 2
-
-    print parameters
 
     simulation.setParameters(parameters)
     simulation.run()

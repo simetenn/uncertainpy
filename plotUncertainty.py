@@ -4,6 +4,7 @@ import sys
 import shutil
 import glob
 import re
+import argparse
 
 import matplotlib.pyplot as plt
 
@@ -331,10 +332,22 @@ class PlotUncertainty():
 
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Plot data")
+    parser.add_argument("-d", "--data_dir", help="Directory the data is stored in")
+
+    args = parser.parse_args()
+
     data_dir = "data/"
     output_figures_dir = "figures/"
-    figureformat = ".png"
     output_gif_dir = "gifs/"
+    figureformat = ".png"
+
+    if args.data_dir:
+        data_dir = "%s/" % os.path.join(data_dir, args.data_dir)
+        output_figures_dir = "%s/" %  os.path.join(output_figures_dir, args.data_dir)
+        output_gif_dir = "%s/" % os.path.join(output_gif_dir, args.data_dir)
+
 
     plot = PlotUncertainty(data_dir=data_dir,
                            output_figures_dir=output_figures_dir,
@@ -343,4 +356,5 @@ if __name__ == "__main__":
 
     plot.allData()
     plot.gif()
-    sortByParameters()
+
+    sortByParameters(path=output_figures_dir, outputpath=output_figures_dir)

@@ -45,7 +45,7 @@ class Model():
             np.save("tmp_t_%d" % CPU, self.t)
 
 
-    def cmd(self, additional_cmds):
+    def cmd(self, additional_cmds=[]):
         cmd = ["python", "run_model.py", "--model_name", self.__class__.__name__]
         cmd = cmd + additional_cmds
 
