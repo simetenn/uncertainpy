@@ -24,8 +24,16 @@ class Model():
         pass
 
 
+    # def setParameters(self, parameters):
+    #     raise NotImplementedError("No setParameters() function implemented")
+
     def setParameters(self, parameters):
-        raise NotImplementedError("No setParameters() function implemented")
+        """
+        Parameters: dictionary with all parameters
+        """
+        # How the parameters are set
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
 
 
     def run(self):

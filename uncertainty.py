@@ -4,6 +4,8 @@
 
 # TODO to many npy files are created
 
+# TODO, only use evaluateNodeFunction if it is a neuron model,
+# withouth a neuronmodel we will not have problems with neuron and chaospy
 
 # TODO Do a regression analysis to figure out which variables are dependent on
 # each other
@@ -263,10 +265,10 @@ class UncertaintyEstimation():
     #     return (t, V, interpolation)
 
 
-    def createPCExpansion(self, parameter_name="all"):
+    def createPCExpansion(self, parameter_name=None):
 
         # TODO find a good way to solve the parameter_name poblem
-        if parameter_name is "all":
+        if parameter_name is None:
             parameter_space = self.parameters.getUncertain("parameter_space")
             tmp_parameter_names = self.parameters.getUncertain("name")
         else:
@@ -356,8 +358,8 @@ class UncertaintyEstimation():
             self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
-    def MC(self, parameter_name="all"):
-        if parameter_name is "all":
+    def MC(self, parameter_name=None):
+        if parameter_name is None:
             parameter_space = self.parameters.getUncertain("parameter_space")
             self.tmp_parameter_names = self.parameters.getUncertain("name")
         else:
@@ -398,7 +400,7 @@ class UncertaintyEstimation():
             interpolated_solves.append(inter(self.t))
 
         self.E = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
-        self.Var[parameter_name] = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
+        self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
 
         #self.plotV_t("MC")
 
@@ -442,9 +444,9 @@ class UncertaintyEstimation():
                 return -1
 
     def allParameters(self):
-        if len(self.parameters.uncertain_parameters) <= 1:
-            print "Only 1 uncertain parameter"
-            return
+        # if len(self.parameters.uncertain_parameters) <= 1:
+        #     print "Only 1 uncertain parameter"
+        #     return
 
         print "\rRunning for all                     "
         if self.createPCExpansion() == -1:
@@ -459,7 +461,11 @@ class UncertaintyEstimation():
 
             samples = self.distribution.sample(self.nr_mc_samples, "M")
 
-            self.U_mc = self.U_hat(*samples)
+            if len(self.parameters.uncertain_parameters) == 1:
+                self.U_mc = self.U_hat(samples)
+            else:
+                self.U_mc = self.U_hat(*samples)
+
             self.p_05 = np.percentile(self.U_mc, 5, 1)
             self.p_95 = np.percentile(self.U_mc, 95, 1)
 
