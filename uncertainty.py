@@ -44,7 +44,6 @@
 
 
 import time
-import datetime
 import scipy.interpolate
 import os
 import subprocess

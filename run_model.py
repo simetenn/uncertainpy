@@ -13,7 +13,6 @@ def main():
     simulation = model()
     simulation.load()
 
-
     tmp_parameters = parameter_args[len(simulation.cmd()) - 4:]
 
     if len(tmp_parameters) % 2 != 0:

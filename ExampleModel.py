@@ -20,15 +20,6 @@ class ExampleModel(Model):
         Model.__init__(self)
 
 
-
-
-    def load(self):
-        """
-        most likely not necesarry
-        """
-        pass
-
-
     def run(self):
         """
         run the model

@@ -21,7 +21,7 @@ class Model():
 
 
     def load(self):
-        raise NotImplementedError("No load() function implemented")
+        pass
 
 
     def setParameters(self, parameters):
