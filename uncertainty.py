@@ -104,6 +104,10 @@ class UncertaintyEstimations():
 
 
         self.t_start = time.time()
+        
+        if os.path.isdir(output_dir_data):
+            shutil.rmtree(output_dir_data)
+        os.makedirs(output_dir_data)
 
 
     def exploreParameters(self):

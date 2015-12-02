@@ -26,10 +26,10 @@ fitted_parameters = ["gbar_Na", "gbar_K", "gbar_l"]
 
 model = HodkinHuxleyModel()
 
-
-test_distributions = {"uniform": [0.02, 0.03]}
+percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
+test_distributions = {"uniform": percentages}
 exploration = UncertaintyEstimations(model, original_parameters, fitted_parameters, test_distributions,
-                                     output_dir_data="data/hodgkin-huxley", CPUs=1)
+                                     output_dir_data="data/hodgkin-huxley")
 exploration.exploreParameters()
 
 memory.end()

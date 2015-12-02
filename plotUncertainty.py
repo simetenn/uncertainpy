@@ -87,6 +87,10 @@ class PlotUncertainty():
 
 
     def confidenceInterval(self, parameter):
+        if self.f is None:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
 
         t = self.f[parameter]["t"][:]
         E = self.f[parameter]["E"][:]
@@ -109,6 +113,9 @@ class PlotUncertainty():
         plt.close()
 
     def sensitivity(self, hardcopy=True):
+        if self.f is None:
+            print "Datafile must be loaded"
+            sys.exit(1)
 
         t = self.f["all"]["t"][:]
         sensitivity = self.f["all"]["sensitivity"][:]
