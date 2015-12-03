@@ -11,7 +11,7 @@ class IzhikevichModel(Model):
         self.a = 0.02
         self.b = 0.2
         self.c = -65
-        self.d = 6
+        self.d = 8
 
         t_end = 100
         self.dt = 0.25
@@ -23,7 +23,7 @@ class IzhikevichModel(Model):
 
     def I(self, t):
         if 10 <= t:
-            return 14
+            return 10
         else:
             return 0
 
