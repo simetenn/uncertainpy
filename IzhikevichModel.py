@@ -1,25 +1,15 @@
 from model import Model
 
 import numpy as np
-from parameters import Parameters
-
 
 class IzhikevichModel(Model):
-    def __init__(self):
-        Model.__init__(self)
-
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters)
 
         self.a = 0.02
         self.b = 0.2
         self.c = -65
         self.d = 8
-
-        parameterlist = [["a", 0.02, None],
-                         ["b", 0.2, None],
-                         ["c", -65, None],
-                         ["d", 8, None]]
-
-        self.parameters = Parameters(parameterlist)
 
         t_end = 100
         self.dt = 0.25
@@ -27,7 +17,6 @@ class IzhikevichModel(Model):
         self.v0 = -70
 
         self.t = np.linspace(0, t_end, t_end/self.dt)
-
 
     def I(self, t):
         if 10 <= t:
@@ -37,7 +26,7 @@ class IzhikevichModel(Model):
 
     def f(self, u_in, t):
         v, u = u_in
-        
+
         dvdt = 0.04*v**2 + 5*v + 140 - u + self.I(t)
         dudt = self.a*(self.b*v - u)
 
@@ -67,5 +56,3 @@ class IzhikevichModel(Model):
                 self.U[n] = u_new[0]
 
             u[n+1] = u_new
-
-        return self.t, self.U

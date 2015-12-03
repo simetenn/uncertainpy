@@ -54,6 +54,10 @@ class Model():
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
+    # def setClassParameters(self):
+    #     for parameter in self.parameters:
+    #         setattr(self, parameter, self.parameters[parameter].value)
+
 
     def setParameters(self, parameters):
         """

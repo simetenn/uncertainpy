@@ -8,40 +8,21 @@ class Parameters():
         """
 
         self.parameters = {}
-        #self.parameter_space = None
-
-
 
         for i in parameterlist:
             if type(i) == Parameter:
                 self.parameters[i[0]] = i
             else:
-                print i[2]
                 self.parameters[i[0]] = Parameter(i[0], i[1], i[2])
+
 
     def setDistribution(self, parameter, distribution_function):
         self.parameters[parameter].setDistribution(distribution_function)
 
+
     def setAllDistributions(self, distribution_function):
         for parameter in self.parameters:
             self.parameters[parameter].setDistribution(distribution_function)
-
-
-        # The first sets a given distribution to all parameters
-        # if hasattr(distributions, '__call__'):
-        #     for parameter in parameters:
-        #         if parameter in uncertain_parameters:
-        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter],
-        #                                                    distributions, True)
-        #         else:
-        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter])
-        # else:
-        #     for parameter in parameters:
-        #         if parameter in uncertain_parameters:
-        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter],
-        #                                                    distributions[parameter], True)
-        #         else:
-        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter])
 
 
     def getUncertain(self, item="name"):

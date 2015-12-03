@@ -45,34 +45,25 @@ parameterlist = [["cap", 1.1, None],
                  ["gahp", 6.4e-5, None],
                  ["gcat", 1.17e-5, None]]
 
+
+parameterlist = [["Rm", 22000, None],
+                 ["Epas", -67, None]]
+
 memory = Memory(10)
 memory.start()
 
-fitted_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat", "gcal",
-                     "ghbar", "catau", "gcanbar"]
-
-test_parameters = ["Rm", "Epas", "gkdr", "kdrsh", "gahp", "gcat"]
-test_parameters = ["Rm", "Epas"]
-
-
-
-
 #parameters = Parameters(original_parameters, distribution_function, test_parameters)
-parameters = Parameters(original_parameters, distribution_function, fitted_parameters)
+parameters = Parameters(parameterlist)
+model = NeuronModel(modelfile, modelpath, parameters)
 
-model = NeuronModel(modelfile, modelpath)
-
-test_distributions = {"uniform": [0.05, 0.06], "normal": [0.04, 0.05]}
+#test_distributions = {"uniform": [0.05, 0.06], "normal": [0.04, 0.05]}
 #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
 
-
-
-#
 # percentages = np.linspace(0.01, 0.1, 41)[23:]
 percentages = [0.02, 0.03]
 test_distributions = {"uniform": percentages}
-exploration = UncertaintyEstimations(model, original_parameters, test_parameters, test_distributions,
-                                     output_dir_data="data/test", CPUs=2)
+exploration = UncertaintyEstimations(model, test_distributions,
+                                     output_dir_data="data/test")
 exploration.exploreParameters()
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
