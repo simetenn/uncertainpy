@@ -65,15 +65,12 @@ from xvfbwrapper import Xvfb
 # Imported from my own files
 from prettyPlot import prettyPlot
 from distribution import Distribution
-from NeuronModel import NeuronModel
 from parameters import Parameters
-from plotUncertainty import PlotUncertainty
-from collect_by_parameter import sortByParameters
 from evaluateNodeFunction import evaluateNodeFunction
 
 
 class UncertaintyEstimations():
-    def __init__(self, model, original_parameters, uncertain_parameters, distributions,
+    def __init__(self, model, distributions,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  output_dir_data="data/",
@@ -88,10 +85,11 @@ class UncertaintyEstimations():
 
         self.UncertaintyEstimations = []
 
+        # original_parameters, uncertain_parameters, distributions,
+
         self.model = model
-        self.original_parameters = original_parameters
-        self.uncertain_parameters = uncertain_parameters
         self.distributions = distributions
+
         self.output_dir_figures = output_dir_figures
         self.output_dir_data = output_dir_data
 
@@ -104,7 +102,7 @@ class UncertaintyEstimations():
 
 
         self.t_start = time.time()
-        
+
         if os.path.isdir(output_dir_data):
             shutil.rmtree(output_dir_data)
         os.makedirs(output_dir_data)
@@ -113,15 +111,14 @@ class UncertaintyEstimations():
     def exploreParameters(self):
         for distribution_function in self.distributions:
             for interval in self.distributions[distribution_function]:
-                # TODO update this when figured out the saving stuff
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
                                                           distribution_function + "_%g" % interval)
                 distribution = getattr(Distribution(interval), distribution_function)
-                parameters = Parameters(self.original_parameters, distribution,
-                                        self.uncertain_parameters)
+
+                self.model.setAllDistributions(distribution)
 
                 print "Running for: " + distribution_function + " " + str(interval)
-                uncertainty_estimation = UncertaintyEstimation(self.model, parameters,
+                uncertainty_estimation = UncertaintyEstimation(self.model,
                                                                output_dir_figures=current_output_dir_figures,
                                                                figureformat=self.figureformat,
                                                                output_dir_data=self.output_dir_data,
@@ -141,7 +138,7 @@ class UncertaintyEstimations():
 
 
 class UncertaintyEstimation():
-    def __init__(self, model, parameters,
+    def __init__(self, model,
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -166,8 +163,6 @@ class UncertaintyEstimation():
         self.figureformat = figureformat
         self.save_data = save_data
         self.output_file = os.path.join(output_dir_data, output_data_name)
-
-        self.parameters = parameters
 
         self.supress_output = supress_output
         self.CPUs = CPUs
@@ -273,10 +268,10 @@ class UncertaintyEstimation():
 
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is None:
-            parameter_space = self.parameters.getUncertain("parameter_space")
-            tmp_parameter_names = self.parameters.getUncertain("name")
+            parameter_space = self.model.parameters.getUncertain("parameter_space")
+            tmp_parameter_names = self.model.parameters.getUncertain()
         else:
-            parameter_space = [self.parameters.get(parameter_name).parameter_space]
+            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
             tmp_parameter_names = [parameter_name]
 
 
@@ -284,10 +279,11 @@ class UncertaintyEstimation():
         if self.rosenblatt:
             # Create the Multivariat normal distribution
             dist_MvNormal = []
-            for parameter in self.parameters.getUncertain("value"):
+            for parameter in self.model.parameters.getUncertain("value"):
                 dist_MvNormal.append(cp.Normal())
 
             dist_MvNormal = cp.J(*dist_MvNormal)
+
 
             self.distribution = cp.J(*parameter_space)
             #self.P = cp.orth_ttr(self.M, self.distribution)
@@ -364,10 +360,10 @@ class UncertaintyEstimation():
 
     def MC(self, parameter_name=None):
         if parameter_name is None:
-            parameter_space = self.parameters.getUncertain("parameter_space")
-            self.tmp_parameter_names = self.parameters.getUncertain("name")
+            parameter_space = self.model.parameters.getUncertain("parameter_space")
+            self.tmp_parameter_names = self.model.parameters.getUncertain("name")
         else:
-            parameter_space = [self.parameters.get(parameter_name).parameter_space]
+            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
             self.tmp_parameter_names = [parameter_name]
 
         self.distribution = cp.J(*parameter_space)
@@ -414,7 +410,7 @@ class UncertaintyEstimation():
 
 
     def singleParameters(self):
-        for uncertain_parameter in self.parameters.uncertain_parameters:
+        for uncertain_parameter in self.model.parameters.getUncertain():
             print "\rRunning for " + uncertain_parameter + "                     "
 
             self.resetValues()
@@ -448,7 +444,7 @@ class UncertaintyEstimation():
                 return -1
 
     def allParameters(self):
-        # if len(self.parameters.uncertain_parameters) <= 1:
+        # if len(self.model.parameters.uncertain_parameters) <= 1:
         #     print "Only 1 uncertain parameter"
         #     return
 
@@ -465,7 +461,7 @@ class UncertaintyEstimation():
 
             samples = self.distribution.sample(self.nr_mc_samples, "M")
 
-            if len(self.parameters.uncertain_parameters) == 1:
+            if len(self.model.parameters.getUncertain()) == 1:
                 self.U_mc = self.U_hat(samples)
             else:
                 self.U_mc = self.U_hat(*samples)
@@ -500,7 +496,7 @@ class UncertaintyEstimation():
     def sensitivityRanking(self):
         self.sensitivity_ranking = {}
         i = 0
-        for parameter in self.parameters.getUncertain("name"):
+        for parameter in self.model.parameters.getUncertain("name"):
             self.sensitivity_ranking[parameter] = sum(self.sensitivity[i])
             i += 1
 
@@ -572,7 +568,7 @@ class UncertaintyEstimation():
             print "WARNING: Sensitivity have not been calculated"
             return
 
-        parameter_names = self.parameters.getUncertain("name")
+        parameter_names = self.model.parameters.getUncertain("name")
 
         for i in range(len(self.sensitivity)):
             prettyPlot(self.t, self.sensitivity[i],
@@ -606,7 +602,7 @@ class UncertaintyEstimation():
         if "name" not in f.attrs.keys():
             f.attrs["name"] = self.output_file.split("/")[-1]
         if "Uncertain parameters" not in f.attrs.keys():
-            f.attrs["Uncertain parameters"] = self.parameters.getUncertain("name")
+            f.attrs["Uncertain parameters"] = self.model.parameters.getUncertain("name")
 
 
 
@@ -631,7 +627,7 @@ class UncertaintyEstimation():
             group.create_dataset("sensitivity", data=self.sensitivity)
 
             i = 0
-            for parameter in self.parameters.getUncertain("name"):
+            for parameter in self.model.parameters.getUncertain("name"):
                 if parameter not in f.keys():
                     f.create_group(parameter)
 

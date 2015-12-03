@@ -1,6 +1,7 @@
 from model import Model
 
 import numpy as np
+from parameters import Parameters
 
 
 class IzhikevichModel(Model):
@@ -12,6 +13,13 @@ class IzhikevichModel(Model):
         self.b = 0.2
         self.c = -65
         self.d = 8
+
+        parameterlist = [["a", 0.02, None],
+                         ["b", 0.2, None],
+                         ["c", -65, None],
+                         ["d", 8, None]]
+
+        self.parameters = Parameters(parameterlist)
 
         t_end = 100
         self.dt = 0.25
@@ -29,7 +37,7 @@ class IzhikevichModel(Model):
 
     def f(self, u_in, t):
         v, u = u_in
-
+        
         dvdt = 0.04*v**2 + 5*v + 140 - u + self.I(t)
         dudt = self.a*(self.b*v - u)
 

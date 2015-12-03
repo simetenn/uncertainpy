@@ -1,52 +1,58 @@
-# TODO Can remove the fitted parameter and test if the parameter has a distribution function?
-
-from distribution import Distribution
 
 class Parameters():
-    def __init__(self, parameters, distributions, uncertain_parameters):
+    def __init__(self, parameterlist):
         """
-        parameters: dict of all the default parameters the model has
-        uncbertain_parameters: list of all parameters that shall be examined
-        distribution_function: Either a function for all parameters, or a dictionary
-                               with the distribution for each parameter
+        parameterlist = [[name1, value1, distribution1], [name2, value2, distribution2],...]
+        or
+        parameterlist = [ParameterObject1, ParameterObject2,...]
         """
 
         self.parameters = {}
-        self.parameter_space = None
-        self.distributions = distributions
+        #self.parameter_space = None
 
 
-        if type(uncertain_parameters) is str:
-            self.uncertain_parameters = [uncertain_parameters]
-        else:
-            self.uncertain_parameters = uncertain_parameters
+
+        for i in parameterlist:
+            if type(i) == Parameter:
+                self.parameters[i[0]] = i
+            else:
+                print i[2]
+                self.parameters[i[0]] = Parameter(i[0], i[1], i[2])
+
+    def setDistribution(self, parameter, distribution_function):
+        self.parameters[parameter].setDistribution(distribution_function)
+
+    def setAllDistributions(self, distribution_function):
+        for parameter in self.parameters:
+            self.parameters[parameter].setDistribution(distribution_function)
 
 
-        if hasattr(distributions, '__call__'):
-            for parameter in parameters:
-                if parameter in uncertain_parameters:
-                    self.parameters[parameter] = Parameter(parameter, parameters[parameter],
-                                                           distributions, True)
-                else:
-                    self.parameters[parameter] = Parameter(parameter, parameters[parameter])
-        else:
-            for parameter in parameters:
-                if parameter in uncertain_parameters:
-                    self.parameters[parameter] = Parameter(parameter, parameters[parameter],
-                                                           distributions[parameter], True)
-                else:
-                    self.parameters[parameter] = Parameter(parameter, parameters[parameter])
+        # The first sets a given distribution to all parameters
+        # if hasattr(distributions, '__call__'):
+        #     for parameter in parameters:
+        #         if parameter in uncertain_parameters:
+        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter],
+        #                                                    distributions, True)
+        #         else:
+        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter])
+        # else:
+        #     for parameter in parameters:
+        #         if parameter in uncertain_parameters:
+        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter],
+        #                                                    distributions[parameter], True)
+        #         else:
+        #             self.parameters[parameter] = Parameter(parameter, parameters[parameter])
 
 
-    def getUncertain(self, item):
+    def getUncertain(self, item="name"):
         items = []
         for parameter in self.parameters.values():
-            if parameter.uncertain:
+            if parameter.distribution_function is not None:
                 items.append(getattr(parameter, item))
         return items
 
 
-    def get(self, item):
+    def get(self, item="name"):
         if item in self.parameters.keys():
             return self.parameters[item]
 
@@ -55,17 +61,20 @@ class Parameters():
 
 
 class Parameter():
-    def __init__(self, name, value, distribution_function=Distribution(0.1).normal,
-                 uncertain=False):
+    def __init__(self, name, value, distribution_function=None):
 
         self.name = name
         self.value = value
-        self.distribution_function = distribution_function
-        self.uncertain = uncertain
+        self.setDistribution(distribution_function)
 
-        if self.uncertain:
+
+    def setDistribution(self, distribution_function):
+        self.distribution_function = distribution_function
+
+        if distribution_function is None:
+            self.parameter_space = None
+        else:
             if hasattr(distribution_function, '__call__'):
                 self.parameter_space = self.distribution_function(self.value)
             else:
-                print "Distribution function is not a function"
-                print "rewrite to use a general distribution instead of a function"
+                raise TypeError("Distribution function is not a function")

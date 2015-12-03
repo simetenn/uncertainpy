@@ -1,13 +1,15 @@
-import os
-import sys
-import argparse
 import numpy as np
+
+
 
 class Model():
     """
     The model must be able to handle these calls
 
+    #Note __init__ must be able to run with no arguments
     simulation = model()
+
+
     simulation.load()
     simulation.setParameters(parameters -> dictionary)
     simulation.run()
@@ -15,13 +17,30 @@ class Model():
 
     simulation.cmd()
     """
-    def __init__(self):
+    def __init__(self, parameters=None):
         self.U = None
         self.t = None
+
+        self.parameters = parameters
 
 
     def load(self):
         pass
+
+
+    def setAllDistributions(self, distribution_function):
+        if self.parameters is None:
+            raise NotImplementedError("Parameters is not implemented in the model")
+
+        self.parameters.setAllDistributions(distribution_function)
+
+
+    def setDistribution(self, parameter_name, distribution_function):
+        if self.parameters is None:
+            raise NotImplementedError("Parameters is not implemented in the model")
+
+        self.parameters.setDistribution(parameter_name, distribution_function)
+
 
 
     # def setParameters(self, parameters):
@@ -35,6 +54,14 @@ class Model():
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
+
+    def setParameters(self, parameters):
+        """
+        Parameters: dictionary with all parameters
+        """
+        # How the parameters are set
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
 
     def run(self):
         raise NotImplementedError("No run() function implemented")
