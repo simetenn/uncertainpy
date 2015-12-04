@@ -4,6 +4,7 @@ import sys
 def main():
     parser = argparse.ArgumentParser(description="Run a model simulation")
     parser.add_argument("--model_name")
+    parser.add_argument("--save_path")
     parser.add_argument("--CPU", type=int)
 
     args, parameter_args = parser.parse_known_args()
@@ -29,7 +30,7 @@ def main():
 
     simulation.setParameters(parameters)
     simulation.run()
-    simulation.save(args.CPU)
+    simulation.save(CPU=args.CPU, save_path=args.save_path)
 
 
 if __name__ == "__main__":

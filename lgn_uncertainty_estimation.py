@@ -1,14 +1,10 @@
 import subprocess
 import datetime
 
-from memory import Memory
-from uncertainty import UncertaintyEstimations, UncertaintyEstimation
-from distribution import Distribution
-from parameters import Parameters
-from NeuronModel import NeuronModel
+import uncertainpy
 
 modelfile = "INmodel.hoc"
-modelpath = "neuron_models/dLGN_modelDB/"
+modelpath = "uncertainpy/models/neuron_models/dLGN_modelDB/"
 parameterfile = "Parameters.hoc"
 
 data_dir = "data/"
@@ -16,21 +12,7 @@ output_figures_dir = "figures/"
 figureformat = ".png"
 output_gif_dir = "gifs/"
 
-original_parameters = {
-    "rall": 113,       # Taken from litterature
-    "cap": 1.1,        #
-    "Rm": 22000,       # Estimated by hand
-    "Vrest": -63,      # Experimentally measured
-    "Epas": -67,       # Estimated by hand
-    "gna": 0.09,
-    "nash": -52.6,
-    "gkdr": 0.37,
-    "kdrsh": -51.2,
-    "gahp": 6.4e-5,
-    "gcat": 1.17e-5,    # Estimatedmodel
-}
-
-distribution_function = Distribution(0.1).uniform
+distribution_function = uncertainpy.Distribution(0.1).uniform
 distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
 
 
@@ -49,12 +31,12 @@ parameterlist = [["cap", 1.1, None],
 parameterlist = [["Rm", 22000, None],
                  ["Epas", -67, None]]
 
-memory = Memory(10)
+memory = uncertainpy.Memory(10)
 memory.start()
 
 #parameters = Parameters(original_parameters, distribution_function, test_parameters)
-parameters = Parameters(parameterlist)
-model = NeuronModel(modelfile, modelpath, parameters)
+parameters = uncertainpy.Parameters(parameterlist)
+model = uncertainpy.NeuronModel(modelfile, modelpath, parameters)
 
 #test_distributions = {"uniform": [0.05, 0.06], "normal": [0.04, 0.05]}
 #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
@@ -62,8 +44,8 @@ model = NeuronModel(modelfile, modelpath, parameters)
 # percentages = np.linspace(0.01, 0.1, 41)[23:]
 percentages = [0.02, 0.03]
 test_distributions = {"uniform": percentages}
-exploration = UncertaintyEstimations(model, test_distributions,
-                                     output_dir_data="data/test")
+exploration = uncertainpy.UncertaintyEstimations(model, test_distributions,
+                                                 output_dir_data="data/test")
 exploration.exploreParameters()
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}

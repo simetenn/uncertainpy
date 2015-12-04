@@ -23,9 +23,6 @@ class NeuronModel(Model):
             self.model_file = model_file
             self.model_path = model_path
 
-        self.filepath = os.path.abspath(__file__)
-        self.filedir = os.path.dirname(self.filepath)
-
         self.h = None
 
     def load(self):

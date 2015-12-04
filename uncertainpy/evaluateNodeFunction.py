@@ -9,6 +9,8 @@ import multiprocessing as mp
 __all__ = ["evaluateNodeFunction"]
 __version__ = "0.1"
 
+filepath = os.path.abspath(__file__)
+filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
@@ -36,7 +38,7 @@ def evaluateNodeFunction(data):
     else:
         current_process = "0"
 
-    cmd = cmd + ["--CPU", current_process]
+    cmd = cmd + ["--CPU", current_process, "--save_path", filedir]
 
     for parameter in tmp_parameters:
         cmd.append(parameter)
@@ -51,11 +53,11 @@ def evaluateNodeFunction(data):
         sys.exit(1)
 
 
-    V = np.load("tmp_U_%s.npy" % current_process)
-    t = np.load("tmp_t_%s.npy" % current_process)
+    V = np.load(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
+    t = np.load(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
 
-    os.remove("tmp_U_%s.npy" % current_process)
-    os.remove("tmp_t_%s.npy" % current_process)
+    os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
+    os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
 
 
     # TODO Do a feature selection here. Make it so several feature

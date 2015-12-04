@@ -22,6 +22,8 @@ class Model():
 
         self.parameters = parameters
 
+        self.filepath = os.path.abspath(__file__)
+        self.filedir = os.path.dirname(self.filepath)
 
     def load(self):
         pass
@@ -70,17 +72,17 @@ class Model():
         raise NotImplementedError("No run() function implemented")
 
 
-    def save(self, CPU=None):
+    def save(self, CPU=None, save_path=""):
         if self.t is None or self.U is None:
             raise ValueError("t or U has not been calculated")
 
         if CPU is None:
-            np.save("tmp_U", self.U)
-            np.save("tmp_t", self.t)
+            np.save(os.path.join(save_path, "tmp_U"), self.U)
+            np.save(os.path.join(save_path, "tmp_t"), self.t)
 
         else:
-            np.save("tmp_U_%d" % CPU, self.U)
-            np.save("tmp_t_%d" % CPU, self.t)
+            np.save(os.path.join(save_path, "tmp_U_%d" % CPU), self.U)
+            np.save(os.path.join(save_path, "tmp_t_%d" % CPU), self.t)
 
 
     def cmd(self, additional_cmds=[]):
