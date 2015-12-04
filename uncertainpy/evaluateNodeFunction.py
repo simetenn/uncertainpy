@@ -6,12 +6,15 @@ import os
 import numpy as np
 import multiprocessing as mp
 
+__all__ = ["evaluateNodeFunction"]
+__version__ = "0.1"
+
 
 def evaluateNodeFunction(data):
     """
     all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, features)
     """
-    
+
     cmd = data[0]
     node = data[1]
     tmp_parameter_names = data[2]

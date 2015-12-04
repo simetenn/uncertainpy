@@ -1,5 +1,8 @@
 import chaospy as cp
 
+__all__ = ["Distribution"]
+__version__ = "0.1"
+
 class Distribution():
     def __init__(self, interval, function=None):
         self.interval = interval

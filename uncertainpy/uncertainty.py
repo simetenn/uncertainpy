@@ -63,7 +63,7 @@ from collections import Iterable
 from xvfbwrapper import Xvfb
 
 # Imported from my own files
-from prettyPlot import prettyPlot
+from plotting import prettyPlot
 from distribution import Distribution
 from parameters import Parameters
 from evaluateNodeFunction import evaluateNodeFunction

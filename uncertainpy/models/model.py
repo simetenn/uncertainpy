@@ -1,6 +1,5 @@
 import numpy as np
-
-
+import os
 
 class Model():
     """
@@ -85,7 +84,10 @@ class Model():
 
 
     def cmd(self, additional_cmds=[]):
-        cmd = ["python", "run_model.py", "--model_name", self.__class__.__name__]
+        filepath = os.path.abspath(__file__)
+        filedir = os.path.dirname(filepath)
+
+        cmd = ["python", filedir + "/run_model.py", "--model_name", self.__class__.__name__]
         cmd = cmd + additional_cmds
 
         return cmd

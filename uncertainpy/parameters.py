@@ -1,4 +1,7 @@
 
+__all__ = ["Parameters", "Parameter"]
+__version__ = "0.1"
+
 class Parameters():
     def __init__(self, parameterlist):
         """

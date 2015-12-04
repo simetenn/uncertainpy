@@ -2,14 +2,17 @@ import subprocess
 import datetime
 
 import numpy as np
-
-from memory import Memory
-from uncertainty import UncertaintyEstimations
-from IzhikevichModel import IzhikevichModel
-from parameters import Parameters
+import uncertainpy
+# import uncertainpy.models
 
 
-memory = Memory(10)
+# from memory import Memory
+# from uncertainty import UncertaintyEstimations
+# from IzhikevichModel import IzhikevichModel
+# from parameters import Parameters
+
+
+memory = uncertainpy.utils.Memory(10)
 memory.start()
 
 parameterlist = [["a", 0.02, None],
@@ -18,8 +21,8 @@ parameterlist = [["a", 0.02, None],
                  ["d", 8, None]]
 
 
-parameters = Parameters(parameterlist)
-model = IzhikevichModel(parameters)
+parameters = uncertainpy.Parameters(parameterlist)
+model = uncertainpy.models.IzhikevichModel(parameters)
 
 
 
@@ -27,7 +30,7 @@ model = IzhikevichModel(parameters)
 percentages = np.linspace(0.01, 0.25, 50)
 test_distributions = {"uniform": percentages}
 
-exploration = UncertaintyEstimations(model, test_distributions, output_dir_data="data/izhikevich")
+exploration = uncertainpy.UncertaintyEstimations(model, test_distributions, output_dir_data="data/izhikevich")
 exploration.exploreParameters()
 
 memory.end()

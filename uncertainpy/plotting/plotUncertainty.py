@@ -9,7 +9,7 @@ import argparse
 import matplotlib.pyplot as plt
 
 from prettyPlot import prettyPlot
-from collect_by_parameter import sortByParameters
+from uncertainpy.utils import sortByParameters
 
 ### TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
 
