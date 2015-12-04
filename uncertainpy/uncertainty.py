@@ -14,16 +14,12 @@
 # TODO Instead of giving results as an average of the response, make it
 # feature based. For example, count the number of spikes, and the
 # average the number of spikes and time between spikes.
-
-# TODO Make a data selection process before PC expansion to look at
+# Make a data selection process before PC expansion to look at
 # specific features. This data selection should be the same as what is
 # done for handling spikes from experiments. One example is a low pass
 # filter and a high pass filter.
 
 # TODO Use a recursive neural network
-
-# TODO Can remove the uncertain parameter and instead test if the parameter has
-# a distribution function?
 
 # TODO have the option of saving the exploration by parameters instead of by distribution
 
@@ -36,14 +32,11 @@
 
 # TODO Add suport for canceling a simulation when it is above a certain memory theeshold
 
-
-# TODO Remove the model class from uncertainty estimation as it is no longer used.
-
 # TODO incorporate singleNeuronRun into a class of file
 
-# TODO Atm parameter are both in the model object and in the parameter object.
-# Make it so they only are one place?
+# TODO problems with new neuron models, and their path
 
+# TODO make it so setup.py install all requirements
 
 import time
 import os
