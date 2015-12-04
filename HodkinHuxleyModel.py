@@ -15,11 +15,11 @@ class HodkinHuxleyModel(Model):
 
     simulation.cmd()
     """
-    def __init__(self):
+    def __init__(self, parameters=None):
         """
         Init must be able to be called with 0 arguments
         """
-        Model.__init__(self)
+        Model.__init__(self, parameters)
 
         ## Functions
         # K channel
@@ -56,6 +56,7 @@ class HodkinHuxleyModel(Model):
         self.E_K = -12      # mV
         self.E_l = 10.613   # mV
 
+
         self.I = np.zeros(len(self.t))
         for i, t in enumerate(self.t):
             if 5 <= t <= 30:
@@ -82,13 +83,3 @@ class HodkinHuxleyModel(Model):
             Vm[i] = Vm[i-1] + (self.I[i-1] - g_Na*(Vm[i-1] - self.E_Na) - g_K*(Vm[i-1] - self.E_K) - g_l*(Vm[i-1] - self.E_l))/self.Cm*self.dt
 
         self.U = Vm
-
-
-    def setParameters(self, parameters):
-        """
-        Parameters: dictionary with all parameters
-        """
-        # How the parameters are set
-        for parameter in parameters:
-
-            setattr(self, parameter, parameters[parameter])
