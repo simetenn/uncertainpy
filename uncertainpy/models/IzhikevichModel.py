@@ -8,8 +8,8 @@ class IzhikevichModel(Model):
 
         self.a = 0.02
         self.b = 0.2
-        self.c = -65
-        self.d = 8
+        self.c = -50
+        self.d = 2
 
         t_end = 100
         self.dt = 0.25

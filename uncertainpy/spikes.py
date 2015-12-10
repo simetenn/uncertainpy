@@ -21,8 +21,8 @@ class Spikes:
 
 
     def detectSpikes(self, t, U):
-        
-        min_dist_from_peak = 2
+
+        min_dist_from_peak = 1
         derivative_cutoff = 0.5
 
         self.spikes = []
@@ -55,7 +55,6 @@ class Spikes:
                 t_spike = t[spike_start:spike_end]
                 U_spike = U[spike_start:spike_end]
 
-
                 self.spikes.append(Spike(t_spike, U_spike, t_max, U_max, global_index))
 
         self.nr_spikes = len(self.spikes)
@@ -73,8 +72,8 @@ class Spikes:
             u_min.append(min(spike.U))
             t_max.append(len(spike.t))
             plotting.prettyPlot(range(len(spike.t)), spike.U,
-                                title="Spike",
-                                xlabel="Time, ms",
+                                title="Spikes",
+                                xlabel="index",
                                 ylabel="Voltage, mV",
                                 color=color,
                                 new_figure=False)
@@ -84,7 +83,7 @@ class Spikes:
 
 
         plt.ylim([min(u_min), max(u_max)])
-        plt.xlim([0, max(t_max)])
+        plt.xlim([0, max(t_max)*1.25])
         plt.legend(labels)
         if save_name is None:
             plt.show()
@@ -96,12 +95,16 @@ class Spike:
     def __init__(self, t_spike, U_spike, U_max, t_max, global_index):
         self.t = t_spike
         self.U = U_spike
+
         self.U_max = U_max
         self.t_max = t_max
 
         self.global_index = global_index
 
 
-    def plot(self):
+    def plot(self, save_name=None):
         plotting.prettyPlot(self.t, self.U, title="Spike", xlabel="Time, ms", ylabel="Voltage, mV", new_figure=True)
-        plt.show()
+        if save_name is None:
+            plt.show()
+        else:
+            plt.savefig(save_name)
