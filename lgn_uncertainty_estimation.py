@@ -45,7 +45,7 @@ model = uncertainpy.NeuronModel(modelfile, modelpath, parameters)
 percentages = [0.02, 0.03]
 test_distributions = {"uniform": percentages}
 exploration = uncertainpy.UncertaintyEstimations(model, test_distributions,
-                                                 output_dir_data="data/test")
+                                                 output_dir_data="data/lgn")
 exploration.exploreParameters()
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}

@@ -62,6 +62,8 @@ class NeuronModel(Model):
 
 
     def run(self):
+        self.load()
+
         self.recordT()
         self.recordV()
 
@@ -69,6 +71,8 @@ class NeuronModel(Model):
 
         self.U = self.getV()
         self.t = self.getT()
+
+        return self.t, self.U
 
 
 

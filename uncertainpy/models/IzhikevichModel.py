@@ -56,3 +56,5 @@ class IzhikevichModel(Model):
                 self.U[n] = u_new[0]
 
             u[n+1] = u_new
+
+        return self.t, np.array(self.U)

@@ -1,4 +1,4 @@
-from IzhikevichModel import IzhikevichModel
+from uncertainpy.models import IzhikevichModel
 
 import pylab as plt
 
