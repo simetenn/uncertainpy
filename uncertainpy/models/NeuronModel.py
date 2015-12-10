@@ -26,13 +26,15 @@ class NeuronModel(Model):
         self.h = None
 
     def load(self):
+
+        current_dir = os.getcwd()
         os.chdir(self.model_path)
 
         import neuron
         self.h = neuron.h
         self.h.load_file(1, self.model_file)
 
-        os.chdir(self.filedir)
+        os.chdir(current_dir)
 
 
 

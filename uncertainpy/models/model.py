@@ -22,9 +22,6 @@ class Model():
 
         self.parameters = parameters
 
-        self.filepath = os.path.abspath(__file__)
-        self.filedir = os.path.dirname(self.filepath)
-
     def load(self):
         pass
 
