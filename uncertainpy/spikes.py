@@ -9,30 +9,22 @@ class Spikes:
         self.nr_spikes = 0
 
 
-    def spike_times(self, t, U):
-        thresh = np.sqrt(U.var())
 
-        print thresh
-        # TODO Figure out exactly what this line does
-        i, = np.where((U[:-1] < thresh) & (U[1:] > thresh))
-        print i
-        print t[i]
-        print U[i]
-
-
-    def detectSpikes(self, t, U):
+    def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
 
         min_dist_from_peak = 1
         derivative_cutoff = 0.5
 
         self.spikes = []
-        thresh = np.sqrt(U.var())
+        if thresh == "auto":
+            thresh = np.sqrt(U.var())
 
         start = 0
         start_flag = False
-        dUdt = np.gradient(U)
-        gt_derivative = np.where(dUdt >= -derivative_cutoff)[0]
-        lt_derivative = np.where(dUdt <= derivative_cutoff)[0]
+        if extended_spikes:
+            dUdt = np.gradient(U)
+            gt_derivative = np.where(dUdt >= -derivative_cutoff)[0]
+            lt_derivative = np.where(dUdt <= derivative_cutoff)[0]
 
         for i in range(len(U)):
             if U[i] > thresh and start_flag is False:
@@ -49,11 +41,12 @@ class Spikes:
                 t_max = t[global_index]
                 U_max = U[global_index]
 
-                spike_start = lt_derivative[np.where(lt_derivative < global_index - min_dist_from_peak)][-1]
-                spike_end = gt_derivative[np.where(gt_derivative > global_index + min_dist_from_peak)][0]
+                if extended_spikes:
+                    spike_start = lt_derivative[np.where(lt_derivative < global_index - min_dist_from_peak)][-1]
+                    spike_end = gt_derivative[np.where(gt_derivative > global_index + min_dist_from_peak)][0]
 
-                t_spike = t[spike_start:spike_end]
-                U_spike = U[spike_start:spike_end]
+                    t_spike = t[spike_start:spike_end]
+                    U_spike = U[spike_start:spike_end]
 
                 self.spikes.append(Spike(t_spike, U_spike, t_max, U_max, global_index))
 

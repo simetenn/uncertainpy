@@ -4,7 +4,10 @@ import scipy
 import os
 
 import numpy as np
-import multiprocessing as mp
+import multiprocess as mp
+
+from features import Features
+from spikes import Spikes
 
 __all__ = ["evaluateNodeFunction"]
 __version__ = "0.1"
@@ -62,9 +65,13 @@ def evaluateNodeFunction(data):
 
     # TODO Do a feature selection here. Make it so several feature
     # selections are performed at this step.
-    for feature in features:
-        pass
+    spikes = Spikes()
+    spikes.detectSpikes(t, V)
+
+    features = Features(spikes)
+    feature_results = features.calculateAllFeatures()
+
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
 
-    return (t, V, interpolation)
+    return (t, V, interpolation, feature_results)

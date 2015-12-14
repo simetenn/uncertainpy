@@ -16,6 +16,6 @@ setup(name=name,
       platforms='linux',
       packages=find_packages(), #["uncertainpy", "uncertainpy/models"],
       setup_requires=[],
-      install_requires=["chaospy", "xvfbwrapper"],
+      install_requires=["chaospy", "xvfbwrapper", "h5py"],
       dependency_links=["https://github.com/cgoldberg/xvfbwrapper", "https://github.com/hplgit/chaospy"]
       )

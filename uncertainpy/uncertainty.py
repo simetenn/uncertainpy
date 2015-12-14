@@ -47,7 +47,7 @@ import h5py
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
-import multiprocessing as mp
+import multiprocess as mp
 
 
 from xvfbwrapper import Xvfb
@@ -313,6 +313,7 @@ class UncertaintyEstimation():
 
 
         solves = np.array(solves)
+        features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
         # If not use the t maximum amount of t values
@@ -337,6 +338,10 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
+        print features
+
+        for feature in features:
+            print feature
 
 
         if self.rosenblatt:
