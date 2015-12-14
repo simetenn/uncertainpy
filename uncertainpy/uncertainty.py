@@ -38,6 +38,8 @@
 
 # TODO make it so setup.py install all requirements
 
+# TODO make it so rosenblatt transform code looks pretier and easier
+
 import time
 import os
 import shutil
@@ -56,7 +58,8 @@ from xvfbwrapper import Xvfb
 from plotting import prettyPlot
 from distribution import Distribution
 from evaluateNodeFunction import evaluateNodeFunction
-
+from features import Features
+from spikes import Spikes
 
 class UncertaintyEstimations():
     def __init__(self, model, distributions,
@@ -128,6 +131,7 @@ class UncertaintyEstimations():
 
 class UncertaintyEstimation():
     def __init__(self, model,
+                 feature_list=Features(Spikes()).implementedFeatures(),
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -146,6 +150,8 @@ class UncertaintyEstimation():
         Figures are always saved on the format:
         output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
+
+        self.feature_list = feature_list
 
         self.save_figures = save_figures
         self.output_dir_figures = output_dir_figures
@@ -235,7 +241,7 @@ class UncertaintyEstimation():
     #
     #
     #     # New setparameters
-    #     tmp_parameters = {}
+    #     tmp_parameters = {}feature_names =
     #     j = 0
     #     for parameter in self.tmp_parameter_names:
     #         tmp_parameters[parameter] = node[j]
@@ -338,10 +344,23 @@ class UncertaintyEstimation():
         for inter in solves[:, 2]:
             interpolated_solves.append(inter(self.t))
 
-        print features
 
-        for feature in features:
-            print feature
+        # Calculate PC for each feature
+        # for feature_name in self.feature_list:
+        #     print feature_name
+        #     tmp_results = []
+        #
+        #     for feature in features:
+        #         tmp_results.append[feature[feature_name]]
+        #
+        #     if self.rosenblatt:
+        #         #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
+        #     else:
+        #         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
+
+
 
 
         if self.rosenblatt:
