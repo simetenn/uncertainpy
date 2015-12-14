@@ -129,6 +129,9 @@ class UncertaintyEstimations():
 
 
 
+
+
+
 class UncertaintyEstimation():
     def __init__(self, model,
                  feature_list=Features(Spikes()).implementedFeatures(),
@@ -174,6 +177,7 @@ class UncertaintyEstimation():
 
         self.resetValues()
 
+
         if self.supress_output:
             self.vdisplay = Xvfb()
             self.vdisplay.start()
@@ -215,7 +219,7 @@ class UncertaintyEstimation():
         self.parameter_space = None
 
 
-        self.U_hat = None
+        self.U_hat = {}
         self.distribution = None
         self.solves = None
         self.t = None
@@ -227,6 +231,7 @@ class UncertaintyEstimation():
         self.Corr = None
         self.P = None
         self.nodes = None
+
 
     def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
         data = []
@@ -346,76 +351,72 @@ class UncertaintyEstimation():
 
 
         # Calculate PC for each feature
-        # for feature_name in self.feature_list:
-        #     print feature_name
-        #     tmp_results = []
-        #
-        #     for feature in features:
-        #         tmp_results.append[feature[feature_name]]
-        #
-        #     if self.rosenblatt:
-        #         #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
-        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
-        #     else:
-        #         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
+        for feature_name in self.feature_list:
+            tmp_results = []
 
+            for feature in features:
+                tmp_results.append(feature[feature_name])
 
-
+            if self.rosenblatt:
+                #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
+            else:
+                #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
 
         if self.rosenblatt:
             #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
-            self.U_hat = cp.fit_regression(self.P, nodes_MvNormal, interpolated_solves, rule="T")
+            self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes_MvNormal, interpolated_solves, rule="T")
         else:
             #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-            self.U_hat = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+            self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
-    def MC(self, parameter_name=None):
-        if parameter_name is None:
-            parameter_space = self.model.parameters.getUncertain("parameter_space")
-            self.tmp_parameter_names = self.model.parameters.getUncertain("name")
-        else:
-            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            self.tmp_parameter_names = [parameter_name]
-
-        self.distribution = cp.J(*parameter_space)
-        samples = self.distribution.sample(self.nr_mc_samples, "M")
-
-        if self.supress_output:
-            vdisplay = Xvfb()
-            vdisplay.start()
-
-        solves = []
-
-        if self.CPUs > 1:
-            solves = self.pool.map(self.evaluateNode, samples.T)
-
-        else:
-            for sample in samples.T:
-                solves.append(self.evaluateNode(sample))
-
-        if self.supress_output:
-            vdisplay.stop()
-
-        solves = np.array(solves)
-        lengths = []
-        for s in solves[:, 0]:
-            lengths.append(len(s))
-
-        index_max_len = np.argmax(lengths)
-        self.t = solves[index_max_len, 0]
-
-        #self.t = np.linspace(solves[0,0], solves[0,0])
-
-        interpolated_solves = []
-        for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t))
-
-        self.E = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
-        self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
-
-        #self.plotV_t("MC")
+    # def MC(self, parameter_name=None):
+    #     if parameter_name is None:
+    #         parameter_space = self.model.parameters.getUncertain("parameter_space")
+    #         self.tmp_parameter_names = self.model.parameters.getUncertain("name")
+    #     else:
+    #         parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
+    #         self.tmp_parameter_names = [parameter_name]
+    #
+    #     self.distribution = cp.J(*parameter_space)
+    #     samples = self.distribution.sample(self.nr_mc_samples, "M")
+    #
+    #     if self.supress_output:
+    #         vdisplay = Xvfb()
+    #         vdisplay.start()
+    #
+    #     solves = []
+    #
+    #     if self.CPUs > 1:
+    #         solves = self.pool.map(self.evaluateNode, samples.T)
+    #
+    #     else:
+    #         for sample in samples.T:
+    #             solves.append(self.evaluateNode(sample))
+    #
+    #     if self.supress_output:
+    #         vdisplay.stop()
+    #
+    #     solves = np.array(solves)
+    #     lengths = []
+    #     for s in solves[:, 0]:
+    #         lengths.append(len(s))
+    #
+    #     index_max_len = np.argmax(lengths)
+    #     self.t = solves[index_max_len, 0]
+    #
+    #     #self.t = np.linspace(solves[0,0], solves[0,0])
+    #
+    #     interpolated_solves = []
+    #     for inter in solves[:, 2]:
+    #         interpolated_solves.append(inter(self.t))
+    #
+    #     self.E = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
+    #     self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
+    #
+    #     #self.plotV_t("MC")
 
 
     def timePassed(self):
@@ -432,12 +433,17 @@ class UncertaintyEstimation():
                 print "Calculations aborted for " + uncertain_parameter
                 return -1
 
-            try:
-                self.E = cp.E(self.U_hat, self.distribution)
-                self.Var = cp.Var(self.U_hat, self.distribution)
+
+            # TODO working here
+
+            for feature_name in self.U_hat:
+                print feature_name
+
+                self.E = cp.E(self.U_hat[feature_name], self.distribution)
+                self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
 
                 samples = self.distribution.sample(self.nr_mc_samples, "M")
-                self.U_mc = self.U_hat(samples)
+                self.U_mc = self.U_hat[feature_name](samples)
 
                 self.p_05 = np.percentile(self.U_mc, 5, 1)
                 self.p_95 = np.percentile(self.U_mc, 95, 1)
@@ -451,10 +457,6 @@ class UncertaintyEstimation():
                 # self.plotV_t(uncertain_parameter)
                 # self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
 
-
-            except MemoryError:
-                print "Memory error, calculations aborted"
-                return -1
 
     def allParameters(self):
         # if len(self.model.parameters.uncertain_parameters) <= 1:
@@ -608,7 +610,7 @@ class UncertaintyEstimation():
 
 
     def save(self, parameter="all"):
-        ### TODO expand the save funcition to also save parameters and model informationty
+        ### TODO expand the save funcition to also save parameters and model information
 
         f = h5py.File(self.output_file, 'a')
 
