@@ -44,7 +44,7 @@ import time
 import os
 import shutil
 import h5py
-
+import sys
 
 import numpy as np
 import chaospy as cp
@@ -434,28 +434,40 @@ class UncertaintyEstimation():
                 return -1
 
 
-            # TODO working here
-
-            for feature_name in self.U_hat:
-                print feature_name
-
+            for feature_name in self.feature_list:
                 self.E = cp.E(self.U_hat[feature_name], self.distribution)
                 self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
 
                 samples = self.distribution.sample(self.nr_mc_samples, "M")
                 self.U_mc = self.U_hat[feature_name](samples)
 
-                self.p_05 = np.percentile(self.U_mc, 5, 1)
-                self.p_95 = np.percentile(self.U_mc, 95, 1)
+                self.p_05 = np.percentile(self.U_mc, 5)
+                self.p_95 = np.percentile(self.U_mc, 95)
+
 
                 if self.save_data:
-                    self.save(uncertain_parameter)
+                    self.save(parameter=uncertain_parameter, feature=feature_name)
 
                 if self.save_figures:
                     self.plotAll(uncertain_parameter)
 
-                # self.plotV_t(uncertain_parameter)
-                # self.plotConfidenceInterval(uncertain_parameter + "_confidence-interval")
+
+            self.E = cp.E(self.U_hat["direct_comparison"], self.distribution)
+            self.Var = cp.Var(self.U_hat["direct_comparison"], self.distribution)
+
+            samples = self.distribution.sample(self.nr_mc_samples, "M")
+            self.U_mc = self.U_hat["direct_comparison"](samples)
+
+            self.p_05 = np.percentile(self.U_mc, 5, 1)
+            self.p_95 = np.percentile(self.U_mc, 95, 1)
+
+            if self.save_data:
+                self.save(parameter=uncertain_parameter, feature="direct_comparison")
+
+            if self.save_figures:
+                self.plotAll(uncertain_parameter)
+
+
 
 
     def allParameters(self):
@@ -467,34 +479,58 @@ class UncertaintyEstimation():
         if self.createPCExpansion() == -1:
             print "Calculations aborted for all"
             return -1
-        try:
-            self.E = cp.E(self.U_hat, self.distribution)
-            self.Var = cp.Var(self.U_hat, self.distribution)
 
-            self.sensitivity = cp.Sens_t(self.U_hat, self.distribution)
-            self.sensitivityRanking()
+
+        for feature_name in self.feature_list:
+            self.E = cp.E(self.U_hat[feature_name], self.distribution)
+            self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
+
+            self.sensitivity = cp.Sens_t(self.U_hat[feature_name], self.distribution)
+            # self.sensitivity_ranking = {}
+            # i = 0
+            # for parameter in self.model.parameters.getUncertain():
+            #     self.sensitivity_ranking[parameter] = self.sensitivity[i]
+            #     i += 1
 
             samples = self.distribution.sample(self.nr_mc_samples, "M")
 
             if len(self.model.parameters.getUncertain()) == 1:
-                self.U_mc = self.U_hat(samples)
+                self.U_mc = self.U_hat[feature_name](samples)
             else:
-                self.U_mc = self.U_hat(*samples)
+                self.U_mc = self.U_hat[feature_name](*samples)
 
-            self.p_05 = np.percentile(self.U_mc, 5, 1)
-            self.p_95 = np.percentile(self.U_mc, 95, 1)
+            self.p_05 = np.percentile(self.U_mc, 5)
+            self.p_95 = np.percentile(self.U_mc, 95)
 
             if self.save_data:
-                self.save("all")
+                self.save(parameter="all", feature=feature_name)
 
             if self.save_figures:
                 self.plotAll("all")
 
             #self.Corr = cp.Corr(self.P, self.distribution)
 
-        except MemoryError:
-            print "Memory error: calculations aborted"
+        self.E = cp.E(self.U_hat["direct_comparison"], self.distribution)
+        self.Var = cp.Var(self.U_hat["direct_comparison"], self.distribution)
 
+        self.sensitivity = cp.Sens_t(self.U_hat["direct_comparison"], self.distribution)
+        self.sensitivityRanking()
+
+        samples = self.distribution.sample(self.nr_mc_samples, "M")
+
+        if len(self.model.parameters.getUncertain()) == 1:
+            self.U_mc = self.U_hat["direct_comparison"](samples)
+        else:
+            self.U_mc = self.U_hat["direct_comparison"](*samples)
+
+        self.p_05 = np.percentile(self.U_mc, 5, 1)
+        self.p_95 = np.percentile(self.U_mc, 95, 1)
+
+        if self.save_data:
+            self.save(parameter="all", feature="direct_comparison")
+
+        if self.save_figures:
+            self.plotAll("all")
 
 
     def plotAll(self, parameter="all"):
@@ -609,23 +645,25 @@ class UncertaintyEstimation():
                     bbox_inches="tight")
 
 
-    def save(self, parameter="all"):
+    def save(self, parameter="all", feature="direct_comparison",):
         ### TODO expand the save funcition to also save parameters and model information
 
         f = h5py.File(self.output_file, 'a')
 
         if "name" not in f.attrs.keys():
             f.attrs["name"] = self.output_file.split("/")[-1]
-        if "Uncertain parameters" not in f.attrs.keys():
-            f.attrs["Uncertain parameters"] = self.model.parameters.getUncertain("name")
+        if "uncertain parameters" not in f.attrs.keys():
+            f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
+        if "features" not in f.attrs.keys():
+            f.attrs["features"] = self.feature_list
 
 
-
-        if parameter in f.keys():
+        if parameter in f.keys() and feature in f[parameter].keys():
             del f[parameter]
-        group = f.create_group(parameter)
 
-        if self.t is not None:
+        group = f.create_group(os.path.join(parameter, feature))
+
+        if self.t is not None and feature == "direct_comparison":
             group.create_dataset("t", data=self.t)
         if self.E is not None:
             group.create_dataset("E", data=self.E)
@@ -638,7 +676,7 @@ class UncertaintyEstimation():
 
 
         # TODO check if this saves correctly
-        if self.sensitivity is not None and parameter == "all":
+        if self.sensitivity is not None and parameter == "all" and feature == "direct_comparison":
             group.create_dataset("sensitivity", data=self.sensitivity)
 
             i = 0
@@ -646,8 +684,8 @@ class UncertaintyEstimation():
                 if parameter not in f.keys():
                     f.create_group(parameter)
 
-                f[parameter].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
-                f[parameter].create_dataset("sensitivity", data=self.sensitivity[i])
+                f[parameter][feature].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
+                f[parameter][feature].create_dataset("sensitivity", data=self.sensitivity[i])
                 i += 1
 
 

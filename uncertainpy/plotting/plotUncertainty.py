@@ -7,8 +7,9 @@ import re
 import argparse
 
 import matplotlib.pyplot as plt
+import numpy as np
 
-from prettyPlot import prettyPlot
+from prettyPlot import prettyPlot, prettyBar
 from uncertainpy.utils import sortByParameters
 
 ### TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
@@ -42,7 +43,7 @@ class PlotUncertainty():
 
 
 
-    def vt(self, parameter):
+    def vt(self, parameter="all", feature="direct_comparison"):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -51,9 +52,9 @@ class PlotUncertainty():
         color2 = 8
 
 
-        t = self.f[parameter]["t"][:]
-        E = self.f[parameter]["E"][:]
-        Var = self.f[parameter]["Var"][:]
+        t = self.f[parameter][feature]["t"][:]
+        E = self.f[parameter][feature]["E"][:]
+        Var = self.f[parameter][feature]["Var"][:]
 
 
         prettyPlot(t, E, "Mean, " + parameter, "time", "voltage", color1)
@@ -86,16 +87,16 @@ class PlotUncertainty():
         plt.close()
 
 
-    def confidenceInterval(self, parameter):
+    def confidenceInterval(self, parameter="all", feature="direct_comparison"):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
 
 
-        t = self.f[parameter]["t"][:]
-        E = self.f[parameter]["E"][:]
-        p_05 = self.f[parameter]["p_05"][:]
-        p_95 = self.f[parameter]["p_95"][:]
+        t = self.f[parameter][feature]["t"][:]
+        E = self.f[parameter][feature]["E"][:]
+        p_05 = self.f[parameter][feature]["p_05"][:]
+        p_95 = self.f[parameter][feature]["p_95"][:]
 
 
         ax, color = prettyPlot(t, E, "Confidence interval", "time", "voltage", 0)
@@ -112,15 +113,15 @@ class PlotUncertainty():
         plt.savefig(os.path.join(self.full_output_figures_dir, parameter + "_confidence-interval" + self.figureformat))
         plt.close()
 
-    def sensitivity(self, hardcopy=True):
+    def sensitivity(self, feature="direct_comparison", hardcopy=True):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
 
-        t = self.f["all"]["t"][:]
-        sensitivity = self.f["all"]["sensitivity"][:]
+        t = self.f["all"][feature]["t"][:]
+        sensitivity = self.f["all"][feature]["sensitivity"][:]
 
-        parameter_names = self.f.attrs["Uncertain parameters"]
+        parameter_names = self.f.attrs["uncertain parameters"]
 
         for i in range(len(sensitivity)):
             prettyPlot(t, sensitivity[i],
@@ -144,18 +145,36 @@ class PlotUncertainty():
                                  "all_sensitivity" + self.figureformat))
         plt.close()
 
-    def all(self):
+    def plotAllDirectComparison(self):
         for parameter in self.f.keys():
             self.vt(parameter)
             self.confidenceInterval(parameter)
 
         self.sensitivity()
 
-    def allData(self):
+
+    def plotFeatures(self):
+        feature_names = self.f.attrs["features"]
+        #parameter_names = self.f.attrs["uncertain parameters"]
+
+        for parameter_name in self.f.keys():
+            tmp_E = []
+            tmp_Var = []
+
+            for feature_name in feature_names:
+                tmp_E.append(self.f[parameter_name][feature_name]["E"][()])
+                tmp_Var.append(self.f[parameter_name][feature_name]["Var"][()])
+
+            prettyBar(tmp_E, tmp_Var, title="Features for %s" % parameter_name, xlabels=feature_names)
+
+            plt.show()
+
+    def plotAllData(self):
         print "Plotting all data"
         for f in glob.glob(self.data_dir + "*"):
             self.loadData(f.split("/")[-1])
-            self.all()
+            self.plotAllDirectComparison()
+            self.plotFeatures()
 
 
     def gif(self):
@@ -299,7 +318,7 @@ class PlotUncertainty():
                     if parameter == "all":
                         sensitivity = f[parameter]["sensitivity"][:]
 
-                        sensitivity_parameters = f.attrs["Uncertain parameters"]
+                        sensitivity_parameters = f.attrs["uncertain parameters"]
                         for i in range(len(sensitivity_parameters)):
                             title = sensitivity_parameters[i] + ": Sensitivity, " + distribution + " " + interval
                             prettyPlot(t, sensitivity[i], title, "time", "sensitivity", i, True)
@@ -352,7 +371,7 @@ if __name__ == "__main__":
 
     if args.data_dir:
         data_dir = "%s/" % os.path.join(data_dir, args.data_dir)
-        output_figures_dir = "%s/" %  os.path.join(output_figures_dir, args.data_dir)
+        output_figures_dir = "%s/" % os.path.join(output_figures_dir, args.data_dir)
         output_gif_dir = "%s/" % os.path.join(output_gif_dir, args.data_dir)
 
 
@@ -361,7 +380,7 @@ if __name__ == "__main__":
                            figureformat=figureformat,
                            output_gif_dir=output_gif_dir)
 
-    plot.allData()
-    plot.gif()
+    plot.plotAllData()
+    #plot.gif()
 
     sortByParameters(path=output_figures_dir, outputpath=output_figures_dir)

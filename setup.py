@@ -14,8 +14,9 @@ setup(name=name,
       author="Simen Tennøe",
       description='Parameter estimation and uncertainty quantification',
       platforms='linux',
-      packages=find_packages(), #["uncertainpy", "uncertainpy/models"],
-      setup_requires=[],
+      packages=find_packages(),  # ["uncertainpy", "uncertainpy/models"],
+      setup_requires=["Cython"],
       install_requires=["chaospy", "xvfbwrapper", "h5py"],
-      dependency_links=["https://github.com/cgoldberg/xvfbwrapper", "https://github.com/hplgit/chaospy"]
+      dependency_links=["https://github.com/cgoldberg/xvfbwrapper",
+                        "https://github.com/hplgit/chaospy"]
       )
