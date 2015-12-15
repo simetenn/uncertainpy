@@ -158,16 +158,17 @@ class PlotUncertainty():
         #parameter_names = self.f.attrs["uncertain parameters"]
 
         for parameter_name in self.f.keys():
-            tmp_E = []
-            tmp_Var = []
 
             for feature_name in feature_names:
-                tmp_E.append(self.f[parameter_name][feature_name]["E"][()])
-                tmp_Var.append(self.f[parameter_name][feature_name]["Var"][()])
+                self.plotFeature(parameter_name, feature_name)
 
-            prettyBar(tmp_E, tmp_Var, title="Features for %s" % parameter_name, xlabels=feature_names)
 
-            plt.show()
+    def plotFeature(self, parameter_name, feature_name):
+        E = self.f[parameter_name][feature_name]["E"][()]
+        Var = self.f[parameter_name][feature_name]["Var"][()]
+        prettyBar(E, Var, title="Features for %s" % parameter_name, xlabels=[feature_name])
+        plt.show()
+
 
     def plotAllData(self):
         print "Plotting all data"

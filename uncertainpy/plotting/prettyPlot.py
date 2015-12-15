@@ -105,7 +105,10 @@ def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
                        labelleft="on", color=axis_grey, labelcolor="black",
                        labelsize=labelsize)
 
-        index = np.arange(len(x))
+        try:
+            index = np.arange(len(x))
+        except TypeError:
+            index = [0]
 
         tmp_colors = []
         j = 0
