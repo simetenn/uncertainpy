@@ -184,8 +184,8 @@ class PlotUncertainty():
 
         for parameter_name in self.f.keys():
             pos = 0
-            xticks = [pos]
-            xticklabels = ["mean"]
+            xticks = []
+            xticklabels = []
 
             plt.figure(figsize=figsize)
             ax = plt.subplot(111)
@@ -203,6 +203,9 @@ class PlotUncertainty():
                            labelleft="on", color=axis_grey, labelcolor="black",
                            labelsize=labelsize)
 
+            a = []
+            b = []
+
             for feature_name in feature_names:
                 E = self.f[parameter_name][feature_name]["E"][()]
                 Var = self.f[parameter_name][feature_name]["Var"][()]
@@ -216,6 +219,9 @@ class PlotUncertainty():
 
                 ax.bar(pos, E, yerr=Var, width=width, align='center', color=tableau20[0], linewidth=0,
                        error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
+                xticks.append(pos)
+                xticklabels.append("mean")
+
 
                 pos += distance
 
@@ -227,6 +233,9 @@ class PlotUncertainty():
 
                 if parameter_name == "all":
                     i = 0
+                    ax.text(pos, -5, "Sensitivity", fontsize=labelsize)
+                    a.append(pos)
+                    b.append("sensitivity")
                     for parameter in self.f.attrs["uncertain parameters"]:
                         # TODO is abs(sensitivity) a problem in the plot?
                         ax.bar(pos, abs(sensitivity[i]), width=width, align='center', color=tableau20[4+i], linewidth=0)
@@ -235,18 +244,25 @@ class PlotUncertainty():
 
                         i += 1
                         pos += width
+
                 else:
                     # TODO is abs(sensitivity) a problem in the plot?
                     ax.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
                     xticks.append(pos)
-                    xticklabels.append(parameter_name)
+                    xticklabels.append("Sensitivity")
 
                 pos += 2*distance
 
             ax.set_xticks(xticks)
             ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
+            # ax.get_xaxis().set_tick_params(which='Minor', pad=10)
+            # ax.set_xticks(a, minor=True)
+            # ax.set_xticklabels(b, minor=True, fontsize=labelsize)
 
+            #ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
 
+            ax.set_title("Features for %s" % parameter_name)
+            ax.set_legend()
             plt.show()
             plt.close()
 
