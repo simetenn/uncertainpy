@@ -70,6 +70,7 @@ def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
         fontsize = 16
         labelsize = 14
         figsize = (10, 7.5)
+        width=0.2
 
         # These are the "Tableau 20" colors as RGB.
         tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
@@ -116,14 +117,14 @@ def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
             tmp_colors.append(tableau20[j])
             j += 2
 
-        ax.bar(index, x, yerr=error, align='center', color=tmp_colors, linewidth=0,
-               error_kw=dict(ecolor='gray', lw=2, capsize=10, capthick=2))
+        ax.bar(index, x, yerr=error, width=width, align='center', color=tmp_colors, linewidth=0,
+               error_kw=dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2))
         ax.set_xticks(index)
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
         ax.set_title(title, fontsize=titlesize)
-        # ax.set_xlabel(xlabel, fontsize=fontsize)
-        # ax.set_ylabel(ylabel, fontsize=fontsize)
+        #ax.set_xlabel(xlabel, fontsize=fontsize)
+        ax.set_ylabel(ylabel, fontsize=fontsize)
         #
         # ax.set_xlim([min(x), max(x)])
         # ax.set_ylim([min(y), max(y)])

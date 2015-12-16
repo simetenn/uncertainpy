@@ -153,21 +153,159 @@ class PlotUncertainty():
         self.sensitivity()
 
 
+
+    # TODO fix title, and names for each feature
     def plotFeatures(self):
         feature_names = self.f.attrs["features"]
         #parameter_names = self.f.attrs["uncertain parameters"]
 
+        axis_grey = (0.5, 0.5, 0.5)
+        titlesize = 18
+        fontsize = 16
+        labelsize = 14
+        figsize = (10, 7.5)
+
+        width = 0.2
+        distance = 0.5
+
+        tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
+                     (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
+                     (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
+                     (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),
+                     (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
+
+        # Scale the RGB values to the [0, 1] range, which is the format matplotlib accepts.
+        for i in range(len(tableau20)):
+            r, g, b = tableau20[i]
+            tableau20[i] = (r / 255., g / 255., b / 255.)
+
+        plt.rcParams["figure.figsize"] = figsize
+
+
         for parameter_name in self.f.keys():
+            pos = 0
+            xticks = [pos]
+            xticklabels = ["mean"]
+
+            plt.figure(figsize=figsize)
+            ax = plt.subplot(111)
+
+            ax.spines["top"].set_edgecolor("None")
+            ax.spines["bottom"].set_edgecolor(axis_grey)
+            ax.spines["right"].set_edgecolor("None")
+            ax.spines["left"].set_edgecolor(axis_grey)
+
+
+            ax.tick_params(axis="x", which="both", bottom="on", top="off",
+                           labelbottom="on", color=axis_grey, labelcolor="black",
+                           labelsize=labelsize)
+            ax.tick_params(axis="y", which="both", right="off", left="on",
+                           labelleft="on", color=axis_grey, labelcolor="black",
+                           labelsize=labelsize)
 
             for feature_name in feature_names:
-                self.plotFeature(parameter_name, feature_name)
+                E = self.f[parameter_name][feature_name]["E"][()]
+                Var = self.f[parameter_name][feature_name]["Var"][()]
+                p_05 = self.f[parameter_name][feature_name]["p_05"][()]
+                p_95 = self.f[parameter_name][feature_name]["p_95"][()]
+
+                if parameter_name == "all":
+                    sensitivity = self.f[parameter_name][feature_name]["sensitivity"][:]
+                else:
+                    sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
+
+                ax.bar(pos, E, yerr=Var, width=width, align='center', color=tableau20[0], linewidth=0,
+                       error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
+
+                pos += distance
+
+                ax.bar(pos, p_05, width=width, align='center', color=tableau20[3], linewidth=0)
+                ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
+                xticks += [pos, pos + width]
+                xticklabels += ["$P_5$", "$P_{95}$"]
+                pos += distance + width
+
+                if parameter_name == "all":
+                    i = 0
+                    for parameter in self.f.attrs["uncertain parameters"]:
+                        # TODO is abs(sensitivity) a problem in the plot?
+                        ax.bar(pos, abs(sensitivity[i]), width=width, align='center', color=tableau20[4+i], linewidth=0)
+                        xticks.append(pos)
+                        xticklabels.append(parameter)
+
+                        i += 1
+                        pos += width
+                else:
+                    # TODO is abs(sensitivity) a problem in the plot?
+                    ax.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
+                    xticks.append(pos)
+                    xticklabels.append(parameter_name)
+
+                pos += 2*distance
+
+            ax.set_xticks(xticks)
+            ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
 
 
-    def plotFeature(self, parameter_name, feature_name):
+            plt.show()
+            plt.close()
+
+
+    def plotFeature(self, feature_name, parameter_name="all"):
         E = self.f[parameter_name][feature_name]["E"][()]
         Var = self.f[parameter_name][feature_name]["Var"][()]
-        prettyBar(E, Var, title="Features for %s" % parameter_name, xlabels=[feature_name])
-        plt.show()
+        p_05 = self.f[parameter_name][feature_name]["p_05"][()]
+        p_95 = self.f[parameter_name][feature_name]["p_95"][()]
+
+        if parameter_name == "all":
+            sensitivity = self.f[parameter_name][feature_name]["sensitivity"][:]
+        else:
+            sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
+
+        axis_grey = (0.5, 0.5, 0.5)
+        titlesize = 18
+        fontsize = 16
+        labelsize = 14
+        figsize = (10, 7.5)
+
+        width = 0.2
+        distance = 0.5
+
+        pos = 0
+        xticks = [pos]
+        xticklabels = ["mean"]
+        ax, tableau20 = prettyBar(E, Var)
+
+        pos += distance
+
+        ax.bar(pos, p_05, width=width, align='center', color=tableau20[3], linewidth=0)
+        ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
+        xticks += [pos, pos + width]
+        xticklabels += ["$P_5$", "$P_{95}$"]
+        pos += distance + width
+
+        if parameter_name == "all":
+            i = 0
+            for parameter in self.f.attrs["uncertain parameters"]:
+                ax.bar(pos, sensitivity[i], width=width, align='center', color=tableau20[4+i], linewidth=0)
+                xticks.append(pos)
+                xticklabels.append(parameter)
+
+                i += 1
+                pos += width
+        else:
+            print sensitivity
+            ax.bar(pos, sensitivity, width=width, align='center', color=tableau20[4], linewidth=0)
+            xticks.append(pos)
+            xticklabels.append(parameter_name)
+
+        pos += 3*distance
+
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
+
+        return ax, tableau20, pos
+
 
 
     def plotAllData(self):
