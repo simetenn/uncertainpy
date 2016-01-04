@@ -181,40 +181,36 @@ class PlotUncertainty():
 
         plt.rcParams["figure.figsize"] = figsize
 
-
         for parameter_name in self.f.keys():
+            ax_i = 0
 
-            pos = 0
-            xticks = []
-            xticklabels = []
-
-            plt.figure(figsize=figsize)
-            ax = plt.subplot(111)
-
-            ax.spines["top"].set_edgecolor("None")
-            ax.spines["bottom"].set_edgecolor(axis_grey)
-            ax.spines["right"].set_edgecolor("None")
-            ax.spines["left"].set_edgecolor(axis_grey)
-
-            ax.set_ylabel('Feature value', fontsize=fontsize)
-
-
-            ax.tick_params(axis="x", which="both", bottom="on", top="off",
-                           labelbottom="on", color=axis_grey, labelcolor="black",
-                           labelsize=labelsize)
-            ax.tick_params(axis="y", which="both", right="off", left="on",
-                           labelleft="on", color=axis_grey, labelcolor="black",
-                           labelsize=labelsize)
-
-            ax2 = ax.twinx()
-            ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                            color=tableau20[4], labelcolor=tableau20[4], labelsize=labelsize)
-            ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
-            ax2.spines["right"].set_edgecolor(color=tableau20[4])
-            ax2.set_ylim([0, 1.05])
-
+            f, ax_all = plt.subplots(1, len(self.f.attrs["features"]))
 
             for feature_name in feature_names:
+                pos = 0
+                xticks = []
+                xticklabels = []
+
+                ax = ax_all[ax_i]
+
+                ax.spines["top"].set_edgecolor("None")
+                ax.spines["bottom"].set_edgecolor(axis_grey)
+                ax.spines["right"].set_edgecolor("None")
+                ax.spines["left"].set_edgecolor(axis_grey)
+
+                ax.tick_params(axis="x", which="both", bottom="on", top="off",
+                               labelbottom="on", color=axis_grey, labelcolor="black",
+                               labelsize=labelsize)
+                ax.tick_params(axis="y", which="both", right="off", left="off",
+                               labelleft="off", color=axis_grey, labelcolor="black",
+                               labelsize=labelsize)
+
+                ax2 = ax.twinx()
+                ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                                color=tableau20[4], labelcolor=tableau20[4], labelsize=labelsize)
+                ax2.spines["right"].set_edgecolor(color=tableau20[4])
+                ax2.set_ylim([0, 1.05])
+
 
                 E = self.f[parameter_name][feature_name]["E"][()]
                 Var = self.f[parameter_name][feature_name]["Var"][()]
@@ -241,7 +237,6 @@ class PlotUncertainty():
                 pos += distance + width
 
                 if parameter_name == "all":
-
                     i = 0
                     legend_bars = []
 
@@ -262,21 +257,19 @@ class PlotUncertainty():
                     xticks.append(pos)
                     xticklabels.append("Sensitivity")
 
-                pos += 2*distance
-
                 ax.set_xticks(xticks)
                 ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
+                ax.set_title("Feature: " + feature_name)
+
+                ax_i += 1
+
+            ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
+            ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
+            f.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
 
 
-
-
-
-
-
-            ax.set_title(parameter_name)
-            save_name = "features_" + parameter_name + self.figureformat
+            save_name = parameter_name + "_features" + self.figureformat
             plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
-            plt.show()
             plt.close()
 
 
@@ -286,7 +279,6 @@ class PlotUncertainty():
                 self.plotFeature(feature_name=feature_name, parameter_name=parameter_name)
                 save_name = "%s_%s" % (parameter_name, feature_name) + self.figureformat
                 plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
-                plt.show()
                 plt.close()
 
 
@@ -318,7 +310,7 @@ class PlotUncertainty():
 
         pos += distance
 
-        ax.set_ylabel("Feature value", labelsize=labelsize)
+        ax.set_ylabel("Feature value", fontsize=labelsize)
 
         ax.bar(pos, p_05, width=width, align='center', color=tableau20[3], linewidth=0)
         ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
@@ -339,7 +331,8 @@ class PlotUncertainty():
             i = 0
             legend_bars = []
             for parameter in self.f.attrs["uncertain parameters"]:
-                legend_bars.append(ax2.bar(pos, sensitivity[i], width=width, align='center', color=tableau20[4+i], linewidth=0))
+                legend_bars.append(ax2.bar(pos, sensitivity[i], width=width,
+                                           align='center', color=tableau20[4+i], linewidth=0))
 
                 i += 1
                 pos += width
@@ -371,7 +364,7 @@ class PlotUncertainty():
         for f in glob.glob(self.data_dir + "*"):
             self.loadData(f.split("/")[-1])
             self.plotAllDirectComparison()
-            #self.plotFeatures()
+            # self.plotFeatures()
             self.plotFeaturesCombined()
 
     def gif(self):
