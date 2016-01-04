@@ -70,7 +70,7 @@ def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
         fontsize = 16
         labelsize = 14
         figsize = (10, 7.5)
-        width=0.2
+        width = .2
 
         # These are the "Tableau 20" colors as RGB.
         tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),

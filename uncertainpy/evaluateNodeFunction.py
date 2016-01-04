@@ -26,7 +26,7 @@ def evaluateNodeFunction(data):
     features = data[3]
 
     if isinstance(node, float) or isinstance(node, int):
-            node = [node]
+        node = [node]
 
     # New setparameters
     tmp_parameters = {}

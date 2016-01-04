@@ -645,7 +645,7 @@ class UncertaintyEstimation():
                     bbox_inches="tight")
 
 
-    def save(self, parameter="all", feature="direct_comparison",):
+    def save(self, parameter="all", feature="direct_comparison"):
         ### TODO expand the save funcition to also save parameters and model information
 
         f = h5py.File(self.output_file, 'a')
@@ -676,7 +676,7 @@ class UncertaintyEstimation():
 
 
         # TODO check if this saves correctly
-        if self.sensitivity is not None and parameter == "all" and feature == "direct_comparison":
+        if self.sensitivity is not None and parameter == "all":
             group.create_dataset("sensitivity", data=self.sensitivity)
 
             i = 0
@@ -684,7 +684,8 @@ class UncertaintyEstimation():
                 if parameter not in f.keys():
                     f.create_group(parameter)
 
-                f[parameter][feature].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
+                if feature == "direct_comparison":
+                    f[parameter][feature].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
                 f[parameter][feature].create_dataset("sensitivity", data=self.sensitivity[i])
                 i += 1
 
