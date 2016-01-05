@@ -16,6 +16,8 @@ from uncertainpy.utils import sortByParameters
 
 ### TODO refactor gif() to be less complex and use more functions
 
+### Todo Add feature plots to gif()
+
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",
@@ -153,11 +155,11 @@ class PlotUncertainty():
         self.sensitivity()
 
 
-
-    # TODO fix title, and names for each feature
     def plotFeaturesCombined(self):
         feature_names = self.f.attrs["features"]
-        #parameter_names = self.f.attrs["uncertain parameters"]
+
+        if len(feature_names) == 0:
+            return
 
         axis_grey = (0.5, 0.5, 0.5)
         titlesize = 18
@@ -380,7 +382,7 @@ class PlotUncertainty():
 
     def plotAllData(self):
         print "Plotting all data"
-        for f in glob.glob(self.data_dir + "*"):
+        for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
             self.plotAllDirectComparison()
             # self.plotFeatures()

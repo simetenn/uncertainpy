@@ -31,6 +31,8 @@
 
 # TODO make it so rosenblatt transform code looks pretier and easier
 
+# TODO Make it possible to implement your own features by inhereting from the feature class.
+
 import time
 import os
 import shutil
@@ -50,10 +52,10 @@ from plotting import prettyPlot
 from distribution import Distribution
 from evaluateNodeFunction import evaluateNodeFunction
 from features import Features
-from spikes import Spikes
 
 class UncertaintyEstimations():
     def __init__(self, model, distributions,
+                 features=None,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  output_dir_data="data/",
@@ -82,7 +84,7 @@ class UncertaintyEstimations():
         self.rosenblatt = rosenblatt
         self.figureformat = figureformat
         self.memory_log = memory_log
-
+        self.features = features
 
         self.t_start = time.time()
 
@@ -102,6 +104,7 @@ class UncertaintyEstimations():
 
                 print "Running for: " + distribution_function + " " + str(interval)
                 uncertainty_estimation = UncertaintyEstimation(self.model,
+                                                               features=self.features,
                                                                output_dir_figures=current_output_dir_figures,
                                                                figureformat=self.figureformat,
                                                                output_dir_data=self.output_dir_data,
@@ -125,7 +128,7 @@ class UncertaintyEstimations():
 
 class UncertaintyEstimation():
     def __init__(self, model,
-                 feature_list=Features(Spikes()).implementedFeatures(),
+                 features=None,
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -145,7 +148,12 @@ class UncertaintyEstimation():
         output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
 
-        self.feature_list = feature_list
+        if features == "all":
+            self.features = Features().implementedFeatures()
+        else:
+            self.features = features
+        # if isinstance(self.features, Features):
+        #     self.feature_names = self.features
 
         self.save_figures = save_figures
         self.output_dir_figures = output_dir_figures
@@ -161,7 +169,6 @@ class UncertaintyEstimation():
         self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
 
-        self.features = []
         self.M = 3
         self.nr_mc_samples = 10**3
 
@@ -315,7 +322,7 @@ class UncertaintyEstimation():
 
 
         solves = np.array(solves)
-        features = solves[:, 3]
+        solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
         # If not use the t maximum amount of t values
@@ -342,10 +349,10 @@ class UncertaintyEstimation():
 
 
         # Calculate PC for each feature
-        for feature_name in self.feature_list:
+        for feature_name in self.features:
             tmp_results = []
 
-            for feature in features:
+            for feature in solved_features:
                 tmp_results.append(feature[feature_name])
 
             if self.rosenblatt:
@@ -425,7 +432,7 @@ class UncertaintyEstimation():
                 return -1
 
 
-            for feature_name in self.feature_list:
+            for feature_name in self.features:
                 self.E = cp.E(self.U_hat[feature_name], self.distribution)
                 self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
 
@@ -472,7 +479,7 @@ class UncertaintyEstimation():
             return -1
 
 
-        for feature_name in self.feature_list:
+        for feature_name in self.features:
             self.E = cp.E(self.U_hat[feature_name], self.distribution)
             self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
 
@@ -646,7 +653,7 @@ class UncertaintyEstimation():
         if "uncertain parameters" not in f.attrs.keys():
             f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
         if "features" not in f.attrs.keys():
-            f.attrs["features"] = self.feature_list
+            f.attrs["features"] = self.features
 
 
         if parameter in f.keys() and feature in f[parameter].keys():

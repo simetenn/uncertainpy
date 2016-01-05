@@ -23,7 +23,9 @@ def evaluateNodeFunction(data):
     cmd = data[0]
     node = data[1]
     tmp_parameter_names = data[2]
-    features = data[3]
+    feature_list = data[3]
+
+
 
     if isinstance(node, float) or isinstance(node, int):
         node = [node]
@@ -69,7 +71,7 @@ def evaluateNodeFunction(data):
     spikes.detectSpikes(t, V)
 
     features = Features(spikes)
-    feature_results = features.calculateAllFeatures()
+    feature_results = features.calculateFeatures(feature_list)
 
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)

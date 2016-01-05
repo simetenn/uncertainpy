@@ -1,17 +1,27 @@
 from uncertainpy.spikes import Spikes
 
 class Features:
-    def __init__(self, spikes):
+    def __init__(self, spikes=None):
 
-        if not isinstance(spikes, Spikes):
-            raise TypeError("spikes must be a Spikes object")
+        if not isinstance(spikes, Spikes) and None:
+            raise TypeError("spikes must be None or a Spikes object")
 
         self.spikes = spikes
         # self.implemented_features = ["nrSpikes", "timeBeforeFirstSpike"]
 
-        self.utility_methods = ["calculateFeature", "calculateFeatures",
-                                "calculateAllFeatures", "__init__", "implementedFeatures"]
+        self.utility_methods = ["calculateFeature",
+                                "calculateFeatures",
+                                "calculateAllFeatures",
+                                "__init__",
+                                "implementedFeatures",
+                                "setSpikes"]
 
+
+    def setSpikes(self, spikes):
+        if not isinstance(spikes, Spikes) and None:
+            raise TypeError("spikes must be None or a Spikes object")
+
+        self.spikes = spikes
 
     def nrSpikes(self):
         return self.spikes.nr_spikes
@@ -26,21 +36,18 @@ class Features:
             sum_AP_overshoot += spike.U_max
         return sum_AP_overshoot/float(self.spikes.nr_spikes)
 
+
     def calculateFeature(self, feature_name):
         if not callable(getattr(self, feature_name)):
             raise NotImplementedError("%s is not a implemented feature" % (feature_name))
 
-        results = {feature_name: getattr(self, feature_name)()}
-        for feature in self.features_to_examine:
-            results[feature] = getattr(self, feature)()
-
-        return results
+        return getattr(self, feature_name)()
 
 
     def calculateFeatures(self, feature_names):
-        results = []
-        for feature_name in self.implementedFeatures():
-            results.append(self.calculateFeature(feature_name))
+        results = {}
+        for feature in feature_names:
+            results[feature] = self.calculateFeature(feature)
 
         return results
 
@@ -48,7 +55,7 @@ class Features:
     def calculateAllFeatures(self):
         results = {}
         for feature in self.implementedFeatures():
-            results[feature] = getattr(self, feature)()
+            results[feature] = self.calculateFeature(feature)
 
         return results
 
