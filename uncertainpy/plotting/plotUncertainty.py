@@ -186,13 +186,17 @@ class PlotUncertainty():
         for parameter_name in self.f.keys():
             ax_i = 0
 
-            if len(feature_names) == 1:
-                self.plotFeature(feature_name=feature_names[0], parameter_name=parameter_name)
-                save_name = "%s_%s" % (parameter_name, feature_names[0]) + self.figureformat
-                plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
-                plt.close()
+            # if len(feature_names) == 1:
+            #     self.plotFeature(feature_name=feature_names[0], parameter_name=parameter_name)
+            #     save_name = "%s_%s" % (parameter_name, feature_names[0]) + self.figureformat
+            #     plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
+            #     plt.close()
+            #     continue
 
             fig, ax_all = plt.subplots(1, len(self.f.attrs["features"]))
+
+            if len(feature_names) == 1:
+                ax_all = [ax_all]
 
             for feature_name in feature_names:
                 pos = 0
@@ -280,11 +284,14 @@ class PlotUncertainty():
 
             if parameter_name == "all":
                 # Put a legend above current axis
-                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper right', bbox_to_anchor=(0, 1.133),
+                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper center', bbox_to_anchor=(0.5, 1.133),
                                  fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
                 lgd.get_frame().set_edgecolor(axis_grey)
 
-            fig.subplots_adjust(top=0.86, wspace=0.5)
+                fig.subplots_adjust(top=0.86, wspace=0.5)
+            else:
+                fig.subplots_adjust(wspace=0.5)
+
             plt.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
 
             save_name = parameter_name + "_features" + self.figureformat
@@ -301,7 +308,7 @@ class PlotUncertainty():
                 plt.close()
 
 
-
+    # TODO not finhised, missing correct label placement
     def plotFeature(self, feature_name, parameter_name="all"):
         E = self.f[parameter_name][feature_name]["E"][()]
         Var = self.f[parameter_name][feature_name]["Var"][()]
@@ -326,6 +333,7 @@ class PlotUncertainty():
         xticks = [pos]
         xticklabels = ["mean"]
         ax, tableau20 = prettyBar(E, Var)
+        ax.spines["right"].set_edgecolor(axis_grey)
 
         pos += distance
 
@@ -339,11 +347,9 @@ class PlotUncertainty():
 
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=tableau20[4], labelcolor=tableau20[4], labelsize=labelsize)
+                        color=axis_grey, labelcolor=tableau20[4], labelsize=labelsize)
         ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
-        ax2.spines["right"].set_edgecolor(color=tableau20[4])
         ax2.set_ylim([0, 1.05])
-
 
 
         if parameter_name == "all":
@@ -358,13 +364,16 @@ class PlotUncertainty():
 
             xticks.append(pos - width*i/2.)
             xticklabels.append("Sensitivity")
-            ax.legend(legend_bars, self.f.attrs["uncertain parameters"])
 
             box = ax.get_position()
             ax.set_position([box.x0, box.y0,
                             box.width, box.height * 0.95])
             ax2.set_position([box.x0, box.y0,
                               box.width, box.height * 0.95])
+
+            lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper center', bbox_to_anchor=(0.5, 1.11),
+                             fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
+            lgd.get_frame().set_edgecolor(axis_grey)
 
         else:
             ax.bar(pos, sensitivity, width=width, align='center', color=tableau20[4], linewidth=0)
@@ -373,19 +382,10 @@ class PlotUncertainty():
 
 
         pos += 3*distance
-
-        if parameter_name == "all":
-            # Put a legend above current axis
-            lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper right', bbox_to_anchor=(0, 1.133),
-                             fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
-            lgd.get_frame().set_edgecolor(axis_grey)
-
-        fig.subplots_adjust(top=0.86, wspace=0.5)
-
         ax.set_xticks(xticks)
         ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
 
-        ax.set_title("%s, %s" % (parameter_name, feature_name))
+        plt.suptitle("Parameter: " + parameter_name + ", feature: " + feature_name, fontsize=titlesize)
 
         return ax, tableau20, pos
 
