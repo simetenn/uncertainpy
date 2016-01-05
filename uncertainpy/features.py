@@ -50,12 +50,12 @@ class Features:
         return sum_AP_overshoot/float(self.spikes.nr_spikes)
 
 
-    # def averageAHPDepth(self):
-    #     sum_AHP_depth = 0
-    #     for i in xrange(len(self.spikes.nr_spikes)):
-    #         sum_AHP_depth += min(self.U[self.spikes[i].global_index:self.spikes[i+1].global_index])
-    #
-    #     return sum_AHP_depth/float(self.spikes.nr_spikes)
+    def averageAHPDepth(self):
+        sum_AHP_depth = 0
+        for i in xrange(self.spikes.nr_spikes-1):
+            sum_AHP_depth += min(self.U[self.spikes[i].global_index:self.spikes[i+1].global_index])
+
+        return sum_AHP_depth/float(self.spikes.nr_spikes)
 
     #
     # def accomondationIndex(self):
