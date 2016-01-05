@@ -10,16 +10,7 @@
 # TODO Do a regression analysis to figure out which variables are dependent on
 # each other
 
-
-# TODO Instead of giving results as an average of the response, make it
-# feature based. For example, count the number of spikes, and the
-# average the number of spikes and time between spikes.
-# Make a data selection process before PC expansion to look at
-# specific features. This data selection should be the same as what is
-# done for handling spikes from experiments. One example is a low pass
-# filter and a high pass filter.
-
-# TODO Use a recursive neural network
+# TODO Use a recursive neural network to do something?
 
 # TODO have the option of saving the exploration by parameters instead of by distribution
 

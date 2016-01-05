@@ -184,20 +184,19 @@ class PlotUncertainty():
         for parameter_name in self.f.keys():
             ax_i = 0
 
-            f, ax_all = plt.subplots(1, len(self.f.attrs["features"]))
+            fig, ax_all = plt.subplots(1, len(self.f.attrs["features"]))
 
             for feature_name in feature_names:
                 pos = 0
                 xticks = []
                 xticklabels = []
-
                 ax = ax_all[ax_i]
 
                 ax.spines["top"].set_edgecolor("None")
                 ax.spines["bottom"].set_edgecolor(axis_grey)
-                ax.spines["right"].set_edgecolor("None")
+                ax.spines["right"].set_edgecolor(axis_grey)
                 ax.spines["left"].set_edgecolor(axis_grey)
-
+                #
                 ax.tick_params(axis="x", which="both", bottom="on", top="off",
                                labelbottom="on", color=axis_grey, labelcolor="black",
                                labelsize=labelsize)
@@ -207,8 +206,8 @@ class PlotUncertainty():
 
                 ax2 = ax.twinx()
                 ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                                color=tableau20[4], labelcolor=tableau20[4], labelsize=labelsize)
-                ax2.spines["right"].set_edgecolor(color=tableau20[4])
+                                color=axis_grey, labelcolor=tableau20[4], labelsize=labelsize)
+
                 ax2.set_ylim([0, 1.05])
 
 
@@ -249,8 +248,20 @@ class PlotUncertainty():
 
                     xticks.append(pos - width*i/2.)
                     xticklabels.append("Sensitivity")
-                    ax.legend(legend_bars, self.f.attrs["uncertain parameters"])
 
+
+                    box = ax.get_position()
+                    ax.set_position([box.x0, box.y0,
+                                    box.width, box.height * 0.95])
+                    ax2.set_position([box.x0, box.y0,
+                                      box.width, box.height * 0.95])
+
+                    # ax.legend(legend_bars, self.f.attrs["uncertain parameters"])
+                    # legends = ["a", "namabnhhhhhhhrr", "b", "x"]
+                    # ax.legend(legend_bars, legends)
+                    # ax.set_xlim(-0.2, pos + 0.8 + 0.1*len(max(self.f.attrs["uncertain parameters"], key=len)))
+                    # print len(max(legends, key=len))
+                    # ax.set_xlim(-0.2, pos + 0.7 + 0.15*len(max(legends, key=len)))
                 else:
                     # TODO is abs(sensitivity) a problem in the plot?
                     ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
@@ -265,8 +276,14 @@ class PlotUncertainty():
 
             ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
             ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
-            f.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
+            fig.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
 
+            if parameter_name == "all":
+
+                # Put a legend below current axis
+                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper center', bbox_to_anchor=(0, 1.133),
+                                 fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
+                lgd.get_frame().set_edgecolor(axis_grey)
 
             save_name = parameter_name + "_features" + self.figureformat
             plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
