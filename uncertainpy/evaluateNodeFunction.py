@@ -64,10 +64,7 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
     os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
 
-    spikes = Spikes()
-    spikes.detectSpikes(t, V)
-
-    features = Features(spikes)
+    features = Features(t, V)
     feature_results = features.calculateFeatures(feature_list)
 
 

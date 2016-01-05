@@ -284,10 +284,11 @@ class PlotUncertainty():
 
             if parameter_name == "all":
                 # Put a legend above current axis
-                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper center', bbox_to_anchor=(0.5, 1.133),
+                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper right', bbox_to_anchor=(0, 1.133),
                                  fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
                 lgd.get_frame().set_edgecolor(axis_grey)
 
+                plt.tight_layout()
                 fig.subplots_adjust(top=0.86, wspace=0.5)
             else:
                 fig.subplots_adjust(wspace=0.5)

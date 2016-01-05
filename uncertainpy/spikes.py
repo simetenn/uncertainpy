@@ -15,6 +15,9 @@ class Spikes:
     def __len__(self):
         return self.nr_spikes
 
+    def __getitem__(self, i):
+        return self.spikes[i]
+
     def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
 
         min_dist_from_peak = 1

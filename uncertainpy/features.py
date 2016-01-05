@@ -1,27 +1,36 @@
 from uncertainpy.spikes import Spikes
 
 class Features:
-    def __init__(self, spikes=None):
+    def __init__(self, t=None, U=None):
+        self.spikes = None
+        self.t = t
+        self.U = U
 
-        if not isinstance(spikes, Spikes) and None:
-            raise TypeError("spikes must be None or a Spikes object")
-
-        self.spikes = spikes
         # self.implemented_features = ["nrSpikes", "timeBeforeFirstSpike"]
-
         self.utility_methods = ["calculateFeature",
                                 "calculateFeatures",
                                 "calculateAllFeatures",
                                 "__init__",
                                 "implementedFeatures",
-                                "setSpikes"]
+                                "setSpikes",
+                                "calculateSpikes"]
+
+        # print self.t
+        # print self.U
+        if self.t is not None and self.U is not None:
+            self.calculateSpikes()
 
 
-    def setSpikes(self, spikes):
-        if not isinstance(spikes, Spikes) and None:
-            raise TypeError("spikes must be None or a Spikes object")
+    def calculateSpikes(self):
+        if self.t is None:
+            raise AttributeError("t is not assigned")
+        if self.U is None:
+            raise AttributeError("V is not assigned")
 
-        self.spikes = spikes
+        self.spikes = Spikes()
+        self.spikes.detectSpikes(self.t, self.U)
+
+
 
     def nrSpikes(self):
         return self.spikes.nr_spikes
@@ -30,11 +39,31 @@ class Features:
     def timeBeforeFirstSpike(self):
         return self.spikes.spikes[0].t_max
 
+    def spikeRate(self):
+        return self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
+
+
     def averageAPOvershoot(self):
         sum_AP_overshoot = 0
         for spike in self.spikes:
             sum_AP_overshoot += spike.U_max
         return sum_AP_overshoot/float(self.spikes.nr_spikes)
+
+
+    # def averageAHPDepth(self):
+    #     sum_AHP_depth = 0
+    #     for i in xrange(len(self.spikes.nr_spikes)):
+    #         sum_AHP_depth += min(self.U[self.spikes[i].global_index:self.spikes[i+1].global_index])
+    #
+    #     return sum_AHP_depth/float(self.spikes.nr_spikes)
+
+    #
+    # def accomondationIndex(self):
+    #     N = self.spikes.nr_spikes
+
+
+
+
 
 
     def calculateFeature(self, feature_name):
