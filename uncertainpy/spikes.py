@@ -8,7 +8,12 @@ class Spikes:
         self.spikes = []
         self.nr_spikes = 0
 
+    def __iter__(self):
+        for spike in self.spikes:
+            yield spike
 
+    def __len__(self):
+        return self.nr_spikes
 
     def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
 

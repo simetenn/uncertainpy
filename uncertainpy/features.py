@@ -20,6 +20,11 @@ class Features:
     def timeBeforeFirstSpike(self):
         return self.spikes.spikes[0].t_max
 
+    def averageAPOvershoot(self):
+        sum_AP_overshoot = 0
+        for spike in self.spikes:
+            sum_AP_overshoot += spike.U_max
+        return sum_AP_overshoot/float(self.spikes.nr_spikes)
 
     def calculateFeature(self, feature_name):
         if not callable(getattr(self, feature_name)):

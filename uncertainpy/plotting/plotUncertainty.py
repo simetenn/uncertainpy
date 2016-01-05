@@ -179,7 +179,7 @@ class PlotUncertainty():
             r, g, b = tableau20[i]
             tableau20[i] = (r / 255., g / 255., b / 255.)
 
-        plt.rcParams["figure.figsize"] = figsize
+        #plt.rcParams["figure.figsize"] = figsize
 
         for parameter_name in self.f.keys():
             ax_i = 0
@@ -222,7 +222,7 @@ class PlotUncertainty():
                     sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
 
                 ax.bar(pos, E, yerr=Var, width=width, align='center', color=tableau20[0], linewidth=0,
-                       error_kw=dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2))
+                       error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
                 xticks.append(pos)
                 xticklabels.append("mean")
 
@@ -270,20 +270,22 @@ class PlotUncertainty():
 
                 ax.set_xticks(xticks)
                 ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
-                ax.set_title("Feature: " + feature_name)
+                ax.set_title(feature_name)
 
                 ax_i += 1
 
+
             ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
             ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
-            fig.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
 
             if parameter_name == "all":
-
-                # Put a legend below current axis
-                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper center', bbox_to_anchor=(0, 1.133),
+                # Put a legend above current axis
+                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper right', bbox_to_anchor=(0, 1.133),
                                  fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
                 lgd.get_frame().set_edgecolor(axis_grey)
+
+            fig.subplots_adjust(top=0.86, wspace=0.5)
+            plt.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
 
             save_name = parameter_name + "_features" + self.figureformat
             plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
