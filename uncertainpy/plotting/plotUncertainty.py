@@ -186,6 +186,12 @@ class PlotUncertainty():
         for parameter_name in self.f.keys():
             ax_i = 0
 
+            if len(feature_names) == 1:
+                self.plotFeature(feature_name=feature_names[0], parameter_name=parameter_name)
+                save_name = "%s_%s" % (parameter_name, feature_names[0]) + self.figureformat
+                plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
+                plt.close()
+
             fig, ax_all = plt.subplots(1, len(self.f.attrs["features"]))
 
             for feature_name in feature_names:
@@ -251,19 +257,11 @@ class PlotUncertainty():
                     xticks.append(pos - width*i/2.)
                     xticklabels.append("Sensitivity")
 
-
                     box = ax.get_position()
                     ax.set_position([box.x0, box.y0,
                                     box.width, box.height * 0.95])
                     ax2.set_position([box.x0, box.y0,
                                       box.width, box.height * 0.95])
-
-                    # ax.legend(legend_bars, self.f.attrs["uncertain parameters"])
-                    # legends = ["a", "namabnhhhhhhhrr", "b", "x"]
-                    # ax.legend(legend_bars, legends)
-                    # ax.set_xlim(-0.2, pos + 0.8 + 0.1*len(max(self.f.attrs["uncertain parameters"], key=len)))
-                    # print len(max(legends, key=len))
-                    # ax.set_xlim(-0.2, pos + 0.7 + 0.15*len(max(legends, key=len)))
                 else:
                     # TODO is abs(sensitivity) a problem in the plot?
                     ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
@@ -362,6 +360,12 @@ class PlotUncertainty():
             xticklabels.append("Sensitivity")
             ax.legend(legend_bars, self.f.attrs["uncertain parameters"])
 
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0,
+                            box.width, box.height * 0.95])
+            ax2.set_position([box.x0, box.y0,
+                              box.width, box.height * 0.95])
+
         else:
             ax.bar(pos, sensitivity, width=width, align='center', color=tableau20[4], linewidth=0)
             xticks.append(pos)
@@ -370,6 +374,13 @@ class PlotUncertainty():
 
         pos += 3*distance
 
+        if parameter_name == "all":
+            # Put a legend above current axis
+            lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper right', bbox_to_anchor=(0, 1.133),
+                             fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
+            lgd.get_frame().set_edgecolor(axis_grey)
+
+        fig.subplots_adjust(top=0.86, wspace=0.5)
 
         ax.set_xticks(xticks)
         ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
