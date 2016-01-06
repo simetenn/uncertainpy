@@ -150,6 +150,8 @@ class UncertaintyEstimation():
 
         if features == "all":
             self.features = Features().implementedFeatures()
+        elif features is None:
+            self.features = []
         else:
             self.features = features
         # if isinstance(self.features, Features):

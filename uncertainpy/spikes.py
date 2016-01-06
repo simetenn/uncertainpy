@@ -27,7 +27,8 @@ class Spikes:
         if thresh == "auto":
             thresh = np.sqrt(U.var())
 
-        start = 0
+
+        spike_start = 0
         start_flag = False
         if extended_spikes:
             dUdt = np.gradient(U)
@@ -36,16 +37,19 @@ class Spikes:
 
         for i in range(len(U)):
             if U[i] > thresh and start_flag is False:
-                start = i
+                spike_start = i
                 start_flag = True
+                continue
+
             elif U[i] < thresh and start_flag is True:
+                spike_end = i + 1
                 start_flag = False
 
-                t_spike = t[start:i + 1]
-                U_spike = U[start:i + 1]
+                t_spike = t[spike_start:spike_end]
+                U_spike = U[spike_start:spike_end]
 
                 spike_index = np.argmax(U_spike)
-                global_index = spike_index + start
+                global_index = spike_index + spike_start
                 t_max = t[global_index]
                 U_max = U[global_index]
 
@@ -53,10 +57,18 @@ class Spikes:
                     spike_start = lt_derivative[np.where(lt_derivative < global_index - min_dist_from_peak)][-1]
                     spike_end = gt_derivative[np.where(gt_derivative > global_index + min_dist_from_peak)][0]
 
-                    t_spike = t[spike_start:spike_end]
-                    U_spike = U[spike_start:spike_end]
+                else:
+                    if global_index - min_dist_from_peak < spike_start:
+                        spike_start = global_index - min_dist_from_peak
+
+                    if global_index + min_dist_from_peak + 1 > spike_end:
+                        spike_end = global_index + min_dist_from_peak + 1
+
+                t_spike = t[spike_start:spike_end]
+                U_spike = U[spike_start:spike_end]
 
                 self.spikes.append(Spike(t_spike, U_spike, t_max, U_max, global_index))
+
 
         self.nr_spikes = len(self.spikes)
 
@@ -69,6 +81,7 @@ class Spikes:
         labels = []
         i = 1
         for spike in self.spikes:
+            print spike.U
             u_max.append(max(spike.U))
             u_min.append(min(spike.U))
             t_max.append(len(spike.t))

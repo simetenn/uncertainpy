@@ -1,8 +1,6 @@
 from uncertainpy.spikes import Spikes
 import scipy.interpolate
 import scipy.optimize
-import numpy as np
-import matplotlib.pyplot as plt
 
 class Features:
     def __init__(self, t=None, U=None):
@@ -30,9 +28,8 @@ class Features:
             raise AttributeError("V is not assigned")
 
         self.spikes = Spikes()
-        self.spikes.detectSpikes(self.t, self.U)
-
-
+        self.spikes.detectSpikes(self.t, self.U, thresh="auto")
+        # self.spikes.plot()
 
     def nrSpikes(self):
         return self.spikes.nr_spikes
@@ -65,10 +62,12 @@ class Features:
         for spike in self.spikes:
             U_width = (spike.U_spike + spike.U[0])/2.
 
+            print spike.t
+
             U_interpolation = scipy.interpolate.interp1d(spike.t, spike.U - U_width)
 
-            root1 = scipy.optimize.fsolve(U_interpolation, spike.t[0])
-            root2 = scipy.optimize.fsolve(U_interpolation, spike.t[-2])
+            root1 = scipy.optimize.fsolve(U_interpolation, spike.t[0]*1.05)
+            root2 = scipy.optimize.fsolve(U_interpolation, spike.t[-1]*0.95)
 
             sum_AP_width += abs(root2 - root1)
 

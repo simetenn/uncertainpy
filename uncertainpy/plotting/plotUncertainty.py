@@ -158,13 +158,11 @@ class PlotUncertainty():
 
 
     def plotFeaturesCombined(self, index=0):
-        if self.features_in_combined_plot+index < len(self.f.attrs["features"]):
+        if self.features_in_combined_plot + index < len(self.f.attrs["features"]):
             self.plotFeaturesCombined(index + self.features_in_combined_plot)
             feature_names = self.f.attrs["features"][index:self.features_in_combined_plot + index]
         else:
             feature_names = self.f.attrs["features"][index:]
-
-        print feature_names
 
         if len(feature_names) == 0:
             return

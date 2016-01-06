@@ -9,6 +9,9 @@ import multiprocess as mp
 from features import Features
 from spikes import Spikes
 
+from uncertainpy import prettyPlot
+import matplotlib.pyplot as plt
+
 __all__ = ["evaluateNodeFunction"]
 __version__ = "0.1"
 
@@ -24,7 +27,6 @@ def evaluateNodeFunction(data):
     node = data[1]
     tmp_parameter_names = data[2]
     feature_list = data[3]
-
 
 
     if isinstance(node, float) or isinstance(node, int):
@@ -63,6 +65,9 @@ def evaluateNodeFunction(data):
 
     os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
     os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
+
+    # prettyPlot(t, V)
+    # plt.show()
 
     features = Features(t, V)
     feature_results = features.calculateFeatures(feature_list)

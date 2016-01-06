@@ -31,11 +31,15 @@ parameters = uncertainpy.Parameters(parameterlist)
 
 model = uncertainpy.HodkinHuxleyModel(parameters)
 
-percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
+# percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
+percentages = [0.05]
 test_distributions = {"uniform": percentages}
-exploration = uncertainpy.UncertaintyEstimations(model, test_distributions,
+exploration = uncertainpy.UncertaintyEstimations(model, test_distributions, features="all", CPUs=1,
                                                  output_dir_data="data/hodgkin-huxley")
 exploration.exploreParameters()
+
+plot = uncertainpy.PlotUncertainty(data_dir="data/hodgkin-huxley", output_figures_dir="figures/hodgkin-huxley")
+plot.plotAllData()
 
 memory.end()
 
