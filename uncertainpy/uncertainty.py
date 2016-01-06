@@ -33,6 +33,8 @@
 
 # TODO Make it possible to implement your own features by inhereting from the feature class.
 
+# TODO Add an option to choose find spike options
+
 import time
 import os
 import shutil

@@ -56,20 +56,6 @@ class Features:
 
         return sum_AHP_depth/float(self.spikes.nr_spikes)
 
-    # def averageAPWidth(self):
-    #     sum_AP_width = 0
-    #     for spike in self.spikes:
-    #         U_width = (spike.U_spike + spike.U[0])/2.
-    #
-    #         U_interpolation = scipy.interpolate.interp1d(spike.t, spike.U - U_width)
-    #
-    #         root1 = scipy.optimize.bisect(U_interpolation, spike.t[0], spike.t_spike)
-    #         root2 = scipy.optimize.bisect(U_interpolation, spike.t_spike, spike.t[-1])
-    #
-    #         sum_AP_width += abs(root2 - root1)
-    #
-    #     return sum_AP_width/float(self.spikes.nr_spikes)
-
 
     def averageAPWidth(self):
         sum_AP_width = 0
@@ -78,8 +64,10 @@ class Features:
 
             U_interpolation = scipy.interpolate.interp1d(spike.t, spike.U - U_width)
 
-            root1 = scipy.optimize.fsolve(U_interpolation, (spike.t_spike - spike.t[0])/2. + spike.t[0])
-            root2 = scipy.optimize.fsolve(U_interpolation, (spike.t[-1] - spike.t_spike)/2. + spike.t_spike)
+            # root1 = scipy.optimize.fsolve(U_interpolation, (spike.t_spike - spike.t[0])/2. + spike.t[0])
+            # root2 = scipy.optimize.fsolve(U_interpolation, (spike.t[-1] - spike.t_spike)/2. + spike.t_spike)
+            root1 = scipy.optimize.brentq(U_interpolation, spike.t[0], spike.t_spike)
+            root2 = scipy.optimize.brentq(U_interpolation, spike.t_spike, spike.t[-1])
 
             sum_AP_width += abs(root2 - root1)
 
