@@ -23,7 +23,8 @@ class PlotUncertainty():
                  data_dir="data/",
                  output_figures_dir="figures/",
                  output_gif_dir="gifs/",
-                 figureformat=".png"):
+                 figureformat=".png",
+                 features_in_combined_plot=3):
 
         self.data_dir = data_dir
         self.output_figures_dir = output_figures_dir
@@ -33,6 +34,7 @@ class PlotUncertainty():
 
         self.tmp_gif_output = ".tmp_gif_output/"
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
+        self.features_in_combined_plot = features_in_combined_plot
 
     def loadData(self, filename):
         self.f = h5py.File(os.path.join(self.data_dir, filename), 'r')
@@ -155,8 +157,14 @@ class PlotUncertainty():
         self.sensitivity()
 
 
-    def plotFeaturesCombined(self):
-        feature_names = self.f.attrs["features"]
+    def plotFeaturesCombined(self, index=0):
+        if self.features_in_combined_plot+index < len(self.f.attrs["features"]):
+            self.plotFeaturesCombined(index + self.features_in_combined_plot)
+            feature_names = self.f.attrs["features"][index:self.features_in_combined_plot + index]
+        else:
+            feature_names = self.f.attrs["features"][index:]
+
+        print feature_names
 
         if len(feature_names) == 0:
             return
@@ -193,7 +201,7 @@ class PlotUncertainty():
             #     plt.close()
             #     continue
 
-            fig, ax_all = plt.subplots(1, len(self.f.attrs["features"]))
+            fig, ax_all = plt.subplots(1, len(feature_names))
 
             if len(feature_names) == 1:
                 ax_all = [ax_all]
@@ -295,7 +303,7 @@ class PlotUncertainty():
 
             plt.suptitle("Parameter: " + parameter_name, fontsize=titlesize)
 
-            save_name = parameter_name + "_features" + self.figureformat
+            save_name = parameter_name + ("_features_%d" % (index/self.features_in_combined_plot)) + self.figureformat
             plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
             plt.close()
 

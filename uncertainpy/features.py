@@ -1,4 +1,8 @@
 from uncertainpy.spikes import Spikes
+import scipy.interpolate
+import scipy.optimize
+import numpy as np
+import matplotlib.pyplot as plt
 
 class Features:
     def __init__(self, t=None, U=None):
@@ -15,8 +19,6 @@ class Features:
                                 "setSpikes",
                                 "calculateSpikes"]
 
-        # print self.t
-        # print self.U
         if self.t is not None and self.U is not None:
             self.calculateSpikes()
 
@@ -37,7 +39,7 @@ class Features:
 
 
     def timeBeforeFirstSpike(self):
-        return self.spikes.spikes[0].t_max
+        return self.spikes.spikes[0].t_spike
 
     def spikeRate(self):
         return self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
@@ -46,7 +48,7 @@ class Features:
     def averageAPOvershoot(self):
         sum_AP_overshoot = 0
         for spike in self.spikes:
-            sum_AP_overshoot += spike.U_max
+            sum_AP_overshoot += spike.U_spike
         return sum_AP_overshoot/float(self.spikes.nr_spikes)
 
 
@@ -57,13 +59,37 @@ class Features:
 
         return sum_AHP_depth/float(self.spikes.nr_spikes)
 
-    #
-    # def accomondationIndex(self):
-    #     N = self.spikes.nr_spikes
+
+    def averageAPWidth(self):
+        sum_AP_width = 0
+        for spike in self.spikes:
+            U_width = (spike.U_spike + spike.U[0])/2.
+
+            U_interpolation = scipy.interpolate.interp1d(spike.t, spike.U - U_width)
+
+            root1 = scipy.optimize.fsolve(U_interpolation, spike.t[0])
+            root2 = scipy.optimize.fsolve(U_interpolation, spike.t[-2])
+
+            sum_AP_width += abs(root2 - root1)
+
+        return sum_AP_width/float(self.spikes.nr_spikes)
 
 
+    def accomondationIndex(self):
+        N = self.spikes.nr_spikes
+        if N == 1:
+            return -1
 
+        k = min(4, int(round(N-1)/5.))
 
+        ISIs = []
+        for i in xrange(N-1):
+            ISIs.append(self.spikes[i+1].t_spike - self.spikes[i].t_spike)
+
+        A = 0
+        for i in xrange(k+1, N-1):
+            A += (ISIs[i] - ISIs[i-1])/(ISIs[i] + ISIs[i-1])
+        return A/(N - k - 1)
 
 
     def calculateFeature(self, feature_name):

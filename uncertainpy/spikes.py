@@ -93,12 +93,12 @@ class Spikes:
 
 
 class Spike:
-    def __init__(self, t_spike, U_spike, U_max, t_max, global_index):
-        self.t = t_spike
-        self.U = U_spike
+    def __init__(self, t, U, t_spike, U_spike, global_index):
+        self.t = t
+        self.U = U
 
-        self.U_max = U_max
-        self.t_max = t_max
+        self.U_spike = U_spike
+        self.t_spike = t_spike
 
         self.global_index = global_index
 
