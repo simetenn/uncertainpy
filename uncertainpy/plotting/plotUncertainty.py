@@ -23,8 +23,7 @@ class PlotUncertainty():
                  data_dir="data/",
                  output_figures_dir="figures/",
                  output_gif_dir="gifs/",
-                 figureformat=".png",
-                 features_in_combined_plot=3):
+                 figureformat=".png"):
 
         self.data_dir = data_dir
         self.output_figures_dir = output_figures_dir
@@ -34,7 +33,7 @@ class PlotUncertainty():
 
         self.tmp_gif_output = ".tmp_gif_output/"
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
-        self.features_in_combined_plot = features_in_combined_plot
+        self.features_in_combined_plot = 3
 
     def loadData(self, filename):
         self.f = h5py.File(os.path.join(self.data_dir, filename), 'r')
@@ -290,11 +289,21 @@ class PlotUncertainty():
 
             if parameter_name == "all":
                 # Put a legend above current axis
-                lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper right', bbox_to_anchor=(0, 1.133),
-                                 fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
+                if len(feature_names) == 1:
+                    location = (0.5, 1.133)
+                    loc = "upper center"
+                elif len(feature_names) == 2:
+                    location = (0, 1.133)
+                    loc = "upper center"
+                else:
+                    location = (0.15, 1.133)
+                    loc = "upper right"
+
+                lgd = ax.legend(legend_bars, self.f.attrs["uncertain parameters"], loc=loc, bbox_to_anchor=location,
+                                fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
                 lgd.get_frame().set_edgecolor(axis_grey)
 
-                plt.tight_layout()
+                # plt.tight_layout()
                 fig.subplots_adjust(top=0.86, wspace=0.5)
             else:
                 fig.subplots_adjust(wspace=0.5)
