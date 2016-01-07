@@ -1,10 +1,8 @@
 from model import Model
 
 import numpy as np
-import pylab as plt
-import odespy
 
-# Tself.dte class name and file name must be tself.dte same
+
 class CoffeeCup2DModel(Model):
     """
     The model must be able to handle these calls

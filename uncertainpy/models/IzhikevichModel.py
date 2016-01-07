@@ -4,7 +4,7 @@ import numpy as np
 
 class IzhikevichModel(Model):
     def __init__(self, parameters=None):
-        Model.__init__(self, parameters)
+        Model.__init__(self, parameters=parameters)
 
         self.a = 0.02
         self.b = 0.2

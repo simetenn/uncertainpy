@@ -14,8 +14,8 @@ memory = uncertainpy.Memory(10)
 memory.start()
 
 parameterlist = [["V_rest", 0, None],
-                 ["Cm", 1, None],
                  ["gbar_Na", 120, None],
+                 ["Cm", 1, None],
                  ["gbar_K", 36, None],
                  ["gbar_l", 0.3, None],
                  ["E_Na", 115, None],

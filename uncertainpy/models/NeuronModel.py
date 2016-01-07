@@ -7,7 +7,7 @@ from model import Model
 
 
 class NeuronModel(Model):
-    def __init__(self, model_file=None, model_path=None, parameters=None):
+    def __init__(self, parameters=None, model_file=None, model_path=None):
         Model.__init__(self, parameters=parameters)
 
         if model_file is None or model_path is None:
@@ -92,5 +92,6 @@ class NeuronModel(Model):
 
 
     def cmd(self):
-        additional_cmds = ["--model_file", self.model_file, "--model_path", self.model_path]
+        additional_cmds = ["--model_file", self.model_file,
+                           "--model_path", self.model_path]
         return Model.cmd(self, additional_cmds)

@@ -61,13 +61,13 @@ class Model():
     #         setattr(self, parameter, self.parameters[parameter].value)
 
 
-    def setParameters(self, parameters):
-        """
-        Parameters: dictionary with all parameters
-        """
-        # How the parameters are set
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
+    # def setParameters(self, parameters):
+    #     """
+    #     Parameters: dictionary with all parameters
+    #     """
+    #     # How the parameters are set
+    #     for parameter in parameters:
+    #         setattr(self, parameter, parameters[parameter])
 
     def run(self):
         raise NotImplementedError("No run() function implemented")

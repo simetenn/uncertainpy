@@ -31,7 +31,11 @@
 
 # TODO make it so rosenblatt transform code looks pretier and easier
 
-# TODO Add an option to choose find spike options
+# TODO Rewrite model.py so it use kwargs to send options back and forth instead of argparse
+
+# TODO find out where to save parameter distributions and parameter objects. In
+# the least remove the problems with parameters and setParameters beeing two
+# different things
 
 import time
 import os
@@ -64,7 +68,12 @@ class UncertaintyEstimations():
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
-                 memory_log=False):
+                 **kwargs):
+        """
+        Options can also be sent to the model or
+        kwargs:
+        features = {keyword1: value1, keyword2: value2}
+        """
 
         # Figures are always saved on the format:
         # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
@@ -84,9 +93,10 @@ class UncertaintyEstimations():
         self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
         self.figureformat = figureformat
-        self.memory_log = memory_log
         self.features = features
         self.feature_list = feature_list
+
+        self.kwargs = kwargs
 
         self.t_start = time.time()
 
@@ -115,7 +125,8 @@ class UncertaintyEstimations():
                                                                supress_output=self.supress_output,
                                                                CPUs=self.CPUs,
                                                                interpolate_union=self.interpolate_union,
-                                                               rosenblatt=self.rosenblatt)
+                                                               rosenblatt=self.rosenblatt,
+                                                               **self.kwargs)
 
                 uncertainty_estimation.singleParameters()
                 uncertainty_estimation.allParameters()
@@ -132,7 +143,7 @@ class UncertaintyEstimations():
 class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,
-                 feature_list=[],
+                 feature_list=None,
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -142,7 +153,8 @@ class UncertaintyEstimation():
                  supress_output=True,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
-                 rosenblatt=False):
+                 rosenblatt=False,
+                 **kwargs):
         """
         model: Model object
         parameters: Parameter object
@@ -159,6 +171,8 @@ class UncertaintyEstimation():
 
         if feature_list == "all":
             self.feature_list = self.features.implementedFeatures()
+        elif feature_list is None:
+            self.feature_list = []
         else:
             self.feature_list = feature_list
 
@@ -176,6 +190,8 @@ class UncertaintyEstimation():
 
         self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
+
+        self.kwargs = kwargs
 
         self.M = 3
         self.nr_mc_samples = 10**3
@@ -242,7 +258,7 @@ class UncertaintyEstimation():
     def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
         data = []
         for node in nodes:
-            data.append((self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd()))
+            data.append((self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs))
         return data
 
 
@@ -324,7 +340,7 @@ class UncertaintyEstimation():
             try:
                 for node in nodes.T:
                     # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction([self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd()]))
+                    solves.append(evaluateNodeFunction([self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs]))
             except MemoryError:
                 return -1
 

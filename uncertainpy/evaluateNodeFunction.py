@@ -27,7 +27,7 @@ def evaluateNodeFunction(data):
     tmp_parameter_names = data[2]
     feature_list = data[3]
     feature_cmd = data[4]
-
+    kwargs = data[5]
 
     if isinstance(node, float) or isinstance(node, int):
         node = [node]
@@ -45,7 +45,7 @@ def evaluateNodeFunction(data):
     else:
         current_process = "0"
 
-    cmd = cmd + ["--CPU", current_process, "--save_path", filedir]
+    cmd = cmd + ["--CPU", current_process, "--save_path", filedir, "--parameters"]
 
     for parameter in tmp_parameters:
         cmd.append(parameter)
@@ -54,9 +54,8 @@ def evaluateNodeFunction(data):
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
-    print ut
-
     if simulation.returncode != 0:
+        print ut
         print "Error when running simulation:"
         print err
         sys.exit(1)
@@ -70,7 +69,13 @@ def evaluateNodeFunction(data):
 
     sys.path.insert(0, feature_cmd[0])
     module = __import__(feature_cmd[1].split(".")[0])
-    features = getattr(module, feature_cmd[2])(t, V)
+
+    if "feature_options" in kwargs:
+        features = getattr(module, feature_cmd[2])(t, V, **kwargs["feature_options"])
+
+    else:
+        features = getattr(module, feature_cmd[2])(t, V)
+
 
     # features = ImplementedNeuronFeatures(t, V)
     feature_results = features.calculateFeatures(feature_list)

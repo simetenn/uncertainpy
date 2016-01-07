@@ -19,7 +19,7 @@ class HodkinHuxleyModel(Model):
         """
         Init must be able to be called with 0 arguments
         """
-        Model.__init__(self, parameters)
+        Model.__init__(self, parameters=parameters)
 
         ## Functions
         # K channel

@@ -1,10 +1,8 @@
 from model import Model
 
 import numpy as np
-import pylab as plt
 import odespy
 
-# The class name and file name must be the same
 class CoffeeCupPointModel(Model):
     """
     The model must be able to handle these calls

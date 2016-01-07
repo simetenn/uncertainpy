@@ -35,7 +35,8 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  test_distributions,
                                                  CPUs=1,
                                                  feature_list="all",
-                                                 output_dir_data="data/izhikevich")
+                                                 output_dir_data="data/izhikevich",
+                                                 feature_options={"thresh": "auto"})
 exploration.exploreParameters()
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich", output_figures_dir="figures/izhikevich")
