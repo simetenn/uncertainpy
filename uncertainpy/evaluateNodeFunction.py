@@ -66,9 +66,6 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
     os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
 
-    # prettyPlot(t, V)
-    # plt.show()
-
     features = Features(t, V)
     feature_results = features.calculateFeatures(feature_list)
 
