@@ -31,8 +31,6 @@
 
 # TODO make it so rosenblatt transform code looks pretier and easier
 
-# TODO Make it possible to implement your own features by inhereting from the feature class.
-
 # TODO Add an option to choose find spike options
 
 import time
@@ -57,6 +55,7 @@ from features import ImplementedNeuronFeatures
 
 class UncertaintyEstimations():
     def __init__(self, model, distributions,
+                 feature_list=[],
                  features=None,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -87,6 +86,7 @@ class UncertaintyEstimations():
         self.figureformat = figureformat
         self.memory_log = memory_log
         self.features = features
+        self.feature_list = feature_list
 
         self.t_start = time.time()
 
@@ -106,6 +106,7 @@ class UncertaintyEstimations():
 
                 print "Running for: " + distribution_function + " " + str(interval)
                 uncertainty_estimation = UncertaintyEstimation(self.model,
+                                                               feature_list=self.feature_list,
                                                                features=self.features,
                                                                output_dir_figures=current_output_dir_figures,
                                                                figureformat=self.figureformat,
@@ -131,6 +132,7 @@ class UncertaintyEstimations():
 class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,
+                 feature_list=[],
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -150,14 +152,16 @@ class UncertaintyEstimation():
         output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
 
-        if features == "all":
-            self.features = ImplementedNeuronFeatures().implementedFeatures()
-        elif features is None:
-            self.features = []
+        if features is None:
+            self.features = ImplementedNeuronFeatures()
         else:
             self.features = features
-        # if isinstance(self.features, Features):
-        #     self.feature_names = self.features
+
+        if feature_list == "all":
+            self.feature_list = self.features.implementedFeatures()
+        else:
+            self.feature_list = feature_list
+
 
         self.save_figures = save_figures
         self.output_dir_figures = output_dir_figures
@@ -238,7 +242,7 @@ class UncertaintyEstimation():
     def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
         data = []
         for node in nodes:
-            data.append((self.model.cmd(), node, tmp_parameter_names, self.features))
+            data.append((self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd()))
         return data
 
 
@@ -320,7 +324,7 @@ class UncertaintyEstimation():
             try:
                 for node in nodes.T:
                     # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction([self.model.cmd(), node, tmp_parameter_names, self.features]))
+                    solves.append(evaluateNodeFunction([self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd()]))
             except MemoryError:
                 return -1
 
@@ -353,7 +357,7 @@ class UncertaintyEstimation():
 
 
         # Calculate PC for each feature
-        for feature_name in self.features:
+        for feature_name in self.feature_list:
             tmp_results = []
 
             for feature in solved_features:
@@ -436,7 +440,7 @@ class UncertaintyEstimation():
                 return -1
 
 
-            for feature_name in self.features:
+            for feature_name in self.feature_list:
                 self.E = cp.E(self.U_hat[feature_name], self.distribution)
                 self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
 
@@ -483,7 +487,7 @@ class UncertaintyEstimation():
             return -1
 
 
-        for feature_name in self.features:
+        for feature_name in self.feature_list:
             self.E = cp.E(self.U_hat[feature_name], self.distribution)
             self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
 
@@ -657,7 +661,7 @@ class UncertaintyEstimation():
         if "uncertain parameters" not in f.attrs.keys():
             f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
         if "features" not in f.attrs.keys():
-            f.attrs["features"] = self.features
+            f.attrs["features"] = self.feature_list
 
 
         if parameter in f.keys() and feature in f[parameter].keys():

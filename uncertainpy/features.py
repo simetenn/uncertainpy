@@ -1,7 +1,8 @@
 from uncertainpy.spikes import Spikes
 import scipy.interpolate
 import scipy.optimize
-
+import os
+import sys
 
 class GeneralFeatures():
     def __init__(self, t=None, U=None, new_utility_methods=[]):
@@ -13,10 +14,17 @@ class GeneralFeatures():
                                 "calculateFeatures",
                                 "calculateAllFeatures",
                                 "__init__",
-                                "implementedFeatures"]
+                                "implementedFeatures",
+                                "cmd"]
 
 
         self.utility_methods = self.utility_methods + new_utility_methods
+
+        self.filepath = sys.modules[self.__class__.__module__].__file__
+        self.filedir = os.path.dirname(self.filepath)
+
+    def cmd(self):
+        return self.filedir, os.path.basename(self.filepath), self.__class__.__name__
 
 
     def calculateFeature(self, feature_name):
@@ -71,9 +79,11 @@ class NeuronFeatures(GeneralFeatures):
         self.spikes.detectSpikes(self.t, self.U, thresh="auto")
         # self.spikes.plot()
 
+
 class ImplementedNeuronFeatures(NeuronFeatures):
     def __init__(self, t=None, U=None):
         NeuronFeatures.__init__(self, t=t, U=U)
+
 
 
     def nrSpikes(self):

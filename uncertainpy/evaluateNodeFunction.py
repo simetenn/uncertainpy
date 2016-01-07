@@ -20,13 +20,13 @@ filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
-    all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, features)
+    all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, feature_list, feature_cmd)
     """
-
     cmd = data[0]
     node = data[1]
     tmp_parameter_names = data[2]
     feature_list = data[3]
+    feature_cmd = data[4]
 
 
     if isinstance(node, float) or isinstance(node, int):
@@ -54,6 +54,8 @@ def evaluateNodeFunction(data):
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
+    print ut
+
     if simulation.returncode != 0:
         print "Error when running simulation:"
         print err
@@ -66,11 +68,13 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
     os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
 
-    features = ImplementedNeuronFeatures(t, V)
+    sys.path.insert(0, feature_cmd[0])
+    module = __import__(feature_cmd[1].split(".")[0])
+    features = getattr(module, feature_cmd[2])(t, V)
+
+    # features = ImplementedNeuronFeatures(t, V)
     feature_results = features.calculateFeatures(feature_list)
 
-    # module = __import__(args.model_name)
-    # model = getattr(module, args.model_name)
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
 

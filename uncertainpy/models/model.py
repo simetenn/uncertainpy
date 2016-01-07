@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import sys
 
 class Model():
     """
@@ -21,6 +22,9 @@ class Model():
         self.t = None
 
         self.parameters = parameters
+
+        self.filepath = os.path.abspath(__file__)
+        self.filedir = os.path.dirname(self.filepath)
 
     def load(self):
         pass
@@ -83,10 +87,17 @@ class Model():
 
 
     def cmd(self, additional_cmds=[]):
-        filepath = os.path.abspath(__file__)
-        filedir = os.path.dirname(filepath)
+        original_path = os.path.abspath(__file__)
+        original_dir = os.path.dirname(original_path)
 
-        cmd = ["python", filedir + "/run_model.py", "--model_name", self.__class__.__name__]
+        filepath = sys.modules[self.__class__.__module__].__file__
+        filedir = os.path.dirname(filepath)
+        filename = os.path.basename(filepath)
+
+        cmd = ["python", original_dir + "/run_model.py",
+               "--model_name", self.__class__.__name__,
+               "--file_dir", filedir,
+               "--file_name", filename]
         cmd = cmd + additional_cmds
 
         return cmd
