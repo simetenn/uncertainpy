@@ -53,7 +53,7 @@ from xvfbwrapper import Xvfb
 from plotting import prettyPlot
 from distribution import Distribution
 from evaluateNodeFunction import evaluateNodeFunction
-from features import Features
+from features import ImplementedNeuronFeatures
 
 class UncertaintyEstimations():
     def __init__(self, model, distributions,
@@ -151,7 +151,7 @@ class UncertaintyEstimation():
         """
 
         if features == "all":
-            self.features = Features().implementedFeatures()
+            self.features = ImplementedNeuronFeatures().implementedFeatures()
         elif features is None:
             self.features = []
         else:

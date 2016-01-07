@@ -2,20 +2,60 @@ from uncertainpy.spikes import Spikes
 import scipy.interpolate
 import scipy.optimize
 
-class Features:
-    def __init__(self, t=None, U=None):
-        self.spikes = None
+
+class GeneralFeatures():
+    def __init__(self, t=None, U=None, new_utility_methods=[]):
         self.t = t
         self.U = U
 
-        # self.implemented_features = ["nrSpikes", "timeBeforeFirstSpike"]
+        # self.implemented_features = []
         self.utility_methods = ["calculateFeature",
                                 "calculateFeatures",
                                 "calculateAllFeatures",
                                 "__init__",
-                                "implementedFeatures",
-                                "setSpikes",
-                                "calculateSpikes"]
+                                "implementedFeatures"]
+
+
+        self.utility_methods = self.utility_methods + new_utility_methods
+
+
+    def calculateFeature(self, feature_name):
+        if not callable(getattr(self, feature_name)):
+            raise NotImplementedError("%s is not a implemented feature" % (feature_name))
+
+        return getattr(self, feature_name)()
+
+
+    def calculateFeatures(self, feature_names):
+        results = {}
+        for feature in feature_names:
+            results[feature] = self.calculateFeature(feature)
+
+        return results
+
+
+    def calculateAllFeatures(self):
+        results = {}
+        for feature in self.implementedFeatures():
+            results[feature] = self.calculateFeature(feature)
+
+        return results
+
+
+    def implementedFeatures(self):
+        """
+        Return a list of all callable methods in feature
+        """
+        return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods]
+
+
+class NeuronFeatures(GeneralFeatures):
+    def __init__(self, t=None, U=None):
+        new_utility_methods = ["setSpikes", "calculateSpikes"]
+
+        GeneralFeatures.__init__(self, t=t, U=U, new_utility_methods=new_utility_methods)
+
+        self.spikes = None
 
         if self.t is not None and self.U is not None:
             self.calculateSpikes()
@@ -30,6 +70,11 @@ class Features:
         self.spikes = Spikes()
         self.spikes.detectSpikes(self.t, self.U, thresh="auto")
         # self.spikes.plot()
+
+class ImplementedNeuronFeatures(NeuronFeatures):
+    def __init__(self, t=None, U=None):
+        NeuronFeatures.__init__(self, t=t, U=U)
+
 
     def nrSpikes(self):
         return self.spikes.nr_spikes
@@ -89,33 +134,3 @@ class Features:
         for i in xrange(k+1, N-1):
             A += (ISIs[i] - ISIs[i-1])/(ISIs[i] + ISIs[i-1])
         return A/(N - k - 1)
-
-
-    def calculateFeature(self, feature_name):
-        if not callable(getattr(self, feature_name)):
-            raise NotImplementedError("%s is not a implemented feature" % (feature_name))
-
-        return getattr(self, feature_name)()
-
-
-    def calculateFeatures(self, feature_names):
-        results = {}
-        for feature in feature_names:
-            results[feature] = self.calculateFeature(feature)
-
-        return results
-
-
-    def calculateAllFeatures(self):
-        results = {}
-        for feature in self.implementedFeatures():
-            results[feature] = self.calculateFeature(feature)
-
-        return results
-
-
-    def implementedFeatures(self):
-        """
-        Return a list of all callable methods in feature
-        """
-        return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods]

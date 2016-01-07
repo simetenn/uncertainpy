@@ -6,7 +6,7 @@ import os
 import numpy as np
 import multiprocess as mp
 
-from features import Features
+from features import ImplementedNeuronFeatures
 from spikes import Spikes
 
 from uncertainpy import prettyPlot
@@ -66,9 +66,11 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
     os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
 
-    features = Features(t, V)
+    features = ImplementedNeuronFeatures(t, V)
     feature_results = features.calculateFeatures(feature_list)
 
+    # module = __import__(args.model_name)
+    # model = getattr(module, args.model_name)
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
 
