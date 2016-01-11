@@ -12,20 +12,20 @@ distribution_function = uncertainpy.Distribution(0.1).uniform
 distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
 
 
-parameterlist = [["cap", 1.1, None],
-                 ["Rm", 22000, None],
-                 ["Vrest", -63, None],
-                 ["Epas", -67, None],
-                 ["gna", 0.09, None],
-                 ["nash", -52.6, None],
-                 ["gkdr", 0.37, None],
-                 ["kdrsh", -51.2, None],
-                 ["gahp", 6.4e-5, None],
-                 ["gcat", 1.17e-5, None]]
+# parameterlist = [["cap", 1.1, None],
+#                  ["Rm", 22000, None],
+#                  ["Vrest", -63, None],
+#                  ["Epas", -67, None],
+#                  ["gna", 0.09, None],
+#                  ["nash", -52.6, None],
+#                  ["gkdr", 0.37, None],
+#                  ["kdrsh", -51.2, None],
+#                  ["gahp", 6.4e-5, None],
+#                  ["gcat", 1.17e-5, None]]
 
-#
-# parameterlist = [["Rm", 22000, None],
-#                  ["Epas", -67, None]]
+
+parameterlist = [["Rm", 22000, None],
+                 ["Epas", -67, None]]
 
 memory = uncertainpy.Memory(10)
 memory.start()
