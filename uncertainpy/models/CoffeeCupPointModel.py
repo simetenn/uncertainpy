@@ -3,6 +3,7 @@ from model import Model
 import numpy as np
 import odespy
 
+
 class CoffeeCupPointModel(Model):
     """
     The model must be able to handle these calls
@@ -15,8 +16,8 @@ class CoffeeCupPointModel(Model):
 
     simulation.cmd()
     """
-    def __init__(self):
-        Model.__init__(self)
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters=parameters)
 
         self.kappa = -0.01
         self.u_env = 20

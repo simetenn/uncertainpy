@@ -1,9 +1,6 @@
 import subprocess
 import datetime
-
-from memory import Memory
-from uncertainty import UncertaintyEstimations
-from CoffeeCupPointModel import CoffeeCupPointModel
+import uncertainpy
 
 
 data_dir = "data/"
@@ -11,24 +8,27 @@ output_figures_dir = "figures/"
 figureformat = ".png"
 output_gif_dir = "gifs/"
 
-original_parameters = {
-    "kappa": -0.01,
-    "u_env": 20
-}
 
-memory = Memory(10)
+memory = uncertainpy.Memory(10)
 memory.start()
 
-#fitted_parameters = ["kappa", "u_env"]
-fitted_parameters = ["kappa"]
 
-model = CoffeeCupPointModel()
+parameterlist = [["kappa", 0.02, None],
+                 ["u_env", 0.2, None]]
 
+parameters = uncertainpy.Parameters(parameterlist)
+model = uncertainpy.CoffeeCupPointModel(parameters)
 
-test_distributions = {"uniform": [0.02, 0.03]}
-exploration = UncertaintyEstimations(model, original_parameters, fitted_parameters, test_distributions,
-                                     output_dir_data="data/coffee", CPUs=1)
+percentages = [0.1, 0.2]
+test_distributions = {"uniform": percentages}
+
+exploration = uncertainpy.UncertaintyEstimations(model,
+                                                 test_distributions,
+                                                 CPUs=1,
+                                                 output_dir_data="data/coffee")
 exploration.exploreParameters()
+plot = uncertainpy.PlotUncertainty(data_dir="data/coffee", output_figures_dir="figures/coffee")
+plot.plotAllData()
 
 memory.end()
 
