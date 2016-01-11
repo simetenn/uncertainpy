@@ -2,13 +2,6 @@ import subprocess
 import datetime
 import uncertainpy
 
-
-data_dir = "data/"
-output_figures_dir = "figures/"
-figureformat = ".png"
-output_gif_dir = "gifs/"
-
-
 memory = uncertainpy.Memory(10)
 memory.start()
 
