@@ -11,7 +11,7 @@ class Model():
 
 
     simulation.load()
-    simulation.setParameters(parameters -> dictionary)
+    simulation.setParameterValues(parameters -> dictionary)
     simulation.run()
     simulation.save(current_process -> int)
 
@@ -32,7 +32,7 @@ class Model():
 
     def setAllDistributions(self, distribution_function):
         if self.parameters is None:
-            raise NotImplementedError("Parameters is not implemented in the model")
+            raise NotImplementedError("Parameters are not in the model")
 
         self.parameters.setAllDistributions(distribution_function)
 
@@ -44,11 +44,7 @@ class Model():
         self.parameters.setDistribution(parameter_name, distribution_function)
 
 
-
-    # def setParameters(self, parameters):
-    #     raise NotImplementedError("No setParameters() function implemented")
-
-    def setParameters(self, parameters):
+    def setParameterValues(self, parameters):
         """
         Parameters: dictionary with all parameters
         """
@@ -56,18 +52,6 @@ class Model():
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
-    # def setClassParameters(self):
-    #     for parameter in self.parameters:
-    #         setattr(self, parameter, self.parameters[parameter].value)
-
-
-    # def setParameters(self, parameters):
-    #     """
-    #     Parameters: dictionary with all parameters
-    #     """
-    #     # How the parameters are set
-    #     for parameter in parameters:
-    #         setattr(self, parameter, parameters[parameter])
 
     def run(self):
         raise NotImplementedError("No run() function implemented")
@@ -98,6 +82,7 @@ class Model():
                "--model_name", self.__class__.__name__,
                "--file_dir", filedir,
                "--file_name", filename]
+
         cmd = cmd + additional_cmds
 
         return cmd

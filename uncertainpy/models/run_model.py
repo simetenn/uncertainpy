@@ -36,7 +36,7 @@ def main():
         parameters[args.parameters[i]] = float(args.parameters[i+1])
         i += 2
 
-    simulation.setParameters(parameters)
+    simulation.setParameterValues(parameters)
     simulation.run()
     simulation.save(CPU=args.CPU, save_path=args.save_path)
 

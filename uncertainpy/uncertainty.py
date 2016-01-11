@@ -37,6 +37,12 @@
 # the least remove the problems with parameters and setParameters beeing two
 # different things
 
+# TODO Reimplement MC method, and implement a method for comparing the results
+
+# TODO implement a feature description in features
+
+# TODO document
+
 import time
 import os
 import shutil
@@ -70,9 +76,9 @@ class UncertaintyEstimations():
                  rosenblatt=False,
                  **kwargs):
         """
-        Options can also be sent to the model or
+        Options can also be sent to the feature
         kwargs:
-        features = {keyword1: value1, keyword2: value2}
+        feature_options = {keyword1: value1, keyword2: value2}
         """
 
         # Figures are always saved on the format:

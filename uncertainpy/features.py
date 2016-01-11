@@ -25,6 +25,7 @@ class GeneralFeatures():
         self.filepath = sys.modules[self.__class__.__module__].__file__
         self.filedir = os.path.dirname(self.filepath)
 
+
     def cmd(self):
         return self.filedir, os.path.basename(self.filepath), self.__class__.__name__
 
@@ -79,13 +80,11 @@ class NeuronFeatures(GeneralFeatures):
 
         self.spikes = Spikes()
         self.spikes.detectSpikes(self.t, self.U, thresh=thresh, extended_spikes=extended_spikes)
-        # self.spikes.plot()
 
 
 class ImplementedNeuronFeatures(NeuronFeatures):
     def __init__(self, t=None, U=None, thresh=-30, extended_spikes=False):
         NeuronFeatures.__init__(self, t=t, U=U, thresh=thresh, extended_spikes=extended_spikes)
-
 
 
     def nrSpikes(self):
