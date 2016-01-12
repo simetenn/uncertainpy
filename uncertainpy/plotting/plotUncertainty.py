@@ -428,12 +428,12 @@ class PlotUncertainty():
         print "Plotting all data"
         for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
-            
+
             self.plotAllDirectComparison()
 
             if combined_features:
                 self.plotFeaturesCombined()
-            else.
+            else:
                 self.plotFeatures()
 
     def gif(self):
