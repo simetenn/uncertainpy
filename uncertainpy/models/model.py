@@ -22,6 +22,8 @@ class Model():
 
     if __name__ == "__main__":
         # Main part of the program here
+
+    Run must store the results from the simulation in self.t and self.U
     """
     def __init__(self, parameters=None):
         self.U = None
@@ -60,6 +62,9 @@ class Model():
 
 
     def run(self):
+        """
+        Run must store the results from the simulation in self.t and self.U
+        """
         raise NotImplementedError("No run() function implemented")
 
 
