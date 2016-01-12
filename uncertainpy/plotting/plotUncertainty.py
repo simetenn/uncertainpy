@@ -424,13 +424,17 @@ class PlotUncertainty():
 
 
 
-    def plotAllData(self):
+    def plotAllData(self, combined_features=True):
         print "Plotting all data"
         for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
+            
             self.plotAllDirectComparison()
-            self.plotFeatures()
-            # self.plotFeaturesCombined()
+
+            if combined_features:
+                self.plotFeaturesCombined()
+            else.
+                self.plotFeatures()
 
     def gif(self):
         print "Creating gifs..."
