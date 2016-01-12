@@ -172,6 +172,10 @@ class PlotUncertainty():
         labelsize = 14
         figsize = (10, 7.5)
 
+
+        max_legend_size = 5
+
+
         width = 0.2
         distance = 0.5
 
@@ -198,7 +202,7 @@ class PlotUncertainty():
             #     plt.close()
             #     continue
 
-            fig, ax_all = plt.subplots(1, len(feature_names))
+            fig, ax_all = plt.subplots(1, len(feature_names) % max_legend_size )
 
             if len(feature_names) == 1:
                 ax_all = [ax_all]

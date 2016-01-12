@@ -24,10 +24,14 @@ class GeneralFeatures():
 
         self.filepath = sys.modules[self.__class__.__module__].__file__
         self.filedir = os.path.dirname(self.filepath)
+        self.filename = os.path.basename(self.filepath)
+
+        if self.__class__.__module__ == "__main__":
+            self.filedir = os.path.dirname(os.path.abspath(self.filename))
 
 
     def cmd(self):
-        return self.filedir, os.path.basename(self.filepath), self.__class__.__name__
+        return self.filedir, self.filename, self.__class__.__name__
 
 
     def calculateFeature(self, feature_name):

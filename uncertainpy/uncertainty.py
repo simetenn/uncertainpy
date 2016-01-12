@@ -41,7 +41,7 @@
 
 # TODO implement a feature description in features
 
-# TODO document
+# TODO do
 
 import time
 import os
@@ -170,6 +170,9 @@ class UncertaintyEstimation():
         output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
         """
 
+
+        # TODO there is something weird with features here. the Default should
+        # probably not be NeuronFeatures
         if features is None:
             self.features = ImplementedNeuronFeatures()
         else:

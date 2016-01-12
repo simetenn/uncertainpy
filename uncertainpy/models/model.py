@@ -16,6 +16,12 @@ class Model():
     simulation.save(current_process -> int)
 
     simulation.cmd()
+
+    If you create your own model it must either be in it's own file
+    or the main part of the program must be inside
+
+    if __name__ == "__main__":
+        # Main part of the program here
     """
     def __init__(self, parameters=None):
         self.U = None
@@ -77,6 +83,11 @@ class Model():
         filepath = sys.modules[self.__class__.__module__].__file__
         filedir = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
+
+        if self.__class__.__module__ == "__main__":
+            filedir = os.path.dirname(os.path.abspath(filename))
+
+
 
         cmd = ["python", original_dir + "/run_model.py",
                "--model_name", self.__class__.__name__,

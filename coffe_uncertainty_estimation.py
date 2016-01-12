@@ -5,14 +5,14 @@ import uncertainpy
 memory = uncertainpy.Memory(10)
 memory.start()
 
+parameterlist = [["kappa", -0.01, None],
+                 ["u_env", 20, None]]
 
-parameterlist = [["kappa", 0.02, None],
-                 ["u_env", 0.2, None]]
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.CoffeeCupPointModel(parameters)
 
-percentages = [0.1, 0.2]
+percentages = [0.01]
 test_distributions = {"uniform": percentages}
 
 exploration = uncertainpy.UncertaintyEstimations(model,

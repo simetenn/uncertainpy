@@ -6,12 +6,6 @@ import os
 import numpy as np
 import multiprocess as mp
 
-from features import ImplementedNeuronFeatures
-from spikes import Spikes
-
-from uncertainpy import prettyPlot
-import matplotlib.pyplot as plt
-
 __all__ = ["evaluateNodeFunction"]
 __version__ = "0.1"
 
@@ -54,8 +48,10 @@ def evaluateNodeFunction(data):
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
+    # TODO decide if output from the model is to be printed or not
+    # print ut
+
     if simulation.returncode != 0:
-        print ut
         print "Error when running simulation:"
         print err
         sys.exit(1)
@@ -70,15 +66,12 @@ def evaluateNodeFunction(data):
     sys.path.insert(0, feature_cmd[0])
     module = __import__(feature_cmd[1].split(".")[0])
 
-
     if "feature_options" in kwargs:
         features = getattr(module, feature_cmd[2])(t, V, **kwargs["feature_options"])
-
     else:
         features = getattr(module, feature_cmd[2])(t, V)
-
-
     # features = ImplementedNeuronFeatures(t, V)
+
     feature_results = features.calculateFeatures(feature_list)
 
 
