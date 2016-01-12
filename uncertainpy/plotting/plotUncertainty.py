@@ -156,7 +156,10 @@ class PlotUncertainty():
         self.sensitivity()
 
 
-    def plotFeaturesCombined(self, index=0):
+    def plotFeaturesCombined(self, index=0, max_legend_size=5):
+        if len(self.f.attrs["uncertain parameters"]) > 8:
+            self.features_in_combined_plot = 2
+
         if self.features_in_combined_plot + index < len(self.f.attrs["features"]):
             self.plotFeaturesCombined(index + self.features_in_combined_plot)
             feature_names = self.f.attrs["features"][index:self.features_in_combined_plot + index]
@@ -173,8 +176,12 @@ class PlotUncertainty():
         figsize = (10, 7.5)
 
 
-        max_legend_size = 5
+        if len(self.f.attrs["uncertain parameters"]) > max_legend_size:
+            legend_size = max_legend_size
+        else:
+            legend_size = len(self.f.attrs["uncertain parameters"])
 
+        legend_width = np.ceil(len(self.f.attrs["uncertain parameters"])/float(max_legend_size))
 
         width = 0.2
         distance = 0.5
@@ -190,19 +197,10 @@ class PlotUncertainty():
             r, g, b = tableau20[i]
             tableau20[i] = (r / 255., g / 255., b / 255.)
 
-        #plt.rcParams["figure.figsize"] = figsize
-
         for parameter_name in self.f.keys():
             ax_i = 0
 
-            # if len(feature_names) == 1:
-            #     self.plotFeature(feature_name=feature_names[0], parameter_name=parameter_name)
-            #     save_name = "%s_%s" % (parameter_name, feature_names[0]) + self.figureformat
-            #     plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
-            #     plt.close()
-            #     continue
-
-            fig, ax_all = plt.subplots(1, len(feature_names) % max_legend_size )
+            fig, ax_all = plt.subplots(1, len(feature_names))
 
             if len(feature_names) == 1:
                 ax_all = [ax_all]
@@ -270,11 +268,12 @@ class PlotUncertainty():
                     xticks.append(pos - width*i/2.)
                     xticklabels.append("Sensitivity")
 
-                    box = ax.get_position()
-                    ax.set_position([box.x0, box.y0,
-                                    box.width, box.height * 0.95])
-                    ax2.set_position([box.x0, box.y0,
-                                      box.width, box.height * 0.95])
+                    #
+                    # box = ax.get_position()
+                    # ax.set_position([box.x0, box.y0,
+                    #                 box.width, box.height*(1 - legend_width*0.1)])
+                    # ax2.set_position([box.x0, box.y0,
+                    #                   box.width, box.height*(1 - legend_width*0.1)])
                 else:
                     # TODO is abs(sensitivity) a problem in the plot?
                     ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
@@ -294,21 +293,22 @@ class PlotUncertainty():
             if parameter_name == "all":
                 # Put a legend above current axis
                 if len(feature_names) == 1:
-                    location = (0.5, 1.133)
+                    location = (0.5, 1.03 + legend_width*0.095)
                     loc = "upper center"
                 elif len(feature_names) == 2:
-                    location = (0, 1.133)
+                    location = (0, 1.03 + legend_width*0.095)
                     loc = "upper center"
                 else:
-                    location = (0.15, 1.133)
+                    location = (0.15, (1.03 + legend_width*0.095))
                     loc = "upper right"
 
+
                 lgd = ax.legend(legend_bars, self.f.attrs["uncertain parameters"], loc=loc, bbox_to_anchor=location,
-                                fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
+                                fancybox=False, shadow=False, ncol=legend_size)
                 lgd.get_frame().set_edgecolor(axis_grey)
 
                 # plt.tight_layout()
-                fig.subplots_adjust(top=0.86, wspace=0.5)
+                fig.subplots_adjust(top=(0.91 - legend_width*0.053), wspace=0.5)
             else:
                 fig.subplots_adjust(wspace=0.5)
 
@@ -329,7 +329,7 @@ class PlotUncertainty():
 
 
     # TODO not finhised, missing correct label placement
-    def plotFeature(self, feature_name, parameter_name="all"):
+    def plotFeature(self, feature_name, parameter_name="all", max_legend_size=5):
         E = self.f[parameter_name][feature_name]["E"][()]
         Var = self.f[parameter_name][feature_name]["Var"][()]
         p_05 = self.f[parameter_name][feature_name]["p_05"][()]
@@ -339,6 +339,14 @@ class PlotUncertainty():
             sensitivity = self.f[parameter_name][feature_name]["sensitivity"][:]
         else:
             sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
+
+
+        if len(self.f.attrs["uncertain parameters"]) > max_legend_size:
+            legend_size = max_legend_size
+        else:
+            legend_size = len(self.f.attrs["uncertain parameters"])
+
+        legend_width = np.ceil(len(self.f.attrs["uncertain parameters"])/float(max_legend_size))
 
         axis_grey = (0.5, 0.5, 0.5)
         titlesize = 18
@@ -385,15 +393,20 @@ class PlotUncertainty():
             xticks.append(pos - width*i/2.)
             xticklabels.append("Sensitivity")
 
-            box = ax.get_position()
-            ax.set_position([box.x0, box.y0,
-                            box.width, box.height * 0.95])
-            ax2.set_position([box.x0, box.y0,
-                              box.width, box.height * 0.95])
+            # box = ax.get_position()
+            # ax.set_position([box.x0, box.y0,
+            #                 box.width, box.height*(0.91 + legend_width*0.053)])
+            # ax2.set_position([box.x0, box.y0,
+            #                   box.width, box.height*(0.91 + legend_width*0.053
 
-            lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"], loc='upper center', bbox_to_anchor=(0.5, 1.11),
-                             fancybox=False, shadow=False, ncol=len(self.f.attrs["uncertain parameters"]))
+            location = (0.5, 1.01 + legend_width*0.095)
+            lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"],
+                             loc='upper center', bbox_to_anchor=location,
+                             fancybox=False, shadow=False, ncol=legend_size)
             lgd.get_frame().set_edgecolor(axis_grey)
+
+            fig = plt.gcf()
+            fig.subplots_adjust(top=(0.91 - legend_width*0.053))
 
         else:
             ax.bar(pos, sensitivity, width=width, align='center', color=tableau20[4], linewidth=0)
@@ -416,8 +429,8 @@ class PlotUncertainty():
         for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
             self.plotAllDirectComparison()
-            # self.plotFeatures()
-            self.plotFeaturesCombined()
+            self.plotFeatures()
+            # self.plotFeaturesCombined()
 
     def gif(self):
         print "Creating gifs..."
