@@ -378,18 +378,18 @@ class UncertaintyEstimation():
 
 
         # Calculate PC for each feature
-        for feature_name in self.feature_list:
-            tmp_results = []
-
-            for feature in solved_features:
-                tmp_results.append(feature[feature_name])
-
-            if self.rosenblatt:
-                #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
-                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
-            else:
-                #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
+        # for feature_name in self.feature_list:
+        #     tmp_results = []
+        #
+        #     for feature in solved_features:
+        #         tmp_results.append(feature[feature_name])
+        #
+        #     if self.rosenblatt:
+        #         #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
+        #     else:
+        #         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
 
         if self.rosenblatt:
             #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
@@ -399,7 +399,10 @@ class UncertaintyEstimation():
             self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
 
 
-            print cp.Sens_t(self.U_hat["direct_comparison"], self.distribution)
+        print cp.Sens_t(cp.fit_regression(self.P, nodes, interpolated_solves, rule="T"), self.distribution)
+
+
+
 
     def singleParameterPCAnalysis(self):
         for feature_name in self.feature_list:
