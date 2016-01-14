@@ -24,8 +24,8 @@ parameterlist = [["cap", 1.1, None],
                  ["gcat", 1.17e-5, None]]
 
 
-# parameterlist = [["Rm", 22000, None],
-#                  ["Epas", -67, None]]
+parameterlist = [["Rm", 22000, None],
+                 ["Epas", -67, None]]
 
 memory = uncertainpy.Memory(10)
 memory.start()
@@ -47,8 +47,8 @@ model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, mo
 # exploration.exploreParameters()
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-# percentages = [0.02]
+# percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
+percentages = [0.02]
 distributions = {"uniform": percentages}
 exploration = uncertainpy.UncertaintyEstimations(model, distributions,
                                                  feature_list="all",
