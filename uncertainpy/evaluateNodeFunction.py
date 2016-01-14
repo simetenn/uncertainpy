@@ -21,6 +21,7 @@ def evaluateNodeFunction(data):
     tmp_parameter_names = data[2]
     feature_list = data[3]
     feature_cmd = data[4]
+
     kwargs = data[5]
 
     if isinstance(node, float) or isinstance(node, int):
@@ -52,6 +53,7 @@ def evaluateNodeFunction(data):
     # print ut
 
     if simulation.returncode != 0:
+        print ut
         print "Error when running simulation:"
         print err
         sys.exit(1)
