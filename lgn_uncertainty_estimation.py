@@ -2,15 +2,14 @@ import subprocess
 import datetime
 
 import uncertainpy
-import numpy as np
 
 model_file = "INmodel.hoc"
 model_path = "uncertainpy/models/neuron_models/dLGN_modelDB/"
 
-
-distribution_function = uncertainpy.Distribution(0.1).uniform
-distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
-
+#
+# distribution_function = uncertainpy.Distribution(0.1).uniform
+# distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
+#
 
 parameterlist = [["cap", 1.1, None],
                  ["Rm", 22000, None],
@@ -48,19 +47,17 @@ model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, mo
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
 # percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-percentages = [0.02]
+percentages = [0.2]
 distributions = {"uniform": percentages}
-exploration = uncertainpy.UncertaintyEstimations(model, distributions,
-                                                 feature_list="all",
+exploration = uncertainpy.UncertaintyEstimations(model, distributions,supress_output=False,
+                                                 CPUs=1,
+                                                 feature_list=None,
                                                  output_dir_data="data/lgn")
 exploration.exploreParameters()
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/lgn", output_figures_dir="figures/lgn")
 plot.plotAllData()
 
-# distributions = {"normal": percentages}
-# exploration = UncertaintyEstimations(model, fitted_parameters, distributions)
-# exploration.exploreParameters()
 memory.end()
 
 

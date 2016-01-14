@@ -12,12 +12,11 @@ parameterlist = [["kappa", -0.01, None],
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.CoffeeCupPointModel(parameters)
 
-percentages = [0.01]
+percentages = [0.5]
 test_distributions = {"uniform": percentages}
 
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  test_distributions,
-                                                 CPUs=1,
                                                  output_dir_data="data/coffee")
 exploration.exploreParameters()
 plot = uncertainpy.PlotUncertainty(data_dir="data/coffee", output_figures_dir="figures/coffee")

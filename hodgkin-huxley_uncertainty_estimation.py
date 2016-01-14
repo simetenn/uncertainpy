@@ -1,14 +1,6 @@
 import subprocess
 import datetime
-
 import uncertainpy
-
-
-data_dir = "data/"
-output_figures_dir = "figures/"
-figureformat = ".png"
-output_gif_dir = "gifs/"
-
 
 memory = uncertainpy.Memory(10)
 memory.start()
@@ -32,9 +24,9 @@ parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.HodkinHuxleyModel(parameters)
 
 # percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
-percentages = [0.05]
+percentages = [0.1]
 test_distributions = {"uniform": percentages}
-exploration = uncertainpy.UncertaintyEstimations(model, test_distributions, features="all", CPUs=1,
+exploration = uncertainpy.UncertaintyEstimations(model, test_distributions, feature_list="all", CPUs=1,
                                                  output_dir_data="data/hodgkin-huxley")
 exploration.exploreParameters()
 

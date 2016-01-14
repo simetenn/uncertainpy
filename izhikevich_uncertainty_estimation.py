@@ -33,7 +33,7 @@ test_distributions = {"uniform": percentages}
 
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  test_distributions,
-                                                 CPUs=1,
+                                                 CPUs=8,
                                                  feature_list="all",
                                                  output_dir_data="data/izhikevich",
                                                  feature_options={"thresh": "auto"})

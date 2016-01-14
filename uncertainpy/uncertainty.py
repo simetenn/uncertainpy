@@ -43,6 +43,14 @@
 
 # TODO Reimplement sensitivity ranking, but for all features and not only the diirect_comparison
 
+# TODO Reimplement: saving sensitivity to each seperate parameter as well?
+
+# TODO placement of feature bar plots
+
+# TODO Make support for plotting features that isn't only one value
+
+# TODO Decide if the HH model should return Vm - 65 or just Vm
+
 import time
 import os
 import shutil
@@ -378,18 +386,18 @@ class UncertaintyEstimation():
 
 
         # Calculate PC for each feature
-        # for feature_name in self.feature_list:
-        #     tmp_results = []
-        #
-        #     for feature in solved_features:
-        #         tmp_results.append(feature[feature_name])
-        #
-        #     if self.rosenblatt:
-        #         #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
-        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
-        #     else:
-        #         #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        #         self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
+        for feature_name in self.feature_list:
+            tmp_results = []
+
+            for feature in solved_features:
+                tmp_results.append(feature[feature_name])
+
+            if self.rosenblatt:
+                #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
+            else:
+                #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
 
         if self.rosenblatt:
             #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
@@ -397,11 +405,6 @@ class UncertaintyEstimation():
         else:
             #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
             self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
-
-
-        print cp.Sens_t(cp.fit_regression(self.P, nodes, interpolated_solves, rule="T"), self.distribution)
-
-
 
 
     def singleParameterPCAnalysis(self):
@@ -457,99 +460,6 @@ class UncertaintyEstimation():
         self.p_95["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 95, 1)
 
 
-
-
-
-    def MC(self, parameter_name=None):
-        # TODO find a good way to solve the parameter_name poblem
-        if parameter_name is None:
-            parameter_space = self.model.parameters.getUncertain("parameter_space")
-            tmp_parameter_names = self.model.parameters.getUncertain()
-        else:
-            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            tmp_parameter_names = [parameter_name]
-
-
-        self.distribution = cp.J(*parameter_space)
-        self.P = cp.orth_ttr(self.M, self.distribution)
-
-        nodes = self.distribution.sample(self.nr_mc_samples, "M")
-
-
-        solves = []
-        try:
-            if self.CPUs > 1:
-                # solves = self.pool.map(self.evaluateNode, nodes.T)
-                solves = self.pool.map(evaluateNodeFunction,
-                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
-            else:
-                for node in nodes.T:
-                    # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction([self.model.cmd(),
-                                                        node,
-                                                        tmp_parameter_names,
-                                                        self.feature_list,
-                                                        self.features.cmd(),
-                                                        self.kwargs]))
-        except MemoryError:
-            return -1
-
-
-        solves = np.array(solves)
-        solved_features = solves[:, 3]
-
-        if self.interpolate_union:
-            i = 0
-            tmp_t = solves[0, 0]
-            while i < len(solves) - 1:
-                tmp_t = np.union1d(tmp_t, solves[i+1, 0])
-                i += 1
-
-            self.t = tmp_t
-        else:
-            lengths = []
-            for s in solves[:, 0]:
-                lengths.append(len(s))
-
-            index_max_len = np.argmax(lengths)
-            self.t = solves[index_max_len, 0]
-
-
-        interpolated_solves = []
-        for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t))
-
-
-
-        self.E = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
-        self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
-
-        for feature_name in self.feature_list:
-            self.E = cp.E(self.U_hat[feature_name], self.distribution)
-            self.Var = cp.Var(self.U_hat[feature_name], self.distribution)
-
-            samples = self.distribution.sample(self.nr_mc_samples, "M")
-            self.U_mc = self.U_hat[feature_name](samples)
-
-            self.p_05 = np.percentile(self.U_mc, 5)
-            self.p_95 = np.percentile(self.U_mc, 95)
-
-
-            if self.save_data:
-                self.save(parameter=uncertain_parameter, feature=feature_name)
-
-            if self.save_figures:
-                self.plotAll(uncertain_parameter)
-
-
-            self.p_05 = np.percentile(interpolated_solves, 5, 1)
-            self.p_95 = np.percentile(interpolated_solves, 95, 1)
-
-            if self.save_data:
-                self.save(parameter=uncertain_parameter, feature="direct_comparison")
-
-            if self.save_figures:
-                self.plotAll(uncertain_parameter)
 
     # def MC(self, parameter_name=None):
     #     if parameter_name is None:
@@ -792,15 +702,18 @@ class UncertaintyEstimation():
             if self.sensitivity[feature] is not None:
                 group.create_dataset("sensitivity", data=self.sensitivity[feature])
 
-                i = 0
-                for parameter in self.model.parameters.getUncertain("name"):
-                    if parameter not in f.keys():
-                        f.create_group(parameter)
-
-                    # if feature == "direct_comparison":
-                    #     f[parameter][feature].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
-                    f[parameter][feature].create_dataset("sensitivity", data=self.sensitivity[feature][i])
-                    i += 1
+                # i = 0
+                # for parameter in self.model.parameters.getUncertain("name"):
+                #     print f.keys()
+                #     if parameter not in f.keys():
+                #         f.create_group(os.path.join(parameter, feature))
+                #
+                #     print self.sensitivity
+                #     print feature
+                #     # if feature == "direct_comparison":
+                #     #     f[parameter][feature].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
+                #     f[parameter][feature].create_dataset("sensitivity", data=self.sensitivity[feature][i])
+                #     i += 1
 
         f.close()
 

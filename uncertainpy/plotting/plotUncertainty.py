@@ -237,8 +237,8 @@ class PlotUncertainty():
 
                 if parameter_name == "all":
                     sensitivity = self.f[parameter_name][feature_name]["sensitivity"][:]
-                else:
-                    sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
+                # else:
+                #     sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
 
                 ax.bar(pos, E, yerr=Var, width=width, align='center', color=tableau20[0], linewidth=0,
                        error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
@@ -252,9 +252,10 @@ class PlotUncertainty():
                 ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
                 xticks += [pos, pos + width]
                 xticklabels += ["$P_5$", "$P_{95}$"]
-                pos += distance + width
 
                 if parameter_name == "all":
+                    pos += distance + width
+
                     i = 0
                     legend_bars = []
 
@@ -276,9 +277,9 @@ class PlotUncertainty():
                     #                   box.width, box.height*(1 - legend_width*0.1)])
                 else:
                     # TODO is abs(sensitivity) a problem in the plot?
-                    ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
-                    xticks.append(pos)
-                    xticklabels.append("Sensitivity")
+                    # ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
+                    xticks.append(pos + distance)
+                    xticklabels.append("")
 
                 ax.set_xticks(xticks)
                 ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
