@@ -51,6 +51,10 @@
 
 # TODO Decide if the HH model should return Vm - 65 or just Vm
 
+# TODO Make sending of model keywords simpler than it currentlu is. Use a
+# dictionary similar to kwargs?
+
+
 import time
 import os
 import shutil
@@ -60,7 +64,7 @@ import sys
 import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
-import multiprocess as mp
+import multiprocessing as mp
 
 
 from xvfbwrapper import Xvfb
@@ -78,7 +82,8 @@ class UncertaintyEstimations():
                  output_dir_figures="figures/",
                  figureformat=".png",
                  output_dir_data="data/",
-                 supress_output=True,
+                 supress_model_graphics=True,
+                 supress_model_output=True,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
@@ -102,7 +107,8 @@ class UncertaintyEstimations():
         self.output_dir_figures = output_dir_figures
         self.output_dir_data = output_dir_data
 
-        self.supress_output = supress_output
+        self.supress_model_graphics = supress_model_graphics
+        self.supress_model_output = supress_model_output
         self.CPUs = CPUs
         self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
@@ -136,7 +142,8 @@ class UncertaintyEstimations():
                                                                figureformat=self.figureformat,
                                                                output_dir_data=self.output_dir_data,
                                                                output_data_name=distribution_function + "_%g" % interval,
-                                                               supress_output=self.supress_output,
+                                                               supress_model_graphics=self.supress_model_graphics,
+                                                               supress_model_output=self.supress_model_output,
                                                                CPUs=self.CPUs,
                                                                interpolate_union=self.interpolate_union,
                                                                rosenblatt=self.rosenblatt,
@@ -164,7 +171,8 @@ class UncertaintyEstimation():
                  save_data=True,
                  output_dir_data="data/",
                  output_data_name="uncertainty",
-                 supress_output=True,
+                 supress_model_graphics=True,
+                 supress_model_output=True,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
@@ -199,7 +207,8 @@ class UncertaintyEstimation():
         self.save_data = save_data
         self.output_file = os.path.join(output_dir_data, output_data_name)
 
-        self.supress_output = supress_output
+        self.supress_model_graphics = supress_model_graphics
+        self.supress_model_output = supress_model_output
         self.CPUs = CPUs
 
         self.model = model
@@ -216,7 +225,7 @@ class UncertaintyEstimation():
         self.resetValues()
 
 
-        if self.supress_output:
+        if self.supress_model_graphics:
             self.vdisplay = Xvfb()
             self.vdisplay.start()
 
@@ -238,7 +247,7 @@ class UncertaintyEstimation():
         if self.CPUs > 1:
             self.pool.close()
 
-        if self.supress_output:
+        if self.supress_model_graphics:
             self.vdisplay.stop()
 
 
@@ -274,7 +283,7 @@ class UncertaintyEstimation():
     def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
         data = []
         for node in nodes:
-            data.append((self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs))
+            data.append((self.model.cmd(), self.supress_model_output, node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs))
         return data
 
 
@@ -353,7 +362,7 @@ class UncertaintyEstimation():
             else:
                 for node in nodes.T:
                     # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction([self.model.cmd(), node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs]))
+                    solves.append(evaluateNodeFunction([self.model.cmd(), self.supress_model_output, node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs]))
         except MemoryError:
             return -1
 
@@ -472,7 +481,7 @@ class UncertaintyEstimation():
     #     self.distribution = cp.J(*parameter_space)
     #     samples = self.distribution.sample(self.nr_mc_samples, "M")
     #
-    #     if self.supress_output:
+    #     if self.supress_model_graphics:
     #         vdisplay = Xvfb()
     #         vdisplay.start()
     #
@@ -485,7 +494,7 @@ class UncertaintyEstimation():
     #         for sample in samples.T:
     #             solves.append(self.evaluateNode(sample))
     #
-    #     if self.supress_output:
+    #     if self.supress_model_graphics:
     #         vdisplay.stop()
     #
     #     solves = np.array(solves)

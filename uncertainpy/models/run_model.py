@@ -24,7 +24,6 @@ def main():
     simulation = model()
     simulation.load()
 
-
     if len(args.parameters) % 2 != 0:
         print "ERROR: Number of parameters does not match number"
         print "         of parametervalues sent to simulation.py"

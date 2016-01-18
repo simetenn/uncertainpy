@@ -64,6 +64,9 @@ class GeneralFeatures():
         return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods]
 
 
+
+
+
 class NeuronFeatures(GeneralFeatures):
     def __init__(self, t=None, U=None, thresh=-30, extended_spikes=False):
         new_utility_methods = ["calculateSpikes"]
@@ -84,6 +87,9 @@ class NeuronFeatures(GeneralFeatures):
 
         self.spikes = Spikes()
         self.spikes.detectSpikes(self.t, self.U, thresh=thresh, extended_spikes=extended_spikes)
+
+
+
 
 
 class ImplementedNeuronFeatures(NeuronFeatures):

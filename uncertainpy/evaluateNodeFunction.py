@@ -4,7 +4,7 @@ import scipy
 import os
 
 import numpy as np
-import multiprocess as mp
+import multiprocessing as mp
 
 __all__ = ["evaluateNodeFunction"]
 __version__ = "0.1"
@@ -17,12 +17,13 @@ def evaluateNodeFunction(data):
     all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, feature_list, feature_cmd)
     """
     cmd = data[0]
-    node = data[1]
-    tmp_parameter_names = data[2]
-    feature_list = data[3]
-    feature_cmd = data[4]
+    supress_model_output = data[1]
+    node = data[2]
+    tmp_parameter_names = data[3]
+    feature_list = data[4]
+    feature_cmd = data[5]
 
-    kwargs = data[5]
+    kwargs = data[6]
 
     if isinstance(node, float) or isinstance(node, int):
         node = [node]
@@ -49,8 +50,8 @@ def evaluateNodeFunction(data):
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
-    # TODO decide if output from the model is to be printed or not
-    # print ut
+    if not supress_model_output:
+        print ut
 
     if simulation.returncode != 0:
         print ut

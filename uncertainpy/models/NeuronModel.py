@@ -86,7 +86,7 @@ class NeuronModel(Model):
         return self.toArray(self.V)
 
 
-    def setParameters(self, parameters):
+    def setParameterValues(self, parameters):
         for parameter in parameters:
             self.h(parameter + " = " + str(parameters[parameter]))
 

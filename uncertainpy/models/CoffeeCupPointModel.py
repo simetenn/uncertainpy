@@ -10,7 +10,7 @@ class CoffeeCupPointModel(Model):
 
     simulation = model()
     simulation.load()
-    simulation.setParameters(parameters -> dictionary)
+    simulation.setParameterValues(parameters -> dictionary)
     simulation.run()
     simulation.save(current_process -> int)
 
