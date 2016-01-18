@@ -73,12 +73,12 @@ class Model():
             raise ValueError("t or U has not been calculated")
 
         if CPU is None:
-            np.save(os.path.join(save_path, "tmp_U"), self.U)
-            np.save(os.path.join(save_path, "tmp_t"), self.t)
+            np.save(os.path.join(save_path, ".tmp_U"), self.U)
+            np.save(os.path.join(save_path, ".tmp_t"), self.t)
 
         else:
-            np.save(os.path.join(save_path, "tmp_U_%d" % CPU), self.U)
-            np.save(os.path.join(save_path, "tmp_t_%d" % CPU), self.t)
+            np.save(os.path.join(save_path, ".tmp_U_%d" % CPU), self.U)
+            np.save(os.path.join(save_path, ".tmp_t_%d" % CPU), self.t)
 
 
     def cmd(self, additional_cmds=[]):

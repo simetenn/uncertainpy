@@ -60,11 +60,11 @@ def evaluateNodeFunction(data):
         sys.exit(1)
 
 
-    V = np.load(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
-    t = np.load(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
+    V = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+    t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
-    os.remove(os.path.join(filedir, "tmp_U_%s.npy" % current_process))
-    os.remove(os.path.join(filedir, "tmp_t_%s.npy" % current_process))
+    os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+    os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
     sys.path.insert(0, feature_cmd[0])
     module = __import__(feature_cmd[1].split(".")[0])

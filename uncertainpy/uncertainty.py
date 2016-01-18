@@ -54,6 +54,9 @@
 # TODO Make sending of model keywords simpler than it currentlu is. Use a
 # dictionary similar to kwargs?
 
+# TODO Make it so that when 0 spikes is returned exclude the result. Return None
+# for that spike and if
+
 
 import time
 import os
@@ -399,6 +402,7 @@ class UncertaintyEstimation():
             tmp_results = []
 
             for feature in solved_features:
+                print feature
                 tmp_results.append(feature[feature_name])
 
             if self.rosenblatt:
