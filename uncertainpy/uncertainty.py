@@ -402,7 +402,8 @@ class UncertaintyEstimation():
             tmp_results = []
 
             for feature in solved_features:
-                print feature
+                if feature[feature_name]:
+                    print "Gotcha!"
                 tmp_results.append(feature[feature_name])
 
             if self.rosenblatt:
