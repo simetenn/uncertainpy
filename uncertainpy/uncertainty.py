@@ -57,6 +57,7 @@
 # TODO Make it so that when 0 spikes is returned exclude the result. Return None
 # for that spike and if
 
+# TODO create a progressbar using tqdm
 
 import time
 import os
@@ -397,21 +398,40 @@ class UncertaintyEstimation():
             interpolated_solves.append(inter(self.t))
 
 
+
         # Calculate PC for each feature
         for feature_name in self.feature_list:
-            tmp_results = []
+            i = 0
+            mask = np.ones(len(solved_features), dtype=bool)
+            tmp_results = np.zeros(len(solved_features))
+
 
             for feature in solved_features:
-                if feature[feature_name]:
-                    print "Gotcha!"
-                tmp_results.append(feature[feature_name])
+                if feature[feature_name] is None:
+                    mask[i] = False
 
-            if self.rosenblatt:
-                #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
-                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes_MvNormal, tmp_results, rule="T")
+                tmp_results[i] = feature[feature_name]
+                i += 1
+
+
+
+            if len(nodes.shape) > 1:
+                if self.rosenblatt:
+                    tmp_nodes = nodes_MvNormal[:, mask]
+                else:
+                    tmp_nodes = nodes[:, mask]
             else:
-                #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-                self.U_hat[feature_name] = cp.fit_regression(self.P, nodes, tmp_results, rule="T")
+                if self.rosenblatt:
+                    tmp_nodes = nodes_MvNormal[mask]
+                else:
+                    tmp_nodes = nodes[mask]
+
+            if not np.all(mask):
+                print "Warning: feature %s does not yield results for all parameter combinations" % (feature_name)
+
+            #self.U_hat = cp.fit_quadrature(self.P, tmp_nodes, weights, tmp_results[mask])
+            self.U_hat[feature_name] = cp.fit_regression(self.P, tmp_nodes, tmp_results[mask], rule="T")
+
 
         if self.rosenblatt:
             #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)

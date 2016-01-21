@@ -105,21 +105,21 @@ class ImplementedNeuronFeatures(NeuronFeatures):
 
     def timeBeforeFirstSpike(self):
         if self.spikes.nr_spikes <= 0:
-            return -1
+            return None
 
         return self.spikes.spikes[0].t_spike
 
 
     def spikeRate(self):
         if self.spikes.nr_spikes <= 0:
-            return -1
+            return None
 
         return self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
 
 
     def averageAPOvershoot(self):
         if self.spikes.nr_spikes <= 0:
-            return -1
+            return None
 
         sum_AP_overshoot = 0
         for spike in self.spikes:
@@ -129,7 +129,7 @@ class ImplementedNeuronFeatures(NeuronFeatures):
 
     def averageAHPDepth(self):
         if self.spikes.nr_spikes <= 0:
-            return -1
+            return None
 
         sum_AHP_depth = 0
         for i in xrange(self.spikes.nr_spikes-1):
@@ -140,7 +140,7 @@ class ImplementedNeuronFeatures(NeuronFeatures):
 
     def averageAPWidth(self):
         if self.spikes.nr_spikes <= 0:
-            return -1
+            return None
 
         sum_AP_width = 0
         for spike in self.spikes:
@@ -161,7 +161,7 @@ class ImplementedNeuronFeatures(NeuronFeatures):
     def accomondationIndex(self):
         N = self.spikes.nr_spikes
         if N <= 1:
-            return -1
+            return None
 
         k = min(4, int(round(N-1)/5.))
 
