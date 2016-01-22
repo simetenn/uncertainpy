@@ -124,10 +124,12 @@ class UncertaintyEstimations():
 
         self.t_start = time.time()
 
-        if os.path.isdir(output_dir_data):
-            shutil.rmtree(output_dir_data)
-        os.makedirs(output_dir_data)
+        # if os.path.isdir(output_dir_data):
+        #     shutil.rmtree(output_dir_data)
+        # os.makedirs(output_dir_data)
 
+        if not os.path.isdir(output_dir_data):
+             os.makedirs(output_dir_data)
 
     def exploreParameters(self):
         for distribution_function in self.distributions:
@@ -139,13 +141,16 @@ class UncertaintyEstimations():
                 self.model.setAllDistributions(distribution)
 
                 print "Running for: " + distribution_function + " " + str(interval)
+
+                tmp_output_dir_data = os.path.join(self.output_dir_data, distribution_function + "_%g" % interval)
+
                 uncertainty_estimation = UncertaintyEstimation(self.model,
                                                                feature_list=self.feature_list,
                                                                features=self.features,
                                                                output_dir_figures=current_output_dir_figures,
                                                                figureformat=self.figureformat,
-                                                               output_dir_data=self.output_dir_data,
-                                                               output_data_name=distribution_function + "_%g" % interval,
+                                                               output_dir_data=tmp_output_dir_data,
+                                                               output_data_filename=self.model.__class__.__name__,
                                                                supress_model_graphics=self.supress_model_graphics,
                                                                supress_model_output=self.supress_model_output,
                                                                CPUs=self.CPUs,
@@ -174,7 +179,7 @@ class UncertaintyEstimation():
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
-                 output_data_name="uncertainty",
+                 output_data_filename=None,
                  supress_model_graphics=True,
                  supress_model_output=True,
                  CPUs=mp.cpu_count(),
@@ -209,7 +214,7 @@ class UncertaintyEstimation():
         self.output_dir_figures = output_dir_figures
         self.figureformat = figureformat
         self.save_data = save_data
-        self.output_file = os.path.join(output_dir_data, output_data_name)
+        self.output_dir_data = output_dir_data
 
         self.supress_model_graphics = supress_model_graphics
         self.supress_model_output = supress_model_output
@@ -236,13 +241,16 @@ class UncertaintyEstimation():
         if self.CPUs > 1:
             self.pool = mp.Pool(processes=self.CPUs)
 
+        if output_data_filename is None:
+            self.output_data_filename = self.model.__class__.__name__
+        else:
+            self.output_data_filename = output_data_filename
 
-        if save_data:
-            if not os.path.isdir(output_dir_data):
-                os.makedirs(output_dir_data)
-            else:
-                if os.path.isfile(self.output_file):
-                    os.remove(self.output_file)
+        # TODO This might be dangerous, remove the deletion of the old folder
+        if self.save_data:
+            if os.path.isdir(self.output_dir_data):
+                shutil.rmtree(self.output_dir_data)
+            os.makedirs(self.output_dir_data)
 
         self.t_start = time.time()
 
@@ -268,7 +276,6 @@ class UncertaintyEstimation():
     def resetValues(self):
         self.parameter_names = None
         self.parameter_space = None
-
 
         self.U_hat = {}
         self.distribution = None
@@ -560,7 +567,7 @@ class UncertaintyEstimation():
             self.singleParameterPCAnalysis()
 
             if self.save_data:
-                self.saveAll(parameter=uncertain_parameter)
+                self.save("%s_%s" % (self.output_data_filename, uncertain_parameter))
 
             if self.save_figures:
                 self.plotAll(uncertain_parameter)
@@ -583,7 +590,8 @@ class UncertaintyEstimation():
         self.PCAnalysis()
 
         if self.save_data:
-            self.saveAll(parameter="all")
+            self.save(self.output_data_filename)
+
 
         if self.save_figures:
             self.plotAll("all")
@@ -701,57 +709,36 @@ class UncertaintyEstimation():
                     bbox_inches="tight")
 
 
-    def save(self, parameter="all", feature="direct_comparison"):
+    def save(self, filename):
         ### TODO expand the save funcition to also save parameters and model information
 
-        f = h5py.File(self.output_file, 'a')
+        f = h5py.File(os.path.join(self.output_dir_data, filename), 'w')
 
-        if "name" not in f.attrs.keys():
-            f.attrs["name"] = self.output_file.split("/")[-1]
-        if "uncertain parameters" not in f.attrs.keys():
-            f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
-        if "features" not in f.attrs.keys():
-            f.attrs["features"] = self.feature_list
+        # f.attrs["name"] = self.output_file.split("/")[-1]
+        f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
+        f.attrs["features"] = self.feature_list
 
+        for feature in self.E:
+            group = f.create_group(feature)
 
-        if parameter in f.keys() and feature in f[parameter].keys():
-            del f[parameter]
-
-        group = f.create_group(os.path.join(parameter, feature))
-
-        if self.t is not None and feature == "direct_comparison":
-            group.create_dataset("t", data=self.t)
-        if self.E is not None:
-            group.create_dataset("E", data=self.E[feature])
-        if self.Var is not None:
-            group.create_dataset("Var", data=self.Var[feature])
-        if self.p_05 is not None:
-            group.create_dataset("p_05", data=self.p_05[feature])
-        if self.p_95 is not None:
-            group.create_dataset("p_95", data=self.p_95[feature])
-
-
-        # TODO check if this saves correctly
-        if parameter == "all":
-            if self.sensitivity[feature] is not None:
+            if self.t is not None and feature == "direct_comparison":
+                group.create_dataset("t", data=self.t)
+            if feature in self.E:
+                group.create_dataset("E", data=self.E[feature])
+            if feature in self.Var:
+                group.create_dataset("Var", data=self.Var[feature])
+            if feature in self.p_05:
+                group.create_dataset("p_05", data=self.p_05[feature])
+            if feature in self.p_95:
+                group.create_dataset("p_95", data=self.p_95[feature])
+            if feature in self.sensitivity:
                 group.create_dataset("sensitivity", data=self.sensitivity[feature])
-
-                # i = 0
-                # for parameter in self.model.parameters.getUncertain("name"):
-                #     print f.keys()
-                #     if parameter not in f.keys():
-                #         f.create_group(os.path.join(parameter, feature))
-                #
-                #     print self.sensitivity
-                #     print feature
-                #     # if feature == "direct_comparison":
-                #     #     f[parameter][feature].create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
-                #     f[parameter][feature].create_dataset("sensitivity", data=self.sensitivity[feature][i])
-                #     i += 1
+            # if feature == "direct_comparison":
+            #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
 
         f.close()
 
-    def saveAll(self, parameter="all"):
-        self.save(parameter=parameter)
-        for feature_name in self.feature_list:
-            self.save(parameter=parameter, feature=feature_name)
+    # def saveAll(self, parameter="all"):
+    #     self.save(parameter=parameter)
+    #     for feature_name in self.feature_list:
+    #         self.save(parameter=parameter, feature=feature_name)
