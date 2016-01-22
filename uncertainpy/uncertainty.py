@@ -51,13 +51,14 @@
 
 # TODO Decide if the HH model should return Vm - 65 or just Vm
 
-# TODO Make sending of model keywords simpler than it currentlu is. Use a
+# TODO Make sending of model keywords simpler than it currently is. Use a
 # dictionary similar to kwargs?
 
-# TODO Make it so that when 0 spikes is returned exclude the result. Return None
-# for that spike and if
 
 # TODO create a progressbar using tqdm
+
+# TODO recreate the save function to only save one parameter run in each hdf5
+# file. Consider saving into seperate .npy files
 
 import time
 import os
@@ -69,7 +70,6 @@ import numpy as np
 import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocessing as mp
-
 
 from xvfbwrapper import Xvfb
 
