@@ -1,16 +1,6 @@
 import subprocess
 import datetime
-
-import numpy as np
 import uncertainpy
-# import uncertainpy.models
-
-
-# from memory import Memory
-# from uncertainty import UncertaintyEstimations
-# from IzhikevichModel import IzhikevichModel
-# from parameters import Parameters
-
 
 memory = uncertainpy.utils.Memory(10)
 memory.start()

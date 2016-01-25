@@ -60,6 +60,11 @@
 # TODO recreate the save function to only save one parameter run in each hdf5
 # file. Consider saving into seperate .npy files
 
+# TODO Rename direct_comparison to diirectComparison so that it is named the
+# same as other features
+
+# TODO Make sure the PC code can handle other 2d features
+
 import time
 import os
 import shutil
