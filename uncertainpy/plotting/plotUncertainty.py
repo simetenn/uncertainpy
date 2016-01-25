@@ -345,28 +345,30 @@ class PlotUncertainty():
 
 
     def plot1dFeatures(self):
-        for parameter_name in self.f.keys():
-            for feature_name in self.f.attrs["features"]:
-                self.plotFeature(feature_name=feature_name, parameter_name=parameter_name)
-                save_name = "%s_%s" % (parameter_name, feature_name) + self.figureformat
-                plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
-                plt.close()
+        for feature_name in self.features_1d:
+            self.plot1dFeature(feature_name)
+            save_name = "%s_%s" % (self.filename, feature_name) + self.figureformat
+            plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
+            plt.close()
+
 
 
     # TODO not finhised, missing correct label placement
     def plot1dFeature(self, feature_name, max_legend_size=5):
         if feature_name not in self.features_1d:
+            # TODO is this the right error to raise?
             raise ValueError("%s is not a 1D feature" % (feature_name))
+
         E = self.f[feature_name]["E"][()]
         Var = self.f[feature_name]["Var"][()]
         p_05 = self.f[feature_name]["p_05"][()]
         p_95 = self.f[feature_name]["p_95"][()]
 
-        if parameter_name == "all":
-            sensitivity = self.f[parameter_name][feature_name]["sensitivity"][:]
-        else:
-            sensitivity = self.f[parameter_name][feature_name]["sensitivity"][()]
 
+        if "sensitivity" in self.f[feature_name].keys():
+            sensitivity = self.f[feature_name]["sensitivity"][:]
+        else:
+            sensitivity = None
 
         if len(self.f.attrs["uncertain parameters"]) > max_legend_size:
             legend_size = max_legend_size
@@ -392,7 +394,7 @@ class PlotUncertainty():
 
         pos += distance
 
-        ax.set_ylabel("Feature value", fontsize=labelsize)
+        ax.set_ylabel(feature_name, fontsize=labelsize)
 
         ax.bar(pos, p_05, width=width, align='center', color=tableau20[3], linewidth=0)
         ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
@@ -406,8 +408,7 @@ class PlotUncertainty():
         ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
         ax2.set_ylim([0, 1.05])
 
-
-        if parameter_name == "all":
+        if sensitivity is not None:
             i = 0
             legend_bars = []
             for parameter in self.f.attrs["uncertain parameters"]:
@@ -435,17 +436,17 @@ class PlotUncertainty():
             fig = plt.gcf()
             fig.subplots_adjust(top=(0.91 - legend_width*0.053))
 
-        else:
-            ax.bar(pos, sensitivity, width=width, align='center', color=tableau20[4], linewidth=0)
-            xticks.append(pos)
-            xticklabels.append(parameter_name)
+        # else:
+        #     ax.bar(pos, sensitivity, width=width, align='center', color=tableau20[4], linewidth=0)
+        #     xticks.append(pos)
+        #     xticklabels.append(self.filename)
 
 
         pos += 3*distance
         ax.set_xticks(xticks)
         ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
 
-        plt.suptitle("Parameter: " + parameter_name + ", feature: " + feature_name, fontsize=titlesize)
+        plt.suptitle(self.filename + ", " + feature_name, fontsize=titlesize)
 
         return ax, tableau20, pos
 
@@ -462,7 +463,7 @@ class PlotUncertainty():
             if combined_features:
                 self.plot1dFeaturesCombined()
             else:
-                self.plotFeatures()
+                self.plot1dFeatures()
 
 
 

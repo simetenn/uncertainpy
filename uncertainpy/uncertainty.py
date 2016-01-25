@@ -572,7 +572,7 @@ class UncertaintyEstimation():
             self.singleParameterPCAnalysis()
 
             if self.save_data:
-                self.save("%s_%s" % (self.output_data_filename, uncertain_parameter))
+                self.save("%s_single-parameter-%s" % (self.output_data_filename, uncertain_parameter))
 
             if self.save_figures:
                 self.plotAll(uncertain_parameter)
