@@ -627,6 +627,7 @@ class UncertaintyEstimation():
             self.sensitivity_ranking[parameter] /= total_sensitivity
 
 
+    # Might not work any more
     def plotV_t(self, parameter):
 
         color1 = 0
@@ -663,6 +664,7 @@ class UncertaintyEstimation():
 
         plt.close()
 
+    # Might not work any more
     def plotConfidenceInterval(self, parameter):
         if parameter not in self.E:
             print "WARNING: %s have not been calculated" % (parameter)
@@ -683,6 +685,7 @@ class UncertaintyEstimation():
 
         plt.close()
 
+    # Might not work any more
     def plotSensitivity(self):
         if not self.sensitivity:
             print "WARNING: Sensitivity have not been calculated"
