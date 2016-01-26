@@ -4,6 +4,7 @@ import sys
 import shutil
 import glob
 import argparse
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,6 +37,7 @@ class PlotUncertainty():
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.features_in_combined_plot = 3
 
+
     def loadData(self, filename):
         self.filename = filename
         self.f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
@@ -53,15 +55,82 @@ class PlotUncertainty():
 
         self.full_output_figures_dir = os.path.join(self.output_figures_dir, filename)
 
-        if os.path.isdir(self.full_output_figures_dir):
-            shutil.rmtree(self.full_output_figures_dir)
-        os.makedirs(self.full_output_figures_dir)
+        # if os.path.isdir(self.full_output_figures_dir):
+        #     shutil.rmtree(self.full_output_figures_dir)
+        # os.makedirs(self.full_output_figures_dir)
+
+        if not os.path.isdir(self.full_output_figures_dir):
+            os.makedirs(self.full_output_figures_dir)
 
 
-    def meanAndVariance(self, feature="direct_comparison", hardcopy=True):
+
+    def mean(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
+
+        if feature not in self.features_2d:
+            # TODO is this the right error to raise?
+            raise ValueError("%s is not a 2D feature" % (feature))
+
+
+        color1 = 0
+        color2 = 8
+
+        t = self.f["direct_comparison"]["t"][:]
+        E = self.f[feature]["E"][:]
+
+        prettyPlot(t, E, "Mean, " + feature, "time", "voltage", color1)
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_figures_dir,
+                                     feature + "_mean" + self.figureformat))
+            plt.close()
+
+        if show:
+            plt.show()
+            plt.close()
+
+
+
+    def variance(self, feature="direct_comparison", hardcopy=True, show=False):
+        if self.f is None:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
+        if feature not in self.features_2d:
+            # TODO is this the right error to raise?
+            raise ValueError("%s is not a 2D feature" % (feature))
+
+
+        color1 = 0
+        color2 = 8
+
+        t = self.f["direct_comparison"]["t"][:]
+        Var = self.f[feature]["Var"][:]
+
+
+        prettyPlot(t, Var, "Variance, " + feature, "time", "voltage", color2)
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_figures_dir,
+                                     feature + "_variance" + self.figureformat))
+            plt.close()
+
+        if show:
+            plt.show()
+            plt.close()
+
+
+
+    def meanAndVariance(self, feature="direct_comparison", hardcopy=True, show=False):
+        if self.f is None:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
+        if feature not in self.features_2d:
+            # TODO is this the right error to raise?
+            raise ValueError("%s is not a 2D feature" % (feature))
+
 
         color1 = 0
         color2 = 8
@@ -70,14 +139,7 @@ class PlotUncertainty():
         E = self.f[feature]["E"][:]
         Var = self.f[feature]["Var"][:]
 
-
-        prettyPlot(t, E, "Mean, " + self.filename, "time", "voltage", color1)
-        plt.savefig(os.path.join(self.full_output_figures_dir, self.filename + "_mean" + self.figureformat))
-
-        prettyPlot(t, Var, "Variance, " + self.filename, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.full_output_figures_dir, self.filename + "_variance" + self.figureformat))
-
-        ax, tableau20 = prettyPlot(t, E, "Mean and variance, " + self.filename,
+        ax, tableau20 = prettyPlot(t, E, "Mean and variance, " + feature,
                                    "time", "voltage, mean", color1)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
@@ -98,16 +160,21 @@ class PlotUncertainty():
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,
                         feature + "_variance-mean" + self.figureformat))
-        else:
+            plt.close()
+
+        if show:
             plt.show()
+            plt.close()
 
-        plt.close()
 
-
-    def confidenceInterval(self, feature="direct_comparison", hardcopy=True):
+    def confidenceInterval(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
+
+        if feature not in self.features_2d:
+            # TODO is this the right error to raise?
+            raise ValueError("%s is not a 2D feature" % (feature))
 
 
         t = self.f["direct_comparison"]["t"][:]
@@ -116,11 +183,12 @@ class PlotUncertainty():
         p_95 = self.f[feature]["p_95"][:]
 
 
-        ax, color = prettyPlot(t, E, "Confidence interval", "time", "voltage", 0)
+        ax, color = prettyPlot(t, E, "", "time", "voltage", 0)
         plt.fill_between(t, p_05, p_95, alpha=0.2, facecolor=color[8])
         prettyPlot(t, p_95, color=8, new_figure=False)
         prettyPlot(t, p_05, color=9, new_figure=False)
-        prettyPlot(t, E, "Confidence interval", "time", "voltage", 0, False)
+        prettyPlot(t, E, new_figure=False)
+        plt.title("Confidence interval, " + feature)
 
         plt.ylim([min([min(p_95), min(p_05), min(E)]),
                   max([max(p_95), max(p_05), max(E)])])
@@ -130,16 +198,22 @@ class PlotUncertainty():
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,
                                      feature + "_confidence-interval" + self.figureformat))
-        else:
+            plt.close()
+
+        if show:
             plt.show()
+            plt.close()
 
-        plt.close()
 
-
-    def sensitivity(self, feature="direct_comparison", hardcopy=True):
+    def sensitivity(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
+
+        if feature not in self.features_2d:
+            # TODO is this the right error to raise?
+            raise ValueError("%s is not a 2D feature" % (feature))
+
 
         if "sensitivity" not in self.f[feature].keys():
             return
@@ -155,14 +229,39 @@ class PlotUncertainty():
                        "sensitivity", i, True)
             plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
-            plt.savefig(os.path.join(self.full_output_figures_dir,
-                                     parameter_names[i] +
-                                     "_sensitivity" + self.figureformat))
-        plt.close()
+
+            if hardcopy:
+                plt.savefig(os.path.join(self.full_output_figures_dir,
+                                         "Sensitivity_" + feature + "_" + parameter_names[i] + self.figureformat))
+                plt.close()
+
+            if show:
+                plt.show()
+                plt.close()
+
+
+
+    def sensitivityAll(self, feature="direct_comparison", hardcopy=True, show=False):
+        if self.f is None:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
+        if feature not in self.features_2d:
+            # TODO is this the right error to raise?
+            raise ValueError("%s is not a 2D feature" % (feature))
+
+
+        if "sensitivity" not in self.f[feature].keys():
+            return
+
+        t = self.f["direct_comparison"]["t"][:]
+        sensitivity = self.f[feature]["sensitivity"][:]
+
+        parameter_names = self.f.attrs["uncertain parameters"]
 
         for i in range(len(sensitivity)):
             prettyPlot(t, sensitivity[i], "sensitivity", "time",
-                       "sensitivity", i, False)
+                       "Sensitivity, " + feature, i, False)
 
         plt.ylim([0, 1.05])
         plt.xlim([t[0], 1.3*t[-1]])
@@ -170,17 +269,22 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,
-                                     "all_sensitivity" + self.figureformat))
-        else:
-            plt.show()
+                                     "sensitivity" + self.figureformat))
+            plt.close()
 
-        plt.close()
+        if show:
+            plt.show()
+            plt.close()
 
 
     def plot2dFeatures(self):
-        self.meanAndVariance()
-        self.confidenceInterval()
-        self.sensitivity()
+        for feature in self.features_2d:
+            self.mean(feature=feature)
+            self.variance(feature=feature)
+            self.meanAndVariance(feature=feature)
+            self.confidenceInterval(feature=feature)
+            self.sensitivity(feature=feature)
+            self.sensitivityAll(feature=feature)
 
 
 
@@ -452,7 +556,7 @@ class PlotUncertainty():
 
 
 
-    def plotAllData(self, combined_features=False):
+    def plotAllData(self, combined_features=True):
         print "Plotting all data"
 
         for f in glob.glob(os.path.join(self.data_dir, "*")):
@@ -465,186 +569,198 @@ class PlotUncertainty():
             else:
                 self.plot1dFeatures()
 
+    def plotAllDataFromExploration(self, combined_features=True):
+        print "Plotting all data"
+
+        original_data_dir = self.data_dir
+        original_output_figures_dir = self.output_figures_dir
+
+        for folder in glob.glob(os.path.join(self.data_dir, "*")):
+            self.data_dir = original_data_dir + folder.split("/")[-1]
+            self.output_figures_dir = original_output_figures_dir + folder.split("/")[-1]
+
+            for filename in glob.glob(os.path.join(folder, "*")):
+                self.loadData(filename.split("/")[-1])
+
+                self.plot2dFeatures()
+
+                if combined_features:
+                    self.plot1dFeaturesCombined()
+                else:
+                    self.plot1dFeatures()
+
+        self.data_dir = original_data_dir
+        self.output_figures_dir = original_output_figures_dir
 
 
-    # def gif(self):
-    #     print "Creating gifs..."
-    #
-    #     if os.path.isdir(self.output_gif_dir):
-    #         shutil.rmtree(self.output_gif_dir)
-    #     os.makedirs(self.output_gif_dir)
-    #
-    #     plot_types = ["mean", "variance", "variance-mean", "confidence-interval", "sensitivity"]
-    #
-    #     files = {}
-    #     plotting_order = {}
-    #     for f in glob.glob(self.data_dir + "*"):
-    #         if re.search("._\d", f):
-    #             files[f.split("/")[-1]] = h5py.File(f, 'r')
-    #
-    #             distribution, interval = f.split("/")[-1].split("_")
-    #
-    #             if distribution in plotting_order:
-    #                 plotting_order[distribution].append(interval)
-    #             else:
-    #                 plotting_order[distribution] = [interval]
-    #
-    #
-    #     uncertain_parameters = []
-    #     for parameter in files[distribution + "_" + interval].keys():
-    #         uncertain_parameters.append(parameter)
-    #
-    #
-    #     # Run through each distribution and plot everything for each distribution
-    #     for distribution in plotting_order:
-    #         if os.path.isdir(self.tmp_gif_output):
-    #             shutil.rmtree(self.tmp_gif_output)
-    #         os.makedirs(self.tmp_gif_output)
-    #
-    #         # Create the plot for each parameter
-    #         for parameter in uncertain_parameters:
-    #
-    #             # Finding the max and min data point for all distributions for each parameter
-    #             max_data = {}
-    #             min_data = {}
-    #             for interval in plotting_order[distribution]:
-    #                 filename = distribution + "_" + interval
-    #                 f = files[filename]
-    #
-    #                 for datasett in f[parameter].keys():
-    #                     if datasett == "sensitivity" or datasett == "total sensitivity":
-    #                         continue
-    #
-    #                     max_value = max(f[parameter][datasett])
-    #                     min_value = min(f[parameter][datasett])
-    #
-    #
-    #                     if datasett in max_data:
-    #                         if max_value > max_data[datasett]:
-    #                             max_data[datasett] = max_value
-    #                         if min_value > min_data[datasett]:
-    #                             min_data[datasett] = min_value
-    #                     else:
-    #                         max_data[datasett] = max_value
-    #                         min_data[datasett] = min_value
-    #
-    #
-    #             for interval in plotting_order[distribution]:
-    #                 filename = distribution + "_" + interval
-    #                 f = files[filename]
-    #
-    #                 t = f[parameter]["t"][:]
-    #                 E = f[parameter]["E"][:]
-    #                 Var = f[parameter]["Var"][:]
-    #                 p_05 = f[parameter]["p_05"][:]
-    #                 p_95 = f[parameter]["p_95"][:]
-    #
-    #
-    #                 # Create the different plots
-    #
-    #
-    #                 ### V(t)
-    #                 color1 = 0
-    #                 color2 = 8
-    #
-    #                 title = parameter + ": Mean, " + distribution + " " + interval
-    #                 #plt.rcParams["figure.figsize"] = (10, 7.5)
-    #                 prettyPlot(t, E, title, "time", "voltage", color1)
-    #                 plt.ylim(min_data["E"], max_data["E"])
-    #                 plt.xlim(min_data["t"], max_data["t"])
-    #                 save_name = parameter + "_" + interval + "_mean" + self.figureformat
-    #                 plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-    #                 plt.close()
-    #
-    #                 title = parameter + ": Variance, " + distribution + " " + interval
-    #                 prettyPlot(t, Var, title, "time", "voltage", color2)
-    #                 plt.ylim(min_data["Var"], max_data["Var"])
-    #                 plt.xlim(min_data["t"], max_data["t"])
-    #                 save_name = parameter + "_" + interval + "_variance" + self.figureformat
-    #                 plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-    #                 plt.close()
-    #
-    #                 title = parameter + ": Mean and variance, " + distribution + " " + interval
-    #                 ax, tableau20 = prettyPlot(t, E, title, "time", "voltage, mean", color1)
-    #                 plt.ylim([min_data["E"], max_data["E"]])
-    #                 ax2 = ax.twinx()
-    #                 ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-    #                                 color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
-    #                 ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
-    #                 ax.spines["right"].set_edgecolor(tableau20[color2])
-    #
-    #                 ax2.set_xlim([min_data["t"], max_data["t"]])
-    #                 ax2.set_ylim([min_data["Var"], max_data["Var"]])
-    #
-    #                 ax2.plot(t, Var, color=tableau20[color2], linewidth=2, antialiased=True)
-    #
-    #                 ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
-    #                 ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
-    #                 ax.spines["left"].set_edgecolor(tableau20[color1])
-    #
-    #
-    #                 save_name = parameter + "_" + interval + "_variance-mean" + self.figureformat
-    #                 plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-    #                 plt.close()
-    #
-    #
-    #                 ### Confidence interval
-    #                 title = parameter + ": Confidence interval, " + distribution + " " + interval
-    #                 ax, color = prettyPlot(t, E, title, "voltage", 0)
-    #                 plt.fill_between(t, p_05, p_95, alpha=0.2, facecolor=color[8])
-    #                 prettyPlot(t, p_95, color=8, new_figure=False)
-    #                 prettyPlot(t, p_05, color=9, new_figure=False)
-    #                 prettyPlot(t, E, title, "time", "voltage", 0, False)
-    #
-    #                 tmp_min = min([min_data["p_95"], min_data["p_05"], min_data["E"]])
-    #                 tmp_max = max([max_data["p_95"], max_data["p_05"], max_data["E"]])
-    #                 plt.ylim(tmp_min, tmp_max)
-    #
-    #                 plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
-    #
-    #                 save_name = parameter + "_" + interval + "_confidence-interval" + self.figureformat
-    #                 plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-    #
-    #                 if parameter == "all":
-    #                     sensitivity = f[parameter]["sensitivity"][:]
-    #
-    #                     sensitivity_parameters = f.attrs["uncertain parameters"]
-    #                     for i in range(len(sensitivity_parameters)):
-    #                         title = sensitivity_parameters[i] + ": Sensitivity, " + distribution + " " + interval
-    #                         prettyPlot(t, sensitivity[i], title, "time", "sensitivity", i, True)
-    #                         plt.ylim([0, 1.05])
-    #                         save_name = sensitivity_parameters[i] + "_" + interval + "_sensitivity" + self.figureformat
-    #                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-    #                         plt.close()
-    #
-    #                     for i in range(len(sensitivity_parameters)):
-    #                         title = "all: Sensitivity, " + distribution + " " + interval
-    #                         prettyPlot(t, sensitivity[i], title, "time",
-    #                                    "sensitivity", i, False)
-    #
-    #                     plt.ylim([0, 1.05])
-    #                     plt.xlim([t[0], 1.3*t[-1]])
-    #                     plt.legend(sensitivity_parameters)
-    #                     save_name = "all_" + interval + "_sensitivity" + self.figureformat
-    #                     plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-    #                     plt.close()
-    #
-    #
-    #         # Create gif
-    #         outputdir = os.path.join(self.output_gif_dir, distribution)
-    #         if os.path.isdir(outputdir):
-    #             shutil.rmtree(outputdir)
-    #         os.makedirs(outputdir)
-    #
-    #         for parameter in uncertain_parameters:
-    #             for plot_type in plot_types:
-    #                 final_name = os.path.join(outputdir, parameter + "_" + plot_type)
-    #                 file_name = os.path.join(self.tmp_gif_output, "%s_*_%s%s" % (parameter, plot_type, self.figureformat))
-    #                 cmd = "convert -set delay 100 %s %s.gif" % (file_name, final_name)
-    #
-    #                 os.system(cmd)
-    #
-    #         shutil.rmtree(self.tmp_gif_output)
+    def gif(self):
+        print "Creating gifs..."
+
+        if os.path.isdir(self.output_gif_dir):
+            shutil.rmtree(self.output_gif_dir)
+        os.makedirs(self.output_gif_dir)
+
+        files = {}
+        plotting_order = {}
+        for f in glob.glob(self.data_dir + "*"):
+            if re.search("._\d", f):
+                distribution, interval = f.split("/")[-1].split("_")
+
+                if distribution in plotting_order:
+                    plotting_order[distribution].append(interval)
+                else:
+                    plotting_order[distribution] = [interval]
+
+        for distribution in plotting_order:
+            plotting_order[distribution].sort()
+
+        # uncertain_parameters = []
+        # for parameter in files[distribution + "_" + interval].keys():
+        #     uncertain_parameters.append(parameter)
+
+
+        # Run through each distribution and plot everything for each distribution
+        for distribution in plotting_order:
+            if os.path.isdir(self.tmp_gif_output):
+                shutil.rmtree(self.tmp_gif_output)
+            os.makedirs(self.tmp_gif_output)
+
+            max_data = {}
+            min_data = {}
+            filenames = []
+
+            for interval in plotting_order[distribution]:
+
+                foldername = distribution + "_" + interval
+                for f in glob.glob(os.path.join(self.data_dir, foldername, "*")):
+                    filename = f.split("/")[-1]
+                    self.f = h5py.File(f, 'r')
+                    if filename not in filenames:
+                        filenames.append(filename)
+
+                    for feature in self.f.keys():
+                        if feature not in max_data:
+                            max_data[feature] = {}
+
+                        if feature not in min_data:
+                            min_data[feature] = {}
+
+
+                        for result in self.f[feature].keys():
+                            if result == "t" or result == "sensitivity":
+                                continue
+
+                            max_value = self.f[feature][result][()].max()
+                            min_value = self.f[feature][result][()].min()
+
+                            if result in max_data[feature]:
+                                if max_value > max_data[feature][result]:
+                                    max_data[feature][result] = max_value
+                                if min_value > min_data[feature][result]:
+                                    min_data[feature][result] = min_value
+                            else:
+                                max_data[feature][result] = max_value
+                                min_data[feature][result] = min_value
+
+
+            for interval in plotting_order[distribution]:
+                foldername = distribution + "_" + interval
+                for f in glob.glob(os.path.join(self.data_dir, foldername, "*")):
+                    filename = f.split("/")[-1]
+                    self.loadData(os.path.join(foldername, filename))
+
+                    for feature in self.features_2d:
+                        self.mean(feature=feature, hardcopy=False)
+                        plt.ylim([min_data[feature]["E"], max_data[feature]["E"]])
+                        save_name = filename + "_mean" + "_" + interval + self.figureformat
+                        plt.title("Mean, " + feature + ", " + interval)
+                        plt.savefig(os.path.join(self.tmp_gif_output, save_name))
+                        plt.close()
+
+                        self.variance(feature=feature, hardcopy=False)
+                        plt.ylim([min_data[feature]["Var"], max_data[feature]["Var"]])
+                        save_name = filename + "_variance" + "_" + interval + self.figureformat
+                        plt.title("Variance, " + feature + ", " + interval)
+                        plt.savefig(os.path.join(self.tmp_gif_output, save_name))
+                        plt.close()
+
+                        self.meanAndVariance(feature=feature, hardcopy=False)
+                        plt.ylim([min(min_data[feature]["E"], min_data[feature]["Var"]),
+                                  max(max_data[feature]["E"], max_data[feature]["Var"])])
+                        save_name = filename + "_mean-variance" + "_" + interval + self.figureformat
+                        plt.title("Mean and Variance, " + feature + ", " + interval)
+                        plt.savefig(os.path.join(self.tmp_gif_output, save_name))
+                        plt.close()
+
+                        self.confidenceInterval(feature=feature, hardcopy=False)
+                        plt.ylim([min(min_data[feature]["p_95"], min_data[feature]["p_05"]),
+                                  max(max_data[feature]["p_95"], max_data[feature]["p_05"])])
+                        save_name = filename + "_confidence-interval" + "_" + interval  + self.figureformat
+                        plt.title("Confidence interval, " + feature + ", " + interval)
+                        plt.savefig(os.path.join(self.tmp_gif_output, save_name))
+                        plt.close()
+
+
+                        # # PLot sensitivity each single plot
+                        # if feature not in self.features_2d:
+                        #     # TODO is this the right error to raise?
+                        #     raise ValueError("%s is not a 2D feature" % (feature))
+                        #
+                        # if "sensitivity" not in self.f[feature].keys():
+                        #     continue
+                        #
+                        # t = self.f["direct_comparison"]["t"][:]
+                        # sensitivity = self.f[feature]["sensitivity"][:]
+                        #
+                        # parameter_names = self.f.attrs["uncertain parameters"]
+                        #
+                        # for i in range(len(sensitivity)):
+                        #     prettyPlot(t, sensitivity[i],
+                        #                parameter_names[i] + " sensitivity", "time",
+                        #                "sensitivity", i, True)
+                        #     plt.title(parameter_names[i] + " sensitivity")
+                        #     plt.ylim([0, 1.05])
+                        #
+                        #     save_name = filename + "_" + interval + "_sensitivity_" + parameter_names[i] + self.figureformat
+                        #     plt.savefig(os.path.join(self.tmp_gif_output, save_name))
+                        #     plt.close()
+
+
+
+                        self.sensitivityAll(feature=feature, hardcopy=False)
+                        save_name = filename + "_sensitivity" + "_" + interval + self.figureformat
+                        plt.title("Sensitivity, " + feature + ", " + interval)
+                        plt.savefig(os.path.join(self.tmp_gif_output, save_name))
+                        plt.close()
+
+
+
+
+            # Create gif
+            outputdir = os.path.join(self.output_gif_dir, distribution)
+            # if os.path.isdir(outputdir):
+            #     shutil.rmtree(outputdir)
+            # os.makedirs(outputdir)
+            if not os.path.isdir(outputdir):
+                os.makedirs(outputdir)
+
+            #
+            plot_types = ["mean", "variance", "mean-variance", "confidence-interval", "sensitivity"]
+
+            for f in filenames:
+                for plot_type in plot_types:
+                    if "single-parameter" in f and plot_type == "sensitivity":
+                        continue
+
+                    final_name = os.path.join(outputdir, f + "_" + plot_type)
+                    filename = os.path.join(self.tmp_gif_output, "%s_%s_*%s" % (f, plot_type, self.figureformat))
+
+                    cmd = "convert -set delay 100 %s %s.gif" % (filename, final_name)
+
+                    os.system(cmd)
+
+            shutil.rmtree(self.tmp_gif_output)
+
 
 
 if __name__ == "__main__":
@@ -670,7 +786,8 @@ if __name__ == "__main__":
                            figureformat=figureformat,
                            output_gif_dir=output_gif_dir)
 
-    plot.plotAllData()
-    #plot.gif()
+    # plot.plotAllData()
+    plot.plotAllDataFromExploration()
+    # plot.gif()
 
     # sortByParameters(path=output_figures_dir, outputpath=output_figures_dir)

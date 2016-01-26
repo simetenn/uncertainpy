@@ -60,10 +60,12 @@
 # TODO recreate the save function to only save one parameter run in each hdf5
 # file. Consider saving into seperate .npy files
 
-# TODO Rename direct_comparison to diirectComparison so that it is named the
+# TODO Rename direct_comparison to directComparison so that it is named the
 # same as other features
 
-# TODO Make sure the PC code can handle other 2d features
+# TODO Make sure the PC code can handle other 2d features than only direct_comparison
+
+# TODO Make 3d plots of 2d features and 2d plots of 1d features
 
 import time
 import os
@@ -134,7 +136,7 @@ class UncertaintyEstimations():
         # os.makedirs(output_dir_data)
 
         if not os.path.isdir(output_dir_data):
-             os.makedirs(output_dir_data)
+            os.makedirs(output_dir_data)
 
     def exploreParameters(self):
         for distribution_function in self.distributions:

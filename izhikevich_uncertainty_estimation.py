@@ -18,7 +18,7 @@ model = uncertainpy.models.IzhikevichModel(parameters)
 
 #percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 #percentages = np.linspace(0.01, 0.25, 50)
-percentages = [0.1]
+percentages = [0.1, 0.2, 0.3]
 test_distributions = {"uniform": percentages}
 
 exploration = uncertainpy.UncertaintyEstimations(model,
@@ -30,7 +30,7 @@ exploration = uncertainpy.UncertaintyEstimations(model,
 exploration.exploreParameters()
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich", output_figures_dir="figures/izhikevich")
-plot.plotAllData()
+# plot.plotAllData()
 
 memory.end()
 

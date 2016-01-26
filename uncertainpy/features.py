@@ -4,8 +4,6 @@ import scipy.optimize
 import os
 import sys
 
-import matplotlib.pylab as plt
-
 class GeneralFeatures():
     def __init__(self, t=None, U=None, new_utility_methods=None):
         self.t = t
