@@ -166,6 +166,10 @@ class PlotUncertainty():
             plt.show()
             plt.close()
 
+        if not show or not hardcopy:
+            return ax, ax2
+
+
 
     def confidenceInterval(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
@@ -183,12 +187,11 @@ class PlotUncertainty():
         p_95 = self.f[feature]["p_95"][:]
 
 
-        ax, color = prettyPlot(t, E, "", "time", "voltage", 0)
+        ax, color = prettyPlot(t, E, xlabel="time", ylabel="voltage", color=0)
         plt.fill_between(t, p_05, p_95, alpha=0.2, facecolor=color[8])
         prettyPlot(t, p_95, color=8, new_figure=False)
         prettyPlot(t, p_05, color=9, new_figure=False)
-        prettyPlot(t, E, new_figure=False)
-        plt.title("Confidence interval, " + feature)
+        prettyPlot(t, E, title="Confidence interval, " + feature, new_figure=False)
 
         plt.ylim([min([min(p_95), min(p_05), min(E)]),
                   max([max(p_95), max(p_05), max(E)])])
@@ -227,7 +230,7 @@ class PlotUncertainty():
             prettyPlot(t, sensitivity[i],
                        parameter_names[i] + " sensitivity", "time",
                        "sensitivity", i, True)
-            plt.title(parameter_names[i] + " sensitivity")
+            # plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
 
             if hardcopy:
@@ -576,10 +579,11 @@ class PlotUncertainty():
         original_output_figures_dir = self.output_figures_dir
 
         for folder in glob.glob(os.path.join(self.data_dir, "*")):
-            self.data_dir = original_data_dir + folder.split("/")[-1]
-            self.output_figures_dir = original_output_figures_dir + folder.split("/")[-1]
+            self.data_dir = os.path.join(original_data_dir, folder.split("/")[-1])
+            self.output_figures_dir = os.path.join(original_output_figures_dir, folder.split("/")[-1])
 
             for filename in glob.glob(os.path.join(folder, "*")):
+
                 self.loadData(filename.split("/")[-1])
 
                 self.plot2dFeatures()
@@ -600,7 +604,6 @@ class PlotUncertainty():
             shutil.rmtree(self.output_gif_dir)
         os.makedirs(self.output_gif_dir)
 
-        files = {}
         plotting_order = {}
         for f in glob.glob(self.data_dir + "*"):
             if re.search("._\d", f):
@@ -614,11 +617,6 @@ class PlotUncertainty():
         for distribution in plotting_order:
             plotting_order[distribution].sort()
 
-        # uncertain_parameters = []
-        # for parameter in files[distribution + "_" + interval].keys():
-        #     uncertain_parameters.append(parameter)
-
-
         # Run through each distribution and plot everything for each distribution
         for distribution in plotting_order:
             if os.path.isdir(self.tmp_gif_output):
@@ -630,20 +628,25 @@ class PlotUncertainty():
             filenames = []
 
             for interval in plotting_order[distribution]:
-
                 foldername = distribution + "_" + interval
+
                 for f in glob.glob(os.path.join(self.data_dir, foldername, "*")):
                     filename = f.split("/")[-1]
-                    self.f = h5py.File(f, 'r')
+
+                    if filename not in max_data:
+                        max_data[filename] = {}
+                        min_data[filename] = {}
+
                     if filename not in filenames:
                         filenames.append(filename)
 
-                    for feature in self.f.keys():
-                        if feature not in max_data:
-                            max_data[feature] = {}
+                    self.f = h5py.File(f, 'r')
 
-                        if feature not in min_data:
-                            min_data[feature] = {}
+
+                    for feature in self.f.keys():
+                        if feature not in max_data[filename]:
+                            max_data[filename][feature] = {}
+                            min_data[filename][feature] = {}
 
 
                         for result in self.f[feature].keys():
@@ -653,48 +656,50 @@ class PlotUncertainty():
                             max_value = self.f[feature][result][()].max()
                             min_value = self.f[feature][result][()].min()
 
-                            if result in max_data[feature]:
-                                if max_value > max_data[feature][result]:
-                                    max_data[feature][result] = max_value
-                                if min_value > min_data[feature][result]:
-                                    min_data[feature][result] = min_value
+                            if result in max_data[filename][feature]:
+                                if max_value > max_data[filename][feature][result]:
+                                    max_data[filename][feature][result] = max_value
+                                if min_value < min_data[filename][feature][result]:
+                                    min_data[filename][feature][result] = min_value
                             else:
-                                max_data[feature][result] = max_value
-                                min_data[feature][result] = min_value
+                                max_data[filename][feature][result] = max_value
+                                min_data[filename][feature][result] = min_value
 
 
             for interval in plotting_order[distribution]:
                 foldername = distribution + "_" + interval
+
                 for f in glob.glob(os.path.join(self.data_dir, foldername, "*")):
                     filename = f.split("/")[-1]
                     self.loadData(os.path.join(foldername, filename))
 
                     for feature in self.features_2d:
                         self.mean(feature=feature, hardcopy=False)
-                        plt.ylim([min_data[feature]["E"], max_data[feature]["E"]])
+                        plt.ylim([min_data[filename][feature]["E"], max_data[filename][feature]["E"]])
                         save_name = filename + "_mean" + "_" + interval + self.figureformat
                         plt.title("Mean, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
                         self.variance(feature=feature, hardcopy=False)
-                        plt.ylim([min_data[feature]["Var"], max_data[feature]["Var"]])
+                        plt.ylim([min_data[filename][feature]["Var"], max_data[filename][feature]["Var"]])
                         save_name = filename + "_variance" + "_" + interval + self.figureformat
                         plt.title("Variance, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
-                        self.meanAndVariance(feature=feature, hardcopy=False)
-                        plt.ylim([min(min_data[feature]["E"], min_data[feature]["Var"]),
-                                  max(max_data[feature]["E"], max_data[feature]["Var"])])
+                        ax, ax2 = self.meanAndVariance(feature=feature, hardcopy=False)
+
+                        ax.set_ylim([min_data[filename][feature]["E"], max_data[filename][feature]["E"]])
+                        ax2.set_ylim([min_data[filename][feature]["Var"], max_data[filename][feature]["Var"]])
                         save_name = filename + "_mean-variance" + "_" + interval + self.figureformat
-                        plt.title("Mean and Variance, " + feature + ", " + interval)
+                        ax.set_title("Mean and Variance, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
                         self.confidenceInterval(feature=feature, hardcopy=False)
-                        plt.ylim([min(min_data[feature]["p_95"], min_data[feature]["p_05"]),
-                                  max(max_data[feature]["p_95"], max_data[feature]["p_05"])])
+                        plt.ylim([min(min_data[filename][feature]["p_95"], min_data[filename][feature]["p_05"]),
+                                  max(max_data[filename][feature]["p_95"], max_data[filename][feature]["p_05"])])
                         save_name = filename + "_confidence-interval" + "_" + interval  + self.figureformat
                         plt.title("Confidence interval, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
@@ -788,6 +793,6 @@ if __name__ == "__main__":
 
     # plot.plotAllData()
     plot.plotAllDataFromExploration()
-    # plot.gif()
+    plot.gif()
 
     # sortByParameters(path=output_figures_dir, outputpath=output_figures_dir)

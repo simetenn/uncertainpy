@@ -43,17 +43,12 @@
 
 # TODO Reimplement sensitivity ranking, but for all features and not only the diirect_comparison
 
-# TODO Reimplement: saving sensitivity to each seperate parameter as well?
-
 # TODO placement of feature bar plots
-
-# TODO Make support for plotting features that isn't only one value
 
 # TODO Decide if the HH model should return Vm - 65 or just Vm
 
 # TODO Make sending of model keywords simpler than it currently is. Use a
 # dictionary similar to kwargs?
-
 
 # TODO create a progressbar using tqdm
 

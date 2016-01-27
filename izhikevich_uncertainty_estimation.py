@@ -30,7 +30,7 @@ exploration = uncertainpy.UncertaintyEstimations(model,
 exploration.exploreParameters()
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich", output_figures_dir="figures/izhikevich")
-# plot.plotAllData()
+plot.plotAllDataFromExploration()
 
 memory.end()
 
