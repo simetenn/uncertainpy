@@ -153,12 +153,6 @@ class UncertaintyEstimation():
         self.resetValues()
 
 
-        if self.supress_model_graphics:
-            self.vdisplay = Xvfb()
-            self.vdisplay.start()
-
-        if self.CPUs > 1:
-            self.pool = mp.Pool(processes=self.CPUs)
 
         if output_data_filename is None:
             self.output_data_filename = self.model.__class__.__name__
@@ -169,11 +163,7 @@ class UncertaintyEstimation():
 
 
     def __del__(self):
-        if self.CPUs > 1:
-            self.pool.close()
-
-        if self.supress_model_graphics:
-            self.vdisplay.stop()
+        pass
 
 
     # def __getstate__(self):
@@ -207,7 +197,13 @@ class UncertaintyEstimation():
     def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
         data = []
         for node in nodes:
-            data.append((self.model.cmd(), self.supress_model_output, node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs))
+            data.append((self.model.cmd(),
+                         self.supress_model_output,
+                         node,
+                         tmp_parameter_names,
+                         self.feature_list,
+                         self.features.cmd(),
+                         self.kwargs))
         return data
 
 
@@ -259,21 +255,10 @@ class UncertaintyEstimation():
             # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
 
-        solves = []
-        try:
-            if self.CPUs > 1:
-                # solves = self.pool.map(self.evaluateNode, nodes.T)
-                solves = self.pool.map(evaluateNodeFunction,
-                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
-            else:
-                for node in nodes.T:
-                    # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction([self.model.cmd(), self.supress_model_output, node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs]))
-        except MemoryError:
-            return -1
 
 
-        solves = np.array(solves)
+
+        solves = self.evaluateNode(nodes, tmp_parameter_names)
         solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
@@ -316,7 +301,6 @@ class UncertaintyEstimation():
                 i += 1
 
 
-
             if len(nodes.shape) > 1:
                 if self.rosenblatt:
                     tmp_nodes = nodes_MvNormal[:, mask]
@@ -341,6 +325,37 @@ class UncertaintyEstimation():
         else:
             #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
             self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+
+
+    def evaluateNode(self, nodes, tmp_parameter_names):
+        if self.supress_model_graphics:
+            vdisplay = Xvfb()
+            vdisplay.start()
+
+        solves = []
+        try:
+            if self.CPUs > 1:
+                pool = mp.Pool(processes=self.CPUs)
+                solves = self.pool.map(evaluateNodeFunction,
+                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
+                pool.close()
+            else:
+                for node in nodes.T:
+                    solves.append(evaluateNodeFunction([self.model.cmd(),
+                                                        self.supress_model_output,
+                                                        node,
+                                                        tmp_parameter_names,
+                                                        self.feature_list,
+                                                        self.features.cmd(),
+                                                        self.kwargs]))
+        except MemoryError:
+            return -1
+
+        if self.supress_model_graphics:
+            vdisplay.stop()
+
+        return np.array(solves)
+
 
 
     def singleParameterPCAnalysis(self):
@@ -409,24 +424,9 @@ class UncertaintyEstimation():
         self.distribution = cp.J(*parameter_space)
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
-        if self.supress_model_graphics:
-            vdisplay = Xvfb()
-            vdisplay.start()
 
-        solves = []
-        try:
-            if self.CPUs > 1:
-                # solves = self.pool.map(self.evaluateNode, nodes.T)
-                solves = self.pool.map(evaluateNodeFunction,
-                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
-            else:
-                for node in nodes.T:
-                    # solves.append(self.evaluateNode(node))
-                    solves.append(evaluateNodeFunction([self.model.cmd(), self.supress_model_output, node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs]))
-        except MemoryError:
-            return -1
 
-        solves = np.array(solves)
+        solves = self.evaluateNode(nodes, tmp_parameter_names)
         solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
@@ -479,20 +479,13 @@ class UncertaintyEstimation():
             self.p_05[feature_name] = np.percentile(tmp_U_masked, 5)
             self.p_95[feature_name] = np.percentile(tmp_U_masked, 95)
 
-            # self.sensitivity[feature_name] = -1
 
         self.E["direct_comparison"] = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
         self.Var["direct_comparison"] = (np.sum((interpolated_solves - self.E[feature_name])**2, 0).T/self.nr_mc_samples).T
         self.p_95["direct_comparison"] = np.percentile(interpolated_solves, 95, 0)
         self.p_05["direct_comparison"] = np.percentile(interpolated_solves, 5, 0)
 
-        # print interpolated_solves
-        # print self.p_05["direct_comparison"], self.p_05["direct_comparison"].shape
-        # print self.p_95["direct_comparison"].shape
-        # print self.E["direct_comparison"].shape
 
-
-        # self.sensitivity["direct_comparison"] = -1
 
     def timePassed(self):
         return time.time() - self.t_start

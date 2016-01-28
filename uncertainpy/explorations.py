@@ -92,7 +92,10 @@ class UncertaintyEstimations():
         self.uncertainty_estimation.output_dir_figures = os.path.join(self.output_dir_figures, "pc_compare")
         self.uncertainty_estimation.output_dir_data = os.path.join(self.output_dir_data, "pc-compare")
 
+        time_1 = time.time()
         self.uncertainty_estimation.allParameters()
+        run_times.append(time.time() - time1)
+
 
         for nr_mc_sample in nr_mc_samples:
             print "Running for: " + str(nr_mc_sample)
@@ -100,37 +103,17 @@ class UncertaintyEstimations():
             current_output_dir_figures = os.path.join(self.output_dir_figures,
                                                       "mc-compare_" + str(nr_mc_sample))
             tmp_output_dir_data = os.path.join(self.output_dir_data,
-                                               "mc_-ompare_" + str(nr_mc_sample))
+                                               "mc_-compare_" + str(nr_mc_sample))
 
             self.uncertainty_estimation.output_dir_figures = current_output_dir_figures
             self.uncertainty_estimation.output_dir_data = tmp_output_dir_data
 
             time_1 = time.time()
             self.uncertainty_estimation.allParametersMC()
-            time_2 = time.time()
-            run_times.append(time2 - time1)
+            run_times.append(time.time() - time1)
 
         return run_times
-        
 
-    def compareMC(self, nr_mc_samples):
-        self.uncertainty_estimation.output_dir_figures = os.path.join(self.output_dir_figures, "pc_compare")
-        self.uncertainty_estimation.output_dir_data = os.path.join(self.output_dir_data, "pc-compare")
-
-        self.uncertainty_estimation.allParameters()
-
-        for nr_mc_sample in nr_mc_samples:
-            print "Running for: " + str(nr_mc_sample)
-
-            current_output_dir_figures = os.path.join(self.output_dir_figures,
-                                                      "mc-compare_" + str(nr_mc_sample))
-            tmp_output_dir_data = os.path.join(self.output_dir_data,
-                                               "mc_-ompare_" + str(nr_mc_sample))
-
-            self.uncertainty_estimation.output_dir_figures = current_output_dir_figures
-            self.uncertainty_estimation.output_dir_data = tmp_output_dir_data
-
-            self.uncertainty_estimation.allParametersMC()
 
 
     def timePassed(self):
