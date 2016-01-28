@@ -211,32 +211,7 @@ class UncertaintyEstimation():
         return data
 
 
-    # def evaluateNode(self, node):
-    #     if isinstance(node, float) or isinstance(node, int):
-    #             node = [node]
-    #
-    #
-    #     # New setparameters
-    #     tmp_parameters = {}feature_names =
-    #     j = 0
-    #     for parameter in self.tmp_parameter_names:
-    #         tmp_parameters[parameter] = node[j]
-    #         j += 1
-    #
-    #     t, V = self.model.run(tmp_parameters)
-    #
-    #     # Do a feature selection here. Make it so several feature
-    #     # selections are performed at this step.
-    #     for feature in self.features:
-    #         V = feature(V)
-    #
-    #     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
-    #
-    #     return (t, V, interpolation)
-
-
-
-    def createPCExpansion(self, parameter_name=None):
+    def createPCExpansion(self, parameter_name=None, nr_pc_samples=None):
 
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is None:
@@ -261,7 +236,10 @@ class UncertaintyEstimation():
             #self.P = cp.orth_ttr(self.M, self.distribution)
             self.P = cp.orth_ttr(self.M, dist_MvNormal)
 
-            nodes_MvNormal = dist_MvNormal.sample(2*len(self.P)+1, "M")
+            if nr_pc_samples is None:
+                nr_pc_samples = 2*len(self.P) + 1
+
+            nodes_MvNormal = dist_MvNormal.sample(nr_pc_samples, "M")
             # nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
             #                                                           rule="J", sparse=True)
 
@@ -274,7 +252,10 @@ class UncertaintyEstimation():
             self.distribution = cp.J(*parameter_space)
             self.P = cp.orth_ttr(self.M, self.distribution)
 
-            nodes = self.distribution.sample(2*len(self.P)+1, "M")
+            if nr_pc_samples is None:
+                nr_pc_samples = 2*len(self.P) + 1
+
+            nodes = self.distribution.sample(nr_pc_samples, "M")
             # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
 
