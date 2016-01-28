@@ -64,6 +64,10 @@
 
 # TODO calculate sensitivity in MC method
 
+# TODO update all files that creates runs
+
+# TODO make so MC methods takes the nr of samples
+
 import time
 import os
 import shutil
@@ -79,104 +83,8 @@ from xvfbwrapper import Xvfb
 
 # Imported from my own files
 from plotting import prettyPlot
-from distribution import Distribution
 from evaluateNodeFunction import evaluateNodeFunction
 from features import ImplementedNeuronFeatures
-
-class UncertaintyEstimations():
-    def __init__(self, model, distributions,
-                 feature_list=[],
-                 features=None,
-                 output_dir_figures="figures/",
-                 figureformat=".png",
-                 output_dir_data="data/",
-                 supress_model_graphics=True,
-                 supress_model_output=True,
-                 CPUs=mp.cpu_count(),
-                 interpolate_union=False,
-                 rosenblatt=False,
-                 nr_mc_samples=10**3,
-                 **kwargs):
-        """
-        Options can also be sent to the feature
-        kwargs:
-        feature_options = {keyword1: value1, keyword2: value2}
-        """
-
-        # Figures are always saved on the format:
-        # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
-
-        self.UncertaintyEstimations = []
-
-        # original_parameters, uncertain_parameters, distributions,
-
-        self.model = model
-        self.distributions = distributions
-
-        self.output_dir_figures = output_dir_figures
-        self.output_dir_data = output_dir_data
-
-        self.supress_model_graphics = supress_model_graphics
-        self.supress_model_output = supress_model_output
-        self.CPUs = CPUs
-        self.interpolate_union = interpolate_union
-        self.rosenblatt = rosenblatt
-        self.figureformat = figureformat
-        self.features = features
-        self.feature_list = feature_list
-        self.nr_mc_samples = nr_mc_samples
-
-        self.kwargs = kwargs
-
-        self.t_start = time.time()
-
-        # if os.path.isdir(output_dir_data):
-        #     shutil.rmtree(output_dir_data)
-        # os.makedirs(output_dir_data)
-
-        if not os.path.isdir(output_dir_data):
-            os.makedirs(output_dir_data)
-
-    def exploreParameters(self):
-        for distribution_function in self.distributions:
-            for interval in self.distributions[distribution_function]:
-                current_output_dir_figures = os.path.join(self.output_dir_figures,
-                                                          distribution_function + "_%g" % interval)
-                distribution = getattr(Distribution(interval), distribution_function)
-
-                self.model.setAllDistributions(distribution)
-
-                print "Running for: " + distribution_function + " " + str(interval)
-
-                tmp_output_dir_data = os.path.join(self.output_dir_data, distribution_function + "_%g" % interval)
-
-                uncertainty_estimation = UncertaintyEstimation(self.model,
-                                                               feature_list=self.feature_list,
-                                                               features=self.features,
-                                                               output_dir_figures=current_output_dir_figures,
-                                                               figureformat=self.figureformat,
-                                                               output_dir_data=tmp_output_dir_data,
-                                                               output_data_filename=self.model.__class__.__name__,
-                                                               supress_model_graphics=self.supress_model_graphics,
-                                                               supress_model_output=self.supress_model_output,
-                                                               CPUs=self.CPUs,
-                                                               interpolate_union=self.interpolate_union,
-                                                               rosenblatt=self.rosenblatt,
-                                                               nr_mc_samples=self.nr_mc_samples,
-                                                               **self.kwargs)
-
-                uncertainty_estimation.singleParameters()
-                uncertainty_estimation.allParameters()
-                del uncertainty_estimation
-
-    def timePassed(self):
-        return time.time() - self.t_start
-
-
-    def comparePCToMC
-
-
-
 
 
 class UncertaintyEstimation():
@@ -257,12 +165,6 @@ class UncertaintyEstimation():
         else:
             self.output_data_filename = output_data_filename
 
-        # TODO This might be dangerous, remove the deletion of the old folder
-        if self.save_data:
-            if os.path.isdir(self.output_dir_data):
-                shutil.rmtree(self.output_dir_data)
-            os.makedirs(self.output_dir_data)
-
         self.t_start = time.time()
 
 
@@ -331,6 +233,7 @@ class UncertaintyEstimation():
     #     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
     #
     #     return (t, V, interpolation)
+
 
 
     def createPCExpansion(self, parameter_name=None):
@@ -806,6 +709,9 @@ class UncertaintyEstimation():
 
 
     def save(self, filename):
+        if not os.path.isdir(self.output_dir_data):
+            os.makedirs(self.output_dir_data)
+
         ### TODO expand the save funcition to also save parameters and model information
 
         f = h5py.File(os.path.join(self.output_dir_data, filename), 'w')
