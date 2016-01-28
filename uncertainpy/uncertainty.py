@@ -58,9 +58,11 @@
 # TODO Rename direct_comparison to directComparison so that it is named the
 # same as other features
 
-# TODO Make sure the PC code can handle other 2d features than only direct_comparison
+# TODO Make the PC code handle other 2d features than only direct_comparison
 
 # TODO Make 3d plots of 2d features and 2d plots of 1d features
+
+# TODO calculate sensitivity in MC method
 
 import time
 import os
@@ -93,6 +95,7 @@ class UncertaintyEstimations():
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
+                 nr_mc_samples=10**3,
                  **kwargs):
         """
         Options can also be sent to the feature
@@ -121,6 +124,7 @@ class UncertaintyEstimations():
         self.figureformat = figureformat
         self.features = features
         self.feature_list = feature_list
+        self.nr_mc_samples = nr_mc_samples
 
         self.kwargs = kwargs
 
@@ -158,6 +162,7 @@ class UncertaintyEstimations():
                                                                CPUs=self.CPUs,
                                                                interpolate_union=self.interpolate_union,
                                                                rosenblatt=self.rosenblatt,
+                                                               nr_mc_samples=self.nr_mc_samples,
                                                                **self.kwargs)
 
                 uncertainty_estimation.singleParameters()
@@ -167,6 +172,8 @@ class UncertaintyEstimations():
     def timePassed(self):
         return time.time() - self.t_start
 
+
+    def comparePCToMC
 
 
 
@@ -187,6 +194,8 @@ class UncertaintyEstimation():
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
+                 nr_mc_samples=10**3,
+                 nr_pc_mc_samples=10**5,
                  **kwargs):
         """
         model: Model object
@@ -230,8 +239,8 @@ class UncertaintyEstimation():
         self.kwargs = kwargs
 
         self.M = 3
-        self.nr_mc_samples = 10**3
-
+        self.nr_mc_samples = nr_mc_samples
+        self.nr_pc_mc_samples = nr_pc_mc_samples
 
         self.resetValues()
 
@@ -455,7 +464,7 @@ class UncertaintyEstimation():
             self.E[feature_name] = cp.E(self.U_hat[feature_name], self.distribution)
             self.Var[feature_name] = cp.Var(self.U_hat[feature_name], self.distribution)
 
-            samples = self.distribution.sample(self.nr_mc_samples, "M")
+            samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
             self.U_mc[feature_name] = self.U_hat[feature_name](samples)
 
             self.p_05[feature_name] = np.percentile(self.U_mc[feature_name], 5)
@@ -464,7 +473,7 @@ class UncertaintyEstimation():
         self.E["direct_comparison"] = cp.E(self.U_hat["direct_comparison"], self.distribution)
         self.Var["direct_comparison"] = cp.Var(self.U_hat["direct_comparison"], self.distribution)
 
-        samples = self.distribution.sample(self.nr_mc_samples, "M")
+        samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
         self.U_mc["direct_comparison"] = self.U_hat["direct_comparison"](samples)
 
         self.p_05["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 5, 1)
@@ -483,7 +492,7 @@ class UncertaintyEstimation():
 
             self.sensitivity[feature_name] = cp.Sens_t(self.U_hat[feature_name], self.distribution)
 
-            samples = self.distribution.sample(self.nr_mc_samples, "M")
+            samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
             self.U_mc[feature_name] = self.U_hat[feature_name](*samples)
 
             self.p_05[feature_name] = np.percentile(self.U_mc[feature_name], 5)
@@ -496,7 +505,7 @@ class UncertaintyEstimation():
         self.sensitivity["direct_comparison"] = cp.Sens_t(self.U_hat["direct_comparison"], self.distribution)
         # self.sensitivityRanking()
 
-        samples = self.distribution.sample(self.nr_mc_samples, "M")
+        samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
         self.U_mc["direct_comparison"] = self.U_hat["direct_comparison"](*samples)
 
         self.p_05["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 5, 1)
@@ -504,52 +513,102 @@ class UncertaintyEstimation():
 
 
 
-    # def MC(self, parameter_name=None):
-    #     if parameter_name is None:
-    #         parameter_space = self.model.parameters.getUncertain("parameter_space")
-    #         self.tmp_parameter_names = self.model.parameters.getUncertain("name")
-    #     else:
-    #         parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-    #         self.tmp_parameter_names = [parameter_name]
-    #
-    #     self.distribution = cp.J(*parameter_space)
-    #     samples = self.distribution.sample(self.nr_mc_samples, "M")
-    #
-    #     if self.supress_model_graphics:
-    #         vdisplay = Xvfb()
-    #         vdisplay.start()
-    #
-    #     solves = []
-    #
-    #     if self.CPUs > 1:
-    #         solves = self.pool.map(self.evaluateNode, samples.T)
-    #
-    #     else:
-    #         for sample in samples.T:
-    #             solves.append(self.evaluateNode(sample))
-    #
-    #     if self.supress_model_graphics:
-    #         vdisplay.stop()
-    #
-    #     solves = np.array(solves)
-    #     lengths = []
-    #     for s in solves[:, 0]:
-    #         lengths.append(len(s))
-    #
-    #     index_max_len = np.argmax(lengths)
-    #     self.t = solves[index_max_len, 0]
-    #
-    #     #self.t = np.linspace(solves[0,0], solves[0,0])
-    #
-    #     interpolated_solves = []
-    #     for inter in solves[:, 2]:
-    #         interpolated_solves.append(inter(self.t))
-    #
-    #     self.E = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
-    #     self.Var = (np.sum((interpolated_solves - self.E)**2, 0).T/self.nr_mc_samples).T
-    #
-    #     #self.plotV_t("MC")
 
+    def MC(self, parameter_name=None):
+        if parameter_name is None:
+            parameter_space = self.model.parameters.getUncertain("parameter_space")
+            tmp_parameter_names = self.model.parameters.getUncertain()
+        else:
+            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
+            tmp_parameter_names = [parameter_name]
+
+        self.distribution = cp.J(*parameter_space)
+        nodes = self.distribution.sample(self.nr_mc_samples, "M")
+
+        if self.supress_model_graphics:
+            vdisplay = Xvfb()
+            vdisplay.start()
+
+        solves = []
+        try:
+            if self.CPUs > 1:
+                # solves = self.pool.map(self.evaluateNode, nodes.T)
+                solves = self.pool.map(evaluateNodeFunction,
+                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
+            else:
+                for node in nodes.T:
+                    # solves.append(self.evaluateNode(node))
+                    solves.append(evaluateNodeFunction([self.model.cmd(), self.supress_model_output, node, tmp_parameter_names, self.feature_list, self.features.cmd(), self.kwargs]))
+        except MemoryError:
+            return -1
+
+        solves = np.array(solves)
+        solved_features = solves[:, 3]
+
+        # Use union to work on all time values when interpolation.
+        # If not use the t maximum amount of t values
+        if self.interpolate_union:
+            i = 0
+            tmp_t = solves[0, 0]
+            while i < len(solves) - 1:
+                tmp_t = np.union1d(tmp_t, solves[i+1, 0])
+                i += 1
+
+            self.t = tmp_t
+        else:
+            lengths = []
+            for s in solves[:, 0]:
+                lengths.append(len(s))
+
+            index_max_len = np.argmax(lengths)
+            self.t = solves[index_max_len, 0]
+
+
+        interpolated_solves = []
+        for inter in solves[:, 2]:
+            interpolated_solves.append(inter(self.t))
+
+        self.U_mc["direct_comparison"] = interpolated_solves
+
+        # Calculate PC for each feature
+        self.mask = {}
+        for feature_name in self.feature_list:
+            i = 0
+            self.mask[feature_name] = np.ones(len(solved_features), dtype=bool)
+            self.U_mc[feature_name] = np.zeros(len(solved_features))
+
+
+            for feature in solved_features:
+                if feature[feature_name] is None:
+                    self.mask[feature_name][i] = False
+
+                self.U_mc[feature_name][i] = feature[feature_name]
+                i += 1
+
+            if not np.all(self.mask):
+                print "Warning: feature %s does not yield results for all parameter combinations" % (feature_name)
+
+            tmp_U_masked = self.U_mc[feature_name][self.mask[feature_name]]
+
+            self.E[feature_name] = (np.sum(tmp_U_masked, 0).T/len(tmp_U_masked)).T
+            self.Var[feature_name] = (np.sum((tmp_U_masked - self.E[feature_name])**2, 0).T/len(tmp_U_masked)).T
+            self.p_05[feature_name] = np.percentile(tmp_U_masked, 5)
+            self.p_95[feature_name] = np.percentile(tmp_U_masked, 95)
+
+            # self.sensitivity[feature_name] = -1
+
+        self.E["direct_comparison"] = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
+        self.Var["direct_comparison"] = (np.sum((interpolated_solves - self.E[feature_name])**2, 0).T/self.nr_mc_samples).T
+        self.p_95["direct_comparison"] = np.percentile(interpolated_solves, 95, 0)
+        self.p_05["direct_comparison"] = np.percentile(interpolated_solves, 5, 0)
+
+        # print interpolated_solves
+        # print self.p_05["direct_comparison"], self.p_05["direct_comparison"].shape
+        # print self.p_95["direct_comparison"].shape
+        # print self.E["direct_comparison"].shape
+
+
+        # self.sensitivity["direct_comparison"] = -1
 
     def timePassed(self):
         return time.time() - self.t_start
@@ -590,6 +649,38 @@ class UncertaintyEstimation():
             return -1
 
         self.PCAnalysis()
+
+        if self.save_data:
+            self.save(self.output_data_filename)
+
+
+        if self.save_figures:
+            self.plotAll("all")
+
+
+    def singleParametersMC(self):
+        for uncertain_parameter in self.model.parameters.getUncertain():
+            print "\rRunning for " + uncertain_parameter + "                     "
+
+            self.resetValues()
+
+            self.MC(uncertain_parameter)
+
+            if self.save_data:
+                self.save("%s_single-parameter-%s" % (self.output_data_filename, uncertain_parameter))
+
+            if self.save_figures:
+                self.plotAll(uncertain_parameter)
+
+
+    def allParametersMC(self):
+        # if len(self.model.parameters.uncertain_parameters) <= 1:
+        #     print "Only 1 uncertain parameter"
+        #     return
+
+        self.resetValues()
+
+        self.MC()
 
         if self.save_data:
             self.save(self.output_data_filename)
