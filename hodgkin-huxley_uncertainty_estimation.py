@@ -22,16 +22,19 @@ parameterlist = [["gbar_Na", 120, None],
 parameters = uncertainpy.Parameters(parameterlist)
 
 model = uncertainpy.HodkinHuxleyModel(parameters)
+# model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
+
+exploration = uncertainpy.UncertaintyEstimations(model, feature_list="all", CPUs=1,
+                                                 output_dir_data="data/hodgkin-huxley")
 
 # percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 percentages = [0.1]
 test_distributions = {"uniform": percentages}
-exploration = uncertainpy.UncertaintyEstimations(model, test_distributions, feature_list="all", CPUs=1,
-                                                 output_dir_data="data/hodgkin-huxley")
-exploration.exploreParameters()
+exploration.exploreParameters(test_distributions)
+
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/hodgkin-huxley", output_figures_dir="figures/hodgkin-huxley")
-plot.plotAllData()
+plot.plotAllDataExploration()
 
 memory.end()
 

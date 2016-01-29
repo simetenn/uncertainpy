@@ -33,6 +33,7 @@ memory.start()
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, model_path=model_path)
 
+
 #test_distributions = {"uniform": [0.05, 0.06], "normal": [0.04, 0.05]}
 #test_distributions = {"uniform": np.linspace(0.01, 0.1, 2)}
 #
@@ -45,17 +46,18 @@ model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, mo
 #
 # exploration.exploreParameters()
 
+
+exploration = uncertainpy.UncertaintyEstimations(model, CPUs=1, supress_model_output=True,
+                                                 feature_list="all",
+                                                 output_dir_data="data/lgn")
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
 # percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
 percentages = [0.2]
 distributions = {"uniform": percentages}
-exploration = uncertainpy.UncertaintyEstimations(model, distributions, CPUs=1, supress_model_output=True,
-                                                 feature_list="all",
-                                                 output_dir_data="data/lgn")
-exploration.exploreParameters()
+exploration.exploreParameters(distributions)
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/lgn", output_figures_dir="figures/lgn")
-plot.plotAllData()
+plot.plotAllDataFromExploration()
 
 memory.end()
 

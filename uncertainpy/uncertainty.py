@@ -68,6 +68,9 @@
 
 # TODO make so MC methods takes the nr of samples
 
+# TODO Shoud single parameter results be stored?
+
+
 import time
 import os
 import shutil
@@ -336,8 +339,8 @@ class UncertaintyEstimation():
         try:
             if self.CPUs > 1:
                 pool = mp.Pool(processes=self.CPUs)
-                solves = self.pool.map(evaluateNodeFunction,
-                                       self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
+                solves = pool.map(evaluateNodeFunction,
+                                  self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
                 pool.close()
             else:
                 for node in nodes.T:

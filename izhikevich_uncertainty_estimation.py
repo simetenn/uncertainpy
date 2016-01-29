@@ -27,7 +27,7 @@ exploration = uncertainpy.UncertaintyEstimations(model,
 
 #percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 #percentages = np.linspace(0.01, 0.25, 50)
-percentages = [0.1, 0.2, 0.3]
+percentages = [0.1]
 test_distributions = {"uniform": percentages}
 
 
@@ -35,7 +35,8 @@ test_distributions = {"uniform": percentages}
 # test.allParametersMC()
 # test.singleParametersMC()
 # exploration.exploreParameters(test_distributions)
-exploration.compareMC([100, 1000])
+exploration.compareMC([10])
+print exploration.uncertainty_estimations.keys()
 
 plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich",
                                    output_figures_dir="figures/izhikevich")
