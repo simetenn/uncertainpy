@@ -9,8 +9,7 @@ import chaospy as cp
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 
-from uncertainty import UncertaintyEstimation
-from distribution import Distribution
+from uncertainty import UncertaintyEstimation, Distribution, prettyPlot
 
 class UncertaintyEstimations():
     def __init__(self, model,
@@ -119,7 +118,7 @@ class UncertaintyEstimations():
                                                        **self.kwargs)
 
         time_1 = time.time()
-        #self.uncertainty_estimations[name].allParameters()
+        self.uncertainty_estimations[name].allParameters()
         run_times.append(time.time() - time_1)
 
 
@@ -148,6 +147,11 @@ class UncertaintyEstimations():
             time_1 = time.time()
             self.uncertainty_estimations[name].allParametersMC()
             run_times.append(time.time() - time_1)
+
+
+
+        for exploration in self.uncertainty_estimations
+
 
         return run_times
 

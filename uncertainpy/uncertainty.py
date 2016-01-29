@@ -64,11 +64,12 @@
 
 # TODO calculate sensitivity in MC method
 
-# TODO update all files that creates runs
-
-# TODO make so MC methods takes the nr of samples
 
 # TODO Shoud single parameter results be stored?
+
+# TODO rewrite plotting code to be a series of functions?
+
+# TODO combine save_data and save_data_dir into the save variable?
 
 
 import time
@@ -109,12 +110,118 @@ class UncertaintyEstimation():
                  nr_pc_mc_samples=10**5,
                  **kwargs):
         """
-        model: Model object
-        parameters: Parameter object
-        output_dir_figures: Where to save the results. Default = "figures/"
+Uncertainty Estimation object
 
-        Figures are always saved on the format:
-        output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
+Parameters
+----------
+Required arguments
+
+model : Model Object
+    The model on which to quantify uncertaintes.
+
+Optional arguments
+
+features : Feature Object
+    Default is ImplementedNeuronFeatures
+feature_list : list
+    A list of all features to be calculated.
+    Default is None, where no features will be calculated.
+save_figures : bool
+    If figures should be created and saved.
+    This is deprecated code from before many changes
+    and might therefore not work. Recommend using
+    PlotUncertainty and plotting from saved files
+    instead.
+    Default is False
+output_dir_figures : str
+    Folder where figures is saved.
+    Default is figures/.
+figureformat : ".png"
+    The format figures are saved in.
+    Matplotlib is used to plot, and most matplotlib backends support
+    png, pdf, ps, eps and svg.
+    Default is .png
+save_data : bool
+    If data should be saved to a hdf5 file.
+    Default is True.
+output_dir_data : str
+    Folder where the data is saved.
+    Default is "data/".
+output_data_filename : str
+    The name of the output file.
+    Default is the name of the model.
+supress_model_graphics : bool
+    If the graphical output from the model
+    should be supressed, such as GUI.
+    Escpecially usefull for the Neuron simulator models.
+    Default is True.
+supress_model_output : True
+    Supress terminal output from the model.
+    Note: set this to false when debugging your model,
+    otherwise print statements will be supressed.
+    Defualt is True.
+CPUs : int
+    The bumber of CPUs to perform
+    calculations on.
+    Defualt is mp.cpu_count() - the number of CPUs on your computer
+interpolate_union : bool
+    If a unionf of all times from the model should be be used.
+    If not, the highest amount of time values is used, and the results are interpolated.
+    This is only necessary if your model returns has variable timesteps.
+    Default is False.
+rosenblatt : False
+    If a rosenblatt transformation should be used.
+    Use this if you have dependent uncertain
+    parameters.
+    Note: not been tested on dependent uncertain
+    parameters.
+    Defualt is False.
+nr_mc_samples : int
+    The number of samples usend when performing a Monte Carlo
+    Method.
+    Defualt is 10**3.
+nr_pc_mc_samples : int
+    The number of samples when using the polynomal chaos
+    polynomial as a surrogate model for a Monte Carlo method.
+    Default is 10**5.
+
+**kwargs : dict
+    Optional arguments to be sent to other classes.
+    Currently only features support recieving optional
+    arguments.
+
+Methods
+-------
+
+resetValues
+evaluateNodeFunctionList
+createPCExpansion
+evaluateNode
+singleParameterPCAnalysis
+PCAnalysis
+MC
+timePassed
+singleParameters
+allParameters
+singleParametersMC
+allParametersMC
+plotAll
+sensitivityRanking
+plotV_t
+plotConfidenceInterval
+plotSensitivity
+save
+
+Returns
+-------
+
+Examples
+--------
+For example on use see:
+    hodgkin-huxley_uncertainty_estimation.py
+    izhikevich_uncertainty_estimation.py
+    lgn_uncertainty_estimation.py
+    coffe_uncertainty_estimation.py
         """
 
 
