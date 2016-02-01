@@ -2,6 +2,7 @@ import numpy as np
 import os
 import sys
 
+
 class Model():
     """
     The model must be able to handle these calls

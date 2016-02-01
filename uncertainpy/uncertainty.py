@@ -338,7 +338,7 @@ For example on use see:
 
 
             self.distribution = cp.J(*parameter_space)
-            #self.P = cp.orth_ttr(self.M, self.distribution)
+            # self.P = cp.orth_ttr(self.M, self.distribution)
             self.P = cp.orth_ttr(self.M, dist_MvNormal)
 
             if nr_pc_samples is None:
@@ -349,7 +349,8 @@ For example on use see:
             #                                                           rule="J", sparse=True)
 
             nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
-            # weights = weights_MvNormal*self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
+            # weights = weights_MvNormal*\
+            #    self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
 
             self.distribution = dist_MvNormal
 
@@ -422,18 +423,22 @@ For example on use see:
                     tmp_nodes = nodes[mask]
 
             if not np.all(mask):
-                print "Warning: feature %s does not yield results for all parameter combinations" % (feature_name)
+                print "Warning: feature %s does not yield results for all parameter combinations" \
+                    % (feature_name)
 
-            #self.U_hat = cp.fit_quadrature(self.P, tmp_nodes, weights, tmp_results[mask])
-            self.U_hat[feature_name] = cp.fit_regression(self.P, tmp_nodes, tmp_results[mask], rule="T")
+            # self.U_hat = cp.fit_quadrature(self.P, tmp_nodes, weights, tmp_results[mask])
+            self.U_hat[feature_name] = cp.fit_regression(self.P, tmp_nodes,
+                                                         tmp_results[mask], rule="T")
 
 
         if self.rosenblatt:
-            #self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
-            self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes_MvNormal, interpolated_solves, rule="T")
+            # self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+            self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes_MvNormal,
+                                                                interpolated_solves, rule="T")
         else:
-            #self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-            self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes, interpolated_solves, rule="T")
+            # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+            self.U_hat["direct_comparison"] = cp.fit_regression(self.P, nodes,
+                                                                interpolated_solves, rule="T")
 
 
     def evaluateNode(self, nodes, tmp_parameter_names):
@@ -510,7 +515,8 @@ For example on use see:
         self.E["direct_comparison"] = cp.E(self.U_hat["direct_comparison"], self.distribution)
         self.Var["direct_comparison"] = cp.Var(self.U_hat["direct_comparison"], self.distribution)
 
-        self.sensitivity["direct_comparison"] = cp.Sens_t(self.U_hat["direct_comparison"], self.distribution)
+        self.sensitivity["direct_comparison"] = cp.Sens_t(self.U_hat["direct_comparison"],
+                                                          self.distribution)
         # self.sensitivityRanking()
 
         samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
@@ -579,18 +585,21 @@ For example on use see:
                 i += 1
 
             if not np.all(self.mask):
-                print "Warning: feature %s does not yield results for all parameter combinations" % (feature_name)
+                print "Warning: feature %s does not yield results for all parameter combinations" \
+                    % (feature_name)
 
             tmp_U_masked = self.U_mc[feature_name][self.mask[feature_name]]
 
             self.E[feature_name] = (np.sum(tmp_U_masked, 0).T/len(tmp_U_masked)).T
-            self.Var[feature_name] = (np.sum((tmp_U_masked - self.E[feature_name])**2, 0).T/len(tmp_U_masked)).T
+            self.Var[feature_name] = \
+                (np.sum((tmp_U_masked - self.E[feature_name])**2, 0).T/len(tmp_U_masked)).T
             self.p_05[feature_name] = np.percentile(tmp_U_masked, 5)
             self.p_95[feature_name] = np.percentile(tmp_U_masked, 95)
 
 
         self.E["direct_comparison"] = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
-        self.Var["direct_comparison"] = (np.sum((interpolated_solves - self.E[feature_name])**2, 0).T/self.nr_mc_samples).T
+        self.Var["direct_comparison"] = \
+            (np.sum((interpolated_solves - self.E[feature_name])**2, 0).T/self.nr_mc_samples).T
         self.p_95["direct_comparison"] = np.percentile(interpolated_solves, 95, 0)
         self.p_05["direct_comparison"] = np.percentile(interpolated_solves, 5, 0)
 
@@ -614,7 +623,8 @@ For example on use see:
             self.singleParameterPCAnalysis()
 
             if self.save_data:
-                self.save("%s_single-parameter-%s" % (self.output_data_filename, uncertain_parameter))
+                self.save("%s_single-parameter-%s"
+                          % (self.output_data_filename, uncertain_parameter))
 
             if self.save_figures:
                 self.plotAll(uncertain_parameter)
@@ -653,7 +663,8 @@ For example on use see:
             self.MC(uncertain_parameter)
 
             if self.save_data:
-                self.save("%s_single-parameter-%s" % (self.output_data_filename, uncertain_parameter))
+                self.save("%s_single-parameter-%s"
+                          % (self.output_data_filename, uncertain_parameter))
 
             if self.save_figures:
                 self.plotAll(uncertain_parameter)
@@ -711,7 +722,8 @@ For example on use see:
                     bbox_inches="tight")
 
         prettyPlot(self.t, self.Var, "Variance, " + parameter, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.output_dir_figures, parameter + "_variance" + self.figureformat),
+        plt.savefig(os.path.join(self.output_dir_figures,
+                                 parameter + "_variance" + self.figureformat),
                     bbox_inches="tight")
 
         ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + parameter,
@@ -753,7 +765,8 @@ For example on use see:
                   max([max(self.p_95), max(self.p_05), max(self.E)])])
 
         plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
-        plt.savefig(os.path.join(self.output_dir_figures, parameter + "_confidence-interval" + self.figureformat),
+        plt.savefig(os.path.join(self.output_dir_figures,
+                    parameter + "_confidence-interval" + self.figureformat),
                     bbox_inches="tight")
 
         plt.close()
