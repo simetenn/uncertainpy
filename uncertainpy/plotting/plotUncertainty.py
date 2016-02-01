@@ -85,9 +85,19 @@ class PlotUncertainty():
                 self.t[feature] = None
 
         self.uncertain_parameters = f.attrs["uncertain parameters"]
-
         self.loaded_flag = True
 
+
+    def setData(self, t, E, Var, p_05, p_95, uncertain_parameters, sensitivity=None):
+        self.t = t
+        self.E = E
+        self.Var = Var
+        self.p_05 = p_05
+        self.p_95 = p_95
+        self.sensitivity = sensitivity
+        self.uncertain_parameters = uncertain_parameters
+
+        self.loaded_flag = True
 
     def plotMean(self, feature="direct_comparison", hardcopy=True, show=False):
         if not self.loaded_flag:
