@@ -37,18 +37,20 @@ class PlotUncertainty():
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.features_in_combined_plot = 3
 
+        self.loaded_flag = False
+
 
     def loadData(self, filename):
         self.filename = filename
-        self.f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
+        f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
 
         self.features_1d = []
         self.features_2d = []
 
-        for feature in self.f.keys():
-            if len(self.f[feature]["E"].shape) == 0:
+        for feature in f.keys():
+            if len(f[feature]["E"].shape) == 0:
                 self.features_1d.append(feature)
-            elif len(self.f[feature]["E"].shape) == 1:
+            elif len(f[feature]["E"].shape) == 1:
                 self.features_2d.append(feature)
             else:
                 print "WARNING: No support for more than 1d and 2d plotting"
@@ -66,28 +68,29 @@ class PlotUncertainty():
         self.p_95 = {}
         self.sensitivity = {}
 
-        for feature in self.f.keys():
-            self.E[feature] = self.f[feature]["E"][()]
-            self.Var[feature] = self.f[feature]["Var"][()]
-            self.p_05[feature] = self.f[feature]["p_05"][()]
-            self.p_95[feature] = self.f[feature]["p_95"][()]
+        for feature in f.keys():
+            self.E[feature] = f[feature]["E"][()]
+            self.Var[feature] = f[feature]["Var"][()]
+            self.p_05[feature] = f[feature]["p_05"][()]
+            self.p_95[feature] = f[feature]["p_95"][()]
 
-            if "sensitivity" in self.f[feature].keys():
-                self.sensitivity[feature] = self.f[feature]["sensitivity"][()]
+            if "sensitivity" in f[feature].keys():
+                self.sensitivity[feature] = f[feature]["sensitivity"][()]
             else:
                 self.sensitivity[feature] = None
 
-            if "t" in self.f[feature].keys():
-                self.t[feature] = self.f[feature]["t"][()]
+            if "t" in f[feature].keys():
+                self.t[feature] = f[feature]["t"][()]
             else:
                 self.t[feature] = None
 
-        self. uncertain_parameters = self.f.attrs["uncertain parameters"]
+        self.uncertain_parameters = f.attrs["uncertain parameters"]
 
+        self.loaded_flag = True
 
 
     def plotMean(self, feature="direct_comparison", hardcopy=True, show=False):
-        if self.f is None:
+        if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
@@ -111,7 +114,7 @@ class PlotUncertainty():
 
 
     def plotVariance(self, feature="direct_comparison", hardcopy=True, show=False):
-        if self.f is None:
+        if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
@@ -137,7 +140,7 @@ class PlotUncertainty():
 
 
     def plotMeanAndVariance(self, feature="direct_comparison", hardcopy=True, show=False):
-        if self.f is None:
+        if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
@@ -182,7 +185,7 @@ class PlotUncertainty():
 
 
     def plotConfidenceInterval(self, feature="direct_comparison", hardcopy=True, show=False):
-        if self.f is None:
+        if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
@@ -213,7 +216,7 @@ class PlotUncertainty():
 
 
     def plotSensitivity(self, feature="direct_comparison", hardcopy=True, show=False):
-        if self.f is None:
+        if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
@@ -225,7 +228,7 @@ class PlotUncertainty():
         if self.sensitivity[feature] is None:
             return
 
-        parameter_names = self.f.attrs["uncertain parameters"]
+        parameter_names = self.uncertain_parameters
 
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
@@ -245,7 +248,7 @@ class PlotUncertainty():
 
 
     def plotSensitivityCombined(self, feature="direct_comparison", hardcopy=True, show=False):
-        if self.f is None:
+        if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
@@ -257,7 +260,7 @@ class PlotUncertainty():
         if self.sensitivity[feature] is None:
             return
 
-        parameter_names = self.f.attrs["uncertain parameters"]
+        parameter_names = self.uncertain_parameters
 
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i], "sensitivity", "time",
@@ -289,7 +292,12 @@ class PlotUncertainty():
 
 
     def plot1dFeaturesCombined(self, index=0, max_legend_size=5):
-        if len(self.f.attrs["uncertain parameters"]) > 8:
+        if not self.loaded_flag:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
+
+        if len(self.uncertain_parameters) > 8:
             self.features_in_combined_plot = 2
 
         if self.features_in_combined_plot + index < len(self.features_1d):
@@ -305,13 +313,11 @@ class PlotUncertainty():
         titlesize = 18
         fontsize = 16
         labelsize = 14
-        figsize = (10, 7.5)
-
 
         if len(self.features_1d) > max_legend_size:
             legend_size = max_legend_size
         else:
-            legend_size = len(self.f.attrs["uncertain parameters"])
+            legend_size = len(self.uncertain_parameters)
 
         legend_width = np.ceil(len(self.features_1d)/float(max_legend_size))
 
@@ -371,8 +377,10 @@ class PlotUncertainty():
 
             pos += distance
 
-            ax.bar(pos, self.p_05[feature_name], width=width, align='center', color=tableau20[3], linewidth=0)
-            ax.bar(pos + width, self.p_95[feature_name], width=width, align='center', color=tableau20[2], linewidth=0)
+            ax.bar(pos, self.p_05[feature_name],
+                   width=width, align='center', color=tableau20[3], linewidth=0)
+            ax.bar(pos + width, self.p_95[feature_name],
+                   width=width, align='center', color=tableau20[2], linewidth=0)
             xticks += [pos, pos + width]
             xticklabels += ["$P_5$", "$P_{95}$"]
 
@@ -382,7 +390,7 @@ class PlotUncertainty():
                 i = 0
                 legend_bars = []
 
-                for parameter in self.f.attrs["uncertain parameters"]:
+                for parameter in self.uncertain_parameters:
                     # TODO is abs(sensitivity) a problem in the plot?
                     legend_bars.append(ax2.bar(pos, abs(self.sensitivity[feature_name][i]), width=width, align='center', color=tableau20[4+i], linewidth=0))
 
@@ -427,7 +435,7 @@ class PlotUncertainty():
                 loc = "upper right"
 
 
-            lgd = ax.legend(legend_bars, self.f.attrs["uncertain parameters"], loc=loc, bbox_to_anchor=location,
+            lgd = ax.legend(legend_bars, self.uncertain_parameters, loc=loc, bbox_to_anchor=location,
                             fancybox=False, shadow=False, ncol=legend_size)
             lgd.get_frame().set_edgecolor(axis_grey)
 
@@ -444,6 +452,10 @@ class PlotUncertainty():
 
 
     def plot1dFeatures(self):
+        if not self.loaded_flag:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
         for feature_name in self.features_1d:
             self.plot1dFeature(feature_name)
             save_name = "%s_%s" % (self.filename, feature_name) + self.figureformat
@@ -454,17 +466,21 @@ class PlotUncertainty():
 
     # TODO not finhised, missing correct label placement
     def plot1dFeature(self, feature_name, max_legend_size=5):
+        if not self.loaded_flag:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
         if feature_name not in self.features_1d:
             # TODO is this the right error to raise?
             raise ValueError("%s is not a 1D feature" % (feature_name))
 
 
-        if len(self.f.attrs["uncertain parameters"]) > max_legend_size:
+        if len(self.uncertain_parameters) > max_legend_size:
             legend_size = max_legend_size
         else:
-            legend_size = len(self.f.attrs["uncertain parameters"])
+            legend_size = len(self.uncertain_parameters)
 
-        legend_width = np.ceil(len(self.f.attrs["uncertain parameters"])/float(max_legend_size))
+        legend_width = np.ceil(len(self.uncertain_parameters)/float(max_legend_size))
 
         axis_grey = (0.5, 0.5, 0.5)
         titlesize = 18
@@ -497,11 +513,11 @@ class PlotUncertainty():
         ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
         ax2.set_ylim([0, 1.05])
 
-        if sensitivity is not None:
+        if self.sensitivity[feature_name] is not None:
             i = 0
             legend_bars = []
-            for parameter in self.f.attrs["uncertain parameters"]:
-                legend_bars.append(ax2.bar(pos, sensitivity[i], width=width,
+            for parameter in self.uncertain_parameters:
+                legend_bars.append(ax2.bar(pos, self.sensitivity[feature_name][i], width=width,
                                            align='center', color=tableau20[4+i], linewidth=0))
 
                 i += 1
@@ -517,7 +533,7 @@ class PlotUncertainty():
             #                   box.width, box.height*(0.91 + legend_width*0.053
 
             location = (0.5, 1.01 + legend_width*0.095)
-            lgd = plt.legend(legend_bars, self.f.attrs["uncertain parameters"],
+            lgd = plt.legend(legend_bars, self.uncertain_parameters,
                              loc='upper center', bbox_to_anchor=location,
                              fancybox=False, shadow=False, ncol=legend_size)
             lgd.get_frame().set_edgecolor(axis_grey)
@@ -582,9 +598,12 @@ class PlotUncertainty():
     def gif(self):
         print "Creating gifs..."
 
-        if os.path.isdir(self.output_gif_dir):
-            shutil.rmtree(self.output_gif_dir)
-        os.makedirs(self.output_gif_dir)
+        if not self.loaded_flag:
+            print "Datafile must be loaded"
+            sys.exit(1)
+
+        if not os.path.isdir(self.output_gif_dir):
+            os.makedirs(self.output_gif_dir)
 
         plotting_order = {}
         for f in glob.glob(self.data_dir + "*"):
@@ -699,7 +718,7 @@ class PlotUncertainty():
                         # t = self.f["direct_comparison"]["t"][:]
                         # sensitivity = self.f[feature]["sensitivity"][:]
                         #
-                        # parameter_names = self.f.attrs["uncertain parameters"]
+                        # parameter_names = self.uncertain_parameters
                         #
                         # for i in range(len(sensitivity)):
                         #     prettyPlot(t, sensitivity[i],
