@@ -55,22 +55,36 @@ class PlotUncertainty():
 
         self.full_output_figures_dir = os.path.join(self.output_figures_dir, filename)
 
-        # if os.path.isdir(self.full_output_figures_dir):
-        #     shutil.rmtree(self.full_output_figures_dir)
-        # os.makedirs(self.full_output_figures_dir)
-
         if not os.path.isdir(self.full_output_figures_dir):
             os.makedirs(self.full_output_figures_dir)
 
-        self.t = self.f["direct_comparison"]["t"][:]
-        self.E = self.f[:]["E"][:]
-        print self.E
-        # # self.Var = self.f[feature]["Var"][:]
+
+        self.t = {}
+        self.E = {}
+        self.Var = {}
+        self.p_05 = {}
+        self.p_95 = {}
+        self.sensitivity = {}
+
+        for feature in self.f.keys():
+            self.E[feature] = self.f[feature]["E"][()]
+            self.Var[feature] = self.f[feature]["Var"][()]
+            self.p_05[feature] = self.f[feature]["p_05"][()]
+            self.p_95[feature] = self.f[feature]["p_95"][()]
+
+            if "sensitivity" in self.f[feature].keys():
+                self.sensitivity[feature] = self.f[feature]["sensitivity"][()]
+            else:
+                self.sensitivity[feature] = None
+
+            if "t" in self.f[feature].keys():
+                self.t[feature] = self.f[feature]["t"][()]
+            else:
+                self.t[feature] = None
 
 
 
-
-    def mean(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotMean(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -81,9 +95,8 @@ class PlotUncertainty():
 
 
         color1 = 0
-        color2 = 8
 
-        prettyPlot(self.t, self.E, "Mean, " + feature, "time", "voltage", color1)
+        prettyPlot(self.t[feature], self.E[feature], "Mean, " + feature, "time", "voltage", color1)
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,
                                      feature + "_mean" + self.figureformat))
@@ -95,7 +108,7 @@ class PlotUncertainty():
 
 
 
-    def variance(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotVariance(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -105,13 +118,10 @@ class PlotUncertainty():
             raise ValueError("%s is not a 2D feature" % (feature))
 
 
-        color1 = 0
         color2 = 8
 
-        t = self.f["direct_comparison"]["t"][:]
-
-
-        prettyPlot(self.t, self.Var, "Variance, " + feature, "time", "voltage", color2)
+        prettyPlot(self.t[feature], self.Var[feature], "Variance, " + feature,
+                   "time", "voltage", color2)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,
@@ -124,7 +134,7 @@ class PlotUncertainty():
 
 
 
-    def meanAndVariance(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotMeanAndVariance(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -137,11 +147,7 @@ class PlotUncertainty():
         color1 = 0
         color2 = 8
 
-        t = self.f["direct_comparison"]["t"][:]
-        E = self.f[feature]["E"][:]
-        Var = self.f[feature]["Var"][:]
-
-        ax, tableau20 = prettyPlot(t, E, "Mean and variance, " + feature,
+        ax, tableau20 = prettyPlot(self.t[feature], self.E[feature], "Mean and variance, " + feature,
                                    "time", "voltage, mean", color1)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
@@ -149,10 +155,10 @@ class PlotUncertainty():
         ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
         ax.spines["right"].set_edgecolor(tableau20[color2])
 
-        ax2.set_xlim([min(t), max(t)])
-        ax2.set_ylim([min(Var), max(Var)])
+        ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
+        ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
 
-        ax2.plot(t, Var, color=tableau20[color2], linewidth=2, antialiased=True)
+        ax2.plot(self.t[feature], self.Var[feature], color=tableau20[color2], linewidth=2, antialiased=True)
 
         ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
         ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
@@ -173,7 +179,7 @@ class PlotUncertainty():
 
 
 
-    def confidenceInterval(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotConfidenceInterval(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -183,20 +189,14 @@ class PlotUncertainty():
             raise ValueError("%s is not a 2D feature" % (feature))
 
 
-        t = self.f["direct_comparison"]["t"][:]
-        E = self.f[feature]["E"][:]
-        p_05 = self.f[feature]["p_05"][:]
-        p_95 = self.f[feature]["p_95"][:]
+        ax, color = prettyPlot(self.t[feature], self.E[feature], xlabel="time", ylabel="voltage", color=0)
+        plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature], alpha=0.2, facecolor=color[8])
+        prettyPlot(self.t[feature], self.p_95[feature], color=8, new_figure=False)
+        prettyPlot(self.t[feature], self.p_05[feature], color=9, new_figure=False)
+        prettyPlot(self.t[feature], self.E[feature], title="Confidence interval, " + feature, new_figure=False)
 
-
-        ax, color = prettyPlot(t, E, xlabel="time", ylabel="voltage", color=0)
-        plt.fill_between(t, p_05, p_95, alpha=0.2, facecolor=color[8])
-        prettyPlot(t, p_95, color=8, new_figure=False)
-        prettyPlot(t, p_05, color=9, new_figure=False)
-        prettyPlot(t, E, title="Confidence interval, " + feature, new_figure=False)
-
-        plt.ylim([min([min(p_95), min(p_05), min(E)]),
-                  max([max(p_95), max(p_05), max(E)])])
+        plt.ylim([min([min(self.p_95[feature]), min(self.p_05[feature]), min(self.E[feature])]),
+                  max([max(self.p_95[feature]), max(self.p_05[feature]), max(self.E[feature])])])
 
         plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
 
@@ -210,7 +210,7 @@ class PlotUncertainty():
             plt.close()
 
 
-    def sensitivity(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotSensitivity(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -223,13 +223,10 @@ class PlotUncertainty():
         if "sensitivity" not in self.f[feature].keys():
             return
 
-        t = self.f["direct_comparison"]["t"][:]
-        sensitivity = self.f[feature]["sensitivity"][:]
-
         parameter_names = self.f.attrs["uncertain parameters"]
 
-        for i in range(len(sensitivity)):
-            prettyPlot(t, sensitivity[i],
+        for i in range(len(self.sensitivity[feature])):
+            prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        parameter_names[i] + " sensitivity", "time",
                        "sensitivity", i, True)
             # plt.title(parameter_names[i] + " sensitivity")
@@ -246,7 +243,7 @@ class PlotUncertainty():
 
 
 
-    def sensitivityAll(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotSensitivityCombined(self, feature="direct_comparison", hardcopy=True, show=False):
         if self.f is None:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -259,17 +256,14 @@ class PlotUncertainty():
         if "sensitivity" not in self.f[feature].keys():
             return
 
-        t = self.f["direct_comparison"]["t"][:]
-        sensitivity = self.f[feature]["sensitivity"][:]
-
         parameter_names = self.f.attrs["uncertain parameters"]
 
-        for i in range(len(sensitivity)):
-            prettyPlot(t, sensitivity[i], "sensitivity", "time",
+        for i in range(len(self.sensitivity[feature])):
+            prettyPlot(self.t[feature], self.sensitivity[feature][i], "sensitivity", "time",
                        "Sensitivity, " + feature, i, False)
 
         plt.ylim([0, 1.05])
-        plt.xlim([t[0], 1.3*t[-1]])
+        plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
         plt.legend(parameter_names)
 
         if hardcopy:
@@ -284,12 +278,12 @@ class PlotUncertainty():
 
     def plot2dFeatures(self):
         for feature in self.features_2d:
-            self.mean(feature=feature)
-            self.variance(feature=feature)
-            self.meanAndVariance(feature=feature)
-            self.confidenceInterval(feature=feature)
-            self.sensitivity(feature=feature)
-            self.sensitivityAll(feature=feature)
+            self.plotMean(feature=feature)
+            self.plotVariance(feature=feature)
+            self.plotMeanAndVariance(feature=feature)
+            self.plotConfidenceInterval(feature=feature)
+            self.plotSensitivity(feature=feature)
+            self.plotSensitivityCombined(feature=feature)
 
 
 
@@ -365,15 +359,10 @@ class PlotUncertainty():
             ax2.set_ylim([0, 1.05])
 
 
-            E = self.f[feature_name]["E"][()]
-            Var = self.f[feature_name]["Var"][()]
-            p_05 = self.f[feature_name]["p_05"][()]
-            p_95 = self.f[feature_name]["p_95"][()]
+            # if "sensitivity" in self.f[feature_name].keys():
+            #     sensitivity = self.f[feature_name]["sensitivity"][:]
 
-            if "sensitivity" in self.f[feature_name].keys():
-                sensitivity = self.f[feature_name]["sensitivity"][:]
-
-            ax.bar(pos, E, yerr=Var, width=width, align='center', color=tableau20[0], linewidth=0,
+            ax.bar(pos, self.E[feature_name], yerr=self.Var[feature_name], width=width, align='center', color=tableau20[0], linewidth=0,
                    error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
             xticks.append(pos)
             xticklabels.append("mean")
@@ -381,8 +370,8 @@ class PlotUncertainty():
 
             pos += distance
 
-            ax.bar(pos, p_05, width=width, align='center', color=tableau20[3], linewidth=0)
-            ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
+            ax.bar(pos, self.p_05[feature_name], width=width, align='center', color=tableau20[3], linewidth=0)
+            ax.bar(pos + width, self.p_95[feature_name], width=width, align='center', color=tableau20[2], linewidth=0)
             xticks += [pos, pos + width]
             xticklabels += ["$P_5$", "$P_{95}$"]
 
@@ -394,7 +383,7 @@ class PlotUncertainty():
 
                 for parameter in self.f.attrs["uncertain parameters"]:
                     # TODO is abs(sensitivity) a problem in the plot?
-                    legend_bars.append(ax2.bar(pos, abs(sensitivity[i]), width=width, align='center', color=tableau20[4+i], linewidth=0))
+                    legend_bars.append(ax2.bar(pos, abs(self.sensitivity[feature_name][i]), width=width, align='center', color=tableau20[4+i], linewidth=0))
 
                     i += 1
                     pos += width
@@ -468,11 +457,6 @@ class PlotUncertainty():
             # TODO is this the right error to raise?
             raise ValueError("%s is not a 1D feature" % (feature_name))
 
-        E = self.f[feature_name]["E"][()]
-        Var = self.f[feature_name]["Var"][()]
-        p_05 = self.f[feature_name]["p_05"][()]
-        p_95 = self.f[feature_name]["p_95"][()]
-
 
         if "sensitivity" in self.f[feature_name].keys():
             sensitivity = self.f[feature_name]["sensitivity"][:]
@@ -498,15 +482,15 @@ class PlotUncertainty():
         pos = 0
         xticks = [pos]
         xticklabels = ["mean"]
-        ax, tableau20 = prettyBar(E, Var)
+        ax, tableau20 = prettyBar(self.E[feature_name], self.Var[feature_name])
         ax.spines["right"].set_edgecolor(axis_grey)
 
         pos += distance
 
         ax.set_ylabel(feature_name, fontsize=labelsize)
 
-        ax.bar(pos, p_05, width=width, align='center', color=tableau20[3], linewidth=0)
-        ax.bar(pos + width, p_95, width=width, align='center', color=tableau20[2], linewidth=0)
+        ax.bar(pos, self.p_05[feature_name], width=width, align='center', color=tableau20[3], linewidth=0)
+        ax.bar(pos + width, self.p_95[feature_name], width=width, align='center', color=tableau20[2], linewidth=0)
         xticks += [pos, pos + width]
         xticklabels += ["$P_5$", "$P_{95}$"]
         pos += distance + width
@@ -676,21 +660,21 @@ class PlotUncertainty():
                     self.loadData(os.path.join(foldername, filename))
 
                     for feature in self.features_2d:
-                        self.mean(feature=feature, hardcopy=False)
+                        self.plotMean(feature=feature, hardcopy=False)
                         plt.ylim([min_data[filename][feature]["E"], max_data[filename][feature]["E"]])
                         save_name = filename + "_mean" + "_" + interval + self.figureformat
                         plt.title("Mean, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
-                        self.variance(feature=feature, hardcopy=False)
+                        self.plotVariance(feature=feature, hardcopy=False)
                         plt.ylim([min_data[filename][feature]["Var"], max_data[filename][feature]["Var"]])
                         save_name = filename + "_variance" + "_" + interval + self.figureformat
                         plt.title("Variance, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
-                        ax, ax2 = self.meanAndVariance(feature=feature, hardcopy=False)
+                        ax, ax2 = self.plotMeanAndVariance(feature=feature, hardcopy=False)
 
                         ax.set_ylim([min_data[filename][feature]["E"], max_data[filename][feature]["E"]])
                         ax2.set_ylim([min_data[filename][feature]["Var"], max_data[filename][feature]["Var"]])
@@ -699,7 +683,7 @@ class PlotUncertainty():
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
-                        self.confidenceInterval(feature=feature, hardcopy=False)
+                        self.plotConfidenceInterval(feature=feature, hardcopy=False)
                         plt.ylim([min(min_data[filename][feature]["p_95"], min_data[filename][feature]["p_05"]),
                                   max(max_data[filename][feature]["p_95"], max_data[filename][feature]["p_05"])])
                         save_name = filename + "_confidence-interval" + "_" + interval  + self.figureformat
@@ -734,7 +718,7 @@ class PlotUncertainty():
 
 
 
-                        self.sensitivityAll(feature=feature, hardcopy=False)
+                        self.plotSensitivityCombined(feature=feature, hardcopy=False)
                         save_name = filename + "_sensitivity" + "_" + interval + self.figureformat
                         plt.title("Sensitivity, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
