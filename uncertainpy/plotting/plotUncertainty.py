@@ -62,6 +62,12 @@ class PlotUncertainty():
         if not os.path.isdir(self.full_output_figures_dir):
             os.makedirs(self.full_output_figures_dir)
 
+        self.t = self.f["direct_comparison"]["t"][:]
+        self.E = self.f[:]["E"][:]
+        print self.E
+        # # self.Var = self.f[feature]["Var"][:]
+
+
 
 
     def mean(self, feature="direct_comparison", hardcopy=True, show=False):
@@ -77,10 +83,7 @@ class PlotUncertainty():
         color1 = 0
         color2 = 8
 
-        t = self.f["direct_comparison"]["t"][:]
-        E = self.f[feature]["E"][:]
-
-        prettyPlot(t, E, "Mean, " + feature, "time", "voltage", color1)
+        prettyPlot(self.t, self.E, "Mean, " + feature, "time", "voltage", color1)
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,
                                      feature + "_mean" + self.figureformat))
@@ -106,10 +109,9 @@ class PlotUncertainty():
         color2 = 8
 
         t = self.f["direct_comparison"]["t"][:]
-        Var = self.f[feature]["Var"][:]
 
 
-        prettyPlot(t, Var, "Variance, " + feature, "time", "voltage", color2)
+        prettyPlot(self.t, self.Var, "Variance, " + feature, "time", "voltage", color2)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_figures_dir,

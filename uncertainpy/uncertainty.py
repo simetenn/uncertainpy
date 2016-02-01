@@ -74,7 +74,6 @@
 
 import time
 import os
-import shutil
 import h5py
 import sys
 
@@ -678,9 +677,8 @@ For example on use see:
 
 
     def plotAll(self, parameter="all"):
-        if os.path.isdir(self.output_dir_figures):
-            shutil.rmtree(self.output_dir_figures)
-        os.makedirs(self.output_dir_figures)
+        if not os.path.isdir(self.output_dir_figures):
+            os.makedirs(self.output_dir_figures)
 
         self.plotV_t(parameter)
         self.plotConfidenceInterval(parameter)

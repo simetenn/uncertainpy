@@ -1,15 +1,9 @@
 import time
 import os
-import shutil
-import h5py
-import sys
 
-import numpy as np
-import chaospy as cp
-import matplotlib.pyplot as plt
 import multiprocessing as mp
 
-from uncertainty import UncertaintyEstimation, Distribution, prettyPlot
+from uncertainpy import UncertaintyEstimation, Distribution
 
 class UncertaintyEstimations():
     def __init__(self, model,
@@ -73,22 +67,25 @@ class UncertaintyEstimations():
                 name = distribution_function + "_" + str(interval)
                 print "Running for: " + distribution_function + " " + str(interval)
 
-                tmp_output_dir_data = os.path.join(self.output_dir_data, distribution_function + "_%g" % interval)
+                tmp_output_dir_data = \
+                    os.path.join(self.output_dir_data,
+                                 distribution_function + "_%g" % interval)
 
-                self.uncertainty_estimations[name] = UncertaintyEstimation(self.model,
-                                                               feature_list=self.feature_list,
-                                                               features=self.features,
-                                                               output_dir_figures=current_output_dir_figures,
-                                                               figureformat=self.figureformat,
-                                                               output_dir_data=tmp_output_dir_data,
-                                                               output_data_filename=self.model.__class__.__name__,
-                                                               supress_model_graphics=self.supress_model_graphics,
-                                                               supress_model_output=self.supress_model_output,
-                                                               CPUs=self.CPUs,
-                                                               interpolate_union=self.interpolate_union,
-                                                               rosenblatt=self.rosenblatt,
-                                                               nr_mc_samples=self.nr_mc_samples,
-                                                               **self.kwargs)
+                self.uncertainty_estimations[name] =\
+                    UncertaintyEstimation(self.model,
+                                          feature_list=self.feature_list,
+                                          features=self.features,
+                                          output_dir_figures=current_output_dir_figures,
+                                          figureformat=self.figureformat,
+                                          output_dir_data=tmp_output_dir_data,
+                                          output_data_filename=self.model.__class__.__name__,
+                                          supress_model_graphics=self.supress_model_graphics,
+                                          supress_model_output=self.supress_model_output,
+                                          CPUs=self.CPUs,
+                                          interpolate_union=self.interpolate_union,
+                                          rosenblatt=self.rosenblatt,
+                                          nr_mc_samples=self.nr_mc_samples,
+                                          **self.kwargs)
 
                 self.uncertainty_estimations[name].singleParameters()
                 self.uncertainty_estimations[name].allParameters()
@@ -102,20 +99,21 @@ class UncertaintyEstimations():
         output_dir_figures = os.path.join(self.output_dir_figures, name)
         output_dir_data = os.path.join(self.output_dir_data, name)
 
-        self.uncertainty_estimations[name] = UncertaintyEstimation(self.model,
-                                                       feature_list=self.feature_list,
-                                                       features=self.features,
-                                                       output_dir_figures=output_dir_figures,
-                                                       figureformat=self.figureformat,
-                                                       output_dir_data=output_dir_data,
-                                                       output_data_filename=self.model.__class__.__name__,
-                                                       supress_model_graphics=self.supress_model_graphics,
-                                                       supress_model_output=self.supress_model_output,
-                                                       CPUs=self.CPUs,
-                                                       interpolate_union=self.interpolate_union,
-                                                       rosenblatt=self.rosenblatt,
-                                                       nr_mc_samples=nr_mc_samples,
-                                                       **self.kwargs)
+        self.uncertainty_estimations[name] =\
+            UncertaintyEstimation(self.model,
+                                  feature_list=self.feature_list,
+                                  features=self.features,
+                                  output_dir_figures=output_dir_figures,
+                                  figureformat=self.figureformat,
+                                  output_dir_data=output_dir_data,
+                                  output_data_filename=self.model.__class__.__name__,
+                                  supress_model_graphics=self.supress_model_graphics,
+                                  supress_model_output=self.supress_model_output,
+                                  CPUs=self.CPUs,
+                                  interpolate_union=self.interpolate_union,
+                                  rosenblatt=self.rosenblatt,
+                                  nr_mc_samples=nr_mc_samples,
+                                  **self.kwargs)
 
         time_1 = time.time()
         self.uncertainty_estimations[name].allParameters()
@@ -130,27 +128,24 @@ class UncertaintyEstimations():
             current_output_dir_figures = os.path.join(self.output_dir_figures, name)
             tmp_output_dir_data = os.path.join(self.output_dir_data, name)
 
-            self.uncertainty_estimations[name] = UncertaintyEstimation(self.model,
-                                                               feature_list=self.feature_list,
-                                                               features=self.features,
-                                                               output_dir_figures=current_output_dir_figures,
-                                                               figureformat=self.figureformat,
-                                                               output_dir_data=tmp_output_dir_data,
-                                                               output_data_filename=self.model.__class__.__name__,
-                                                               supress_model_graphics=self.supress_model_graphics,
-                                                               supress_model_output=self.supress_model_output,
-                                                               CPUs=self.CPUs,
-                                                               interpolate_union=self.interpolate_union,
-                                                               rosenblatt=self.rosenblatt,
-                                                               **self.kwargs)
+            self.uncertainty_estimations[name] =\
+                UncertaintyEstimation(self.model,
+                                      feature_list=self.feature_list,
+                                      features=self.features,
+                                      output_dir_figures=current_output_dir_figures,
+                                      figureformat=self.figureformat,
+                                      output_dir_data=tmp_output_dir_data,
+                                      output_data_filename=self.model.__class__.__name__,
+                                      supress_model_graphics=self.supress_model_graphics,
+                                      supress_model_output=self.supress_model_output,
+                                      CPUs=self.CPUs,
+                                      interpolate_union=self.interpolate_union,
+                                      rosenblatt=self.rosenblatt,
+                                      **self.kwargs)
 
             time_1 = time.time()
             self.uncertainty_estimations[name].allParametersMC()
             run_times.append(time.time() - time_1)
-
-
-
-        for exploration in self.uncertainty_estimations
 
 
         return run_times
