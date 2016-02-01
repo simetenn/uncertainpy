@@ -82,6 +82,8 @@ class PlotUncertainty():
             else:
                 self.t[feature] = None
 
+        self. uncertain_parameters = self.f.attrs["uncertain parameters"]
+
 
 
     def plotMean(self, feature="direct_comparison", hardcopy=True, show=False):
@@ -220,7 +222,7 @@ class PlotUncertainty():
             raise ValueError("%s is not a 2D feature" % (feature))
 
 
-        if "sensitivity" not in self.f[feature].keys():
+        if self.sensitivity[feature] is None:
             return
 
         parameter_names = self.f.attrs["uncertain parameters"]
@@ -229,7 +231,6 @@ class PlotUncertainty():
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        parameter_names[i] + " sensitivity", "time",
                        "sensitivity", i, True)
-            # plt.title(parameter_names[i] + " sensitivity")
             plt.ylim([0, 1.05])
 
             if hardcopy:
@@ -253,7 +254,7 @@ class PlotUncertainty():
             raise ValueError("%s is not a 2D feature" % (feature))
 
 
-        if "sensitivity" not in self.f[feature].keys():
+        if self.sensitivity[feature] is None:
             return
 
         parameter_names = self.f.attrs["uncertain parameters"]
@@ -375,7 +376,7 @@ class PlotUncertainty():
             xticks += [pos, pos + width]
             xticklabels += ["$P_5$", "$P_{95}$"]
 
-            if "sensitivity" in self.f[feature_name].keys():
+            if self.sensitivity[feature_name] is not None:
                 pos += distance + width
 
                 i = 0
@@ -413,7 +414,7 @@ class PlotUncertainty():
         ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
         ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
 
-        if "sensitivity" in self.f[feature_name].keys():
+        if self.sensitivity[feature_name] is not None:
                 # Put a legend above current axis
             if len(feature_names) == 1:
                 location = (0.5, 1.03 + legend_width*0.095)
@@ -457,11 +458,6 @@ class PlotUncertainty():
             # TODO is this the right error to raise?
             raise ValueError("%s is not a 1D feature" % (feature_name))
 
-
-        if "sensitivity" in self.f[feature_name].keys():
-            sensitivity = self.f[feature_name]["sensitivity"][:]
-        else:
-            sensitivity = None
 
         if len(self.f.attrs["uncertain parameters"]) > max_legend_size:
             legend_size = max_legend_size
@@ -626,21 +622,21 @@ class PlotUncertainty():
                     if filename not in filenames:
                         filenames.append(filename)
 
-                    self.f = h5py.File(f, 'r')
+                    f = h5py.File(f, 'r')
 
 
-                    for feature in self.f.keys():
+                    for feature in f.keys():
                         if feature not in max_data[filename]:
                             max_data[filename][feature] = {}
                             min_data[filename][feature] = {}
 
 
-                        for result in self.f[feature].keys():
+                        for result in f[feature].keys():
                             if result == "t" or result == "sensitivity":
                                 continue
 
-                            max_value = self.f[feature][result][()].max()
-                            min_value = self.f[feature][result][()].min()
+                            max_value = f[feature][result][()].max()
+                            min_value = f[feature][result][()].min()
 
                             if result in max_data[filename][feature]:
                                 if max_value > max_data[filename][feature][result]:
@@ -738,13 +734,14 @@ class PlotUncertainty():
             #
             plot_types = ["mean", "variance", "mean-variance", "confidence-interval", "sensitivity"]
 
-            for f in filenames:
+            for fi in filenames:
                 for plot_type in plot_types:
                     if "single-parameter" in f and plot_type == "sensitivity":
                         continue
 
-                    final_name = os.path.join(outputdir, f + "_" + plot_type)
-                    filename = os.path.join(self.tmp_gif_output, "%s_%s_*%s" % (f, plot_type, self.figureformat))
+                    final_name = os.path.join(outputdir, fi + "_" + plot_type)
+                    filename = os.path.join(self.tmp_gif_output,
+                                            "%s_%s_*%s" % (fi, plot_type, self.figureformat))
 
                     cmd = "convert -set delay 100 %s %s.gif" % (filename, final_name)
 
