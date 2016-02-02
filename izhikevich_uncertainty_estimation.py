@@ -21,6 +21,7 @@ model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  CPUs=1,
+                                                 save_figures=True,
                                                  feature_list="all",
                                                  output_dir_data="data/izhikevich",
                                                  nr_mc_samples=10**2)
@@ -34,13 +35,12 @@ test_distributions = {"uniform": percentages}
 # test.allParameters()
 # test.allParametersMC()
 # test.singleParametersMC()
-# exploration.exploreParameters(test_distributions)
-exploration.compareMC([10])
-print exploration.uncertainty_estimations.keys()
+exploration.exploreParameters(test_distributions)
+# exploration.compareMC([10])
 
-plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich",
-                                   output_figures_dir="figures/izhikevich")
-plot.plotAllDataFromExploration()
+# plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich",
+#                                    output_dir_figures="figures/izhikevich")
+# plot.plotAllDataFromExploration()
 # plot.plotAllData()
 
 memory.end()

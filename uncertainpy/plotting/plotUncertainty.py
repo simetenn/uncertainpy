@@ -89,7 +89,7 @@ class PlotUncertainty():
         self.loaded_flag = True
 
 
-    def setData(self, t, E, Var, p_05, p_95, uncertain_parameters, sensitivity=None):
+    def setData(self, t, E, Var, p_05, p_95, uncertain_parameters, sensitivity, foldername):
         self.t = t
         self.E = E
         self.Var = Var
@@ -97,6 +97,23 @@ class PlotUncertainty():
         self.p_95 = p_95
         self.sensitivity = sensitivity
         self.uncertain_parameters = uncertain_parameters
+
+        self.features_1d = []
+        self.features_2d = []
+
+        for feature in self.E:
+            if len(self.E[feature].shape) == 0:
+                self.features_1d.append(feature)
+            elif len(self.E[feature].shape) == 1:
+                self.features_2d.append(feature)
+            else:
+                print "WARNING: No support for more than 1d and 2d plotting"
+
+
+        if foldername is None:
+            self.full_output_dir_figures = self.output_dir_figures
+        else:
+            self.full_output_dir_figures = os.path.join(self.output_dir_figures, foldername)
 
         self.loaded_flag = True
 

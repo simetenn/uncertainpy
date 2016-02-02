@@ -300,13 +300,13 @@ For example on use see:
         self.nodes = None
 
 
-    def evaluateNodeFunctionList(self, tmp_parameter_names, nodes):
+    def evaluateNodeFunctionList(self, nodes):
         data = []
         for node in nodes:
             data.append((self.model.cmd(),
                          self.supress_model_output,
                          node,
-                         tmp_parameter_names,
+                         self.uncertain_parameters,
                          self.feature_list,
                          self.features.cmd(),
                          self.kwargs))
@@ -318,10 +318,10 @@ For example on use see:
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is None:
             parameter_space = self.model.parameters.getUncertain("parameter_space")
-            tmp_parameter_names = self.model.parameters.getUncertain()
+            self.uncertain_parameters = self.model.parameters.getUncertain()
         else:
             parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            tmp_parameter_names = [parameter_name]
+            self.uncertain_parameters = [parameter_name]
 
 
 
@@ -365,7 +365,7 @@ For example on use see:
 
 
 
-        solves = self.evaluateNode(nodes, tmp_parameter_names)
+        solves = self.evaluateNode(nodes)
         solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
@@ -438,7 +438,7 @@ For example on use see:
                                                                 interpolated_solves, rule="T")
 
 
-    def evaluateNode(self, nodes, tmp_parameter_names):
+    def evaluateNode(self, nodes):
         if self.supress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()
@@ -448,14 +448,14 @@ For example on use see:
             if self.CPUs > 1:
                 pool = mp.Pool(processes=self.CPUs)
                 solves = pool.map(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(tmp_parameter_names, nodes.T))
+                                  self.evaluateNodeFunctionList(self.uncertain_parameters, nodes.T))
                 pool.close()
             else:
                 for node in nodes.T:
                     solves.append(evaluateNodeFunction([self.model.cmd(),
                                                         self.supress_model_output,
                                                         node,
-                                                        tmp_parameter_names,
+                                                        self.uncertain_parameters,
                                                         self.feature_list,
                                                         self.features.cmd(),
                                                         self.kwargs]))
@@ -528,17 +528,17 @@ For example on use see:
     def MC(self, parameter_name=None):
         if parameter_name is None:
             parameter_space = self.model.parameters.getUncertain("parameter_space")
-            tmp_parameter_names = self.model.parameters.getUncertain()
+            self.uncertain_parameters = self.model.parameters.getUncertain()
         else:
             parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            tmp_parameter_names = [parameter_name]
+            self.uncertain_parameters = [parameter_name]
 
         self.distribution = cp.J(*parameter_space)
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
 
 
-        solves = self.evaluateNode(nodes, tmp_parameter_names)
+        solves = self.evaluateNode(nodes)
         solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
@@ -624,7 +624,8 @@ For example on use see:
                           % (self.output_data_filename, uncertain_parameter))
 
             if self.save_figures:
-                self.plotAll(uncertain_parameter)
+                self.plotAll("%s_single-parameter-%s"
+                             % (self.output_data_filename, uncertain_parameter))
 
 
 
@@ -648,7 +649,7 @@ For example on use see:
 
 
         if self.save_figures:
-            self.plotAll("all")
+            self.plotAll(self.output_data_filename)
 
 
     def singleParametersMC(self):
@@ -664,7 +665,8 @@ For example on use see:
                           % (self.output_data_filename, uncertain_parameter))
 
             if self.save_figures:
-                self.plotAll(uncertain_parameter)
+                self.plotAll("%s_single-parameter-%s"
+                             % (self.output_data_filename, uncertain_parameter))
 
 
     def allParametersMC(self):
@@ -681,7 +683,7 @@ For example on use see:
 
 
         if self.save_figures:
-            self.plotAll("all")
+            self.plotAll(self.output_data_filename)
 
 
     def sensitivityRanking(self):
@@ -732,13 +734,14 @@ For example on use see:
 
 
 
-    def plotAll(self, uncertain_parameters, sensitivity=None, combined_features=True):
-        self.plot.setData(t=self.t,
+    def plotAll(self, foldername, combined_features=True):
+        self.plot.setData(foldername=foldername,
+                          t=self.t,
                           E=self.E,
                           Var=self.Var,
                           p_05=self.p_05,
                           p_95=self.p_95,
-                          uncertain_parameters=uncertain_parameters,
-                          sensitivity=sensitivity)
+                          uncertain_parameters=self.uncertain_parameters,
+                          sensitivity=self.sensitivity)
 
         self.plot.plotAllData(combined_features=combined_features)

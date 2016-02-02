@@ -9,8 +9,10 @@ class UncertaintyEstimations():
     def __init__(self, model,
                  feature_list=[],
                  features=None,
+                 save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
+                 save_data=True,
                  output_dir_data="data/",
                  supress_model_graphics=True,
                  supress_model_output=True,
@@ -34,7 +36,9 @@ class UncertaintyEstimations():
 
         self.model = model
 
+        self.save_figures = save_figures
         self.output_dir_figures = output_dir_figures
+        self.save_data = save_data
         self.output_dir_data = output_dir_data
 
         self.supress_model_graphics = supress_model_graphics
@@ -75,8 +79,10 @@ class UncertaintyEstimations():
                     UncertaintyEstimation(self.model,
                                           feature_list=self.feature_list,
                                           features=self.features,
+                                          save_figures=self.save_figures,
                                           output_dir_figures=current_output_dir_figures,
                                           figureformat=self.figureformat,
+                                          save_data=self.save_data,
                                           output_dir_data=tmp_output_dir_data,
                                           output_data_filename=self.model.__class__.__name__,
                                           supress_model_graphics=self.supress_model_graphics,
@@ -103,8 +109,10 @@ class UncertaintyEstimations():
             UncertaintyEstimation(self.model,
                                   feature_list=self.feature_list,
                                   features=self.features,
+                                  save_figures=self.save_figures,
                                   output_dir_figures=output_dir_figures,
                                   figureformat=self.figureformat,
+                                  save_data=self.save_data,
                                   output_dir_data=output_dir_data,
                                   output_data_filename=self.model.__class__.__name__,
                                   supress_model_graphics=self.supress_model_graphics,
