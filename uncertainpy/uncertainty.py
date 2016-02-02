@@ -72,9 +72,16 @@
 
 # TODO use _ before hidden variables
 
+# TODO make suport for This type of feature, with a new t
+#      def testUt(self):
+#           return self.t, self.U
+
+# TODO Add a option for models with variable timesteps
+
 import time
 import os
 import h5py
+import sys
 
 import numpy as np
 import chaospy as cp
@@ -193,7 +200,7 @@ Methods
 resetValues
 evaluateNodeFunctionList
 createPCExpansion
-evaluateNode
+evaluateNodes
 singleParameterPCAnalysis
 PCAnalysis
 MC
@@ -286,6 +293,7 @@ For example on use see:
         self.parameter_names = None
         self.parameter_space = None
 
+        self.U = {}
         self.U_hat = {}
         self.distribution = None
         self.solves = None
@@ -297,7 +305,7 @@ For example on use see:
         self.p_95 = {}
         self.sensitivity = {}
         self.P = None
-        self.nodes = None
+
 
 
     def evaluateNodeFunctionList(self, nodes):
@@ -365,7 +373,40 @@ For example on use see:
 
 
 
-        solves = self.evaluateNode(nodes)
+        solves = self.evaluateNodes(nodes)
+
+        self.features_2d = []
+        self.features_1d = []
+
+        for feature in solves[0]:
+            if hasattr(solves[0][feature][1], "__iter__"):
+                self.features_2d.append(feature)
+            else:
+                self.features_1d.append(feature)
+
+
+        for feature in self.features_2d:
+            if solves[0][feature][0] is None:
+                self.t[feature] = None
+                self.U[feature] = solves[0][feature][1]
+            elif hasattr(solves[0][feature][0], "__iter__"):
+                ts = []
+                interpolation = []
+                for solved in solves:
+                    ts.append(solved[feature][0])
+                    interpolation.append(solved[feature][2])
+
+                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
+            else:
+                print "Return from feature %s does not fit the given format (t, U, interpolation)" % feature
+
+        for feature in self.features_1d:
+            for solved in solves:
+                self.t[feature] = None
+                self.U[feature] = solved[feature][1]
+
+        return -1
+
         solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
@@ -377,19 +418,19 @@ For example on use see:
                 tmp_t = np.union1d(tmp_t, solves[i+1, 0])
                 i += 1
 
-            self.t["direct_comparison"] = tmp_t
+            self.t = tmp_t
         else:
             lengths = []
             for s in solves[:, 0]:
                 lengths.append(len(s))
 
             index_max_len = np.argmax(lengths)
-            self.t["direct_comparison"] = solves[index_max_len, 0]
+            self.t = solves[index_max_len, 0]
 
 
         interpolated_solves = []
         for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t["direct_comparison"]))
+            interpolated_solves.append(inter(self.t))
 
 
 
@@ -397,14 +438,14 @@ For example on use see:
         for feature_name in self.feature_list:
             i = 0
             mask = np.ones(len(solved_features), dtype=bool)
-            tmp_results = np.zeros(len(solved_features))
-
+            tmp_results = []
 
             for feature in solved_features:
                 if feature[feature_name] is None:
                     mask[i] = False
 
-                tmp_results[i] = feature[feature_name]
+                tmp_results.append(feature[feature_name])
+
                 i += 1
 
 
@@ -423,6 +464,11 @@ For example on use see:
                 print "Warning: feature %s does not yield results for all parameter combinations" \
                     % (feature_name)
 
+
+
+            tmp_results = np.array(tmp_results)
+
+
             # self.U_hat = cp.fit_quadrature(self.P, tmp_nodes, weights, tmp_results[mask])
             self.U_hat[feature_name] = cp.fit_regression(self.P, tmp_nodes,
                                                          tmp_results[mask], rule="T")
@@ -438,7 +484,33 @@ For example on use see:
                                                                 interpolated_solves, rule="T")
 
 
-    def evaluateNode(self, nodes):
+
+    def performInterpolation(self, ts, interpolation):
+        if self.interpolate_union:
+            i = 0
+            tmp_t = ts[0]
+            while i < len(ts) - 1:
+                tmp_t = np.union1d(tmp_t, ts[i+1])
+                i += 1
+
+            t = tmp_t
+        else:
+            lengths = []
+            for s in ts:
+                lengths.append(len(s))
+
+            index_max_len = np.argmax(lengths)
+            t = ts[index_max_len]
+
+
+        interpolated_solves = []
+        for inter in interpolation:
+            interpolated_solves.append(inter(t))
+
+        return t, interpolated_solves
+
+
+    def evaluateNodes(self, nodes):
         if self.supress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()
@@ -448,7 +520,8 @@ For example on use see:
             if self.CPUs > 1:
                 pool = mp.Pool(processes=self.CPUs)
                 solves = pool.map(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(self.uncertain_parameters, nodes.T))
+                                  self.evaluateNodeFunctionList(self.uncertain_parameters,
+                                                                nodes.T))
                 pool.close()
             else:
                 for node in nodes.T:
@@ -480,6 +553,7 @@ For example on use see:
             self.p_05[feature_name] = np.percentile(self.U_mc[feature_name], 5)
             self.p_95[feature_name] = np.percentile(self.U_mc[feature_name], 95)
 
+        # self.p_05["test2D"] = np.percentile(self.U_mc["test2D"], 5, 1)
         self.E["direct_comparison"] = cp.E(self.U_hat["direct_comparison"], self.distribution)
         self.Var["direct_comparison"] = cp.Var(self.U_hat["direct_comparison"], self.distribution)
 
@@ -538,7 +612,7 @@ For example on use see:
 
 
 
-        solves = self.evaluateNode(nodes)
+        solves = self.evaluateNodes(nodes)
         solved_features = solves[:, 3]
 
         # Use union to work on all time values when interpolation.
@@ -550,19 +624,19 @@ For example on use see:
                 tmp_t = np.union1d(tmp_t, solves[i+1, 0])
                 i += 1
 
-            self.t["direct_comparison"] = tmp_t
+            self.t = tmp_t
         else:
             lengths = []
             for s in solves[:, 0]:
                 lengths.append(len(s))
 
             index_max_len = np.argmax(lengths)
-            self.t["direct_comparison"] = solves[index_max_len, 0]
+            self.t = solves[index_max_len, 0]
 
 
         interpolated_solves = []
         for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t["direct_comparison"]))
+            interpolated_solves.append(inter(self.t))
 
         self.U_mc["direct_comparison"] = interpolated_solves
 
@@ -716,7 +790,7 @@ For example on use see:
             group = f.create_group(feature)
 
             if feature in self.t:
-                group.create_dataset("t", data=self.t[feature])
+                group.create_dataset("t", data=self.t)
             if feature in self.E:
                 group.create_dataset("E", data=self.E[feature])
             if feature in self.Var:
@@ -743,7 +817,5 @@ For example on use see:
                           p_95=self.p_95,
                           uncertain_parameters=self.uncertain_parameters,
                           sensitivity=self.sensitivity)
-
-        print self.plot.full_output_dir_figures
 
         self.plot.plotAllData(combined_features=combined_features)

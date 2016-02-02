@@ -61,7 +61,7 @@ def evaluateNodeFunction(data):
         sys.exit(1)
 
 
-    V = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+    U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
     t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
     os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
@@ -71,14 +71,30 @@ def evaluateNodeFunction(data):
     module = __import__(feature_cmd[1].split(".")[0])
 
     if "feature_options" in kwargs:
-        features = getattr(module, feature_cmd[2])(t, V, **kwargs["feature_options"])
+        features = getattr(module, feature_cmd[2])(t, U, **kwargs["feature_options"])
     else:
-        features = getattr(module, feature_cmd[2])(t, V)
+        features = getattr(module, feature_cmd[2])(t, U)
     # features = ImplementedNeuronFeatures(t, V)
 
     feature_results = features.calculateFeatures(feature_list)
 
+    results = {}
+    for feature in feature_results:
+        tmp_result = feature_results[feature]
 
-    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, V, k=3)
+        if hasattr(tmp_result, "__iter__"):
+            if len(tmp_result) == 2 and hasattr(tmp_result[0], "__iter__") and hasattr(tmp_result[1], "__iter__"):
+                interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+                results[feature] = (tmp_result[0], tmp_result[1], interpolation)
+            else:
+                results[feature] = (None, tmp_result, None)
+        else:
+            results[feature] = (None, tmp_result, None)
 
-    return (t, V, interpolation, feature_results)
+
+    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+    results["direct_comparison"] = (t, U, interpolation)
+
+    # All results are saved as {feature : (x, U, interpolatio)} as appropriate.
+
+    return results

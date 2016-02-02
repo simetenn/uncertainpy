@@ -81,9 +81,9 @@ class PlotUncertainty():
                 self.sensitivity[feature] = None
 
             if "t" in f[feature].keys():
-                self.t[feature] = f[feature]["t"][()]
-            else:
-                self.t[feature] = None
+                self.t = f[feature]["t"][()]
+            # else:
+            #     self.t[feature] = None
 
         self.uncertain_parameters = f.attrs["uncertain parameters"]
         self.loaded_flag = True
@@ -132,10 +132,9 @@ class PlotUncertainty():
             # TODO is this the right error to raise?
             raise ValueError("%s is not a 2D feature" % (feature))
 
-
         color1 = 0
 
-        prettyPlot(self.t[feature], self.E[feature], "Mean, " + feature, "time", "voltage", color1)
+        prettyPlot(self.t, self.E[feature], "Mean, " + feature, "time", "voltage", color1)
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_mean" + self.figureformat))
@@ -159,7 +158,7 @@ class PlotUncertainty():
 
         color2 = 8
 
-        prettyPlot(self.t[feature], self.Var[feature], "Variance, " + feature,
+        prettyPlot(self.t, self.Var[feature], "Variance, " + feature,
                    "time", "voltage", color2)
 
         if hardcopy:
@@ -186,7 +185,7 @@ class PlotUncertainty():
         color1 = 0
         color2 = 8
 
-        ax, tableau20 = prettyPlot(self.t[feature], self.E[feature],
+        ax, tableau20 = prettyPlot(self.t, self.E[feature],
                                    "Mean and variance, " + feature, "time", "voltage, mean", color1)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
@@ -194,10 +193,10 @@ class PlotUncertainty():
         ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
         ax.spines["right"].set_edgecolor(tableau20[color2])
 
-        ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
+        ax2.set_xlim([min(self.t), max(self.t)])
         ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
 
-        ax2.plot(self.t[feature], self.Var[feature],
+        ax2.plot(self.t, self.Var[feature],
                  color=tableau20[color2], linewidth=2, antialiased=True)
 
         ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
@@ -229,13 +228,13 @@ class PlotUncertainty():
             raise ValueError("%s is not a 2D feature" % (feature))
 
 
-        ax, color = prettyPlot(self.t[feature], self.E[feature],
+        ax, color = prettyPlot(self.t, self.E[feature],
                                xlabel="time", ylabel="voltage", color=0)
-        plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
+        plt.fill_between(self.t, self.p_05[feature], self.p_95[feature],
                          alpha=0.2, facecolor=color[8])
-        prettyPlot(self.t[feature], self.p_95[feature], color=8, new_figure=False)
-        prettyPlot(self.t[feature], self.p_05[feature], color=9, new_figure=False)
-        prettyPlot(self.t[feature], self.E[feature],
+        prettyPlot(self.t, self.p_95[feature], color=8, new_figure=False)
+        prettyPlot(self.t, self.p_05[feature], color=9, new_figure=False)
+        prettyPlot(self.t, self.E[feature],
                    title="Confidence interval, " + feature, new_figure=False)
 
         plt.ylim([min([min(self.p_95[feature]), min(self.p_05[feature]), min(self.E[feature])]),
@@ -268,7 +267,7 @@ class PlotUncertainty():
         parameter_names = self.uncertain_parameters
 
         for i in range(len(self.sensitivity[feature])):
-            prettyPlot(self.t[feature], self.sensitivity[feature][i],
+            prettyPlot(self.t, self.sensitivity[feature][i],
                        parameter_names[i] + " sensitivity", "time",
                        "sensitivity", i, True)
             plt.ylim([0, 1.05])
@@ -299,11 +298,11 @@ class PlotUncertainty():
         parameter_names = self.uncertain_parameters
 
         for i in range(len(self.sensitivity[feature])):
-            prettyPlot(self.t[feature], self.sensitivity[feature][i], "sensitivity", "time",
+            prettyPlot(self.t, self.sensitivity[feature][i], "sensitivity", "time",
                        "Sensitivity, " + feature, i, False)
 
         plt.ylim([0, 1.05])
-        plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
+        plt.xlim([self.t[0], 1.3*self.t[-1]])
         plt.legend(parameter_names)
 
         if hardcopy:
