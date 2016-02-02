@@ -289,7 +289,7 @@ For example on use see:
         self.U_hat = {}
         self.distribution = None
         self.solves = None
-        self.t = None
+        self.t = {}
         self.E = {}
         self.Var = {}
         self.U_mc = {}  # TODO Is this needed to save?
@@ -377,19 +377,19 @@ For example on use see:
                 tmp_t = np.union1d(tmp_t, solves[i+1, 0])
                 i += 1
 
-            self.t = tmp_t
+            self.t["direct_comparison"] = tmp_t
         else:
             lengths = []
             for s in solves[:, 0]:
                 lengths.append(len(s))
 
             index_max_len = np.argmax(lengths)
-            self.t = solves[index_max_len, 0]
+            self.t["direct_comparison"] = solves[index_max_len, 0]
 
 
         interpolated_solves = []
         for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t))
+            interpolated_solves.append(inter(self.t["direct_comparison"]))
 
 
 
@@ -550,19 +550,19 @@ For example on use see:
                 tmp_t = np.union1d(tmp_t, solves[i+1, 0])
                 i += 1
 
-            self.t = tmp_t
+            self.t["direct_comparison"] = tmp_t
         else:
             lengths = []
             for s in solves[:, 0]:
                 lengths.append(len(s))
 
             index_max_len = np.argmax(lengths)
-            self.t = solves[index_max_len, 0]
+            self.t["direct_comparison"] = solves[index_max_len, 0]
 
 
         interpolated_solves = []
         for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t))
+            interpolated_solves.append(inter(self.t["direct_comparison"]))
 
         self.U_mc["direct_comparison"] = interpolated_solves
 
@@ -715,8 +715,8 @@ For example on use see:
         for feature in self.E:
             group = f.create_group(feature)
 
-            if self.t is not None and feature == "direct_comparison":
-                group.create_dataset("t", data=self.t)
+            if feature in self.t:
+                group.create_dataset("t", data=self.t[feature])
             if feature in self.E:
                 group.create_dataset("E", data=self.E[feature])
             if feature in self.Var:
@@ -743,5 +743,7 @@ For example on use see:
                           p_95=self.p_95,
                           uncertain_parameters=self.uncertain_parameters,
                           sensitivity=self.sensitivity)
+
+        print self.plot.full_output_dir_figures
 
         self.plot.plotAllData(combined_features=combined_features)

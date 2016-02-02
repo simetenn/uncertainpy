@@ -89,7 +89,8 @@ class PlotUncertainty():
         self.loaded_flag = True
 
 
-    def setData(self, t, E, Var, p_05, p_95, uncertain_parameters, sensitivity, foldername):
+    def setData(self, t, E, Var, p_05, p_95, uncertain_parameters, sensitivity, foldername=None):
+
         self.t = t
         self.E = E
         self.Var = Var
@@ -111,9 +112,14 @@ class PlotUncertainty():
 
 
         if foldername is None:
+            self.filename = ""
             self.full_output_dir_figures = self.output_dir_figures
         else:
-            self.full_output_dir_figures = os.path.join(self.output_dir_figures, foldername)
+            self.filename = foldername
+            self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
+
+        if not os.path.isdir(self.full_output_dir_figures):
+            os.makedirs(self.full_output_dir_figures)
 
         self.loaded_flag = True
 
@@ -256,8 +262,7 @@ class PlotUncertainty():
             # TODO is this the right error to raise?
             raise ValueError("%s is not a 2D feature" % (feature))
 
-
-        if self.sensitivity[feature] is None:
+        if feature not in self.sensitivity or self.sensitivity[feature] is None:
             return
 
         parameter_names = self.uncertain_parameters
@@ -288,8 +293,7 @@ class PlotUncertainty():
             # TODO is this the right error to raise?
             raise ValueError("%s is not a 2D feature" % (feature))
 
-
-        if self.sensitivity[feature] is None:
+        if feature not in self.sensitivity or self.sensitivity[feature] is None:
             return
 
         parameter_names = self.uncertain_parameters
@@ -417,7 +421,8 @@ class PlotUncertainty():
             xticks += [pos, pos + width]
             xticklabels += ["$P_5$", "$P_{95}$"]
 
-            if self.sensitivity[feature_name] is not None:
+
+            if feature_name in self.sensitivity and self.sensitivity[feature_name] is not None:
                 pos += distance + width
 
                 i = 0
@@ -458,7 +463,7 @@ class PlotUncertainty():
         ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
         ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
 
-        if self.sensitivity[feature_name] is not None:
+        if feature_name in self.sensitivity and self.sensitivity[feature_name] is not None:
                 # Put a legend above current axis
             if len(feature_names) == 1:
                 location = (0.5, 1.03 + legend_width*0.095)
