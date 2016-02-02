@@ -11,22 +11,20 @@ parameterlist = [["kappa", -0.01, None],
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.CoffeeCupPointModel(parameters)
-
 # This sets all distributions to the same, not necessary for exploreParameters,
 # but necessary for compareMC
 model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 
 
-exploration = uncertainpy.UncertaintyEstimations(model, output_dir_data="data/coffee")
+exploration = uncertainpy.UncertaintyEstimations(model,
+                                                 save_figures=True,
+                                                 output_dir_data="data/coffee",
+                                                 output_figures_dir="figures/coffee")
 
 percentages = [0.5]
 test_distributions = {"uniform": percentages}
 
 exploration.exploreParameters(test_distributions)
-
-
-plot = uncertainpy.PlotUncertainty(data_dir="data/coffee", output_figures_dir="figures/coffee")
-plot.plotAllDataFromExploration()
 
 memory.end()
 

@@ -5,14 +5,14 @@ import uncertainpy
 memory = uncertainpy.Memory(10)
 memory.start()
 
-parameterlist = [["V_rest", 0, None],
-                 ["gbar_Na", 120, None],
-                 ["Cm", 1, None],
-                 ["gbar_K", 36, None],
-                 ["gbar_l", 0.3, None],
-                 ["E_Na", 115, None],
-                 ["E_K", -12], None,
-                 ["E_l", 10.613, None]]
+# parameterlist = [["V_rest", 0, None],
+#                  ["gbar_Na", 120, None],
+#                  ["Cm", 1, None],
+#                  ["gbar_K", 36, None],
+#                  ["gbar_l", 0.3, None],
+#                  ["E_Na", 115, None],
+#                  ["E_K", -12], None,
+#                  ["E_l", 10.613, None]]
 
 parameterlist = [["gbar_Na", 120, None],
                  ["gbar_K", 36, None],
@@ -24,17 +24,20 @@ parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.HodkinHuxleyModel(parameters)
 # model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 
-exploration = uncertainpy.UncertaintyEstimations(model, feature_list="all", CPUs=1,
-                                                 output_dir_data="data/hodgkin-huxley")
+exploration = uncertainpy.UncertaintyEstimations(model,
+                                                 feature_list="all",
+                                                 CPUs=1,
+                                                 output_dir_data="data/hodgkin-huxley",
+                                                 output_dir_figures="figures/hodgkin-huxley",
+                                                 save_figures=True)
 
 # percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 percentages = [0.1]
 test_distributions = {"uniform": percentages}
 exploration.exploreParameters(test_distributions)
 
-
-plot = uncertainpy.PlotUncertainty(data_dir="data/hodgkin-huxley", output_figures_dir="figures/hodgkin-huxley")
-plot.plotAllDataExploration()
+# plot = uncertainpy.PlotUncertainty(data_dir="data/hodgkin-huxley", output_figures_dir="figures/hodgkin-huxley")
+# plot.plotAllDataExploration()
 
 memory.end()
 
