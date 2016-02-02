@@ -60,6 +60,7 @@ def prettyPlot(x, y, title="", xlabel="", ylabel="",
 
     return ax, tableau20
 
+
 def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
         """
         Creates pretty bar plots

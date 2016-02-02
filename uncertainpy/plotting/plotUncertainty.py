@@ -9,7 +9,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-from prettyPlot import prettyPlot, prettyBar
+from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
 from uncertainpy.utils import sortByParameters
 
 ### TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
@@ -20,16 +20,17 @@ from uncertainpy.utils import sortByParameters
 
 ### TODO find a good way to find the directory where the data files are
 
+
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",
-                 output_figures_dir="figures/",
-                 output_gif_dir="gifs/",
+                 output_dir_figures="figures/",
+                 output_dir_gif="gifs/",
                  figureformat=".png"):
 
         self.data_dir = data_dir
-        self.output_figures_dir = output_figures_dir
-        self.output_gif_dir = output_gif_dir
+        self.output_dir_figures = output_dir_figures
+        self.output_dir_gif = output_dir_gif
         self.figureformat = figureformat
         self.f = None
 
@@ -55,10 +56,10 @@ class PlotUncertainty():
             else:
                 print "WARNING: No support for more than 1d and 2d plotting"
 
-        self.full_output_figures_dir = os.path.join(self.output_figures_dir, filename)
+        self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
 
-        if not os.path.isdir(self.full_output_figures_dir):
-            os.makedirs(self.full_output_figures_dir)
+        if not os.path.isdir(self.full_output_dir_figures):
+            os.makedirs(self.full_output_dir_figures)
 
 
         self.t = {}
@@ -113,7 +114,7 @@ class PlotUncertainty():
 
         prettyPlot(self.t[feature], self.E[feature], "Mean, " + feature, "time", "voltage", color1)
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_figures_dir,
+            plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_mean" + self.figureformat))
             plt.close()
 
@@ -139,7 +140,7 @@ class PlotUncertainty():
                    "time", "voltage", color2)
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_figures_dir,
+            plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_variance" + self.figureformat))
             plt.close()
 
@@ -162,8 +163,8 @@ class PlotUncertainty():
         color1 = 0
         color2 = 8
 
-        ax, tableau20 = prettyPlot(self.t[feature], self.E[feature], "Mean and variance, " + feature,
-                                   "time", "voltage, mean", color1)
+        ax, tableau20 = prettyPlot(self.t[feature], self.E[feature],
+                                   "Mean and variance, " + feature, "time", "voltage, mean", color1)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
@@ -173,15 +174,16 @@ class PlotUncertainty():
         ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
         ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
 
-        ax2.plot(self.t[feature], self.Var[feature], color=tableau20[color2], linewidth=2, antialiased=True)
+        ax2.plot(self.t[feature], self.Var[feature],
+                 color=tableau20[color2], linewidth=2, antialiased=True)
 
         ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
         ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
         ax.spines["left"].set_edgecolor(tableau20[color1])
-        #plt.tight_layout()
+        # plt.tight_layout()
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_figures_dir,
+            plt.savefig(os.path.join(self.full_output_dir_figures,
                         feature + "_variance-mean" + self.figureformat))
             plt.close()
 
@@ -204,11 +206,14 @@ class PlotUncertainty():
             raise ValueError("%s is not a 2D feature" % (feature))
 
 
-        ax, color = prettyPlot(self.t[feature], self.E[feature], xlabel="time", ylabel="voltage", color=0)
-        plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature], alpha=0.2, facecolor=color[8])
+        ax, color = prettyPlot(self.t[feature], self.E[feature],
+                               xlabel="time", ylabel="voltage", color=0)
+        plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
+                         alpha=0.2, facecolor=color[8])
         prettyPlot(self.t[feature], self.p_95[feature], color=8, new_figure=False)
         prettyPlot(self.t[feature], self.p_05[feature], color=9, new_figure=False)
-        prettyPlot(self.t[feature], self.E[feature], title="Confidence interval, " + feature, new_figure=False)
+        prettyPlot(self.t[feature], self.E[feature],
+                   title="Confidence interval, " + feature, new_figure=False)
 
         plt.ylim([min([min(self.p_95[feature]), min(self.p_05[feature]), min(self.E[feature])]),
                   max([max(self.p_95[feature]), max(self.p_05[feature]), max(self.E[feature])])])
@@ -216,7 +221,7 @@ class PlotUncertainty():
         plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_figures_dir,
+            plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_confidence-interval" + self.figureformat))
             plt.close()
 
@@ -247,7 +252,7 @@ class PlotUncertainty():
             plt.ylim([0, 1.05])
 
             if hardcopy:
-                plt.savefig(os.path.join(self.full_output_figures_dir,
+                plt.savefig(os.path.join(self.full_output_dir_figures,
                                          "Sensitivity_" + feature + "_" + parameter_names[i] + self.figureformat))
                 plt.close()
 
@@ -281,7 +286,7 @@ class PlotUncertainty():
         plt.legend(parameter_names)
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_figures_dir,
+            plt.savefig(os.path.join(self.full_output_dir_figures,
                                      "sensitivity" + self.figureformat))
             plt.close()
 
@@ -379,7 +384,8 @@ class PlotUncertainty():
             # if "sensitivity" in self.f[feature_name].keys():
             #     sensitivity = self.f[feature_name]["sensitivity"][:]
 
-            ax.bar(pos, self.E[feature_name], yerr=self.Var[feature_name], width=width, align='center', color=tableau20[0], linewidth=0,
+            ax.bar(pos, self.E[feature_name], yerr=self.Var[feature_name],
+                   width=width, align='center', color=tableau20[0], linewidth=0,
                    error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
             xticks.append(pos)
             xticklabels.append("mean")
@@ -402,7 +408,9 @@ class PlotUncertainty():
 
                 for parameter in self.uncertain_parameters:
                     # TODO is abs(sensitivity) a problem in the plot?
-                    legend_bars.append(ax2.bar(pos, abs(self.sensitivity[feature_name][i]), width=width, align='center', color=tableau20[4+i], linewidth=0))
+                    legend_bars.append(ax2.bar(pos, abs(self.sensitivity[feature_name][i]),
+                                               width=width, align='center', color=tableau20[4+i],
+                                               linewidth=0))
 
                     i += 1
                     pos += width
@@ -418,7 +426,8 @@ class PlotUncertainty():
                 #                   box.width, box.height*(1 - legend_width*0.1)])
             else:
                 # TODO is abs(sensitivity) a problem in the plot?
-                # ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4], linewidth=0)
+                # ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4],
+                #  linewidth=0)
                 xticks.append(pos + distance)
                 xticklabels.append("")
 
@@ -445,8 +454,9 @@ class PlotUncertainty():
                 loc = "upper right"
 
 
-            lgd = ax.legend(legend_bars, self.uncertain_parameters, loc=loc, bbox_to_anchor=location,
-                            fancybox=False, shadow=False, ncol=legend_size)
+            lgd = ax.legend(legend_bars, self.uncertain_parameters, loc=loc,
+                            bbox_to_anchor=location, fancybox=False,
+                            shadow=False, ncol=legend_size)
             lgd.get_frame().set_edgecolor(axis_grey)
 
             # plt.tight_layout()
@@ -456,8 +466,9 @@ class PlotUncertainty():
 
         plt.suptitle(self.filename, fontsize=titlesize)
 
-        save_name = self.filename + ("_features_%d" % (index/self.features_in_combined_plot)) + self.figureformat
-        plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
+        save_name = self.filename + \
+            ("_features_%d" % (index/self.features_in_combined_plot)) + self.figureformat
+        plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
         plt.close()
 
 
@@ -469,7 +480,7 @@ class PlotUncertainty():
         for feature_name in self.features_1d:
             self.plot1dFeature(feature_name)
             save_name = "%s_%s" % (self.filename, feature_name) + self.figureformat
-            plt.savefig(os.path.join(self.full_output_figures_dir, save_name))
+            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
             plt.close()
 
 
@@ -496,7 +507,6 @@ class PlotUncertainty():
         titlesize = 18
         fontsize = 16
         labelsize = 14
-        figsize = (10, 7.5)
 
         width = 0.2
         distance = 0.5
@@ -511,8 +521,10 @@ class PlotUncertainty():
 
         ax.set_ylabel(feature_name, fontsize=labelsize)
 
-        ax.bar(pos, self.p_05[feature_name], width=width, align='center', color=tableau20[3], linewidth=0)
-        ax.bar(pos + width, self.p_95[feature_name], width=width, align='center', color=tableau20[2], linewidth=0)
+        ax.bar(pos, self.p_05[feature_name],
+               width=width, align='center', color=tableau20[3], linewidth=0)
+        ax.bar(pos + width, self.p_95[feature_name],
+               width=width, align='center', color=tableau20[2], linewidth=0)
         xticks += [pos, pos + width]
         xticklabels += ["$P_5$", "$P_{95}$"]
         pos += distance + width
@@ -567,28 +579,36 @@ class PlotUncertainty():
 
 
 
-    def plotAllData(self, combined_features=True):
+    def plotAllDataInFolder(self, combined_features=True):
         print "Plotting all data"
 
         for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
 
-            self.plot2dFeatures()
+            self.plotAllData(combined_features)
 
-            if combined_features:
-                self.plot1dFeaturesCombined()
-            else:
-                self.plot1dFeatures()
+
+    def plotAllData(self, combined_features=True):
+        self.plot2dFeatures()
+
+        if combined_features:
+            self.plot1dFeaturesCombined()
+        else:
+            self.plot1dFeatures()
+
+
+
 
     def plotAllDataFromExploration(self, combined_features=True):
         print "Plotting all data"
 
         original_data_dir = self.data_dir
-        original_output_figures_dir = self.output_figures_dir
+        original_output_dir_figures = self.output_dir_figures
 
         for folder in glob.glob(os.path.join(self.data_dir, "*")):
             self.data_dir = os.path.join(original_data_dir, folder.split("/")[-1])
-            self.output_figures_dir = os.path.join(original_output_figures_dir, folder.split("/")[-1])
+            self.output_dir_figures = os.path.join(original_output_dir_figures,
+                                                   folder.split("/")[-1])
 
             for filename in glob.glob(os.path.join(folder, "*")):
 
@@ -602,7 +622,7 @@ class PlotUncertainty():
                     self.plot1dFeatures()
 
         self.data_dir = original_data_dir
-        self.output_figures_dir = original_output_figures_dir
+        self.output_dir_figures = original_output_dir_figures
 
 
     def gif(self):
@@ -612,8 +632,8 @@ class PlotUncertainty():
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if not os.path.isdir(self.output_gif_dir):
-            os.makedirs(self.output_gif_dir)
+        if not os.path.isdir(self.output_dir_gif):
+            os.makedirs(self.output_dir_gif)
 
         plotting_order = {}
         for f in glob.glob(self.data_dir + "*"):
@@ -686,14 +706,16 @@ class PlotUncertainty():
 
                     for feature in self.features_2d:
                         self.plotMean(feature=feature, hardcopy=False)
-                        plt.ylim([min_data[filename][feature]["E"], max_data[filename][feature]["E"]])
+                        plt.ylim([min_data[filename][feature]["E"],
+                                  max_data[filename][feature]["E"]])
                         save_name = filename + "_mean" + "_" + interval + self.figureformat
                         plt.title("Mean, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
                         self.plotVariance(feature=feature, hardcopy=False)
-                        plt.ylim([min_data[filename][feature]["Var"], max_data[filename][feature]["Var"]])
+                        plt.ylim([min_data[filename][feature]["Var"],
+                                  max_data[filename][feature]["Var"]])
                         save_name = filename + "_variance" + "_" + interval + self.figureformat
                         plt.title("Variance, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
@@ -701,17 +723,22 @@ class PlotUncertainty():
 
                         ax, ax2 = self.plotMeanAndVariance(feature=feature, hardcopy=False)
 
-                        ax.set_ylim([min_data[filename][feature]["E"], max_data[filename][feature]["E"]])
-                        ax2.set_ylim([min_data[filename][feature]["Var"], max_data[filename][feature]["Var"]])
+                        ax.set_ylim([min_data[filename][feature]["E"],
+                                     max_data[filename][feature]["E"]])
+                        ax2.set_ylim([min_data[filename][feature]["Var"],
+                                      max_data[filename][feature]["Var"]])
                         save_name = filename + "_mean-variance" + "_" + interval + self.figureformat
                         ax.set_title("Mean and Variance, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
 
                         self.plotConfidenceInterval(feature=feature, hardcopy=False)
-                        plt.ylim([min(min_data[filename][feature]["p_95"], min_data[filename][feature]["p_05"]),
-                                  max(max_data[filename][feature]["p_95"], max_data[filename][feature]["p_05"])])
-                        save_name = filename + "_confidence-interval" + "_" + interval  + self.figureformat
+                        plt.ylim([min(min_data[filename][feature]["p_95"],
+                                      min_data[filename][feature]["p_05"]),
+                                  max(max_data[filename][feature]["p_95"],
+                                      max_data[filename][feature]["p_05"])])
+                        save_name = filename + "_confidence-interval" + \
+                            "_" + interval + self.figureformat
                         plt.title("Confidence interval, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         plt.close()
@@ -737,7 +764,8 @@ class PlotUncertainty():
                         #     plt.title(parameter_names[i] + " sensitivity")
                         #     plt.ylim([0, 1.05])
                         #
-                        #     save_name = filename + "_" + interval + "_sensitivity_" + parameter_names[i] + self.figureformat
+                        #     save_name = filename + "_" + interval + "_sensitivity_" \
+                        #           + parameter_names[i] + self.figureformat
                         #     plt.savefig(os.path.join(self.tmp_gif_output, save_name))
                         #     plt.close()
 
@@ -753,7 +781,7 @@ class PlotUncertainty():
 
 
             # Create gif
-            outputdir = os.path.join(self.output_gif_dir, distribution)
+            outputdir = os.path.join(self.output_dir_gif, distribution)
             # if os.path.isdir(outputdir):
             #     shutil.rmtree(outputdir)
             # os.makedirs(outputdir)
@@ -788,23 +816,23 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     data_dir = "data/"
-    output_figures_dir = "figures/"
-    output_gif_dir = "gifs/"
+    output_dir_figures = "figures/"
+    output_dir_gif = "gifs/"
     figureformat = ".png"
 
     if args.data_dir:
         data_dir = "%s/" % os.path.join(data_dir, args.data_dir)
-        output_figures_dir = "%s/" % os.path.join(output_figures_dir, args.data_dir)
-        output_gif_dir = "%s/" % os.path.join(output_gif_dir, args.data_dir)
+        output_dir_figures = "%s/" % os.path.join(output_dir_figures, args.data_dir)
+        output_dir_gif = "%s/" % os.path.join(output_dir_gif, args.data_dir)
 
 
     plot = PlotUncertainty(data_dir=data_dir,
-                           output_figures_dir=output_figures_dir,
+                           output_dir_figures=output_dir_figures,
                            figureformat=figureformat,
-                           output_gif_dir=output_gif_dir)
+                           output_dir_gif=output_dir_gif)
 
     # plot.plotAllData()
     plot.plotAllDataFromExploration()
     plot.gif()
 
-    # sortByParameters(path=output_figures_dir, outputpath=output_figures_dir)
+    # sortByParameters(path=output_dir_figures, outputpath=output_dir_figures)

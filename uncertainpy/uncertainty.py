@@ -64,31 +64,28 @@
 
 # TODO calculate sensitivity in MC method
 
-
 # TODO Shoud single parameter results be stored?
 
 # TODO rewrite plotting code to be a series of functions?
 
 # TODO combine save_data and save_data_dir into the save variable?
 
+# TODO use _ before hidden variables
 
 import time
 import os
 import h5py
-import sys
 
 import numpy as np
 import chaospy as cp
-import matplotlib.pyplot as plt
 import multiprocessing as mp
 
 from xvfbwrapper import Xvfb
 
 # Imported from my own files
-from plotting import prettyPlot
-from evaluateNodeFunction import evaluateNodeFunction
-from features import ImplementedNeuronFeatures
-
+from uncertainpy.features import ImplementedNeuronFeatures
+from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
+from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 
 class UncertaintyEstimation():
     def __init__(self, model,
@@ -99,6 +96,7 @@ class UncertaintyEstimation():
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
+                 output_dir_gif="gif/",
                  output_data_filename=None,
                  supress_model_graphics=True,
                  supress_model_output=True,
@@ -204,11 +202,7 @@ singleParameters
 allParameters
 singleParametersMC
 allParametersMC
-plotAll
 sensitivityRanking
-plotV_t
-plotConfidenceInterval
-plotSensitivity
 save
 
 Returns
@@ -239,7 +233,6 @@ For example on use see:
             self.feature_list = feature_list
 
         self.save_figures = save_figures
-        self.output_dir_figures = output_dir_figures
         self.figureformat = figureformat
         self.save_data = save_data
         self.output_dir_data = output_dir_data
@@ -261,6 +254,10 @@ For example on use see:
 
         self.resetValues()
 
+        self.plot = PlotUncertainty(data_dir=self.output_dir_data,
+                                    output_dir_figures=output_dir_figures,
+                                    output_dir_gif=output_dir_gif,
+                                    figureformat=figureformat)
 
 
         if output_data_filename is None:
@@ -687,16 +684,6 @@ For example on use see:
             self.plotAll("all")
 
 
-    def plotAll(self, parameter="all"):
-        if not os.path.isdir(self.output_dir_figures):
-            os.makedirs(self.output_dir_figures)
-
-        self.plotV_t(parameter)
-        self.plotConfidenceInterval(parameter)
-
-        if parameter == "all":
-            self.plotSensitivity()
-
     def sensitivityRanking(self):
         self.sensitivity_ranking = {}
         i = 0
@@ -709,98 +696,6 @@ For example on use see:
             total_sensitivity += self.sensitivity_ranking[parameter]
         for parameter in self.sensitivity_ranking:
             self.sensitivity_ranking[parameter] /= total_sensitivity
-
-
-    # Might not work any more
-    def plotV_t(self, parameter):
-
-        color1 = 0
-        color2 = 8
-
-        prettyPlot(self.t, self.E, "Mean, " + parameter, "time", "voltage", color1)
-        plt.savefig(os.path.join(self.output_dir_figures, parameter + "_mean" + self.figureformat),
-                    bbox_inches="tight")
-
-        prettyPlot(self.t, self.Var, "Variance, " + parameter, "time", "voltage", color2)
-        plt.savefig(os.path.join(self.output_dir_figures,
-                                 parameter + "_variance" + self.figureformat),
-                    bbox_inches="tight")
-
-        ax, tableau20 = prettyPlot(self.t, self.E, "Mean and variance, " + parameter,
-                                   "time", "voltage, mean", color1)
-        ax2 = ax.twinx()
-        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=tableau20[color2], labelcolor=tableau20[color2], labelsize=14)
-        ax2.set_ylabel('voltage, variance', color=tableau20[color2], fontsize=16)
-        ax.spines["right"].set_edgecolor(tableau20[color2])
-
-        ax2.set_xlim([min(self.t), max(self.t)])
-        ax2.set_ylim([min(self.Var), max(self.Var)])
-
-        ax2.plot(self.t, self.Var, color=tableau20[color2], linewidth=2, antialiased=True)
-
-        ax.tick_params(axis="y", color=tableau20[color1], labelcolor=tableau20[color1])
-        ax.set_ylabel('voltage, mean', color=tableau20[color1], fontsize=16)
-        ax.spines["left"].set_edgecolor(tableau20[color1])
-        plt.tight_layout()
-        plt.savefig(os.path.join(self.output_dir_figures,
-                    parameter + "_variance-mean" + self.figureformat),
-                    bbox_inches="tight")
-
-        plt.close()
-
-    # Might not work any more
-    def plotConfidenceInterval(self, parameter):
-        if parameter not in self.E:
-            print "WARNING: %s have not been calculated" % (parameter)
-            return
-
-        ax, color = prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0)
-        plt.fill_between(self.t, self.p_05, self.p_95, alpha=0.2, facecolor=color[8])
-        prettyPlot(self.t, self.p_95, color=8, new_figure=False)
-        prettyPlot(self.t, self.p_05, color=9, new_figure=False)
-        prettyPlot(self.t, self.E, "Confidence interval", "time", "voltage", 0, False)
-
-        plt.ylim([min([min(self.p_95), min(self.p_05), min(self.E)]),
-                  max([max(self.p_95), max(self.p_05), max(self.E)])])
-
-        plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
-        plt.savefig(os.path.join(self.output_dir_figures,
-                    parameter + "_confidence-interval" + self.figureformat),
-                    bbox_inches="tight")
-
-        plt.close()
-
-    # Might not work any more
-    def plotSensitivity(self):
-        if not self.sensitivity:
-            print "WARNING: Sensitivity have not been calculated"
-            return
-
-        parameter_names = self.model.parameters.getUncertain("name")
-
-        for i in range(len(self.sensitivity)):
-            prettyPlot(self.t, self.sensitivity[i],
-                       parameter_names[i] + " sensitivity", "time",
-                       "sensitivity", i, True)
-            plt.title(parameter_names[i] + " sensitivity")
-            plt.ylim([0, 1.05])
-            plt.savefig(os.path.join(self.output_dir_figures,
-                                     parameter_names[i] +
-                                     "_sensitivity" + self.figureformat),
-                        bbox_inches="tight")
-        plt.close()
-
-        for i in range(len(self.sensitivity)):
-            prettyPlot(self.t, self.sensitivity[i], "sensitivity", "time",
-                       "sensitivity", i, False)
-
-        plt.ylim([0, 1.05])
-        plt.xlim([self.t[0], 1.3*self.t[-1]])
-        plt.legend(parameter_names)
-        plt.savefig(os.path.join(self.output_dir_figures,
-                                 "all_sensitivity" + self.figureformat),
-                    bbox_inches="tight")
 
 
     def save(self, filename):
@@ -835,7 +730,15 @@ For example on use see:
 
         f.close()
 
-    # def saveAll(self, parameter="all"):
-    #     self.save(parameter=parameter)
-    #     for feature_name in self.feature_list:
-    #         self.save(parameter=parameter, feature=feature_name)
+
+
+    def plotAll(self, uncertain_parameters, sensitivity=None, combined_features=True):
+        self.plot.setData(t=self.t,
+                          E=self.E,
+                          Var=self.Var,
+                          p_05=self.p_05,
+                          p_95=self.p_95,
+                          uncertain_parameters=uncertain_parameters,
+                          sensitivity=sensitivity)
+
+        self.plot.plotAllData(combined_features=combined_features)
