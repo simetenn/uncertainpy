@@ -15,7 +15,8 @@ filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
-    all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath, feature_list, feature_cmd)
+    all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath,
+                feature_list, feature_cmd, kwargs)
     """
     cmd = data[0]
     supress_model_output = data[1]
@@ -89,7 +90,7 @@ def evaluateNodeFunction(data):
             else:
                 results[feature] = (None, tmp_result, None)
         else:
-            results[feature] = (None, tmp_result, None)
+            results[feature] = (None, (tmp_result), None)
 
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
