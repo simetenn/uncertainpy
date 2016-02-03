@@ -105,7 +105,7 @@ class UncertaintyEstimations():
         output_dir_figures = os.path.join(self.output_dir_figures, name)
         output_dir_data = os.path.join(self.output_dir_data, name)
 
-        self.uncertainty_estimations[name] =\
+        self.uncertainty_estimations_pc =\
             UncertaintyEstimation(self.model,
                                   feature_list=self.feature_list,
                                   features=self.features,
@@ -124,7 +124,7 @@ class UncertaintyEstimations():
                                   **self.kwargs)
 
         time_1 = time.time()
-        self.uncertainty_estimations[name].allParameters()
+        self.uncertainty_estimations_pc.allParameters()
         run_times.append(time.time() - time_1)
 
 
@@ -142,6 +142,7 @@ class UncertaintyEstimations():
                                       features=self.features,
                                       output_dir_figures=current_output_dir_figures,
                                       figureformat=self.figureformat,
+                                      save_data=self.save_data,
                                       output_dir_data=tmp_output_dir_data,
                                       output_data_filename=self.model.__class__.__name__,
                                       supress_model_graphics=self.supress_model_graphics,
@@ -154,6 +155,8 @@ class UncertaintyEstimations():
             time_1 = time.time()
             self.uncertainty_estimations[name].allParametersMC()
             run_times.append(time.time() - time_1)
+
+
 
 
         return run_times

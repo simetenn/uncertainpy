@@ -157,8 +157,6 @@ class ImplementedNeuronFeatures(NeuronFeatures):
 
         return sum_AP_width/float(self.spikes.nr_spikes)
 
-    def test2D(self):
-        return self.U
 
     def accomondationIndex(self):
         N = self.spikes.nr_spikes

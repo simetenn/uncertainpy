@@ -422,7 +422,8 @@ For example on use see:
         # Calculate PC for each feature
 
         for feature in self.features_1d + self.features_2d:
-            masked_nodes, masked_U = self.createMask(feature, nodes, self.U)
+            masked_nodes, masked_U, nr_masked = self.createMask(self.nr_pc_samples, feature,
+                                                                nodes, self.U)
 
             if self.rosenblatt:
                 # self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
@@ -462,13 +463,15 @@ For example on use see:
         return t, interpolated_solves
 
 
-    def createMask(self, feature, nodes, U):
+    def createMask(self, nr_samples, feature, nodes, U):
         i = 0
-        mask = np.ones(self.nr_pc_samples, dtype=bool)
+        mask = np.ones(nr_samples, dtype=bool)
 
+        nr_masked = 0
         for u in U:
             if u is None:
                 mask[i] = False
+                nr_masked += 1
 
             i += 1
 
@@ -483,7 +486,7 @@ For example on use see:
             print "Warning: feature %s does not yield results for all parameter combinations" \
                 % feature
 
-        return masked_nodes, masked_U
+        return masked_nodes, masked_U, nr_masked
 
 
 
@@ -518,62 +521,8 @@ For example on use see:
         return np.array(solves)
 
 
-    def singleParameterPCAnalysis(self):
-        for feature_name in self.feature_list:
-            self.E[feature_name] = cp.E(self.U_hat[feature_name], self.distribution)
-            self.Var[feature_name] = cp.Var(self.U_hat[feature_name], self.distribution)
-
-            samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
-            self.U_mc[feature_name] = self.U_hat[feature_name](samples)
-
-            self.p_05[feature_name] = np.percentile(self.U_mc[feature_name], 5)
-            self.p_95[feature_name] = np.percentile(self.U_mc[feature_name], 95)
-
-        # self.p_05["test2D"] = np.percentile(self.U_mc["test2D"], 5, 1)
-        self.E["direct_comparison"] = cp.E(self.U_hat["direct_comparison"], self.distribution)
-        self.Var["direct_comparison"] = cp.Var(self.U_hat["direct_comparison"], self.distribution)
-
-        samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
-        self.U_mc["direct_comparison"] = self.U_hat["direct_comparison"](samples)
-
-        self.p_05["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 5, 1)
-        self.p_95["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 95, 1)
-
-
 
     def PCAnalysis(self):
-        if len(self.model.parameters.getUncertain()) == 1:
-            self.singleParameterPCAnalysis()
-            return
-
-        for feature_name in self.feature_list:
-            self.E[feature_name] = cp.E(self.U_hat[feature_name], self.distribution)
-            self.Var[feature_name] = cp.Var(self.U_hat[feature_name], self.distribution)
-
-            self.sensitivity[feature_name] = cp.Sens_t(self.U_hat[feature_name], self.distribution)
-
-            samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
-            self.U_mc[feature_name] = self.U_hat[feature_name](*samples)
-
-            self.p_05[feature_name] = np.percentile(self.U_mc[feature_name], 5)
-            self.p_95[feature_name] = np.percentile(self.U_mc[feature_name], 95)
-
-
-        self.E["direct_comparison"] = cp.E(self.U_hat["direct_comparison"], self.distribution)
-        self.Var["direct_comparison"] = cp.Var(self.U_hat["direct_comparison"], self.distribution)
-
-        self.sensitivity["direct_comparison"] = cp.Sens_t(self.U_hat["direct_comparison"],
-                                                          self.distribution)
-        # self.sensitivityRanking()
-
-        samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
-        self.U_mc["direct_comparison"] = self.U_hat["direct_comparison"](*samples)
-
-        self.p_05["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 5, 1)
-        self.p_95["direct_comparison"] = np.percentile(self.U_mc["direct_comparison"], 95, 1)
-
-
-    def allPCAnalysis(self):
 
         for feature in self.features_1d + self.features_2d:
             self.E[feature] = cp.E(self.U_hat[feature], self.distribution)
@@ -612,67 +561,69 @@ For example on use see:
 
 
         solves = self.evaluateNodes(nodes)
-        solved_features = solves[:, 3]
-
-        # Use union to work on all time values when interpolation.
-        # If not use the t maximum amount of t values
-        if self.interpolate_union:
-            i = 0
-            tmp_t = solves[0, 0]
-            while i < len(solves) - 1:
-                tmp_t = np.union1d(tmp_t, solves[i+1, 0])
-                i += 1
-
-            self.t = tmp_t
-        else:
-            lengths = []
-            for s in solves[:, 0]:
-                lengths.append(len(s))
-
-            index_max_len = np.argmax(lengths)
-            self.t = solves[index_max_len, 0]
 
 
-        interpolated_solves = []
-        for inter in solves[:, 2]:
-            interpolated_solves.append(inter(self.t))
+        # Find 1d and 2d features
+        # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
+        self.features_2d = []
+        self.features_1d = []
 
-        self.U_mc["direct_comparison"] = interpolated_solves
+        for feature in solves[0]:
+            if hasattr(solves[0][feature][1], "__iter__"):
+                self.features_2d.append(feature)
+            else:
+                self.features_1d.append(feature)
+
+        for feature in self.features_2d:
+            if solves[0][feature][0] is None:
+                tmp_U_mc = []
+                for solved in solves:
+                    tmp_U_mc.append(solved[feature][1])
+
+                self.t[feature] = np.arange(len(solves[0][feature][1]))
+                self.U_mc[feature] = np.array(tmp_U_mc)
+
+            elif hasattr(solves[0][feature][0], "__iter__"):
+                ts = []
+                interpolation = []
+                for solved in solves:
+                    ts.append(solved[feature][0])
+                    interpolation.append(solved[feature][2])
+
+                self.t[feature], self.U_mc[feature] = self.performInterpolation(ts, interpolation)
+            else:
+                print "Return from feature %s does not fit the given format (t, U, interpolation)" % feature
+
+        for feature in self.features_1d:
+            self.U_mc[feature] = []
+            for solved in solves:
+                self.t[feature] = None
+                self.U_mc[feature].append(solved[feature][1])
+
+            self.U_mc[feature] = np.array(self.U_mc[feature])
 
         # Calculate PC for each feature
-        self.mask = {}
-        for feature_name in self.feature_list:
-            i = 0
-            self.mask[feature_name] = np.ones(len(solved_features), dtype=bool)
-            self.U_mc[feature_name] = np.zeros(len(solved_features))
+
+        for feature in self.features_1d:
+            masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
+                                                                nodes, self.U_mc)
+
+            self.E[feature] = (np.sum(masked_U, 0).T/(self.nr_mc_samples - nr_masked)).T
+            self.Var[feature] = \
+                (np.sum((masked_U - self.E[feature])**2, 0).T/(self.nr_mc_samples - nr_masked)).T
+            self.p_05[feature] = np.percentile(masked_U, 5)
+            self.p_95[feature] = np.percentile(masked_U, 95)
 
 
-            for feature in solved_features:
-                if feature[feature_name] is None:
-                    self.mask[feature_name][i] = False
+        for feature in self.features_2d:
+            masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
+                                                                nodes, self.U_mc)
 
-                self.U_mc[feature_name][i] = feature[feature_name]
-                i += 1
-
-            if not np.all(self.mask):
-                print "Warning: feature %s does not yield results for all parameter combinations" \
-                    % (feature_name)
-
-            tmp_U_masked = self.U_mc[feature_name][self.mask[feature_name]]
-
-            self.E[feature_name] = (np.sum(tmp_U_masked, 0).T/len(tmp_U_masked)).T
-            self.Var[feature_name] = \
-                (np.sum((tmp_U_masked - self.E[feature_name])**2, 0).T/len(tmp_U_masked)).T
-            self.p_05[feature_name] = np.percentile(tmp_U_masked, 5)
-            self.p_95[feature_name] = np.percentile(tmp_U_masked, 95)
-
-
-        self.E["direct_comparison"] = (np.sum(interpolated_solves, 0).T/self.nr_mc_samples).T
-        self.Var["direct_comparison"] = \
-            (np.sum((interpolated_solves - self.E[feature_name])**2, 0).T/self.nr_mc_samples).T
-        self.p_95["direct_comparison"] = np.percentile(interpolated_solves, 95, 0)
-        self.p_05["direct_comparison"] = np.percentile(interpolated_solves, 5, 0)
-
+            self.E[feature] = (np.sum(masked_U, 0).T/(self.nr_mc_samples - nr_masked)).T
+            self.Var[feature] = \
+                (np.sum((masked_U - self.E[feature])**2, 0).T/(self.nr_mc_samples - nr_masked)).T
+            self.p_95[feature] = np.percentile(masked_U, 95, 0)
+            self.p_05[feature] = np.percentile(masked_U, 5, 0)
 
 
     def timePassed(self):
@@ -689,9 +640,7 @@ For example on use see:
                 print "Calculations aborted for " + uncertain_parameter
                 return -1
 
-
-            #self.singleParameterPCAnalysis()
-            self.allPCAnalysis()
+            self.PCAnalysis()
 
             if self.save_data:
                 self.save("%s_single-parameter-%s"
@@ -716,8 +665,7 @@ For example on use see:
             print "Calculations aborted for all"
             return -1
 
-        #self.PCAnalysis()
-        self.allPCAnalysis()
+        self.PCAnalysis()
 
         if self.save_data:
             self.save(self.output_data_filename)
@@ -755,7 +703,6 @@ For example on use see:
 
         if self.save_data:
             self.save(self.output_data_filename)
-
 
         if self.save_figures:
             self.plotAll(self.output_data_filename)
