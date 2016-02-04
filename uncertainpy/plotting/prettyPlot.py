@@ -3,8 +3,44 @@ import numpy as np
 
 def prettyPlot(x, y, title="", xlabel="", ylabel="",
                color=0, new_figure=True):
+
     """
-    Creates pretty plots
+prettyPlot
+
+Creates prettier plots, just a wrapper around matplotlib plot.
+Customizing several matplotlib options
+
+Parameters
+----------
+Required arguments
+
+x : sequence to plot
+   x values
+y : sequence to plot
+  y values
+
+Optional arguments
+
+title : str
+    Title of the plot. Default is ""
+xlabel : str
+    Xlabel of the plot. Default is ""
+ylabel : str
+    Ylabel of the plot. Default is ""
+color : int
+    Color of the line, given as a int than then index Tablea20 colors.
+    Defualt is 0.
+new_figure : bool
+    If a new figure should be made, or if teh plot should be made
+    ontop of the last existing plot.
+    Default is True.
+
+
+Returns
+----------
+ax : matplotlib ax Object
+tableau20 : list
+    List of tableau20 colors
     """
 
     axis_grey = (0.5, 0.5, 0.5)
@@ -61,7 +97,7 @@ def prettyPlot(x, y, title="", xlabel="", ylabel="",
     return ax, tableau20
 
 
-def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
+def prettyBar(x, error=None, title="", xlabels=[], ylabel="", new_figure=True):
         """
         Creates pretty bar plots
         """
@@ -114,9 +150,18 @@ def prettyBar(x, error, title="", xlabels="", ylabel="", new_figure=True):
 
         tmp_colors = []
         j = 0
+        even = True
         for i in index:
             tmp_colors.append(tableau20[j])
             j += 2
+            if j > len(tableau20):
+                if even:
+                    j = 1
+                    even = False
+                else:
+                    j = 0
+                    even = True
+
 
         ax.bar(index, x, yerr=error, width=width, align='center', color=tmp_colors, linewidth=0,
                error_kw=dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2))

@@ -35,9 +35,10 @@ test_distributions = {"uniform": percentages}
 # test.allParameters()
 # test.allParametersMC()
 # test.singleParametersMC()
-exploration.exploreParameters(test_distributions)
+# exploration.exploreParameters(test_distributions)
 
-exploration.compareMC([10, 100, 1000, 2000])
+exploration.compareMC([10, 50, 100, 200, 1000, 2000])
+# exploration.compareMC([5, 10, 15])
 
 # plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich",
 #                                    output_dir_figures="figures/izhikevich")

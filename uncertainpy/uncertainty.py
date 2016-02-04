@@ -523,7 +523,6 @@ For example on use see:
 
 
     def PCAnalysis(self):
-
         for feature in self.features_1d + self.features_2d:
             self.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
@@ -561,7 +560,6 @@ For example on use see:
 
 
         solves = self.evaluateNodes(nodes)
-
 
         # Find 1d and 2d features
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
