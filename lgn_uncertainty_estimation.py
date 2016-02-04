@@ -18,14 +18,12 @@ parameterlist = [["cap", 1.1, None],
                  ["gahp", 6.4e-5, None],
                  ["gcat", 1.17e-5, None]]
 
-
-
 memory = uncertainpy.Memory(10)
 memory.start()
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, model_path=model_path)
-model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
+model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
 
 
 exploration = uncertainpy.UncertaintyEstimations(model, CPUs=7, supress_model_output=True,
