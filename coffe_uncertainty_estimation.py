@@ -17,14 +17,19 @@ model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 
 
 exploration = uncertainpy.UncertaintyEstimations(model,
+                                                 feature_list=None,
                                                  save_figures=True,
                                                  output_dir_data="data/coffee",
                                                  output_figures_dir="figures/coffee")
 
-percentages = [0.5]
-test_distributions = {"uniform": percentages}
 
+
+percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
+test_distributions = {"uniform": percentages}
 exploration.exploreParameters(test_distributions)
+
+mc_samples = [50, 100, 200, 500, 1000, 1500, 2000]
+exploration.compareMC(mc_samples)
 
 memory.end()
 
