@@ -26,7 +26,7 @@ exploration = uncertainpy.UncertaintyEstimations(model,
 percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 # percentages = np.linspace(0.01, 0.25, 50)
 test_distributions = {"uniform": percentages}
-exploration.exploreParameters(test_distributions)
+# exploration.exploreParameters(test_distributions)
 
 mc_samples = [50, 100, 200, 500, 1000, 1500, 2000]
 exploration.compareMC(mc_samples)
