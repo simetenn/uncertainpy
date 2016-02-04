@@ -23,8 +23,6 @@ parameterlist = [["cap", 1.1, None],
                  ["gcat", 1.17e-5, None]]
 
 
-parameterlist = [["Rm", 22000, None],
-                 ["Epas", -67, None]]
 
 memory = uncertainpy.Memory(10)
 memory.start()
@@ -35,7 +33,7 @@ model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, mo
 
 
 
-exploration = uncertainpy.UncertaintyEstimations(model, CPUs=1, supress_model_output=True,
+exploration = uncertainpy.UncertaintyEstimations(model, CPUs=7, supress_model_output=True,
                                                  feature_list="all",
                                                  output_dir_data="data/lgn",
                                                  save_figures=True,

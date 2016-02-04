@@ -365,6 +365,7 @@ For example on use see:
 
         else:
             self.distribution = cp.J(*parameter_space)
+
             self.P = cp.orth_ttr(self.M, self.distribution)
 
             if nr_pc_samples is None:
@@ -468,7 +469,7 @@ For example on use see:
         mask = np.ones(nr_samples, dtype=bool)
 
         nr_masked = 0
-        for u in U:
+        for u in U[feature]:
             if u is None:
                 mask[i] = False
                 nr_masked += 1
