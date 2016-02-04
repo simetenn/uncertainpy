@@ -500,8 +500,7 @@ For example on use see:
             if self.CPUs > 1:
                 pool = mp.Pool(processes=self.CPUs)
                 solves = pool.map(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(self.uncertain_parameters,
-                                                                nodes.T))
+                                  self.evaluateNodeFunctionList(nodes.T))
                 pool.close()
             else:
                 for node in nodes.T:
