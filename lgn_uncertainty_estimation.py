@@ -6,10 +6,6 @@ import uncertainpy
 model_file = "INmodel.hoc"
 model_path = "uncertainpy/models/neuron_models/dLGN_modelDB/"
 
-#
-# distribution_function = uncertainpy.Distribution(0.1).uniform
-# distribution_functions = {"Rm": distribution_function, "Epas": distribution_function}
-#
 
 parameterlist = [["cap", 1.1, None],
                  ["Rm", 22000, None],
@@ -27,10 +23,9 @@ parameterlist = [["cap", 1.1, None],
 memory = uncertainpy.Memory(10)
 memory.start()
 
-#parameters = Parameters(original_parameters, distribution_function, test_parameters)
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, model_path=model_path)
-
+model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 
 
 exploration = uncertainpy.UncertaintyEstimations(model, CPUs=7, supress_model_output=True,
