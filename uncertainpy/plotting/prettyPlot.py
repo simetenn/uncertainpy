@@ -154,7 +154,7 @@ def prettyBar(x, error=None, title="", xlabels=[], ylabel="", new_figure=True):
         for i in index:
             tmp_colors.append(tableau20[j])
             j += 2
-            if j > len(tableau20):
+            if j >= len(tableau20):
                 if even:
                     j = 1
                     even = False
