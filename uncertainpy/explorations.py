@@ -140,6 +140,7 @@ class UncertaintyEstimations():
                 UncertaintyEstimation(self.model,
                                       feature_list=self.feature_list,
                                       features=self.features,
+                                      save_figures=self.save_figures,
                                       output_dir_figures=current_output_dir_figures,
                                       figureformat=self.figureformat,
                                       save_data=self.save_data,

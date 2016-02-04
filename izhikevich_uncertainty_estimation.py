@@ -10,13 +10,9 @@ parameterlist = [["a", 0.02, None],
                  ["c", -65, None],
                  ["d", 8, None]]
 
-
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.models.IzhikevichModel(parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
-
-
-
 
 
 exploration = uncertainpy.UncertaintyEstimations(model,
@@ -30,20 +26,10 @@ exploration = uncertainpy.UncertaintyEstimations(model,
 percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 # percentages = np.linspace(0.01, 0.25, 50)
 test_distributions = {"uniform": percentages}
+exploration.exploreParameters(test_distributions)
 
-
-# test.allParameters()
-# test.allParametersMC()
-# test.singleParametersMC()
-# exploration.exploreParameters(test_distributions)
-
-exploration.compareMC([10, 50, 100, 200, 1000, 2000])
-# exploration.compareMC([5, 10, 15])
-
-# plot = uncertainpy.PlotUncertainty(data_dir="data/izhikevich",
-#                                    output_dir_figures="figures/izhikevich")
-# plot.plotAllDataFromExploration()
-# plot.plotAllData()
+mc_samples = [50, 100, 200, 500, 1000, 1500, 2000]
+exploration.compareMC(mc_samples)
 
 memory.end()
 
