@@ -65,6 +65,8 @@ class UncertaintyEstimations():
             for interval in distributions[distribution_function]:
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
                                                           distribution_function + "_%g" % interval)
+
+                print current_output_dir_figures
                 distribution = getattr(Distribution(interval), distribution_function)
 
                 self.model.setAllDistributions(distribution)

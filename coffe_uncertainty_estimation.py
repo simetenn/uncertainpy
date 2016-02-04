@@ -20,11 +20,11 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  feature_list=None,
                                                  save_figures=True,
                                                  output_dir_data="data/coffee",
-                                                 output_figures_dir="figures/coffee")
+                                                 output_dir_figures="figures/coffee")
 
 
 
-percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
+percentages = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 test_distributions = {"uniform": percentages}
 exploration.exploreParameters(test_distributions)
 
