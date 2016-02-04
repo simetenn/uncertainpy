@@ -66,7 +66,6 @@ class UncertaintyEstimations():
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
                                                           distribution_function + "_%g" % interval)
 
-                print current_output_dir_figures
                 distribution = getattr(Distribution(interval), distribution_function)
 
                 self.model.setAllDistributions(distribution)
@@ -134,7 +133,7 @@ class UncertaintyEstimations():
             print "Running for: " + str(nr_mc_sample)
 
 
-            name = "mc-_" + str(nr_mc_sample)
+            name = "mc_" + str(nr_mc_sample)
             current_output_dir_figures = os.path.join(self.output_dir_figures, name)
             tmp_output_dir_data = os.path.join(self.output_dir_data, name)
 
