@@ -129,7 +129,7 @@ class Memory:
 if __name__ == "__main__":
     import numpy as np
     import matplotlib.pyplot as plt
-    from prettyPlot import prettyPlot
+    from uncertainpy import prettyPlot
 
     total_data = np.loadtxt("memory.dat", unpack=True)
     total_time = total_data[0]
