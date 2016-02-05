@@ -111,7 +111,7 @@ class ImplementedNeuronFeatures(NeuronFeatures):
 
 
     def spikeRate(self):
-        if self.spikes.nr_spikes <= 0:
+        if self.spikes.nr_spikes < 0:
             return None
 
         return self.spikes.nr_spikes/float(self.t[-1] - self.t[0])

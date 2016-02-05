@@ -78,6 +78,30 @@
 
 # TODO Add a option for models with variable timesteps
 
+# TODO Fix what seems to be memory leak in code
+
+# TODO Profile the code using line profiler
+
+### After meeting
+
+# TODO Variance of mean and variance of the model is two seperate things.
+# Variance of mean tels how well I have calculated the mean while
+# variance of the model tells how well the model is.
+# Make sure that I calculate the correct one of those in PC and MC method
+# Also make sure I compare the same ones when comparing MC with PC
+
+# TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
+
+#
+
+# TODO Check if averageAPWidth seems correct
+
+# TODO Save 2-3 plots directly from a run. Use one specific parameter set, so
+# we can get a feel for how the model behaves.
+
+# TODO fix the plotting of feature variance.
+
+
 import time
 import os
 import h5py
