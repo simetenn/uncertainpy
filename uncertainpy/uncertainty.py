@@ -354,6 +354,8 @@ For example on use see:
 
     def createPCExpansion(self, parameter_name=None, nr_pc_samples=None):
 
+        self.nr_pc_samples = nr_pc_samples
+
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is None:
             parameter_space = self.model.parameters.getUncertain("parameter_space")
@@ -377,10 +379,10 @@ For example on use see:
             # self.P = cp.orth_ttr(self.M, self.distribution)
             self.P = cp.orth_ttr(self.M, dist_MvNormal)
 
-            if nr_pc_samples is None:
-                nr_pc_samples = 2*len(self.P) + 1
+            if self.nr_pc_samples is None:
+                self.nr_pc_samples = 2*len(self.P) + 1
 
-            nodes_MvNormal = dist_MvNormal.sample(nr_pc_samples, "M")
+            nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
             # nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
             #                                                           rule="J", sparse=True)
 
@@ -399,7 +401,7 @@ For example on use see:
 
             self.P = cp.orth_ttr(self.M, self.distribution)
 
-            if nr_pc_samples is None:
+            if self.nr_pc_samples is None:
                 self.nr_pc_samples = 2*len(self.P) + 1
 
             nodes = self.distribution.sample(self.nr_pc_samples, "M")
