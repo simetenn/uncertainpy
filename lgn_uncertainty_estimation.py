@@ -34,7 +34,7 @@ exploration = uncertainpy.UncertaintyEstimations(model, CPUs=7, supress_model_ou
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
 # percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-percentages = [0.07, 0.08, 0.09, 0.10]
+percentages = [0.02, 0.03, 0.04]
 distributions = {"uniform": percentages}
 exploration.exploreParameters(distributions)
 

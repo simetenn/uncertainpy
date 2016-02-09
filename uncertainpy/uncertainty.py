@@ -21,7 +21,7 @@
 
 # TODO save the entire class to file
 
-# TODO Add suport for canceling a simulation when it is above a certain memory theeshold
+# TODO Add support for aborting a simulation when it is above a certain memory theeshold
 
 # TODO incorporate singleNeuronRun into a class of file
 
@@ -95,7 +95,6 @@ import numpy as np
 import chaospy as cp
 import multiprocessing as mp
 import matplotlib.pyplot as plt
-
 
 from xvfbwrapper import Xvfb
 
@@ -513,7 +512,6 @@ For example on use see:
         return masked_nodes, masked_U, nr_masked
 
 
-
     def evaluateNodes(self, nodes):
         if self.supress_model_graphics:
             vdisplay = Xvfb()
@@ -542,7 +540,6 @@ For example on use see:
             vdisplay.stop()
 
         return np.array(solves)
-
 
 
     def PCAnalysis(self):
@@ -670,7 +667,6 @@ For example on use see:
             if self.save_figures:
                 self.plotAll("%s_single-parameter-%s"
                              % (self.output_data_filename, uncertain_parameter))
-
 
 
 

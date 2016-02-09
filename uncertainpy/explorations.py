@@ -59,7 +59,7 @@ class UncertaintyEstimations():
         if not os.path.isdir(output_dir_data):
             os.makedirs(output_dir_data)
 
-
+    @profile
     def exploreParameters(self, distributions):
         for distribution_function in distributions:
             for interval in distributions[distribution_function]:
