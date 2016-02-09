@@ -6,6 +6,8 @@ import os
 import numpy as np
 import multiprocessing as mp
 
+
+
 __all__ = ["evaluateNodeFunction"]
 __version__ = "0.1"
 
@@ -68,13 +70,12 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
     os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
+
+
     sys.path.insert(0, feature_cmd[0])
     module = __import__(feature_cmd[1].split(".")[0])
 
-    if "feature_options" in kwargs:
-        features = getattr(module, feature_cmd[2])(t, U, **kwargs["feature_options"])
-    else:
-        features = getattr(module, feature_cmd[2])(t, U)
+    features = getattr(module, feature_cmd[2])(t, U, **kwargs)
     # features = ImplementedNeuronFeatures(t, V)
 
     feature_results = features.calculateFeatures(feature_list)
@@ -94,8 +95,8 @@ def evaluateNodeFunction(data):
 
 
     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
-    results["direct_comparison"] = (t, U, interpolation)
+    results["directComparison"] = (t, U, interpolation)
 
-    # All results are saved as {feature : (x, U, interpolatio)} as appropriate.
+    # All results are saved as {feature : (x, U, interpolation)} as appropriate.
 
     return results

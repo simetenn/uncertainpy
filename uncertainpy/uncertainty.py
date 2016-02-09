@@ -55,10 +55,10 @@
 # TODO recreate the save function to only save one parameter run in each hdf5
 # file. Consider saving into seperate .npy files
 
-# TODO Rename direct_comparison to directComparison so that it is named the
+# TODO Rename directComparison to directComparison so that it is named the
 # same as other features
 
-# TODO Make the PC code handle other 2d features than only direct_comparison
+# TODO Make the PC code handle other 2d features than only directComparison
 
 # TODO Make 3d plots of 2d features and 2d plots of 1d features
 
@@ -744,7 +744,7 @@ For example on use see:
         self.sensitivity_ranking = {}
         i = 0
         for parameter in self.model.parameters.getUncertain("name"):
-            self.sensitivity_ranking[parameter] = sum(self.sensitivity["direct_comparison"][i])
+            self.sensitivity_ranking[parameter] = sum(self.sensitivity["directComparison"][i])
             i += 1
 
         total_sensitivity = 0
@@ -783,7 +783,7 @@ For example on use see:
                 group.create_dataset("p_95", data=self.p_95[feature])
             if feature in self.sensitivity:
                 group.create_dataset("sensitivity", data=self.sensitivity[feature])
-            # if feature == "direct_comparison":
+            # if feature == "directComparison":
             #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
 
         f.close()
@@ -797,9 +797,9 @@ For example on use see:
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        padding = len(str(self.U["direct_comparison"].shape[0] + 1))
-        for U in self.U["direct_comparison"]:
-            prettyPlot(self.t["direct_comparison"], U,
+        padding = len(str(self.U["directComparison"].shape[0] + 1))
+        for U in self.U["directComparison"]:
+            prettyPlot(self.t["directComparison"], U,
                        xlabel="Time, ms", ylabel="Voltage")
             plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding)))
             i += 1

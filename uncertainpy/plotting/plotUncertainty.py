@@ -126,7 +126,7 @@ class PlotUncertainty():
 
         self.loaded_flag = True
 
-    def plotMean(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotMean(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -149,7 +149,7 @@ class PlotUncertainty():
 
 
 
-    def plotVariance(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotVariance(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -175,7 +175,7 @@ class PlotUncertainty():
 
 
 
-    def plotMeanAndVariance(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotMeanAndVariance(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -221,7 +221,7 @@ class PlotUncertainty():
 
 
 
-    def plotConfidenceInterval(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotConfidenceInterval(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -255,7 +255,7 @@ class PlotUncertainty():
             plt.close()
 
 
-    def plotSensitivity(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotSensitivity(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -286,7 +286,7 @@ class PlotUncertainty():
 
 
 
-    def plotSensitivityCombined(self, feature="direct_comparison", hardcopy=True, show=False):
+    def plotSensitivityCombined(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -786,7 +786,7 @@ class PlotUncertainty():
                         # if "sensitivity" not in self.f[feature].keys():
                         #     continue
                         #
-                        # t = self.f["direct_comparison"]["t"][:]
+                        # t = self.f["directComparison"]["t"][:]
                         # sensitivity = self.f[feature]["sensitivity"][:]
                         #
                         # parameter_names = self.uncertain_parameters
