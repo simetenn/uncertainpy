@@ -37,8 +37,6 @@
 # the least remove the problems with parameters and setParameters beeing two
 # different things
 
-# TODO Reimplement MC method, and implement a method for comparing the results
-
 # TODO implement a feature description in features
 
 # TODO Reimplement sensitivity ranking, but for all features and not only the diirect_comparison
@@ -52,13 +50,6 @@
 
 # TODO create a progressbar using tqdm
 
-# TODO recreate the save function to only save one parameter run in each hdf5
-# file. Consider saving into seperate .npy files
-
-# TODO Rename directComparison to directComparison so that it is named the
-# same as other features
-
-# TODO Make the PC code handle other 2d features than only directComparison
 
 # TODO Make 3d plots of 2d features and 2d plots of 1d features
 
@@ -71,10 +62,6 @@
 # TODO combine save_data and save_data_dir into the save variable?
 
 # TODO use _ before hidden variables
-
-# TODO make suport for This type of feature, with a new t
-#      def testUt(self):
-#           return self.t, self.U
 
 # TODO Add a option for models with variable timesteps
 
@@ -93,9 +80,11 @@
 
 # TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
 
+# TODO make it possible to create dependent variables.
+
 # TODO Check if averageAPWidth seems correct
 
-# TODO Move plotDirtectComparison to plotUncertainty. Save self.U?
+# TODO Move plotDirtectComparison to plotUncertainty.
 
 import time
 import os

@@ -271,13 +271,13 @@ class PlotUncertainty():
 
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       parameter_names[i] + " sensitivity", "time",
+                       "sensitivity, " + feature, "time",
                        "sensitivity", i, True)
             plt.ylim([0, 1.05])
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                         "Sensitivity_" + feature + "_" + parameter_names[i] + self.figureformat))
+                                         "sensitivity_" + feature + "_" + parameter_names[i] + self.figureformat))
                 plt.close()
 
             if show:
@@ -301,8 +301,9 @@ class PlotUncertainty():
         parameter_names = self.uncertain_parameters
 
         for i in range(len(self.sensitivity[feature])):
-            prettyPlot(self.t[feature], self.sensitivity[feature][i], "sensitivity", "time",
-                       "Sensitivity, " + feature, i, False)
+            prettyPlot(self.t[feature], self.sensitivity[feature][i],
+                       "sensitivity, " + feature, "time",
+                       "sensitivity", i, False)
 
         plt.ylim([0, 1.05])
         plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
@@ -310,7 +311,7 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     "sensitivity" + self.figureformat))
+                                     "sensitivity_" + feature + self.figureformat))
             plt.close()
 
         if show:
