@@ -93,12 +93,7 @@
 
 # TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
 
-#
-
 # TODO Check if averageAPWidth seems correct
-
-# TODO Save 2-3 plots directly from a run. Use one specific parameter set, so
-# we can get a feel for how the model behaves.
 
 # TODO Move plotDirtectComparison to plotUncertainty. Save self.U?
 
@@ -811,6 +806,7 @@ For example on use see:
     def plotAll(self, foldername):
         self.plot.setData(foldername=foldername,
                           t=self.t,
+                          U=self.U,
                           E=self.E,
                           Var=self.Var,
                           p_05=self.p_05,
