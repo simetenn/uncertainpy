@@ -97,7 +97,7 @@ tableau20 : list
     return ax, tableau20
 
 
-def prettyBar(x, error=None, title="", xlabels=[], ylabel="", new_figure=True):
+def prettyBar(x, error=None, start_color=0, title="", xlabels=[], ylabel="", new_figure=True):
         """
         Creates pretty bar plots
         """
@@ -149,7 +149,7 @@ def prettyBar(x, error=None, title="", xlabels=[], ylabel="", new_figure=True):
             index = [0]
 
         tmp_colors = []
-        j = 0
+        j = start_color
         even = True
         for i in index:
             tmp_colors.append(tableau20[j])

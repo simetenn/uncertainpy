@@ -80,12 +80,13 @@
 
 # TODO Fix what seems to be memory leak in code
 
-# TODO Profile the code using line profiler
+# TODO Profile the code using line profiler or
+# python -m cProfile %1
 
 ### After meeting
 
 # TODO Variance of mean and variance of the model is two seperate things.
-# Variance of mean tels how well I have calculated the mean while
+# Variance of mean tells how well I have calculated the mean while
 # variance of the model tells how well the model is.
 # Make sure that I calculate the correct one of those in PC and MC method
 # Also make sure I compare the same ones when comparing MC with PC
@@ -99,8 +100,7 @@
 # TODO Save 2-3 plots directly from a run. Use one specific parameter set, so
 # we can get a feel for how the model behaves.
 
-# TODO fix the plotting of feature variance.
-
+# TODO Move plotDirtectComparison to plotUncertainty. Save self.U?
 
 import time
 import os
@@ -110,6 +110,8 @@ import sys
 import numpy as np
 import chaospy as cp
 import multiprocessing as mp
+import matplotlib.pyplot as plt
+
 
 from xvfbwrapper import Xvfb
 
@@ -117,6 +119,7 @@ from xvfbwrapper import Xvfb
 from uncertainpy.features import ImplementedNeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
+from uncertainpy.plotting.prettyPlot import prettyPlot
 
 class UncertaintyEstimation():
     def __init__(self, model,
@@ -125,6 +128,7 @@ class UncertaintyEstimation():
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
+                 combined_features=True,
                  save_data=True,
                  output_dir_data="data/",
                  output_dir_gif="gif/",
@@ -267,6 +271,7 @@ For example on use see:
         self.figureformat = figureformat
         self.save_data = save_data
         self.output_dir_data = output_dir_data
+        self.output_dir_figures = output_dir_figures
 
         self.supress_model_graphics = supress_model_graphics
         self.supress_model_output = supress_model_output
@@ -288,7 +293,8 @@ For example on use see:
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=output_dir_figures,
                                     output_dir_gif=output_dir_gif,
-                                    figureformat=figureformat)
+                                    figureformat=figureformat,
+                                    combined_features=combined_features)
 
 
         if output_data_filename is None:
@@ -334,6 +340,12 @@ For example on use see:
 
     def evaluateNodeFunctionList(self, nodes):
         data = []
+
+        if "feature_options" in self.kwargs:
+            tmp_kwargs = self.kwargs["feature_options"]
+        else:
+            tmp_kwargs = {}
+
         for node in nodes:
             data.append((self.model.cmd(),
                          self.supress_model_output,
@@ -341,7 +353,7 @@ For example on use see:
                          self.uncertain_parameters,
                          self.feature_list,
                          self.features.cmd(),
-                         self.kwargs))
+                         tmp_kwargs))
         return data
 
 
@@ -404,6 +416,7 @@ For example on use see:
 
 
         solves = self.evaluateNodes(nodes)
+
 
         # Find 1d and 2d features
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
@@ -761,6 +774,8 @@ For example on use see:
 
             if feature in self.t and self.t[feature] is not None:
                 group.create_dataset("t", data=self.t[feature])
+            if feature in self.U:
+                group.create_dataset("U", data=self.E[feature])
             if feature in self.E:
                 group.create_dataset("E", data=self.E[feature])
             if feature in self.Var:
@@ -778,7 +793,22 @@ For example on use see:
 
 
 
-    def plotAll(self, foldername, combined_features=True):
+
+    def plotSimulatorResults(self, foldername="simulator_results"):
+        i = 1
+        save_folder = os.path.join(self.output_dir_figures, foldername)
+        if not os.path.isdir(save_folder):
+            os.makedirs(save_folder)
+
+        padding = len(str(self.U["direct_comparison"].shape[0] + 1))
+        for U in self.U["direct_comparison"]:
+            prettyPlot(self.t["direct_comparison"], U,
+                       xlabel="Time, ms", ylabel="Voltage")
+            plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding)))
+            i += 1
+
+
+    def plotAll(self, foldername):
         self.plot.setData(foldername=foldername,
                           t=self.t,
                           E=self.E,
@@ -788,4 +818,5 @@ For example on use see:
                           uncertain_parameters=self.uncertain_parameters,
                           sensitivity=self.sensitivity)
 
-        self.plot.plotAllData(combined_features=combined_features)
+
+        self.plot.plotAllData()

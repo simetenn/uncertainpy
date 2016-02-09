@@ -14,8 +14,6 @@ from uncertainpy.utils import sortByParameters
 
 ### TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
 
-### TODO refactor gif() to be less complex and use more functions
-
 ### TODO Add feature plots to gif()
 
 ### TODO find a good way to find the directory where the data files are
@@ -26,12 +24,14 @@ class PlotUncertainty():
                  data_dir="data/",
                  output_dir_figures="figures/",
                  output_dir_gif="gifs/",
-                 figureformat=".png"):
+                 figureformat=".png",
+                 combined_features=True):
 
         self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
         self.output_dir_gif = output_dir_gif
         self.figureformat = figureformat
+        self.combined_features = combined_features
         self.f = None
 
         self.tmp_gif_output = ".tmp_gif_output/"
@@ -63,6 +63,7 @@ class PlotUncertainty():
 
 
         self.t = {}
+        self.U = {}
         self.E = {}
         self.Var = {}
         self.p_05 = {}
@@ -70,6 +71,7 @@ class PlotUncertainty():
         self.sensitivity = {}
 
         for feature in f.keys():
+            self.U[feature] = f[feature]["U"][()]
             self.E[feature] = f[feature]["E"][()]
             self.Var[feature] = f[feature]["Var"][()]
             self.p_05[feature] = f[feature]["p_05"][()]
@@ -89,9 +91,10 @@ class PlotUncertainty():
         self.loaded_flag = True
 
 
-    def setData(self, t, E, Var, p_05, p_95, uncertain_parameters, sensitivity, foldername=None):
+    def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters, sensitivity, foldername=None):
 
         self.t = t
+        self.U = U
         self.E = E
         self.Var = Var
         self.p_05 = p_05
@@ -404,20 +407,24 @@ class PlotUncertainty():
             # if "sensitivity" in self.f[feature_name].keys():
             #     sensitivity = self.f[feature_name]["sensitivity"][:]
 
-            ax.bar(pos, self.E[feature_name], yerr=self.Var[feature_name],
-                   width=width, align='center', color=tableau20[0], linewidth=0,
-                   error_kw=dict(ecolor=axis_grey, lw=2, capsize=5, capthick=2))
-            xticks.append(pos)
-            xticklabels.append("mean")
+            ax.bar(pos, self.E[feature_name],
+                   width=width, align='center', color=tableau20[1], linewidth=0)
+            xticks.append(pos - 0.5*width)
+            xticklabels.append("Mean")
+            pos += width
 
 
+            ax.bar(pos, self.Var[feature_name],
+                   width=width, align='center', color=tableau20[0], linewidth=0)
+            xticks.append(pos - 0.5*width)
+            xticklabels.append("Variance")
             pos += distance
 
             ax.bar(pos, self.p_05[feature_name],
                    width=width, align='center', color=tableau20[3], linewidth=0)
             ax.bar(pos + width, self.p_95[feature_name],
                    width=width, align='center', color=tableau20[2], linewidth=0)
-            xticks += [pos, pos + width]
+            xticks += [pos - 0.5*width, pos + 0.5*width]
             xticklabels += ["$P_5$", "$P_{95}$"]
 
 
@@ -445,15 +452,16 @@ class PlotUncertainty():
                 #                 box.width, box.height*(1 - legend_width*0.1)])
                 # ax2.set_position([box.x0, box.y0,
                 #                   box.width, box.height*(1 - legend_width*0.1)])
-            else:
+            # else:
                 # TODO is abs(sensitivity) a problem in the plot?
                 # ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4],
                 #  linewidth=0)
-                xticks.append(pos + distance)
-                xticklabels.append("")
+                # xticks.append(pos + distance)
+                # xticklabels.append("")
 
             ax.set_xticks(xticks)
-            ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
+            ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45,
+                               horizontalalignment="left")
             ax.set_title(feature_name)
 
             ax_i += 1
@@ -535,12 +543,18 @@ class PlotUncertainty():
         pos = 0
         xticks = [pos]
         xticklabels = ["mean"]
-        ax, tableau20 = prettyBar(self.E[feature_name], self.Var[feature_name])
+        ax, tableau20 = prettyBar(self.E[feature_name], start_color=1)
         ax.spines["right"].set_edgecolor(axis_grey)
 
+        ax.set_ylabel(feature_name, fontsize=labelsize)
+        pos += width
+
+        ax.bar(pos, self.Var[feature_name],
+               width=width, align='center', color=tableau20[0], linewidth=0)
+        xticks.append(pos)
+        xticklabels += ["Variance"]
         pos += distance
 
-        ax.set_ylabel(feature_name, fontsize=labelsize)
 
         ax.bar(pos, self.p_05[feature_name],
                width=width, align='center', color=tableau20[3], linewidth=0)
@@ -593,26 +607,25 @@ class PlotUncertainty():
         pos += 3*distance
         ax.set_xticks(xticks)
         ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
-
         plt.suptitle(self.filename + ", " + feature_name, fontsize=titlesize)
 
         return ax, tableau20, pos
 
 
 
-    def plotAllDataInFolder(self, combined_features=True):
+    def plotAllDataInFolder(self):
         print "Plotting all data"
 
         for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
 
-            self.plotAllData(combined_features)
+            self.plotAllData()
 
 
-    def plotAllData(self, combined_features=True):
+    def plotAllData(self):
         self.plot2dFeatures()
 
-        if combined_features:
+        if self.combined_features:
             self.plot1dFeaturesCombined()
         else:
             self.plot1dFeatures()
@@ -620,7 +633,7 @@ class PlotUncertainty():
 
 
 
-    def plotAllDataFromExploration(self, combined_features=True):
+    def plotAllDataFromExploration(self):
         print "Plotting all data"
 
         original_data_dir = self.data_dir
@@ -637,7 +650,7 @@ class PlotUncertainty():
 
                 self.plot2dFeatures()
 
-                if combined_features:
+                if self.combined_features:
                     self.plot1dFeaturesCombined()
                 else:
                     self.plot1dFeatures()
