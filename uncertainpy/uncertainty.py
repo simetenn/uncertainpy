@@ -511,7 +511,6 @@ For example on use see:
 
         return masked_nodes, masked_U, nr_masked
 
-
     def evaluateNodes(self, nodes):
         if self.supress_model_graphics:
             vdisplay = Xvfb()

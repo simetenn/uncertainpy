@@ -6,6 +6,10 @@ import multiprocessing as mp
 
 from uncertainpy import UncertaintyEstimation, Distribution, prettyPlot, prettyBar
 
+
+from guppy import hpy
+
+
 class UncertaintyEstimations():
     def __init__(self, model,
                  feature_list=[],
@@ -30,6 +34,8 @@ class UncertaintyEstimations():
 
         # Figures are always saved on the format:
         # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
+
+
 
         self.uncertainty_estimations = {}
 
@@ -59,8 +65,13 @@ class UncertaintyEstimations():
         if not os.path.isdir(output_dir_data):
             os.makedirs(output_dir_data)
 
-    @profile
+        self.hp = hpy()
+
+
+
     def exploreParameters(self, distributions):
+        print self.hp.heap()
+        self.hp.setrelheap()
         for distribution_function in distributions:
             for interval in distributions[distribution_function]:
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
@@ -72,7 +83,8 @@ class UncertaintyEstimations():
 
                 name = distribution_function + "_" + str(interval)
                 print "Running for: " + distribution_function + " " + str(interval)
-
+                print "Before creating uncertainty object"
+                print self.hp.heap().byrcs
                 tmp_output_dir_data = \
                     os.path.join(self.output_dir_data,
                                  distribution_function + "_%g" % interval)
@@ -97,6 +109,10 @@ class UncertaintyEstimations():
 
                 self.uncertainty_estimations[name].singleParameters()
                 self.uncertainty_estimations[name].allParameters()
+
+
+                print "After all calculations"
+                print self.hp.heap().byrcs
 
 
 
