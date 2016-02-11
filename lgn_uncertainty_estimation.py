@@ -38,8 +38,8 @@ percentages = [0.02, 0.03, 0.04]
 distributions = {"uniform": percentages}
 exploration.exploreParameters(distributions)
 
-mc_samples = [50, 100, 200, 500, 1000, 1500, 2000]
-exploration.compareMC(mc_samples)
+# mc_samples = [50, 100, 200, 500, 1000, 1500, 2000]
+# exploration.compareMC(mc_samples)
 
 
 memory.end()

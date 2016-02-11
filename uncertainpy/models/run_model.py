@@ -12,7 +12,7 @@ def main():
     # parser.add_argument("--kwargs", nargs="*")
 
 
-    args, parameter_args = parser.parse_known_args()
+    args = parser.parse_args()
 
     # module = __import__(args.model_name)
     # model = getattr(module, args.model_name)
@@ -24,16 +24,19 @@ def main():
     simulation = model()
     simulation.load()
 
-    if len(args.parameters) % 2 != 0:
-        print "ERROR: Number of parameters does not match number"
-        print "         of parametervalues sent to simulation.py"
-        sys.exit(1)
 
     parameters = {}
     i = 0
     while i < len(args.parameters):
         parameters[args.parameters[i]] = float(args.parameters[i+1])
         i += 2
+
+    print parameters
+
+    if len(args.parameters) % 2 != 0:
+        print "ERROR: Number of parameters does not match number"
+        print "       of parametervalues sent to simulation"
+        sys.exit(1)
 
     simulation.setParameterValues(parameters)
     simulation.run()

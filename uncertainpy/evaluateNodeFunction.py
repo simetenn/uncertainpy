@@ -49,7 +49,7 @@ def evaluateNodeFunction(data):
 
     for parameter in tmp_parameters:
         cmd.append(parameter)
-        cmd.append(str(tmp_parameters[parameter]))
+        cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()

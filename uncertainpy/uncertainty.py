@@ -104,6 +104,11 @@ from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot
 
+import warnings
+
+warnings.simplefilter('ignore')
+
+
 class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,

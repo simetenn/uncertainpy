@@ -23,9 +23,9 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  output_dir_figures="figures/izhikevich",
                                                  nr_mc_samples=10**2)
 
-#percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
+percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
 # percentages = np.linspace(0.01, 0.25, 50)
-percentages = [0.01, 0.03, 0.05, 0.07, 0.09]
+# percentages = [0.01, 0.03, 0.05, 0.07, 0.09]
 
 test_distributions = {"uniform": percentages}
 exploration.exploreParameters(test_distributions)

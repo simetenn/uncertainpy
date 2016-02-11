@@ -69,26 +69,29 @@ class Memory:
 
 
     def percent(self):
-        return self.memory()/psutil.virtual_memory().total*100
+        return self.memory()/float(psutil.virtual_memory().total)*100
+
 
     def saveCurrentProcess(self, info=""):
-        memory_GB = "%.2f" % (self.memory()/1024**3)
-        t = "%.2f" % (time.time()-self.t_start)
-        p = "%.2f" % (self.percent())
-        if info:
-            info = " : " + info
-        self.f.write(t + " " + p + " " + memory_GB + info + "\n")
-
-    def saveTotal(self, info=""):
-        memory_GB = "%.2f" % (self.totalUsed()/1024**3)
-        t = "%.2f" % (time.time()-self.t_start)
-        p = "%.2f" % (self.totalPercent())
+        memory_GB = "%.5f" % (self.memory()/float(1024**3))
+        t = "%.5f" % (time.time()-self.t_start)
+        p = "%.5f" % (self.percent())
         if info:
             info = " : " + info
         self.total_f.write(t + " " + p + " " + memory_GB + info + "\n")
 
+
+    def saveTotal(self, info=""):
+        memory_GB = "%.5f" % (self.totalUsed()/float(1024**3))
+        t = "%.5f" % (time.time()-self.t_start)
+        p = "%.5f" % (self.totalPercent())
+        if info:
+            info = " : " + info
+        self.total_f.write(t + " " + p + " " + memory_GB + info + "\n")
+
+
     def __str__(self):
-        return "%.2f GB" % (self.memory()/1024.**3)
+        return "%.5f GB" % (self.memory()/1024.**3)
 
 
     def totalMemory(self):
@@ -109,6 +112,15 @@ class Memory:
         self.total_f = open(self.filename, "w")
         self.t_start = time.time()
         while not self.exit.is_set():
+            self.saveCurrentProcess()
+            time.sleep(self.delta_poll)
+
+        self.total_f.close()
+
+    def logTotal(self):
+        self.total_f = open(self.filename, "w")
+        self.t_start = time.time()
+        while not self.exit.is_set():
             self.saveTotal()
             time.sleep(self.delta_poll)
 
@@ -117,6 +129,11 @@ class Memory:
 
     def start(self):
         self.p = mp.Process(target=self.log)
+        self.p.start()
+
+
+    def startTotal(self):
+        self.p = mp.Process(target=self.logTotal)
         self.p.start()
 
 

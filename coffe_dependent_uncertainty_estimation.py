@@ -2,7 +2,7 @@ import subprocess
 import datetime
 import uncertainpy
 
-memory = uncertainpy.Memory(10)
+memory = uncertainpy.Memory(1)
 memory.start()
 
 parameterlist = [["kappa", -0.01, None],
