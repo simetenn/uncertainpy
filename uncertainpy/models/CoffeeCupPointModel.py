@@ -19,18 +19,11 @@ class CoffeeCupPointModel(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
 
-        self.kappa = -0.01
+        self.kappa = -0.05
         self.u_env = 20
 
         self.u0 = 95
-        self.t_points = np.linspace(0, 360, 150)
-
-        self.x = np.linspace(0, 10, 500)
-
-        # self.u0 = np.zeros(len(self.x))
-        # for i, t in enumerate(self.x):
-        #     if 4 <= t <= 6:
-        #         self.u0[i] = 95
+        self.t_points = np.linspace(0, 200, 150)
 
     def f(self, u, t):
         return self.kappa*(u - self.u_env)

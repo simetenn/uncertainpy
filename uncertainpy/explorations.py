@@ -19,12 +19,14 @@ class UncertaintyEstimations():
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
+                 plot_simulator_results=False,
                  supress_model_graphics=True,
                  supress_model_output=True,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
-                 nr_mc_samples=10**2,
+                 nr_mc_samples=10**3,
+                 nr_pc_mc_samples=10**5,
                  **kwargs):
         """
         Options can also be sent to the feature
@@ -47,6 +49,7 @@ class UncertaintyEstimations():
         self.output_dir_figures = output_dir_figures
         self.save_data = save_data
         self.output_dir_data = output_dir_data
+        self.plot_simulator_results = plot_simulator_results
 
         self.supress_model_graphics = supress_model_graphics
         self.supress_model_output = supress_model_output
@@ -57,6 +60,7 @@ class UncertaintyEstimations():
         self.features = features
         self.feature_list = feature_list
         self.nr_mc_samples = nr_mc_samples
+        self.nr_pc_mc_samples = nr_pc_mc_samples
 
         self.kwargs = kwargs
 
@@ -104,15 +108,19 @@ class UncertaintyEstimations():
                                           interpolate_union=self.interpolate_union,
                                           rosenblatt=self.rosenblatt,
                                           nr_mc_samples=self.nr_mc_samples,
+                                          nr_pc_mc_samples=self.nr_pc_mc_samples,
                                           **self.kwargs)
 
                 self.uncertainty_estimations.singleParameters()
                 self.uncertainty_estimations.allParameters()
-                # del self.uncertainty_estimations
+                if self.plot_simulator_results:
+                    self.uncertainty_estimations.plotSimulatorResults()
+
+                del self.uncertainty_estimations
 
                 print "After all calculations"
                 print self.hp.heap().byrcs
-                time.sleep(1)
+                time.sleep(10)
 
 
 
@@ -125,7 +133,7 @@ class UncertaintyEstimations():
 
 
 
-        self.uncertainty_estimations_pc =\
+        self.uncertainty_estimations =\
             UncertaintyEstimation(self.model,
                                   feature_list=self.feature_list,
                                   features=self.features,
@@ -140,17 +148,24 @@ class UncertaintyEstimations():
                                   CPUs=self.CPUs,
                                   interpolate_union=self.interpolate_union,
                                   rosenblatt=self.rosenblatt,
+                                  nr_pc_mc_samples=self.nr_pc_mc_samples,
                                   **self.kwargs)
 
         time_1 = time.time()
-        self.uncertainty_estimations_pc.allParameters()
-        pc_var = self.uncertainty_estimations_pc.Var
-        t_pc = self.uncertainty_estimations_pc.t
+
+        self.uncertainty_estimations.allParameters()
+
+        if self.plot_simulator_results:
+            self.uncertainty_estimations.plotSimulatorResults()
+
+        pc_var = self.uncertainty_estimations.Var
+        t_pc = self.uncertainty_estimations.t
         nr_pc_samples = self.uncertainty_estimations.nr_pc_samples
-        features_2d =  self.uncertainty_estimations.features_2d
-        features_1d =  self.uncertainty_estimations.features_1d
+        features_2d = self.uncertainty_estimations.features_2d
+        features_1d = self.uncertainty_estimations.features_1d
 
         del self.uncertainty_estimations
+
         run_times.append(time.time() - time_1)
 
         mc_var = {}
@@ -178,20 +193,30 @@ class UncertaintyEstimations():
                                       interpolate_union=self.interpolate_union,
                                       rosenblatt=self.rosenblatt,
                                       nr_mc_samples=nr_mc_sample,
+                                      nr_pc_mc_samples=self.nr_pc_mc_samples,
                                       **self.kwargs)
 
+
             time_1 = time.time()
+
             self.uncertainty_estimations.allParametersMC()
+            if self.plot_simulator_results:
+                self.uncertainty_estimations.plotSimulatorResults()
+
             mc_var[nr_mc_sample] = self.uncertainty_estimations.Var
+
             del self.uncertainty_estimations
+
             run_times.append(time.time() - time_1)
 
+
+
+
+        ### Code to compare MC to PC
 
         output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
         if not os.path.isdir(output_dir_compare):
             os.makedirs(output_dir_compare)
-
-
 
 
         for feature in features_2d:
@@ -211,7 +236,7 @@ class UncertaintyEstimations():
 
                 legend.append("MC samples " + str(nr_mc_sample))
 
-                prettyPlot(t[feature], difference_var,
+                prettyPlot(t_pc[feature], difference_var,
                            new_figure=new_figure, color=color,
                            xlabel="Time", ylabel="Variance, mv",
                            title="MC variance/PC variance(%d), %s" % (nr_pc_samples, feature))
@@ -228,11 +253,10 @@ class UncertaintyEstimations():
         for feature in features_1d:
             difference_var = []
             legend = []
-            for mc_estimation in sorted(self.uncertainty_estimations):
-                mc = self.uncertainty_estimations[mc_estimation]
+            for mc_estimation in sorted(mc_var):
                 difference_var.append(mc_var[mc_estimation][feature]/float(pc_var[feature]))
 
-                legend.append("MC " + str(mc.nr_mc_samples))
+                legend.append("MC " + str(mc_estimation))
 
                 new_figure = False
                 color += 2
@@ -248,6 +272,53 @@ class UncertaintyEstimations():
 
 
 
+
+            color = 0
+            max_var = 0
+            min_var = 0
+            legend = []
+            new_figure = True
+
+            for nr_mc_sample in sorted(mc_var):
+
+                if mc_var[nr_mc_sample]["directComparison"].max() > max_var:
+                    max_var = mc_var[nr_mc_sample]["directComparison"].max()
+
+                if mc_var[nr_mc_sample]["directComparison"].min() < min_var:
+                    min_var = mc_var[nr_mc_sample]["directComparison"].min()
+
+                legend.append("MC samples " + str(nr_mc_sample))
+
+                prettyPlot(t_pc["directComparison"], mc_var[nr_mc_sample]["directComparison"],
+                           new_figure=new_figure, color=color,
+                           xlabel="Time", ylabel="Variance, mv",
+                           title="Variance")
+                new_figure = False
+                color += 2
+
+
+            if pc_var["directComparison"].max() > max_var:
+                max_var = pc_var["directComparison"].max()
+
+            if pc_var["directComparison"].min() < min_var:
+                min_var = pc_var["directComparison"].min()
+
+            legend.append("PC")
+
+            prettyPlot(t_pc["directComparison"], pc_var["directComparison"],
+                       new_figure=new_figure, color=color,
+                       xlabel="Time", ylabel="Variance, mv",
+                       title="Variance")
+            new_figure = False
+            color += 2
+
+
+            plt.ylim([min_var, max_var])
+            plt.legend(legend)
+            plt.savefig(os.path.join(output_dir_compare,
+                                     "variance-MC-PC_" + self.figureformat))
+            # plt.show()
+            plt.close()
 
 
 

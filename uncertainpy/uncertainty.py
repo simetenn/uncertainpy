@@ -395,7 +395,8 @@ For example on use see:
             self.P = cp.orth_ttr(self.M, self.distribution)
 
             if self.nr_pc_samples is None:
-                self.nr_pc_samples = 2*len(self.P) + 1
+                self.nr_pc_samples = 2*len(self.P) + 2
+
 
             nodes = self.distribution.sample(self.nr_pc_samples, "M")
             # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
@@ -554,12 +555,13 @@ For example on use see:
             if len(self.uncertain_parameters) > 1:
                     self.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
 
-            samples = self.distribution.sample(self.nr_pc_mc_samples, "M")
+            samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 
             if len(self.uncertain_parameters) > 1:
                 self.U_mc[feature] = self.U_hat[feature](*samples)
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
+
 
             if feature in self.features_2d:
                 self.p_05[feature] = np.percentile(self.U_mc[feature], 5, 1)
@@ -603,7 +605,7 @@ For example on use see:
                     tmp_U_mc.append(solved[feature][1])
 
                 self.t[feature] = np.arange(len(solves[0][feature][1]))
-                self.U_mc[feature] = np.array(tmp_U_mc)
+                self.U[feature] = np.array(tmp_U_mc)
 
             elif hasattr(solves[0][feature][0], "__iter__"):
                 ts = []
@@ -612,38 +614,36 @@ For example on use see:
                     ts.append(solved[feature][0])
                     interpolation.append(solved[feature][2])
 
-                self.t[feature], self.U_mc[feature] = self.performInterpolation(ts, interpolation)
+                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
             else:
                 print "Return from feature %s does not fit the given format (t, U, interpolation)" % feature
 
         for feature in self.features_1d:
-            self.U_mc[feature] = []
+            self.U[feature] = []
             for solved in solves:
                 self.t[feature] = None
-                self.U_mc[feature].append(solved[feature][1])
+                self.U[feature].append(solved[feature][1])
 
-            self.U_mc[feature] = np.array(self.U_mc[feature])
-
-        # Calculate PC for each feature
+            self.U[feature] = np.array(self.U[feature])
 
         for feature in self.features_1d:
             masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
-                                                                nodes, self.U_mc)
+                                                                nodes, self.U)
 
-            self.E[feature] = (np.sum(masked_U, 0).T/(self.nr_mc_samples - nr_masked)).T
-            self.Var[feature] = \
-                (np.sum((masked_U - self.E[feature])**2, 0).T/(self.nr_mc_samples - nr_masked)).T
+            self.E[feature] = np.mean(masked_U, 0)
+            self.Var[feature] = np.var(masked_U, 0)
+
             self.p_05[feature] = np.percentile(masked_U, 5)
             self.p_95[feature] = np.percentile(masked_U, 95)
 
 
         for feature in self.features_2d:
             masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
-                                                                nodes, self.U_mc)
+                                                                nodes, self.U)
 
-            self.E[feature] = (np.sum(masked_U, 0).T/(self.nr_mc_samples - nr_masked)).T
-            self.Var[feature] = \
-                (np.sum((masked_U - self.E[feature])**2, 0).T/(self.nr_mc_samples - nr_masked)).T
+            self.E[feature] = np.mean(masked_U, 0)
+            self.Var[feature] = np.var(masked_U, 0)
+
             self.p_95[feature] = np.percentile(masked_U, 95, 0)
             self.p_05[feature] = np.percentile(masked_U, 5, 0)
 
