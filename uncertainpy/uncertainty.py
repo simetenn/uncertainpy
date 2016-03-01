@@ -123,6 +123,7 @@ class UncertaintyEstimation():
                  output_data_filename=None,
                  supress_model_graphics=True,
                  supress_model_output=True,
+                 adaptive_model=False,
                  CPUs=mp.cpu_count(),
                  interpolate_union=False,
                  rosenblatt=False,
@@ -266,6 +267,7 @@ For example on use see:
         self.CPUs = CPUs
 
         self.model = model
+        self.adaptive_model = adaptive_model
 
         self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
@@ -337,6 +339,7 @@ For example on use see:
         for node in nodes:
             data.append((self.model.cmd(),
                          self.supress_model_output,
+                         self.adaptive_model,
                          node,
                          self.uncertain_parameters,
                          self.feature_list,
@@ -414,11 +417,15 @@ For example on use see:
         self.features_2d = []
         self.features_1d = []
 
+
         for feature in solves[0]:
-            if hasattr(solves[0][feature][1], "__iter__"):
+            #if hasattr(solves[0][feature][1], "__iter__"):
+            if len(solves[0][feature][1].shape) >= 1:
                 self.features_2d.append(feature)
             else:
                 self.features_1d.append(feature)
+
+        print self.features_1d
 
         for feature in self.features_2d:
             if solves[0][feature][0] is None:
@@ -430,13 +437,24 @@ For example on use see:
                 self.U[feature] = np.array(tmp_U)
 
             elif hasattr(solves[0][feature][0], "__iter__"):
-                ts = []
-                interpolation = []
-                for solved in solves:
-                    ts.append(solved[feature][0])
-                    interpolation.append(solved[feature][2])
+                if self.adaptive_model:
+                    ts = []
+                    interpolation = []
+                    for solved in solves:
+                        ts.append(solved[feature][0])
+                        interpolation.append(solved[feature][2])
 
-                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
+                    self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
+                else:
+                    self.t[feature] = []
+                    self.U[feature] = []
+                    for solved in solves:
+                        self.t[feature].append(solved[feature][0])
+                        self.U[feature].append(solved[feature][1])
+
+                    self.t[feature] = np.array(self.t[feature])
+                    self.U[feature] = np.array(self.U[feature])
+
             else:
                 print "Return from feature %s does not fit the given format (t, U, interpolation)" % feature
 
@@ -533,6 +551,7 @@ For example on use see:
                 for node in nodes.T:
                     solves.append(evaluateNodeFunction([self.model.cmd(),
                                                         self.supress_model_output,
+                                                        self.adaptive_model,
                                                         node,
                                                         self.uncertain_parameters,
                                                         self.feature_list,

@@ -17,17 +17,18 @@ filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
-    all_data = (cmds, node, tmp_parameter_names, modelfile, modelpath,
+    all_data = (cmds, supress_model_output, node, tmp_parameter_names,
                 feature_list, feature_cmd, kwargs)
     """
     cmd = data[0]
     supress_model_output = data[1]
-    node = data[2]
-    tmp_parameter_names = data[3]
-    feature_list = data[4]
-    feature_cmd = data[5]
+    adaptive_model = data[2]
+    node = data[3]
+    tmp_parameter_names = data[4]
+    feature_list = data[5]
+    feature_cmd = data[6]
 
-    kwargs = data[6]
+    kwargs = data[7]
 
     if isinstance(node, float) or isinstance(node, int):
         node = [node]
@@ -71,31 +72,35 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
 
-
-    sys.path.insert(0, feature_cmd[0])
-    module = __import__(feature_cmd[1].split(".")[0])
-
-    features = getattr(module, feature_cmd[2])(t, U, **kwargs)
-    # features = ImplementedNeuronFeatures(t, V)
-
-    feature_results = features.calculateFeatures(feature_list)
-
     results = {}
-    for feature in feature_results:
-        tmp_result = feature_results[feature]
 
-        if hasattr(tmp_result, "__iter__"):
-            if len(tmp_result) == 2 and hasattr(tmp_result[0], "__iter__") and hasattr(tmp_result[1], "__iter__"):
-                interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
-                results[feature] = (tmp_result[0], tmp_result[1], interpolation)
+    if len(feature_list) > 0:
+        sys.path.insert(0, feature_cmd[0])
+        module = __import__(feature_cmd[1].split(".")[0])
+        features = getattr(module, feature_cmd[2])(t, U, **kwargs)
+        # features = ImplementedNeuronFeatures(t, V)
+
+
+
+        feature_results = features.calculateFeatures(feature_list)
+        for feature in feature_results:
+            tmp_result = feature_results[feature]
+
+            if hasattr(tmp_result, "__iter__"):
+                if len(tmp_result) == 2 and hasattr(tmp_result[0], "__iter__") and hasattr(tmp_result[1], "__iter__"):
+                    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+                    results[feature] = (tmp_result[0], tmp_result[1], interpolation)
+                else:
+                    results[feature] = (None, tmp_result, None)
             else:
-                results[feature] = (None, tmp_result, None)
-        else:
-            results[feature] = (None, (tmp_result), None)
+                results[feature] = (None, (tmp_result), None)
 
 
-    interpolation = None#scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
-    results["directComparison"] = (t, U, interpolation)
+    if adaptive_model:
+        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+        results["directComparison"] = (t, U, interpolation)
+    else:
+        results["directComparison"] = (t, U, None)
 
     # All results are saved as {feature : (x, U, interpolation)} as appropriate.
 

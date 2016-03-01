@@ -70,8 +70,8 @@ class Model():
 
 
     def save(self, CPU=None, save_path=""):
-        if self.t is None or self.U is None:
-            raise ValueError("t or U has not been calculated")
+        if self.U is None:
+            raise ValueError("U has not been calculated")
 
         if CPU is None:
             np.save(os.path.join(save_path, ".tmp_U"), self.U)

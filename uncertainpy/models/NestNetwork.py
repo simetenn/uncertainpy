@@ -1,7 +1,7 @@
 from model import Model
 import pandas as pd
 import numpy as np
-import nest
+
 
 class NestNetwork(Model):
     def __init__(self, parameters=None):
@@ -24,6 +24,9 @@ class NestNetwork(Model):
 
         self.N_rec = 100   # Number of neurons to record from
         self.simtime = 1000
+
+    def load(self):
+        import nest
 
         nest.ResetKernel()
 
@@ -96,6 +99,8 @@ class NestNetwork(Model):
             return np.nan
 
     def run(self):
+        self.load()
+
         nest.Simulate(self.simtime)
         events_E = pd.DataFrame(nest.GetStatus(self.spike_detec_E, 'events')[0])
         cv = []

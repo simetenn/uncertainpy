@@ -35,4 +35,7 @@ class CoffeeCupPointModel(Model):
         solver.set_initial_condition(self.u0)
 
         self.U, self.t = solver.solve(self.t_points)
+        self.U = np.mean(self.U)
+        self.t = None
+
         return self.t, self.U

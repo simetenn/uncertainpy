@@ -17,7 +17,7 @@ model.setAllDistributions(uncertainpy.Distribution(1).uniform)
 
 uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 CPUs=8,
-                                                save_figures=False,
+                                                save_figures=True,
                                                 feature_list="all",
                                                 output_dir_data="data/izhikevich",
                                                 output_dir_figures="figures/izhikevich",
