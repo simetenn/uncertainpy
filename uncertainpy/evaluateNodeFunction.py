@@ -94,7 +94,7 @@ def evaluateNodeFunction(data):
             results[feature] = (None, (tmp_result), None)
 
 
-    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+    interpolation = None#scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
     results["directComparison"] = (t, U, interpolation)
 
     # All results are saved as {feature : (x, U, interpolation)} as appropriate.
