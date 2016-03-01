@@ -9,4 +9,5 @@ from CoffeeCupPointModelDependent import CoffeeCupPointModelDependent
 from HodkinHuxleyModel import HodkinHuxleyModel
 from IzhikevichModel import IzhikevichModel
 from NeuronModel import NeuronModel
+from NestNetwork import NestNetwork
 from model import Model

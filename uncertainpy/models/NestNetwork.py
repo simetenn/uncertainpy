@@ -1,7 +1,7 @@
 from model import Model
-
+import pandas as pd
 import numpy as np
-
+import nest
 
 class NestNetwork(Model):
     def __init__(self, parameters=None):
@@ -11,7 +11,7 @@ class NestNetwork(Model):
         self.eta = 1.0  # rate of external population in multiples of threshold rate
         self.delay = 1.5  # synaptic delay in ms
         self.C_m = 281.0
-        self.tau_m = C_m/20.0   # Membrane time constant in mV
+        self.tau_m = self.C_m/20.0   # Membrane time constant in mV
         self.V_th = -50.4  # Spike threshold in mV
         self.t_ref = 2.0
         self.E_L = -60.
@@ -23,12 +23,12 @@ class NestNetwork(Model):
         self.P_E = .8  # P_I = 1 - P_E
 
         self.N_rec = 100   # Number of neurons to record from
-        self.simtime = 10000
+        self.simtime = 1000
 
         nest.ResetKernel()
 
-        N_E = int(N_neurons * self.P_E)
-        N_I = int(N_neurons * (1 - self.P_E))
+        N_E = int(self.N_neurons * self.P_E)
+        N_I = int(self.N_neurons * (1 - self.P_E))
 
         C_E = int(N_E/10)  # number of excitatory synapses per neuron
         C_I = int(N_I/10)  # number of inhibitory synapses per neuron
@@ -41,7 +41,7 @@ class NestNetwork(Model):
 
         # Configure kernel and neuron defaults
         nest.SetKernelStatus({"print_time": True,
-                              "local_num_threads": 8})
+                              "local_num_threads": 1})
 
         nest.SetDefaults("iaf_psc_delta",
                          {"C_m": self.C_m,
@@ -64,7 +64,7 @@ class NestNetwork(Model):
                      "excitatory")
 
         nest.CopyModel("static_synapse", "inhibitory",
-                       {"weight": J_I, "delay": delay})
+                       {"weight": J_I, "delay": self.delay})
 
         nest.Connect(nodes_I, nodes,
                      {"rule": 'fixed_indegree', "indegree": C_I},
@@ -79,13 +79,31 @@ class NestNetwork(Model):
         spikes = nest.Create("spike_detector", 2,
                              params=[{"label": "Exc", "to_file": False},
                                      {"label": "Inh", "to_file": False}])
-        spikes_E = spikes[:1]
-        spikes_I = spikes[1:]
+        self.spike_detec_E = spikes[:1]
+        self.spike_detec_I = spikes[1:]
 
         # connect using all_to_all: all recorded excitatory neurons to one
         # detector
-        nest.Connect(nodes_E[:self.N_rec], spikes_E)
-        nest.Connect(nodes_I[:self.N_rec], spikes_I)
+        nest.Connect(nodes_E[:self.N_rec], self.spike_detec_E)
+        nest.Connect(nodes_I[:self.N_rec], self.spike_detec_I)
+
+    def calc_CV(self, spikes):
+        isi = np.diff(spikes)
+        if len(isi) > 0:
+            CV = np.sqrt(np.mean(isi**2) - np.mean(isi)**2) / np.mean(isi)
+            return CV
+        else:
+            return np.nan
 
     def run(self):
         nest.Simulate(self.simtime)
+        events_E = pd.DataFrame(nest.GetStatus(self.spike_detec_E, 'events')[0])
+        cv = []
+        for idx, sender in enumerate(events_E.senders):
+            spikes = events_E[events_E.senders == sender].times
+            cv.append(self.calc_CV(spikes))
+
+        self.U = np.nanmean(np.array(cv))
+        self.t = 1
+        print self.U
+        print self.t
