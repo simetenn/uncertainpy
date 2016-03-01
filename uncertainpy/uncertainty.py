@@ -425,8 +425,6 @@ For example on use see:
             else:
                 self.features_1d.append(feature)
 
-        print self.features_1d
-
         for feature in self.features_2d:
             if solves[0][feature][0] is None:
                 tmp_U = []
