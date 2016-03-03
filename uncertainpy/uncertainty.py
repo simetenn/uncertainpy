@@ -407,71 +407,18 @@ For example on use see:
             #     nodes = np.array([nodes])
 
 
-
-
         solves = self.evaluateNodes(nodes)
 
-
-        # Find 1d and 2d features
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
-        self.features_2d = []
-        self.features_1d = []
-
-
-        for feature in solves[0]:
-            #if hasattr(solves[0][feature][1], "__iter__"):
-            if len(solves[0][feature][1].shape) >= 1:
-                self.features_2d.append(feature)
-            else:
-                self.features_1d.append(feature)
-
-        for feature in self.features_2d:
-            if solves[0][feature][0] is None:
-                tmp_U = []
-                for solved in solves:
-                    tmp_U.append(solved[feature][1])
-
-                self.t[feature] = np.arange(len(solves[0][feature][1]))
-                self.U[feature] = np.array(tmp_U)
-
-            elif hasattr(solves[0][feature][0], "__iter__"):
-                if self.adaptive_model:
-                    ts = []
-                    interpolation = []
-                    for solved in solves:
-                        ts.append(solved[feature][0])
-                        interpolation.append(solved[feature][2])
-
-                    self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
-                else:
-                    self.t[feature] = []
-                    self.U[feature] = []
-                    for solved in solves:
-                        self.t[feature].append(solved[feature][0])
-                        self.U[feature].append(solved[feature][1])
-
-                    self.t[feature] = np.array(self.t[feature])
-                    self.U[feature] = np.array(self.U[feature])
-
-            else:
-                print "Return from feature %s does not fit the given format (t, U, interpolation)" % feature
-
-        for feature in self.features_1d:
-            self.U[feature] = []
-            for solved in solves:
-                self.t[feature] = None
-                self.U[feature].append(solved[feature][1])
-
-            self.U[feature] = np.array(self.U[feature])
+        self.storeResults(solves)
 
         # Calculate PC for each feature
-
-        for feature in self.features_1d + self.features_2d:
-            masked_nodes, masked_U, nr_masked = self.createMask(self.nr_pc_samples, feature,
-                                                                nodes, self.U)
+        for feature in self.features_0d + self.features_1d:
+            masked_nodes, masked_U = self.createMask(nodes, feature)
 
             if self.rosenblatt:
-                # self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal, weights, interpolated_solves)
+                # self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal,
+                #                                weights, interpolated_solves)
                 self.U_hat[feature] = cp.fit_regression(self.P, nodes_MvNormal,
                                                         self.U[feature], rule="T")
             else:
@@ -479,6 +426,62 @@ For example on use see:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
 
+
+    def storeResults(self, solves):
+        self.features_0d, self.features_1d = self.sortFeatures(solves[0])
+
+        for feature in self.features_1d:
+            if solves[0][feature][0] is None:
+                self.t[feature] = np.arange(len(solves[0][feature][1]))
+            else:
+                self.t[feature] = solves[0][feature][0]
+
+
+            if self.adaptive_model:
+                ts = []
+                interpolation = []
+                for solved in solves:
+                    ts.append(solved[feature][0])
+                    interpolation.append(solved[feature][2])
+
+                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
+            else:
+                self.U[feature] = []
+                for solved in solves:
+                    self.U[feature].append(solved[feature][1])
+
+                self.U[feature] = np.array(self.U[feature])
+
+
+        for feature in self.features_0d:
+            self.U[feature] = []
+            for solved in solves:
+                self.t[feature] = None
+                self.U[feature].append(solved[feature][1])
+
+            self.U[feature] = np.array(self.U[feature])
+
+
+        # Mask None values
+        for feature in self.features_0d + self.features_1d:
+            self.U[feature] = np.ma.masked_invalid(self.U[feature])
+
+
+    def sortFeatures(self, results):
+        features_1d = []
+        features_0d = []
+
+        for feature in results:
+            if hasattr(results[feature][1], "__iter__"):
+                if len(results[feature][1].shape) == 0:
+                    features_0d.append(feature)
+                else:
+                    features_1d.append(feature)
+            else:
+                features_0d.append(feature)
+
+        return features_0d, features_1d
+        
 
 
     def performInterpolation(self, ts, interpolation):
@@ -508,30 +511,32 @@ For example on use see:
         return t, interpolated_solves
 
 
-    def createMask(self, nr_samples, feature, nodes, U):
-        i = 0
-        mask = np.ones(nr_samples, dtype=bool)
 
-        nr_masked = 0
-        for u in U[feature]:
-            if u is None:
-                mask[i] = False
-                nr_masked += 1
+    def createMask(self, nodes, feature):
+        if feature in self.features_0d:
+            mask = ~self.U[feature].mask
+            if len(nodes.shape) > 1:
+                masked_nodes = nodes[:, mask]
+            else:
+                masked_nodes = nodes[mask]
 
-            i += 1
-
-        if len(nodes.shape) > 1:
-            masked_nodes = nodes[:, mask]
+            masked_U = self.U[feature][mask]
         else:
-            masked_nodes = nodes[mask]
+            mask = ~np.any(self.U[feature].mask, axis=1)
 
-        masked_U = U[feature][mask]
+            if len(nodes.shape) > 1:
+                masked_nodes = nodes[:, mask]
+            else:
+                masked_nodes = nodes[mask]
+
+            masked_U = self.U[feature][mask, :]
 
         if not np.all(mask):
             print "Warning: feature %s does not yield results for all parameter combinations" \
                 % feature
 
-        return masked_nodes, masked_U, nr_masked
+        return masked_nodes, masked_U
+
 
     def evaluateNodes(self, nodes):
         if self.supress_model_graphics:
@@ -565,7 +570,7 @@ For example on use see:
 
 
     def PCAnalysis(self):
-        for feature in self.features_1d + self.features_2d:
+        for feature in self.features_0d + self.features_1d:
             self.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
 
@@ -580,12 +585,13 @@ For example on use see:
                 self.U_mc[feature] = self.U_hat[feature](samples)
 
 
-            if feature in self.features_2d:
+            if feature in self.features_1d:
                 self.p_05[feature] = np.percentile(self.U_mc[feature], 5, 1)
                 self.p_95[feature] = np.percentile(self.U_mc[feature], 95, 1)
             else:
                 self.p_05[feature] = np.percentile(self.U_mc[feature], 5)
                 self.p_95[feature] = np.percentile(self.U_mc[feature], 95)
+
 
 
 
@@ -606,44 +612,9 @@ For example on use see:
 
         # Find 1d and 2d features
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
-        self.features_2d = []
-        self.features_1d = []
+        self.storeResults(solves)
 
-        for feature in solves[0]:
-            if hasattr(solves[0][feature][1], "__iter__"):
-                self.features_2d.append(feature)
-            else:
-                self.features_1d.append(feature)
-
-        for feature in self.features_2d:
-            if solves[0][feature][0] is None:
-                tmp_U_mc = []
-                for solved in solves:
-                    tmp_U_mc.append(solved[feature][1])
-
-                self.t[feature] = np.arange(len(solves[0][feature][1]))
-                self.U[feature] = np.array(tmp_U_mc)
-
-            elif hasattr(solves[0][feature][0], "__iter__"):
-                ts = []
-                interpolation = []
-                for solved in solves:
-                    ts.append(solved[feature][0])
-                    interpolation.append(solved[feature][2])
-
-                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
-            else:
-                print "Return from feature %s does not fit the given format (t, U, interpolation)" % feature
-
-        for feature in self.features_1d:
-            self.U[feature] = []
-            for solved in solves:
-                self.t[feature] = None
-                self.U[feature].append(solved[feature][1])
-
-            self.U[feature] = np.array(self.U[feature])
-
-        for feature in self.features_1d:
+        for feature in self.features_0d:
             masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
                                                                 nodes, self.U)
 
@@ -654,7 +625,7 @@ For example on use see:
             self.p_95[feature] = np.percentile(masked_U, 95)
 
 
-        for feature in self.features_2d:
+        for feature in self.features_1d:
             masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
                                                                 nodes, self.U)
 
@@ -688,6 +659,7 @@ For example on use see:
             if self.save_figures:
                 self.plotAll("%s_single-parameter-%s"
                              % (self.output_data_filename, uncertain_parameter))
+
 
 
 
@@ -772,13 +744,13 @@ For example on use see:
         f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
         f.attrs["features"] = self.feature_list
 
-        for feature in self.features_1d + self.features_2d:
+        for feature in self.features_0d + self.features_1d:
             group = f.create_group(feature)
 
             if feature in self.t and self.t[feature] is not None:
                 group.create_dataset("t", data=self.t[feature])
             if feature in self.U:
-                group.create_dataset("U", data=self.E[feature])
+                group.create_dataset("U", data=self.U[feature])
             if feature in self.E:
                 group.create_dataset("E", data=self.E[feature])
             if feature in self.Var:

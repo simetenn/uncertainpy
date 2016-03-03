@@ -45,16 +45,10 @@ class PlotUncertainty():
         self.filename = filename
         f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
 
+        self.features_0d = []
         self.features_1d = []
-        self.features_2d = []
 
-        for feature in f.keys():
-            if len(f[feature]["E"].shape) == 0:
-                self.features_1d.append(feature)
-            elif len(f[feature]["E"].shape) == 1:
-                self.features_2d.append(feature)
-            else:
-                print "WARNING: No support for more than 1d and 2d plotting"
+        self.features_0d, self.features_1d = self.sortFeatures(self.E)
 
         self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
 
@@ -102,16 +96,8 @@ class PlotUncertainty():
         self.sensitivity = sensitivity
         self.uncertain_parameters = uncertain_parameters
 
-        self.features_1d = []
-        self.features_2d = []
 
-        for feature in self.E:
-            if len(self.E[feature].shape) == 0:
-                self.features_1d.append(feature)
-            elif len(self.E[feature].shape) == 1:
-                self.features_2d.append(feature)
-            else:
-                print "WARNING: No support for more than 1d and 2d plotting"
+        self.features_0d, self.features_1d = self.sortFeatures(self.E)
 
 
         if foldername is None:
@@ -126,14 +112,34 @@ class PlotUncertainty():
 
         self.loaded_flag = True
 
+
+    def sortFeatures(self, results):
+        features_1d = []
+        features_0d = []
+
+        for feature in results:
+            if hasattr(results[feature], "__iter__"):
+                if len(results[feature].shape) == 0:
+                    features_0d.append(feature)
+                elif len(results[feature].shape) == 1:
+                        features_1d.append(feature)
+                else:
+                    print "WARNING: No support for more than 0d and 1d plotting"
+
+            else:
+                features_0d.append(feature)
+
+        return features_0d, features_1d
+
+
     def plotMean(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature not in self.features_2d:
+        if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 2D feature" % (feature))
+            raise ValueError("%s is not a 1d feature" % (feature))
 
         color1 = 0
 
@@ -154,9 +160,9 @@ class PlotUncertainty():
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature not in self.features_2d:
+        if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 2D feature" % (feature))
+            raise ValueError("%s is not a 1d feature" % (feature))
 
 
         color2 = 8
@@ -180,9 +186,9 @@ class PlotUncertainty():
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature not in self.features_2d:
+        if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 2D feature" % (feature))
+            raise ValueError("%s is not a 1d feature" % (feature))
 
 
         color1 = 0
@@ -226,9 +232,9 @@ class PlotUncertainty():
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature not in self.features_2d:
+        if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 2D feature" % (feature))
+            raise ValueError("%s is not a 1d feature" % (feature))
 
 
         ax, color = prettyPlot(self.t[feature], self.E[feature],
@@ -260,9 +266,9 @@ class PlotUncertainty():
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature not in self.features_2d:
+        if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 2D feature" % (feature))
+            raise ValueError("%s is not a 1d feature" % (feature))
 
         if feature not in self.sensitivity or self.sensitivity[feature] is None:
             return
@@ -291,9 +297,9 @@ class PlotUncertainty():
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature not in self.features_2d:
+        if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 2D feature" % (feature))
+            raise ValueError("%s is not a 1d feature" % (feature))
 
         if feature not in self.sensitivity or self.sensitivity[feature] is None:
             return
@@ -319,8 +325,8 @@ class PlotUncertainty():
             plt.close()
 
 
-    def plot2dFeatures(self):
-        for feature in self.features_2d:
+    def plot1dFeatures(self):
+        for feature in self.features_1d:
             self.plotMean(feature=feature)
             self.plotVariance(feature=feature)
             self.plotMeanAndVariance(feature=feature)
@@ -330,7 +336,7 @@ class PlotUncertainty():
 
 
 
-    def plot1dFeaturesCombined(self, index=0, max_legend_size=5):
+    def plot0dFeaturesCombined(self, index=0, max_legend_size=5):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
@@ -339,11 +345,11 @@ class PlotUncertainty():
         if len(self.uncertain_parameters) > 8:
             self.features_in_combined_plot = 2
 
-        if self.features_in_combined_plot + index < len(self.features_1d):
-            self.plot1dFeaturesCombined(index + self.features_in_combined_plot)
-            feature_names = self.features_1d[index:self.features_in_combined_plot + index]
+        if self.features_in_combined_plot + index < len(self.features_0d):
+            self.plot0dFeaturesCombined(index + self.features_in_combined_plot)
+            feature_names = self.features_0d[index:self.features_in_combined_plot + index]
         else:
-            feature_names = self.features_1d[index:]
+            feature_names = self.features_0d[index:]
 
         if len(feature_names) == 0:
             return
@@ -353,12 +359,12 @@ class PlotUncertainty():
         fontsize = 16
         labelsize = 14
 
-        if len(self.features_1d) > max_legend_size:
+        if len(self.features_0d) > max_legend_size:
             legend_size = max_legend_size
         else:
             legend_size = len(self.uncertain_parameters)
 
-        legend_width = np.ceil(len(self.features_1d)/float(max_legend_size))
+        legend_width = np.ceil(len(self.features_0d)/float(max_legend_size))
 
         width = 0.2
         distance = 0.5
@@ -502,13 +508,13 @@ class PlotUncertainty():
         plt.close()
 
 
-    def plot1dFeatures(self):
+    def plot0dFeatures(self):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
-        for feature_name in self.features_1d:
-            self.plot1dFeature(feature_name)
+        for feature_name in self.features_0d:
+            self.plot0dFeature(feature_name)
             save_name = "%s_%s" % (self.filename, feature_name) + self.figureformat
             plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
             plt.close()
@@ -516,14 +522,14 @@ class PlotUncertainty():
 
 
     # TODO not finhised, missing correct label placement
-    def plot1dFeature(self, feature_name, max_legend_size=5):
+    def plot0dFeature(self, feature_name, max_legend_size=5):
         if not self.loaded_flag:
             print "Datafile must be loaded"
             sys.exit(1)
 
-        if feature_name not in self.features_1d:
+        if feature_name not in self.features_0d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1D feature" % (feature_name))
+            raise ValueError("%s is not a 0d feature" % (feature_name))
 
 
         if len(self.uncertain_parameters) > max_legend_size:
@@ -624,12 +630,12 @@ class PlotUncertainty():
 
 
     def plotAllData(self):
-        self.plot2dFeatures()
+        self.plot1dFeatures()
 
         if self.combined_features:
-            self.plot1dFeaturesCombined()
+            self.plot0dFeaturesCombined()
         else:
-            self.plot1dFeatures()
+            self.plot0dFeatures()
 
 
 
@@ -649,12 +655,12 @@ class PlotUncertainty():
 
                 self.loadData(filename.split("/")[-1])
 
-                self.plot2dFeatures()
+                self.plot1dFeatures()
 
                 if self.combined_features:
-                    self.plot1dFeaturesCombined()
+                    self.plot0dFeaturesCombined()
                 else:
-                    self.plot1dFeatures()
+                    self.plot0dFeatures()
 
         self.data_dir = original_data_dir
         self.output_dir_figures = original_output_dir_figures
@@ -739,7 +745,7 @@ class PlotUncertainty():
                     filename = f.split("/")[-1]
                     self.loadData(os.path.join(foldername, filename))
 
-                    for feature in self.features_2d:
+                    for feature in self.features_1d:
                         self.plotMean(feature=feature, hardcopy=False)
                         plt.ylim([min_data[filename][feature]["E"],
                                   max_data[filename][feature]["E"]])
@@ -780,9 +786,9 @@ class PlotUncertainty():
 
 
                         # # PLot sensitivity each single plot
-                        # if feature not in self.features_2d:
+                        # if feature not in self.features_1d:
                         #     # TODO is this the right error to raise?
-                        #     raise ValueError("%s is not a 2D feature" % (feature))
+                        #     raise ValueError("%s is not a 1d feature" % (feature))
                         #
                         # if "sensitivity" not in self.f[feature].keys():
                         #     continue

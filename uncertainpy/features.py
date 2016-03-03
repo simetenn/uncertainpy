@@ -3,7 +3,7 @@ import scipy.interpolate
 import scipy.optimize
 import os
 import sys
-
+import numpy as np
 
 
 class GeneralFeatures():
@@ -40,8 +40,11 @@ class GeneralFeatures():
         if not callable(getattr(self, feature_name)):
             raise NotImplementedError("%s is not a implemented feature" % (feature_name))
 
-        return getattr(self, feature_name)()
-
+        tmp_result = getattr(self, feature_name)()
+        if tmp_result is None:
+            return np.NaN
+        else:
+            return tmp_result
 
     def calculateFeatures(self, feature_names):
         results = {}

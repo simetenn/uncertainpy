@@ -17,7 +17,7 @@ filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
-    all_data = (cmds, supress_model_output, node, tmp_parameter_names,
+    all_data = (cmds, supress_model_output, adaptive_model, node, tmp_parameter_names,
                 feature_list, feature_cmd, kwargs)
     """
     cmd = data[0]
