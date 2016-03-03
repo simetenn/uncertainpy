@@ -413,30 +413,40 @@ For example on use see:
         self.storeResults(solves)
 
         # Calculate PC for each feature
-        for feature in self.features_0d + self.features_1d:
-            masked_nodes, masked_U = self.createMask(nodes, feature)
+        for feature in self.all_features:
 
             if self.rosenblatt:
+                masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
+
                 # self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal,
                 #                                weights, interpolated_solves)
-                self.U_hat[feature] = cp.fit_regression(self.P, nodes_MvNormal,
-                                                        self.U[feature], rule="T")
+                # self.U_hat[feature] = cp.fit_regression(self.P, nodes_MvNormal,
+                #                                         self.U[feature], rule="T")
             else:
+                masked_nodes, masked_U = self.createMask(nodes, feature)
+
                 # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-                self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                        masked_U, rule="T")
+                # self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                #                                         masked_U, rule="T")
+
+            # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+            self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                                                    masked_U, rule="T")
+
 
 
     def storeResults(self, solves):
-        self.features_0d, self.features_1d = self.sortFeatures(solves[0])
+        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(solves[0])
 
-        for feature in self.features_1d:
+        self.all_features = self.features_0d + self.features_1d + self.features_2d
+
+        for feature in self.features_1d + self.features_2d:
             if solves[0][feature][0] is None:
                 self.t[feature] = np.arange(len(solves[0][feature][1]))
             else:
                 self.t[feature] = solves[0][feature][0]
 
-
+            # Not tested for 2d features
             if self.adaptive_model:
                 ts = []
                 interpolation = []
@@ -463,25 +473,28 @@ For example on use see:
 
 
         # Mask None values
-        for feature in self.features_0d + self.features_1d:
+        for feature in self.all_features:
             self.U[feature] = np.ma.masked_invalid(self.U[feature])
 
 
     def sortFeatures(self, results):
-        features_1d = []
         features_0d = []
+        features_1d = []
+        features_2d = []
 
         for feature in results:
             if hasattr(results[feature][1], "__iter__"):
                 if len(results[feature][1].shape) == 0:
                     features_0d.append(feature)
-                else:
+                elif len(results[feature][1].shape) == 1:
                     features_1d.append(feature)
+                else:
+                    features_2d.append(feature)
             else:
                 features_0d.append(feature)
 
-        return features_0d, features_1d
-        
+        return features_0d, features_1d, features_2d
+
 
 
     def performInterpolation(self, ts, interpolation):
@@ -521,8 +534,19 @@ For example on use see:
                 masked_nodes = nodes[mask]
 
             masked_U = self.U[feature][mask]
-        else:
+            
+        elif feature in self.features_1d:
             mask = ~np.any(self.U[feature].mask, axis=1)
+
+            if len(nodes.shape) > 1:
+                masked_nodes = nodes[:, mask]
+            else:
+                masked_nodes = nodes[mask]
+
+            masked_U = self.U[feature][mask, :]
+
+        elif feature in self.features_2d:
+            mask = ~np.any(np.any(self.U[feature].mask, axis=1), axis=1)
 
             if len(nodes.shape) > 1:
                 masked_nodes = nodes[:, mask]
@@ -570,7 +594,7 @@ For example on use see:
 
 
     def PCAnalysis(self):
-        for feature in self.features_0d + self.features_1d:
+        for feature in self.all_features:
             self.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
 
@@ -584,14 +608,8 @@ For example on use see:
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
 
-
-            if feature in self.features_1d:
-                self.p_05[feature] = np.percentile(self.U_mc[feature], 5, 1)
-                self.p_95[feature] = np.percentile(self.U_mc[feature], 95, 1)
-            else:
-                self.p_05[feature] = np.percentile(self.U_mc[feature], 5)
-                self.p_95[feature] = np.percentile(self.U_mc[feature], 95)
-
+            self.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
+            self.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
 
 
 
@@ -744,7 +762,7 @@ For example on use see:
         f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
         f.attrs["features"] = self.feature_list
 
-        for feature in self.features_0d + self.features_1d:
+        for feature in self.all_features:
             group = f.create_group(feature)
 
             if feature in self.t and self.t[feature] is not None:
