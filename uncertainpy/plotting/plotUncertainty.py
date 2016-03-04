@@ -25,7 +25,7 @@ class PlotUncertainty():
                  output_dir_figures="figures/",
                  output_dir_gif="gifs/",
                  figureformat=".png",
-                 combined_features=False):
+                 combined_features=True):
 
         self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
@@ -433,7 +433,6 @@ class PlotUncertainty():
             xticks += [pos - 0.5*width, pos + 0.5*width]
             xticklabels += ["$P_5$", "$P_{95}$"]
 
-
             if feature_name in self.sensitivity and self.sensitivity[feature_name] is not None:
                 pos += distance + width
 
@@ -465,6 +464,7 @@ class PlotUncertainty():
                 # xticks.append(pos + distance)
                 # xticklabels.append("")
 
+            xticks += [pos + distance]
             ax.set_xticks(xticks)
             ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45,
                                horizontalalignment="left")
