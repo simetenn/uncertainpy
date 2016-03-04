@@ -86,6 +86,10 @@
 
 # TODO Move plotDirtectComparison to plotUncertainty.
 
+# TODO Fix MC so it has support for 2d model output
+
+# TODO Fix bug in plotting
+
 import time
 import os
 import h5py
@@ -534,7 +538,7 @@ For example on use see:
                 masked_nodes = nodes[mask]
 
             masked_U = self.U[feature][mask]
-            
+
         elif feature in self.features_1d:
             mask = ~np.any(self.U[feature].mask, axis=1)
 
@@ -624,34 +628,18 @@ For example on use see:
         self.distribution = cp.J(*parameter_space)
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
-
-
         solves = self.evaluateNodes(nodes)
 
         # Find 1d and 2d features
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
         self.storeResults(solves)
 
-        for feature in self.features_0d:
-            masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
-                                                                nodes, self.U)
+        for feature in self.all_features:
+            self.E[feature] = np.mean(self.U[feature], 0)
+            self.Var[feature] = np.var(self.U[feature], 0)
 
-            self.E[feature] = np.mean(masked_U, 0)
-            self.Var[feature] = np.var(masked_U, 0)
-
-            self.p_05[feature] = np.percentile(masked_U, 5)
-            self.p_95[feature] = np.percentile(masked_U, 95)
-
-
-        for feature in self.features_1d:
-            masked_nodes, masked_U, nr_masked = self.createMask(self.nr_mc_samples, feature,
-                                                                nodes, self.U)
-
-            self.E[feature] = np.mean(masked_U, 0)
-            self.Var[feature] = np.var(masked_U, 0)
-
-            self.p_95[feature] = np.percentile(masked_U, 95, 0)
-            self.p_05[feature] = np.percentile(masked_U, 5, 0)
+            self.p_05[feature] = np.percentile(self.U[feature], 5, 0)
+            self.p_95[feature] = np.percentile(self.U[feature], 95, 0)
 
 
     def timePassed(self):

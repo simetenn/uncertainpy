@@ -25,7 +25,7 @@ class PlotUncertainty():
                  output_dir_figures="figures/",
                  output_dir_gif="gifs/",
                  figureformat=".png",
-                 combined_features=True):
+                 combined_features=False):
 
         self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
@@ -99,7 +99,6 @@ class PlotUncertainty():
 
         self.features_0d, self.features_1d = self.sortFeatures(self.E)
 
-
         if foldername is None:
             self.filename = ""
             self.full_output_dir_figures = self.output_dir_figures
@@ -122,7 +121,7 @@ class PlotUncertainty():
                 if len(results[feature].shape) == 0:
                     features_0d.append(feature)
                 elif len(results[feature].shape) == 1:
-                        features_1d.append(feature)
+                    features_1d.append(feature)
                 else:
                     print "WARNING: No support for more than 0d and 1d plotting"
 

@@ -25,8 +25,8 @@ uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 combined_features=True)
 
 
-uncertainty.singleParameters()
-uncertainty.allParameters()
+uncertainty.singleParametersMC()
+uncertainty.allParametersMC()
 # uncertainty.plotSimulatorResults()
 
 memory.end()
