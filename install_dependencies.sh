@@ -30,12 +30,12 @@ set -e  # make sure any failed command stops the script
 
 echo "Installing system wide packages"
 apt_install gcc
+apt_install python-dev
 apt_install python-matplotlib
 apt_install python-scipy
 apt_install python-h5py
 apt_install build-essential
 apt_install gfortran
-apt_install python-dev
 
 
 # sudo apt-get install -y virtualenvwrapper
