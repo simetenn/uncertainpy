@@ -84,11 +84,9 @@
 
 # TODO Check if averageAPWidth seems correct
 
-# TODO Move plotDirtectComparison to plotUncertainty.
+# TODO Move plotDirectComparison to plotUncertainty.
 
-# TODO Fix MC so it has support for 2d model output
-
-# TODO Fix bug in plotting
+# TODO Create full test coverage
 
 import time
 import os
