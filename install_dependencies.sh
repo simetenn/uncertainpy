@@ -30,7 +30,7 @@ set -e  # make sure any failed command stops the script
 
 echo "Installing system wide packages"
 apt_install gcc
-apt_install python-dev
+apt_install build-dev
 apt_install python-matplotlib
 apt_install python-scipy
 apt_install python-h5py
