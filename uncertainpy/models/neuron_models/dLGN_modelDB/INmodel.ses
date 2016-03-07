@@ -1,0 +1,64 @@
+{load_file("nrngui.hoc")}
+objectvar save_window_, rvp_
+objectvar scene_vector_[4]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+{
+xpanel("RunControl", 0)
+v_init = -65
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 3000
+xvalue("t","t", 2 )
+tstop = 3000
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 1e-08
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+screen_update_invl = 0.05
+xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
+realtime = 8.7
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(1290,30)
+}
+{
+xpanel("IClamp[0] at soma(0.5)", 0)
+xlabel("IClamp[0] at soma(0.5)")
+stim.del = 1000
+xvalue("del","stim.del", 1,"", 0, 1 )
+stim.dur = 900
+xvalue("dur","stim.dur", 1,"", 0, 1 )
+stim.amp = 0.055
+xvalue("amp","stim.amp", 1,"", 0, 1 )
+stim.i = 0
+xvalue("i","stim.i", 0,"", 0, 1 )
+xpanel(1302,474)
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,3000,-80,40)
+scene_vector_[2] = save_window_
+{save_window_.view(0, -80, 3000, 120, 858, 384, 300.6, 200.8)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addexpr("v(.5)", 1, 1, 0.8, 0.9, 2)
+}
+{
+save_window_ = new PlotShape(0)
+save_window_.size(-366.324,200.488,-277.361,289.734)
+save_window_.variable("v")
+scene_vector_[3] = save_window_
+{save_window_.view(-366.324, -277.361, 566.812, 567.095, 972, 30, 200.7, 200.8)}
+fast_flush_list.append(save_window_)
+save_window_.save_name("fast_flush_list.")
+}
+objectvar scene_vector_[1]
+{doNotify()}
