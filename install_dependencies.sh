@@ -35,6 +35,7 @@ apt_install python-scipy
 apt_install python-h5py
 apt_install build-essential
 apt_install gfortran
+apt_install python-dev
 
 
 # sudo apt-get install -y virtualenvwrapper
@@ -54,6 +55,7 @@ pip_install numpy
 pip_install -e git+https://github.com/hplgit/chaospy.git#egg=chaospy
 
 pip_install xvfbwrapper
+pip_install python-dev
 pip_install psutils
 pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
 
