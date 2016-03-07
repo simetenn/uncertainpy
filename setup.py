@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# TODO add option to install in virtual enviroment
+
 import subprocess
 import os
 import sys

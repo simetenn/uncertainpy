@@ -34,7 +34,7 @@ apt_install python-matplotlib
 apt_install python-scipy
 apt_install python-h5py
 apt_install build-essential
-apt_install gfortan
+apt_install gfortran
 
 # sudo apt-get install -y virtualenvwrapper
 # source /etc/bash_completion.d/virtualenvwrapper
