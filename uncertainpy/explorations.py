@@ -7,8 +7,6 @@ import multiprocessing as mp
 from uncertainpy import UncertaintyEstimation, Distribution, prettyPlot, prettyBar
 import time
 
-from guppy import hpy
-
 
 class UncertaintyEstimations():
     def __init__(self, model,
