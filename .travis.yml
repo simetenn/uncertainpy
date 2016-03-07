@@ -14,4 +14,5 @@ install:
 script:
  #  - source /etc/bash_completion.d/virtualenvwrapper
  #  - workon uncertainpy
+  - cd uncertainpy
   - nose2

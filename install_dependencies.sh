@@ -35,7 +35,7 @@ apt_install python-scipy
 apt_install python-h5py
 apt_install build-essential
 apt_install gfortran
-apt_install g77
+# apt_install g77
 
 # sudo apt-get install -y virtualenvwrapper
 # source /etc/bash_completion.d/virtualenvwrapper
