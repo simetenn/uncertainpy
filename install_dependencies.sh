@@ -33,6 +33,7 @@ apt_install gcc
 apt_install python-matplotlib
 apt_install python-scipy
 apt_install python-h5py
+apt_install build-essential
 
 
 # sudo apt-get install -y virtualenvwrapper

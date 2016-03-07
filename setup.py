@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 import platform
+import argparse
 
 try:
     from setuptools import setup, find_packages, Command
@@ -50,6 +51,13 @@ class CustomInstall(_install):
     def run(self):
         setupInstall()
         _install.run(self)
+
+
+
+# parser = argparse.ArgumentParser(description="Install uncertainpy %s" % (name))
+# parse.add_argument("-p", '--paper', action='store_true',
+#                                  help='Compile for paper')
+# parse.parse_known_args()
 
 
 try:
