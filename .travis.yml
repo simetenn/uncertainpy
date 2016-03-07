@@ -9,9 +9,9 @@ compiler:
 sudo: required
 dist: trusty
 install:
-  - sudo apt-get install python-pip
-  - sudo apt-get install python-scipy python-networkx cython gcc
-  - sudo apt-get install build-essential python-dev python-setuptools libatlas-dev libatlas3gf-base
+  - sudo apt-get -qq install python-pip
+  - sudo apt-get -qq install python-scipy python-networkx cython gcc
+  - sudo apt-get -qq install build-essential python-dev python-setuptools libatlas-dev libatlas3gf-base
   - sudo pip install -e git+https://github.com/hplgit/chaospy.git#egg=chaospy
   - sudo python setup.py install
 script:
