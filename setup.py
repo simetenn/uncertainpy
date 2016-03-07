@@ -60,7 +60,8 @@ try:
         pass
 except IndexError:
     pass
-
+except KeyError:
+    print "Could not create virtual_enviroment"
 
 cmdclass = {'install': CustomInstall,
             'develop': CustomDevelop}

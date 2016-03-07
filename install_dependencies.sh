@@ -22,23 +22,26 @@ function pip_install {
 }
 
 sudo apt-get update --fix-missing
-# sudo apt-get install -y virtualenvwrapper
-# source /etc/bash_completion.d/virtualenvwrapper
-# set +e
-# mkvirtualenv uncertainpy
-# workon uncertainpy
-# set -e
+
 
 echo "Starting installation"
 
 set -e  # make sure any failed command stops the script
-
 
 echo "Installing system wide packages"
 apt_install gcc
 apt_install python-matplotlib
 apt_install python-scipy
 apt_install python-h5py
+
+
+# sudo apt-get install -y virtualenvwrapper
+# source /etc/bash_completion.d/virtualenvwrapper
+# set +e
+# mkvirtualenv uncertainpy --system-site-packages
+# workon uncertainpy
+# set -e
+
 
 
 echo "Installing virtual envionment packages"
