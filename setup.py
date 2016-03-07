@@ -62,16 +62,20 @@ class CustomInstall(_install):
 # parse.parse_known_args()
 
 
-try:
-    cmds = ["install", "develop"]
+if "-h" in sys.argv:
+    print """
+Commandline arguments:
+    --virtual: Install in a virtual enviroment
+    install: Install uncertainpy
+    develop: Install uncertainpy as a developer
+    """
 
-    if sys.argv[1] in cmds and platform.system() == "Linux":
-        activate_virtualev()
-        pass
-except IndexError:
-    pass
-except KeyError:
-    print "Could not create virtual_enviroment"
+if "--virtual" in sys.argv:
+    activate_virtualev()
+    sys.argv.remove("--virtual")
+
+
+
 
 cmdclass = {'install': CustomInstall,
             'develop': CustomDevelop}
