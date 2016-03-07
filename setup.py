@@ -74,6 +74,9 @@ if "--virtual" in sys.argv:
     activate_virtualev()
     sys.argv.remove("--virtual")
 
+if "--neuron" in sys.argv:
+    subprocess.call("./install_neuron.sh", shell=True)
+    sys.argv.remove("--neuron")
 
 
 
