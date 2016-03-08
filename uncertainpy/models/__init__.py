@@ -11,3 +11,4 @@ from IzhikevichModel import IzhikevichModel
 from NeuronModel import NeuronModel
 from NestNetwork import NestNetwork
 from model import Model
+from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d

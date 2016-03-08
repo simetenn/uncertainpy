@@ -18,6 +18,7 @@ model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 CPUs=1,
+                                                supress_model_output=True,
                                                 feature_list=None,
                                                 save_figures=True,
                                                 output_dir_data="data/coffee",

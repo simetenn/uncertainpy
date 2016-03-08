@@ -58,3 +58,4 @@ make install
 
 cd /usr/local/neuron/nrn/src/nrnpython
 python setup.py install
+export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages/

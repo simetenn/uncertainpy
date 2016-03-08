@@ -31,7 +31,6 @@ def main():
         parameters[args.parameters[i]] = float(args.parameters[i+1])
         i += 2
 
-    print parameters
 
     if len(args.parameters) % 2 != 0:
         print "ERROR: Number of parameters does not match number"

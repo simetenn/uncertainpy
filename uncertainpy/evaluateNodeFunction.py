@@ -78,8 +78,6 @@ def evaluateNodeFunction(data):
         sys.path.insert(0, feature_cmd[0])
         module = __import__(feature_cmd[1].split(".")[0])
         features = getattr(module, feature_cmd[2])(t, U, **kwargs)
-        # features = ImplementedNeuronFeatures(t, V)
-
 
 
         feature_results = features.calculateFeatures(feature_list)
@@ -88,8 +86,11 @@ def evaluateNodeFunction(data):
 
             if hasattr(tmp_result, "__iter__"):
                 if len(tmp_result) == 2 and hasattr(tmp_result[0], "__iter__") and hasattr(tmp_result[1], "__iter__"):
-                    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
-                    results[feature] = (tmp_result[0], tmp_result[1], interpolation)
+                    if adaptive_model:
+                        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(tmp_result[0], tmp_result[1], k=3)
+                        results[feature] = (tmp_result[0], tmp_result[1], interpolation)
+                    else:
+                        results[feature] = (tmp_result[0], tmp_result[1], None)
                 else:
                     results[feature] = (None, tmp_result, None)
             else:
