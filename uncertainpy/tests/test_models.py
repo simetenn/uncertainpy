@@ -66,7 +66,7 @@ class TestHodkinHuxleyModel(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
 
@@ -178,7 +178,7 @@ class TestCoffeeCupPointModel(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
 
@@ -192,7 +192,7 @@ class TestCoffeeCupPointModel(unittest.TestCase):
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
 
@@ -293,7 +293,7 @@ class TestIzhikevichModel(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
 
@@ -444,7 +444,7 @@ class TestTestingModel0d(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
     def test_saveTNoneProcess(self):
@@ -480,7 +480,7 @@ class TestTestingModel0d(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
         self.model.save(1)
@@ -489,7 +489,7 @@ class TestTestingModel0d(unittest.TestCase):
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
         self.assertIsInstance(self.model.cmd(), list)
@@ -555,7 +555,7 @@ class TestTestingModel1d(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
     def test_saveTNoneProcess(self):
@@ -666,7 +666,7 @@ class TestTestingModel2d(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
     def test_saveTNoneProcess(self):
@@ -679,7 +679,7 @@ class TestTestingModel2d(unittest.TestCase):
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
 
-        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.isnan(t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
 
