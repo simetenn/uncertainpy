@@ -9,10 +9,10 @@ compiler:
 sudo: required
 dist: trusty
 install:
- # - sudo apt-get install -y virtualenvwrapper
+  # - sudo apt-get install -y virtualenvwrapper
   - sudo python setup.py install
 script:
- #  - source /etc/bash_completion.d/virtualenvwrapper
- #  - workon uncertainpy
-  - cd uncertainpy
+  # Currently travis does not support my creation of virtual env
+  # - source /etc/bash_completion.d/virtualenvwrapper
+  # - workon uncertainpy
   - nose2
