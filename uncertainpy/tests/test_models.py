@@ -27,38 +27,6 @@ from uncertainpy.models import IzhikevichModel, Model, NeuronModel
 #         run_model(model, models[model_name])
 
 
-# def test_CoffeeCupPointModel():
-#     from uncertainpy.models import CoffeeCupPointModel
-#
-#     model = CoffeeCupPointModel()
-#     model.load()
-#
-#     parameters = {"kappa": -0.05, "u_env": 20}
-#     model.setParameterValues(parameters)
-#
-#     t, U = model.run()
-#
-#     # def distribution_function(x):
-#     #     return x
-#     #
-#     # model.setAllDistributions(distribution_function)
-#     # model.setDistribution("kappa", distribution_function)
-#
-#     model.save()
-#     t = np.load(".tmp_t.npy")
-#     U = np.load(".tmp_U.npy")
-#     os.remove(".tmp_U.npy")
-#     os.remove(".tmp_t.npy")
-#
-#     model.save(1)
-#     U = np.load(".tmp_U_%s.npy" % 1)
-#     t = np.load(".tmp_t_%s.npy" % 1)
-#     os.remove(".tmp_U_%s.npy" % 1)
-#     os.remove(".tmp_t_%s.npy" % 1)
-#
-#     model.cmd()
-
-
 class TestHodkinHuxleyModel(unittest.TestCase):
     def setUp(self):
         self.model = HodkinHuxleyModel()
@@ -106,7 +74,38 @@ class TestHodkinHuxleyModel(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.model.cmd()
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
+
+
+    def test_useCase(self):
+        self.model = HodkinHuxleyModel()
+        self.model.load()
+
+        parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
+        self.model.setParameterValues(parameters)
+        self.model.run()
+        self.model.save()
+
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
 
 
 class TestCoffeeCupPointModel(unittest.TestCase):
@@ -160,6 +159,35 @@ class TestCoffeeCupPointModel(unittest.TestCase):
         self.assertEqual(self.model.cmd()[0], "python")
 
 
+    def test_useCase(self):
+        self.model = CoffeeCupPointModel()
+        self.model.load()
+
+        parameters = parameters = {"kappa": -0.05, "u_env": 20}
+        self.model.setParameterValues(parameters)
+        self.model.run()
+        self.model.save()
+
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
+
 
 class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
@@ -212,6 +240,37 @@ class TestIzhikevichModel(unittest.TestCase):
         self.assertEqual(self.model.cmd()[0], "python")
 
 
+
+    def test_useCase(self):
+            self.model = IzhikevichModel()
+            self.model.load()
+
+            parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
+            self.model.setParameterValues(parameters)
+            self.model.run()
+            self.model.save()
+
+            t = np.load(".tmp_t.npy")
+            U = np.load(".tmp_U.npy")
+            os.remove(".tmp_U.npy")
+            os.remove(".tmp_t.npy")
+
+            self.assertTrue(np.array_equal(self.model.t, t))
+            self.assertTrue(np.array_equal(self.model.U, U))
+
+            self.model.save(1)
+            U = np.load(".tmp_U_%s.npy" % 1)
+            t = np.load(".tmp_t_%s.npy" % 1)
+            os.remove(".tmp_U_%s.npy" % 1)
+            os.remove(".tmp_t_%s.npy" % 1)
+
+            self.assertTrue(np.array_equal(self.model.t, t))
+            self.assertTrue(np.array_equal(self.model.U, U))
+
+            self.assertIsInstance(self.model.cmd(), list)
+            self.assertEqual(self.model.cmd()[0], "python")
+
+
 class TestModel(unittest.TestCase):
     def setUp(self):
         self.model = Model()
@@ -234,6 +293,7 @@ class TestModel(unittest.TestCase):
     def test_save(self):
         with self.assertRaises(ValueError):
             self.model.save()
+
 
     def test_saveProcess(self):
         with self.assertRaises(ValueError):
