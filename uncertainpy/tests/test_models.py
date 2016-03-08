@@ -78,8 +78,8 @@ class TestHodkinHuxleyModel(unittest.TestCase):
 
 
     def test_save(self):
-        self.model.U = np.linspace(0, 10, 100)
         self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
 
         self.model.save()
         t = np.load(".tmp_t.npy")
@@ -87,11 +87,22 @@ class TestHodkinHuxleyModel(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+
+    def test_saveProcess(self):
+        self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
+
         self.model.save(1)
         U = np.load(".tmp_U_%s.npy" % 1)
         t = np.load(".tmp_t_%s.npy" % 1)
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
 
 
     def test_cmd(self):
@@ -117,8 +128,8 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
 
     def test_save(self):
-        self.model.U = np.linspace(0, 10, 100)
         self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
 
         self.model.save()
         t = np.load(".tmp_t.npy")
@@ -126,15 +137,28 @@ class TestCoffeeCupPointModel(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+
+    def test_saveProcess(self):
+        self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
+
         self.model.save(1)
         U = np.load(".tmp_U_%s.npy" % 1)
         t = np.load(".tmp_t_%s.npy" % 1)
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
 
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
 
     def test_cmd(self):
-        self.model.cmd()
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
+
 
 
 class TestIzhikevichModel(unittest.TestCase):
@@ -156,8 +180,8 @@ class TestIzhikevichModel(unittest.TestCase):
 
 
     def test_save(self):
-        self.model.U = np.linspace(0, 10, 100)
         self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
 
         self.model.save()
         t = np.load(".tmp_t.npy")
@@ -165,15 +189,27 @@ class TestIzhikevichModel(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+
+    def test_saveProcess(self):
+        self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
+
         self.model.save(1)
         U = np.load(".tmp_U_%s.npy" % 1)
         t = np.load(".tmp_t_%s.npy" % 1)
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
 
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
 
     def test_cmd(self):
-        self.model.cmd()
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
 
 
 class TestModel(unittest.TestCase):
@@ -199,9 +235,14 @@ class TestModel(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.model.save()
 
+    def test_saveProcess(self):
+        with self.assertRaises(ValueError):
+            self.model.save()
+
 
     def test_cmd(self):
-        self.model.cmd()
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
 
 
 # class TestNeuronModel(unittest.TestCase):
