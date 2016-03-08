@@ -6,24 +6,22 @@ __version__ = "0.1"
 
 
 class Parameter():
-    def __init__(self, name, value, distribution_function=None):
+    def __init__(self, name, value, distribution=None):
 
         self.name = name
         self.value = value
-        self.setDistribution(distribution_function)
+        self.setDistribution(distribution)
 
 
-    def setDistribution(self, distribution_function):
-        self.distribution_function = distribution_function
-
-        if distribution_function is None:
+    def setDistribution(self, distribution):
+        if distribution is None:
             self.parameter_space = None
-        elif isinstance(distribution_function, cp.Dist):
-            self.parameter_space = distribution_function
-        elif hasattr(distribution_function, '__call__'):
-            self.parameter_space = self.distribution_function(self.value)
+        elif isinstance(distribution, cp.Dist):
+            self.parameter_space = distribution
+        elif hasattr(distribution, '__call__'):
+            self.parameter_space = distribution(self.value)
         else:
-            raise TypeError("Distribution function is not a function")
+            raise TypeError("Argument is neither a function nor a Chaospy distribution")
 
 
 
@@ -45,19 +43,19 @@ parameterlist = [ParameterObject1, ParameterObject2,...]
                 self.parameters[i[0]] = Parameter(i[0], i[1], i[2])
 
 
-    def setDistribution(self, parameter, distribution_function):
-        self.parameters[parameter].setDistribution(distribution_function)
+    def setDistribution(self, parameter, distribution):
+        self.parameters[parameter].setDistribution(distribution)
 
 
-    def setAllDistributions(self, distribution_function):
+    def setAllDistributions(self, distribution):
         for parameter in self.parameters:
-            self.parameters[parameter].setDistribution(distribution_function)
+            self.parameters[parameter].setDistribution(distribution)
 
 
     def getUncertain(self, item="name"):
         items = []
         for parameter in self.parameters.values():
-            if parameter.distribution_function is not None:
+            if parameter.parameter_space is not None:
                 items.append(getattr(parameter, item))
         return items
 
