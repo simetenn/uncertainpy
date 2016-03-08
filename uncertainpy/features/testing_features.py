@@ -10,4 +10,4 @@ class TestingFeatures(GeneralFeatures):
         return np.arange(0, 10)
 
     def feature_2d(self):
-        return np.arrau([np.arange(0, 10), np.arange(0, 10)])
+        return np.array([np.arange(0, 10), np.arange(0, 10)])

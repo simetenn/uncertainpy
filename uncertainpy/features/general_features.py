@@ -34,8 +34,11 @@ class GeneralFeatures():
 
 
     def calculateFeature(self, feature_name):
-        if not callable(getattr(self, feature_name)):
-            raise NotImplementedError("%s is not a implemented feature" % (feature_name))
+        if feature_name in self.utility_methods:
+            raise TypeError("%s is a utility method")
+
+        # if not callable(getattr(self, feature_name)):
+        #     raise NotImplementedError("%s is not a implemented feature" % (feature_name))
 
         tmp_result = getattr(self, feature_name)()
         if tmp_result is None:

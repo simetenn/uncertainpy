@@ -56,6 +56,7 @@ class TestHodkinHuxleyModel(unittest.TestCase):
         self.assertTrue(np.array_equal(self.model.t, t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
+
     def test_saveTNone(self):
         self.model.t = None
         self.model.U = np.linspace(0, 10, 100)
