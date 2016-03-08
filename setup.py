@@ -67,6 +67,7 @@ if "-h" in sys.argv:
 Custom commandline arguments:
     --virtual: Install in a virtual enviroment
     --neuron: Install neuron
+    --no-dependencies: Only install uncertainpy
     install: Install uncertainpy with dependencies
     develop: Install uncertainpy with dependencies as a developer
     """
@@ -83,6 +84,10 @@ if "--neuron" in sys.argv:
 
 cmdclass = {'install': CustomInstall,
             'develop': CustomDevelop}
+
+if "--no-dependencies" in sys.argv:
+    cmdclass = {}
+    sys.argv.remove("--no-dependencies")
 
 
 setup(name=name,
