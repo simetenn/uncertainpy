@@ -16,3 +16,4 @@ script:
   # - source /etc/bash_completion.d/virtualenvwrapper
   # - workon uncertainpy
   - nose2
+  - python -c "import neuron"
