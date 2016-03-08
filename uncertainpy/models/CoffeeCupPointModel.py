@@ -35,6 +35,6 @@ class CoffeeCupPointModel(Model):
         solver.set_initial_condition(self.u0)
 
         self.U, self.t = solver.solve(self.t_points)
-        self.U = np.array([self.U, self.U, self.U])
+        # self.U = np.array([self.U, self.U, self.U])
 
         return self.t, self.U

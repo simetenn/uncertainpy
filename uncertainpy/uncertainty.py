@@ -101,7 +101,7 @@ import matplotlib.pyplot as plt
 from xvfbwrapper import Xvfb
 
 # Imported from my own files
-from uncertainpy.features import ImplementedNeuronFeatures
+from uncertainpy.features.neuron_features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot
@@ -145,7 +145,7 @@ model : Model Object
 Optional arguments
 
 features : Feature Object
-    Default is ImplementedNeuronFeatures
+    Default is NeuronFeatures
 feature_list : list
     A list of all features to be calculated.
     Default is None, where no features will be calculated.
@@ -247,7 +247,7 @@ For example on use see:
         # TODO there is something weird with features here. the Default should
         # probably not be NeuronFeatures
         if features is None:
-            self.features = ImplementedNeuronFeatures()
+            self.features = NeuronFeatures()
         else:
             self.features = features
 

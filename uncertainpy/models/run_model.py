@@ -14,8 +14,6 @@ def main():
 
     args = parser.parse_args()
 
-    # module = __import__(args.model_name)
-    # model = getattr(module, args.model_name)
 
     sys.path.insert(0, args.file_dir)
     module = __import__(args.file_name.split(".")[0])
@@ -23,7 +21,6 @@ def main():
 
     simulation = model()
     simulation.load()
-
 
     parameters = {}
     i = 0
