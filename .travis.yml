@@ -10,7 +10,7 @@ sudo: required
 dist: trusty
 install:
   # - sudo apt-get install -y virtualenvwrapper
-  - sudo python setup.py install
+  - sudo python setup.py install --neuron
 script:
   # Currently travis does not support my creation of virtual env
   # - source /etc/bash_completion.d/virtualenvwrapper
