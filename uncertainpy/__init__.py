@@ -7,7 +7,7 @@ from models import *
 from plotting import *
 from utils import *
 from features import *
-# from tests import *
+from tests import *
 
 from distribution import *
 from evaluateNodeFunction import *

@@ -101,7 +101,7 @@ import matplotlib.pyplot as plt
 from xvfbwrapper import Xvfb
 
 # Imported from my own files
-from uncertainpy.features.neuron_features import NeuronFeatures
+from uncertainpy.features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot
