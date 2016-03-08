@@ -43,6 +43,10 @@ parameterlist = [ParameterObject1, ParameterObject2,...]
                 self.parameters[i[0]] = Parameter(i[0], i[1], i[2])
 
 
+    def __getitem__(self, i):
+        return self.parameters[i]
+
+
     def setDistribution(self, parameter, distribution):
         self.parameters[parameter].setDistribution(distribution)
 
