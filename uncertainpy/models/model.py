@@ -73,6 +73,9 @@ class Model():
         if self.U is None:
             raise ValueError("U has not been calculated")
 
+        if self.t is None:
+            raise ValueError("t has not been calculated")
+
         if CPU is None:
             np.save(os.path.join(save_path, ".tmp_U"), self.U)
             np.save(os.path.join(save_path, ".tmp_t"), self.t)

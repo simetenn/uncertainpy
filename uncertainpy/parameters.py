@@ -1,20 +1,46 @@
+import chaospy as cp
 
 __all__ = ["Parameters", "Parameter"]
 __version__ = "0.1"
 
+
+
+class Parameter():
+    def __init__(self, name, value, distribution_function=None):
+
+        self.name = name
+        self.value = value
+        self.setDistribution(distribution_function)
+
+
+    def setDistribution(self, distribution_function):
+        self.distribution_function = distribution_function
+
+        if distribution_function is None:
+            self.parameter_space = None
+        elif isinstance(distribution_function, cp.Dist):
+            self.parameter_space = distribution_function
+        elif hasattr(distribution_function, '__call__'):
+            self.parameter_space = self.distribution_function(self.value)
+        else:
+            raise TypeError("Distribution function is not a function")
+
+
+
 class Parameters():
     def __init__(self, parameterlist):
         """
-        parameterlist = [[name1, value1, distribution1], [name2, value2, distribution2],...]
-        or
-        parameterlist = [ParameterObject1, ParameterObject2,...]
+parameterlist = [[name1, value1, distribution1],
+                 [name2, value2, distribution2],
+                 ...]
+or
+parameterlist = [ParameterObject1, ParameterObject2,...]
         """
-
         self.parameters = {}
 
         for i in parameterlist:
-            if type(i) == Parameter:
-                self.parameters[i[0]] = i
+            if isinstance(i, Parameter):
+                self.parameters[i.name] = i
             else:
                 self.parameters[i[0]] = Parameter(i[0], i[1], i[2])
 
@@ -41,24 +67,3 @@ class Parameters():
             return self.parameters[item]
 
         return [getattr(parameter, item) for parameter in self.parameters.values()]
-
-
-
-class Parameter():
-    def __init__(self, name, value, distribution_function=None):
-
-        self.name = name
-        self.value = value
-        self.setDistribution(distribution_function)
-
-
-    def setDistribution(self, distribution_function):
-        self.distribution_function = distribution_function
-
-        if distribution_function is None:
-            self.parameter_space = None
-        else:
-            if hasattr(distribution_function, '__call__'):
-                self.parameter_space = self.distribution_function(self.value)
-            else:
-                raise TypeError("Distribution function is not a function")

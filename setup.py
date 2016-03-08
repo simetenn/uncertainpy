@@ -64,10 +64,11 @@ class CustomInstall(_install):
 
 if "-h" in sys.argv:
     print """
-Commandline arguments:
+Custom commandline arguments:
     --virtual: Install in a virtual enviroment
-    install: Install uncertainpy
-    develop: Install uncertainpy as a developer
+    --neuron: Install neuron
+    install: Install uncertainpy with dependencies
+    develop: Install uncertainpy with dependencies as a developer
     """
 
 if "--virtual" in sys.argv:
