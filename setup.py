@@ -91,6 +91,6 @@ setup(name=name,
       packages=find_packages(),
       cmdclass=cmdclass,
       setup_requires=[],
-      install_requires=["xvfbwrapper"],
+      install_requires=["xvfbwrapper", "psutil"],
       dependency_link=[]
       )
