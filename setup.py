@@ -21,7 +21,7 @@ virtual_enviroment = name
 
 
 chaospy_req = ["networkx", "cython"]
-uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "nose2", "chaospy"]
+uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "nose2", "chaospy", "pandas"]
 dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
                     "http://github.com/hplgit/chaospy/tarball/master#egg=chaospy"]
 

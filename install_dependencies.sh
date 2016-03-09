@@ -57,4 +57,4 @@ pip_install numpy
 #pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
 
 # Testing tools
-# pip_install nose2
+pip_install nose2
