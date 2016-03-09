@@ -3,6 +3,28 @@ from uncertainpy import plotting
 import pylab as plt
 import numpy as np
 
+
+class Spike:
+    def __init__(self, t, U, t_spike, U_spike, global_index):
+        self.t = t
+        self.U = U
+
+        self.U_spike = U_spike
+        self.t_spike = t_spike
+
+        self.global_index = global_index
+
+
+    def plot(self, save_name=None):
+        plotting.prettyPlot(self.t, self.U, title="Spike", xlabel="Time, ms", ylabel="Voltage, mV", new_figure=True)
+        if save_name is None:
+            plt.show()
+        else:
+            plt.savefig(save_name)
+
+
+
+
 class Spikes:
     def __init__(self):
         self.spikes = []
@@ -99,25 +121,6 @@ class Spikes:
         plt.ylim([min(u_min), max(u_max)])
         plt.xlim([0, max(t_max)*1.25])
         plt.legend(labels)
-        if save_name is None:
-            plt.show()
-        else:
-            plt.savefig(save_name)
-
-
-class Spike:
-    def __init__(self, t, U, t_spike, U_spike, global_index):
-        self.t = t
-        self.U = U
-
-        self.U_spike = U_spike
-        self.t_spike = t_spike
-
-        self.global_index = global_index
-
-
-    def plot(self, save_name=None):
-        plotting.prettyPlot(self.t, self.U, title="Spike", xlabel="Time, ms", ylabel="Voltage, mV", new_figure=True)
         if save_name is None:
             plt.show()
         else:

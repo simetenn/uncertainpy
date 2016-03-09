@@ -9,7 +9,7 @@ from uncertainpy.features import TestingFeatures, NeuronFeatures
 class TestGeneralFeatures(unittest.TestCase):
     def setUp(self):
         t = np.arange(0, 10)
-        U = t + 1
+        U = np.arange(0, 10) + 1
 
         self.features = GeneralFeatures(t, U)
 
@@ -49,7 +49,6 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual('GeneralFeatures', result[2])
 
 
-
     def test_calculateFeatureNotImplemented(self):
         with self.assertRaises(AttributeError):
             self.features.calculateFeature("not_in_class")
@@ -66,6 +65,23 @@ class TestGeneralFeatures(unittest.TestCase):
 
     def test_calculateAllFeatures(self):
         self.assertEqual(self.features.calculateAllFeatures(), {})
+
+
+
+# class TestGeneralNeuronFeatures(unittest.TestCase):
+#     def setUp(self):
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
