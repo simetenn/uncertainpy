@@ -50,6 +50,7 @@ echo "Installing virtual envionment packages"
 # pip_install networkx
 # pip_install pandas
 pip_install numpy
+echo "finished installing numpy"
 
 
 # pip_install xvfbwrapper
@@ -58,3 +59,4 @@ pip_install numpy
 
 # Testing tools
 pip_install nose2
+echo "finished installing nose2"
