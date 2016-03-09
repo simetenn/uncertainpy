@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# TODO add option to install in virtual enviroment
-
 import subprocess
 import os
 import sys
@@ -55,11 +53,9 @@ class CustomInstall(_install):
         _install.run(self)
 
 
+cmdclass = {'install': CustomInstall,
+            'develop': CustomDevelop}
 
-# parser = argparse.ArgumentParser(description="Install uncertainpy %s" % (name))
-# parse.add_argument("-p", '--paper', action='store_true',
-#                                  help='Compile for paper')
-# parse.parse_known_args()
 
 
 if "-h" in sys.argv:
@@ -81,10 +77,6 @@ if "--neuron" in sys.argv:
     sys.argv.remove("--neuron")
 
 
-
-cmdclass = {'install': CustomInstall,
-            'develop': CustomDevelop}
-
 if "--no-dependencies" in sys.argv:
     cmdclass = {}
     sys.argv.remove("--no-dependencies")
@@ -92,10 +84,13 @@ if "--no-dependencies" in sys.argv:
 
 setup(name=name,
       version="0.1",
-      url="https://github.com/simetenn/parameter_estimation",
+      url="https://github.com/simetenn/uncertainpy,
       author="Simen Tennøe",
       description='Parameter estimation and uncertainty quantification',
       platforms='linux',
       packages=find_packages(),
-      cmdclass=cmdclass
+      cmdclass=cmdclass,
+      setup_requires=[],
+      install_requires=["xvfbwrapper"],
+      dependency_link=[]
       )
