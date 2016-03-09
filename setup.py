@@ -84,7 +84,7 @@ if "--no-dependencies" in sys.argv:
 
 setup(name=name,
       version="0.1",
-      url="https://github.com/simetenn/uncertainpy,
+      url="https://github.com/simetenn/uncertainpy",
       author="Simen Tennøe",
       description='Parameter estimation and uncertainty quantification',
       platforms='linux',
