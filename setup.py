@@ -55,6 +55,24 @@ class CustomInstall(_install):
         setupInstall()
         _install.run(self)
 
+def setupFullInstall():
+    if not platform.system() == "Linux":
+        print "Warning: OS not supported, the installation may fail"
+
+    subprocess.call("./install_all_dependencies.sh", shell=True)
+
+
+class CustomFullDevelop(_develop):
+    def run(self):
+        setupFullInstall()
+        _develop.run(self)
+
+
+class CustomFullInstall(_install):
+    def run(self):
+        setupFullInstall()
+        _install.run(self)
+
 
 cmdclass = {'install': CustomInstall,
             'develop': CustomDevelop}
@@ -67,6 +85,7 @@ Custom commandline arguments:
     --virtual: Install in a virtual enviroment
     --neuron: Install neuron
     --no-dependencies: Only install uncertainpy
+    --full-dependencies: Install all dependencies through bash
     install: Install uncertainpy with dependencies
     develop: Install uncertainpy with dependencies as a developer
     """
@@ -85,6 +104,14 @@ if "--no-dependencies" in sys.argv:
     uncertainpy_req = []
     chaospy_req = []
     sys.argv.remove("--no-dependencies")
+
+
+if "--full-dependencies" in sys.argv:
+    cmdclass = {'install': CustomFullInstall,
+                'develop': CustomFullDevelop}
+    uncertainpy_req = []
+    chaospy_req = []
+    sys.argv.remove("--full-dependencies")
 
 
 setup(name=name,

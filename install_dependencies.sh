@@ -32,7 +32,7 @@ set -e  # make sure any failed command stops the script
 echo "Installing system wide packages for chaospy, withouth sckit-learn"
 apt_install gcc
 apt_install python-scipy
-
+apt_install build-essential
 
 echo "Installing system wide packages for odespy"
 apt_install gfortran
@@ -50,7 +50,6 @@ echo "Installing virtual envionment packages"
 # pip_install networkx
 # pip_install pandas
 pip_install numpy
-echo "finished installing numpy"
 
 
 # pip_install xvfbwrapper
@@ -58,5 +57,4 @@ echo "finished installing numpy"
 #pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
 
 # Testing tools
-pip_install nose2
-echo "finished installing nose2"
+#pip_install nose2
