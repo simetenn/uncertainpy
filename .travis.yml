@@ -16,5 +16,6 @@ script:
   # Currently travis does not support my creation of virtual env
   # - source /etc/bash_completion.d/virtualenvwrapper
   # - workon uncertainpy
+  - pip freeze
   - nose2
   # - python2.7 -c "import neuron"
