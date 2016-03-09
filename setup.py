@@ -4,10 +4,9 @@ import subprocess
 import os
 import sys
 import platform
-import argparse
 
 try:
-    from setuptools import setup, find_packages, Command
+    from setuptools import setup, find_packages
     from setuptools.command.install import install as _install
     from setuptools.command.develop import develop as _develop
 
@@ -19,6 +18,13 @@ except ImportError:
 
 name = "uncertainpy"
 virtual_enviroment = name
+
+
+chaospy_req = ["networkx", "cython"]
+uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "nose2", "chaospy"]
+dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
+                    "http://github.com/hplgit/chaospy/tarball/master#egg=chaospy"]
+
 
 
 def activate_virtualev(virtual_enviroment=virtual_enviroment):
@@ -35,9 +41,6 @@ def setupInstall():
     if not platform.system() == "Linux":
         print "Warning: OS not supported, the installation may fail"
 
-    #
-    # subprocess.call("./dependencies_apt-get.sh", shell=True)
-    # subprocess.call("./dependencies_pip.sh", shell=True)
     subprocess.call("./install_dependencies.sh", shell=True)
 
 
@@ -79,6 +82,8 @@ if "--neuron" in sys.argv:
 
 if "--no-dependencies" in sys.argv:
     cmdclass = {}
+    uncertainpy_req = []
+    chaospy_req = []
     sys.argv.remove("--no-dependencies")
 
 
@@ -90,7 +95,6 @@ setup(name=name,
       platforms='linux',
       packages=find_packages(),
       cmdclass=cmdclass,
-      setup_requires=[],
-      install_requires=["xvfbwrapper", "psutil"],
-      dependency_link=[]
+      install_requires=uncertainpy_req + chaospy_req,
+      dependency_links=dependency_links
       )
