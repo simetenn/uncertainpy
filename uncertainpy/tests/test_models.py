@@ -406,6 +406,9 @@ class TestTestingModel0d(unittest.TestCase):
     def test_run(self):
         self.model.run()
 
+        self.assertIsNone(self.model.t)
+        self.assertEqual(self.model.U, 2)
+
 
     def test_save(self):
         self.model.t = 1
@@ -474,6 +477,10 @@ class TestTestingModel0d(unittest.TestCase):
         parameters = {"a": 1, "b": 2}
         self.model.setParameterValues(parameters)
         self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertEqual(self.model.U, 2)
+
         self.model.save()
 
         t = np.load(".tmp_t.npy")
@@ -516,6 +523,9 @@ class TestTestingModel1d(unittest.TestCase):
 
     def test_run(self):
         self.model.run()
+
+        self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
 
 
     def test_save(self):
@@ -585,6 +595,10 @@ class TestTestingModel1d(unittest.TestCase):
         parameters = {"a": 1, "b": 2}
         self.model.setParameterValues(parameters)
         self.model.run()
+
+        self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+
         self.model.save()
 
         t = np.load(".tmp_t.npy")
@@ -627,6 +641,11 @@ class TestTestingModel2d(unittest.TestCase):
 
     def test_run(self):
         self.model.run()
+
+        self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.model.U,
+                                       np.array([np.arange(0, 10) + 1,
+                                                 np.arange(0, 10) + 2])))
 
 
     def test_save(self):

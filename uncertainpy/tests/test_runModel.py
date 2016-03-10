@@ -31,7 +31,7 @@ class TestRunModel(unittest.TestCase):
         os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
         self.assertTrue(np.isnan(t))
-        self.assertEqual(U, 1)
+        self.assertEqual(U, 2)
 
 
 
@@ -61,7 +61,7 @@ class TestRunModel(unittest.TestCase):
 
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(U, np.arange(0, 10) + 2))
+        self.assertTrue(np.array_equal(U, np.arange(0, 10) + 4))
 
 
     def test_runModel2d(self):
