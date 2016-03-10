@@ -37,15 +37,18 @@ class TestPrettyPlot(unittest.TestCase):
         prettyPlot(self.t, self.U, new_figure=False)
         plt.close()
 
+
 class TestPrettyBar(unittest.TestCase):
     def setUp(self):
         self.U = np.arange(2, 7)
         self.error = np.arange(2, 7)*0.1
         self.labels = ["1", "2", "3", "4", "5"]
 
+
     def test_PrettyBar(self):
         prettyBar(self.U)
         plt.close()
+
 
     def test_PrettyBarError(self):
         prettyBar(self.U, self.error)
@@ -66,7 +69,7 @@ class TestPrettyBar(unittest.TestCase):
     def test_prettyPlotFalseNewFigure2(self):
         prettyBar(self.U, new_figure=False)
         plt.close()
-        
+
 
 if __name__ == "__main__":
     unittest.main()
