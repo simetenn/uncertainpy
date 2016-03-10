@@ -88,6 +88,8 @@
 
 # TODO Create full test coverage
 
+# TODO Add support for 2d interpolation
+
 import time
 import os
 import h5py
@@ -443,6 +445,23 @@ For example on use see:
         self.all_features = self.features_0d + self.features_1d + self.features_2d
 
         for feature in self.features_1d + self.features_2d:
+            if solves[0][feature][0] is None:
+                self.t[feature] = np.arange(len(solves[0][feature][1]))
+            else:
+                self.t[feature] = solves[0][feature][0]
+
+            # Not tested for 2d features
+            if self.adaptive_model:
+                print ""
+                raise NotImplementedError("Error: No support for 2d interpolation")
+            else:
+                self.U[feature] = []
+                for solved in solves:
+                    self.U[feature].append(solved[feature][1])
+
+                self.U[feature] = np.array(self.U[feature])
+
+        for feature in self.features_1d:
             if solves[0][feature][0] is None:
                 self.t[feature] = np.arange(len(solves[0][feature][1]))
             else:
