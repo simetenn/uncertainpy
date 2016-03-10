@@ -102,7 +102,8 @@ tableau20 : list
     return ax, tableau20
 
 
-def prettyBar(x, error=None, start_color=0, title="", xlabels=[], ylabel="", new_figure=True):
+def prettyBar(x, error=None, start_color=0, title="",
+              xlabels=[], ylabel="", new_figure=True):
         """
         Creates pretty bar plots
         """
