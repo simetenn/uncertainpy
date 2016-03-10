@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def prettyPlot(x, y, title="", xlabel="", ylabel="",
+def prettyPlot(x, y=None, title="", xlabel="", ylabel="",
                color=0, new_figure=True):
 
     """
@@ -16,11 +16,11 @@ Required arguments
 
 x : sequence to plot
    x values
-y : sequence to plot
-  y values
 
 Optional arguments
 
+y : sequence to plot
+  y values
 title : str
     Title of the plot. Default is ""
 xlabel : str
@@ -69,6 +69,11 @@ tableau20 : list
     else:
         if new_figure:
             plt.clf()
+
+
+    if y is None:
+        y = x
+        x = range(len(y))
 
     ax = plt.subplot(111)
 
