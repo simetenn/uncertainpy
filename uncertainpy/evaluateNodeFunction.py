@@ -81,16 +81,17 @@ def evaluateNodeFunction(data):
 
 
         feature_results = features.calculateFeatures(feature_list)
+
         for feature in feature_results:
             tmp_result = feature_results[feature]
-
+            
             if hasattr(tmp_result, "__iter__"):
-                if len(tmp_result) == 2 and hasattr(tmp_result[0], "__iter__") and hasattr(tmp_result[1], "__iter__"):
-                    if adaptive_model:
-                        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(tmp_result[0], tmp_result[1], k=3)
-                        results[feature] = (tmp_result[0], tmp_result[1], interpolation)
+                if adaptive_model:
+                    if len(tmp_result) > 1 and hasattr(tmp_result[0], "__iter__"):
+                        raise NotImplementedError("Error: No support for 2d interpolation")
                     else:
-                        results[feature] = (tmp_result[0], tmp_result[1], None)
+                        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
+                        results[feature] = (None, tmp_result, interpolation)
                 else:
                     results[feature] = (None, tmp_result, None)
             else:
@@ -98,10 +99,16 @@ def evaluateNodeFunction(data):
 
 
     if adaptive_model:
-        interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
-        results["directComparison"] = (t, U, interpolation)
+        if len(U) > 1 and hasattr(U[0], "__iter__"):
+            raise NotImplementedError("Error: No support for 2d interpolation")
+        else:
+            interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+            results["directComparison"] = (t, U, interpolation)
     else:
-        results["directComparison"] = (t, U, None)
+        if np.isnan(t):
+            results["directComparison"] = (None, U, None)
+        else:
+            results["directComparison"] = (t, U, None)
 
     # All results are saved as {feature : (x, U, interpolation)} as appropriate.
 
