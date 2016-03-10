@@ -1,5 +1,5 @@
 from uncertainpy.spikes import Spikes
-from general_features import GeneralFeatures
+from uncertainpy.features import GeneralFeatures
 
 
 class GeneralNeuronFeatures(GeneralFeatures):

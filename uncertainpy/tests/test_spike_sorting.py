@@ -30,12 +30,14 @@ class TestSpikes(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.t = np.load(os.path.join(folder, "data/t_test_spikesorting.npy"))
-        self.U = np.load(os.path.join(folder, "data/U_test_spikesorting.npy"))
+        self.t = np.load(os.path.join(folder, "data/t_test.npy"))
+        self.U = np.load(os.path.join(folder, "data/U_test.npy"))
+
 
     def test_init(self):
         self.spikes = Spikes()
         self.assertIsInstance(self.spikes, Spikes)
+
 
     def test_detectSpikesDefault(self):
         self.spikes = Spikes()
@@ -43,11 +45,13 @@ class TestSpikes(unittest.TestCase):
         self.spikes.detectSpikes(self.t, self.U)
         self.assertEqual(self.spikes.nr_spikes, 12)
 
+
     def test_detectSpikesAuto(self):
         self.spikes = Spikes()
 
         self.spikes.detectSpikes(self.t, self.U, thresh="auto")
         self.assertEqual(self.spikes.nr_spikes, 12)
+
 
     def test_detectSpikesExtended(self):
         self.spikes = Spikes()
