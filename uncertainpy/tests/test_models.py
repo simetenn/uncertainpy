@@ -1,18 +1,30 @@
 import numpy as np
 import os
 import unittest
+import chaospy as cp
 
 from uncertainpy.models import HodkinHuxleyModel, CoffeeCupPointModel
 from uncertainpy.models import IzhikevichModel, Model, NeuronModel
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
 from uncertainpy.models import TestingModel0dNoTime, TestingModel1dNoTime
 from uncertainpy.models import TestingModel2dNoTime, TestingModelNoU
-
+from uncertainpy import Parameters
 
 
 class TestModel(unittest.TestCase):
     def setUp(self):
         self.model = Model()
+
+
+    def test_init(self):
+        parameterlist = [["gbar_Na", 120, None],
+                         ["gbar_K", 36, None],
+                         ["gbar_l", 0.3, None]]
+
+        parameters = Parameters(parameterlist)
+        model = Model(parameters)
+
+        self.assertIsInstance(model.parameters, Parameters)
 
 
     def test_load(self):
@@ -104,6 +116,57 @@ class TestModel(unittest.TestCase):
         self.assertIn("Model", result)
         self.assertIsInstance(result, list)
         self.assertEqual(result[0], "python")
+
+
+    def test_setDistribution(self):
+        parameterlist = [["gbar_Na", 120, None],
+                         ["gbar_K", 36, None],
+                         ["gbar_l", 0.3, None]]
+
+        parameters = Parameters(parameterlist)
+        self.model = Model(parameters)
+
+        def distribution_function(x):
+            return cp.Uniform(x - 10, x + 10)
+
+        self.model.setDistribution("gbar_Na", distribution_function)
+
+        self.assertIsInstance(self.model.parameters["gbar_Na"].parameter_space, cp.Dist)
+
+
+    def test_setDistributionNone(self):
+        def distribution_function(x):
+            return cp.Uniform(x - 10, x + 10)
+
+        with self.assertRaises(AttributeError):
+            self.model.setDistribution("gbar_Na", distribution_function)
+
+
+
+    def test_setAllDistributions(self):
+        parameterlist = [["gbar_Na", 120, None],
+                         ["gbar_K", 36, None],
+                         ["gbar_l", 0.3, None]]
+
+        parameters = Parameters(parameterlist)
+        self.model = Model(parameters)
+
+        def distribution_function(x):
+            return cp.Uniform(x - 10, x + 10)
+
+        self.model.setAllDistributions(distribution_function)
+
+        self.assertIsInstance(self.model.parameters["gbar_Na"].parameter_space, cp.Dist)
+        self.assertIsInstance(self.model.parameters["gbar_K"].parameter_space, cp.Dist)
+        self.assertIsInstance(self.model.parameters["gbar_l"].parameter_space, cp.Dist)
+
+
+    def test_setAllDistributionsNone(self):
+        def distribution_function(x):
+            return cp.Uniform(x - 10, x + 10)
+
+        with self.assertRaises(AttributeError):
+            self.model.setAllDistributions(distribution_function)
 
 
 class TestHodkinHuxleyModel(unittest.TestCase):

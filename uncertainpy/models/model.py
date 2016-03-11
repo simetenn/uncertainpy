@@ -39,18 +39,18 @@ class Model():
         pass
 
 
-    def setAllDistributions(self, distribution_function):
-        if self.parameters is None:
-            raise NotImplementedError("Parameters are not in the model")
-
-        self.parameters.setAllDistributions(distribution_function)
-
-
     def setDistribution(self, parameter_name, distribution_function):
         if self.parameters is None:
-            raise NotImplementedError("Parameters is not implemented in the model")
+            raise AttributeError("Parameters is not in the model")
 
         self.parameters.setDistribution(parameter_name, distribution_function)
+
+
+    def setAllDistributions(self, distribution_function):
+        if self.parameters is None:
+            raise AttributeError("Parameters are not in the model")
+
+        self.parameters.setAllDistributions(distribution_function)
 
 
     def setParameterValues(self, parameters):
@@ -75,7 +75,7 @@ class Model():
 
         if self.t is None:
             self.t = np.NaN
-            
+
         if CPU is None:
             np.save(os.path.join(save_path, ".tmp_U"), self.U)
             np.save(os.path.join(save_path, ".tmp_t"), self.t)

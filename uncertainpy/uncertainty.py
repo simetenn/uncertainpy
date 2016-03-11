@@ -791,6 +791,36 @@ For example on use see:
 
 
 
+    # TODO not finished
+    def load(self, filename):
+        self.filename = filename
+        f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
+
+        self.features_0d = []
+        self.features_1d = []
+
+        self.features_0d, self.features_1d = self.sortFeatures(self.E)
+
+
+        for feature in f.keys():
+            self.U[feature] = f[feature]["U"][()]
+            self.E[feature] = f[feature]["E"][()]
+            self.Var[feature] = f[feature]["Var"][()]
+            self.p_05[feature] = f[feature]["p_05"][()]
+            self.p_95[feature] = f[feature]["p_95"][()]
+
+            if "sensitivity" in f[feature].keys():
+                self.sensitivity[feature] = f[feature]["sensitivity"][()]
+            else:
+                self.sensitivity[feature] = None
+
+            if "t" in f[feature].keys():
+                self.t = f[feature]["t"][()]
+            # else:
+            #     self.t[feature] = None
+
+        self.uncertain_parameters = f.attrs["uncertain parameters"]
+
 
     def plotSimulatorResults(self, foldername="simulator_results"):
         i = 1
