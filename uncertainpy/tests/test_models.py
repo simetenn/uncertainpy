@@ -5,6 +5,8 @@ import unittest
 from uncertainpy.models import HodkinHuxleyModel, CoffeeCupPointModel
 from uncertainpy.models import IzhikevichModel, Model, NeuronModel
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
+from uncertainpy.models import TestingModel0dNoTime, TestingModel1dNoTime
+from uncertainpy.models import TestingModel2dNoTime, TestingModelNoU
 
 
 
@@ -97,8 +99,11 @@ class TestModel(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("Model", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
 
 
 class TestHodkinHuxleyModel(unittest.TestCase):
@@ -115,9 +120,11 @@ class TestHodkinHuxleyModel(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.model.cmd()
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("HodkinHuxleyModel", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
 
 
     def test_useCase(self):
@@ -145,9 +152,6 @@ class TestHodkinHuxleyModel(unittest.TestCase):
 
         self.assertTrue(np.array_equal(self.model.t, t))
         self.assertTrue(np.array_equal(self.model.U, U))
-
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
 
 
 class TestCoffeeCupPointModel(unittest.TestCase):
@@ -178,8 +182,11 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("CoffeeCupPointModel", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
 
 
     def test_useCase(self):
@@ -208,9 +215,6 @@ class TestCoffeeCupPointModel(unittest.TestCase):
         self.assertTrue(np.array_equal(self.model.t, t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
-
 
 class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
@@ -226,39 +230,39 @@ class TestIzhikevichModel(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("IzhikevichModel", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
 
 
 
     def test_useCase(self):
-            self.model = IzhikevichModel()
-            self.model.load()
+        self.model = IzhikevichModel()
+        self.model.load()
 
-            parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
-            self.model.setParameterValues(parameters)
-            self.model.run()
-            self.model.save()
+        parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
+        self.model.setParameterValues(parameters)
+        self.model.run()
+        self.model.save()
 
-            t = np.load(".tmp_t.npy")
-            U = np.load(".tmp_U.npy")
-            os.remove(".tmp_U.npy")
-            os.remove(".tmp_t.npy")
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
 
-            self.assertTrue(np.array_equal(self.model.t, t))
-            self.assertTrue(np.array_equal(self.model.U, U))
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
 
-            self.model.save(1)
-            U = np.load(".tmp_U_%s.npy" % 1)
-            t = np.load(".tmp_t_%s.npy" % 1)
-            os.remove(".tmp_U_%s.npy" % 1)
-            os.remove(".tmp_t_%s.npy" % 1)
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
 
-            self.assertTrue(np.array_equal(self.model.t, t))
-            self.assertTrue(np.array_equal(self.model.U, U))
-
-            self.assertIsInstance(self.model.cmd(), list)
-            self.assertEqual(self.model.cmd()[0], "python")
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
 
 
 
@@ -287,8 +291,12 @@ class TestTestingModel0d(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("TestingModel0d", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
+
 
 
     def test_useCase(self):
@@ -322,9 +330,6 @@ class TestTestingModel0d(unittest.TestCase):
         self.assertEqual(self.model.t, t)
         self.assertTrue(np.array_equal(self.model.U, U))
 
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
-
 
 class TestTestingModel1d(unittest.TestCase):
     def setUp(self):
@@ -351,8 +356,11 @@ class TestTestingModel1d(unittest.TestCase):
 
 
     def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("TestingModel1d", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
 
 
     def test_useCase(self):
@@ -385,9 +393,6 @@ class TestTestingModel1d(unittest.TestCase):
         self.assertTrue(np.array_equal(self.model.t, t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
-
 
 class TestTestingModel2d(unittest.TestCase):
     def setUp(self):
@@ -407,10 +412,12 @@ class TestTestingModel2d(unittest.TestCase):
                                        np.array([np.arange(0, 10) + 1,
                                                  np.arange(0, 10) + 2])))
 
-
     def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
+        result = self.model.cmd()
+
+        self.assertIn("TestingModel2d", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
 
 
     def test_useCase(self):
@@ -421,6 +428,11 @@ class TestTestingModel2d(unittest.TestCase):
         self.model.setParameterValues(parameters)
         self.model.run()
         self.model.save()
+
+        self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.model.U,
+                                       np.array([np.arange(0, 10) + 1,
+                                                 np.arange(0, 10) + 2])))
 
         t = np.load(".tmp_t.npy")
         U = np.load(".tmp_U.npy")
@@ -439,9 +451,235 @@ class TestTestingModel2d(unittest.TestCase):
         self.assertTrue(np.array_equal(self.model.t, t))
         self.assertTrue(np.array_equal(self.model.U, U))
 
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
 
+
+class TestTestingModel0dNoTime(unittest.TestCase):
+    def setUp(self):
+        self.model = TestingModel0dNoTime()
+
+
+    def test_load(self):
+        self.model.load()
+
+
+    def test_setParametervalues(self):
+        parameters = {"a": -1, "b": -1}
+        self.model.setParameterValues(parameters)
+
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
+
+
+    def test_run(self):
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertEqual(self.model.U, 2)
+
+
+    def test_cmd(self):
+        result = self.model.cmd()
+
+        self.assertIn("TestingModel0dNoTime", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
+
+
+
+    def test_useCase(self):
+        self.model = TestingModel0dNoTime()
+        self.model.load()
+
+        parameters = {"a": 1, "b": 2}
+        self.model.setParameterValues(parameters)
+        self.model.run()
+
+
+        self.assertIsNone(self.model.t)
+        self.assertEqual(self.model.U, 2)
+
+        self.model.save()
+
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.isnan(t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.isnan(t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+
+class TestTestingModel1dNoTime(unittest.TestCase):
+    def setUp(self):
+        self.model = TestingModel1dNoTime()
+
+
+    def test_load(self):
+        self.model.load()
+
+
+    def test_setParametervalues(self):
+        parameters = {"a": -1, "b": -1}
+        self.model.setParameterValues(parameters)
+
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
+
+
+    def test_run(self):
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+
+
+    def test_cmd(self):
+        result = self.model.cmd()
+
+        self.assertIn("TestingModel1dNoTime", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
+
+
+    def test_useCase(self):
+        self.model = TestingModel1dNoTime()
+        self.model.load()
+
+        parameters = {"a": 1, "b": 2}
+        self.model.setParameterValues(parameters)
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+
+        self.model.save()
+
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.isnan(t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+
+        self.assertTrue(np.isnan(t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+
+class TestTestingModel2dNoTime(unittest.TestCase):
+    def setUp(self):
+        self.model = TestingModel2dNoTime()
+
+
+    def test_load(self):
+        self.model.load()
+
+
+    def test_run(self):
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertTrue(np.array_equal(self.model.U,
+                                       np.array([np.arange(0, 10) + 1,
+                                                 np.arange(0, 10) + 2])))
+
+    def test_cmd(self):
+        result = self.model.cmd()
+
+        self.assertIn("TestingModel2dNoTime", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
+
+
+    def test_useCase(self):
+        self.model = TestingModel2dNoTime()
+        self.model.load()
+
+        parameters = {"a": 1, "b": 2}
+        self.model.setParameterValues(parameters)
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertTrue(np.array_equal(self.model.U,
+                                       np.array([np.arange(0, 10) + 1,
+                                                 np.arange(0, 10) + 2])))
+        self.model.save()
+
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.isnan(t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.isnan(t))
+        self.assertTrue(np.array_equal(self.model.U, U))
+
+
+class TestTestingModelNoU(unittest.TestCase):
+    def setUp(self):
+        self.model = TestingModelNoU()
+
+
+    def test_load(self):
+        self.model.load()
+
+
+    def test_run(self):
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertIsNone(self.model.U)
+
+
+    def test_cmd(self):
+        result = self.model.cmd()
+
+        self.assertIn("TestingModelNoU", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], "python")
+
+
+    def test_useCase(self):
+        self.model = TestingModelNoU()
+        self.model.load()
+
+        parameters = {"a": 1, "b": 2}
+        self.model.setParameterValues(parameters)
+
+        self.model.run()
+
+        self.assertIsNone(self.model.t)
+        self.assertIsNone(self.model.U)
+
+        with self.assertRaises(ValueError):
+            self.model.save()
+
+        with self.assertRaises(ValueError):
+            self.model.save(1)
 
 
 # class TestNeuronModel(unittest.TestCase):

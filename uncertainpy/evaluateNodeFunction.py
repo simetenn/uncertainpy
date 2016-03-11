@@ -58,11 +58,12 @@ def evaluateNodeFunction(data):
     if not supress_model_output:
         print ut
 
+
     if simulation.returncode != 0:
-        print ut
-        print "Error when running simulation:"
-        print err
-        sys.exit(1)
+        # print ut
+        # print "Error when running simulation:"
+        # print err
+        raise RuntimeError(err)
 
 
     U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
@@ -94,6 +95,9 @@ def evaluateNodeFunction(data):
                     results[feature] = (None, tmp_result, None)
 
                 elif len(tmp_result.shape) == 1:
+                    if np.all(np.isnan(t)):
+                        raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+
                     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
                     results[feature] = (None, tmp_result, interpolation)
 
@@ -110,7 +114,7 @@ def evaluateNodeFunction(data):
 
         elif len(U.shape) == 1:
             if np.all(np.isnan(t)):
-                raise AttributeError("Model does not retunr any t values. Unable to perform interpolation")
+                raise AttributeError("Model does not return any t values. Unable to perform interpolation")
 
             interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
             results["directComparison"] = (t, U, interpolation)

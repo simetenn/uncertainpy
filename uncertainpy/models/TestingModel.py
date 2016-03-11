@@ -22,7 +22,7 @@ class TestingModel1d(Model):
 
     def run(self):
         self.t = np.arange(0, 10)
-        self.U = self.t + self.a + self.b
+        self.U = np.arange(0, 10) + self.a + self.b
 
 
 class TestingModel2d(Model):
@@ -34,7 +34,7 @@ class TestingModel2d(Model):
 
     def run(self):
         self.t = np.arange(0, 10)
-        self.U = np.array([self.t + self.a, self.t + self.b])
+        self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
 
 
 
@@ -57,7 +57,7 @@ class TestingModel1dNoTime(Model):
         self.b = 2
 
     def run(self):
-        self.U = self.t + self.a + self.b
+        self.U = np.arange(0, 10) + self.a + self.b
 
 
 class TestingModel2dNoTime(Model):
@@ -68,4 +68,16 @@ class TestingModel2dNoTime(Model):
         self.b = 2
 
     def run(self):
-        self.U = np.array([self.t + self.a, self.t + self.b])
+        self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
+
+
+class TestingModelNoU(Model):
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters=parameters)
+
+        self.a = 1
+        self.b = 2
+
+
+    def run(self):
+        pass

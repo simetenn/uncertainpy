@@ -6,7 +6,10 @@ import scipy.interpolate
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.features import TestingFeatures
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
+from uncertainpy.models import TestingModel0dNoTime, TestingModel1dNoTime
+from uncertainpy.models import TestingModel2dNoTime, TestingModelNoU
 from uncertainpy.parameters import Parameters
+
 
 
 class TestEvaluateNodeFunction(unittest.TestCase):
@@ -44,9 +47,6 @@ class TestEvaluateNodeFunction(unittest.TestCase):
                 self.tmp_kwargs)
 
         return data
-
-
-    # {feature : (x, U, interpolation)}
 
 
     def test_evaluateNodeFunctionModel0d(self):
@@ -251,7 +251,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
             evaluateNodeFunction(self.setUpData())
 
 
-    def test_evaluateNodeFunctionModel2dFeature0dAdaptive(self):
+    def test_evaluateNodeFunctionModel2dFeature1dAdaptive(self):
         self.adaptive_model = True
         self.feature_list = ["feature1d"]
 
@@ -280,6 +280,98 @@ class TestEvaluateNodeFunction(unittest.TestCase):
 
 
 
+    def test_evaluateNodeFunctionModel0dNoTime(self):
+        self.feature_list = []
+        self.model = TestingModel0dNoTime(self.parameters)
+        result = evaluateNodeFunction(self.setUpData())
+
+
+        self.assertIn("directComparison", result.keys())
+        self.assertEqual(len(result["directComparison"]), 3)
+
+        self.assertIsNone(result["directComparison"][0])
+        self.assertEqual(result["directComparison"][1], 3)
+        self.assertIsNone(result["directComparison"][2])
+
+
+    def test_evaluateNodeFunctionModel1dNoTime(self):
+        self.feature_list = []
+        self.model = TestingModel1dNoTime(self.parameters)
+        result = evaluateNodeFunction(self.setUpData())
+
+
+        self.assertIn("directComparison", result.keys())
+        self.assertEqual(len(result["directComparison"]), 3)
+
+        self.assertIsNone(result["directComparison"][0])
+        self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
+        self.assertIsNone(result["directComparison"][2])
+
+
+    def test_evaluateNodeFunctionModel2dNoTime(self):
+        self.feature_list = []
+        self.model = TestingModel2dNoTime(self.parameters)
+        result = evaluateNodeFunction(self.setUpData())
+
+
+        self.assertIn("directComparison", result.keys())
+        self.assertEqual(len(result["directComparison"]), 3)
+
+        self.assertIsNone(result["directComparison"][0])
+        self.assertTrue(np.array_equal(result["directComparison"][1],
+                                       np.array([np.arange(0, 10) + 2,
+                                                 np.arange(0, 10) + 3])))
+        self.assertIsNone(result["directComparison"][2])
+
+
+
+
+
+
+    def test_evaluateNodeFunctionModel0dNoTimeAdaptive(self):
+        self.feature_list = []
+        self.adaptive_model = True
+        self.model = TestingModel0dNoTime(self.parameters)
+
+        with self.assertRaises(AttributeError):
+            evaluateNodeFunction(self.setUpData())
+
+
+    def test_evaluateNodeFunctionModel1dNoTimeAdaptive(self):
+        self.feature_list = []
+        self.adaptive_model = True
+        self.model = TestingModel1dNoTime(self.parameters)
+
+        with self.assertRaises(AttributeError):
+            evaluateNodeFunction(self.setUpData())
+
+
+    def test_evaluateNodeFunctionModel2dNoTimeAdaptive(self):
+        self.feature_list = []
+        self.adaptive_model = True
+        self.model = TestingModel2dNoTime(self.parameters)
+
+        with self.assertRaises(NotImplementedError):
+            evaluateNodeFunction(self.setUpData())
+
+
+    def test_evaluateNodeFunctionModel1dNoTimefeatures1dAdaptive(self):
+        self.feature_list = ["feature1d"]
+        self.adaptive_model = True
+        self.model = TestingModel1dNoTime(self.parameters)
+
+        with self.assertRaises(AttributeError):
+            evaluateNodeFunction(self.setUpData())
+
+
+
+    def test_evaluateNodeFunctionModelNoU(self):
+        self.feature_list = []
+        self.model = TestingModelNoU(self.parameters)
+
+        with self.assertRaises(RuntimeError):
+            evaluateNodeFunction(self.setUpData())
+
 
 
 
@@ -288,6 +380,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertModel0d(self, result):
         self.assertIn("directComparison", result.keys())
         self.assertEqual(len(result["directComparison"]), 3)
+
         self.assertEqual(result["directComparison"][0], 1)
         self.assertEqual(result["directComparison"][1], 3)
         self.assertIsNone(result["directComparison"][2])
@@ -298,6 +391,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertModel1d(self, result):
         self.assertIn("directComparison", result.keys())
         self.assertEqual(len(result["directComparison"]), 3)
+
         self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
         self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
         self.assertIsNone(result["directComparison"][2])
@@ -306,6 +400,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertModel2d(self, result):
         self.assertIn("directComparison", result.keys())
         self.assertEqual(len(result["directComparison"]), 3)
+
         self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
         self.assertTrue(np.array_equal(result["directComparison"][1],
                                        np.array([np.arange(0, 10) + 2,
@@ -316,6 +411,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertFeature0d(self, result):
         self.assertIn("feature0d", result.keys())
         self.assertEqual(len(result["feature0d"]), 3)
+
         self.assertIsNone(result["feature0d"][0])
         self.assertEqual(result["feature0d"][1], 1)
         self.assertIsNone(result["feature0d"][2])
@@ -324,6 +420,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertFeature1d(self, result):
         self.assertIn("feature1d", result.keys())
         self.assertEqual(len(result["feature1d"]), 3)
+
         self.assertIsNone(result["feature1d"][0])
         self.assertTrue(np.array_equal(result["feature1d"][1],
                                        np.arange(0, 10)))
@@ -333,16 +430,12 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertFeature2d(self, result):
         self.assertIn("feature2d", result.keys())
         self.assertEqual(len(result["feature2d"]), 3)
+
         self.assertIsNone(result["feature2d"][0])
         self.assertTrue(np.array_equal(result["feature2d"][1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
         self.assertIsNone(result["feature2d"][2])
-
-
-
-
-
 
 
 
