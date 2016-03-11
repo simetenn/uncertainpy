@@ -7,6 +7,100 @@ from uncertainpy.models import IzhikevichModel, Model, NeuronModel
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
 
 
+
+class TestModel(unittest.TestCase):
+    def setUp(self):
+        self.model = Model()
+
+
+    def test_load(self):
+        self.model.load()
+
+
+    def test_setParametervalues(self):
+        parameters = parameters = {"random1": -1, "random2": -1}
+        self.model.setParameterValues(parameters)
+
+        self.assertEqual(self.model.random1, -1)
+        self.assertEqual(self.model.random2, -1)
+
+
+    def test_run(self):
+        with self.assertRaises(NotImplementedError):
+            self.model.run()
+
+
+    def test_save(self):
+        self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
+
+        self.model.save()
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.array_equal(self.model.t, 1))
+        self.assertTrue(np.array_equal(self.model.U, np.linspace(0, 10, 100)))
+
+
+    def test_saveProcess(self):
+        self.model.t = 1
+        self.model.U = np.linspace(0, 10, 100)
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.array_equal(self.model.t, 1))
+        self.assertTrue(np.array_equal(self.model.U, np.linspace(0, 10, 100)))
+
+
+    def test_saveNoT(self):
+        self.model.U = np.linspace(0, 10, 100)
+
+        self.model.save()
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.array_equal(self.model.U, np.linspace(0, 10, 100)))
+
+
+    def test_saveProcessNoT(self):
+        self.model.U = np.linspace(0, 10, 100)
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.isnan(self.model.t))
+        self.assertTrue(np.array_equal(self.model.U, np.linspace(0, 10, 100)))
+
+
+    def test_saveNoU(self):
+        self.model.t = 1
+        with self.assertRaises(ValueError):
+            self.model.save(1)
+
+
+    def test_saveProcessNoU(self):
+        self.model.t = 1
+        with self.assertRaises(ValueError):
+            self.model.save(1)
+
+
+    def test_cmd(self):
+        self.assertIsInstance(self.model.cmd(), list)
+        self.assertEqual(self.model.cmd()[0], "python")
+
+
 class TestHodkinHuxleyModel(unittest.TestCase):
     def setUp(self):
         self.model = HodkinHuxleyModel()
@@ -348,43 +442,6 @@ class TestIzhikevichModel(unittest.TestCase):
             self.assertEqual(self.model.cmd()[0], "python")
 
 
-class TestModel(unittest.TestCase):
-    def setUp(self):
-        self.model = Model()
-
-
-    def test_load(self):
-        self.model.load()
-
-
-    def test_setParametervalues(self):
-        parameters = parameters = {"random1": -1, "random2": -1}
-        self.model.setParameterValues(parameters)
-
-        self.assertEqual(self.model.random1, -1)
-        self.assertEqual(self.model.random2, -1)
-
-
-    def test_run(self):
-        with self.assertRaises(NotImplementedError):
-            self.model.run()
-
-
-    def test_save(self):
-        with self.assertRaises(ValueError):
-            self.model.save()
-
-
-    def test_saveProcess(self):
-        with self.assertRaises(ValueError):
-            self.model.save()
-
-
-    def test_cmd(self):
-        self.assertIsInstance(self.model.cmd(), list)
-        self.assertEqual(self.model.cmd()[0], "python")
-
-
 
 class TestTestingModel0d(unittest.TestCase):
     def setUp(self):
@@ -406,7 +463,7 @@ class TestTestingModel0d(unittest.TestCase):
     def test_run(self):
         self.model.run()
 
-        self.assertIsNone(self.model.t)
+        self.assertEqual(self.model.t, 1)
         self.assertEqual(self.model.U, 2)
 
 
@@ -478,7 +535,8 @@ class TestTestingModel0d(unittest.TestCase):
         self.model.setParameterValues(parameters)
         self.model.run()
 
-        self.assertIsNone(self.model.t)
+
+        self.assertEqual(self.model.t, 1)
         self.assertEqual(self.model.U, 2)
 
         self.model.save()
@@ -488,7 +546,7 @@ class TestTestingModel0d(unittest.TestCase):
         os.remove(".tmp_U.npy")
         os.remove(".tmp_t.npy")
 
-        self.assertTrue(np.isnan(t))
+        self.assertEqual(self.model.t, 1)
         self.assertTrue(np.array_equal(self.model.U, U))
 
         self.model.save(1)
@@ -497,7 +555,7 @@ class TestTestingModel0d(unittest.TestCase):
         os.remove(".tmp_U_%s.npy" % 1)
         os.remove(".tmp_t_%s.npy" % 1)
 
-        self.assertTrue(np.isnan(t))
+        self.assertEqual(self.model.t, t)
         self.assertTrue(np.array_equal(self.model.U, U))
 
         self.assertIsInstance(self.model.cmd(), list)

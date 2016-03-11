@@ -30,7 +30,7 @@ class TestRunModel(unittest.TestCase):
         os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
         os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
-        self.assertTrue(np.isnan(t))
+        self.assertEqual(t, 1)
         self.assertEqual(U, 2)
 
 

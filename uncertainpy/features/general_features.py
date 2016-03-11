@@ -44,7 +44,7 @@ class GeneralFeatures():
         if tmp_result is None:
             return np.NaN
         else:
-            return tmp_result
+            return np.array(tmp_result)
 
     def calculateFeatures(self, feature_names):
         results = {}
