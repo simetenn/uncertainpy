@@ -42,9 +42,10 @@ class GeneralFeatures():
 
         tmp_result = getattr(self, feature_name)()
         if tmp_result is None:
-            return np.NaN
+            return None # np.NaN
         else:
             return np.array(tmp_result)
+
 
     def calculateFeatures(self, feature_names):
         results = {}

@@ -55,14 +55,11 @@ def evaluateNodeFunction(data):
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
-    if not supress_model_output:
+    if not supress_model_output and len(ut) != 0:
         print ut
 
 
     if simulation.returncode != 0:
-        # print ut
-        # print "Error when running simulation:"
-        # print err
         raise RuntimeError(err)
 
 
@@ -75,6 +72,9 @@ def evaluateNodeFunction(data):
 
     results = {}
 
+
+    # TODO Should t be stored for all results? Or should none be used for features
+
     if len(feature_list) > 0:
         sys.path.insert(0, feature_cmd[0])
         module = __import__(feature_cmd[1].split(".")[0])
@@ -86,7 +86,10 @@ def evaluateNodeFunction(data):
         for feature in feature_results:
             tmp_result = feature_results[feature]
 
-            if adaptive_model:
+            if tmp_result is None:
+                results[feature] = (None, np.nan, None)
+
+            elif adaptive_model:
                 if len(U.shape) == 0:
                     raise AttributeError("Model returns a single value, unable to perform interpolation")
 
@@ -99,13 +102,17 @@ def evaluateNodeFunction(data):
                         raise AttributeError("Model does not return any t values. Unable to perform interpolation")
 
                     interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
-                    results[feature] = (None, tmp_result, interpolation)
+                    results[feature] = (t, tmp_result, interpolation)
 
                 else:
                     raise NotImplementedError("Error: No support yet for >= 2d interpolation")
 
             else:
-                results[feature] = (None, tmp_result, None)
+                if np.all(np.isnan(t)):
+                    results[feature] = (None, tmp_result, None)
+                else:
+                    results[feature] = (t, tmp_result, None)
+            # results[feature] = (t, tmp_result, None)
 
 
     if adaptive_model:

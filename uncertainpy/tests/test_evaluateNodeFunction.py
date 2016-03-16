@@ -78,10 +78,37 @@ class TestEvaluateNodeFunction(unittest.TestCase):
 
         result = evaluateNodeFunction(self.setUpData())
 
-        self.assertModel0d(result)
-        self.assertFeature0d(result)
-        self.assertFeature1d(result)
-        self.assertFeature2d(result)
+        self.assertIn("feature0d", result.keys())
+        self.assertEqual(len(result["feature0d"]), 3)
+
+        self.assertEqual(result["feature0d"][0], 1)
+        self.assertEqual(result["feature0d"][1], 1)
+        self.assertIsNone(result["feature0d"][2])
+
+
+        self.assertIn("feature1d", result.keys())
+        self.assertEqual(len(result["feature1d"]), 3)
+
+        self.assertEqual(result["feature1d"][0], 1)
+        self.assertTrue(np.array_equal(result["feature1d"][1],
+                                       np.arange(0, 10)))
+        self.assertIsNone(result["feature1d"][2])
+
+
+        self.assertIn("feature2d", result.keys())
+        self.assertEqual(len(result["feature2d"]), 3)
+
+        self.assertEqual(result["feature2d"][0], 1)
+        self.assertTrue(np.array_equal(result["feature2d"][1],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+        self.assertIsNone(result["feature2d"][2])
+
+        self.assertIn("featureInvalid", result.keys())
+        self.assertEqual(len(result["featureInvalid"]), 3)
+        self.assertEqual(result["feature0d"][0], 1)
+        self.assertTrue(np.isnan(result["featureInvalid"][1]))
+        self.assertIsNone(result["featureInvalid"][2])
 
 
     def test_evaluateNodeFunctionModel1dAllFeatures(self):
@@ -93,6 +120,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.assertFeature0d(result)
         self.assertFeature1d(result)
         self.assertFeature2d(result)
+        self.assertFeatureInvalid(result)
 
 
     def test_evaluateNodeFunctionModel2dAllFeatures(self):
@@ -104,6 +132,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.assertFeature0d(result)
         self.assertFeature1d(result)
         self.assertFeature2d(result)
+        self.assertFeatureInvalid(result)
 
 
     def test_evaluateNodeFunctionModel0dAdaptive(self):
@@ -135,6 +164,15 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def test_evaluateNodeFunctionModel0dFeature2dAdaptive(self):
         self.adaptive_model = True
         self.feature_list = ["feature2d"]
+
+        self.model = TestingModel0d(self.parameters)
+        with self.assertRaises(AttributeError):
+            evaluateNodeFunction(self.setUpData())
+
+
+    def test_evaluateNodeFunctionModel0dFeatureInvalidAdaptive(self):
+        self.adaptive_model = True
+        self.feature_list = ["featureInvalid"]
 
         self.model = TestingModel0d(self.parameters)
         with self.assertRaises(AttributeError):
@@ -207,7 +245,8 @@ class TestEvaluateNodeFunction(unittest.TestCase):
 
         self.assertIn("feature1d", result.keys())
         self.assertEqual(len(result["feature1d"]), 3)
-        self.assertIsNone(result["feature1d"][0])
+        self.assertTrue(np.array_equal(result["feature1d"][0],
+                                       np.arange(0, 10)))
         self.assertTrue(np.array_equal(result["feature1d"][1], np.arange(0, 10)))
         self.assertIsInstance(result["feature1d"][2],
                               scipy.interpolate.fitpack2.UnivariateSpline)
@@ -221,6 +260,24 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             evaluateNodeFunction(self.setUpData())
 
+
+    def test_evaluateNodeFunctionModelInvalidFeature1dAdaptive(self):
+        self.adaptive_model = True
+        self.feature_list = ["featureInvalid"]
+
+        self.model = TestingModel1d(self.parameters)
+        result = evaluateNodeFunction(self.setUpData())
+
+        self.assertIn("directComparison", result.keys())
+        self.assertEqual(len(result["directComparison"]), 3)
+
+        self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
+        self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
+        self.assertIsNotNone(result["directComparison"][2])
+        self.assertIsInstance(result["directComparison"][2],
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+
+        self.assertFeatureInvalid(result)
 
 
     def test_evaluateNodeFunctionModel1dAllFeaturesAdaptive(self):
@@ -267,6 +324,16 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.model = TestingModel2d(self.parameters)
         with self.assertRaises(NotImplementedError):
             evaluateNodeFunction(self.setUpData())
+
+
+    def test_evaluateNodeFunctionModel2dFeature2dAdaptive(self):
+        self.adaptive_model = True
+        self.feature_list = ["featureInvalid"]
+
+        self.model = TestingModel2d(self.parameters)
+        with self.assertRaises(NotImplementedError):
+            evaluateNodeFunction(self.setUpData())
+
 
 
     def test_evaluateNodeFunctionModel2dAllFeaturesAdaptive(self):
@@ -411,8 +478,8 @@ class TestEvaluateNodeFunction(unittest.TestCase):
     def assertFeature0d(self, result):
         self.assertIn("feature0d", result.keys())
         self.assertEqual(len(result["feature0d"]), 3)
-
-        self.assertIsNone(result["feature0d"][0])
+        self.assertTrue(np.array_equal(result["feature0d"][0],
+                                       np.arange(0, 10)))
         self.assertEqual(result["feature0d"][1], 1)
         self.assertIsNone(result["feature0d"][2])
 
@@ -421,7 +488,8 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.assertIn("feature1d", result.keys())
         self.assertEqual(len(result["feature1d"]), 3)
 
-        self.assertIsNone(result["feature1d"][0])
+        self.assertTrue(np.array_equal(result["feature1d"][0],
+                                       np.arange(0, 10)))
         self.assertTrue(np.array_equal(result["feature1d"][1],
                                        np.arange(0, 10)))
         self.assertIsNone(result["feature1d"][2])
@@ -431,15 +499,20 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.assertIn("feature2d", result.keys())
         self.assertEqual(len(result["feature2d"]), 3)
 
-        self.assertIsNone(result["feature2d"][0])
+        self.assertTrue(np.array_equal(result["feature2d"][0],
+                                       np.arange(0, 10)))
         self.assertTrue(np.array_equal(result["feature2d"][1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
         self.assertIsNone(result["feature2d"][2])
 
 
-
-
+    def assertFeatureInvalid(self, result):
+        self.assertIn("featureInvalid", result.keys())
+        self.assertEqual(len(result["featureInvalid"]), 3)
+        self.assertIsNone(result["featureInvalid"][0])
+        self.assertTrue(np.isnan(result["featureInvalid"][1]))
+        self.assertIsNone(result["featureInvalid"][2])
 
 
 if __name__ == "__main__":

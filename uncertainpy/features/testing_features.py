@@ -11,3 +11,6 @@ class TestingFeatures(GeneralFeatures):
 
     def feature2d(self):
         return np.array([np.arange(0, 10), np.arange(0, 10)])
+
+    def featureInvalid(self):
+        return None

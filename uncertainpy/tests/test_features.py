@@ -230,7 +230,8 @@ class TestTestingFeatures(unittest.TestCase):
     def setUp(self):
         self.features = TestingFeatures()
 
-        self.implemented_features = ["feature0d", "feature1d", "feature2d"]
+        self.implemented_features = ["feature0d", "feature1d",
+                                     "feature2d", "featureInvalid"]
 
     def test_init(self):
         self.features = TestingFeatures()
@@ -247,6 +248,10 @@ class TestTestingFeatures(unittest.TestCase):
     def test_feature2d(self):
         self.assertTrue((self.features.feature2d(),
                          np.array([np.arange(0, 10), np.arange(0, 10)])))
+
+
+    def test_featureInvalid(self):
+        self.assertIsNone(self.features.featureInvalid())
 
 
     def test_calculateAllFeatures(self):

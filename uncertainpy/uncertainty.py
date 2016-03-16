@@ -90,6 +90,11 @@
 
 # TODO Add support for 2d interpolation
 
+# TODO Refactor so private variables are "hidden", starts with _
+
+# TODO reduce the number of t values stored.
+# When not an adaptive model only 1 set is needed to be stored
+
 import time
 import os
 import h5py
@@ -129,7 +134,6 @@ class UncertaintyEstimation():
                  supress_model_output=True,
                  adaptive_model=False,
                  CPUs=mp.cpu_count(),
-                 interpolate_union=False,
                  rosenblatt=False,
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
@@ -186,14 +190,9 @@ supress_model_output : True
     otherwise print statements will be supressed.
     Defualt is True.
 CPUs : int
-    The bumber of CPUs to perform
+    The number of CPUs to perform
     calculations on.
     Defualt is mp.cpu_count() - the number of CPUs on your computer
-interpolate_union : bool
-    If a unionf of all times from the model should be be used.
-    If not, the highest amount of time values is used, and the results are interpolated.
-    This is only necessary if your model returns has variable timesteps.
-    Default is False.
 rosenblatt : False
     If a rosenblatt transformation should be used.
     Use this if you have dependent uncertain
@@ -273,7 +272,6 @@ For example on use see:
         self.model = model
         self.adaptive_model = adaptive_model
 
-        self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
 
         self.kwargs = kwargs
@@ -350,6 +348,167 @@ For example on use see:
                          self.features.cmd(),
                          tmp_kwargs))
         return data
+
+
+
+    def evaluateNodes(self, nodes):
+        if self.supress_model_graphics:
+            vdisplay = Xvfb()
+            vdisplay.start()
+
+        solves = []
+        try:
+            if self.CPUs > 1:
+                pool = mp.Pool(processes=self.CPUs)
+                solves = pool.map(evaluateNodeFunction,
+                                  self.evaluateNodeFunctionList(nodes.T))
+                pool.close()
+            else:
+                for node in nodes.T:
+                    solves.append(evaluateNodeFunction([self.model.cmd(),
+                                                        self.supress_model_output,
+                                                        self.adaptive_model,
+                                                        node,
+                                                        self.uncertain_parameters,
+                                                        self.feature_list,
+                                                        self.features.cmd(),
+                                                        self.kwargs]))
+        except MemoryError:
+            return -1
+
+        if self.supress_model_graphics:
+            vdisplay.stop()
+
+        return np.array(solves)
+
+
+
+    def sortFeatures(self, results):
+        features_0d = []
+        features_1d = []
+        features_2d = []
+
+        for feature in results:
+            if hasattr(results[feature][1], "__iter__"):
+                if len(results[feature][1].shape) == 0:
+                    features_0d.append(feature)
+                elif len(results[feature][1].shape) == 1:
+                    features_1d.append(feature)
+                else:
+                    features_2d.append(feature)
+            else:
+                features_0d.append(feature)
+
+        return features_0d, features_1d, features_2d
+
+
+
+    def performInterpolation(self, ts, interpolation):
+        lengths = []
+        for s in ts:
+            lengths.append(len(s))
+
+        index_max_len = np.argmax(lengths)
+        t = ts[index_max_len]
+
+        interpolated_solves = []
+        for inter in interpolation:
+            interpolated_solves.append(inter(t))
+
+        interpolated_solves = np.array(interpolated_solves)
+
+        return t, interpolated_solves
+
+
+
+    def storeResults(self, solves):
+        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(solves[0])
+
+        self.all_features = self.features_0d + self.features_1d + self.features_2d
+
+        for feature in self.features_2d:
+            if self.adaptive_model:
+                raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
+
+            else:
+                self.t[feature] = solves[0][feature][0]
+
+                self.U[feature] = []
+                for solved in solves:
+                    self.U[feature].append(solved[feature][1])
+
+                self.U[feature] = np.array(self.U[feature])
+
+        for feature in self.features_1d:
+            if self.adaptive_model:
+                ts = []
+                interpolation = []
+                for solved in solves:
+                    ts.append(solved[feature][0])
+                    interpolation.append(solved[feature][2])
+
+                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
+            else:
+                self.t[feature] = solves[0][feature][0]
+                self.U[feature] = []
+                for solved in solves:
+                    self.U[feature].append(solved[feature][1])
+
+                self.U[feature] = np.array(self.U[feature])
+
+
+        for feature in self.features_0d:
+            self.U[feature] = []
+            self.t[feature] = None
+            for solved in solves:
+                self.U[feature].append(solved[feature][1])
+
+            self.U[feature] = np.array(self.U[feature])
+
+
+        # # Mask None values
+        for feature in self.all_features:
+            self.U[feature] = np.ma.masked_invalid(self.U[feature])
+
+
+
+
+    def createMask(self, nodes, feature):
+        if feature in self.features_0d:
+            mask = ~self.U[feature].mask
+            if len(nodes.shape) > 1:
+                masked_nodes = nodes[:, mask]
+            else:
+                masked_nodes = nodes[mask]
+
+            masked_U = self.U[feature][mask]
+
+        elif feature in self.features_1d:
+            mask = ~np.any(self.U[feature].mask, axis=1)
+
+            if len(nodes.shape) > 1:
+                masked_nodes = nodes[:, mask]
+            else:
+                masked_nodes = nodes[mask]
+
+            masked_U = self.U[feature][mask, :]
+
+        elif feature in self.features_2d:
+            mask = ~np.any(np.any(self.U[feature].mask, axis=1), axis=1)
+
+            if len(nodes.shape) > 1:
+                masked_nodes = nodes[:, mask]
+            else:
+                masked_nodes = nodes[mask]
+
+            masked_U = self.U[feature][mask, :]
+
+        if not np.all(mask):
+            print "Warning: feature %s does not yield results for all parameter combinations" \
+                % feature
+
+        return masked_nodes, masked_U
+
 
 
     def createPCExpansion(self, parameter_name=None, nr_pc_samples=None):
@@ -437,181 +596,6 @@ For example on use see:
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
 
-
-
-    def storeResults(self, solves):
-        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(solves[0])
-
-        self.all_features = self.features_0d + self.features_1d + self.features_2d
-
-        for feature in self.features_1d + self.features_2d:
-            if solves[0][feature][0] is None:
-                self.t[feature] = np.arange(len(solves[0][feature][1]))
-            else:
-                self.t[feature] = solves[0][feature][0]
-
-            # Not tested for 2d features
-            if self.adaptive_model:
-                print ""
-                raise NotImplementedError("Error: No support for 2d interpolation")
-            else:
-                self.U[feature] = []
-                for solved in solves:
-                    self.U[feature].append(solved[feature][1])
-
-                self.U[feature] = np.array(self.U[feature])
-
-        for feature in self.features_1d:
-            if solves[0][feature][0] is None:
-                self.t[feature] = np.arange(len(solves[0][feature][1]))
-            else:
-                self.t[feature] = solves[0][feature][0]
-
-            # Not tested for 2d features
-            if self.adaptive_model:
-                ts = []
-                interpolation = []
-                for solved in solves:
-                    ts.append(solved[feature][0])
-                    interpolation.append(solved[feature][2])
-
-                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
-            else:
-                self.U[feature] = []
-                for solved in solves:
-                    self.U[feature].append(solved[feature][1])
-
-                self.U[feature] = np.array(self.U[feature])
-
-
-        for feature in self.features_0d:
-            self.U[feature] = []
-            for solved in solves:
-                self.t[feature] = None
-                self.U[feature].append(solved[feature][1])
-
-            self.U[feature] = np.array(self.U[feature])
-
-
-        # Mask None values
-        for feature in self.all_features:
-            self.U[feature] = np.ma.masked_invalid(self.U[feature])
-
-
-    def sortFeatures(self, results):
-        features_0d = []
-        features_1d = []
-        features_2d = []
-
-        for feature in results:
-            if hasattr(results[feature][1], "__iter__"):
-                if len(results[feature][1].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature][1].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    features_2d.append(feature)
-            else:
-                features_0d.append(feature)
-
-        return features_0d, features_1d, features_2d
-
-
-
-    def performInterpolation(self, ts, interpolation):
-        if self.interpolate_union:
-            i = 0
-            tmp_t = ts[0]
-            while i < len(ts) - 1:
-                tmp_t = np.union1d(tmp_t, ts[i+1])
-                i += 1
-
-            t = tmp_t
-        else:
-            lengths = []
-            for s in ts:
-                lengths.append(len(s))
-
-            index_max_len = np.argmax(lengths)
-            t = ts[index_max_len]
-
-
-        interpolated_solves = []
-        for inter in interpolation:
-            interpolated_solves.append(inter(t))
-
-        interpolated_solves = np.array(interpolated_solves)
-
-        return t, interpolated_solves
-
-
-
-    def createMask(self, nodes, feature):
-        if feature in self.features_0d:
-            mask = ~self.U[feature].mask
-            if len(nodes.shape) > 1:
-                masked_nodes = nodes[:, mask]
-            else:
-                masked_nodes = nodes[mask]
-
-            masked_U = self.U[feature][mask]
-
-        elif feature in self.features_1d:
-            mask = ~np.any(self.U[feature].mask, axis=1)
-
-            if len(nodes.shape) > 1:
-                masked_nodes = nodes[:, mask]
-            else:
-                masked_nodes = nodes[mask]
-
-            masked_U = self.U[feature][mask, :]
-
-        elif feature in self.features_2d:
-            mask = ~np.any(np.any(self.U[feature].mask, axis=1), axis=1)
-
-            if len(nodes.shape) > 1:
-                masked_nodes = nodes[:, mask]
-            else:
-                masked_nodes = nodes[mask]
-
-            masked_U = self.U[feature][mask, :]
-
-        if not np.all(mask):
-            print "Warning: feature %s does not yield results for all parameter combinations" \
-                % feature
-
-        return masked_nodes, masked_U
-
-
-    def evaluateNodes(self, nodes):
-        if self.supress_model_graphics:
-            vdisplay = Xvfb()
-            vdisplay.start()
-
-        solves = []
-        try:
-            if self.CPUs > 1:
-                pool = mp.Pool(processes=self.CPUs)
-                solves = pool.map(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(nodes.T))
-                pool.close()
-            else:
-                for node in nodes.T:
-                    solves.append(evaluateNodeFunction([self.model.cmd(),
-                                                        self.supress_model_output,
-                                                        self.adaptive_model,
-                                                        node,
-                                                        self.uncertain_parameters,
-                                                        self.feature_list,
-                                                        self.features.cmd(),
-                                                        self.kwargs]))
-        except MemoryError:
-            return -1
-
-        if self.supress_model_graphics:
-            vdisplay.stop()
-
-        return np.array(solves)
 
 
     def PCAnalysis(self):
