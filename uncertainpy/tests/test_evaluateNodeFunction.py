@@ -207,86 +207,107 @@ class TestEvaluateNodeFunction(unittest.TestCase):
 
 
 
-    def test_evaluateNodeFunctionModel1dFeature0dAdaptive(self):
-        self.adaptive_model = True
-        self.feature_list = ["feature0d"]
-
-        self.model = TestingModel1d(self.parameters)
-        result = evaluateNodeFunction(self.setUpData())
-
-        self.assertIn("directComparison", result.keys())
-        self.assertEqual(len(result["directComparison"]), 3)
-
-        self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
-        self.assertIsNotNone(result["directComparison"][2])
-        self.assertIsInstance(result["directComparison"][2],
-                              scipy.interpolate.fitpack2.UnivariateSpline)
-
-        self.assertFeature0d
-
-
-    def test_evaluateNodeFunctionModel1dFeature1dAdaptive(self):
-        self.adaptive_model = True
-        self.feature_list = ["feature1d"]
-
-        self.model = TestingModel1d(self.parameters)
-        result = evaluateNodeFunction(self.setUpData())
-
-        self.assertIn("directComparison", result.keys())
-        self.assertEqual(len(result["directComparison"]), 3)
-
-        self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
-        self.assertIsNotNone(result["directComparison"][2])
-        self.assertIsInstance(result["directComparison"][2],
-                              scipy.interpolate.fitpack2.UnivariateSpline)
-
-
-        self.assertIn("feature1d", result.keys())
-        self.assertEqual(len(result["feature1d"]), 3)
-        self.assertTrue(np.array_equal(result["feature1d"][0],
-                                       np.arange(0, 10)))
-        self.assertTrue(np.array_equal(result["feature1d"][1], np.arange(0, 10)))
-        self.assertIsInstance(result["feature1d"][2],
-                              scipy.interpolate.fitpack2.UnivariateSpline)
-
-
-    def test_evaluateNodeFunctionModel1dFeature2dAdaptive(self):
-        self.adaptive_model = True
-        self.feature_list = ["feature2d"]
-
-        self.model = TestingModel1d(self.parameters)
-        with self.assertRaises(NotImplementedError):
-            evaluateNodeFunction(self.setUpData())
-
-
-    def test_evaluateNodeFunctionModelInvalidFeature1dAdaptive(self):
-        self.adaptive_model = True
-        self.feature_list = ["featureInvalid"]
-
-        self.model = TestingModel1d(self.parameters)
-        result = evaluateNodeFunction(self.setUpData())
-
-        self.assertIn("directComparison", result.keys())
-        self.assertEqual(len(result["directComparison"]), 3)
-
-        self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
-        self.assertIsNotNone(result["directComparison"][2])
-        self.assertIsInstance(result["directComparison"][2],
-                              scipy.interpolate.fitpack2.UnivariateSpline)
-
-        self.assertFeatureInvalid(result)
+    # def test_evaluateNodeFunctionModel1dFeature0dAdaptive(self):
+    #     self.adaptive_model = True
+    #     self.feature_list = ["feature0d"]
+    #
+    #     self.model = TestingModel1d(self.parameters)
+    #     result = evaluateNodeFunction(self.setUpData())
+    #
+    #     self.assertIn("directComparison", result.keys())
+    #     self.assertEqual(len(result["directComparison"]), 3)
+    #
+    #     self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
+    #     self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
+    #     self.assertIsNotNone(result["directComparison"][2])
+    #     self.assertIsInstance(result["directComparison"][2],
+    #                           scipy.interpolate.fitpack2.UnivariateSpline)
+    #
+    #     self.assertFeature0d
+    #
+    #
+    # def test_evaluateNodeFunctionModel1dFeature1dAdaptive(self):
+    #     self.adaptive_model = True
+    #     self.feature_list = ["feature1d"]
+    #
+    #     self.model = TestingModel1d(self.parameters)
+    #     result = evaluateNodeFunction(self.setUpData())
+    #
+    #     self.assertIn("directComparison", result.keys())
+    #     self.assertEqual(len(result["directComparison"]), 3)
+    #
+    #     self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
+    #     self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
+    #     self.assertIsNotNone(result["directComparison"][2])
+    #     self.assertIsInstance(result["directComparison"][2],
+    #                           scipy.interpolate.fitpack2.UnivariateSpline)
+    #
+    #
+    #     self.assertIn("feature1d", result.keys())
+    #     self.assertEqual(len(result["feature1d"]), 3)
+    #     self.assertTrue(np.array_equal(result["feature1d"][0],
+    #                                    np.arange(0, 10)))
+    #     self.assertTrue(np.array_equal(result["feature1d"][1], np.arange(0, 10)))
+    #     self.assertIsInstance(result["feature1d"][2],
+    #                           scipy.interpolate.fitpack2.UnivariateSpline)
+    #
+    #
+    # def test_evaluateNodeFunctionModel1dFeature2dAdaptive(self):
+    #     self.adaptive_model = True
+    #     self.feature_list = ["feature2d"]
+    #
+    #     self.model = TestingModel1d(self.parameters)
+    #
+    #     with self.assertRaises(NotImplementedError):
+    #         evaluateNodeFunction(self.setUpData())
+    #
+    #
+    # def test_evaluateNodeFunctionModelInvalidFeature1dAdaptive(self):
+    #     self.adaptive_model = True
+    #     self.feature_list = ["featureInvalid"]
+    #
+    #     self.model = TestingModel1d(self.parameters)
+    #     result = evaluateNodeFunction(self.setUpData())
+    #
+    #     self.assertIn("directComparison", result.keys())
+    #     self.assertEqual(len(result["directComparison"]), 3)
+    #
+    #     self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
+    #     self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
+    #     self.assertIsNotNone(result["directComparison"][2])
+    #     self.assertIsInstance(result["directComparison"][2],
+    #                           scipy.interpolate.fitpack2.UnivariateSpline)
+    #
+    #     self.assertFeatureInvalid(result)
+    #
+    #
+    # def test_evaluateNodeFunctionModel1dAllFeaturesAdaptive(self):
+    #     self.adaptive_model = True
+    #
+    #     self.model = TestingModel1d(self.parameters)
+    #     with self.assertRaises(NotImplementedError):
+    #         evaluateNodeFunction(self.setUpData())
 
 
     def test_evaluateNodeFunctionModel1dAllFeaturesAdaptive(self):
         self.adaptive_model = True
 
         self.model = TestingModel1d(self.parameters)
-        with self.assertRaises(NotImplementedError):
-            evaluateNodeFunction(self.setUpData())
+        result = evaluateNodeFunction(self.setUpData())
 
+        self.assertIn("directComparison", result.keys())
+        self.assertEqual(len(result["directComparison"]), 3)
+
+        self.assertTrue(np.array_equal(result["directComparison"][0], np.arange(0, 10)))
+        self.assertTrue(np.array_equal(result["directComparison"][1], np.arange(0, 10) + 5))
+        self.assertIsNotNone(result["directComparison"][2])
+        self.assertIsInstance(result["directComparison"][2],
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+
+        self.assertFeature0d(result)
+        self.assertFeature1d(result)
+        self.assertFeature2d(result)
+        self.assertFeatureInvalid(result)
 
 
 

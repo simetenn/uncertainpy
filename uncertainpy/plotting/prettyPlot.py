@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def prettyPlot(x, y=None, title="", xlabel="", ylabel="",
-               color=0, new_figure=True):
+def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
+               color=0, linestyle="solid", new_figure=True):
 
     """
 prettyPlot
@@ -27,6 +27,8 @@ xlabel : str
     Xlabel of the plot. Default is ""
 ylabel : str
     Ylabel of the plot. Default is ""
+linestyle: str
+    ['solid' | 'dashed', 'dashdot', 'dotted' | (offset, on-off-dash-seq) | '-' | '--' | '-.' | ':' | 'None' | ' ' | '']
 color : int
     Color of the line, given as a int than then index Tablea20 colors.
     Defualt is 0.
@@ -90,10 +92,15 @@ tableau20 : list
                    labelleft="on", color=axis_grey, labelcolor="black",
                    labelsize=labelsize)
 
-    ax.plot(x, y, color=tableau20[color], linewidth=2, antialiased=True)
     ax.set_title(title, fontsize=titlesize)
     ax.set_xlabel(xlabel, fontsize=fontsize)
     ax.set_ylabel(ylabel, fontsize=fontsize)
+
+    if len(x) == 0:
+        return ax, tableau20
+
+    ax.plot(x, y, color=tableau20[color], linestyle=linestyle, linewidth=2, antialiased=True)
+
 
     ax.set_xlim([min(x), max(x)])
     ax.set_ylim([min(y), max(y)])

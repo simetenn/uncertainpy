@@ -89,23 +89,23 @@ def evaluateNodeFunction(data):
             if tmp_result is None:
                 results[feature] = (None, np.nan, None)
 
-            elif adaptive_model:
-                if len(U.shape) == 0:
-                    raise AttributeError("Model returns a single value, unable to perform interpolation")
-
-                if len(tmp_result.shape) == 0:
-                    # print "Warning: {} returns a single number, no interpolation performed".format(feature)
-                    results[feature] = (None, tmp_result, None)
-
-                elif len(tmp_result.shape) == 1:
-                    if np.all(np.isnan(t)):
-                        raise AttributeError("Model does not return any t values. Unable to perform interpolation")
-
-                    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
-                    results[feature] = (t, tmp_result, interpolation)
-
-                else:
-                    raise NotImplementedError("Error: No support yet for >= 2d interpolation")
+            # elif adaptive_model:
+            #     if len(U.shape) == 0:
+            #         raise AttributeError("Model returns a single value, unable to perform interpolation")
+            #
+            #     if len(tmp_result.shape) == 0:
+            #         # print "Warning: {} returns a single number, no interpolation performed".format(feature)
+            #         results[feature] = (None, tmp_result, None)
+            #
+            #     elif len(tmp_result.shape) == 1:
+            #         if np.all(np.isnan(t)):
+            #             raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+            #
+            #         interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
+            #         results[feature] = (t, tmp_result, interpolation)
+            #
+            #     else:
+            #         raise NotImplementedError("Error: No support yet for >= 2d interpolation")
 
             else:
                 if np.all(np.isnan(t)):

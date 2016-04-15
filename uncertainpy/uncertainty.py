@@ -95,6 +95,13 @@
 # TODO reduce the number of t values stored.
 # When not an adaptive model only 1 set is needed to be stored
 
+# TODO Does it make any sense to perform an interpolation for features?
+# Currently features are excluded from interpolation
+
+# TODO finish testing
+
+
+
 import time
 import os
 import h5py
@@ -115,7 +122,6 @@ from uncertainpy.plotting.prettyPlot import prettyPlot
 
 import warnings
 
-warnings.simplefilter('ignore')
 
 
 class UncertaintyEstimation():
@@ -137,6 +143,7 @@ class UncertaintyEstimation():
                  rosenblatt=False,
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
+                 warning_flag=True,
                  **kwargs):
         """
 Uncertainty Estimation object
@@ -275,6 +282,10 @@ For example on use see:
         self.rosenblatt = rosenblatt
 
         self.kwargs = kwargs
+        self.warning_flag = warning_flag
+
+        if self.warning_flag:
+            warnings.simplefilter('ignore')
 
         self.M = 3
         self.nr_mc_samples = nr_mc_samples
@@ -295,6 +306,7 @@ For example on use see:
             self.output_data_filename = output_data_filename
 
         self.t_start = time.time()
+
 
 
     def __del__(self):
@@ -427,7 +439,7 @@ For example on use see:
         self.all_features = self.features_0d + self.features_1d + self.features_2d
 
         for feature in self.features_2d:
-            if self.adaptive_model:
+            if self.adaptive_model and feature == "directComparison":
                 raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
 
             else:
@@ -440,7 +452,7 @@ For example on use see:
                 self.U[feature] = np.array(self.U[feature])
 
         for feature in self.features_1d:
-            if self.adaptive_model:
+            if self.adaptive_model and feature == "directComparison":
                 ts = []
                 interpolation = []
                 for solved in solves:
@@ -466,7 +478,8 @@ For example on use see:
             self.U[feature] = np.array(self.U[feature])
 
 
-        # # Mask None values
+        # REVIEW Move masking of the self.U to createMask?
+        # Mask None values
         for feature in self.all_features:
             self.U[feature] = np.ma.masked_invalid(self.U[feature])
 
@@ -474,6 +487,8 @@ For example on use see:
 
 
     def createMask(self, nodes, feature):
+        # self.U[feature] = np.ma.masked_invalid(self.U[feature])
+
         if feature in self.features_0d:
             mask = ~self.U[feature].mask
             if len(nodes.shape) > 1:
@@ -482,7 +497,7 @@ For example on use see:
                 masked_nodes = nodes[mask]
 
             masked_U = self.U[feature][mask]
-
+    
         elif feature in self.features_1d:
             mask = ~np.any(self.U[feature].mask, axis=1)
 
@@ -503,9 +518,13 @@ For example on use see:
 
             masked_U = self.U[feature][mask, :]
 
-        if not np.all(mask):
-            print "Warning: feature %s does not yield results for all parameter combinations" \
-                % feature
+        else:
+            raise AttributeError("Error: {s} is not a feture".format(feature))
+
+
+        if not np.all(mask) and self.warning_flag:
+            raise RuntimeWarning("feature % s does not yield results for all parameter combinations" \
+                                 % feature)
 
         return masked_nodes, masked_U
 
