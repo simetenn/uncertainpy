@@ -109,8 +109,8 @@ tableau20 : list
     return ax, tableau20
 
 
-def prettyBar(x, error=None, start_color=0, title="",
-              xlabels=[], ylabel="", new_figure=True):
+def prettyBar(x, error=None, index=None, colors=None, start_color=0, title="", linewidth=0,
+              xlabels=[], ylabel="", width=0.2, new_figure=True, error_kw=None, **kwargs):
         """
         Creates pretty bar plots
         """
@@ -120,7 +120,6 @@ def prettyBar(x, error=None, start_color=0, title="",
         fontsize = 16
         labelsize = 14
         figsize = (10, 7.5)
-        width = .2
 
         # These are the "Tableau 20" colors as RGB.
         tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
@@ -156,28 +155,38 @@ def prettyBar(x, error=None, start_color=0, title="",
                        labelleft="on", color=axis_grey, labelcolor="black",
                        labelsize=labelsize)
 
-        try:
-            index = np.arange(len(x))
-        except TypeError:
-            index = [0]
+        if index is None:
+            try:
+                index = np.arange(len(x))
+            except TypeError:
+                index = [0]
+
 
         tmp_colors = []
-        j = start_color
-        even = True
-        for i in index:
-            tmp_colors.append(tableau20[j])
-            j += 2
-            if j >= len(tableau20):
-                if even:
-                    j = 1
-                    even = False
-                else:
-                    j = 0
-                    even = True
+        if colors is None:
+            j = start_color
+            even = True
+            for i in index:
+                tmp_colors.append(tableau20[j])
+                j += 2
+                if j >= len(tableau20):
+                    if even:
+                        j = 1
+                        even = False
+                    else:
+                        j = 0
+                        even = True
+        else:
+            for c in colors:
+                c = c % len(tableau20)
+                tmp_colors.append(tableau20[int(round(c, 0))])
+
+        if error_kw is None:
+            error_kw=dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2)
 
 
-        ax.bar(index, x, yerr=error, width=width, align='center', color=tmp_colors, linewidth=0,
-               error_kw=dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2))
+        ax.bar(index, x, yerr=error, width=width, align='center', color=tmp_colors, linewidth=linewidth,
+               error_kw=error_kw, edgecolor=axis_grey, **kwargs)
         ax.set_xticks(index)
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
