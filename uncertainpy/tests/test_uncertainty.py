@@ -404,6 +404,8 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.storeResults(results)
 
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "directComparison")
+        print masked_nodes
+        print nodes
 
         self.assertEqual(len(masked_U), 3)
         self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
@@ -441,7 +443,7 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.storeResults(results)
 
         self.uncertainty.U["feature0d"] = np.array([1, np.nan, 1])
-        self.uncertainty.U["feature0d"] = np.ma.masked_invalid(self.uncertainty.U["feature0d"])
+        # self.uncertainty.U["feature0d"] = np.ma.masked_invalid(self.uncertainty.U["feature0d"])
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature0d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
@@ -478,14 +480,14 @@ class TestUncertainty(unittest.TestCase):
 
         # TODO Working here
 
-        self.uncertainty.U["feature1d"] = [np.arange(0, 10), [np.nan], np.arange(0, 10)]
-        print self.uncertainty.U["feature1d"]
-        print np.isnan(self.uncertainty.U["feature1d"])
+        self.uncertainty.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
+        # print self.uncertainty.U["feature1d"]
+        # print np.isnan(self.uncertainty.U["feature1d"])
         #print np.ma.masked_array(self.uncertainty.U["feature1d"], np.isnan(self.uncertainty.U["feature1d"]))
-        self.uncertainty.U["feature1d"] = np.ma.masked_where(np.isnan(self.uncertainty.U["feature1d"]), self.uncertainty.U["feature1d"])
+        # self.uncertainty.U["feature1d"] = np.ma.masked_where(np.isnan(self.uncertainty.U["feature1d"]), self.uncertainty.U["feature1d"])
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature1d")
 
-        print masked_U
+        # print masked_U
 
         self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))

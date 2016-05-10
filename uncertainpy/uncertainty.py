@@ -449,7 +449,7 @@ For example on use see:
                 for solved in solves:
                     self.U[feature].append(solved[feature][1])
 
-                self.U[feature] = np.array(self.U[feature])
+                # self.U[feature] = np.array(self.U[feature])
 
         for feature in self.features_1d:
             if self.adaptive_model and feature == "directComparison":
@@ -466,7 +466,7 @@ For example on use see:
                 for solved in solves:
                     self.U[feature].append(solved[feature][1])
 
-                self.U[feature] = np.array(self.U[feature])
+                # self.U[feature] = np.array(self.U[feature])
 
 
         for feature in self.features_0d:
@@ -475,13 +475,15 @@ For example on use see:
             for solved in solves:
                 self.U[feature].append(solved[feature][1])
 
-            self.U[feature] = np.array(self.U[feature])
+            # self.U[feature] = np.array(self.U[feature])
 
+        # self.t[feature] = np.array(self.t[feature])
+        # self.U[feature] = np.array(self.U[feature])
 
         # REVIEW Move masking of the self.U to createMask?
         # Mask None values
-        for feature in self.all_features:
-            self.U[feature] = np.ma.masked_invalid(self.U[feature])
+        # for feature in self.all_features:
+        #     self.U[feature] = np.ma.masked_invalid(self.U[feature])
 
 
 
@@ -489,44 +491,79 @@ For example on use see:
     def createMask(self, nodes, feature):
         # self.U[feature] = np.ma.masked_invalid(self.U[feature])
 
-        if feature in self.features_0d:
-            mask = ~self.U[feature].mask
-            if len(nodes.shape) > 1:
-                masked_nodes = nodes[:, mask]
-            else:
-                masked_nodes = nodes[mask]
-
-            masked_U = self.U[feature][mask]
-    
-        elif feature in self.features_1d:
-            mask = ~np.any(self.U[feature].mask, axis=1)
-
-            if len(nodes.shape) > 1:
-                masked_nodes = nodes[:, mask]
-            else:
-                masked_nodes = nodes[mask]
-
-            masked_U = self.U[feature][mask, :]
-
-        elif feature in self.features_2d:
-            mask = ~np.any(np.any(self.U[feature].mask, axis=1), axis=1)
-
-            if len(nodes.shape) > 1:
-                masked_nodes = nodes[:, mask]
-            else:
-                masked_nodes = nodes[mask]
-
-            masked_U = self.U[feature][mask, :]
-
-        else:
+        if feature not in self.all_features:
             raise AttributeError("Error: {s} is not a feture".format(feature))
 
+        i = 0
+        masked_U = []
+        masked_nodes = []
+        mask = np.ones(len(self.U[feature]), dtype=bool)
 
-        if not np.all(mask) and self.warning_flag:
-            raise RuntimeWarning("feature % s does not yield results for all parameter combinations" \
-                                 % feature)
+        for result in self.U[feature]:
+            if not isinstance(result, np.ndarray) and np.isnan(result):
+                mask[i] = False
+            else:
+                if feature in self.all_features:
+                    masked_U.append(result)
 
-        return masked_nodes, masked_U
+                else:
+                    raise AttributeError("{s} is not a feture".format(feature))
+
+                i += 1
+
+
+        if len(nodes.shape) > 1:
+            masked_nodes = nodes[:, mask]
+        else:
+            masked_nodes = nodes[mask]
+
+        if np.any(mask) and self.warning_flag:
+            raise RuntimeWarning("Feature: {s} does not yield results for all parameter combinations".format(feature))
+
+        # print
+        # print masked_U
+        # print masked_nodes
+        # print
+
+        # if feature in self.features_0d:
+        #     # mask = ~self.U[feature].mask
+        #     if len(nodes.shape) > 1:
+        #         masked_nodes = nodes[:, mask]
+        #     else:
+        #         masked_nodes = nodes[mask]
+        #
+        #     masked_U = self.U[feature][mask]
+        #
+        # elif feature in self.features_1d:
+        #     # mask = ~np.any(self.U[feature].mask, axis=1)
+        #
+        #     if len(nodes.shape) > 1:
+        #         masked_nodes = nodes[:, mask]
+        #     else:
+        #         masked_nodes = nodes[mask]
+        #
+        #     print self.U[feature]
+        #     masked_U = self.U[feature][mask, :]
+        #
+        # elif feature in self.features_2d:
+        #     # mask = ~np.any(np.any(self.U[feature].mask, axis=1), axis=1)
+        #
+        #     if len(nodes.shape) > 1:
+        #         masked_nodes = nodes[:, mask]
+        #     else:
+        #         masked_nodes = nodes[mask]
+        #
+        #     masked_U = self.U[feature][mask, :]
+        #
+        # else:
+        #     raise AttributeError("Error: {s} is not a feture".format(feature))
+        #
+        #
+        # if not np.all(mask) and self.warning_flag:
+        #     raise RuntimeWarning("feature % s does not yield results for all parameter combinations" \
+        #                          % feature)
+
+        return np.array(masked_nodes), np.array(masked_U)
 
 
 
