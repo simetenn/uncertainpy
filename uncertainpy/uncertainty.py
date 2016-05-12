@@ -509,7 +509,7 @@ For example on use see:
                 else:
                     raise AttributeError("{s} is not a feture".format(feature))
 
-                i += 1
+            i += 1
 
 
         if len(nodes.shape) > 1:
@@ -518,50 +518,8 @@ For example on use see:
             masked_nodes = nodes[mask]
 
         if np.any(mask) and self.warning_flag:
-            raise RuntimeWarning("Feature: {s} does not yield results for all parameter combinations".format(feature))
+            raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
 
-        # print
-        # print masked_U
-        # print masked_nodes
-        # print
-
-        # if feature in self.features_0d:
-        #     # mask = ~self.U[feature].mask
-        #     if len(nodes.shape) > 1:
-        #         masked_nodes = nodes[:, mask]
-        #     else:
-        #         masked_nodes = nodes[mask]
-        #
-        #     masked_U = self.U[feature][mask]
-        #
-        # elif feature in self.features_1d:
-        #     # mask = ~np.any(self.U[feature].mask, axis=1)
-        #
-        #     if len(nodes.shape) > 1:
-        #         masked_nodes = nodes[:, mask]
-        #     else:
-        #         masked_nodes = nodes[mask]
-        #
-        #     print self.U[feature]
-        #     masked_U = self.U[feature][mask, :]
-        #
-        # elif feature in self.features_2d:
-        #     # mask = ~np.any(np.any(self.U[feature].mask, axis=1), axis=1)
-        #
-        #     if len(nodes.shape) > 1:
-        #         masked_nodes = nodes[:, mask]
-        #     else:
-        #         masked_nodes = nodes[mask]
-        #
-        #     masked_U = self.U[feature][mask, :]
-        #
-        # else:
-        #     raise AttributeError("Error: {s} is not a feture".format(feature))
-        #
-        #
-        # if not np.all(mask) and self.warning_flag:
-        #     raise RuntimeWarning("feature % s does not yield results for all parameter combinations" \
-        #                          % feature)
 
         return np.array(masked_nodes), np.array(masked_U)
 

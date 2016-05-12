@@ -329,8 +329,9 @@ class TestUncertainty(unittest.TestCase):
     def assertFeatureInvalid(self, results):
         self.assertIn("featureInvalid", self.uncertainty.U.keys())
         self.assertIsNone(self.uncertainty.t["featureInvalid"])
-        self.assertIsInstance(self.uncertainty.U["featureInvalid"][0], np.ma.masked_array)
-        self.assertEqual(self.uncertainty.U["featureInvalid"].count(), 0)
+        self.assertTrue(np.isnan(self.uncertainty.U["featureInvalid"][0]))
+        self.assertTrue(np.isnan(self.uncertainty.U["featureInvalid"][1]))
+        self.assertTrue(np.isnan(self.uncertainty.U["featureInvalid"][2]))
 
 
     def test_sortFeatures(self):
@@ -404,8 +405,6 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.storeResults(results)
 
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "directComparison")
-        print masked_nodes
-        print nodes
 
         self.assertEqual(len(masked_U), 3)
         self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
@@ -413,11 +412,41 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(np.array_equal(masked_U[2], np.arange(0, 10) + 5))
         self.assertTrue(np.array_equal(nodes, masked_nodes))
 
-        ### Todo working here
-        # add specific test cases, set one part of the masked array to Nan
+
+    def test_createMaskDirectComparisonNaN(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.warning_flag = False
+
+        results = self.uncertainty.evaluateNodes(nodes)
+        self.uncertainty.storeResults(results)
+
+        self.uncertainty.U["directComparison"][1] = np.nan
+
+        masked_nodes, masked_U = self.uncertainty.createMask(nodes, "directComparison")
 
 
-        # feature0d
+        self.assertEqual(len(masked_U), 2)
+        self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10) + 5))
+        self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
+
+
+    def test_createMaskRuntimeWarning(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.warning_flag = True
+
+        results = self.uncertainty.evaluateNodes(nodes)
+        self.uncertainty.storeResults(results)
+
+        self.uncertainty.U["directComparison"][1] = np.nan
+
+        with self.assertRaises(RuntimeWarning):
+            self.uncertainty.createMask(nodes, "directComparison")
+
+
+
     def test_createMaskFeature0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
@@ -443,13 +472,10 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.storeResults(results)
 
         self.uncertainty.U["feature0d"] = np.array([1, np.nan, 1])
-        # self.uncertainty.U["feature0d"] = np.ma.masked_invalid(self.uncertainty.U["feature0d"])
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature0d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
-
-
 
 
 
@@ -478,16 +504,8 @@ class TestUncertainty(unittest.TestCase):
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        # TODO Working here
-
         self.uncertainty.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
-        # print self.uncertainty.U["feature1d"]
-        # print np.isnan(self.uncertainty.U["feature1d"])
-        #print np.ma.masked_array(self.uncertainty.U["feature1d"], np.isnan(self.uncertainty.U["feature1d"]))
-        # self.uncertainty.U["feature1d"] = np.ma.masked_where(np.isnan(self.uncertainty.U["feature1d"]), self.uncertainty.U["feature1d"])
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature1d")
-
-        # print masked_U
 
         self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
@@ -516,34 +534,49 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    # def test_createMaskFeature2dNan(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.uncertainty.uncertain_parameters = ["a", "b"]
-    #     self.uncertainty.warning_flag = False
-    #
-    #     results = self.uncertainty.evaluateNodes(nodes)
-    #     self.uncertainty.storeResults(results)
-    #
-    #
-    #     # print self.uncertainty.U["feature2d"][1]
-    #     self.uncertainty.U["feature2d"][1] = np.nan
-    #     # print "-----------"
-    #     # print self.uncertainty.U["feature2d"]
-    #     self.uncertainty.U["feature2d"] = np.ma.masked_invalid(self.uncertainty.U["feature2d"])
-    #     # print "-----------"
-    #     # print self.uncertainty.U["feature2d"]
-    #
-    #     masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature2d")
-    #
-    #     # print masked_U
-    #     # print masked_nodes
-    #
-    #     self.assertTrue(np.array_equal(masked_U, np.array([[np.arange(0, 10), np.arange(0, 10)],
-    #                                                        [np.arange(0, 10), np.arange(0, 10)]])))
-    #     self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
-    #
-    #
+    def test_createMaskFeature2dNan(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.warning_flag = False
 
+        results = self.uncertainty.evaluateNodes(nodes)
+        self.uncertainty.storeResults(results)
+
+        self.uncertainty.U["feature2d"][1] = np.nan
+        masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature2d")
+
+        self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
+
+
+        self.assertEqual(len(masked_U), 2)
+        self.assertTrue(np.array_equal(masked_U[0],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+        self.assertTrue(np.array_equal(masked_U[1],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+
+
+    def test_createMaskFeature2dnodes1DNaN(self):
+        nodes = np.array([0, 1, 2])
+        self.uncertainty.uncertain_parameters = ["a"]
+        self.uncertainty.warning_flag = False
+
+        results = self.uncertainty.evaluateNodes(nodes)
+        self.uncertainty.storeResults(results)
+
+        self.uncertainty.U["feature2d"][1] = np.nan
+        masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature2d")
+
+        self.assertTrue(np.array_equal(masked_nodes, np.array([0, 2])))
+
+        self.assertEqual(len(masked_U), 2)
+        self.assertTrue(np.array_equal(masked_U[0],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+        self.assertTrue(np.array_equal(masked_U[1],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
 
 
 
