@@ -3,7 +3,6 @@ import os
 import unittest
 
 from uncertainpy.spikes import Spike, Spikes
-from uncertainpy.models import IzhikevichModel
 
 
 # TODO Not testing plotting
