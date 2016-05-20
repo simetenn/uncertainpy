@@ -263,6 +263,8 @@ For example on use see:
             self.feature_list = self.features.implementedFeatures()
         elif feature_list is None:
             self.feature_list = []
+        elif isinstance(feature_list, str):
+            self.feature_list = [feature_list]
         else:
             self.feature_list = feature_list
 
@@ -480,16 +482,10 @@ For example on use see:
         # self.t[feature] = np.array(self.t[feature])
         # self.U[feature] = np.array(self.U[feature])
 
-        # REVIEW Move masking of the self.U to createMask?
-        # Mask None values
-        # for feature in self.all_features:
-        #     self.U[feature] = np.ma.masked_invalid(self.U[feature])
-
 
 
 
     def createMask(self, nodes, feature):
-        # self.U[feature] = np.ma.masked_invalid(self.U[feature])
 
         if feature not in self.all_features:
             raise AttributeError("Error: {s} is not a feture".format(feature))
@@ -517,14 +513,15 @@ For example on use see:
         else:
             masked_nodes = nodes[mask]
 
-        if np.any(mask) and self.warning_flag:
+
+        if not np.all(mask) and self.warning_flag:
             raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
 
 
         return np.array(masked_nodes), np.array(masked_U)
 
 
-
+    # TODO move all of the uq calculations into it's own class
     def createPCExpansion(self, parameter_name=None, nr_pc_samples=None):
 
         self.nr_pc_samples = nr_pc_samples
@@ -549,7 +546,6 @@ For example on use see:
 
 
             self.distribution = cp.J(*parameter_space)
-            # self.P = cp.orth_ttr(self.M, self.distribution)
             self.P = cp.orth_ttr(self.M, dist_MvNormal)
 
             if self.nr_pc_samples is None:
@@ -562,10 +558,6 @@ For example on use see:
             nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
             # weights = weights_MvNormal*\
             #    self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
-
-            #if len(nodes.shape) == 1:
-            #    nodes = np.array([nodes])
-
 
             self.distribution = dist_MvNormal
 
@@ -580,8 +572,9 @@ For example on use see:
 
             nodes = self.distribution.sample(self.nr_pc_samples, "M")
             # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
-            # if len(nodes.shape) == 1:
-            #     nodes = np.array([nodes])
+
+        # if len(nodes.shape) == 1:
+        #     nodes = np.array([nodes])
 
 
         solves = self.evaluateNodes(nodes)
@@ -591,20 +584,11 @@ For example on use see:
 
         # Calculate PC for each feature
         for feature in self.all_features:
-
             if self.rosenblatt:
                 masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
 
-                # self.U_hat = cp.fit_quadrature(self.P, nodes_MvNormal,
-                #                                weights, interpolated_solves)
-                # self.U_hat[feature] = cp.fit_regression(self.P, nodes_MvNormal,
-                #                                         self.U[feature], rule="T")
             else:
                 masked_nodes, masked_U = self.createMask(nodes, feature)
-
-                # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-                # self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                #                                         masked_U, rule="T")
 
             # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
@@ -749,6 +733,7 @@ For example on use see:
         total_sensitivity = 0
         for parameter in self.sensitivity_ranking:
             total_sensitivity += self.sensitivity_ranking[parameter]
+
         for parameter in self.sensitivity_ranking:
             self.sensitivity_ranking[parameter] /= total_sensitivity
 

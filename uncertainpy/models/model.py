@@ -74,7 +74,7 @@ class Model():
             raise ValueError("U has not been calculated")
 
         if self.t is None:
-            self.t = np.NaN
+            self.t = np.nan
 
         if CPU is None:
             np.save(os.path.join(save_path, ".tmp_U"), self.U)

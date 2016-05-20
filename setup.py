@@ -28,7 +28,7 @@ dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
 
 
 def activate_virtualev(virtual_enviroment=virtual_enviroment):
-    subprocess.call("source /usr/local/bin/virtualenvwrapper.sh && mkvirtualenv "
+    subprocess.call("source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && mkvirtualenv "
                     + virtual_enviroment + " --system-site-packages",
                     executable='bash', shell=True)
     virtual_path = os.environ["VIRTUALENVWRAPPER_HOOK_DIR"] + "/" + virtual_enviroment
@@ -41,7 +41,7 @@ def setupInstall():
     if not platform.system() == "Linux":
         print "Warning: OS not supported, the installation may fail"
 
-    subprocess.call("./install_dependencies.sh", shell=True)
+    subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
 class CustomDevelop(_develop):
@@ -59,7 +59,7 @@ def setupFullInstall():
     if not platform.system() == "Linux":
         print "Warning: OS not supported, the installation may fail"
 
-    subprocess.call("./install_all_dependencies.sh", shell=True)
+    subprocess.call("./install_scripts/install_all_dependencies.sh", shell=True)
 
 
 class CustomFullDevelop(_develop):
@@ -95,7 +95,7 @@ if "--virtual" in sys.argv:
     sys.argv.remove("--virtual")
 
 if "--neuron" in sys.argv:
-    subprocess.call("./install_neuron.sh", shell=True)
+    subprocess.call("sudo ./install_scripts/install_neuron.sh", shell=True)
     sys.argv.remove("--neuron")
 
 

@@ -1,12 +1,13 @@
 import numpy as np
 import unittest
 import scipy.interpolate
-import warnings
+import chaospy as cp
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.features import TestingFeatures, NeuronFeatures
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
-
+from uncertainpy.parameters import Parameters
+from uncertainpy import Distribution
 
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
@@ -15,7 +16,7 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list="all")
 
 
-    def test_intit(self):
+    def test_init(self):
         uncertainty = UncertaintyEstimation(TestingModel1d())
 
 
@@ -559,6 +560,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature2dnodes1DNaN(self):
         nodes = np.array([0, 1, 2])
+
         self.uncertainty.uncertain_parameters = ["a"]
         self.uncertainty.warning_flag = False
 
@@ -580,6 +582,112 @@ class TestUncertainty(unittest.TestCase):
 
 
 
+
+
+    def test_createPCExpansion(self):
+
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature0d",
+                                                               "feature1d",
+                                                               "feature2d"])
+        self.uncertainty.createPCExpansion()
+
+        self.assertIsInstance(self.uncertainty.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["directComparison"], cp.Poly)
+
+
+    def test_createPCExpansionFeatureInvalid(self):
+
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list="featureInvalid")
+
+        with self.assertRaises(RuntimeWarning):
+            self.uncertainty.createPCExpansion()
+
+        self.uncertainty.warning_flag = False
+        self.uncertainty.createPCExpansion()
+        self.assertIsInstance(self.uncertainty.U_hat["directComparison"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["featureInvalid"], cp.Poly)
+
+
+    def test_createPCExpansionRosenBlatt(self):
+
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list="all",
+                                                 rosenblatt=True,
+                                                 warning_flag=False)
+
+        self.uncertainty.createPCExpansion()
+
+
+        self.assertIsInstance(self.uncertainty.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["directComparison"], cp.Poly)
+        self.assertIsInstance(self.uncertainty.U_hat["featureInvalid"], cp.Poly)
+
+
+
+    def test_PCAnalysis(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature0d",
+                                                               "feature1d",
+                                                               "feature2d"],
+                                                 warning_flag=False)
+
+
+        self.uncertainty.all_features = ["feature0d", "feature1d",
+                                         "feature1d", "directComparison"]
+
+        q0, q1 = cp.variable(2)
+        print self.uncertainty.distribution
+        parameter_space = model.parameters.getUncertain("parameter_space")
+        self.uncertainty.distribution = cp.J(*parameter_space)
+
+        self.uncertainty.U_hat["directComparison"] = cp.Poly([q0, q1*q0, q1])
+        self.uncertainty.U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
+        self.uncertainty.U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
+        self.uncertainty.U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+
+        self.uncertainty.PCAnalysis()
 
 
 if __name__ == "__main__":

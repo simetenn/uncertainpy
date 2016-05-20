@@ -21,7 +21,7 @@ function pip_install {
   fi
 }
 
-#sudo apt-get update --fix-missing
+sudo apt-get update --fix-missing
 
 
 echo "Starting installation"
@@ -29,7 +29,7 @@ echo "Starting installation"
 set -e  # make sure any failed command stops the script
 
 # Neuron dependencies
-
+apt_install libncurses5-dev
 
 mkdir /usr/local/neuron/
 

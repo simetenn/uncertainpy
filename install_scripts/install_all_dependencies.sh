@@ -40,6 +40,7 @@ echo "Installing system wide packages for uncertainpy"
 apt_install python-dev
 apt_install python-matplotlib
 apt_install python-h5py
+apt_install xvfb
 
 
 echo "Installing virtual envionment packages"
