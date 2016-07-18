@@ -25,6 +25,19 @@ class TestingModel1d(Model):
         self.U = np.arange(0, 10) + self.a + self.b
 
 
+class TestingModel1dConstant(Model):
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters=parameters)
+
+        self.a = 1
+        self.b = 2
+
+    def run(self):
+        self.t = np.arange(0, 10)
+        self.U = np.arange(0, 10)
+
+
+
 class TestingModel2d(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)

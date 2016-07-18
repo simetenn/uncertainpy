@@ -675,12 +675,14 @@ class TestUncertainty(unittest.TestCase):
 
 
         self.uncertainty.all_features = ["feature0d", "feature1d",
-                                         "feature1d", "directComparison"]
+                                         "feature2d", "directComparison"]
 
         q0, q1 = cp.variable(2)
-        print self.uncertainty.distribution
         parameter_space = model.parameters.getUncertain("parameter_space")
         self.uncertainty.distribution = cp.J(*parameter_space)
+
+        self.uncertainty.uncertain_parameters = ["a", "b"]
+
 
         self.uncertainty.U_hat["directComparison"] = cp.Poly([q0, q1*q0, q1])
         self.uncertainty.U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
@@ -688,6 +690,105 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
 
         self.uncertainty.PCAnalysis()
+
+
+        # Test if all calculated properties actually exists
+        self.assertIsInstance(self.uncertainty.p_05["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_05["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_05["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_05["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.p_95["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_95["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_95["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_95["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.E["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.E["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.E["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.E["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.Var["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.Var["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.Var["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.Var["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.sensitivity["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.sensitivity["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.sensitivity["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.sensitivity["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.U_mc["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.U_mc["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.U_mc["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.U_mc["feature2d"], np.ndarray)
+
+
+
+
+    def test_PCAnalysis(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["featureInvalid"],
+                                                 warning_flag=False)
+
+
+        self.uncertainty.all_features = ["featureInvalid", "directComparison"]
+
+        q0, q1 = cp.variable(2)
+        parameter_space = model.parameters.getUncertain("parameter_space")
+        self.uncertainty.distribution = cp.J(*parameter_space)
+
+        self.uncertainty.uncertain_parameters = ["a", "b"]
+
+
+        self.uncertainty.U_hat["directComparison"] = cp.Poly([q0, q1*q0, q1])
+        self.uncertainty.U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
+        self.uncertainty.U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
+        self.uncertainty.U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+
+        self.uncertainty.PCAnalysis()
+
+
+        # Tests if all calculated properties actually exists
+        self.assertIsInstance(self.uncertainty.p_05["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_05["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_05["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_05["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.p_95["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_95["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_95["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.p_95["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.E["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.E["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.E["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.E["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.Var["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.Var["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.Var["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.Var["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.sensitivity["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.sensitivity["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.sensitivity["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.sensitivity["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.U_mc["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.U_mc["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.U_mc["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.U_mc["feature2d"], np.ndarray)
+
 
 
 if __name__ == "__main__":

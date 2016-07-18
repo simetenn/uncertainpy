@@ -6,6 +6,7 @@ from uncertainpy.spikes import Spike, Spikes
 
 
 # TODO Not testing plotting
+
 class TestSpike(unittest.TestCase):
     def setUp(self):
         t = np.arange(0, 10)

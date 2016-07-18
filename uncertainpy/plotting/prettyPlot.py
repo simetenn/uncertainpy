@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
-               color=0, linestyle="solid", new_figure=True):
+               color=0, linestyle="solid", marker=None, new_figure=True):
 
     """
 prettyPlot
@@ -45,10 +45,25 @@ tableau20 : list
     List of tableau20 colors
     """
 
+
+    plt.rcParams['text.latex.preamble'] = [r"\usepackage{lmodern}"]
+    #Options
+    params = {'text.usetex': True,
+              'font.family': 'lmodern',
+              'axes.grid': True,
+              'grid.color': 'white',
+              'grid.linewidth': 1.3,
+              'grid.linestyle': '-',
+              'axes.facecolor': '0.95',
+              'legend.fontsize': 16}
+
+    plt.rcParams.update(params)
+
+
     axis_grey = (0.5, 0.5, 0.5)
-    titlesize = 18
-    fontsize = 16
-    labelsize = 14
+    titlesize = 20
+    fontsize = 18
+    labelsize = 16
     figsize = (10, 7.5)
 
     # These are the "Tableau 20" colors as RGB.
@@ -99,7 +114,9 @@ tableau20 : list
     if len(x) == 0:
         return ax, tableau20
 
-    ax.plot(x, y, color=tableau20[color], linestyle=linestyle, linewidth=2, antialiased=True)
+    ax.plot(x, y, color=tableau20[color], linestyle=linestyle, marker=marker,
+            markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
+            zorder=3)
 
 
     ax.set_xlim([min(x), max(x)])
