@@ -100,6 +100,7 @@
 
 # TODO finish testing
 
+# TODO move creation of all_features to where the class is initiated
 
 
 import time
