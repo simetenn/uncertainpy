@@ -23,7 +23,8 @@ uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 save_figures=True,
                                                 output_dir_data="data/coffee",
                                                 output_dir_figures="figures/coffee",
-                                                rosenblatt=False)
+                                                rosenblatt=False,
+                                                verbose_filename="test.log")
 
 
 uncertainty.singleParameters()

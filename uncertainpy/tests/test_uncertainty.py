@@ -15,7 +15,8 @@ class TestUncertainty(unittest.TestCase):
     def setUp(self):
         self.uncertainty = UncertaintyEstimation(TestingModel1d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all")
+                                                 feature_list="all",
+                                                 verbose_level="error")
 
 
     def test_init(self):
@@ -23,27 +24,32 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_intitFeatures(self):
-        uncertainty = UncertaintyEstimation(TestingModel1d())
+        uncertainty = UncertaintyEstimation(TestingModel1d(),
+                                            verbose_level="error")
         self.assertIsInstance(uncertainty.features, NeuronFeatures)
 
         uncertainty = UncertaintyEstimation(TestingModel1d(),
-                                            features=TestingFeatures())
+                                            features=TestingFeatures(),
+                                            verbose_level="error")
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
     def test_intitFeatureList(self):
         uncertainty = UncertaintyEstimation(TestingModel1d(),
-                                            features=TestingFeatures())
+                                            features=TestingFeatures(),
+                                            verbose_level="error")
         self.assertEqual(uncertainty.feature_list, [])
 
         uncertainty = UncertaintyEstimation(TestingModel1d(),
                                             features=TestingFeatures(),
-                                            feature_list="all")
+                                            feature_list="all",
+                                            verbose_level="error")
         self.assertEqual(uncertainty.feature_list,
                          ["feature0d", "feature1d", "feature2d", "featureInvalid"])
 
         uncertainty = UncertaintyEstimation(TestingModel1d(),
-                                            feature_list=["feature1", "feature2"])
+                                            feature_list=["feature1", "feature2"],
+                                            verbose_level="error")
         self.assertEqual(uncertainty.feature_list,
                          ["feature1", "feature2"])
 
@@ -118,7 +124,8 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel0d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all")
+                                                 feature_list="all",
+                                                 verbose_level="error")
 
         self.CPUs = 1
         self.uncertainty.uncertain_parameters = ["a", "b"]
@@ -134,7 +141,8 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel0d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all")
+                                                 feature_list="all",
+                                                 verbose_level="error")
         self.CPUs = 3
         self.uncertainty.uncertain_parameters = ["a", "b"]
 
@@ -188,7 +196,8 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel2d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all")
+                                                 feature_list="all",
+                                                 verbose_level="error")
         self.CPUs = 3
         self.uncertainty.uncertain_parameters = ["a", "b"]
 
@@ -600,7 +609,8 @@ class TestUncertainty(unittest.TestCase):
                                                  features=TestingFeatures(),
                                                  feature_list=["feature0d",
                                                                "feature1d",
-                                                               "feature2d"])
+                                                               "feature2d"],
+                                                 verbose_level="error")
         self.uncertainty.createPCExpansion()
 
         self.assertIsInstance(self.uncertainty.U_hat["feature0d"], cp.Poly)
@@ -621,7 +631,8 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="featureInvalid")
+                                                 feature_list="featureInvalid",
+                                                 verbose_level="error")
 
         with self.assertRaises(RuntimeWarning):
             self.uncertainty.createPCExpansion()
@@ -646,7 +657,8 @@ class TestUncertainty(unittest.TestCase):
                                                  features=TestingFeatures(),
                                                  feature_list="all",
                                                  rosenblatt=True,
-                                                 warning_flag=False)
+                                                 warning_flag=False,
+                                                 verbose_level="error")
 
         self.uncertainty.createPCExpansion()
 
@@ -673,7 +685,8 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list=["feature0d",
                                                                "feature1d",
                                                                "feature2d"],
-                                                 warning_flag=False)
+                                                 warning_flag=False,
+                                                 verbose_level="error")
 
 
         self.uncertainty.all_features = ["feature0d", "feature1d",
@@ -741,7 +754,8 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=None,
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False)
+                                                 warning_flag=False,
+                                                 verbose_level="error")
 
 
         self.uncertainty.all_features = ["directComparison"]
@@ -771,7 +785,8 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=["feature0d"],
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False)
+                                                 warning_flag=False,
+                                                 verbose_level="error")
 
 
         self.uncertainty.all_features = ["feature0d"]
@@ -800,7 +815,8 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=["feature1d"],
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False)
+                                                 warning_flag=False,
+                                                 verbose_level="error")
 
 
         self.uncertainty.all_features = ["feature1d"]
@@ -831,7 +847,8 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=["feature2d"],
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False)
+                                                 warning_flag=False,
+                                                 verbose_level="error")
 
 
         self.uncertainty.all_features = ["feature2d"]
@@ -867,8 +884,7 @@ class TestUncertainty(unittest.TestCase):
                                                  warning_flag=False,
                                                  output_data_filename="test_save_data",
                                                  output_dir_data=output_test_data,
-                                                 verbose_filename="test.log",
-                                                 verbose_level="debug")
+                                                 verbose_level="error")
 
 
         self.uncertainty.singleParameters()
@@ -878,7 +894,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(output_test_data,
                                        "test_save_data_single-parameter-b")))
 
-        # shutil.rmtree(output_test_data)
+        shutil.rmtree(output_test_data)
 
 
 

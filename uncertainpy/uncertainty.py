@@ -151,8 +151,7 @@ class UncertaintyEstimation():
                  CPUs=mp.cpu_count(),
                  rosenblatt=False,
                  nr_mc_samples=10**3,
-                 nr_pc_mc_samples=10**5,
-                 warning_flag=True,
+                 nr_pc_mc_samples=10**5
                  verbose_level="info",
                  verbose_filename=None,
                  **kwargs):
@@ -326,31 +325,30 @@ For example on use see:
             self.output_data_filename = output_data_filename
 
 
+
         numeric_level = getattr(logging, verbose_level.upper(), None)
         if not isinstance(numeric_level, int):
             raise ValueError('Invalid log level: %s' % verbose_level)
 
-
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.logger.setLevel(numeric_level)
 
         formatter = logging.Formatter('%(levelname)s: %(message)s')
         # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-        console = logging.StreamHandler(stream=sys.stdout)
-
         if verbose_filename is None:
+            console = logging.StreamHandler(stream=sys.stdout)
             console.setLevel(numeric_level)
-        else:
-            console.setLevel(logging.ERROR)
+            console.setFormatter(formatter)
 
-            handler = logging.FileHandler(verbose_filename)
+            self.logger.addHandler(console)
+        else:
+            handler = logging.FileHandler(filename=verbose_filename, mode='w')
             handler.setLevel(numeric_level)
             handler.setFormatter(formatter)
+
             self.logger.addHandler(handler)
 
-        console.setFormatter(formatter)
-        self.logger.addHandler(console)
 
         self.t_start = time.time()
 
@@ -559,7 +557,7 @@ For example on use see:
             masked_nodes = nodes[mask]
 
 
-        if not np.all(mask) and self.warning_flag:
+        if not np.all(mask):
             raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
 
 
