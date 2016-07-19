@@ -104,6 +104,11 @@
 
 # TODO save data from each singleParameter run or not in the class?
 
+# TODO save logging in a file,
+# http://victorlin.me/posts/2012/08/26/good-logging-practice-in-python
+
+# TODO use logging everywhere I print
+
 
 import time
 import os
@@ -118,8 +123,7 @@ import logging
 
 from xvfbwrapper import Xvfb
 
-# Imported from my own files
-from verbose import Verbose
+# Imported from uncertainpy
 from uncertainpy.features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
@@ -150,6 +154,7 @@ class UncertaintyEstimation():
                  nr_pc_mc_samples=10**5,
                  warning_flag=True,
                  verbose_level="info",
+                 verbose_filename=None,
                  **kwargs):
         """
 Uncertainty Estimation object
@@ -224,8 +229,11 @@ nr_pc_mc_samples : int
 verbose_level : str
     The amount of information printed to the terminal.
     Options from much output to low output:
-    'debug', 'info', 'warnings', 'silent'
-    Default is 'silent'.
+    'debug', 'info', 'warning', 'error','critical'
+    Default is 'warnings'.
+verbose_filename : None/str
+    redirect output to a file. If None print to terminal.
+    Default is None.
 **kwargs : dict
     Optional arguments to be sent to other classes.
     Currently only features support recieving optional
@@ -296,8 +304,8 @@ For example on use see:
         self.kwargs = kwargs
         self.warning_flag = warning_flag
 
-        if self.warning_flag:
-            warnings.simplefilter('ignore')
+        # if self.warning_flag:
+        #     warnings.simplefilter('ignore')
 
         self.M = 3
         self.nr_mc_samples = nr_mc_samples
@@ -317,7 +325,32 @@ For example on use see:
         else:
             self.output_data_filename = output_data_filename
 
-        self.verbose = Verbose(verbose_level)
+
+        numeric_level = getattr(logging, verbose_level.upper(), None)
+        if not isinstance(numeric_level, int):
+            raise ValueError('Invalid log level: %s' % verbose_level)
+
+
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter('%(levelname)s: %(message)s')
+        # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+        console = logging.StreamHandler(stream=sys.stdout)
+
+        if verbose_filename is None:
+            console.setLevel(numeric_level)
+        else:
+            console.setLevel(logging.ERROR)
+
+            handler = logging.FileHandler(verbose_filename)
+            handler.setLevel(numeric_level)
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
+
+        console.setFormatter(formatter)
+        self.logger.addHandler(console)
 
         self.t_start = time.time()
 
@@ -659,7 +692,9 @@ For example on use see:
 
     def singleParameters(self):
         for uncertain_parameter in self.model.parameters.getUncertain():
-            print "\rRunning for " + uncertain_parameter + "                     "
+            # print "\rRunning for " + uncertain_parameter + "                     "
+            message = "Running for " + uncertain_parameter + "                     "
+            self.logger.info(message)
 
             self.resetValues()
 
@@ -704,8 +739,9 @@ For example on use see:
 
     def singleParametersMC(self):
         for uncertain_parameter in self.model.parameters.getUncertain():
-            print "\rRunning for " + uncertain_parameter + "                     "
-
+            # print "\rRunning for " + uncertain_parameter + "                     "
+            message = "\rRunning for " + uncertain_parameter + "                     "
+            logging.warning(message)
 
 
             self.resetValues()

@@ -2,6 +2,8 @@ import numpy as np
 import unittest
 import scipy.interpolate
 import chaospy as cp
+import os
+import shutil
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.features import TestingFeatures, NeuronFeatures
@@ -851,6 +853,8 @@ class TestUncertainty(unittest.TestCase):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
+        output_test_data = ".tests"
+
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
@@ -862,10 +866,19 @@ class TestUncertainty(unittest.TestCase):
                                                  save_figures=False,
                                                  warning_flag=False,
                                                  output_data_filename="test_save_data",
-                                                 output_dir_data="data/test")
+                                                 output_dir_data=output_test_data,
+                                                 verbose_filename="test.log",
+                                                 verbose_level="debug")
 
 
         self.uncertainty.singleParameters()
+
+        self.assertTrue(os.path.isfile(os.path.join(output_test_data,
+                                       "test_save_data_single-parameter-a")))
+        self.assertTrue(os.path.isfile(os.path.join(output_test_data,
+                                       "test_save_data_single-parameter-b")))
+
+        # shutil.rmtree(output_test_data)
 
 
 
