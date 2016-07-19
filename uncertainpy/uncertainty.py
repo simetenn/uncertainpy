@@ -102,6 +102,8 @@
 
 # TODO move creation of all_features to where the class is initiated
 
+# TODO save data from each singleParameter run or not in the class?
+
 
 import time
 import os
@@ -112,6 +114,7 @@ import numpy as np
 import chaospy as cp
 import multiprocessing as mp
 import matplotlib.pyplot as plt
+import logging
 
 from xvfbwrapper import Xvfb
 
@@ -145,6 +148,7 @@ class UncertaintyEstimation():
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
                  warning_flag=True,
+                 verbose=1,
                  **kwargs):
         """
 Uncertainty Estimation object
@@ -724,6 +728,7 @@ For example on use see:
             self.plotAll(self.output_data_filename)
 
 
+    # TODO does not work
     def sensitivityRanking(self):
         self.sensitivity_ranking = {}
         i = 0
@@ -820,6 +825,7 @@ For example on use see:
             i += 1
 
 
+    # TODO make sure this function works
     def plotAll(self, foldername):
         self.plot.setData(foldername=foldername,
                           t=self.t,

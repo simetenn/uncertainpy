@@ -839,12 +839,33 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(np.array_equal(self.uncertainty.E["feature2d"],
                                        features.feature2d()))
         self.assertTrue(np.array_equal(self.uncertainty.Var["feature2d"],
-                                       np.zeros(2, 10)))
+                                       np.zeros((2, 10))))
         self.assertTrue(np.array_equal(self.uncertainty.p_05["feature2d"],
                                        features.feature2d()))
         self.assertTrue(np.array_equal(self.uncertainty.p_95["feature2d"],
                                        features.feature2d()))
 
+
+
+    def test_singleParameters(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature1d"],
+                                                 save_data=True,
+                                                 save_figures=False,
+                                                 warning_flag=False,
+                                                 output_data_filename="test_save_data",
+                                                 output_dir_data="data/test")
+
+
+        self.uncertainty.singleParameters()
 
 
 
