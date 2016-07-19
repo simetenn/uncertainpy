@@ -119,6 +119,7 @@ import logging
 from xvfbwrapper import Xvfb
 
 # Imported from my own files
+from verbose import Verbose
 from uncertainpy.features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
@@ -148,7 +149,7 @@ class UncertaintyEstimation():
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
                  warning_flag=True,
-                 verbose=1,
+                 verbose_level="info",
                  **kwargs):
         """
 Uncertainty Estimation object
@@ -220,7 +221,11 @@ nr_pc_mc_samples : int
     The number of samples when using the polynomal chaos
     polynomial as a surrogate model for a Monte Carlo method.
     Default is 10**5.
-
+verbose_level : str
+    The amount of information printed to the terminal.
+    Options from much output to low output:
+    'debug', 'info', 'warnings', 'silent'
+    Default is 'silent'.
 **kwargs : dict
     Optional arguments to be sent to other classes.
     Currently only features support recieving optional
@@ -311,6 +316,8 @@ For example on use see:
             self.output_data_filename = self.model.__class__.__name__
         else:
             self.output_data_filename = output_data_filename
+
+        self.verbose = Verbose(verbose_level)
 
         self.t_start = time.time()
 
@@ -698,6 +705,8 @@ For example on use see:
     def singleParametersMC(self):
         for uncertain_parameter in self.model.parameters.getUncertain():
             print "\rRunning for " + uncertain_parameter + "                     "
+
+
 
             self.resetValues()
 
