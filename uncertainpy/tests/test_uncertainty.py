@@ -4,6 +4,7 @@ import scipy.interpolate
 import chaospy as cp
 import os
 import shutil
+import subprocess
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.features import TestingFeatures, NeuronFeatures
@@ -13,12 +14,14 @@ from uncertainpy import Distribution
 
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
+        self.output_test_dir = ".tests"
+
         self.uncertainty = UncertaintyEstimation(TestingModel1d(),
                                                  features=TestingFeatures(),
                                                  feature_list="all",
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 output_dir_data=self.output_test_dir)
 
-        self.output_test_dir = ".tests"
 
 
 
@@ -877,6 +880,10 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_singleParameters(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.mkdir(self.output_test_dir)
+
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -897,12 +904,183 @@ class TestUncertainty(unittest.TestCase):
 
 
         self.uncertainty.singleParameters()
+        #
+        # self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+        #                                "test_save_data_single-parameter-a")))
+        # self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+        #                                "test_save_data_single-parameter-b")))
 
-        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
-                                       "test_save_data_single-parameter-a")))
-        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
-                                       "test_save_data_single-parameter-b")))
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_data_single-parameter-a")
+        filename = os.path.join(self.output_test_dir, "test_save_data_single-parameter-a")
+        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
 
+        self.assertEqual(result, 0)
+
+
+        compare_file = os.path.join(folder, "data/test_save_data_single-parameter-b")
+        filename = os.path.join(self.output_test_dir, "test_save_data_single-parameter-b")
+        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_allParameters(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.mkdir(self.output_test_dir)
+
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature1d"],
+                                                 save_data=True,
+                                                 save_figures=False,
+                                                 output_data_filename="test_save_data",
+                                                 output_dir_data=self.output_test_dir,
+                                                 verbose_level="error")
+
+
+        self.uncertainty.allParameters()
+
+        # filename = os.path.join(self.output_test_dir, "test_save_data")
+        # self.assertTrue(os.path.isfile(filename))
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_data")
+        filename = os.path.join(self.output_test_dir, "test_save_data")
+
+        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_singleParametersMC(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.mkdir(self.output_test_dir)
+
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature1d"],
+                                                 save_data=True,
+                                                 save_figures=False,
+                                                 output_data_filename="test_save_data_MC",
+                                                 output_dir_data=self.output_test_dir,
+                                                 verbose_level="error",
+                                                 nr_mc_samples=10**1)
+
+
+        self.uncertainty.singleParametersMC()
+
+        # self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+        #                                "test_save_data_MC_single-parameter-a")))
+        # self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+        #                                "test_save_data_MC_single-parameter-b")))
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_data_MC_single-parameter-a")
+        filename = os.path.join(self.output_test_dir, "test_save_data_MC_single-parameter-a")
+
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+        compare_file = os.path.join(folder, "data/test_save_data_MC_single-parameter-b")
+        filename = os.path.join(self.output_test_dir, "test_save_data_MC_single-parameter-b")
+
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_allParametersMC(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.mkdir(self.output_test_dir)
+
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature1d"],
+                                                 save_data=True,
+                                                 save_figures=False,
+                                                 output_data_filename="test_save_data_MC",
+                                                 output_dir_data=self.output_test_dir,
+                                                 verbose_level="error",
+                                                 nr_mc_samples=10**1)
+
+
+        self.uncertainty.allParametersMC()
+
+        # filename = os.path.join(self.output_test_dir, "test_save_data_MC")
+        # self.assertTrue(os.path.isfile(filename))
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_data_MC")
+        filename = os.path.join(self.output_test_dir, "test_save_data_MC")
+
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_saveMockData(self):
+
+        def f(x):
+            return x
+
+        self.uncertainty.all_features = ["feature1", "directComparison"]
+        self.uncertainty.feature_list = ["feature1"]
+        parameterlist = [["a", 1, f],
+                         ["b", 2, f]]
+
+
+        parameters = Parameters(parameterlist)
+        self.uncertainty.model.parameters = parameters
+
+        self.uncertainty.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
+
+        self.uncertainty.save("test_save_mock")
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock")
+        filename = os.path.join(self.output_test_dir, "test_save_mock")
+
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
 
 
 if __name__ == "__main__":

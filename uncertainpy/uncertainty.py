@@ -104,11 +104,6 @@
 
 # TODO save data from each singleParameter run or not in the class?
 
-# TODO save logging in a file,
-# http://victorlin.me/posts/2012/08/26/good-logging-practice-in-python
-
-# TODO use logging everywhere I print
-
 
 import time
 import os
@@ -128,9 +123,6 @@ from uncertainpy.features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot
-
-import warnings
-
 
 
 class UncertaintyEstimation():
@@ -530,7 +522,7 @@ For example on use see:
     def createMask(self, nodes, feature):
 
         if feature not in self.all_features:
-            raise AttributeError("Error: {s} is not a feture".format(feature))
+            raise AttributeError("Error: {} is not a feature".format(feature))
 
         i = 0
         masked_U = []
@@ -545,7 +537,7 @@ For example on use see:
                     masked_U.append(result)
 
                 else:
-                    raise AttributeError("{s} is not a feture".format(feature))
+                    raise AttributeError("{} is not a feature".format(feature))
 
             i += 1
 
@@ -689,26 +681,30 @@ For example on use see:
 
     def singleParameters(self):
         for uncertain_parameter in self.model.parameters.getUncertain():
-            # print "\rRunning for " + uncertain_parameter + "                     "
             message = "Running for " + uncertain_parameter + "                     "
             self.logger.info(message)
 
             self.resetValues()
 
             if self.createPCExpansion(uncertain_parameter) == -1:
-                print "Calculations aborted for " + uncertain_parameter
+                self.logger.warning("Calculations aborted for " + uncertain_parameter)
                 return -1
 
             self.PCAnalysis()
 
+
             if self.save_data:
-                self.save("%s_single-parameter-%s"
-                          % (self.output_data_filename, uncertain_parameter))
+                filename = "%s_single-parameter-%s" \
+                    % (self.output_data_filename, uncertain_parameter)
+
+                self.logger.info("Saving data as: {}".format(filename))
+                self.save(filename)
 
             if self.save_figures:
-                self.plotAll("%s_single-parameter-%s"
-                             % (self.output_data_filename, uncertain_parameter))
-
+                filename = "%s_single-parameter-%s" \
+                    % (self.output_data_filename, uncertain_parameter)
+                self.logger.info("Saving plots as: {}".format(filename))
+                self.plotAll(filename)
 
 
 
@@ -719,39 +715,44 @@ For example on use see:
 
         self.resetValues()
 
-        print "\rRunning for all                     "
+        self.logger.info("Running for all parameters")
         if self.createPCExpansion() == -1:
-            print "Calculations aborted for all"
+            self.logger.warning("Calculations aborted for all")
             return -1
 
         self.PCAnalysis()
 
         if self.save_data:
+            self.logger.info("Saving data as: {}".format(self.output_data_filename))
             self.save(self.output_data_filename)
 
 
         if self.save_figures:
+            self.logger.info("Saving plots as: {}".format(self.output_data_filename))
             self.plotAll(self.output_data_filename)
+
 
 
     def singleParametersMC(self):
         for uncertain_parameter in self.model.parameters.getUncertain():
-            # print "\rRunning for " + uncertain_parameter + "                     "
-            message = "\rRunning for " + uncertain_parameter + "                     "
+            message = "Running MC for " + uncertain_parameter
             logging.info(message)
-
 
             self.resetValues()
 
             self.MC(uncertain_parameter)
 
+            filename = "%s_single-parameter-%s" \
+                % (self.output_data_filename, uncertain_parameter)
+
             if self.save_data:
-                self.save("%s_single-parameter-%s"
-                          % (self.output_data_filename, uncertain_parameter))
+                self.logger.info("Saving data as: {}".format(filename))
+                self.save(filename)
+
 
             if self.save_figures:
-                self.plotAll("%s_single-parameter-%s"
-                             % (self.output_data_filename, uncertain_parameter))
+                self.logger.info("Saving plots as: {}".format(filename))
+                self.plotAll(filename)
 
 
     def allParametersMC(self):
@@ -764,9 +765,12 @@ For example on use see:
         self.MC()
 
         if self.save_data:
+            self.logger.info("Saving data as: {}".format(self.output_data_filename))
             self.save(self.output_data_filename)
 
+
         if self.save_figures:
+            self.logger.info("Saving plots as: {}".format(self.output_data_filename))
             self.plotAll(self.output_data_filename)
 
 

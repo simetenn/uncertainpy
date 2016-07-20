@@ -42,6 +42,9 @@ apt_install python-matplotlib
 apt_install python-h5py
 apt_install xvfb
 
+echo "Installing system wide packages for testing"
+apt_install h5utils
+
 
 echo "Installing virtual envionment packages"
 pip_install cython
