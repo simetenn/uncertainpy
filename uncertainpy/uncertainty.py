@@ -151,7 +151,7 @@ class UncertaintyEstimation():
                  CPUs=mp.cpu_count(),
                  rosenblatt=False,
                  nr_mc_samples=10**3,
-                 nr_pc_mc_samples=10**5
+                 nr_pc_mc_samples=10**5,
                  verbose_level="info",
                  verbose_filename=None,
                  **kwargs):
@@ -301,7 +301,6 @@ For example on use see:
         self.rosenblatt = rosenblatt
 
         self.kwargs = kwargs
-        self.warning_flag = warning_flag
 
         # if self.warning_flag:
         #     warnings.simplefilter('ignore')
@@ -558,8 +557,8 @@ For example on use see:
 
 
         if not np.all(mask):
-            raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
-
+            # raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
+            self.logger.warning("Feature: {} does not yield results for all parameter combinations".format(feature))
 
         return np.array(masked_nodes), np.array(masked_U)
 
@@ -739,7 +738,7 @@ For example on use see:
         for uncertain_parameter in self.model.parameters.getUncertain():
             # print "\rRunning for " + uncertain_parameter + "                     "
             message = "\rRunning for " + uncertain_parameter + "                     "
-            logging.warning(message)
+            logging.info(message)
 
 
             self.resetValues()

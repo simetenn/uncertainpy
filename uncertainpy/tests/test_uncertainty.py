@@ -18,6 +18,9 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list="all",
                                                  verbose_level="error")
 
+        self.output_test_dir = ".tests"
+
+
 
     def test_init(self):
         UncertaintyEstimation(TestingModel1d())
@@ -411,7 +414,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskDirectComparison(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -428,7 +430,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskDirectComparisonNaN(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -444,25 +445,38 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
 
 
-    def test_createMaskRuntimeWarning(self):
+    def test_createMaskWarning(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.mkdir(self.output_test_dir)
+
+        logfile = os.path.join(self.output_test_dir, "test.log")
+
+        self.uncertainty = UncertaintyEstimation(TestingModel1d(),
+                                                 features=TestingFeatures(),
+                                                 feature_list="all",
+                                                 verbose_level="warning",
+                                                 verbose_filename=logfile)
+
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = True
+        self.uncertainty.verbose_filename = logfile
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
         self.uncertainty.U["directComparison"][1] = np.nan
 
-        with self.assertRaises(RuntimeWarning):
-            self.uncertainty.createMask(nodes, "directComparison")
+        self.uncertainty.createMask(nodes, "directComparison")
 
+        self.assertTrue("WARNING: Feature: directComparison does not yield results for all parameter combinations" in open(logfile).read())
+
+        shutil.rmtree(self.output_test_dir)
 
 
     def test_createMaskFeature0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -478,7 +492,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskFeature0dNan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -494,7 +507,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskFeature1d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -511,7 +523,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskFeature1dNan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -527,7 +538,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskFeature2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -549,7 +559,6 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskFeature2dNan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -573,7 +582,6 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([0, 1, 2])
 
         self.uncertainty.uncertain_parameters = ["a"]
-        self.uncertainty.warning_flag = False
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -621,6 +629,8 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createPCExpansionFeatureInvalid(self):
 
+
+
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -628,19 +638,25 @@ class TestUncertainty(unittest.TestCase):
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
 
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.mkdir(self.output_test_dir)
+
+        logfile = os.path.join(self.output_test_dir, "test.log")
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
                                                  feature_list="featureInvalid",
-                                                 verbose_level="error")
+                                                 verbose_level="warning",
+                                                 verbose_filename=logfile)
 
-        with self.assertRaises(RuntimeWarning):
-            self.uncertainty.createPCExpansion()
-
-        self.uncertainty.warning_flag = False
         self.uncertainty.createPCExpansion()
         self.assertIsInstance(self.uncertainty.U_hat["directComparison"], cp.Poly)
         self.assertIsInstance(self.uncertainty.U_hat["featureInvalid"], cp.Poly)
+
+        self.assertTrue("WARNING: Feature: featureInvalid does not yield results for all parameter combinations" in open(logfile).read())
+
+        shutil.rmtree(self.output_test_dir)
 
 
     def test_createPCExpansionRosenBlatt(self):
@@ -657,7 +673,6 @@ class TestUncertainty(unittest.TestCase):
                                                  features=TestingFeatures(),
                                                  feature_list="all",
                                                  rosenblatt=True,
-                                                 warning_flag=False,
                                                  verbose_level="error")
 
         self.uncertainty.createPCExpansion()
@@ -685,7 +700,6 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list=["feature0d",
                                                                "feature1d",
                                                                "feature2d"],
-                                                 warning_flag=False,
                                                  verbose_level="error")
 
 
@@ -754,7 +768,6 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=None,
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False,
                                                  verbose_level="error")
 
 
@@ -785,7 +798,6 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=["feature0d"],
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False,
                                                  verbose_level="error")
 
 
@@ -815,7 +827,6 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=["feature1d"],
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False,
                                                  verbose_level="error")
 
 
@@ -847,7 +858,6 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  feature_list=["feature2d"],
                                                  nr_mc_samples=10**1,
-                                                 warning_flag=False,
                                                  verbose_level="error")
 
 
@@ -870,7 +880,7 @@ class TestUncertainty(unittest.TestCase):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
-        output_test_data = ".tests"
+
 
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
@@ -881,20 +891,17 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list=["feature1d"],
                                                  save_data=True,
                                                  save_figures=False,
-                                                 warning_flag=False,
                                                  output_data_filename="test_save_data",
-                                                 output_dir_data=output_test_data,
+                                                 output_dir_data=self.output_test_dir,
                                                  verbose_level="error")
 
 
         self.uncertainty.singleParameters()
 
-        self.assertTrue(os.path.isfile(os.path.join(output_test_data,
+        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
                                        "test_save_data_single-parameter-a")))
-        self.assertTrue(os.path.isfile(os.path.join(output_test_data,
+        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
                                        "test_save_data_single-parameter-b")))
-
-        shutil.rmtree(output_test_data)
 
 
 
