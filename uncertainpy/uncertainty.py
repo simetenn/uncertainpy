@@ -863,7 +863,7 @@ For example on use see:
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        padding = len(str(self.U["directComparison"].shape[0] + 1))
+        padding = len(str(len(self.U["directComparison"]) + 1))
         for U in self.U["directComparison"]:
             prettyPlot(self.t["directComparison"], U,
                        xlabel="Time, ms", ylabel="Voltage")
