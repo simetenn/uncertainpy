@@ -57,6 +57,3 @@ pip_install -e git+https://github.com/hplgit/chaospy.git#egg=chaospy
 pip_install xvfbwrapper
 pip_install psutil
 pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
-
-# Testing tools
-pip_install nose2
