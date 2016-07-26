@@ -13,6 +13,7 @@ from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
 from uncertainpy.parameters import Parameters
 from uncertainpy import Distribution
 
+
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
@@ -483,7 +484,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.createMask(nodes, "directComparison")
 
-        message = "WARNING: Feature: directComparison does not yield results for all parameter combinations"
+        message = "WARNING - uncertainty - Feature: directComparison does not yield results for all parameter combinations"
         self.assertTrue(message in open(logfile).read())
 
         shutil.rmtree(self.output_test_dir)
@@ -669,7 +670,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(self.uncertainty.U_hat["directComparison"], cp.Poly)
         self.assertIsInstance(self.uncertainty.U_hat["featureInvalid"], cp.Poly)
 
-        message = "WARNING: Feature: featureInvalid does not yield results for all parameter combinations"
+        message = "WARNING - uncertainty - Feature: featureInvalid does not yield results for all parameter combinations"
         self.assertTrue(message in open(logfile).read())
 
         shutil.rmtree(self.output_test_dir)

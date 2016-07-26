@@ -123,8 +123,8 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         features_0d, features_1d = self.plot.sortFeatures(self.plot.E)
 
-        test_file_content = """WARNING: No support for more than 0d and 1d plotting.
-WARNING: No support for more than 0d and 1d plotting."""
+        test_file_content = """WARNING - plotUncertainty - No support for more than 0d and 1d plotting.
+WARNING - plotUncertainty - No support for more than 0d and 1d plotting."""
 
         self.assertTrue(test_file_content in open(logfile).read())
         self.assertEqual(features_0d, ["feature0d"])
