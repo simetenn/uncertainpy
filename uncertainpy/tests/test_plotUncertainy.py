@@ -152,6 +152,24 @@ WARNING: No support for more than 0d and 1d plotting."""
         with self.assertRaises(RuntimeError):
             self.plot.plotVariance(feature="feature2d")
 
+
+
+    def test_plotVariance(self):
+        self.plot.loadData(self.data_file)
+
+
+        # self.plot.plotVariance(feature="feature1d", hardcopy=False, show=True)
+        # self.plot.plotVariance(feature="directComparison", hardcopy=False, show=True)
+
+        self.compare_plotType("plotVariance", "variance", "directComparison")
+        self.compare_plotType("plotVariance", "variance", "feature1d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotVariance(feature="feature0d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotVariance(feature="feature2d")
+
     # def plot_assert_plotMean(self, feature):
     #     self.plot.plotMean(feature=feature)
         #
@@ -169,8 +187,8 @@ WARNING: No support for more than 0d and 1d plotting."""
         getattr(self.plot, plot_type)(feature=feature)
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data",
-                                    plot_type + "_" + feature + ".png")
+        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                    feature + "_" + name + ".png")
 
         plot_file = os.path.join(self.output_test_dir, self.data_file,
                                  feature + "_" + name + ".png")

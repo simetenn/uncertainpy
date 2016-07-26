@@ -57,7 +57,7 @@ class PlotUncertainty():
         # TODO what to do if output folder and data folder is the same.
         # Two options create the figures in the same folder, or create a new
         # folder with _figures added to the name?
-        
+
         # full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
         # if os.path.isfile(full_output_dir_figures):
         #     self.full_output_dir_figures = self.output_dir_figures
