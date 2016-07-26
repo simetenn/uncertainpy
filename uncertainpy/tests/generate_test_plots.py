@@ -17,9 +17,8 @@ def generate_plots():
 
     plot.loadData(data_file)
 
-    plot.plot1dFeatures()
-
-
+    plot.plotAllData()
+    plot.plot0dFeatures()
 
 if __name__ == "__main__":
     generate_plots()

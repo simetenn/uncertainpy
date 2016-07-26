@@ -242,7 +242,7 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                        feature + "_variance-mean" + self.figureformat))
+                        feature + "_mean-variance" + self.figureformat))
             if not show:
                 plt.close()
 
@@ -292,9 +292,7 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise RuntimeError("Datafile must be loaded")
 
-
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
         if feature not in self.sensitivity or self.sensitivity[feature] is None:
@@ -304,13 +302,14 @@ class PlotUncertainty():
 
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       "sensitivity, " + feature, "time",
-                       "sensitivity", i, True)
+                       title="sensitivity, " + feature,
+                       xlabel="time", ylabel="sensitivity",
+                       color=i, new_figure=True)
             plt.ylim([0, 1.05])
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                         "sensitivity_" + feature + "_" + parameter_names[i] + self.figureformat))
+                                         feature + "_sensitivity_" + parameter_names[i] + self.figureformat))
                 if not show:
                     plt.close()
 
@@ -336,8 +335,9 @@ class PlotUncertainty():
 
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       "sensitivity, " + feature, "time",
-                       "sensitivity", i, False)
+                       title="sensitivity, " + feature,
+                       xlabel="time", ylabel="sensitivity",
+                       color=i, new_figure=False)
 
         plt.ylim([0, 1.05])
         plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
@@ -345,7 +345,7 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     "sensitivity_" + feature + self.figureformat))
+                                     feature + "_sensitivity" + self.figureformat))
             if not show:
                 plt.close()
 
@@ -359,218 +359,22 @@ class PlotUncertainty():
             self.plotVariance(feature=feature)
             self.plotMeanAndVariance(feature=feature)
             self.plotConfidenceInterval(feature=feature)
-            # self.plotSensitivity(feature=feature)
-            # self.plotSensitivityCombined(feature=feature)
+            self.plotSensitivity(feature=feature)
+            self.plotSensitivityCombined(feature=feature)
 
 
 
-    def plot0dFeaturesCombined(self, index=0, max_legend_size=5,
-                               hardcopy=True, show=False):
-        if not self.loaded_flag:
-            raise RuntimeError("Datafile must be loaded")
-
-
-
-        if len(self.uncertain_parameters) > 8:
-            self.features_in_combined_plot = 2
-
-        if self.features_in_combined_plot + index < len(self.features_0d):
-            self.plot0dFeaturesCombined(index + self.features_in_combined_plot)
-            feature_names = self.features_0d[index:self.features_in_combined_plot + index]
-        else:
-            feature_names = self.features_0d[index:]
-
-        if len(feature_names) == 0:
-            return
-
-        axis_grey = (0.5, 0.5, 0.5)
-        titlesize = 18
-        fontsize = 16
-        labelsize = 14
-
-        if len(self.features_0d) > max_legend_size:
-            legend_size = max_legend_size
-        else:
-            legend_size = len(self.uncertain_parameters)
-
-        legend_width = np.ceil(len(self.features_0d)/float(max_legend_size))
-
-        width = 0.2
-        distance = 0.5
-
-        tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
-                     (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
-                     (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
-                     (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),
-                     (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
-
-        # Scale the RGB values to the [0, 1] range, which is the format matplotlib accepts.
-        for i in range(len(tableau20)):
-            r, g, b = tableau20[i]
-            tableau20[i] = (r / 255., g / 255., b / 255.)
-
-        ax_i = 0
-        fig, ax_all = plt.subplots(1, len(feature_names))
-
-        if len(feature_names) == 1:
-            ax_all = [ax_all]
-
-        for feature_name in feature_names:
-            pos = 0
-            xticks = []
-            xticklabels = []
-            ax = ax_all[ax_i]
-
-            ax.spines["top"].set_edgecolor("None")
-            ax.spines["bottom"].set_edgecolor(axis_grey)
-            ax.spines["right"].set_edgecolor(axis_grey)
-            ax.spines["left"].set_edgecolor(axis_grey)
-            #
-            ax.tick_params(axis="x", which="both", bottom="on", top="off",
-                           labelbottom="on", color=axis_grey, labelcolor="black",
-                           labelsize=labelsize)
-            ax.tick_params(axis="y", which="both", right="off", left="off",
-                           labelleft="off", color=axis_grey, labelcolor="black",
-                           labelsize=labelsize)
-
-            ax2 = ax.twinx()
-            ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                            color=axis_grey, labelcolor=tableau20[4], labelsize=labelsize)
-
-            ax2.set_ylim([0, 1.05])
-
-
-            # if "sensitivity" in self.f[feature_name].keys():
-            #     sensitivity = self.f[feature_name]["sensitivity"][:]
-
-            ax.bar(pos, self.E[feature_name],
-                   width=width, align='center', color=tableau20[1], linewidth=0)
-            xticks.append(pos - 0.5*width)
-            xticklabels.append("Mean")
-            pos += width
-
-
-            ax.bar(pos, self.Var[feature_name],
-                   width=width, align='center', color=tableau20[0], linewidth=0)
-            xticks.append(pos - 0.5*width)
-            xticklabels.append("Variance")
-            pos += distance
-
-            ax.bar(pos, self.p_05[feature_name],
-                   width=width, align='center', color=tableau20[3], linewidth=0)
-            ax.bar(pos + width, self.p_95[feature_name],
-                   width=width, align='center', color=tableau20[2], linewidth=0)
-            xticks += [pos - 0.5*width, pos + 0.5*width]
-            xticklabels += ["$P_5$", "$P_{95}$"]
-
-            if feature_name in self.sensitivity and self.sensitivity[feature_name] is not None:
-                pos += distance + width
-
-                i = 0
-                legend_bars = []
-
-                for parameter in self.uncertain_parameters:
-                    # TODO is abs(sensitivity) a problem in the plot?
-                    legend_bars.append(ax2.bar(pos, abs(self.sensitivity[feature_name][i]),
-                                               width=width, align='center', color=tableau20[4+i],
-                                               linewidth=0))
-
-                    i += 1
-                    pos += width
-
-                xticks.append(pos - width*i/2.)
-                xticklabels.append("Sensitivity")
-
-                #
-                # box = ax.get_position()
-                # ax.set_position([box.x0, box.y0,
-                #                 box.width, box.height*(1 - legend_width*0.1)])
-                # ax2.set_position([box.x0, box.y0,
-                #                   box.width, box.height*(1 - legend_width*0.1)])
-            # else:
-                # TODO is abs(sensitivity) a problem in the plot?
-                # ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4],
-                #  linewidth=0)
-                # xticks.append(pos + distance)
-                # xticklabels.append("")
-
-            xticks += [pos + distance]
-            ax.set_xticks(xticks)
-            ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45,
-                               horizontalalignment="left")
-            ax.set_title(feature_name)
-
-            ax_i += 1
-
-
-        ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
-        ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
-
-        if feature_name in self.sensitivity and self.sensitivity[feature_name] is not None:
-                # Put a legend above current axis
-            if len(feature_names) == 1:
-                location = (0.5, 1.03 + legend_width*0.095)
-                loc = "upper center"
-            elif len(feature_names) == 2:
-                location = (0, 1.03 + legend_width*0.095)
-                loc = "upper center"
-            else:
-                location = (0.15, (1.03 + legend_width*0.095))
-                loc = "upper right"
-
-
-            lgd = ax.legend(legend_bars, self.uncertain_parameters, loc=loc,
-                            bbox_to_anchor=location, fancybox=False,
-                            shadow=False, ncol=legend_size)
-            lgd.get_frame().set_edgecolor(axis_grey)
-
-            # plt.tight_layout()
-            fig.subplots_adjust(top=(0.91 - legend_width*0.053), wspace=0.5)
-        else:
-            fig.subplots_adjust(wspace=0.5)
-
-        plt.suptitle(self.filename, fontsize=titlesize)
-
-        save_name = self.filename + \
-            ("_features_%d" % (index/self.features_in_combined_plot)) + self.figureformat
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
-
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
-
-
-    def plot0dFeatures(self, hardcopy=True, show=False):
-        if not self.loaded_flag:
-            raise RuntimeError("Datafile must be loaded")
-
-
-        for feature_name in self.features_0d:
-            self.plot0dFeature(feature_name)
-            save_name = "%s_%s" % (self.filename, feature_name) + self.figureformat
-
-            if hardcopy:
-                plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
-            if not show:
-                plt.close()
-
-            if show:
-                plt.show()
 
 
     # TODO not finhised, missing correct label placement
-    def plot0dFeature(self, feature_name, max_legend_size=5):
+    def plot0dFeature(self, feature, max_legend_size=5,
+                      hardcopy=True, show=False):
         if not self.loaded_flag:
             raise RuntimeError("Datafile must be loaded")
 
 
-        if feature_name not in self.features_0d:
-            # TODO is this the right error to raise?
-            raise RuntimeError("%s is not a 0D feature" % (feature_name))
+        if feature not in self.features_0d:
+            raise RuntimeError("%s is not a 0D feature" % (feature))
 
 
         if len(self.uncertain_parameters) > max_legend_size:
@@ -591,22 +395,22 @@ class PlotUncertainty():
         pos = 0
         xticks = [pos]
         xticklabels = ["mean"]
-        ax, tableau20 = prettyBar(self.E[feature_name], start_color=1)
+        ax, tableau20 = prettyBar(self.E[feature], start_color=1)
         ax.spines["right"].set_edgecolor(axis_grey)
 
-        ax.set_ylabel(feature_name, fontsize=labelsize)
+        ax.set_ylabel(feature, fontsize=labelsize)
         pos += width
 
-        ax.bar(pos, self.Var[feature_name],
+        ax.bar(pos, self.Var[feature],
                width=width, align='center', color=tableau20[0], linewidth=0)
         xticks.append(pos)
         xticklabels += ["Variance"]
         pos += distance
 
 
-        ax.bar(pos, self.p_05[feature_name],
+        ax.bar(pos, self.p_05[feature],
                width=width, align='center', color=tableau20[3], linewidth=0)
-        ax.bar(pos + width, self.p_95[feature_name],
+        ax.bar(pos + width, self.p_95[feature],
                width=width, align='center', color=tableau20[2], linewidth=0)
         xticks += [pos, pos + width]
         xticklabels += ["$P_5$", "$P_{95}$"]
@@ -618,11 +422,11 @@ class PlotUncertainty():
         ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
         ax2.set_ylim([0, 1.05])
 
-        if self.sensitivity[feature_name] is not None:
+        if self.sensitivity[feature] is not None:
             i = 0
             legend_bars = []
             for parameter in self.uncertain_parameters:
-                legend_bars.append(ax2.bar(pos, self.sensitivity[feature_name][i], width=width,
+                legend_bars.append(ax2.bar(pos, self.sensitivity[feature][i], width=width,
                                            align='center', color=tableau20[4+i], linewidth=0))
 
                 i += 1
@@ -655,9 +459,225 @@ class PlotUncertainty():
         pos += 3*distance
         ax.set_xticks(xticks)
         ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45)
-        plt.suptitle(self.filename + ", " + feature_name, fontsize=titlesize)
+        title = self.filename + ", " + feature
+        title = title.replace("_", "\_")
+        plt.suptitle(title, fontsize=titlesize)
+
+        save_name = feature + self.figureformat
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
 
         return ax, tableau20, pos
+
+
+
+    def plot0dFeatures(self, hardcopy=True, show=False):
+        if not self.loaded_flag:
+            raise RuntimeError("Datafile must be loaded")
+
+
+        for feature in self.features_0d:
+            self.plot0dFeature(feature, hardcopy=hardcopy, show=show)
+
+
+
+    def plot0dFeaturesCombined(self, index=0, max_legend_size=5,
+                               hardcopy=True, show=False):
+        if not self.loaded_flag:
+            raise RuntimeError("Datafile must be loaded")
+
+
+        plt.rcParams['text.latex.preamble'] = [r"\usepackage{lmodern}"]
+        #Options
+        params = {'text.usetex': True,
+                  'font.family': 'lmodern',
+                  'axes.grid': False,
+                  'grid.color': 'white',
+                  'grid.linewidth': 1.3,
+                  'grid.linestyle': '-',
+                  'axes.facecolor': '0.95',
+                  'legend.fontsize': 16}
+
+        plt.rcParams.update(params)
+
+
+        if len(self.uncertain_parameters) > 8:
+            self.features_in_combined_plot = 2
+
+        if self.features_in_combined_plot + index < len(self.features_0d):
+            self.plot0dFeaturesCombined(index + self.features_in_combined_plot)
+            features = self.features_0d[index:self.features_in_combined_plot + index]
+        else:
+            features = self.features_0d[index:]
+
+        if len(features) == 0:
+            return
+
+        axis_grey = (0.5, 0.5, 0.5)
+        titlesize = 18
+        fontsize = 16
+        labelsize = 14
+
+        if len(self.features_0d) > max_legend_size:
+            legend_size = max_legend_size
+        else:
+            legend_size = len(self.uncertain_parameters)
+
+        legend_width = np.ceil(len(self.features_0d)/float(max_legend_size))
+
+        width = 0.2
+        distance = 0.5
+
+        tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
+                     (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
+                     (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
+                     (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),
+                     (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]
+
+        # Scale the RGB values to the [0, 1] range, which is the format matplotlib accepts.
+        for i in range(len(tableau20)):
+            r, g, b = tableau20[i]
+            tableau20[i] = (r / 255., g / 255., b / 255.)
+
+        ax_i = 0
+        fig, ax_all = plt.subplots(1, len(features))
+
+        if len(features) == 1:
+            ax_all = [ax_all]
+
+        for feature in features:
+            pos = 0
+            xticks = []
+            xticklabels = []
+            ax = ax_all[ax_i]
+
+            ax.spines["top"].set_edgecolor("None")
+            ax.spines["bottom"].set_edgecolor(axis_grey)
+            ax.spines["right"].set_edgecolor(axis_grey)
+            ax.spines["left"].set_edgecolor(axis_grey)
+            #
+            ax.tick_params(axis="x", which="both", bottom="on", top="off",
+                           labelbottom="on", color=axis_grey, labelcolor="black",
+                           labelsize=labelsize)
+            ax.tick_params(axis="y", which="both", right="off", left="off",
+                           labelleft="off", color=axis_grey, labelcolor="black",
+                           labelsize=labelsize)
+
+            ax2 = ax.twinx()
+            ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                            color=axis_grey, labelcolor=tableau20[4], labelsize=labelsize)
+
+            ax2.set_ylim([0, 1.05])
+
+
+            # if "sensitivity" in self.f[feature].keys():
+            #     sensitivity = self.f[feature]["sensitivity"][:]
+
+            ax.bar(pos, self.E[feature],
+                   width=width, align='center', color=tableau20[1], linewidth=0)
+            xticks.append(pos - 0.5*width)
+            xticklabels.append("Mean")
+            pos += width
+
+
+            ax.bar(pos, self.Var[feature],
+                   width=width, align='center', color=tableau20[0], linewidth=0)
+            xticks.append(pos - 0.5*width)
+            xticklabels.append("Variance")
+            pos += distance
+
+            ax.bar(pos, self.p_05[feature],
+                   width=width, align='center', color=tableau20[3], linewidth=0)
+            ax.bar(pos + width, self.p_95[feature],
+                   width=width, align='center', color=tableau20[2], linewidth=0)
+            xticks += [pos - 0.5*width, pos + 0.5*width]
+            xticklabels += ["$P_5$", "$P_{95}$"]
+
+            if feature in self.sensitivity and self.sensitivity[feature] is not None:
+                pos += distance + width
+
+                i = 0
+                legend_bars = []
+
+                for parameter in self.uncertain_parameters:
+                    # TODO is abs(sensitivity) a problem in the plot?
+                    legend_bars.append(ax2.bar(pos, abs(self.sensitivity[feature][i]),
+                                               width=width, align='center', color=tableau20[4+i],
+                                               linewidth=0))
+
+                    i += 1
+                    pos += width
+
+                xticks.append(pos - width*i/2.)
+                xticklabels.append("Sensitivity")
+
+                #
+                # box = ax.get_position()
+                # ax.set_position([box.x0, box.y0,
+                #                 box.width, box.height*(1 - legend_width*0.1)])
+                # ax2.set_position([box.x0, box.y0,
+                #                   box.width, box.height*(1 - legend_width*0.1)])
+            # else:
+                # TODO is abs(sensitivity) a problem in the plot?
+                # ax2.bar(pos, abs(sensitivity), width=width, align='center', color=tableau20[4],
+                #  linewidth=0)
+                # xticks.append(pos + distance)
+                # xticklabels.append("")
+
+            xticks += [pos + distance]
+            ax.set_xticks(xticks)
+            ax.set_xticklabels(xticklabels, fontsize=labelsize, rotation=-45,
+                               horizontalalignment="left")
+            ax.set_title(feature)
+
+            ax_i += 1
+
+
+        ax_all[0].set_ylabel('Feature value', fontsize=fontsize)
+        ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
+
+        if feature in self.sensitivity and self.sensitivity[feature] is not None:
+                # Put a legend above current axis
+            if len(features) == 1:
+                location = (0.5, 1.03 + legend_width*0.095)
+                loc = "upper center"
+            elif len(features) == 2:
+                location = (0, 1.03 + legend_width*0.095)
+                loc = "upper center"
+            else:
+                location = (0.15, (1.03 + legend_width*0.095))
+                loc = "upper right"
+
+
+            lgd = ax.legend(legend_bars, self.uncertain_parameters, loc=loc,
+                            bbox_to_anchor=location, fancybox=False,
+                            shadow=False, ncol=legend_size)
+            lgd.get_frame().set_edgecolor(axis_grey)
+
+            # plt.tight_layout()
+            fig.subplots_adjust(top=(0.91 - legend_width*0.053), wspace=0.5)
+        else:
+            fig.subplots_adjust(wspace=0.5)
+
+        plt.suptitle(self.filename, fontsize=titlesize)
+
+        save_name = "combined_features_%d" % (index/self.features_in_combined_plot) + self.figureformat
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
 
 
 
@@ -665,7 +685,7 @@ class PlotUncertainty():
         self.logger.info("Plotting all data in folder")
 
         for f in glob.glob(os.path.join(self.data_dir, "*")):
-            self.loadData(f.split("/")[-1])
+            self.loadData(f.split(os.path.sep)[-1])
 
             self.plotAllData()
 

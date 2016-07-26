@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
-               color=0, linestyle="solid", marker=None, new_figure=True):
+               color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
 
     """
 prettyPlot
@@ -50,7 +50,7 @@ tableau20 : list
     #Options
     params = {'text.usetex': True,
               'font.family': 'lmodern',
-              'axes.grid': True,
+              'axes.grid': grid,
               'grid.color': 'white',
               'grid.linewidth': 1.3,
               'grid.linestyle': '-',
@@ -126,11 +126,27 @@ tableau20 : list
     return ax, tableau20
 
 
-def prettyBar(x, error=None, index=None, colors=None, start_color=0, title="", linewidth=0,
-              xlabels=[], ylabel="", width=0.2, new_figure=True, error_kw=None, **kwargs):
+def prettyBar(x, error=None, index=None, colors=None, start_color=0, title="",
+              linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True,
+              grid=False, error_kw=None, **kwargs):
         """
         Creates pretty bar plots
         """
+
+
+        plt.rcParams['text.latex.preamble'] = [r"\usepackage{lmodern}"]
+        #Options
+        params = {'text.usetex': True,
+                  'font.family': 'lmodern',
+                  'axes.grid': grid,
+                  'grid.color': 'white',
+                  'grid.linewidth': 1.3,
+                  'grid.linestyle': '-',
+                  'axes.facecolor': '0.95',
+                  'legend.fontsize': 16}
+
+        plt.rcParams.update(params)
+
 
         axis_grey = (0.5, 0.5, 0.5)
         titlesize = 18

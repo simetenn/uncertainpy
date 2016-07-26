@@ -2,6 +2,8 @@ import numpy as np
 import os
 import unittest
 import subprocess
+import shutil
+
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.features import TestingFeatures
@@ -9,18 +11,26 @@ from uncertainpy.models import TestingModel1d
 
 class TestPlotUncertainpy(unittest.TestCase):
     def setUp(self):
-        folder = os.path.dirname(os.path.realpath(__file__))
+        self.folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.test_data_dir = os.path.join(folder, "data")
+        self.test_data_dir = os.path.join(self.folder, "data")
         self.data_file = "test_plot_data"
-        self.output_test_dir = ".test/"
+        self.output_test_dir = ".tests/"
 
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.makedirs(self.output_test_dir)
 
         self.plot = PlotUncertainty(data_dir=self.test_data_dir,
                                     output_dir_figures=self.output_test_dir,
                                     output_dir_gif=self.output_test_dir,
                                     verbose_level="error")
 
+
+
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
 
 
     def test_init(self):
@@ -136,12 +146,10 @@ WARNING: No support for more than 0d and 1d plotting."""
 
 
 
+
     def test_plotVariance(self):
         self.plot.loadData(self.data_file)
 
-
-        # self.plot.plotVariance(feature="feature1d", hardcopy=False, show=True)
-        # self.plot.plotVariance(feature="directComparison", hardcopy=False, show=True)
 
         self.compare_plotType("plotVariance", "variance", "directComparison")
         self.compare_plotType("plotVariance", "variance", "feature1d")
@@ -154,33 +162,104 @@ WARNING: No support for more than 0d and 1d plotting."""
 
 
 
-    def test_plotVariance(self):
+    def test_plotMeanAndVariance(self):
         self.plot.loadData(self.data_file)
 
-
-        # self.plot.plotVariance(feature="feature1d", hardcopy=False, show=True)
-        # self.plot.plotVariance(feature="directComparison", hardcopy=False, show=True)
-
-        self.compare_plotType("plotVariance", "variance", "directComparison")
-        self.compare_plotType("plotVariance", "variance", "feature1d")
+        self.compare_plotType("plotMeanAndVariance", "mean-variance", "directComparison")
+        self.compare_plotType("plotMeanAndVariance", "mean-variance", "feature1d")
 
         with self.assertRaises(RuntimeError):
-            self.plot.plotVariance(feature="feature0d")
+            self.plot.plotMeanAndVariance(feature="feature0d")
 
         with self.assertRaises(RuntimeError):
-            self.plot.plotVariance(feature="feature2d")
+            self.plot.plotMeanAndVariance(feature="feature2d")
 
-    # def plot_assert_plotMean(self, feature):
-    #     self.plot.plotMean(feature=feature)
-        #
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/plotMean_" + feature + ".png")
-    #
-    #     plot_file = os.path.join(self.output_test_dir, self.data_file,
-    #                              feature + "_mean.png")
-    #     result = subprocess.call(["diff", plot_file, compare_file])
-    #
-    #     self.assertEqual(result, 0)
+
+
+    def test_plotConfidenceInterval(self):
+        self.plot.loadData(self.data_file)
+
+        self.compare_plotType("plotConfidenceInterval", "confidence-interval", "directComparison")
+        self.compare_plotType("plotConfidenceInterval", "confidence-interval", "feature1d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotConfidenceInterval(feature="feature0d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotConfidenceInterval(feature="feature2d")
+
+
+    def test_plotSensitivity(self):
+        self.plot.loadData(self.data_file)
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.plot.plotSensitivity(feature="directComparison")
+
+        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                    "directComparison_sensitivity_a.png")
+
+        plot_file = os.path.join(self.output_test_dir, self.data_file,
+                                 "directComparison_sensitivity_a.png")
+        result = subprocess.call(["diff", plot_file, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                    "directComparison_sensitivity_b.png")
+
+        plot_file = os.path.join(self.output_test_dir, self.data_file,
+                                 "directComparison_sensitivity_b.png")
+        result = subprocess.call(["diff", plot_file, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+
+        self.plot.plotSensitivity(feature="feature1d")
+
+        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                    "feature1d_sensitivity_a.png")
+
+        plot_file = os.path.join(self.output_test_dir, self.data_file,
+                                 "feature1d_sensitivity_a.png")
+        result = subprocess.call(["diff", plot_file, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                    "feature1d_sensitivity_b.png")
+
+        plot_file = os.path.join(self.output_test_dir, self.data_file,
+                                 "feature1d_sensitivity_b.png")
+        result = subprocess.call(["diff", plot_file, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotSensitivityCombined(feature="feature0d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotSensitivityCombined(feature="feature2d")
+
+
+
+    def test_plotSensitivityCombined(self):
+        self.plot.loadData(self.data_file)
+
+        self.compare_plotType("plotSensitivityCombined", "sensitivity", "directComparison")
+        self.compare_plotType("plotSensitivityCombined", "sensitivity", "feature1d")
+
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotSensitivityCombined(feature="feature0d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plotSensitivityCombined(feature="feature2d")
+
 
 
     def compare_plotType(self, plot_type, name, feature):
@@ -197,9 +276,92 @@ WARNING: No support for more than 0d and 1d plotting."""
         self.assertEqual(result, 0)
 
 
+    def test_plot1dFeatures(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plot1dFeatures()
+
+
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_a")
+        self.compare_plot("feature1d_sensitivity_b")
+        self.compare_plot("feature1d_sensitivity")
+
+
+    def compare_plot(self, name):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                    name + ".png")
+
+        plot_file = os.path.join(self.output_test_dir, self.data_file,
+                                 name + ".png")
+        result = subprocess.call(["diff", plot_file, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_plot0dFeature(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plot0dFeature(feature="feature0d")
+
+        self.compare_plot("feature0d")
+
+        with self.assertRaises(RuntimeError):
+            self.plot.plot0dFeature(feature="feature1d")
+
+
+    def test_plot0dFeatures(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plot0dFeature(feature="feature0d")
+
+        self.compare_plot("feature0d")
+
+
+    def test_plot0dFeaturesCombined(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plot0dFeaturesCombined()
+
+        self.compare_plot("combined_features_0")
 
 
 
+    def test_plotAllDataCombined(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plotAllData()
+
+
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_a")
+        self.compare_plot("feature1d_sensitivity_b")
+        self.compare_plot("feature1d_sensitivity")
+
+        self.compare_plot("combined_features_0")
+
+
+    def test_plotAllData(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.combined_features = False
+        self.plot.plotAllData()
+
+        self.compare_plot("feature0d")
+
+
+# TODO test for creating gif
+# TODO test combined features 0 for many features
+
+# TODO test plotAllDataFromExploration
+# TODO test plotAllDataInFolder
 
 if __name__ == "__main__":
     unittest.main()
