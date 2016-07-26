@@ -5,6 +5,7 @@ import unittest
 
 from uncertainpy.plotting import prettyPlot, prettyBar
 
+# TODO compare all plots to an existing plot 
 
 class TestPrettyPlot(unittest.TestCase):
     def setUp(self):

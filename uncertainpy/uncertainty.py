@@ -104,6 +104,7 @@
 
 # TODO save data from each singleParameter run or not in the class?
 
+# TODO remove feature list from UncertaintyEstimation, and add it to feature class instead
 
 import time
 import os
@@ -123,6 +124,7 @@ from uncertainpy.features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot
+from uncertainpy.utils import create_logger
 
 
 class UncertaintyEstimation():
@@ -317,28 +319,9 @@ For example on use see:
 
 
 
-        numeric_level = getattr(logging, verbose_level.upper(), None)
-        if not isinstance(numeric_level, int):
-            raise ValueError('Invalid log level: %s' % verbose_level)
-
-        self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.setLevel(numeric_level)
-
-        formatter = logging.Formatter('%(levelname)s: %(message)s')
-        # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-        if verbose_filename is None:
-            console = logging.StreamHandler(stream=sys.stdout)
-            console.setLevel(numeric_level)
-            console.setFormatter(formatter)
-
-            self.logger.addHandler(console)
-        else:
-            handler = logging.FileHandler(filename=verbose_filename, mode='w')
-            handler.setLevel(numeric_level)
-            handler.setFormatter(formatter)
-
-            self.logger.addHandler(handler)
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
 
 
         self.t_start = time.time()
@@ -802,11 +785,13 @@ For example on use see:
         f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
         f.attrs["features"] = self.feature_list
 
+
         for feature in self.all_features:
             group = f.create_group(feature)
 
             if feature in self.t and self.t[feature] is not None:
                 group.create_dataset("t", data=self.t[feature])
+            # TODO do not save U to save space?
             if feature in self.U:
                 group.create_dataset("U", data=self.U[feature])
             if feature in self.E:

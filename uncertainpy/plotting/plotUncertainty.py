@@ -10,14 +10,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
-from uncertainpy.utils import sortByParameters
+from uncertainpy.utils import create_logger
 
-### TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
+# TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
 
-### TODO Add feature plots to gif()
+# TODO Add feature plots to gif()
 
-### TODO find a good way to find the directory where the data files are
+# TODO find a good way to find the directory where the data files are
 
+# TODO test out if seaborn is a better package to use for plottintg
 
 class PlotUncertainty():
     def __init__(self,
@@ -25,7 +26,9 @@ class PlotUncertainty():
                  output_dir_figures="figures/",
                  output_dir_gif="gifs/",
                  figureformat=".png",
-                 combined_features=True):
+                 combined_features=True,
+                 verbose_level="info",
+                 verbose_filename=None,):
 
         self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
@@ -41,20 +44,35 @@ class PlotUncertainty():
         self.loaded_flag = False
 
 
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
+
+
+
     def loadData(self, filename):
         self.filename = filename
         f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
 
-        self.features_0d = []
-        self.features_1d = []
+        # TODO what to do if output folder and data folder is the same.
+        # Two options create the figures in the same folder, or create a new
+        # folder with _figures added to the name?
+        
+        # full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
+        # if os.path.isfile(full_output_dir_figures):
+        #     self.full_output_dir_figures = self.output_dir_figures
+        # else:
+        #     self.full_output_dir_figures = self.full_output_dir_figures
+        #     if not os.path.isdir(self.full_output_dir_figures):
+        #         os.makedirs(self.full_output_dir_figures)
 
-        self.features_0d, self.features_1d = self.sortFeatures(self.E)
 
         self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
+        if os.path.isfile(self.full_output_dir_figures):
+            self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
 
         if not os.path.isdir(self.full_output_dir_figures):
             os.makedirs(self.full_output_dir_figures)
-
 
         self.t = {}
         self.U = {}
@@ -76,16 +94,20 @@ class PlotUncertainty():
             else:
                 self.sensitivity[feature] = None
 
+
             if "t" in f[feature].keys():
-                self.t = f[feature]["t"][()]
+                self.t[feature] = f[feature]["t"][()]
             # else:
             #     self.t[feature] = None
+
+        self.features_0d, self.features_1d = self.sortFeatures(self.E)
 
         self.uncertain_parameters = f.attrs["uncertain parameters"]
         self.loaded_flag = True
 
 
-    def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters, sensitivity, foldername=None):
+    def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters,
+                sensitivity, foldername=None):
 
         self.t = t
         self.U = U
@@ -106,8 +128,13 @@ class PlotUncertainty():
             self.filename = foldername
             self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
 
+
+        if os.path.isfile(self.full_output_dir_figures):
+            self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
+
         if not os.path.isdir(self.full_output_dir_figures):
             os.makedirs(self.full_output_dir_figures)
+
 
         self.loaded_flag = True
 
@@ -123,7 +150,7 @@ class PlotUncertainty():
                 elif len(results[feature].shape) == 1:
                     features_1d.append(feature)
                 else:
-                    print "WARNING: No support for more than 0d and 1d plotting"
+                    self.logger.warning("No support for more than 0d and 1d plotting.")
 
             else:
                 features_0d.append(feature)
@@ -133,35 +160,36 @@ class PlotUncertainty():
 
     def plotMean(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1d feature" % (feature))
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
         color1 = 0
 
         prettyPlot(self.t[feature], self.E[feature], "Mean, " + feature, "time", "voltage", color1)
+
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_mean" + self.figureformat))
-            plt.close()
+            if not show:
+                plt.close()
 
         if show:
             plt.show()
-            plt.close()
 
 
 
     def plotVariance(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1d feature" % (feature))
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
         color2 = 8
@@ -172,22 +200,22 @@ class PlotUncertainty():
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_variance" + self.figureformat))
-            plt.close()
+            if not show:
+                plt.close()
 
         if show:
             plt.show()
-            plt.close()
 
 
 
     def plotMeanAndVariance(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1d feature" % (feature))
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
         color1 = 0
@@ -215,11 +243,11 @@ class PlotUncertainty():
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                         feature + "_variance-mean" + self.figureformat))
-            plt.close()
+            if not show:
+                plt.close()
 
         if show:
             plt.show()
-            plt.close()
 
         if not show or not hardcopy:
             return ax, ax2
@@ -228,12 +256,12 @@ class PlotUncertainty():
 
     def plotConfidenceInterval(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1d feature" % (feature))
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
         ax, color = prettyPlot(self.t[feature], self.E[feature],
@@ -253,21 +281,21 @@ class PlotUncertainty():
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_confidence-interval" + self.figureformat))
-            plt.close()
+            if not show:
+                plt.close()
 
         if show:
             plt.show()
-            plt.close()
 
 
     def plotSensitivity(self, feature="directComparison", hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1d feature" % (feature))
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
         if feature not in self.sensitivity or self.sensitivity[feature] is None:
             return
@@ -283,22 +311,23 @@ class PlotUncertainty():
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
                                          "sensitivity_" + feature + "_" + parameter_names[i] + self.figureformat))
-                plt.close()
+                if not show:
+                    plt.close()
 
             if show:
                 plt.show()
-                plt.close()
 
 
 
-    def plotSensitivityCombined(self, feature="directComparison", hardcopy=True, show=False):
+    def plotSensitivityCombined(self, feature="directComparison",
+                                hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature not in self.features_1d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 1d feature" % (feature))
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
         if feature not in self.sensitivity or self.sensitivity[feature] is None:
             return
@@ -317,11 +346,11 @@ class PlotUncertainty():
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                                      "sensitivity_" + feature + self.figureformat))
-            plt.close()
+            if not show:
+                plt.close()
 
         if show:
             plt.show()
-            plt.close()
 
 
     def plot1dFeatures(self):
@@ -330,15 +359,16 @@ class PlotUncertainty():
             self.plotVariance(feature=feature)
             self.plotMeanAndVariance(feature=feature)
             self.plotConfidenceInterval(feature=feature)
-            self.plotSensitivity(feature=feature)
-            self.plotSensitivityCombined(feature=feature)
+            # self.plotSensitivity(feature=feature)
+            # self.plotSensitivityCombined(feature=feature)
 
 
 
-    def plot0dFeaturesCombined(self, index=0, max_legend_size=5):
+    def plot0dFeaturesCombined(self, index=0, max_legend_size=5,
+                               hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
 
         if len(self.uncertain_parameters) > 8:
@@ -503,32 +533,44 @@ class PlotUncertainty():
 
         save_name = self.filename + \
             ("_features_%d" % (index/self.features_in_combined_plot)) + self.figureformat
-        plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
-        plt.close()
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
 
 
-    def plot0dFeatures(self):
+    def plot0dFeatures(self, hardcopy=True, show=False):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         for feature_name in self.features_0d:
             self.plot0dFeature(feature_name)
             save_name = "%s_%s" % (self.filename, feature_name) + self.figureformat
-            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
-            plt.close()
 
+            if hardcopy:
+                plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+            if not show:
+                plt.close()
+
+            if show:
+                plt.show()
 
 
     # TODO not finhised, missing correct label placement
     def plot0dFeature(self, feature_name, max_legend_size=5):
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if feature_name not in self.features_0d:
             # TODO is this the right error to raise?
-            raise ValueError("%s is not a 0d feature" % (feature_name))
+            raise RuntimeError("%s is not a 0D feature" % (feature_name))
 
 
         if len(self.uncertain_parameters) > max_legend_size:
@@ -620,7 +662,7 @@ class PlotUncertainty():
 
 
     def plotAllDataInFolder(self):
-        print "Plotting all data"
+        self.logger.info("Plotting all data in folder")
 
         for f in glob.glob(os.path.join(self.data_dir, "*")):
             self.loadData(f.split("/")[-1])
@@ -640,7 +682,7 @@ class PlotUncertainty():
 
 
     def plotAllDataFromExploration(self):
-        print "Plotting all data"
+        self.logger.info("Plotting all data")
 
         original_data_dir = self.data_dir
         original_output_dir_figures = self.output_dir_figures
@@ -666,11 +708,11 @@ class PlotUncertainty():
 
 
     def gif(self):
-        print "Creating gifs..."
+        self.logger.info("Creating gifs. Takes a long time")
 
         if not self.loaded_flag:
-            print "Datafile must be loaded"
-            sys.exit(1)
+            raise RuntimeError("Datafile must be loaded")
+
 
         if not os.path.isdir(self.output_dir_gif):
             os.makedirs(self.output_dir_gif)
