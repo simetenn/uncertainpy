@@ -144,8 +144,7 @@ WARNING - plotUncertainty - No support for more than 0d and 1d plotting."""
         with self.assertRaises(RuntimeError):
             self.plot.plotMean(feature="feature2d")
 
-
-
+    
 
     def test_plotVariance(self):
         self.plot.loadData(self.data_file)
