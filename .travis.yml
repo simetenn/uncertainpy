@@ -16,5 +16,5 @@ install:
   - sudo python setup.py install --full-dependencies
 script:
   - workon uncertainpy
-  - ./tests.sh
+  - python testrunner.py
   # - python2.7 -c "import neuron"
