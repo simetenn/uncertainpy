@@ -13,5 +13,5 @@ from distribution import *
 from evaluateNodeFunction import *
 from parameters import *
 from uncertainty import *
-from explorations import *
+from exploration import *
 from spikes import *

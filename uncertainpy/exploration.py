@@ -4,8 +4,8 @@ import os
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 
-from uncertainpy import UncertaintyEstimation, Distribution, prettyPlot, prettyBar
-import time
+from uncertainpy import UncertaintyEstimation, Distribution
+from uncertainpy import prettyPlot, prettyBar, create_logger
 
 
 class UncertaintyEstimations():
@@ -25,6 +25,8 @@ class UncertaintyEstimations():
                  rosenblatt=False,
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
+                 verbose_level="info",
+                 verbose_filename=None,
                  **kwargs):
         """
         Options can also be sent to the feature
@@ -67,13 +69,16 @@ class UncertaintyEstimations():
         if not os.path.isdir(output_dir_data):
             os.makedirs(output_dir_data)
 
-        self.hp = hpy()
+        self.verbose_level = verbose_level
+        self.verbose_filename = verbose_filename
+
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
 
 
 
     def exploreParameters(self, distributions):
-        print self.hp.heap()
-        self.hp.setrelheap()
         for distribution_function in distributions:
             for interval in distributions[distribution_function]:
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
@@ -83,9 +88,9 @@ class UncertaintyEstimations():
 
                 self.model.setAllDistributions(distribution)
 
-                print "Running for: " + distribution_function + " " + str(interval)
-                print "Before creating uncertainty object"
-                print self.hp.heap().byrcs
+                message = "Running for: " + distribution_function + " " + str(interval)
+                self.logger.info(message)
+
                 tmp_output_dir_data = \
                     os.path.join(self.output_dir_data,
                                  distribution_function + "_%g" % interval)
@@ -107,18 +112,18 @@ class UncertaintyEstimations():
                                           rosenblatt=self.rosenblatt,
                                           nr_mc_samples=self.nr_mc_samples,
                                           nr_pc_mc_samples=self.nr_pc_mc_samples,
+                                          verbose_level=self.verbose_level,
+                                          verbose_filename=self.verbose_filename,
                                           **self.kwargs)
+
 
                 self.uncertainty_estimations.singleParameters()
                 self.uncertainty_estimations.allParameters()
+
                 if self.plot_simulator_results:
                     self.uncertainty_estimations.plotSimulatorResults()
 
                 del self.uncertainty_estimations
-
-                print "After all calculations"
-                print self.hp.heap().byrcs
-                time.sleep(10)
 
 
 
@@ -168,8 +173,8 @@ class UncertaintyEstimations():
 
         mc_var = {}
         for nr_mc_sample in nr_mc_samples:
-            print "Running for: " + str(nr_mc_sample)
-
+            message = "Running for: " + str(nr_mc_sample)
+            self.logger.info(message)
 
             name = "mc_" + str(nr_mc_sample)
             current_output_dir_figures = os.path.join(self.output_dir_figures, name)
