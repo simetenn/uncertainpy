@@ -222,42 +222,52 @@ class UncertaintyEstimations():
             os.makedirs(output_dir_compare)
 
 
-        for feature in features_2d:
+        # for feature in features_2d:
+        #     new_figure = True
+        #     color = 0
+        #     max_var = 0
+        #     min_var = 0
+        #     legend = []
+        #     for nr_mc_sample in sorted(mc_var):
+        #         difference_var = mc_var[nr_mc_sample][feature]/pc_var[feature]
+        #
+        #         if difference_var.max() > max_var:
+        #             max_var = difference_var.max()
+        #
+        #         if difference_var.min() < min_var:
+        #             min_var = difference_var.min()
+        #
+        #         legend.append("MC samples " + str(nr_mc_sample))
+        #
+        #         print t_pc[feature]
+        #         print difference_var
+        #         prettyPlot(t_pc[feature], difference_var,
+        #                    new_figure=new_figure, color=color,
+        #                    xlabel="Time", ylabel="Variance, mv",
+        #                    title="MC variance/PC variance(%d), %s" % (nr_pc_samples, feature))
+        #         new_figure = False
+        #         color += 2
+        #
+        #     plt.ylim([min_var, max_var])
+        #     plt.legend(legend)
+        #     plt.savefig(os.path.join(output_dir_compare,
+        #                              "variance-diff-MC-PC_" + feature + self.figureformat))
+        #     # plt.show()
+        #     plt.close()
+
+        for feature in features_1d:
             new_figure = True
             color = 0
             max_var = 0
             min_var = 0
             legend = []
-            for nr_mc_sample in sorted(mc_var):
-                difference_var = mc_var[nr_mc_sample][feature]/pc_var[feature]
 
-                if difference_var.max() > max_var:
-                    max_var = difference_var.max()
-
-                if difference_var.min() < min_var:
-                    min_var = difference_var.min()
-
-                legend.append("MC samples " + str(nr_mc_sample))
-
-                prettyPlot(t_pc[feature], difference_var,
-                           new_figure=new_figure, color=color,
-                           xlabel="Time", ylabel="Variance, mv",
-                           title="MC variance/PC variance(%d), %s" % (nr_pc_samples, feature))
-                new_figure = False
-                color += 2
-
-            plt.ylim([min_var, max_var])
-            plt.legend(legend)
-            plt.savefig(os.path.join(output_dir_compare,
-                                     "variance-diff-MC-PC_" + feature + self.figureformat))
-            # plt.show()
-            plt.close()
-
-        for feature in features_1d:
             difference_var = []
             legend = []
             for mc_estimation in sorted(mc_var):
-                difference_var.append(mc_var[mc_estimation][feature]/float(pc_var[feature]))
+                print mc_var[mc_estimation][feature]
+                print pc_var[feature]
+                difference_var.append(mc_var[mc_estimation][feature]/pc_var[feature])
 
                 legend.append("MC " + str(mc_estimation))
 

@@ -20,6 +20,8 @@ class Parameter():
             self.parameter_space = distribution
         elif hasattr(distribution, '__call__'):
             self.parameter_space = distribution(self.value)
+            if not isinstance(self.parameter_space, cp.Dist):
+                raise TypeError("Function does not return a Chaospy distribution")
         else:
             raise TypeError("Argument is neither a function nor a Chaospy distribution")
 

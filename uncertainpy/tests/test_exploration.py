@@ -2,6 +2,7 @@ import os
 import unittest
 import subprocess
 import shutil
+import chaospy as cp
 
 
 from uncertainpy import UncertaintyEstimations, Parameters
@@ -14,7 +15,6 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.folder = os.path.dirname(os.path.realpath(__file__))
 
         self.test_data_dir = os.path.join(self.folder, "data")
-        self.data_file = "test_plot_data"
         self.output_test_dir = ".tests/"
 
         if os.path.isdir(self.output_test_dir):
@@ -27,7 +27,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
         def mock_distribution(x):
-            return x
+            return cp.Uniform(0, 1)
 
         parameterlist = [["a", 1, mock_distribution],
                          ["b", 2, mock_distribution]]
@@ -42,28 +42,55 @@ class TestPlotUncertainpy(unittest.TestCase):
                                                   output_dir_data=self.output_test_dir,
                                                   output_dir_figures=self.output_test_dir,
                                                   nr_mc_samples=10**1)
-    #
+
     # def tearDown(self):
     #     if os.path.isdir(self.output_test_dir):
     #         shutil.rmtree(self.output_test_dir)
+    #
+    #
+    # def test_init(self):
+    #     self.uncertainty = UncertaintyEstimations(TestingModel1d(),
+    #                                               features=TestingFeatures(),
+    #                                               feature_list="all",
+    #                                               verbose_level="error",
+    #                                               output_dir_data=self.output_test_dir,
+    #                                               output_dir_figures=self.output_test_dir,
+    #                                               nr_mc_samples=10**1)
+    #
+    #
+    #
+    #     self.assertIsInstance(self.uncertainty, UncertaintyEstimations)
+    #
+    #
+    # def test_exploreParameters(self):
+    #     self.uncertainty.exploreParameters(self.test_distributions)
+    #
+    #     self.assert_files_in_folder("uniform_0.01")
+    #     self.assert_files_in_folder("uniform_0.03")
+    #     self.assert_files_in_folder("uniform_0.05")
 
 
-    def test_init(self):
-        self.uncertainty = UncertaintyEstimations(TestingModel1d(),
-                                                  features=TestingFeatures(),
-                                                  feature_list="all",
-                                                  verbose_level="error",
-                                                  output_dir_data=self.output_test_dir,
-                                                  output_dir_figures=self.output_test_dir,
-                                                  nr_mc_samples=10**1)
+
+    def assert_files_in_folder(self, folder):
+        self.assertTrue(os.path.isdir(os.path.join(self.output_test_dir,
+                                                   folder)))
+
+        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+                                                    folder,
+                                                    "TestingModel1d")))
+        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+                                                    folder,
+                                                    "TestingModel1d_single-parameter-a")))
+
+        self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
+                                                    folder,
+                                                    "TestingModel1d_single-parameter-b")))
 
 
+    def test_compareMC(self):
+        mc_samples = [10, 100]
 
-        self.assertIsInstance(self.uncertainty, UncertaintyEstimations)
-
-
-    def test_exploreParameters(self):
-        self.uncertainty.exploreParameters(self.test_distributions)
+        self.uncertainty.compareMC(mc_samples)
 
 
 

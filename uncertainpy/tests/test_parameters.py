@@ -50,7 +50,14 @@ class TestParameter(unittest.TestCase):
         # self.assertEqual(self.parameter.parameter_space, cp.Uniform(110, 130))
         self.assertIsInstance(self.parameter.parameter_space, cp.Dist)
 
+        def test_setDistributionFunctionNotDistReturn(self):
+            def distribution_function(x):
+                return x
 
+            with self.assertRaises(TypeError):
+                self.parameter.setDistribution(distribution_function)
+
+            
     def test_setDistributionInt(self):
         distribution = 1
         with self.assertRaises(TypeError):
