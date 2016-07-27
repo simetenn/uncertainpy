@@ -15,6 +15,5 @@ install:
   - "sh -e /etc/init.d/xvfb start"
   - sudo python setup.py install --full-dependencies
 script:
-  - workon uncertainpy
   - python testrunner.py
   # - python2.7 -c "import neuron"
