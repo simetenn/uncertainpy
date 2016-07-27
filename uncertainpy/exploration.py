@@ -255,31 +255,48 @@ class UncertaintyEstimations():
         #     # plt.show()
         #     plt.close()
 
+
+        print "mc_var"
+
+        print mc_var
+        print "pc_var"
+        print pc_var
+
         for feature in features_1d:
-            new_figure = True
-            color = 0
-            max_var = 0
-            min_var = 0
-            legend = []
-
-            difference_var = []
-            legend = []
-            for mc_estimation in sorted(mc_var):
-                print mc_var[mc_estimation][feature]
-                print pc_var[feature]
-                difference_var.append(mc_var[mc_estimation][feature]/pc_var[feature])
-
-                legend.append("MC " + str(mc_estimation))
-
-                new_figure = False
-                color += 2
-
-            prettyBar(difference_var,
-                      xlabels=legend, ylabel="Variance, mv",
-                      title="MC variance/PC variance, " + feature)
-            plt.savefig(os.path.join(output_dir_compare,
-                                     "variance-diff-MC-PC_" + feature + self.figureformat))
-            plt.close()
+            # new_figure = True
+            # color = 0
+            # max_var = 0
+            # min_var = 0
+            # legend = []
+            #
+            # difference_var = []
+            # legend = []
+            # for mc_estimation in sorted(mc_var):
+            #     fractional_difference_var = abs(pc_var[feature] - mc_var[mc_estimation][feature])/pc_var[feature]
+            #
+            #
+            #     print mc_var[mc_estimation][feature]
+            #     print pc_var[feature]
+            #     print difference_var
+            #
+            #     legend.append("MC " + str(mc_estimation))
+            #
+            #     # prettyBar(difference_var,
+            #     #           xlabels=legend, ylabel="Variance, mv",
+            #     #           title="MC variance/PC variance, " + feature)
+            #
+            #
+            #     prettyPlot(t_pc[feature], fractional_difference_var,
+            #                xlabel="time, ms", ylabel="Variance, mv",
+            #                title="${|PC_{variance} - MC_{variance}|}{PC_{variance}}$, " + feature)
+            #
+            #     new_figure = False
+            #     color += 2
+            #
+            # plt.show()
+            # plt.savefig(os.path.join(output_dir_compare,
+            #                          "variance-diff-MC-PC_" + feature + self.figureformat))
+            # plt.close()
 
 
 
@@ -328,6 +345,7 @@ class UncertaintyEstimations():
 
             plt.ylim([min_var, max_var])
             plt.legend(legend)
+            plt.show()
             plt.savefig(os.path.join(output_dir_compare,
                                      "variance-MC-PC_" + self.figureformat))
             # plt.show()
