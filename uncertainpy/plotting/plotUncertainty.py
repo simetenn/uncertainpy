@@ -727,6 +727,20 @@ class PlotUncertainty():
         self.output_dir_figures = original_output_dir_figures
 
 
+
+
+
+
+
+
+    def plotCompareMC(self):
+        self.logger.info("Plotting compareMC data")
+
+
+
+
+
+
     def gif(self):
         self.logger.info("Creating gifs. Takes a long time")
 
