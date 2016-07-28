@@ -12,8 +12,7 @@ test_data_dir = os.path.join(folder, "data")
 
 seed = 10
 
-# TODO Currently the names this saves with and the data files loaded by the tests
-# are different
+
 def generate_data_allParameters():
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
@@ -104,7 +103,6 @@ def generate_data_singleParametersMC():
 
 
 def generate_data_compareMC():
-
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -124,6 +122,7 @@ def generate_data_compareMC():
 
     mc_samples = [10, 100]
     uncertainty.compareMC(mc_samples)
+
 
 
 if __name__ == "__main__":

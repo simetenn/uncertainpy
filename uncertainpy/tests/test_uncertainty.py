@@ -35,11 +35,11 @@ class TestUncertainty(unittest.TestCase):
                                                  output_dir_figures=self.output_test_dir,
                                                  seed=self.seed)
 
-    #
-    #
-    # def tearDown(self):
-    #     if os.path.isdir(self.output_test_dir):
-    #         shutil.rmtree(self.output_test_dir)
+    
+
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
 
 
     def test_init(self):
@@ -927,7 +927,7 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a")
-        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
+        result = subprocess.call(["h5diff", filename, compare_file])
 
 
         self.assertEqual(result, 0)
@@ -935,7 +935,7 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b")
-        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
+        result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -975,7 +975,7 @@ class TestUncertainty(unittest.TestCase):
         compare_file = os.path.join(folder, "data/TestingModel1d")
         filename = os.path.join(self.output_test_dir, "TestingModel1d")
 
-        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
+        result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
 

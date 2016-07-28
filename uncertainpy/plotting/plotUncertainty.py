@@ -730,20 +730,110 @@ class PlotUncertainty():
 
 
 
+    # TODO expand this to work with regex
+    def loadCompareData(self, filename, base_compare_name="pc", compare_name="mc_"):
+        self.t_compare = {}
+        # self.U_compare = {}
+        self.E_compare = {}
+        self.Var_compare = {}
+        self.p_05_compare = {}
+        self.p_95_compare = {}
+        self.sensitivity_compare = {}
 
-    # def loadCompareMCData(self, feature):
-    #     print glob.glob(os.path.join(folder, "*")):
-    #
-    # def plotCompareMC(self):
-    #     self.logger.info("Plotting compareMC data")
-    #
-    #
+        for path in glob.glob(os.path.join(self.data_dir, compare_name + "*")):
+            name = path.split(os.path.sep)[-1]
 
+            self.loadData(os.path.join(name, filename))
+
+            self.t_compare[name] = self.t
+            # self.U_compare[name] = self.U
+            self.E_compare[name] = self.E
+            self.Var_compare[name] = self.Var
+            self.p_05_compare[name] = self.p_05
+            self.p_95_compare[name] = self.p_95
+            self.sensitivity_compare[name] = self.sensitivity
+
+
+        self.loadData(os.path.join(base_compare_name, filename))
+
+
+    def plotCompare(self, filename, reference_name="pc", compare_name="mc_"):
+        self.logger.info("Plotting {} data".compare)
+
+        self.loadCompareData(filename, base_compare_name=reference_name,
+                             compare_name=compare_name)
+
+
+
+    def plotCompareFeature1d(self, feature, attribute="E"):
+        if feature not in self.features_1d:
+            raise RuntimeError("%s is not a 1D feature" % (feature))
+
+
+        output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
+        if not os.path.isdir(output_dir_compare):
+            os.makedirs(output_dir_compare)
+
+
+        value = getattr(self, attribute + "_compare")
+        reference_value = getattr(self, attribute)
+
+
+        color = 0
+        max_value = 0
+        min_value = 10**10
+        legend = []
+        new_figure = True
+
+        for compare in self.E_compare.keys():
+            min_value, max_value = self.getMinMax(value[compare][feature],
+                                                  min_value, max_value)
+
+
+            if compare[:3] == "mc_":
+                legend.append("MC samples " + compare.split("_")[-1])
+            else:
+                legend.append(compare)
+
+
+            prettyPlot(self.t[feature], value[compare][feature],
+                       new_figure=new_figure, color=color,
+                       xlabel="Time", ylabel=attribute,
+                       title="Comparison plot, " + attribute)
+            new_figure = False
+            color += 2
+
+
+
+        legend.append("PC")
+        prettyPlot(self.t[feature], reference_value[feature],
+                   new_figure=new_figure, color=color,
+                   xlabel="Time", ylabel=attribute,
+                   title="Comparison plot, " + attribute)
+
+
+        plt.ylim([min_value*0.99, max_value*1.01])
+        plt.legend(legend)
+        plt.show()
+        plt.savefig(os.path.join(output_dir_compare,
+                                 "variance-MC-PC_" + self.figureformat))
+
+
+
+
+    def getMinMax(self, value, min_value, max_value):
+        if value.max() > max_value:
+            max_value = value.max()
+
+        if value.min() < min_value:
+            min_value = value.min()
+
+        return min_value, max_value
 
 
 
     def gif(self):
-        self.logger.info("Creating gifs. Takes a long time")
+        self.logger.info("Creating gifs. mAY TAKE A LONG TIME")
 
         if not self.loaded_flag:
             raise RuntimeError("Datafile must be loaded")

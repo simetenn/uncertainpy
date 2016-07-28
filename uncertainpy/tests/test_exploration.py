@@ -45,32 +45,32 @@ class TestPlotUncertainpy(unittest.TestCase):
                                                   nr_mc_samples=10**1,
                                                   seed=self.seed)
 
-    # def tearDown(self):
-    #     if os.path.isdir(self.output_test_dir):
-    #         shutil.rmtree(self.output_test_dir)
-    #
-    #
-    # def test_init(self):
-    #     self.uncertainty = UncertaintyEstimations(TestingModel1d(),
-    #                                               features=TestingFeatures(),
-    #                                               feature_list="all",
-    #                                               verbose_level="error",
-    #                                               output_dir_data=self.output_test_dir,
-    #                                               output_dir_figures=self.output_test_dir,
-    #                                               nr_mc_samples=10**1,
-    #                                               seed=self.seed)
-    #
-    #
-    #
-    #     self.assertIsInstance(self.uncertainty, UncertaintyEstimations)
-    #
-    #
-    # def test_exploreParameters(self):
-    #     self.uncertainty.exploreParameters(self.test_distributions)
-    #
-    #     self.assert_files_in_folder("uniform_0.01")
-    #     self.assert_files_in_folder("uniform_0.03")
-    #     self.assert_files_in_folder("uniform_0.05")
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+    def test_init(self):
+        self.uncertainty = UncertaintyEstimations(TestingModel1d(),
+                                                  features=TestingFeatures(),
+                                                  feature_list="all",
+                                                  verbose_level="error",
+                                                  output_dir_data=self.output_test_dir,
+                                                  output_dir_figures=self.output_test_dir,
+                                                  nr_mc_samples=10**1,
+                                                  seed=self.seed)
+
+
+
+        self.assertIsInstance(self.uncertainty, UncertaintyEstimations)
+
+
+    def test_exploreParameters(self):
+        self.uncertainty.exploreParameters(self.test_distributions)
+
+        self.assert_files_in_folder("uniform_0.01")
+        self.assert_files_in_folder("uniform_0.03")
+        self.assert_files_in_folder("uniform_0.05")
 
 
 
