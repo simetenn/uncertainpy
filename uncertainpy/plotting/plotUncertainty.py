@@ -9,7 +9,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
+from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar, setTitle
 from uncertainpy.utils import create_logger
 
 # TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
@@ -42,7 +42,7 @@ class PlotUncertainty():
         self.features_in_combined_plot = 3
 
         self.loaded_flag = False
-
+        self.loaded_compare_flag = False
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -158,18 +158,19 @@ class PlotUncertainty():
         return features_0d, features_1d
 
 
-    def plotMean(self, feature="directComparison", hardcopy=True, show=False):
+    def plotMean(self, feature="directComparison", hardcopy=True, show=False,
+                 new_figure=True, color=0):
         if not self.loaded_flag:
             raise RuntimeError("Datafile must be loaded")
 
 
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
-        color1 = 0
 
-        prettyPlot(self.t[feature], self.E[feature], "Mean, " + feature, "time", "voltage", color1)
+        prettyPlot(self.t[feature], self.E[feature],
+                   "Mean, " + feature, "time", "voltage", color=color,
+                   new_figure=False)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
@@ -188,7 +189,6 @@ class PlotUncertainty():
 
 
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
@@ -214,7 +214,6 @@ class PlotUncertainty():
 
 
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
@@ -260,7 +259,6 @@ class PlotUncertainty():
 
 
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
@@ -325,7 +323,6 @@ class PlotUncertainty():
 
 
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
         if feature not in self.sensitivity or self.sensitivity[feature] is None:
@@ -730,8 +727,8 @@ class PlotUncertainty():
 
 
 
-    # TODO expand this to work with regex
-    def loadCompareData(self, filename, base_compare_name="pc", compare_name="mc_"):
+    # TODO expand this to work with regex?
+    def loadCompareData(self, filename, compare_folders=None):
         self.t_compare = {}
         # self.U_compare = {}
         self.E_compare = {}
@@ -740,8 +737,14 @@ class PlotUncertainty():
         self.p_95_compare = {}
         self.sensitivity_compare = {}
 
-        for path in glob.glob(os.path.join(self.data_dir, compare_name + "*")):
-            name = path.split(os.path.sep)[-1]
+        if compare_folders is None:
+            compare_folders = [folder for folder in os.listdir(self.data_dir)
+                               if os.path.isdir(os.path.join(self.data_dir,
+                                                             compare_folders))]
+
+        self.compare_folders = compare_folders
+        for folder in self.compare_folders:
+            name = folder.split(os.path.sep)[-1]
 
             self.loadData(os.path.join(name, filename))
 
@@ -754,15 +757,18 @@ class PlotUncertainty():
             self.sensitivity_compare[name] = self.sensitivity
 
 
-        self.loadData(os.path.join(base_compare_name, filename))
+        self.compare_output_dir_figures = os.path.join(self.output_dir_figures, "compare")
 
+        if not os.path.isdir(self.compare_output_dir_figures):
+            os.makedirs(self.compare_output_dir_figures)
+
+        self.loaded_compare_flag = True
 
     def plotCompare(self, filename, reference_name="pc", compare_name="mc_"):
         self.logger.info("Plotting {} data".compare)
 
-        self.loadCompareData(filename, base_compare_name=reference_name,
+        self.loadCompareData(filename, reference_name=reference_name,
                              compare_name=compare_name)
-
 
 
     def plotCompareFeature1d(self, feature, attribute="E"):
@@ -770,14 +776,66 @@ class PlotUncertainty():
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
 
+
         output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
         if not os.path.isdir(output_dir_compare):
             os.makedirs(output_dir_compare)
 
 
-        value = getattr(self, attribute + "_compare")
-        reference_value = getattr(self, attribute)
 
+        # color = 0
+        # max_value = 0
+        # min_value = 10**10
+        # legend = []
+        # new_figure = True
+        #
+        #
+        # compares = self.E_compare.keys()
+        # compares.remove(self.reference_name)
+
+        # for compare in compares:
+        #     min_value, max_value = self.getMinMax(value[compare][feature],
+        #                                           min_value, max_value)
+        #
+        #     if compare[:3] == "mc_":
+        #         legend.append("MC samples " + compare.split("_")[-1])
+        #     else:
+        #         legend.append(compare)
+        #
+        #
+        #     if attribute == "E":
+        #         self.E = value[compare]
+        #         self.plotMean(feature=feature, hardcopy=False, show=False,
+        #                       new_figure=new_figure, color=color)
+        #
+        #     new_figure = False
+        #     color += 2
+        #
+        #
+        # min_value, max_value = self.getMinMax(value[self.reference_name][feature],
+        #                                       min_value, max_value)
+        # legend.append("PC")
+        # if attribute == "E":
+        #     self.E = value[self.reference_name]
+        #     self.plotMean(feature=feature, hardcopy=False, show=False,
+        #                   new_figure=new_figure, color=color)
+        #     # TODO avoid using this function
+        #     setTitle("Compare mean, " + feature)
+        #     save_name = "MC-PC_comparison_" + feature
+        #
+        #
+        # plt.ylim([min_value*0.99, max_value*1.01])
+        # plt.legend(legend)
+        # plt.show()
+        # plt.savefig(os.path.join(output_dir_compare, save_name + self.figureformat))
+
+
+
+
+
+    def plotCompareAttribute(self, feature="directComparison", attribute="E"):
+        if feature not in self.features_1d:
+            raise RuntimeError("%s is not a 1D feature" % (feature))
 
         color = 0
         max_value = 0
@@ -785,39 +843,94 @@ class PlotUncertainty():
         legend = []
         new_figure = True
 
-        for compare in self.E_compare.keys():
+        value = getattr(self, attribute + "_compare")
+
+        for compare in self.compare_folders:
             min_value, max_value = self.getMinMax(value[compare][feature],
                                                   min_value, max_value)
 
+            if compare[:2] == "mc":
+                legend.append("MC samples " + compare.split("_")[-1])
+            else:
+                legend.append(compare)
 
+            self.t = self.t_compare[compare]
+            if attribute == "E":
+                self.E = value[compare]
+                self.plotMean(feature=feature, hardcopy=False, show=False,
+                              new_figure=new_figure, color=color)
+            elif attribute == "Var":
+                self.Var = value[compare]
+                self.plotVariance(feature=feature, hardcopy=False, show=False,
+                                  new_figure=new_figure, color=color)
+            elif attribute == "E_Var":
+                # TODO working here: trying to figure out how to handle plotmeanandvariance()
+                # Possible best solution, make own functions for comparing mean, variacne, mean and avriance and so on
+
+            else:
+                raise RuntimeError("Unknown attribute {}".format(attribute))
+            new_figure = False
+            color += 2
+
+
+        if attribute == "E":
+            save_name = feature + "_mean"
+
+        plt.ylim([min_value*0.99, max_value*1.01])
+        plt.legend(legend)
+        # TODO add show and hardcopy options
+        plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                 save_name + self.figureformat))
+
+
+    def plotCompareAttributeFractionalDifference(self, feature="directComparison", attribute="E",
+                                                 reference_name="pc"):
+        if feature not in self.features_1d:
+            raise RuntimeError("%s is not a 1D feature" % (feature))
+
+        color = 0
+        max_value = 0
+        min_value = 10**10
+        legend = []
+        new_figure = True
+
+        value = getattr(self, attribute + "_compare")
+
+        compares = value.keys()
+        compares.remove(reference_name)
+
+        for compare in compares:
             if compare[:3] == "mc_":
                 legend.append("MC samples " + compare.split("_")[-1])
             else:
                 legend.append(compare)
 
+            self.t = self.t_compare[compare]
+            if attribute == "E":
+                fractional_difference = abs(value[reference_name][feature] - value[compare][feature])/value[reference_name][feature]
+                min_value, max_value = self.getMinMax(fractional_difference,
+                                                      min_value, max_value)
 
-            prettyPlot(self.t[feature], value[compare][feature],
-                       new_figure=new_figure, color=color,
-                       xlabel="Time", ylabel=attribute,
-                       title="Comparison plot, " + attribute)
+                self.E[feature] = fractional_difference
+                self.plotMean(feature=feature, hardcopy=False, show=False,
+                              new_figure=new_figure, color=color)
+
             new_figure = False
             color += 2
 
+        if attribute == "E":
+            title = "$\\frac{|{PC}_{mean} - MC_{mean}|}{PC_{mean}}$, " + feature
+            save_name = feature + "mean_fractional-difference"
 
-
-        legend.append("PC")
-        prettyPlot(self.t[feature], reference_value[feature],
-                   new_figure=new_figure, color=color,
-                   xlabel="Time", ylabel=attribute,
-                   title="Comparison plot, " + attribute)
-
+        setTitle(title)
 
         plt.ylim([min_value*0.99, max_value*1.01])
         plt.legend(legend)
-        plt.show()
-        plt.savefig(os.path.join(output_dir_compare,
-                                 "variance-MC-PC_" + self.figureformat))
+        # TODO add show and hardcopy options
+        # plt.savefig(os.path.join(self.compare_output_dir_figures,
+        #                          save_name + self.figureformat))
 
+        plt.show()
 
 
 
@@ -832,8 +945,22 @@ class PlotUncertainty():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     def gif(self):
-        self.logger.info("Creating gifs. mAY TAKE A LONG TIME")
+        self.logger.info("Creating gifs. May take a long time")
 
         if not self.loaded_flag:
             raise RuntimeError("Datafile must be loaded")

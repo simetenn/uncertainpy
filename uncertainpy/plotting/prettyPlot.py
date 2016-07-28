@@ -1,6 +1,18 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+axis_grey = (0.5, 0.5, 0.5)
+titlesize = 20
+fontsize = 18
+labelsize = 16
+figsize = (10, 7.5)
+
+# TODO avoid this function
+def setTitle(title):
+    plt.title(title, fontsize=titlesize)
+
+
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
                color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
 
@@ -59,12 +71,6 @@ tableau20 : list
 
     plt.rcParams.update(params)
 
-
-    axis_grey = (0.5, 0.5, 0.5)
-    titlesize = 20
-    fontsize = 18
-    labelsize = 16
-    figsize = (10, 7.5)
 
     # These are the "Tableau 20" colors as RGB.
     tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
@@ -147,12 +153,6 @@ def prettyBar(x, error=None, index=None, colors=None, start_color=0, title="",
 
         plt.rcParams.update(params)
 
-
-        axis_grey = (0.5, 0.5, 0.5)
-        titlesize = 18
-        fontsize = 16
-        labelsize = 14
-        figsize = (10, 7.5)
 
         # These are the "Tableau 20" colors as RGB.
         tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),

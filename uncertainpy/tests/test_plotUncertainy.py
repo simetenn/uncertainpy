@@ -409,15 +409,20 @@ class TestPlotUncertainpy(unittest.TestCase):
     # def test_plotCompare(self):
     #     self.plot.plotCompareData("TestingModel1d")
 
-    def test_plotCompareFeature1d(self):
-        self.plot.loadCompareData("TestingModel1d", base_compare_name="pc",
-                                  compare_name="mc")
+    def test_plotCompareAttribute(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareAttribute(feature="directComparison", attribute="E")
 
 
-        self.plot.plotCompareFeature1d("directComparison")
+    def test_plotCompareAttributeFractionalDifference(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
 
 
-
+        self.plot.plotCompareAttributeFractionalDifference(feature="directComparison",
+                                                           attribute="E")
 
 # TODO test for creating gif
 # TODO test combined features 0 for many features
