@@ -413,6 +413,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.loadCompareData("TestingModel1d", base_compare_name="pc",
                                   compare_name="mc")
 
+
         self.plot.plotCompareFeature1d("directComparison")
 
 
