@@ -24,6 +24,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         percentages = [0.01, 0.03, 0.05]
 
         self.test_distributions = {"uniform": percentages}
+        self.seed = 10
 
 
         def mock_distribution(x):
@@ -41,7 +42,8 @@ class TestPlotUncertainpy(unittest.TestCase):
                                                   verbose_level="error",
                                                   output_dir_data=self.output_test_dir,
                                                   output_dir_figures=self.output_test_dir,
-                                                  nr_mc_samples=10**1)
+                                                  nr_mc_samples=10**1,
+                                                  seed=self.seed)
 
     # def tearDown(self):
     #     if os.path.isdir(self.output_test_dir):
@@ -55,7 +57,8 @@ class TestPlotUncertainpy(unittest.TestCase):
     #                                               verbose_level="error",
     #                                               output_dir_data=self.output_test_dir,
     #                                               output_dir_figures=self.output_test_dir,
-    #                                               nr_mc_samples=10**1)
+    #                                               nr_mc_samples=10**1,
+    #                                               seed=self.seed)
     #
     #
     #
@@ -92,6 +95,27 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.uncertainty.compareMC(mc_samples)
 
+        compare_file = os.path.join(self.folder, "data/pc",
+                                    "TestingModel1d")
+        data_file = os.path.join(self.output_test_dir, "pc/TestingModel1d")
+        result = subprocess.call(["h5diff", data_file, compare_file])
+
+
+        self.assertEqual(result, 0)
+
+        compare_file = os.path.join(self.folder, "data/mc_10",
+                                    "TestingModel1d")
+        data_file = os.path.join(self.output_test_dir, "mc_10/TestingModel1d")
+        result = subprocess.call(["h5diff", data_file, compare_file])
+
+        self.assertEqual(result, 0)
+
+        compare_file = os.path.join(self.folder, "data/mc_100",
+                                    "TestingModel1d")
+        data_file = os.path.join(self.output_test_dir, "mc_100/TestingModel1d")
+        result = subprocess.call(["h5diff", data_file, compare_file])
+
+        self.assertEqual(result, 0)
 
 
 if __name__ == "__main__":

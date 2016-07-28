@@ -148,6 +148,7 @@ class UncertaintyEstimation():
                  nr_pc_mc_samples=10**5,
                  verbose_level="info",
                  verbose_filename=None,
+                 seed=None,
                  **kwargs):
         """
 Uncertainty Estimation object
@@ -227,6 +228,8 @@ verbose_level : str
 verbose_filename : None/str
     redirect output to a file. If None print to terminal.
     Default is None.
+seed : None/ int or array_like, optional
+    Setting a seed, usefull for testing purposes
 **kwargs : dict
     Optional arguments to be sent to other classes.
     Currently only features support recieving optional
@@ -318,11 +321,14 @@ For example on use see:
             self.output_data_filename = output_data_filename
 
 
-
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
 
+        if seed is not None:
+            cp.seed(seed)
+            np.random.seed(seed)
+        self.seed = seed
 
         self.t_start = time.time()
 
@@ -621,7 +627,9 @@ For example on use see:
             if len(self.uncertain_parameters) > 1:
                     self.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
 
+
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
+
 
             if len(self.uncertain_parameters) > 1:
                 self.U_mc[feature] = self.U_hat[feature](*samples)

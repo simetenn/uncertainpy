@@ -731,12 +731,13 @@ class PlotUncertainty():
 
 
 
-
-
-    def plotCompareMC(self):
-        self.logger.info("Plotting compareMC data")
-
-
+    # def loadCompareMCData(self, feature):
+    #     print glob.glob(os.path.join(folder, "*")):
+    #
+    # def plotCompareMC(self):
+    #     self.logger.info("Plotting compareMC data")
+    #
+    #
 
 
 

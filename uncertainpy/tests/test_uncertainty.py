@@ -14,9 +14,13 @@ from uncertainpy.parameters import Parameters
 from uncertainpy import Distribution
 
 
+# TODO fix all h5diff -d 0.01 tests,
+# find out why seed does not make the files equal
+
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
+        self.seed = 10
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -28,13 +32,14 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list="all",
                                                  verbose_level="error",
                                                  output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=self.output_test_dir)
+                                                 output_dir_figures=self.output_test_dir,
+                                                 seed=self.seed)
 
-
-
-    def tearDown(self):
-        if os.path.isdir(self.output_test_dir):
-            shutil.rmtree(self.output_test_dir)
+    #
+    #
+    # def tearDown(self):
+    #     if os.path.isdir(self.output_test_dir):
+    #         shutil.rmtree(self.output_test_dir)
 
 
     def test_init(self):
@@ -901,42 +906,41 @@ class TestUncertainty(unittest.TestCase):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
-
-
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
 
+
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list=["feature1d"],
+                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
-                                                 output_data_filename="test_save_data",
                                                  output_dir_data=self.output_test_dir,
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 seed=self.seed)
 
 
         self.uncertainty.singleParameters()
-        #
-        # self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
-        #                                "test_save_data_single-parameter-a")))
-        # self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
-        #                                "test_save_data_single-parameter-b")))
+
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/test_save_data_single-parameter-a")
-        filename = os.path.join(self.output_test_dir, "test_save_data_single-parameter-a")
+        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a")
+        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
+
+
+        self.assertEqual(result, 0)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b")
         result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
 
         self.assertEqual(result, 0)
 
 
-        compare_file = os.path.join(folder, "data/test_save_data_single-parameter-b")
-        filename = os.path.join(self.output_test_dir, "test_save_data_single-parameter-b")
-        result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
 
-        self.assertEqual(result, 0)
 
 
     def test_allParameters(self):
@@ -955,10 +959,9 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list=["feature1d"],
+                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
-                                                 output_data_filename="test_save_data",
                                                  output_dir_data=self.output_test_dir,
                                                  verbose_level="error")
 
@@ -969,8 +972,8 @@ class TestUncertainty(unittest.TestCase):
         # self.assertTrue(os.path.isfile(filename))
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/test_save_data")
-        filename = os.path.join(self.output_test_dir, "test_save_data")
+        compare_file = os.path.join(folder, "data/TestingModel1d")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d")
 
         result = subprocess.call(["h5diff", "-d", "0.01", filename, compare_file])
 
@@ -993,10 +996,10 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list=["feature1d"],
+                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
-                                                 output_data_filename="test_save_data_MC",
+                                                 output_data_filename="TestingModel1d_MC",
                                                  output_dir_data=self.output_test_dir,
                                                  verbose_level="error",
                                                  nr_mc_samples=10**1)
@@ -1010,15 +1013,15 @@ class TestUncertainty(unittest.TestCase):
         #                                "test_save_data_MC_single-parameter-b")))
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/test_save_data_MC_single-parameter-a")
-        filename = os.path.join(self.output_test_dir, "test_save_data_MC_single-parameter-a")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-a")
 
         result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
 
-        compare_file = os.path.join(folder, "data/test_save_data_MC_single-parameter-b")
-        filename = os.path.join(self.output_test_dir, "test_save_data_MC_single-parameter-b")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b")
 
         result = subprocess.call(["h5diff", filename, compare_file])
 
@@ -1041,10 +1044,10 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list=["feature1d"],
+                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
-                                                 output_data_filename="test_save_data_MC",
+                                                 output_data_filename="TestingModel1d_MC",
                                                  output_dir_data=self.output_test_dir,
                                                  verbose_level="error",
                                                  nr_mc_samples=10**1)
@@ -1056,8 +1059,8 @@ class TestUncertainty(unittest.TestCase):
         # self.assertTrue(os.path.isfile(filename))
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/test_save_data_MC")
-        filename = os.path.join(self.output_test_dir, "test_save_data_MC")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC")
 
         result = subprocess.call(["h5diff", filename, compare_file])
 
@@ -1067,7 +1070,7 @@ class TestUncertainty(unittest.TestCase):
     def test_save(self):
 
         def f(x):
-            return x
+            return cp.Uniform(0, 1)
 
         self.uncertainty.all_features = ["feature1", "directComparison"]
         self.uncertainty.feature_list = ["feature1"]
