@@ -138,10 +138,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 #         self.compare_plotType("plotMean", "mean", "directComparison")
 #         self.compare_plotType("plotMean", "mean", "feature1d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotMean(feature="feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotMean(feature="feature2d")
 #
 #
@@ -153,10 +153,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 #         self.compare_plotType("plotVariance", "variance", "directComparison")
 #         self.compare_plotType("plotVariance", "variance", "feature1d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotVariance(feature="feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotVariance(feature="feature2d")
 #
 #
@@ -167,10 +167,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 #         self.compare_plotType("plotMeanAndVariance", "mean-variance", "directComparison")
 #         self.compare_plotType("plotMeanAndVariance", "mean-variance", "feature1d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotMeanAndVariance(feature="feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotMeanAndVariance(feature="feature2d")
 #
 #
@@ -181,10 +181,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 #         self.compare_plotType("plotConfidenceInterval", "confidence-interval", "directComparison")
 #         self.compare_plotType("plotConfidenceInterval", "confidence-interval", "feature1d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotConfidenceInterval(feature="feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotConfidenceInterval(feature="feature2d")
 #
 #
@@ -238,10 +238,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 #
 #
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotSensitivityCombined(feature="feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotSensitivityCombined(feature="feature2d")
 #
 #
@@ -253,10 +253,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 #         self.compare_plotType("plotSensitivityCombined", "sensitivity", "feature1d")
 #
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotSensitivityCombined(feature="feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plotSensitivityCombined(feature="feature2d")
 #
 #
@@ -309,7 +309,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 #
 #         self.compare_plot("feature0d")
 #
-#         with self.assertRaises(RuntimeError):
+#         with self.assertRaises(ValueError):
 #             self.plot.plot0dFeature(feature="feature1d")
 #
 #
@@ -409,20 +409,44 @@ class TestPlotUncertainpy(unittest.TestCase):
     # def test_plotCompare(self):
     #     self.plot.plotCompareData("TestingModel1d")
 
-    def test_plotCompareAttribute(self):
+    #
+    # def test_plotCompareMean(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #     self.plot.plotCompareMean(feature="directComparison", show=True)
+    #
+    #
+    # def test_plotCompareVariance(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #     self.plot.plotCompareVariance(feature="directComparison", show=True)
+
+
+    # def test_plotCompareMeanAndVariance(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #     self.plot.plotCompareMeanAndVariance(feature="directComparison", show=True)
+
+
+
+    def test_plotCompareConfidenceInterval(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareAttribute(feature="directComparison", attribute="E")
+        self.plot.plotCompareConfidenceInterval(feature="directComparison", show=True)
 
 
-    def test_plotCompareAttributeFractionalDifference(self):
-        self.plot.loadCompareData("TestingModel1d",
-                                  compare_folders=["pc", "mc_10", "mc_100"])
 
-
-        self.plot.plotCompareAttributeFractionalDifference(feature="directComparison",
-                                                           attribute="E")
+    # def test_plotCompareAttributeFractionalDifference(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #
+    #     self.plot.plotCompareAttributeFractionalDifference(feature="directComparison",
+    #                                                        attribute="E")
 
 # TODO test for creating gif
 # TODO test combined features 0 for many features

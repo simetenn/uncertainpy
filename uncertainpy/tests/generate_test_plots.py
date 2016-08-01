@@ -25,32 +25,34 @@ def generate_plots_plotUncertainty():
     plot.plot0dFeatures()
 
 
-def generate_plots_UncertaintyEstimations():
-    folder = os.path.dirname(os.path.realpath(__file__))
+# def generate_plots_UncertaintyEstimations():
+#     folder = os.path.dirname(os.path.realpath(__file__))
+#
+#     output_test_dir = os.path.join(folder, "../tests/data")
+#
+#
+#     def mock_distribution(x):
+#         return cp.Uniform(0, 1)
+#
+#     parameterlist = [["a", 1, mock_distribution],
+#                      ["b", 2, mock_distribution]]
+#
+#     parameters = Parameters(parameterlist)
+#     model = TestingModel1d(parameters)
+#
+#     uncertainty = UncertaintyEstimations(model,
+#                                          features=TestingFeatures(),
+#                                          feature_list="all",
+#                                          verbose_level="error",
+#                                          output_dir_data=output_test_dir,
+#                                          output_dir_figures=output_test_dir,
+#                                          nr_mc_samples=10**1)
+#
+#     uncertainty.compareMC()
 
-    output_test_dir = os.path.join(folder, "../tests/data")
 
-
-    def mock_distribution(x):
-        return cp.Uniform(0, 1)
-
-    parameterlist = [["a", 1, mock_distribution],
-                     ["b", 2, mock_distribution]]
-
-    parameters = Parameters(parameterlist)
-    model = TestingModel1d(parameters)
-
-    uncertainty = UncertaintyEstimations(model,
-                                         features=TestingFeatures(),
-                                         feature_list="all",
-                                         verbose_level="error",
-                                         output_dir_data=output_test_dir,
-                                         output_dir_figures=output_test_dir,
-                                         nr_mc_samples=10**1)
-
-    uncertainty.compareMC()
 
 
 if __name__ == "__main__":
     generate_plots_plotUncertainty()
-    generate_plots_UncertaintyEstimations()
+    # generate_plots_UncertaintyEstimations()

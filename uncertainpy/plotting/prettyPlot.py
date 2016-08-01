@@ -9,9 +9,28 @@ labelsize = 16
 figsize = (10, 7.5)
 
 # TODO avoid this function
-def setTitle(title):
-    plt.title(title, fontsize=titlesize)
+def title(title, ax=None):
+    if ax is None:
+        plt.title(title, fontsize=titlesize)
+    else:
+        ax.set_title(title, fontsize=titlesize)
 
+def xlabel(xlabel, ax=None):
+    if ax is None:
+        plt.xlabel(xlabel, fontsize=labelsize)
+    else:
+        ax.set_xlabel(xlabel, fontsize=labelsize)
+
+
+def ylabel(ylabel, ax=None):
+    if ax is None:
+        plt.ylabel(ylabel, fontsize=labelsize)
+    else:
+        ax.set_ylabel(ylabel, fontsize=labelsize)
+
+
+def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
+               color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
 
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
                color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
@@ -67,7 +86,8 @@ tableau20 : list
               'grid.linewidth': 1.3,
               'grid.linestyle': '-',
               'axes.facecolor': '0.95',
-              'legend.fontsize': 16}
+              'legend.fontsize': 16,
+              "legend.fancybox": True}
 
     plt.rcParams.update(params)
 
@@ -134,7 +154,7 @@ tableau20 : list
 
 def prettyBar(x, error=None, index=None, colors=None, start_color=0, title="",
               linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True,
-              grid=False, error_kw=None, **kwargs):
+              ax=None, grid=False, error_kw=None, **kwargs):
         """
         Creates pretty bar plots
         """
