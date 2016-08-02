@@ -361,7 +361,7 @@ class PlotUncertainty():
 
         plt.ylim([0, 1.05])
         if len(self.sensitivity[feature]) > 4:
-        plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
+            plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
 
         set_legend(parameter_names)
 
