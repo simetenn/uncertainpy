@@ -682,7 +682,6 @@ class PlotUncertainty():
 
         save_name = "combined_features_%d" % (index/self.features_in_combined_plot) + self.figureformat
 
-
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
 

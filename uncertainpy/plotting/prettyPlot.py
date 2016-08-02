@@ -169,7 +169,7 @@ def create_canvas(grid=True):
 
 
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
-               color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
+               nr_hues = ,color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
 
     """
 prettyPlot
@@ -232,29 +232,36 @@ tableau20 : list
 
     set_font()
     set_legend()
+    #
+    # tableau20 = colormap()
 
-    tableau20 = colormap()
 
-    if y is None:
-        y = x
-        x = range(len(y))
+    sns.set_palette(sns.color_palette("husl", 2))
+
 
     if new_figure:
         plt.figure(figsize=figsize)
-
-    ax = create_canvas(grid=grid)
-
+        ax = create_canvas(grid=grid)
+    else:
+        ax = plt.gca()
 
     set_title(title, ax)
     set_xlabel(xlabel, ax)
     set_xlabel(ylabel, ax)
 
     if len(x) == 0:
-        return ax, tableau20
+        return ax
+
+
+    if y is None:
+        y = x
+        x = range(len(y))
 
     # ax.plot(x, y, color=tableau20[color], linestyle=linestyle, marker=marker,
     #         markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
     #         zorder=3)
+
+
 
     ax.plot(x, y, linestyle=linestyle, marker=marker,
             markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
@@ -262,8 +269,6 @@ tableau20 : list
 
     # ax.set_xlim([min(x), max(x)])
     # ax.set_ylim([min(y), max(y)])
-
-    # ax.scale("auto")
 
 
     return ax
