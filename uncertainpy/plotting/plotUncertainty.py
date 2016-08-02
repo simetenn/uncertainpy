@@ -9,7 +9,8 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
-from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar, setTitle
+# Fix Remove import * once finished
+from uncertainpy.plotting.prettyPlot import *
 from uncertainpy.utils import create_logger
 
 # TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
@@ -231,9 +232,10 @@ class PlotUncertainty():
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
+        tableau20 = colormap()
 
-        ax, tableau20 = prettyPlot(self.t[feature], self.E[feature],
-                                   "Mean and variance, " + feature, "time", "voltage, mean", color=color, new_figure=new_figure)
+        ax= prettyPlot(self.t[feature], self.E[feature],
+                       "Mean and variance, " + feature, "time", "voltage, mean", color=color, new_figure=new_figure)
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=tableau20[color+2], labelcolor=tableau20[color+2], labelsize=14)
@@ -273,11 +275,12 @@ class PlotUncertainty():
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
+        tableau20 = colormap()
 
-        ax, color = prettyPlot(self.t[feature], self.E[feature],
-                               xlabel="time", ylabel="voltage", color=0)
+        ax = prettyPlot(self.t[feature], self.E[feature],
+                        xlabel="time", ylabel="voltage", color=0)
         plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
-                         alpha=0.2, facecolor=color[8])
+                         alpha=0.2, facecolor=tableau20[8])
         prettyPlot(self.t[feature], self.p_95[feature], color=8, new_figure=False)
         prettyPlot(self.t[feature], self.p_05[feature], color=9, new_figure=False)
         prettyPlot(self.t[feature], self.E[feature],
@@ -679,6 +682,7 @@ class PlotUncertainty():
 
         save_name = "combined_features_%d" % (index/self.features_in_combined_plot) + self.figureformat
 
+
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
 
@@ -1040,6 +1044,8 @@ class PlotUncertainty():
         new_figure = True
 
 
+        color_table = colormap()
+
         for compare in self.compare_folders:
 
             if compare[:2] == "mc":
@@ -1053,10 +1059,11 @@ class PlotUncertainty():
             self.p_95 = self.p_95_compare[compare]
 
             if new_figure:
-                ax, color_table = prettyPlot(self.t[feature], self.E[feature],
-                                             xlabel="time", ylabel="voltage",
-                                             color=color, new_figure=new_figure,
-                                             grid=False)
+                ax = prettyPlot(self.t[feature], self.E[feature],
+                                xlabel="time", ylabel="voltage",
+                                color=color, new_figure=new_figure,
+                                grid=False)
+
 
             ax.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
                             alpha=0.2, facecolor=color_table[color+2])
@@ -1267,7 +1274,7 @@ class PlotUncertainty():
             title = "$\\frac{|{PC}_{mean} - MC_{mean}|}{PC_{mean}}$, " + feature
             save_name = feature + "mean_fractional-difference"
 
-        setTitle(title)
+        title(title)
 
         plt.ylim([min_value*0.99, max_value*1.01])
         plt.legend(legend)

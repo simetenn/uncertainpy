@@ -9,9 +9,10 @@ from uncertainpy import Parameters
 def generate_plots_plotUncertainty():
     folder = os.path.dirname(os.path.realpath(__file__))
 
-    test_data_dir = os.path.join(folder, "../tests/data")
     data_file = "test_plot_data"
-    output_test_dir = os.path.join(folder, "../tests/data")
+    test_data_dir = os.path.join(folder, "data")
+    output_test_dir = os.path.join(folder, "data")
+    output_test_dir = os.path.join(folder, "../../test_data")
 
 
     plot = PlotUncertainty(data_dir=test_data_dir,

@@ -51,6 +51,7 @@ pip_install cython
 pip_install networkx
 pip_install pandas
 pip_install numpy
+pip_install seaborn
 pip_install -e git+https://github.com/hplgit/chaospy.git#egg=chaospy
 
 
