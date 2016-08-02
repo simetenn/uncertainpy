@@ -164,7 +164,7 @@ class PlotUncertainty():
 
 
     def plotMean(self, feature="directComparison", hardcopy=True, show=False,
-                 new_figure=True, color=0):
+                 new_figure=True):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -174,34 +174,35 @@ class PlotUncertainty():
 
 
         prettyPlot(self.t[feature], self.E[feature],
-                   "Mean, " + feature, "time", "voltage", color=color,
-                   new_figure=False)
+                   "Mean, " + feature, "time", "voltage",
+                    new_figure=False)
 
 
-        min_t = self.t[feature].min()
-        max_t = self.t[feature].max()
-
-        min_E = self.E[feature].min()
-        max_E = self.E[feature].max()
-
-        plt.xlim(min_t, max_t)
-        plt.ylim(min_E, max_E)
+        # min_t = self.t[feature].min()
+        # max_t = self.t[feature].max()
+        #
+        # min_E = self.E[feature].min()
+        # max_E = self.E[feature].max()
+        #
+        # plt.xlim(min_t, max_t)
+        # plt.ylim(min_E, max_E)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_mean" + self.figureformat))
+                                     feature + "_mean" + self.figureformat),
+                        bbox_inches="tight")
             if not show:
                 plt.close()
 
         if show:
             plt.show()
 
-        return min_t, max_t, min_E, max_E
+        # return min_t, max_t, min_E, max_E
 
 
 
     def plotVariance(self, feature="directComparison",
-                     color=8, new_figure=True, hardcopy=True, show=False):
+                     new_figure=True, hardcopy=True, show=False):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -211,11 +212,12 @@ class PlotUncertainty():
 
 
         prettyPlot(self.t[feature], self.Var[feature], "Variance, " + feature,
-                   "time", "voltage", color=color, new_figure=new_figure)
+                   "time", "voltage", new_figure=new_figure)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_variance" + self.figureformat))
+                                     feature + "_variance" + self.figureformat),
+                        bbox_inches="tight")
             if not show:
                 plt.close()
 
@@ -232,38 +234,48 @@ class PlotUncertainty():
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        tableau20 = colormap()
+        colors = colormap()
 
-        ax= prettyPlot(self.t[feature], self.E[feature],
-                       "Mean and variance, " + feature, "time", "voltage, mean", color=color, new_figure=new_figure)
+        ax = prettyPlot(self.t[feature], self.E[feature],
+                        "Mean and variance, " + feature, "time", "voltage, mean",
+                        sns_style="dark", new_figure=new_figure)
+
         ax2 = ax.twinx()
-        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=tableau20[color+2], labelcolor=tableau20[color+2], labelsize=14)
-        ax2.set_ylabel('voltage, variance', color=tableau20[color+2], fontsize=16)
-        ax.spines["right"].set_edgecolor(tableau20[color+2])
 
-        ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
-        ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
+        spines_edge_color(ax2, edges={"top": "None", "bottom": "None",
+                                      "right": colors[color+1], "left": "None"})
+        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                        color=colors[color+1], labelcolor=colors[color+1], labelsize=14)
+        ax2.set_ylabel('voltage, variance', color=colors[color+1], fontsize=16)
+
+        # ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
+        # ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
 
         ax2.plot(self.t[feature], self.Var[feature],
-                 color=tableau20[color+2], linewidth=2, antialiased=True)
+                 color=colors[color+1], linewidth=2, antialiased=True)
 
-        ax.tick_params(axis="y", color=tableau20[color], labelcolor=tableau20[color])
-        ax.set_ylabel('voltage, mean', color=tableau20[color], fontsize=16)
-        ax.spines["left"].set_edgecolor(tableau20[color])
-        # plt.tight_layout()
+        ax2.yaxis.offsetText.set_fontsize(16)
+        ax2.yaxis.offsetText.set_color(colors[color+1])
+
+
+        ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
+        ax.spines["left"].set_edgecolor(colors[color])
+
+        ax.set_ylabel('voltage, mean', color=colors[color], fontsize=16)
+
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                        feature + "_mean-variance" + self.figureformat))
+                                     feature + "_mean-variance" + self.figureformat),
+                        bbox_inches="tight")
             if not show:
                 plt.close()
 
         if show:
             plt.show()
-
-        if not show or not hardcopy:
-            return ax, ax2
+        #
+        # if not show or not hardcopy:
+        #     return ax, ax2
 
 
 
@@ -271,29 +283,23 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
+        colors = colormap()
 
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        tableau20 = colormap()
-
         ax = prettyPlot(self.t[feature], self.E[feature],
                         xlabel="time", ylabel="voltage", color=0)
         plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
-                         alpha=0.2, facecolor=tableau20[8])
-        prettyPlot(self.t[feature], self.p_95[feature], color=8, new_figure=False)
-        prettyPlot(self.t[feature], self.p_05[feature], color=9, new_figure=False)
-        prettyPlot(self.t[feature], self.E[feature],
-                   title="Confidence interval, " + feature, new_figure=False)
+                         alpha=0.5, color=colors[0])
 
-        plt.ylim([min([min(self.p_95[feature]), min(self.p_05[feature]), min(self.E[feature])]),
-                  max([max(self.p_95[feature]), max(self.p_05[feature]), max(self.E[feature])])])
 
-        plt.legend(["Mean", "$P_{95}$", "$P_{5}$"])
+        set_legend(["Mean", "90\% confidence interval"])
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_confidence-interval" + self.figureformat))
+                                     feature + "_confidence-interval" + self.figureformat),
+                        bbox_inches="tight")
             if not show:
                 plt.close()
 
@@ -317,12 +323,13 @@ class PlotUncertainty():
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title="sensitivity, " + feature,
                        xlabel="time", ylabel="sensitivity",
-                       color=i, new_figure=True)
+                       new_figure=True)
             plt.ylim([0, 1.05])
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                         feature + "_sensitivity_" + parameter_names[i] + self.figureformat))
+                                         feature + "_sensitivity_" + parameter_names[i] + self.figureformat),
+                            bbox_inches="tight")
                 if not show:
                     plt.close()
 
@@ -345,19 +352,23 @@ class PlotUncertainty():
 
         parameter_names = self.uncertain_parameters
 
+        new_figure = True
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title="sensitivity, " + feature,
                        xlabel="time", ylabel="sensitivity",
-                       color=i, new_figure=False)
+                       new_figure=False)
 
         plt.ylim([0, 1.05])
+        if len(self.sensitivity[feature]) > 4:
         plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
-        plt.legend(parameter_names)
+
+        set_legend(parameter_names)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_sensitivity" + self.figureformat))
+                                     feature + "_sensitivity" + self.figureformat),
+                        bbox_inches="tight")
             if not show:
                 plt.close()
 
@@ -847,263 +858,263 @@ class PlotUncertainty():
 
 
 
-    def plotCompareMean(self, feature="directComparison",
-                        hardcopy=True, show=False):
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-        color = 0
-        max_values = []
-        min_values = []
-        legend = []
-        new_figure = True
-
-        for compare in self.compare_folders:
-            min_values.append(self.E_compare[compare][feature].min())
-            max_values.append(self.E_compare[compare][feature].max())
-
-
-            if compare[:2] == "mc":
-                legend.append("MC samples " + compare.split("_")[-1])
-            else:
-                legend.append(compare)
-
-            self.t = self.t_compare[compare]
-            self.E = self.E_compare[compare]
-
-            self.plotMean(feature=feature, hardcopy=False, show=False,
-                          new_figure=new_figure, color=color)
-
-            new_figure = False
-            color += 2
-
-        save_name = feature + "_mean_compare"
-
-        plt.ylim([min(min_values)*0.99, max(max_values)*1.01])
-        plt.legend(legend)
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
-                                     save_name + self.figureformat))
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
-
-
-
-    def plotCompareVariance(self, feature="directComparison",
-                            hardcopy=True, show=False):
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-        color = 0
-        max_values = []
-        min_values = []
-        legend = []
-        new_figure = True
-
-        for compare in self.compare_folders:
-            min_values.append(self.Var_compare[compare][feature].min())
-            max_values.append(self.Var_compare[compare][feature].max())
-
-
-            if compare[:2] == "mc":
-                legend.append("MC samples " + compare.split("_")[-1])
-            else:
-                legend.append(compare)
-
-            self.t = self.t_compare[compare]
-            self.Var = self.Var_compare[compare]
-
-            self.plotVariance(feature=feature, hardcopy=False, show=False,
-                              new_figure=new_figure, color=color)
-
-            new_figure = False
-            color += 2
-
-        save_name = feature + "_variance_compare"
-
-        plt.ylim([min(min_values)*0.99, max(max_values)*1.01])
-        plt.legend(legend)
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
-                                     save_name + self.figureformat))
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
-
-
-
-    def plotCompareMeanAndVariance(self, feature="directComparison",
-                                   hardcopy=True, show=False):
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-        color = 0
-        max_values_E = []
-        min_values_E = []
-        max_values_Var = []
-        min_values_Var = []
-
-        legend_E = []
-        legend_Var = []
-        new_figure = True
-        ax2 = None
-
-
-        for compare in self.compare_folders:
-            min_values_E.append(self.E_compare[compare][feature].min())
-            max_values_E.append(self.E_compare[compare][feature].max())
-            min_values_Var.append(self.Var_compare[compare][feature].min())
-            max_values_Var.append(self.Var_compare[compare][feature].max())
-
-
-            if compare[:2] == "mc":
-                nr_mc_samples = compare.split("_")[-1]
-                legend_E.append("MC samples " + nr_mc_samples)
-                legend_Var.append("MC samples " + nr_mc_samples)
-            else:
-                legend_E.append(compare)
-                legend_Var.append(compare)
-
-            self.t = self.t_compare[compare]
-            self.E = self.E_compare[compare]
-            self.Var = self.Var_compare[compare]
-
-            if new_figure:
-                ax, tableau20 = prettyPlot(self.t[feature], self.E[feature],
-                                           "Mean and variance, " + feature,
-                                           "time",
-                                           "voltage, mean",
-                                           color=color,
-                                           new_figure=new_figure,
-                                           grid=False)
-                ax2 = ax.twinx()
-                ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                                color=tableau20[color+2], labelcolor=tableau20[color+2], labelsize=14)
-                ax2.set_ylabel('voltage, variance', color=tableau20[color+2], fontsize=16)
-
-                ax.tick_params(axis="y", color=tableau20[color], labelcolor=tableau20[color])
-                ax.set_ylabel('voltage, mean', color=tableau20[color], fontsize=16)
-                ax.spines["left"].set_edgecolor(tableau20[color])
-
-                ax.spines["right"].set_edgecolor(tableau20[color+2])
-
-
-            else:
-                ax.plot(self.t[feature], self.E[feature],
-                        color=tableau20[color], linewidth=2, antialiased=True,
-                        zorder=3)
-
-            ax2.plot(self.t[feature], self.Var[feature],
-                     color=tableau20[color+2], linewidth=2, antialiased=True,
-                     zorder=3)
-
-            new_figure = False
-            color += 4
-
-        save_name = feature + "_mean-variance_compare"
-
-        legend1 = ax.legend(legend_E, loc=2, title="Mean", fontsize=16)
-        legend2 = ax2.legend(legend_Var, title="Variance", fontsize=16)
-
-        legend1.get_title().set_fontsize('18')
-        legend2.get_title().set_fontsize('18')
-
-        ax2.set_ylim([min(min_values_Var)*0.99, max(max_values_Var)*1.3])
-        ax.set_ylim([min(min_values_E)*0.99, max(max_values_E)*1.3])
-
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
-                                     save_name + self.figureformat))
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
-
-
-
-    def plotCompareConfidenceInterval(self, feature="directComparison",
-                                      hardcopy=True, show=False):
-
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-        color = 0
-        max_values = []
-        min_values = []
-        legend = []
-        new_figure = True
-
-
-        color_table = colormap()
-
-        for compare in self.compare_folders:
-
-            if compare[:2] == "mc":
-                legend.append("MC samples " + compare.split("_")[-1])
-            else:
-                legend.append(compare)
-
-            self.t = self.t_compare[compare]
-            self.E = self.E_compare[compare]
-            self.p_05 = self.p_05_compare[compare]
-            self.p_95 = self.p_95_compare[compare]
-
-            if new_figure:
-                ax = prettyPlot(self.t[feature], self.E[feature],
-                                xlabel="time", ylabel="voltage",
-                                color=color, new_figure=new_figure,
-                                grid=False)
-
-
-            ax.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
-                            alpha=0.2, facecolor=color_table[color+2])
-
-            ax.plot(self.t[feature], self.E[feature],
-                    color=color_table[color], linewidth=2, antialiased=True)
-            ax.plot(self.t[feature], self.p_05[feature],
-                    color=color_table[color+2], linewidth=2, antialiased=True)
-            ax.plot(self.t[feature], self.p_95[feature],
-                    color=color_table[color+3], linewidth=2, antialiased=True)
-
-
-            min_values.append(min([min(self.p_95[feature]),
-                                   min(self.p_05[feature]),
-                                   min(self.E[feature])]))
-            max_values.append(max([max(self.p_95[feature]),
-                                   max(self.p_05[feature]),
-                                   max(self.E[feature])]))
-
-            legend.extend(["Mean", "$P_{95}$", "$P_{5}$"])
-
-
-
-            new_figure = False
-            color += 4
-            #
-            # plt.show()
-
-        save_name = feature + "_confidence-interval_compare"
-
-        plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
-        plt.legend(legend, ncol=len(self.compare_folders))
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
-                                     save_name + self.figureformat))
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
+    # def plotCompareMean(self, feature="directComparison",
+    #                     hardcopy=True, show=False):
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #     color = 0
+    #     max_values = []
+    #     min_values = []
+    #     legend = []
+    #     new_figure = True
+    #
+    #     for compare in self.compare_folders:
+    #         min_values.append(self.E_compare[compare][feature].min())
+    #         max_values.append(self.E_compare[compare][feature].max())
+    #
+    #
+    #         if compare[:2] == "mc":
+    #             legend.append("MC samples " + compare.split("_")[-1])
+    #         else:
+    #             legend.append(compare)
+    #
+    #         self.t = self.t_compare[compare]
+    #         self.E = self.E_compare[compare]
+    #
+    #         self.plotMean(feature=feature, hardcopy=False, show=False,
+    #                       new_figure=new_figure, color=color)
+    #
+    #         new_figure = False
+    #         color += 2
+    #
+    #     save_name = feature + "_mean_compare"
+    #
+    #     plt.ylim([min(min_values)*0.99, max(max_values)*1.01])
+    #     plt.legend(legend)
+    #
+    #     if hardcopy:
+    #         plt.savefig(os.path.join(self.compare_output_dir_figures,
+    #                                  save_name + self.figureformat))
+    #         if not show:
+    #             plt.close()
+    #
+    #     if show:
+    #         plt.show()
+    #
+    #
+    #
+    # def plotCompareVariance(self, feature="directComparison",
+    #                         hardcopy=True, show=False):
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #     color = 0
+    #     max_values = []
+    #     min_values = []
+    #     legend = []
+    #     new_figure = True
+    #
+    #     for compare in self.compare_folders:
+    #         min_values.append(self.Var_compare[compare][feature].min())
+    #         max_values.append(self.Var_compare[compare][feature].max())
+    #
+    #
+    #         if compare[:2] == "mc":
+    #             legend.append("MC samples " + compare.split("_")[-1])
+    #         else:
+    #             legend.append(compare)
+    #
+    #         self.t = self.t_compare[compare]
+    #         self.Var = self.Var_compare[compare]
+    #
+    #         self.plotVariance(feature=feature, hardcopy=False, show=False,
+    #                           new_figure=new_figure, color=color)
+    #
+    #         new_figure = False
+    #         color += 2
+    #
+    #     save_name = feature + "_variance_compare"
+    #
+    #     plt.ylim([min(min_values)*0.99, max(max_values)*1.01])
+    #     plt.legend(legend)
+    #
+    #     if hardcopy:
+    #         plt.savefig(os.path.join(self.compare_output_dir_figures,
+    #                                  save_name + self.figureformat))
+    #         if not show:
+    #             plt.close()
+    #
+    #     if show:
+    #         plt.show()
+    #
+    #
+    #
+    # def plotCompareMeanAndVariance(self, feature="directComparison",
+    #                                hardcopy=True, show=False):
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #     color = 0
+    #     max_values_E = []
+    #     min_values_E = []
+    #     max_values_Var = []
+    #     min_values_Var = []
+    #
+    #     legend_E = []
+    #     legend_Var = []
+    #     new_figure = True
+    #     ax2 = None
+    #
+    #
+    #     for compare in self.compare_folders:
+    #         min_values_E.append(self.E_compare[compare][feature].min())
+    #         max_values_E.append(self.E_compare[compare][feature].max())
+    #         min_values_Var.append(self.Var_compare[compare][feature].min())
+    #         max_values_Var.append(self.Var_compare[compare][feature].max())
+    #
+    #
+    #         if compare[:2] == "mc":
+    #             nr_mc_samples = compare.split("_")[-1]
+    #             legend_E.append("MC samples " + nr_mc_samples)
+    #             legend_Var.append("MC samples " + nr_mc_samples)
+    #         else:
+    #             legend_E.append(compare)
+    #             legend_Var.append(compare)
+    #
+    #         self.t = self.t_compare[compare]
+    #         self.E = self.E_compare[compare]
+    #         self.Var = self.Var_compare[compare]
+    #
+    #         if new_figure:
+    #             ax, tableau20 = prettyPlot(self.t[feature], self.E[feature],
+    #                                        "Mean and variance, " + feature,
+    #                                        "time",
+    #                                        "voltage, mean",
+    #                                        color=color,
+    #                                        new_figure=new_figure,
+    #                                        grid=False)
+    #             ax2 = ax.twinx()
+    #             ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+    #                             color=tableau20[color+2], labelcolor=tableau20[color+2], labelsize=14)
+    #             ax2.set_ylabel('voltage, variance', color=tableau20[color+2], fontsize=16)
+    #
+    #             ax.tick_params(axis="y", color=tableau20[color], labelcolor=tableau20[color])
+    #             ax.set_ylabel('voltage, mean', color=tableau20[color], fontsize=16)
+    #             ax.spines["left"].set_edgecolor(tableau20[color])
+    #
+    #             ax.spines["right"].set_edgecolor(tableau20[color+2])
+    #
+    #
+    #         else:
+    #             ax.plot(self.t[feature], self.E[feature],
+    #                     color=tableau20[color], linewidth=2, antialiased=True,
+    #                     zorder=3)
+    #
+    #         ax2.plot(self.t[feature], self.Var[feature],
+    #                  color=tableau20[color+2], linewidth=2, antialiased=True,
+    #                  zorder=3)
+    #
+    #         new_figure = False
+    #         color += 4
+    #
+    #     save_name = feature + "_mean-variance_compare"
+    #
+    #     legend1 = ax.legend(legend_E, loc=2, title="Mean", fontsize=16)
+    #     legend2 = ax2.legend(legend_Var, title="Variance", fontsize=16)
+    #
+    #     legend1.get_title().set_fontsize('18')
+    #     legend2.get_title().set_fontsize('18')
+    #
+    #     ax2.set_ylim([min(min_values_Var)*0.99, max(max_values_Var)*1.3])
+    #     ax.set_ylim([min(min_values_E)*0.99, max(max_values_E)*1.3])
+    #
+    #
+    #     if hardcopy:
+    #         plt.savefig(os.path.join(self.compare_output_dir_figures,
+    #                                  save_name + self.figureformat))
+    #         if not show:
+    #             plt.close()
+    #
+    #     if show:
+    #         plt.show()
+    #
+    #
+    #
+    # def plotCompareConfidenceInterval(self, feature="directComparison",
+    #                                   hardcopy=True, show=False):
+    #
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #     color = 0
+    #     max_values = []
+    #     min_values = []
+    #     legend = []
+    #     new_figure = True
+    #
+    #
+    #     color_table = colormap()
+    #
+    #     for compare in self.compare_folders:
+    #
+    #         if compare[:2] == "mc":
+    #             legend.append("MC samples " + compare.split("_")[-1])
+    #         else:
+    #             legend.append(compare)
+    #
+    #         self.t = self.t_compare[compare]
+    #         self.E = self.E_compare[compare]
+    #         self.p_05 = self.p_05_compare[compare]
+    #         self.p_95 = self.p_95_compare[compare]
+    #
+    #         if new_figure:
+    #             ax = prettyPlot(self.t[feature], self.E[feature],
+    #                             xlabel="time", ylabel="voltage",
+    #                             color=color, new_figure=new_figure,
+    #                             grid=False)
+    #
+    #
+    #         ax.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
+    #                         alpha=0.2, facecolor=color_table[color+2])
+    #
+    #         ax.plot(self.t[feature], self.E[feature],
+    #                 color=color_table[color], linewidth=2, antialiased=True)
+    #         ax.plot(self.t[feature], self.p_05[feature],
+    #                 color=color_table[color+2], linewidth=2, antialiased=True)
+    #         ax.plot(self.t[feature], self.p_95[feature],
+    #                 color=color_table[color+3], linewidth=2, antialiased=True)
+    #
+    #
+    #         min_values.append(min([min(self.p_95[feature]),
+    #                                min(self.p_05[feature]),
+    #                                min(self.E[feature])]))
+    #         max_values.append(max([max(self.p_95[feature]),
+    #                                max(self.p_05[feature]),
+    #                                max(self.E[feature])]))
+    #
+    #         legend.extend(["Mean", "$P_{95}$", "$P_{5}$"])
+    #
+    #
+    #
+    #         new_figure = False
+    #         color += 4
+    #         #
+    #         # plt.show()
+    #
+    #     save_name = feature + "_confidence-interval_compare"
+    #
+    #     plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
+    #     plt.legend(legend, ncol=len(self.compare_folders))
+    #
+    #     if hardcopy:
+    #         plt.savefig(os.path.join(self.compare_output_dir_figures,
+    #                                  save_name + self.figureformat))
+    #         if not show:
+    #             plt.close()
+    #
+    #     if show:
+    #         plt.show()
 
 
 
@@ -1184,104 +1195,104 @@ class PlotUncertainty():
 
 
 
-    def plotCompareAttribute(self, feature="directComparison", attribute="E"):
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-        color = 0
-        max_value = 0
-        min_value = 10**10
-        legend = []
-        new_figure = True
-
-        value = getattr(self, attribute + "_compare")
-
-        for compare in self.compare_folders:
-            min_value, max_value = self.getMinMax(value[compare][feature],
-                                                  min_value, max_value)
-
-            if compare[:2] == "mc":
-                legend.append("MC samples " + compare.split("_")[-1])
-            else:
-                legend.append(compare)
-
-            self.t = self.t_compare[compare]
-            if attribute == "E":
-                self.E = value[compare]
-                self.plotMean(feature=feature, hardcopy=False, show=False,
-                              new_figure=new_figure, color=color)
-            elif attribute == "Var":
-                self.Var = value[compare]
-                self.plotVariance(feature=feature, hardcopy=False, show=False,
-                                  new_figure=new_figure, color=color)
-            elif attribute == "E_Var":
-                # TODO working here: trying to figure out how to handle plotmeanandvariance()
-                # Possible best solution, make own functions for comparing mean, variacne, mean and avriance and so on
-                "he"
-            else:
-                raise ValueError("Unknown attribute {}".format(attribute))
-            new_figure = False
-            color += 2
-
-
-        if attribute == "E":
-            save_name = feature + "_mean"
-
-        plt.ylim([min_value*0.99, max_value*1.01])
-        plt.legend(legend)
-        # TODO add show and hardcopy options
-        plt.savefig(os.path.join(self.compare_output_dir_figures,
-                                 save_name + self.figureformat))
-
-
-    def plotCompareAttributeFractionalDifference(self, feature="directComparison", attribute="E",
-                                                 reference_name="pc"):
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-        color = 0
-        max_value = 0
-        min_value = 10**10
-        legend = []
-        new_figure = True
-
-        value = getattr(self, attribute + "_compare")
-
-        compares = value.keys()
-        compares.remove(reference_name)
-
-        for compare in compares:
-            if compare[:3] == "mc_":
-                legend.append("MC samples " + compare.split("_")[-1])
-            else:
-                legend.append(compare)
-
-            self.t = self.t_compare[compare]
-            if attribute == "E":
-                fractional_difference = abs(value[reference_name][feature] - value[compare][feature])/value[reference_name][feature]
-                min_value, max_value = self.getMinMax(fractional_difference,
-                                                      min_value, max_value)
-
-                self.E[feature] = fractional_difference
-                self.plotMean(feature=feature, hardcopy=False, show=False,
-                              new_figure=new_figure, color=color)
-
-            new_figure = False
-            color += 2
-
-        if attribute == "E":
-            title = "$\\frac{|{PC}_{mean} - MC_{mean}|}{PC_{mean}}$, " + feature
-            save_name = feature + "mean_fractional-difference"
-
-        title(title)
-
-        plt.ylim([min_value*0.99, max_value*1.01])
-        plt.legend(legend)
-        # TODO add show and hardcopy options
-        # plt.savefig(os.path.join(self.compare_output_dir_figures,
-        #                          save_name + self.figureformat))
-
-        plt.show()
+    # def plotCompareAttribute(self, feature="directComparison", attribute="E"):
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #     color = 0
+    #     max_value = 0
+    #     min_value = 10**10
+    #     legend = []
+    #     new_figure = True
+    #
+    #     value = getattr(self, attribute + "_compare")
+    #
+    #     for compare in self.compare_folders:
+    #         min_value, max_value = self.getMinMax(value[compare][feature],
+    #                                               min_value, max_value)
+    #
+    #         if compare[:2] == "mc":
+    #             legend.append("MC samples " + compare.split("_")[-1])
+    #         else:
+    #             legend.append(compare)
+    #
+    #         self.t = self.t_compare[compare]
+    #         if attribute == "E":
+    #             self.E = value[compare]
+    #             self.plotMean(feature=feature, hardcopy=False, show=False,
+    #                           new_figure=new_figure, color=color)
+    #         elif attribute == "Var":
+    #             self.Var = value[compare]
+    #             self.plotVariance(feature=feature, hardcopy=False, show=False,
+    #                               new_figure=new_figure, color=color)
+    #         elif attribute == "E_Var":
+    #             # TODO working here: trying to figure out how to handle plotmeanandvariance()
+    #             # Possible best solution, make own functions for comparing mean, variacne, mean and avriance and so on
+    #             "he"
+    #         else:
+    #             raise ValueError("Unknown attribute {}".format(attribute))
+    #         new_figure = False
+    #         color += 2
+    #
+    #
+    #     if attribute == "E":
+    #         save_name = feature + "_mean"
+    #
+    #     plt.ylim([min_value*0.99, max_value*1.01])
+    #     plt.legend(legend)
+    #     # TODO add show and hardcopy options
+    #     plt.savefig(os.path.join(self.compare_output_dir_figures,
+    #                              save_name + self.figureformat))
+    #
+    #
+    # def plotCompareAttributeFractionalDifference(self, feature="directComparison", attribute="E",
+    #                                              reference_name="pc"):
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #     color = 0
+    #     max_value = 0
+    #     min_value = 10**10
+    #     legend = []
+    #     new_figure = True
+    #
+    #     value = getattr(self, attribute + "_compare")
+    #
+    #     compares = value.keys()
+    #     compares.remove(reference_name)
+    #
+    #     for compare in compares:
+    #         if compare[:3] == "mc_":
+    #             legend.append("MC samples " + compare.split("_")[-1])
+    #         else:
+    #             legend.append(compare)
+    #
+    #         self.t = self.t_compare[compare]
+    #         if attribute == "E":
+    #             fractional_difference = abs(value[reference_name][feature] - value[compare][feature])/value[reference_name][feature]
+    #             min_value, max_value = self.getMinMax(fractional_difference,
+    #                                                   min_value, max_value)
+    #
+    #             self.E[feature] = fractional_difference
+    #             self.plotMean(feature=feature, hardcopy=False, show=False,
+    #                           new_figure=new_figure, color=color)
+    #
+    #         new_figure = False
+    #         color += 2
+    #
+    #     if attribute == "E":
+    #         title = "$\\frac{|{PC}_{mean} - MC_{mean}|}{PC_{mean}}$, " + feature
+    #         save_name = feature + "mean_fractional-difference"
+    #
+    #     title(title)
+    #
+    #     plt.ylim([min_value*0.99, max_value*1.01])
+    #     plt.legend(legend)
+    #     # TODO add show and hardcopy options
+    #     # plt.savefig(os.path.join(self.compare_output_dir_figures,
+    #     #                          save_name + self.figureformat))
+    #
+    #     plt.show()
 
 
 

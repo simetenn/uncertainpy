@@ -18,7 +18,7 @@ def set_figuresize():
     plt.rcParams.update(params)
 
 
-def set_legend(legend, ax=None):
+def set_legend(legend=None, ax=None):
     """
     legend options
     """
@@ -36,10 +36,11 @@ def set_legend(legend, ax=None):
     }
     plt.rcParams.update(params)
 
-    if ax is None:
-        plt.legend(legend)
-    else:
-        ax.set_legend(legend)
+    if legend is not None:
+        if ax is None:
+            plt.legend(legend)
+        else:
+            ax.set_legend(legend)
 
 
 def set_font():
@@ -84,11 +85,27 @@ def set_grid(ax, bgcolor="#EAEAF2", linecolor="w", linestyle="-", linewidth=1.3)
     ax.grid(True, color=linecolor, linestyle=linestyle, linewidth=linewidth,
             zorder=0)
 
-def set_spines_colors(ax):
-    ax.spines["top"].set_edgecolor("None")
-    ax.spines["bottom"].set_edgecolor(axis_grey)
-    ax.spines["right"].set_edgecolor("None")
-    ax.spines["left"].set_edgecolor(axis_grey)
+# def set_spines_colors(ax):
+#     ax.spines["top"].set_edgecolor("None")
+#     ax.spines["bottom"].set_edgecolor(axis_grey)
+#     ax.spines["right"].set_edgecolor("None")
+#     ax.spines["left"].set_edgecolor(axis_grey)
+
+def spines_edge_color(ax, edges={"top": "None", "bottom": axis_grey,
+                                 "right": "None", "left": axis_grey}):
+    """
+    Set spines edge color
+    Parameters
+    ----------
+    Required arguments
+    ax : matplotlib.axis
+        axis object
+    edges : dictionary
+        edges as keys with colors as key values
+    """
+
+    for edge, color in edges.iteritems():
+        ax.spines[edge].set_edgecolor(color)
 
 
 def remove_ticks(ax):
@@ -135,24 +152,25 @@ def set_title(title, ax=None):
         ax.set_title(title, fontsize=titlesize)
 
 
-def set_xlabel(xlabel, ax=None):
+def set_xlabel(xlabel, ax=None, color="black"):
     if ax is None:
-        plt.xlabel(xlabel, fontsize=labelsize)
+        plt.xlabel(xlabel, fontsize=labelsize, color=color)
     else:
-        ax.set_xlabel(xlabel, fontsize=labelsize)
+        ax.set_xlabel(xlabel, fontsize=labelsize, color=color)
 
 
-def set_ylabel(ylabel, ax=None):
+def set_ylabel(ylabel, ax=None, color="black"):
     if ax is None:
-        plt.ylabel(ylabel, fontsize=labelsize)
+        plt.ylabel(ylabel, fontsize=labelsize, color=color)
     else:
-        ax.set_ylabel(ylabel, fontsize=labelsize)
+        ax.set_ylabel(ylabel, fontsize=labelsize, color=color)
 
 
 def set_style(sns_style="darkgrid", nr_hues=6):
     sns.set_style(sns_style)
     sns.set_palette(colormap(nr_hues))
     set_font()
+    set_legend()
     set_figuresize()
 
 
@@ -160,7 +178,8 @@ def set_style(sns_style="darkgrid", nr_hues=6):
 
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
                nr_hues=6, sns_style="darkgrid",
-               linestyle="solid", marker=None, new_figure=True, grid=True):
+               linestyle="solid", marker=None,
+               color=None, new_figure=True):
 
     """
 prettyPlot
@@ -204,7 +223,7 @@ tableau20 : list
     """
 
 
-    set_style(sns_style)
+    set_style(sns_style, nr_hues=nr_hues)
 
     if new_figure:
         plt.figure()
@@ -217,15 +236,14 @@ tableau20 : list
     if len(x) == 0:
         return ax
 
-    set_spines_colors(ax)
+    # set_spines_colors(ax)
+    spines_edge_color(ax)
     remove_ticks(ax)
 
 
     set_title(title, ax)
     set_xlabel(xlabel, ax)
-    set_xlabel(ylabel, ax)
-
-
+    set_ylabel(ylabel, ax)
 
 
     if y is None:
@@ -236,9 +254,18 @@ tableau20 : list
     #         markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
     #         zorder=3)
 
+    if color is not None:
+        colors = colormap()
+        color = colors[color]
+
     ax.plot(x, y, linestyle=linestyle, marker=marker,
             markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
-            zorder=3)
+            zorder=3, color=color)
+
+    ax.yaxis.offsetText.set_fontsize(labelsize)
+    ax.yaxis.offsetText.set_color("black")
+    # ax.ticklabel_format(useOffset=False)
+
 
     # ax.set_xlim([min(x), max(x)])
     # ax.set_ylim([min(y), max(y)])
