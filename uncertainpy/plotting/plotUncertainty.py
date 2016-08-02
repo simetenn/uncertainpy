@@ -418,31 +418,34 @@ class PlotUncertainty():
         pos = 0
         xticks = [pos]
         xticklabels = ["mean"]
-        ax, tableau20 = prettyBar(self.E[feature], start_color=1)
+
+        colors = colormap()
+
+        ax = prettyBar(self.E[feature], start_color=1)
         ax.spines["right"].set_edgecolor(axis_grey)
 
         ax.set_ylabel(feature, fontsize=labelsize)
         pos += width
 
         ax.bar(pos, self.Var[feature],
-               width=width, align='center', color=tableau20[0], linewidth=0)
+               width=width, align='center', color=colors[0], linewidth=0)
         xticks.append(pos)
         xticklabels += ["Variance"]
         pos += distance
 
 
         ax.bar(pos, self.p_05[feature],
-               width=width, align='center', color=tableau20[3], linewidth=0)
+               width=width, align='center', color=colors[3], linewidth=0)
         ax.bar(pos + width, self.p_95[feature],
-               width=width, align='center', color=tableau20[2], linewidth=0)
+               width=width, align='center', color=colors[2], linewidth=0)
         xticks += [pos, pos + width]
         xticklabels += ["$P_5$", "$P_{95}$"]
         pos += distance + width
 
         ax2 = ax.twinx()
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=axis_grey, labelcolor=tableau20[4], labelsize=labelsize)
-        ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=tableau20[4])
+                        color=axis_grey, labelcolor=colors[4], labelsize=labelsize)
+        ax2.set_ylabel('Sensitivity', fontsize=fontsize, color=colors[4])
         ax2.set_ylim([0, 1.05])
 
         if self.sensitivity[feature] is not None:
@@ -450,7 +453,7 @@ class PlotUncertainty():
             legend_bars = []
             for parameter in self.uncertain_parameters:
                 legend_bars.append(ax2.bar(pos, self.sensitivity[feature][i], width=width,
-                                           align='center', color=tableau20[4+i], linewidth=0))
+                                           align='center', color=colors[4+i], linewidth=0))
 
                 i += 1
                 pos += width
@@ -497,7 +500,7 @@ class PlotUncertainty():
             plt.show()
 
 
-        return ax, tableau20, pos
+        return ax, pos
 
 
 

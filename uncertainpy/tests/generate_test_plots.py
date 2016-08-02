@@ -22,7 +22,7 @@ def generate_plots_plotUncertainty():
 
     plot.loadData(data_file)
 
-    plot.plotAllData()
+    # plot.plotAllData()
     plot.plot0dFeatures()
 
 
