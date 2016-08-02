@@ -4,10 +4,11 @@ import seaborn as sns
 
 
 axis_grey = (0.5, 0.5, 0.5)
+axis_grey = (0.6, 0.6, 0.6)
 titlesize = 20
 fontsize = 14
 labelsize = 16
-ticksize = 14
+ticksize = 5
 figsize = (10, 7.5)
 
 
@@ -17,23 +18,28 @@ def set_figuresize():
     plt.rcParams.update(params)
 
 
-def set_legend():
+def set_legend(legend, ax=None):
     """
     legend options
     """
     params = {
         'legend.fontsize': 'medium',
         'legend.handlelength': 2.2,
-        'legend.frameon': False,
+        'legend.frameon': True,
         'legend.numpoints': 1,
         'legend.scatterpoints': 1,
         'legend.fontsize': fontsize,
         'legend.handlelength': 2.2,
-        'legend.borderpad': 0.0,
+        'legend.borderpad': 0.5,
         'legend.framealpha': 2,
         'legend.fancybox': True
     }
     plt.rcParams.update(params)
+
+    if ax is None:
+        plt.legend(legend)
+    else:
+        ax.set_legend(legend)
 
 
 def set_font():
@@ -41,25 +47,17 @@ def set_font():
     #Options
     params = {'text.usetex': True,
               'font.family': 'lmodern',
-              'axes.facecolor': '0.95',
+            #   'axes.facecolor': "white",
               'axes.titlesize': titlesize,
               'axes.labelsize': labelsize,
+              'axes.edgecolor': axis_grey,
+              'axes.linewidth': 1,
               'lines.linewidth': 2,
-              'xtick.labelsize': ticksize,
-              'ytick.labelsize': ticksize,
+              "xtick.major.size": ticksize,
+              'xtick.color': axis_grey,
+              "ytick.major.size": ticksize,
+              'ytick.color': axis_grey
               }
-
-    # params = {'font.family': [u'sans-serif'],
-    #           'font.sans-serif':
-    #           [u'sans-serif',
-    #            u'Liberation Sans',
-    #            u'Bitstream Vera Sans'],
-    #           'font.size': 14,
-    #
-    #           'lines.linewidth':2,
-    #           'xtick.labelsize': 14,
-    #           'ytick.labelsize': 14,
-    #         }
 
     plt.rcParams.update(params)
 
@@ -103,7 +101,7 @@ def remove_ticks(ax):
                    labelsize=labelsize)
 
 
-def colormap(color=None):
+def colormap_tableu20(color=None):
     tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
                  (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
@@ -122,6 +120,12 @@ def colormap(color=None):
         color = color % len(tableau20)
 
         return tableau20[color]
+
+
+
+def colormap(nr_hues=6):
+    return sns.color_palette("husl", nr_hues)
+
 
 
 def set_title(title, ax=None):
@@ -145,31 +149,18 @@ def set_ylabel(ylabel, ax=None):
         ax.set_ylabel(ylabel, fontsize=labelsize)
 
 
-
-def create_canvas(grid=True):
+def set_style(sns_style="darkgrid", nr_hues=6):
+    sns.set_style(sns_style)
+    sns.set_palette(colormap(nr_hues))
     set_font()
-    set_legend()
-
-    # # plt.figure(figsize=figsize)
-    # if new_figure:
-    #     plt.figure(figsize=figsize)
-
-    ax = plt.subplot(111)
-
-    set_spines_colors(ax)
-    remove_ticks(ax)
-    set_grid(ax)
-
-
-    return ax
-
-
+    set_figuresize()
 
 
 
 
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
-               nr_hues = ,color=0, linestyle="solid", marker=None, new_figure=True, grid=True):
+               nr_hues=6, sns_style="darkgrid",
+               linestyle="solid", marker=None, new_figure=True, grid=True):
 
     """
 prettyPlot
@@ -211,46 +202,30 @@ ax : matplotlib ax Object
 tableau20 : list
     List of tableau20 colors
     """
-    # sns.set_style("darkgrid")
-
-    # plt.rcParams['text.latex.preamble'] = [r"\usepackage{lmodern}"]
-    # #Options
-    # params = {'text.usetex': True,
-    #           'font.family': 'lmodern',
-    #           'axes.grid': grid,
-    #           'grid.color': 'white',
-    #           'grid.linewidth': 1.3,
-    #           'grid.linestyle': '-',
-    #           'axes.facecolor': '0.95',
-    #           'legend.fontsize': 16,
-    #           "legend.fancybox": True}
-    #
-    # plt.rcParams.update(params)
 
 
-    # These are the "Tableau 20" colors as RGB.
-
-    set_font()
-    set_legend()
-    #
-    # tableau20 = colormap()
-
-
-    sns.set_palette(sns.color_palette("husl", 2))
-
+    set_style(sns_style)
 
     if new_figure:
-        plt.figure(figsize=figsize)
-        ax = create_canvas(grid=grid)
+        plt.figure()
+
+        ax = plt.subplot(111)
     else:
         ax = plt.gca()
+
+
+    if len(x) == 0:
+        return ax
+
+    set_spines_colors(ax)
+    remove_ticks(ax)
+
 
     set_title(title, ax)
     set_xlabel(xlabel, ax)
     set_xlabel(ylabel, ax)
 
-    if len(x) == 0:
-        return ax
+
 
 
     if y is None:
@@ -260,8 +235,6 @@ tableau20 : list
     # ax.plot(x, y, color=tableau20[color], linestyle=linestyle, marker=marker,
     #         markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
     #         zorder=3)
-
-
 
     ax.plot(x, y, linestyle=linestyle, marker=marker,
             markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
