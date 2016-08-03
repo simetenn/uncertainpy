@@ -3,7 +3,7 @@ import numpy as np
 import seaborn as sns
 
 
-axis_grey = (0.5, 0.5, 0.5)
+# axis_grey = (0.5, 0.5, 0.5)
 axis_grey = (0.6, 0.6, 0.6)
 titlesize = 20
 fontsize = 14
@@ -118,7 +118,7 @@ def remove_ticks(ax):
                    labelsize=labelsize)
 
 
-def colormap_tableu20(color=None):
+def get_colormap_tableu20(color=None):
     tableau20 = [(31, 119, 180), (14, 199, 232), (255, 127, 14), (255, 187, 120),
                  (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),
                  (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),
@@ -140,10 +140,11 @@ def colormap_tableu20(color=None):
 
 
 
-def colormap(nr_hues=6):
+def get_colormap(nr_hues=6):
     return sns.color_palette("hls", nr_hues)
 
-
+def get_current_colormap():
+    return sns.color_palette()
 
 def set_title(title, ax=None):
     if ax is None:
@@ -166,9 +167,14 @@ def set_ylabel(ylabel, ax=None, color="black"):
         ax.set_ylabel(ylabel, fontsize=labelsize, color=color)
 
 
-def set_style(sns_style="darkgrid", nr_hues=6):
+def set_style(sns_style="darkgrid", nr_hues=6, palette=None):
     sns.set_style(sns_style)
-    sns.set_palette(colormap(nr_hues))
+
+    if palette is None:
+        sns.set_palette(get_colormap(nr_hues))
+    else:
+        sns.set_palette(palette)
+
     set_font()
     set_legend()
     set_figuresize()
@@ -179,7 +185,7 @@ def set_style(sns_style="darkgrid", nr_hues=6):
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
                nr_hues=6, sns_style="darkgrid",
                linestyle="solid", marker=None,
-               ax=None,
+               ax=None, palette=None,
                color=None, new_figure=True, **kwargs):
 
     """
@@ -224,7 +230,7 @@ tableau20 : list
     """
 
 
-    set_style(sns_style, nr_hues=nr_hues)
+    set_style(sns_style, nr_hues=nr_hues, palette=palette)
 
     if ax is None:
         if new_figure:
@@ -238,7 +244,6 @@ tableau20 : list
     if len(x) == 0:
         return ax
 
-    # set_spines_colors(ax)
     spines_edge_color(ax)
     remove_ticks(ax)
 
@@ -257,7 +262,7 @@ tableau20 : list
     #         zorder=3)
 
     if color is not None:
-        colors = colormap()
+        colors = sns.color_palette()
         color = colors[color]
 
     ax.plot(x, y, linestyle=linestyle, marker=marker,
@@ -276,17 +281,16 @@ tableau20 : list
     return ax
 
 
-def prettyBar(x, error=None, index=None, colors=None, start_color=0, title="",
-              linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True,
+def prettyBar(x, error=None, index=None, colors=None, title="",
+              linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True, palette=None,
               ax=None, grid=False, sns_style="dark", nr_hues=6, error_kw=None, **kwargs):
     """
 Creates pretty bar plots
     """
 
+    set_style(sns_style, nr_hues=nr_hues, palette=palette)
 
-
-
-    set_style(sns_style, nr_hues=nr_hues)
+    print
 
     if new_figure:
         plt.figure()
@@ -298,9 +302,6 @@ Creates pretty bar plots
     spines_edge_color(ax)
     remove_ticks(ax)
 
-    tableu20 = colormap_tableu20()
-
-
     if index is None:
         try:
             index = np.arange(len(x))
@@ -308,31 +309,11 @@ Creates pretty bar plots
             index = [0]
 
 
-    tmp_colors = []
-    if colors is None:
-        j = start_color
-        even = True
-        for i in index:
-            tmp_colors.append(tableu20[j])
-            j += 2
-            if j >= len(tableu20):
-                if even:
-                    j = 1
-                    even = False
-                else:
-                    j = 0
-                    even = True
-    else:
-        for c in colors:
-            c = c % len(colors)
-            tmp_colors.append(tableu20[int(round(c, 0))])
-
     if error_kw is None:
         error_kw = dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2)
 
-    # tmp_colors = colors
 
-    ax.bar(index, x, yerr=error, width=width, align='center', color=tmp_colors, linewidth=linewidth,
+    ax.bar(index, x, yerr=error, color=sns.color_palette(), width=width, align='center', linewidth=linewidth,
            error_kw=error_kw, edgecolor=axis_grey, **kwargs)
     ax.set_xticks(index)
     ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)

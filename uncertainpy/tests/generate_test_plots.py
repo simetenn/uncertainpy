@@ -23,7 +23,8 @@ def generate_plots_plotUncertainty():
     plot.loadData(data_file)
 
     # plot.plotAllData()
-    plot.plot0dFeatures()
+    # plot.plot0dFeatures()
+    plot.plotSensitivityGrid(show=True)
 
 
 # def generate_plots_UncertaintyEstimations():
