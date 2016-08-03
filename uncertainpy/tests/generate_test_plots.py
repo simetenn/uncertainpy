@@ -12,7 +12,7 @@ def generate_plots_plotUncertainty():
     data_file = "test_plot_data"
     test_data_dir = os.path.join(folder, "data")
     output_test_dir = os.path.join(folder, "data")
-    output_test_dir = os.path.join(folder, "../../test_data")
+    # output_test_dir = os.path.join(folder, "../../test_data")
 
 
     plot = PlotUncertainty(data_dir=test_data_dir,
@@ -22,9 +22,8 @@ def generate_plots_plotUncertainty():
 
     plot.loadData(data_file)
 
-    # plot.plotAllData()
-    # plot.plot0dFeatures()
-    plot.plotSensitivityGrid(show=True)
+    plot.plotAllData()
+
 
 
 # def generate_plots_UncertaintyEstimations():

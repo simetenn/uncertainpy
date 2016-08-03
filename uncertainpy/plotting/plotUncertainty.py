@@ -350,21 +350,15 @@ class PlotUncertainty():
             return
 
         parameter_names = self.uncertain_parameters
-        parameter_names = ["longassnameone", "longerassnametwo"]
+
         # get size of the grid in x and y directions
         nr_plots = len(parameter_names)
         grid_size = np.ceil(np.sqrt(nr_plots))
         grid_x_size = int(grid_size)
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
-        print grid_x_size
-        print grid_y_size
-
-
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size)
 
-        # fig, axarr = plt.subplots(grid_y_size, grid_x_size)
-        set_style()
         for i in range(0, nr_plots):
             nx = i % grid_x_size
             ny = int(np.floor(i/float(grid_x_size)))
@@ -372,12 +366,9 @@ class PlotUncertainty():
                 ax = axes[nx]
             else:
                 ax = axes[ny][nx]
-            print "plot: ",i
 
-            print "y ", ny
-            print "x ", nx
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                        title=parameter_names[i],
+                        title=parameter_names[i], color=i, nr_hues=nr_plots,
                         xlabel="time", ylabel="sensitivity", ax=ax)
             ax.set_ylim([0, 1.05])
 
@@ -389,7 +380,7 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_sensitivity" + self.figureformat),
+                                     feature + "_sensitivity_grid" + self.figureformat),
                         bbox_inches="tight")
             if not show:
                 plt.close()
@@ -445,6 +436,8 @@ class PlotUncertainty():
             self.plotConfidenceInterval(feature=feature)
             self.plotSensitivity(feature=feature)
             self.plotSensitivityCombined(feature=feature)
+            self.plotSensitivityGrid(feature=feature)
+
 
 
 

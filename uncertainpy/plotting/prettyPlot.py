@@ -180,8 +180,6 @@ def set_style(sns_style="darkgrid", nr_hues=6, palette=None):
     set_figuresize()
 
 
-
-
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
                nr_hues=6, sns_style="darkgrid",
                linestyle="solid", marker=None,
@@ -214,8 +212,26 @@ ylabel : str
 linestyle: str
     ['solid' | 'dashed', 'dashdot', 'dotted' | (offset, on-off-dash-seq) | '-' | '--' | '-.' | ':' | 'None' | ' ' | '']
 color : int
-    Color of the line, given as a int than then index Tablea20 colors.
-    Defualt is 0.
+    Color of the line, given as a int.
+    Uses #color from the current colormap
+nr_hues : int
+    the number of hues to be used with the seaborn color palette
+    #hues different colors
+sns_style : str
+    ["darkgrid" | "whitegrid" | "dark" | "white" | "ticks"]
+    which seaborn style to use base.
+    Default is "darkgrid"
+palette : hls | husl | matplotlib colormap | seaborn color palette
+    Set the matplotlib color cycle using a seaborn palette.
+    Availible seaborn palette names:
+        deep, muted, bright, pastel, dark, colorblind
+    Other options:
+        hls, husl, any named matplotlib palette, list of colors
+    Matplotlib paletes can be specified as reversed palettes by appending "_r"
+    to the name or as dark palettes by appending "_d" to the name.
+    (These options are mutually exclusive, but the resulting list of colors
+    can also be reversed).
+    Default is "hsl"
 new_figure : bool
     If a new figure should be made, or if the plot should be made
     ontop of the last existing plot.
@@ -225,8 +241,6 @@ new_figure : bool
 Returns
 ----------
 ax : matplotlib ax Object
-tableau20 : list
-    List of tableau20 colors
     """
 
 
@@ -281,6 +295,9 @@ tableau20 : list
     return ax
 
 
+
+
+# TODO updated doc string
 def prettyBar(x, error=None, index=None, colors=None, title="",
               linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True, palette=None,
               ax=None, grid=False, sns_style="dark", nr_hues=6, error_kw=None, **kwargs):
@@ -289,8 +306,6 @@ Creates pretty bar plots
     """
 
     set_style(sns_style, nr_hues=nr_hues, palette=palette)
-
-    print
 
     if new_figure:
         plt.figure()
@@ -313,12 +328,12 @@ Creates pretty bar plots
         error_kw = dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2)
 
 
-    ax.bar(index, x, yerr=error, color=sns.color_palette(), width=width, align='center', linewidth=linewidth,
-           error_kw=error_kw, edgecolor=axis_grey, **kwargs)
+    ax.bar(index, x, yerr=error, color=sns.color_palette(), width=width,
+           align='center', linewidth=linewidth, error_kw=error_kw,
+           edgecolor=axis_grey, **kwargs)
     ax.set_xticks(index)
     ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
-    #
     # ax.set_xlim([min(x), max(x)])
     # ax.set_ylim([min(y), max(y)])
 
