@@ -243,7 +243,6 @@ Returns
 ax : matplotlib ax Object
     """
 
-
     set_style(sns_style, nr_hues=nr_hues, palette=palette)
 
     if ax is None:
@@ -278,6 +277,7 @@ ax : matplotlib ax Object
     if color is not None:
         colors = sns.color_palette()
         color = colors[color]
+
 
     ax.plot(x, y, linestyle=linestyle, marker=marker,
             markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
