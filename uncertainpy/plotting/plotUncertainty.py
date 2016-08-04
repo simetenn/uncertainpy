@@ -163,7 +163,7 @@ class PlotUncertainty():
 
 
     def plotMean(self, feature="directComparison", hardcopy=True, show=False,
-                 new_figure=True, nr_hues=6, sns_style="darkgrid", palette=None):
+                 **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -173,9 +173,7 @@ class PlotUncertainty():
 
 
         prettyPlot(self.t[feature], self.E[feature],
-                   "Mean, " + feature, "time", "voltage",
-                   new_figure=new_figure, nr_hues=nr_hues, sns_style=sns_style,
-                   palette=palette)
+                   "Mean, " + feature, "time", "voltage", **kwargs)
 
 
         # min_t = self.t[feature].min()
@@ -202,8 +200,8 @@ class PlotUncertainty():
 
 
     def plotVariance(self, feature="directComparison",
-                     new_figure=True, hardcopy=True, show=False,
-                     nr_hues=6, sns_style="darkgrid", palette=None):
+                     hardcopy=True, show=False,
+                     **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -213,8 +211,7 @@ class PlotUncertainty():
 
 
         prettyPlot(self.t[feature], self.Var[feature], "Variance, " + feature,
-                   "time", "voltage", new_figure=new_figure,
-                   nr_hues=nr_hues, sns_style=sns_style, palette=palette)
+                   "time", "voltage", **kwargs)
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
@@ -229,8 +226,7 @@ class PlotUncertainty():
 
 
     def plotMeanAndVariance(self, feature="directComparison", new_figure=True,
-                            hardcopy=True, show=False, nr_hues=6,
-                            sns_style="dark", palette=None, color=0):
+                            hardcopy=True, show=False, color=0, **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -241,8 +237,7 @@ class PlotUncertainty():
 
         ax = prettyPlot(self.t[feature], self.E[feature],
                         "Mean and variance, " + feature, "time", "voltage, mean",
-                        nr_hues=nr_hues, sns_style=sns_style, palette=palette,
-                        new_figure=new_figure)
+                        **kwargs)
 
         colors = get_current_colormap()
 
@@ -286,8 +281,7 @@ class PlotUncertainty():
 
 
     def plotConfidenceInterval(self, feature="directComparison", hardcopy=True,
-                               show=False, nr_hues=6, sns_style="darkgrid",
-                               palette=None, new_figure=True):
+                               show=False, **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -296,8 +290,7 @@ class PlotUncertainty():
 
         prettyPlot(self.t[feature], self.E[feature], title="Confidence interval, " + feature,
                    xlabel="time", ylabel="voltage", color=0,
-                   nr_hues=nr_hues, sns_style=sns_style, palette=palette,
-                   new_figure=new_figure)
+                   **kwargs)
 
         colors = get_current_colormap()
         plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
@@ -319,7 +312,8 @@ class PlotUncertainty():
             plt.show()
 
 
-    def plotSensitivity(self, feature="directComparison", hardcopy=True, show=False):
+    def plotSensitivity(self, feature="directComparison", hardcopy=True, show=False,
+                        **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -335,7 +329,7 @@ class PlotUncertainty():
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title="sensitivity, " + feature,
                        xlabel="time", ylabel="sensitivity",
-                       new_figure=True)
+                       new_figure=True, **kwargs)
             plt.ylim([0, 1.05])
 
             if hardcopy:
@@ -349,7 +343,8 @@ class PlotUncertainty():
                 plt.show()
 
 
-    def plotSensitivityGrid(self, feature="directComparison", hardcopy=True, show=False):
+    def plotSensitivityGrid(self, feature="directComparison",
+                            hardcopy=True, show=False, **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -377,9 +372,11 @@ class PlotUncertainty():
             else:
                 ax = axes[ny][nx]
 
+
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                        title=parameter_names[i], color=i, nr_hues=nr_plots,
-                        xlabel="time", ylabel="sensitivity", ax=ax)
+                       title=parameter_names[i], color=i, nr_hues=nr_plots,
+                       xlabel="time", ylabel="sensitivity", ax=ax,
+                       **kwargs)
             ax.set_ylim([0, 1.05])
 
         title = feature + ", sensitivity"
@@ -401,7 +398,7 @@ class PlotUncertainty():
 
 
     def plotSensitivityCombined(self, feature="directComparison",
-                                hardcopy=True, show=False):
+                                hardcopy=True, show=False, **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -419,7 +416,7 @@ class PlotUncertainty():
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title="sensitivity, " + feature,
                        xlabel="time", ylabel="sensitivity",
-                       new_figure=False)
+                       new_figure=False, **kwargs)
 
         plt.ylim([0, 1.05])
         if len(self.sensitivity[feature]) > 4:
@@ -704,7 +701,7 @@ class PlotUncertainty():
 
 
     def plotCompareMean(self, feature="directComparison",
-                        hardcopy=True, show=False):
+                        hardcopy=True, show=False, **kwargs):
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
@@ -727,7 +724,8 @@ class PlotUncertainty():
             self.E = self.E_compare[compare]
 
             self.plotMean(feature=feature, hardcopy=False, show=False,
-                          new_figure=new_figure, nr_hues=len(self.compare_folders))
+                          new_figure=new_figure, nr_hues=len(self.compare_folders),
+                          **kwargs)
 
             new_figure = False
 
@@ -748,7 +746,7 @@ class PlotUncertainty():
 
 
     def plotCompareVariance(self, feature="directComparison",
-                            hardcopy=True, show=False):
+                            hardcopy=True, show=False, **kwargs):
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
@@ -772,7 +770,8 @@ class PlotUncertainty():
             self.Var = self.Var_compare[compare]
 
             self.plotVariance(feature=feature, hardcopy=False, show=False,
-                              new_figure=new_figure, nr_hues=len(self.compare_folders))
+                              new_figure=new_figure,
+                              nr_hues=len(self.compare_folders), **kwargs)
 
             new_figure = False
             color += 2
@@ -794,7 +793,7 @@ class PlotUncertainty():
 
 
     def plotCompareMeanAndVariance(self, feature="directComparison",
-                                   hardcopy=True, show=False):
+                                   hardcopy=True, show=False, **kwargs):
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
@@ -809,7 +808,7 @@ class PlotUncertainty():
         new_figure = True
         ax2 = None
 
-        set_style(sns_style, nr_hues=nr_hues, palette=palette)
+        # set_style(sns_style=sns_style, nr_hues=nr_hues, palette=palette)
         color = get_current_colormap()
 
 
@@ -835,21 +834,20 @@ class PlotUncertainty():
             if new_figure:
                 ax = prettyPlot(self.t[feature], self.E[feature],
                                 "Mean and variance, " + feature, "time", "voltage, mean",
-                                nr_hues=nr_hues, sns_style=sns_style, palette=palette,
-                                new_figure=new_figure)
+                                **kwargs)
 
 
 
                 ax2 = ax.twinx()
                 ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                                color=tableau20[color+2], labelcolor=tableau20[color+2], labelsize=14)
-                ax2.set_ylabel('voltage, variance', color=tableau20[color+2], fontsize=16)
+                                color=color[color+2], labelcolor=color[color+2], labelsize=14)
+                ax2.set_ylabel('voltage, variance', color=color[color+2], fontsize=16)
 
-                ax.tick_params(axis="y", color=tableau20[color], labelcolor=tableau20[color])
-                ax.set_ylabel('voltage, mean', color=tableau20[color], fontsize=16)
-                ax.spines["left"].set_edgecolor(tableau20[color])
+                ax.tick_params(axis="y", color=color[color], labelcolor=color[color])
+                ax.set_ylabel('voltage, mean', color=color[color], fontsize=16)
+                ax.spines["left"].set_edgecolor(color[color])
 
-                ax.spines["right"].set_edgecolor(tableau20[color+2])
+                ax.spines["right"].set_edgecolor(color[color+2])
 
 
             else:
