@@ -143,8 +143,10 @@ def get_colormap_tableu20(color=None):
 def get_colormap(nr_hues=6):
     return sns.color_palette("hls", nr_hues)
 
+
 def get_current_colormap():
     return sns.color_palette()
+
 
 def set_title(title, ax=None):
     if ax is None:

@@ -10,10 +10,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Fix Remove import * once finished
-from uncertainpy.plotting.prettyPlot import *
+from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
+from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap, set_legend
+from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize
 from uncertainpy.utils import create_logger
 
-# TODO rewrite gif() to use less memory when creating GIF(Only load one dataset at the time)
+# TODO rewrite gif() to use less memory when creating GIF
+# (Only load one dataset at the time)
 
 # TODO Add feature plots to gif()
 
@@ -23,7 +26,8 @@ from uncertainpy.utils import create_logger
 
 # TODO move load() to it's own class
 
-# TODO compare plots in a grid of all plots, such as plotting all features in a grid plot
+# TODO compare plots in a grid of all plots,
+# such as plotting all features in a grid plot
 
 class PlotUncertainty():
     def __init__(self,
@@ -246,8 +250,8 @@ class PlotUncertainty():
         spines_edge_color(ax2, edges={"top": "None", "bottom": "None",
                                       "right": colors[color+1], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=colors[color+1], labelcolor=colors[color+1], labelsize=14)
-        ax2.set_ylabel('voltage, variance', color=colors[color+1], fontsize=16)
+                        color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
+        ax2.set_ylabel('voltage, variance', color=colors[color+1], fontsize=fontsize)
 
         # ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
         # ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
@@ -793,7 +797,8 @@ class PlotUncertainty():
 
 
     def plotCompareMeanAndVariance(self, feature="directComparison",
-                                   hardcopy=True, show=False, **kwargs):
+                                   hardcopy=True, show=False, sns_style="dark",
+                                   **kwargs):
         if feature not in self.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
@@ -807,9 +812,6 @@ class PlotUncertainty():
         legend_Var = []
         new_figure = True
         ax2 = None
-
-        # set_style(sns_style=sns_style, nr_hues=nr_hues, palette=palette)
-        color = get_current_colormap()
 
 
         for compare in self.compare_folders:
@@ -832,40 +834,65 @@ class PlotUncertainty():
             self.Var = self.Var_compare[compare]
 
             if new_figure:
+                print "haha"
                 ax = prettyPlot(self.t[feature], self.E[feature],
                                 "Mean and variance, " + feature, "time", "voltage, mean",
-                                **kwargs)
+                                sns_style=sns_style, nr_hues=2*len(self.compare_folders),
+                                new_figure=new_figure, **kwargs)
 
-
+                colors = get_current_colormap()
 
                 ax2 = ax.twinx()
-                ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                                color=color[color+2], labelcolor=color[color+2], labelsize=14)
-                ax2.set_ylabel('voltage, variance', color=color[color+2], fontsize=16)
 
-                ax.tick_params(axis="y", color=color[color], labelcolor=color[color])
-                ax.set_ylabel('voltage, mean', color=color[color], fontsize=16)
-                ax.spines["left"].set_edgecolor(color[color])
 
-                ax.spines["right"].set_edgecolor(color[color+2])
+                # ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                #                 color=axis_grey, labelcolor=colors[color+1], labelsize=14)
+                # ax2.set_ylabel('voltage, variance', color=colors[color+1], fontsize=16)
+                #
+                # ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
+                # ax.set_ylabel('voltage, mean', color=colors[color], fontsize=16)
+                # ax.spines["left"].set_edgecolor(colors[color])
+                #
+                # ax.spines["right"].set_edgecolor(colors[color+1])
+
+
+
 
 
             else:
                 ax.plot(self.t[feature], self.E[feature],
-                        color=tableau20[color], linewidth=2, antialiased=True,
+                        color=colors[color], linewidth=2, antialiased=True,
                         zorder=3)
 
+
             ax2.plot(self.t[feature], self.Var[feature],
-                     color=tableau20[color+2], linewidth=2, antialiased=True,
-                     zorder=3)
+                     color=colors[color], linewidth=2, antialiased=True,
+                     linestyle="--", zorder=3)
+
 
             new_figure = False
-            color += 4
+            color += 1
+
+
+
+
+
+        spines_edge_color(ax2, edges={"top": "None", "bottom": "None",
+                          "right": axis_grey, "left": "None"})
+        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+                        color=axis_grey, labelcolor="black", labelsize=labelsize)
+        ax2.set_ylabel('voltage, variance', color="black", fontsize=labelsize)
+
+
+        ax2.yaxis.offsetText.set_fontsize(labelsize)
+
+
+
 
         save_name = feature + "_mean-variance_compare"
 
-        legend1 = ax.legend(legend_E, loc=2, title="Mean", fontsize=16)
-        legend2 = ax2.legend(legend_Var, title="Variance", fontsize=16)
+        legend1 = ax.legend(legend_E, loc=2, title="Mean", fontsize=fontsize)
+        legend2 = ax2.legend(legend_Var, title="Variance", fontsize=fontsize)
 
         legend1.get_title().set_fontsize('18')
         legend2.get_title().set_fontsize('18')

@@ -389,20 +389,20 @@ class TestPlotUncertainpy(unittest.TestCase):
     #
     #
 
-    def test_plotCompareMean(self):
-        self.plot.loadCompareData("TestingModel1d",
-                                  compare_folders=["pc", "mc_10", "mc_100"])
+    # def test_plotCompareMean(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #     self.plot.plotCompareMean(feature="directComparison", show=True)
+    #
+    #
+    # def test_plotCompareVariance(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #     self.plot.plotCompareVariance(feature="directComparison", show=True)
 
-        self.plot.plotCompareMean(feature="directComparison", show=True)
 
-
-    def test_plotCompareVariance(self):
-        self.plot.loadCompareData("TestingModel1d",
-                                  compare_folders=["pc", "mc_10", "mc_100"])
-
-        self.plot.plotCompareVariance(feature="directComparison", show=True)
-
-    
     def test_plotCompareMeanAndVariance(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
