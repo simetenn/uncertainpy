@@ -300,9 +300,9 @@ ax : matplotlib ax Object
 
 
 # TODO updated doc string
-def prettyBar(x, error=None, index=None, xticks=None, colors=None, title="",
+def prettyBar(x, error=None, index=None, xticks=None, color=None, title="",
               linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True, palette=None,
-              ax=None, grid=False, sns_style="dark", nr_hues=6, error_kw=None, **kwargs):
+              ax=None, sns_style="dark", nr_hues=6, error_kw=None, **kwargs):
     """
 Creates pretty bar plots
     """
@@ -332,8 +332,12 @@ Creates pretty bar plots
     if error_kw is None:
         error_kw = dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2)
 
+    if color is None:
+        colors = sns.color_palette()
+    else:
+        colors = sns.color_palette()[color]
 
-    ax.bar(index, x, yerr=error, color=sns.color_palette(), width=width,
+    ax.bar(index, x, yerr=error, color=colors, width=width,
            align='center', linewidth=linewidth, error_kw=error_kw,
            edgecolor=axis_grey, **kwargs)
 

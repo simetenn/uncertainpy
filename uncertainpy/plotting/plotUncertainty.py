@@ -1018,18 +1018,40 @@ class PlotUncertainty():
             # xlabels.extend(["$P_{5}$", "$P_{95}$"])
             xlabels.append(compare.replace("_", " "))
             xticks.append(pos + width)
-            index.extend([pos + 0.5*width, pos + 1.5*width])
+            index.extend([pos + 0.5*width])
 
 
             values.append(self.p_05_compare[compare][feature])
-            values.append(self.p_95_compare[compare][feature])
+            # values.append(self.p_95_compare[compare][feature])
 
             pos += distance + 2*width
 
         prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
-                  nr_hues=2, label=["$P_{5}$", "$P_{95}$"], **kwargs)
+                  nr_hues=2, color=0, label="$P_{5}$", **kwargs)
 
-        # set_legend(["$P_{5}$", "$P_{95}$"])
+
+
+        values = []
+        xlabels = []
+        xticks = []
+        index = []
+        pos = 0
+
+        for compare in self.compare_folders:
+            # xlabels.extend(["$P_{5}$", "$P_{95}$"])
+            xlabels.append(compare.replace("_", " "))
+            xticks.append(pos + width)
+            index.extend([pos + 1.5*width])
+
+
+            values.append(self.p_05_compare[compare][feature])
+            # values.append(self.p_95_compare[compare][feature])
+
+            pos += distance + 2*width
+
+        prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
+                  nr_hues=2, color=1, label="$P_{95}$", new_figure=False, **kwargs)
+
 
         plt.legend()
 
