@@ -11,7 +11,8 @@ import numpy as np
 
 # Fix Remove import * once finished
 from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
-from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap, set_legend
+from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap
+from uncertainpy.plotting.prettyPlot import set_legend, get_colormap_tableu20
 from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize
 from uncertainpy.utils import create_logger
 
@@ -655,52 +656,6 @@ class PlotUncertainty():
 
 
 
-        # color = 0
-        # max_value = 0
-        # min_value = 10**10
-        # legend = []
-        # new_figure = True
-        #
-        #
-        # compares = self.E_compare.keys()
-        # compares.remove(self.reference_name)
-
-        # for compare in compares:
-        #     min_value, max_value = self.getMinMax(value[compare][feature],
-        #                                           min_value, max_value)
-        #
-        #     if compare[:3] == "mc_":
-        #         legend.append("MC samples " + compare.split("_")[-1])
-        #     else:
-        #         legend.append(compare)
-        #
-        #
-        #     if attribute == "E":
-        #         self.E = value[compare]
-        #         self.plotMean(feature=feature, hardcopy=False, show=False,
-        #                       new_figure=new_figure, color=color)
-        #
-        #     new_figure = False
-        #     color += 2
-        #
-        #
-        # min_value, max_value = self.getMinMax(value[self.reference_name][feature],
-        #                                       min_value, max_value)
-        # legend.append("PC")
-        # if attribute == "E":
-        #     self.E = value[self.reference_name]
-        #     self.plotMean(feature=feature, hardcopy=False, show=False,
-        #                   new_figure=new_figure, color=color)
-        #     # TODO avoid using this function
-        #     setTitle("Compare mean, " + feature)
-        #     save_name = "MC-PC_comparison_" + feature
-        #
-        #
-        # plt.ylim([min_value*0.99, max_value*1.01])
-        # plt.legend(legend)
-        # plt.show()
-        # plt.savefig(os.path.join(output_dir_compare, save_name + self.figureformat))
-
 
 
 
@@ -744,7 +699,8 @@ class PlotUncertainty():
             plt.show()
 
 
-
+    # TODO combine compare variance and compare mean into one general function
+    # As with compare 0d features
     def plotCompareVariance(self, feature="directComparison",
                             hardcopy=True, show=False, **kwargs):
         if feature not in self.features_1d:
@@ -819,7 +775,6 @@ class PlotUncertainty():
             self.Var = self.Var_compare[compare]
 
             if new_figure:
-                print "haha"
                 ax = prettyPlot(self.t[feature], self.E[feature],
                                 "Mean and variance, " + feature, "time", "voltage, mean",
                                 sns_style=sns_style, nr_hues=2*len(self.compare_folders),
@@ -828,21 +783,6 @@ class PlotUncertainty():
                 colors = get_current_colormap()
 
                 ax2 = ax.twinx()
-
-
-                # ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                #                 color=axis_grey, labelcolor=colors[color+1], labelsize=14)
-                # ax2.set_ylabel('voltage, variance', color=colors[color+1], fontsize=16)
-                #
-                # ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
-                # ax.set_ylabel('voltage, mean', color=colors[color], fontsize=16)
-                # ax.spines["left"].set_edgecolor(colors[color])
-                #
-                # ax.spines["right"].set_edgecolor(colors[color+1])
-
-
-
-
 
             else:
                 ax.plot(self.t[feature], self.E[feature],
@@ -867,10 +807,7 @@ class PlotUncertainty():
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=axis_grey, labelcolor="black", labelsize=labelsize)
         ax2.set_ylabel('voltage, variance', color="black", fontsize=labelsize)
-
-
         ax2.yaxis.offsetText.set_fontsize(labelsize)
-
 
 
 
@@ -949,8 +886,6 @@ class PlotUncertainty():
 
             new_figure = False
             color += 1
-            #
-            # plt.show()
 
         save_name = feature + "_confidence-interval_compare"
 
@@ -968,8 +903,9 @@ class PlotUncertainty():
 
 
 
-
-    def plotCompareSensitivity():
+    # TODO not tested since MC currently does not calculate sensitivity
+    def plotCompareSensitivity(self, feature="directComparison",
+                               hardcopy=True, show=False, **kwargs):
             if feature not in self.sensitivity or self.sensitivity[feature] is None:
                 return
 
@@ -980,8 +916,6 @@ class PlotUncertainty():
                 new_figure = True
 
                 for compare in self.compare_folders:
-                    min_values.append(self.E_compare[compare][feature].min())
-                    max_values.append(self.E_compare[compare][feature].max())
 
                     legend.append(compare.replace("_", " "))
 
@@ -992,9 +926,8 @@ class PlotUncertainty():
                                title="sensitivity, " + feature,
                                xlabel="time", ylabel="sensitivity",
                                new_figure=new_figure, **kwargs)
-                    new_figure = False
 
-                save_name = feature + "_mean_compare"
+                    new_figure = False
 
                 plt.legend(legend)
                 plt.ylim([0, 1.05])
@@ -1002,7 +935,7 @@ class PlotUncertainty():
 
                 if hardcopy:
                     plt.savefig(os.path.join(self.full_output_dir_figures,
-                                             feature + "_sensitivity_" + parameter_names[i] + self.figureformat),
+                                             feature + "_sensitivity_" + parameter_names[i]  + "_compare" + self.figureformat),
                                 bbox_inches="tight")
                     if not show:
                         plt.close()
@@ -1012,134 +945,100 @@ class PlotUncertainty():
 
 
 
+    def plotCompare1dFeatures(self):
+        for feature in self.features_1d:
+            self.plotCompareMean(feature=feature)
+            self.plotCompareVariance(feature=feature)
+            self.plotCompareMeanAndVariance(feature=feature)
+            self.plotCompareConfidenceInterval(feature=feature)
 
 
 
 
-    # def plotCompare(self, plot_function, values=[], name=None, feature="directComparison",
-    #                 hardcopy=True, show=False):
-    #     if feature not in self.features_1d:
-    #         raise ValueError("%s is not a 1D feature" % (feature))
-    #
-    #     allowed_plot_functions = ["plotMean", "plotVariance",
-    #                               "plotMeanAndVariance", "plotConfidenceInterval"]
-    #
-    #     if not hasattr(plot_function, "__call__"):
-    #         raise ValueError("plot_function must be callable")
-    #
-    #     if plot_function not in allowed_plot_functions:
-    #         raise ValueError("Not allowed plot function, Working functions are: " + ', '.join(allowed_plot_functions))
-    #
-    #     if name is None:
-    #         name = plot_function.__name__
-    #
-    #     color = 0
-    #     legend = []
-    #     new_figure = True
-    #     min_xs = []
-    #     max_xs = []
-    #     min_ys = []
-    #     max_ys = []
-    #
-    #
-    #     for compare in self.compare_folders:
-    #
-    #         if compare[:2] == "mc":
-    #             legend.append("MC samples " + compare.split("_")[-1])
-    #         else:
-    #             legend.append(compare)
-    #
-    #         self.t = self.t_compare[compare]
-    #         #self.U = self.U_compare[compare]
-    #         self.E = self.E_compare[compare]
-    #         self.Var = self.Var_compare[compare]
-    #         self.p_05 = self.p_05_compare[compare]
-    #         self.p_95 = self.p_95_compare[compare]
-    #         self.sensitivity = self.sensitivity_compare[compare]
-    #
-    #         min_x, max_x, min_y, max_y = plot_function(feature=feature,
-    #                                                    hardcopy=False,
-    #                                                    show=False,
-    #                                                    new_figure=new_figure,
-    #                                                    color=color)
-    #         min_xs.append(min_x)
-    #         max_xs.append(max_x)
-    #         min_ys.append(min_y)
-    #         max_ys.append(max_y)
-    #
-    #
-    #         new_figure = False
-    #         color += 2
-    #
-    #
-    #
-    #     save_name = feature + "_" + name
-    #
-    #     plt.xlim([min(min_xs)*0.99, max(max_xs)*1.01])
-    #     plt.xlim([min(min_xs)*0.99, max(max_xs)*1.01])
-    #     plt.legend(legend)
-    #
-    #     if hardcopy:
-    #         plt.savefig(os.path.join(self.compare_output_dir_figures,
-    #                                  save_name + self.figureformat))
-    #         if not show:
-    #             plt.close()
-    #
-    #     if show:
-    #         plt.show()
+    def plotCompareAttributeFeature0d(self, feature, attribute="E", attribute_name="mean",
+                                      hardcopy=True, show=False, **kwargs):
+        if feature not in self.features_0d:
+            raise ValueError("%s is not a 0D feature" % (feature))
+
+        if attribute not in ["E", "Var"]:
+            raise ValueError("{} is not a supported attribute".format(attribute))
+
+
+        width = 0.2
+        distance = 0.5
+
+        values = []
+        xlabels = []
+        xticks = []
+        pos = 0
+
+        for compare in self.compare_folders:
+            xlabels.append(compare.replace("_", " "))
+            xticks.append(pos + 0.5*width)
+            values.append(getattr(self, attribute + "_compare")[compare][feature])
+
+            pos += distance
+
+        prettyBar(values, index=xticks, xlabels=xlabels, ylabel=feature,
+                  nr_hues=len(self.compare_folders), **kwargs)
+
+        plt.title(feature + ", " + attribute_name)
+
+        save_name = feature + "_" + attribute_name + "_compare"
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                     save_name + self.figureformat))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
 
 
 
-    # def plotCompareAttribute(self, feature="directComparison", attribute="E"):
-    #     if feature not in self.features_1d:
-    #         raise ValueError("%s is not a 1D feature" % (feature))
-    #
-    #     color = 0
-    #     max_value = 0
-    #     min_value = 10**10
-    #     legend = []
-    #     new_figure = True
-    #
-    #     value = getattr(self, attribute + "_compare")
-    #
-    #     for compare in self.compare_folders:
-    #         min_value, max_value = self.getMinMax(value[compare][feature],
-    #                                               min_value, max_value)
-    #
-    #         if compare[:2] == "mc":
-    #             legend.append("MC samples " + compare.split("_")[-1])
-    #         else:
-    #             legend.append(compare)
-    #
-    #         self.t = self.t_compare[compare]
-    #         if attribute == "E":
-    #             self.E = value[compare]
-    #             self.plotMean(feature=feature, hardcopy=False, show=False,
-    #                           new_figure=new_figure, color=color)
-    #         elif attribute == "Var":
-    #             self.Var = value[compare]
-    #             self.plotVariance(feature=feature, hardcopy=False, show=False,
-    #                               new_figure=new_figure, color=color)
-    #         elif attribute == "E_Var":
-    #             # TODO working here: trying to figure out how to handle plotmeanandvariance()
-    #             # Possible best solution, make own functions for comparing mean, variacne, mean and avriance and so on
-    #             "he"
-    #         else:
-    #             raise ValueError("Unknown attribute {}".format(attribute))
-    #         new_figure = False
-    #         color += 2
-    #
-    #
-    #     if attribute == "E":
-    #         save_name = feature + "_mean"
-    #
-    #     plt.ylim([min_value*0.99, max_value*1.01])
-    #     plt.legend(legend)
-    #     # TODO add show and hardcopy options
-    #     plt.savefig(os.path.join(self.compare_output_dir_figures,
-    #                              save_name + self.figureformat))
-    #
-    #
+
+
+    def plotCompareConfidenceIntervalFeature0d(self, feature, hardcopy=True,
+                                               show=False, **kwargs):
+        if feature not in self.features_0d:
+            raise ValueError("%s is not a 0D feature" % (feature))
+
+
+        width = 0.2
+        distance = 0.5
+
+        values = []
+        xlabels = []
+        xticks = []
+        pos = 0
+
+        for compare in self.compare_folders:
+            xlabels.append(compare.replace("_", " "))
+            xticks.append(pos + 0.5*width)
+            values.append(self.p_05_compare[compare][feature])
+            values.append(self.p_95_compare[compare][feature])
+
+            pos += distance
+
+        prettyBar(values, index=xticks, xlabels=xlabels, ylabel=feature,
+                  palette=get_colormap_tableu20(), **kwargs)
+
+        plt.title(feature + ", 90 \% Confidence interval")
+
+        save_name = feature + "_confidence-interval_compare"
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                     save_name + self.figureformat))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
+
+
     # def plotCompareAttributeFractionalDifference(self, feature="directComparison", attribute="E",
     #                                              reference_name="pc"):
     #     if feature not in self.features_1d:
@@ -1302,9 +1201,6 @@ class PlotUncertainty():
                         save_name = filename + "_mean" + "_" + interval + self.figureformat
                         plt.title("Mean, " + feature + ", " + interval)
                         plt.savefig(os.path.join(self.tmp_gif_output, save_name))
-                        plt.close()
-
-                        self.plotVariance(feature=feature, hardcopy=False)
                         plt.ylim([min_data[filename][feature]["Var"],
                                   max_data[filename][feature]["Var"]])
                         save_name = filename + "_variance" + "_" + interval + self.figureformat
