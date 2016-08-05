@@ -401,23 +401,23 @@ class TestPlotUncertainpy(unittest.TestCase):
     #                               compare_folders=["pc", "mc_10", "mc_100"])
     #
     #     self.plot.plotCompareVariance(feature="directComparison", show=True)
-
-
-    def test_plotCompareMeanAndVariance(self):
-        self.plot.loadCompareData("TestingModel1d",
-                                  compare_folders=["pc", "mc_10", "mc_100"])
-
-        self.plot.plotCompareMeanAndVariance(feature="directComparison", show=True)
+    # 
     #
-    #
-    #
-    # def test_plotCompareConfidenceInterval(self):
+    # def test_plotCompareMeanAndVariance(self):
     #     self.plot.loadCompareData("TestingModel1d",
     #                               compare_folders=["pc", "mc_10", "mc_100"])
     #
-    #     self.plot.plotCompareConfidenceInterval(feature="directComparison", show=True)
-    #
-    #
+    #     self.plot.plotCompareMeanAndVariance(feature="directComparison", show=True)
+
+
+
+    def test_plotCompareConfidenceInterval(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareConfidenceInterval(feature="directComparison", show=True)
+
+
     #
     # def test_plotCompareAttributeFractionalDifference(self):
     #     self.plot.loadCompareData("TestingModel1d",
