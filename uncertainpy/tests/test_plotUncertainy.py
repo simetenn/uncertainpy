@@ -462,7 +462,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareAttributeFeature0d(feature="feature0d", show=True)
+        self.plot.plotCompareConfidenceIntervalFeature0d(feature="feature0d", show=True)
 
 
 

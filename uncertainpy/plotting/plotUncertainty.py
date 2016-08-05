@@ -977,7 +977,7 @@ class PlotUncertainty():
             xticks.append(pos + 0.5*width)
             values.append(getattr(self, attribute + "_compare")[compare][feature])
 
-            pos += distance
+            pos += distance + width
 
         prettyBar(values, index=xticks, xlabels=xlabels, ylabel=feature,
                   nr_hues=len(self.compare_folders), **kwargs)
@@ -1011,18 +1011,28 @@ class PlotUncertainty():
         values = []
         xlabels = []
         xticks = []
+        index = []
         pos = 0
 
         for compare in self.compare_folders:
+            # xlabels.extend(["$P_{5}$", "$P_{95}$"])
             xlabels.append(compare.replace("_", " "))
-            xticks.append(pos + 0.5*width)
+            xticks.append(pos + width)
+            index.extend([pos + 0.5*width, pos + 1.5*width])
+
+
             values.append(self.p_05_compare[compare][feature])
             values.append(self.p_95_compare[compare][feature])
 
-            pos += distance
+            pos += distance + 2*width
 
-        prettyBar(values, index=xticks, xlabels=xlabels, ylabel=feature,
-                  palette=get_colormap_tableu20(), **kwargs)
+        prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
+                  nr_hues=2, label=["$P_{5}$", "$P_{95}$"], **kwargs)
+
+        # set_legend(["$P_{5}$", "$P_{95}$"])
+
+        plt.legend()
+
 
         plt.title(feature + ", 90 \% Confidence interval")
 

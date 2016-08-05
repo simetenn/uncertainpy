@@ -300,7 +300,7 @@ ax : matplotlib ax Object
 
 
 # TODO updated doc string
-def prettyBar(x, error=None, index=None, colors=None, title="",
+def prettyBar(x, error=None, index=None, xticks=None, colors=None, title="",
               linewidth=0, xlabels=[], ylabel="", width=0.2, new_figure=True, palette=None,
               ax=None, grid=False, sns_style="dark", nr_hues=6, error_kw=None, **kwargs):
     """
@@ -325,6 +325,9 @@ Creates pretty bar plots
         except TypeError:
             index = [0]
 
+    if xticks is None:
+        xticks = index
+
 
     if error_kw is None:
         error_kw = dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2)
@@ -333,7 +336,8 @@ Creates pretty bar plots
     ax.bar(index, x, yerr=error, color=sns.color_palette(), width=width,
            align='center', linewidth=linewidth, error_kw=error_kw,
            edgecolor=axis_grey, **kwargs)
-    ax.set_xticks(index)
+
+    ax.set_xticks(xticks)
     ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
     # ax.set_xlim([min(x), max(x)])
