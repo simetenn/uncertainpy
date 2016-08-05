@@ -1071,6 +1071,10 @@ class PlotUncertainty():
 
 
 
+    # TODO create the avobe compare plots for the fractional difference also
+
+    
+
     # def plotCompareAttributeFractionalDifference(self, feature="directComparison", attribute="E",
     #                                              reference_name="pc"):
     #     if feature not in self.features_1d:
