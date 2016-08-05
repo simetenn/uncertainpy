@@ -912,9 +912,6 @@ class PlotUncertainty():
         for compare in self.compare_folders:
 
             # legend.append(compare.replace("_", " "))
-
-            # legend.extend([compare.replace("_", " ") + ", Mean",
-            #                compare.replace("_", " ") + ", 90\% confidence interval"])
             legend.extend([compare.replace("_", " ") + ", Mean",
                            compare.replace("_", " ") + ", 90\% CI"])
 
@@ -968,6 +965,51 @@ class PlotUncertainty():
 
         if show:
             plt.show()
+
+
+
+
+    def plotCompareSensitivity():
+            if feature not in self.sensitivity or self.sensitivity[feature] is None:
+                return
+
+            parameter_names = self.uncertain_parameters
+
+            for i in range(len(self.sensitivity[feature])):
+                legend = []
+                new_figure = True
+
+                for compare in self.compare_folders:
+                    min_values.append(self.E_compare[compare][feature].min())
+                    max_values.append(self.E_compare[compare][feature].max())
+
+                    legend.append(compare.replace("_", " "))
+
+                    self.t = self.t_compare[compare]
+                    self.sensitivity = self.sensitivity_compare[compare]
+
+                    prettyPlot(self.t[feature], self.sensitivity[feature][i],
+                               title="sensitivity, " + feature,
+                               xlabel="time", ylabel="sensitivity",
+                               new_figure=new_figure, **kwargs)
+                    new_figure = False
+
+                save_name = feature + "_mean_compare"
+
+                plt.legend(legend)
+                plt.ylim([0, 1.05])
+
+
+                if hardcopy:
+                    plt.savefig(os.path.join(self.full_output_dir_figures,
+                                             feature + "_sensitivity_" + parameter_names[i] + self.figureformat),
+                                bbox_inches="tight")
+                    if not show:
+                        plt.close()
+
+                if show:
+                    plt.show()
+
 
 
 
