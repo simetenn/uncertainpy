@@ -40,7 +40,7 @@ def set_legend(legend=None, ax=None):
         if ax is None:
             plt.legend(legend)
         else:
-            ax.set_legend(legend)
+            ax.legend(legend)
 
 
 def set_font():

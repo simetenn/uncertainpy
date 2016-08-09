@@ -180,16 +180,6 @@ class PlotUncertainty():
         prettyPlot(self.t[feature], self.E[feature],
                    "Mean, " + feature, "time", "voltage", **kwargs)
 
-
-        # min_t = self.t[feature].min()
-        # max_t = self.t[feature].max()
-        #
-        # min_E = self.E[feature].min()
-        # max_E = self.E[feature].max()
-        #
-        # plt.xlim(min_t, max_t)
-        # plt.ylim(min_E, max_E)
-
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
                                      feature + "_mean" + self.figureformat),
@@ -200,8 +190,39 @@ class PlotUncertainty():
         if show:
             plt.show()
 
-        # return min_t, max_t, min_E, max_E
 
+    def plotAttributeFeature1d(self, feature="directComparison",
+                               attribute="E", attribute_name="mean",
+                               hardcopy=True, show=False,
+                               **kwargs):
+        if not self.loaded_flag:
+            raise ValueError("Datafile must be loaded")
+
+
+        if feature not in self.features_1d:
+            raise ValueError("%s is not a 1D feature" % (feature))
+
+
+        if attribute not in ["E", "Var"]:
+            raise ValueError("{} is not a supported attribute".format(attribute))
+
+
+        value = getattr(self, attribute)
+        prettyPlot(self.t[feature], value[feature],
+                   feature + ", " + attribute_name, "time", "voltage", **kwargs)
+
+
+        save_name = feature + "_" + attribute_name + "_compare"
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_dir_figures,
+                                     save_name + self.figureformat),
+                        bbox_inches="tight")
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
 
 
     def plotVariance(self, feature="directComparison",
@@ -644,15 +665,15 @@ class PlotUncertainty():
     #                          compare_name=compare_name)
 
 
-    def plotCompareFeature1d(self, feature, attribute="E"):
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-
-
-        output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
-        if not os.path.isdir(output_dir_compare):
-            os.makedirs(output_dir_compare)
+    # def plotCompareFeature1d(self, feature, attribute="E"):
+    #     if feature not in self.features_1d:
+    #         raise ValueError("%s is not a 1D feature" % (feature))
+    #
+    #
+    #
+    #     output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
+    #     if not os.path.isdir(output_dir_compare):
+    #         os.makedirs(output_dir_compare)
 
 
 
@@ -945,16 +966,6 @@ class PlotUncertainty():
 
 
 
-    def plotCompare1dFeatures(self):
-        for feature in self.features_1d:
-            self.plotCompareMean(feature=feature)
-            self.plotCompareVariance(feature=feature)
-            self.plotCompareMeanAndVariance(feature=feature)
-            self.plotCompareConfidenceInterval(feature=feature)
-
-
-
-
     def plotCompareAttributeFeature0d(self, feature, attribute="E", attribute_name="mean",
                                       hardcopy=True, show=False, **kwargs):
         if feature not in self.features_0d:
@@ -1015,19 +1026,16 @@ class PlotUncertainty():
         pos = 0
 
         for compare in self.compare_folders:
-            # xlabels.extend(["$P_{5}$", "$P_{95}$"])
             xlabels.append(compare.replace("_", " "))
             xticks.append(pos + width)
             index.extend([pos + 0.5*width])
 
-
             values.append(self.p_05_compare[compare][feature])
-            # values.append(self.p_95_compare[compare][feature])
 
             pos += distance + 2*width
 
         prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
-                  nr_hues=2, color=0, label="$P_{5}$", **kwargs)
+                  nr_hues=2, color=1, label="$P_{5}$", **kwargs)
 
 
 
@@ -1038,19 +1046,16 @@ class PlotUncertainty():
         pos = 0
 
         for compare in self.compare_folders:
-            # xlabels.extend(["$P_{5}$", "$P_{95}$"])
             xlabels.append(compare.replace("_", " "))
             xticks.append(pos + width)
             index.extend([pos + 1.5*width])
 
-
-            values.append(self.p_05_compare[compare][feature])
-            # values.append(self.p_95_compare[compare][feature])
+            values.append(self.p_95_compare[compare][feature])
 
             pos += distance + 2*width
 
         prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
-                  nr_hues=2, color=1, label="$P_{95}$", new_figure=False, **kwargs)
+                  nr_hues=2, color=0, label="$P_{95}$", new_figure=False, **kwargs)
 
 
         plt.legend()
@@ -1073,7 +1078,282 @@ class PlotUncertainty():
 
     # TODO create the avobe compare plots for the fractional difference also
 
-    
+
+
+
+    def plotCompareFractionalFeature1d(self, feature="directComparison", attribute="E",
+                                       attribute_name="mean", reference_name="pc",
+                                       hardcopy=True, show=False, **kwargs):
+        if feature not in self.features_1d:
+            raise ValueError("%s is not a 1D feature" % (feature))
+
+        if attribute not in ["E", "Var"]:
+            raise ValueError("{} is not a supported attribute".format(attribute))
+
+
+        legend = []
+        new_figure = True
+
+        compares = self.compare_folders[:]
+        compares.remove(reference_name)
+
+        for compare in compares:
+            legend.append(compare.replace("_", " "))
+
+            value = getattr(self, attribute + "_compare")
+            fractional_difference_mean = self.fractional_difference(value[reference_name][feature],
+                                                                    value[compare][feature])
+
+
+            # title = feature + "$\\frac{{|{0} - {1}|}}{{{0}}}$, ".format(reference_name, compare.split("_")[0]) + ", " + attribute_name
+            title = feature + ", $\\frac{{|{0}_{{{2}}} - {1}_{{{2}}}|}}{{{0}_{{{2}}}}}$, ".format(reference_name.upper(), compare.split("_")[0].upper(), attribute_name)
+
+            prettyPlot(self.t[feature], fractional_difference_mean,
+                       title, "time", "voltage",
+                       new_figure=new_figure, nr_hues=len(compares),
+                       **kwargs)
+
+
+            new_figure = False
+
+
+        save_name = feature + "_" + attribute_name + "_compare_fractional"
+
+        plt.legend(legend)
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                     save_name + self.figureformat))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
+
+
+    def plotCompareFractionalMean(self, **kwargs):
+        self.plotCompareFractionalFeature1d(feature="directComparison",
+                                            attribute="E",
+                                            attribute_name="mean",
+                                            **kwargs)
+
+
+    def plotCompareFractionalVariance(self, **kwargs):
+        self.plotCompareFractionalFeature1d(feature="directComparison",
+                                            attribute="Var",
+                                            attribute_name="variance",
+                                            **kwargs)
+
+
+
+
+    def plotCompareFractionalConfidenceInterval(self, feature="directComparison",
+                                                attribute="E",
+                                                attribute_name="mean",
+                                                reference_name="pc",
+                                                hardcopy=True,
+                                                show=False,
+                                                **kwargs):
+        if feature not in self.features_1d:
+            raise ValueError("%s is not a 1D feature" % (feature))
+
+
+
+        legend = []
+        new_figure = True
+        color = 0
+
+        compares = self.compare_folders[:]
+        compares.remove(reference_name)
+
+        for compare in compares:
+            legend.extend([compare.replace("_", " ") + ", Mean",
+                           compare.replace("_", " ") + ", 90\% CI"])
+
+            value = getattr(self, attribute + "_compare")
+            fractional_difference_mean = self.fractional_difference(self.E_compare[reference_name][feature],
+                                                                    self.E_compare[compare][feature])
+            fractional_difference_05 = self.fractional_difference(self.p_05_compare[reference_name][feature],
+                                                                  self.p_05_compare[compare][feature])
+            fractional_difference_95 = self.fractional_difference(self.p_95_compare[reference_name][feature],
+                                                                  self.p_95_compare[compare][feature])
+
+
+            title = feature + ", 90\% Confidence interval, $\\frac{{|{0} - {1}|}}{{{0}}}$, ".format(reference_name, compare.split("_")[0])
+
+            if new_figure:
+                ax = prettyPlot(self.t[feature], fractional_difference_mean, title=title,
+                                xlabel="time", ylabel="voltage", color=color,
+                                nr_hues=len(compares), label=compare.replace("_", " ") + ", Mean",
+                                **kwargs)
+
+                colors = get_current_colormap()
+            else:
+                ax.plot(self.t[feature], fractional_difference_mean,
+                        color=colors[color], linewidth=2, antialiased=True,
+                        zorder=3, label=compare.replace("_", " ") + ", Mean")
+
+            ax.fill_between(self.t[feature], fractional_difference_05,
+                            fractional_difference_95,
+                            alpha=0.5, color=colors[color], label=compare.replace("_", " ") + ", 90\% CI")
+
+
+            new_figure = False
+            color += 1
+
+        save_name = feature + "_confidence-interval_compare_fractional"
+
+        plt.legend()
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                     save_name + self.figureformat))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
+
+
+    def fractional_difference(self, x, y):
+        return abs(x - y)/x
+
+
+
+
+    def plotCompareFractionalAttributeFeature0d(self, feature=None,
+                                                attribute="E",
+                                                attribute_name="mean",
+                                                reference_name="pc",
+                                                hardcopy=True,
+                                                show=False,
+                                                **kwargs):
+        if feature not in self.features_0d:
+            raise ValueError("%s is not a 0D feature" % (feature))
+
+
+        if attribute not in ["E", "Var"]:
+            raise ValueError("{} is not a supported attribute".format(attribute))
+
+
+        width = 0.2
+        distance = 0.5
+
+        values = []
+        xlabels = []
+        xticks = []
+        pos = 0
+
+        compares = self.compare_folders[:]
+        compares.remove(reference_name)
+
+        for compare in compares:
+            xlabels.append(compare.replace("_", " "))
+            xticks.append(pos + 0.5*width)
+            values.append(getattr(self, attribute + "_compare")[compare][feature])
+
+            pos += distance + width
+
+        prettyBar(values, index=xticks, xlabels=xlabels, ylabel=feature,
+                  nr_hues=len(self.compare_folders), **kwargs)
+
+        title = feature + ", $\\frac{{|{0}_{{{2}}} - {1}_{{{2}}}|}}{{{0}_{{{2}}}}}$, ".format(reference_name.upper(), compare.split("_")[0].upper(), attribute_name)
+        plt.title(title)
+
+        save_name = feature + "_" + attribute_name + "_compare_fractional"
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                     save_name + self.figureformat))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
+
+
+
+
+    def plotCompareFractionalConfidenceIntervalFeature0d(self, feature=None,
+                                                         reference_name="pc",
+                                                         hardcopy=True,
+                                                         show=False,
+                                                         **kwargs):
+        if feature not in self.features_0d:
+            raise ValueError("%s is not a 0D feature" % (feature))
+
+
+        width = 0.2
+        distance = 0.5
+
+        values = []
+        xlabels = []
+        xticks = []
+        index = []
+        pos = 0
+
+        compares = self.compare_folders[:]
+        compares.remove(reference_name)
+
+
+        # TODO working Here, plot fractional difference values
+
+        for compare in compares:
+            xlabels.append(compare.replace("_", " "))
+            xticks.append(pos + width)
+            index.extend([pos + 0.5*width])
+
+            values.append(self.fractional_difference(self.p_05_compare[reference_name][feature],
+                                                     self.p_05_compare[compare][feature]))
+
+            pos += distance + 2*width
+
+        prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
+                  nr_hues=2, color=1, label="$P_{5}$", **kwargs)
+
+        values = []
+        xlabels = []
+        xticks = []
+        index = []
+        pos = 0
+
+        for compare in compares:
+            xlabels.append(compare.replace("_", " "))
+            xticks.append(pos + width)
+            index.extend([pos + 1.5*width])
+
+
+            values.append(self.fractional_difference(self.p_95_compare[reference_name][feature],
+                                                     self.p_95_compare[compare][feature]))
+
+
+            pos += distance + 2*width
+
+        prettyBar(values, index=index, xticks=xticks, xlabels=xlabels, ylabel=feature,
+                  nr_hues=2, color=0, label="$P_{95}$", new_figure=False, **kwargs)
+
+
+        plt.legend()
+
+        title = feature + ", $\\frac{{|{0} - {1}|}}{{{0}}}$, 90\\% Confidence interval".format(reference_name.upper(), compare.split("_")[0].upper())
+        plt.title(title)
+
+        save_name = feature + "_confidence-interval_compare_fractional"
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.compare_output_dir_figures,
+                                     save_name + self.figureformat))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
+
+
 
     # def plotCompareAttributeFractionalDifference(self, feature="directComparison", attribute="E",
     #                                              reference_name="pc"):
@@ -1126,20 +1406,38 @@ class PlotUncertainty():
 
 
 
-    def getMinMax(self, value, min_value, max_value):
-        if value.max() > max_value:
-            max_value = value.max()
-
-        if value.min() < min_value:
-            min_value = value.min()
-
-        return min_value, max_value
 
 
 
 
 
 
+    def plotCompare1dFeatures(self, hardcopy=True, show=False):
+        for feature in self.features_1d:
+            self.plotCompareMean(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareVariance(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareMeanAndVariance(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareConfidenceInterval(feature=feature, hardcopy=hardcopy, show=show)
+
+
+
+    def plotCompareFractional1dFeatures(self, hardcopy=True, show=False):
+        for feature in self.features_1d:
+            self.plotCompareFractionalMean(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareFractionalVariance(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareConfidenceInterval(feature=feature, hardcopy=hardcopy, show=show)
+
+
+    def plotCompare0dFeatures(self, hardcopy=True, show=False):
+        for feature in self.features_0d:
+
+
+
+    def plotCompareFractional0dFeatures(self, hardcopy=True, show=False):
+        for feature in self.features_0d:
+            self.plotCompareFractionalMean(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareFractionalVariance(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotCompareConfidenceInterval(feature=feature, hardcopy=hardcopy, show=show)
 
 
 
