@@ -106,6 +106,8 @@
 
 # TODO remove feature list from UncertaintyEstimation, and add it to feature class instead
 
+# TODO make it possible to use ones own plotting class
+
 import time
 import os
 import h5py
@@ -311,8 +313,7 @@ For example on use see:
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=output_dir_figures,
                                     output_dir_gif=output_dir_gif,
-                                    figureformat=figureformat,
-                                    combined_features=combined_features)
+                                    figureformat=figureformat)
 
 
         if output_data_filename is None:
@@ -626,7 +627,6 @@ For example on use see:
 
             if len(self.uncertain_parameters) > 1:
                     self.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
-
 
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 

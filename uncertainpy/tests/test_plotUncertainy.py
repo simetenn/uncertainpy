@@ -408,11 +408,6 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertEqual(self.plot.sensitivity_compare.keys(), ["pc", 'mc_10', 'mc_100'])
 
 
-    def test_plotCompare(self):
-        self.plot.plotCompareData("TestingModel1d")
-
-
-
     def test_plotCompareMean(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
@@ -442,21 +437,13 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.plotCompareConfidenceInterval(feature="directComparison", show=True)
 
 
-    TODO not implemented sensitivity for MC
-    def test_plotCompareSensitivity(self):
-        self.plot.loadCompareData("TestingModel1d",
-                                  compare_folders=["pc", "mc_10", "mc_100"])
-
-        self.plot.plotCompareSensitivity(feature="directComparison", show=True)
-
-
-    def test_plotCompareAttributeFractionalDifference(self):
-        self.plot.loadCompareData("TestingModel1d",
-                                  compare_folders=["pc", "mc_10", "mc_100"])
-
-
-        self.plot.plotCompareAttributeFractionalDifference(feature="directComparison",
-                                                           attribute="E")
+    # # TODO not implemented sensitivity for MC
+    # def test_plotCompareSensitivity(self):
+    #     self.plot.loadCompareData("TestingModel1d",
+    #                               compare_folders=["pc", "mc_10", "mc_100"])
+    #
+    #     self.plot.plotCompareSensitivity(feature="directComparison", show=True)
+    #
 
 
     def test_CompareAttributeFeature0dMean(self):
@@ -494,19 +481,20 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareFractional(feature="directComparison",
-                                        attribute="E", attribute_name="mean",
-                                        show=True)
+        self.plot.plotCompareFractionalFeature1d(feature="directComparison",
+                                                 attribute="E", attribute_name="mean",
+                                                 show=True)
 
-        self.plot.plotCompareFractional(feature="directComparison",
-                                        attribute="Var", attribute_name="variance",
-                                        show=True)
+        self.plot.plotCompareFractionalFeature1d(feature="directComparison",
+                                                 attribute="Var", attribute_name="variance",
+                                                 show=True)
 
     def test_plotCompareFractionalMean(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareFractionalMean(show=True)
+
 
     def test_plotCompareFractionalVariance(self):
         self.plot.loadCompareData("TestingModel1d",
@@ -549,6 +537,16 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.plot.plotCompareFractionalConfidenceIntervalFeature0d(feature="feature0d",
                                                                    show=True)
+
+
+
+
+    def test_plotCompareData(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareData("TestingModel1d", reference_name="pc",
+                                  compare_name="mc_",)
 
 
 

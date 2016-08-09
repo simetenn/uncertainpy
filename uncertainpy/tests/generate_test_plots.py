@@ -12,7 +12,7 @@ def generate_plots_plotUncertainty():
     data_file = "test_plot_data"
     test_data_dir = os.path.join(folder, "data")
     output_test_dir = os.path.join(folder, "data")
-    # output_test_dir = os.path.join(folder, "../../test_data")
+    output_test_dir = os.path.join(folder, "../../test_data")
 
 
     plot = PlotUncertainty(data_dir=test_data_dir,
@@ -26,35 +26,26 @@ def generate_plots_plotUncertainty():
 
 
 
-def generate_plots_UncertaintyEstimations():
+def generate_plots_compare():
     folder = os.path.dirname(os.path.realpath(__file__))
 
-    output_test_dir = os.path.join(folder, "../tests/data")
+    data_file = "TestingModel1d"
+    compare_folders = ["pc", "mc_10", "mc_100"]
+    test_data_dir = os.path.join(folder, "data")
+    output_test_dir = os.path.join(folder, "data")
+    output_test_dir = os.path.join(folder, "../../test_data")
+
+    plot = PlotUncertainty(data_dir=test_data_dir,
+                           output_dir_figures=output_test_dir,
+                           output_dir_gif=output_test_dir,
+                           verbose_level="error")
 
 
-    def mock_distribution(x):
-        return cp.Uniform(0, 1)
-
-    parameterlist = [["a", 1, mock_distribution],
-                     ["b", 2, mock_distribution]]
-
-    parameters = Parameters(parameterlist)
-    model = TestingModel1d(parameters)
-
-    uncertainty = UncertaintyEstimations(model,
-                                         features=TestingFeatures(),
-                                         feature_list="all",
-                                         verbose_level="error",
-                                         output_dir_data=output_test_dir,
-                                         output_dir_figures=output_test_dir,
-                                         nr_mc_samples=10**1,
-                                         seed=10)
-
-    uncertainty.compareMC()
+    plot.plotCompareData(data_file, compare_folders)
 
 
 
 
 if __name__ == "__main__":
     generate_plots_plotUncertainty()
-    # generate_plots_UncertaintyEstimations()
+    generate_plots_compare()
