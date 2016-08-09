@@ -63,7 +63,7 @@ class PlotUncertainty():
 
 
 
-    def loadData(self, filename):
+    def loadData(self, filename, create_output_folder=True):
         self.filename = filename
         full_path = os.path.join(self.data_dir, self.filename)
 
@@ -86,7 +86,7 @@ class PlotUncertainty():
         if os.path.isfile(self.full_output_dir_figures):
             self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
 
-        if not os.path.isdir(self.full_output_dir_figures):
+        if not os.path.isdir(self.full_output_dir_figures) and create_output_folder:
             os.makedirs(self.full_output_dir_figures)
 
         self.t = {}
@@ -650,7 +650,7 @@ class PlotUncertainty():
         for folder in self.compare_folders:
             name = folder.split(os.path.sep)[-1]
 
-            self.loadData(os.path.join(name, filename))
+            self.loadData(os.path.join(name, filename), create_output_folder=False)
 
             self.t_compare[name] = self.t
             # self.U_compare[name] = self.U
