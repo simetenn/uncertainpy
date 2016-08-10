@@ -173,30 +173,6 @@ class PlotUncertainty():
         return features_0d, features_1d
 
 
-    def plotMean(self, feature="directComparison", hardcopy=True, show=False,
-                 **kwargs):
-        if not self.loaded_flag:
-            raise ValueError("Datafile must be loaded")
-
-
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
-
-
-        prettyPlot(self.t[feature], self.E[feature],
-                   feature + ", mean", "time", "voltage", **kwargs)
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_mean" + self.figureformat),
-                        bbox_inches="tight")
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
-
-
     def plotAttributeFeature1d(self, feature="directComparison",
                                attribute="E", attribute_name="mean",
                                hardcopy=True, show=False,
@@ -218,7 +194,7 @@ class PlotUncertainty():
                    feature + ", " + attribute_name, "time", "voltage", **kwargs)
 
 
-        save_name = feature + "_" + attribute_name + "_compare"
+        save_name = feature + "_" + attribute_name
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
@@ -230,30 +206,20 @@ class PlotUncertainty():
         if show:
             plt.show()
 
-
-    def plotVariance(self, feature="directComparison",
-                     hardcopy=True, show=False,
-                     **kwargs):
-        if not self.loaded_flag:
-            raise ValueError("Datafile must be loaded")
-
-
-        if feature not in self.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
+    def plotMean(self, feature, hardcopy=True,
+                 show=False, **kwargs):
+        self.plotAttributeFeature1d(feature, attribute="E",
+                                    attribute_name="mean",
+                                    hardcopy=hardcopy,
+                                    show=show, **kwargs)
 
 
-        prettyPlot(self.t[feature], self.Var[feature], feature + ", variance",
-                   "time", "voltage", **kwargs)
-
-        if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_variance" + self.figureformat),
-                        bbox_inches="tight")
-            if not show:
-                plt.close()
-
-        if show:
-            plt.show()
+    def plotVariance(self, feature, hardcopy=True,
+                     show=False, **kwargs):
+        self.plotAttributeFeature1d(feature, attribute="Var",
+                                    attribute_name="variance",
+                                    hardcopy=hardcopy,
+                                    show=show, **kwargs)
 
 
 
