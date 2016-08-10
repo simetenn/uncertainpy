@@ -27,10 +27,10 @@ class TestPlotUncertainpy(unittest.TestCase):
                                     verbose_level="error")
 
 
-
-    def tearDown(self):
-        if os.path.isdir(self.output_test_dir):
-            shutil.rmtree(self.output_test_dir)
+    #
+    # def tearDown(self):
+    #     if os.path.isdir(self.output_test_dir):
+    #         shutil.rmtree(self.output_test_dir)
 
 
 #     def test_init(self):
@@ -314,17 +314,25 @@ class TestPlotUncertainpy(unittest.TestCase):
 #         self.compare_plot("feature1d_sensitivity")
 #
 #
-#     def compare_plot(self, name):
-#         folder = os.path.dirname(os.path.realpath(__file__))
-#         compare_file = os.path.join(folder, "data/test_plot_data_figures",
-#                                     name + ".png")
-#
-#         plot_file = os.path.join(self.output_test_dir, self.data_file,
-#                                  name + ".png")
-#         result = subprocess.call(["diff", plot_file, compare_file])
-#
-#         self.assertEqual(result, 0)
-#
+    def compare_plot(self, name, compare=False):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        if compare:
+            compare_file = os.path.join(folder, "data/compare",
+                                        name + ".png")
+            plot_file = os.path.join(self.output_test_dir,
+                                     "compare", name + ".png")
+
+        else:
+            compare_file = os.path.join(folder, "data/test_plot_data_figures",
+                                        name + ".png")
+
+            plot_file = os.path.join(self.output_test_dir, self.data_file,
+                                     name + ".png")
+
+        result = subprocess.call(["diff", plot_file, compare_file])
+
+        self.assertEqual(result, 0)
+
 #
 #     def test_plot0dFeature(self):
 #         self.plot.loadData(self.data_file)
@@ -408,33 +416,81 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertEqual(self.plot.sensitivity_compare.keys(), ["pc", 'mc_10', 'mc_100'])
 
 
-    def test_plotCompareMean(self):
+    def test_plotCompareMeanDirectComparison(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareMean(feature="directComparison", show=True)
+        self.plot.plotCompareMean(feature="directComparison")
+
+        self.compare_plot("directComparison_mean_compare", compare=True)
 
 
-    def test_plotCompareVariance(self):
+    def test_plotCompareMeanFeature1d(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareVariance(feature="directComparison", show=True)
+        self.plot.plotCompareMean(feature="feature1d")
+
+        self.compare_plot("feature1d_mean_compare", compare=True)
 
 
-    def test_plotCompareMeanAndVariance(self):
+    def test_plotCompareVarianceDirectComparison(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareMeanAndVariance(feature="directComparison", show=True)
+        self.plot.plotCompareVariance(feature="directComparison")
+
+        self.compare_plot("directComparison_variance_compare", compare=True)
 
 
-
-    def test_plotCompareConfidenceInterval(self):
+    def test_plotCompareVarianceFeature1d(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareConfidenceInterval(feature="directComparison", show=True)
+        self.plot.plotCompareVariance(feature="feature1d")
+
+        self.compare_plot("feature1d_variance_compare", compare=True)
+
+
+
+    def test_plotCompareMeanAndVarianceDirectComparison(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareMeanAndVariance(feature="directComparison")
+
+        self.compare_plot("directComparison_mean-variance_compare", compare=True)
+
+
+    def test_plotCompareMeanAndVarianceFeature1d(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareMeanAndVariance(feature="feature1d")
+
+        self.compare_plot("feature1d_mean-variance_compare", compare=True)
+
+
+
+    def test_plotCompareConfidenceIntervalDirectComparison(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareConfidenceInterval(feature="directComparison")
+
+        self.compare_plot("directComparison_confidence-interval_compare", compare=True)
+
+
+
+    def test_plotCompareConfidenceIntervalFeature1d(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareConfidenceInterval(feature="feature1d")
+
+        self.compare_plot("feature1d_confidence-interval_compare", compare=True)
+
+
 
 
     # # TODO not implemented sensitivity for MC
@@ -443,7 +499,9 @@ class TestPlotUncertainpy(unittest.TestCase):
     #                               compare_folders=["pc", "mc_10", "mc_100"])
     #
     #     self.plot.plotCompareSensitivity(feature="directComparison", show=True)
-    #
+
+
+
 
 
     def test_CompareAttributeFeature0dMean(self):
@@ -451,14 +509,21 @@ class TestPlotUncertainpy(unittest.TestCase):
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareAttributeFeature0d(feature="feature0d", attribute="E",
-                                                attribute_name="mean", show=True)
+                                                attribute_name="mean")
 
-    def test_CompareAttributeFeature0dVariance(self):
+        self.compare_plot("feature0d_mean_compare", compare=True)
+
+
+    def test_CompareAttributeFeature0dvariance(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareAttributeFeature0d(feature="feature0d", attribute="Var",
-                                                attribute_name="variance", show=True)
+                                                attribute_name="variance")
+
+        self.compare_plot("feature0d_variance_compare", compare=True)
+
+
 
     def test_CompareAttributeFeature0dError(self):
         self.plot.loadCompareData("TestingModel1d",
@@ -469,38 +534,76 @@ class TestPlotUncertainpy(unittest.TestCase):
                                                     attribute_name="not existing")
 
 
+    def test_CompareMeanFeature0d(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareMeanFeature0d(feature="feature0d")
+
+        self.compare_plot("feature0d_mean_compare", compare=True)
+
+
+    def test_CompareVarianceFeature0d(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareVarianceFeature0d(feature="feature0d")
+
+        self.compare_plot("feature0d_variance_compare", compare=True)
+
+
+
+
     def test_plotCompareConfidenceIntervalFeature0d(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareConfidenceIntervalFeature0d(feature="feature0d", show=True)
+        self.plot.plotCompareConfidenceIntervalFeature0d(feature="feature0d")
+
+        self.compare_plot("feature0d_confidence-interval_compare", compare=True)
 
 
 
-    def test_plotCompareFractionalFeature1d(self):
+
+
+    def test_plotCompareFractionalFeature1dMean(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareFractionalFeature1d(feature="directComparison",
-                                                 attribute="E", attribute_name="mean",
-                                                 show=True)
+        self.plot.plotCompareAttributeFeature1dFractional(feature="directComparison",
+                                                          attribute="E", attribute_name="mean")
 
-        self.plot.plotCompareFractionalFeature1d(feature="directComparison",
-                                                 attribute="Var", attribute_name="variance",
-                                                 show=True)
+        self.compare_plot("directComparison_mean_compare_fractional", compare=True)
+
+
+    def test_plotCompareFractionalFeature1dVariance(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareAttributeFeature1dFractional(feature="directComparison",
+                                                          attribute="Var", attribute_name="variance")
+
+        self.compare_plot("directComparison_variance_compare_fractional", compare=True)
+
 
     def test_plotCompareFractionalMean(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareFractionalMean(show=True)
+        self.plot.plotCompareFractionalMean(feature="directComparison")
+
+
+        self.compare_plot("directComparison_mean_compare_fractional", compare=True)
+
 
 
     def test_plotCompareFractionalVariance(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareFractionalVariance(show=True)
+        self.plot.plotCompareFractionalVariance(feature="directComparison")
+        self.compare_plot("directComparison_variance_compare_fractional", compare=True)
+
 
 
 
@@ -508,7 +611,15 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareFractionalConfidenceInterval(show=True)
+        self.plot.plotCompareFractionalConfidenceInterval("directComparison")
+        self.compare_plot("directComparison_confidence-interval_compare_fractional",
+                          compare=True)
+
+
+    def test_fractional_difference(self):
+
+        value = self.plot._fractional_difference(2., 1)
+        self.assertEqual(value, 0.5)
 
 
     def test_plotCompareFractionalAttributeFeature0dMean(self):
@@ -517,36 +628,177 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.plot.plotCompareFractionalAttributeFeature0d(feature="feature0d",
                                                           attribute="E",
-                                                          attribute_name="mean",
-                                                          show=True)
+                                                          attribute_name="mean")
+        self.compare_plot("feature0d_mean_compare_fractional", compare=True)
 
 
-    def test_plotCompareFractionalAttributeFeature0dVar(self):
+    def test_plotCompareFractionalAttributeFeature0dVariance(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareFractionalAttributeFeature0d(feature="feature0d",
                                                           attribute="Var",
-                                                          attribute_name="variance",
-                                                          show=True)
+                                                          attribute_name="variance")
+        self.compare_plot("feature0d_variance_compare_fractional", compare=True)
+
+
+
+    def test_plotCompareFractionalMeanFeature0d(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareFractionalMeanFeature0d(feature="feature0d")
+        self.compare_plot("feature0d_mean_compare_fractional", compare=True)
+
+
+
+    def test_plotCompareFractionalVarianceFeature0d(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareFractionalVarianceFeature0d(feature="feature0d")
+        self.compare_plot("feature0d_variance_compare_fractional", compare=True)
 
 
     def test_plotCompareFractionalConfidenceIntervalFeature0d(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareFractionalConfidenceIntervalFeature0d(feature="feature0d",
-                                                                   show=True)
+        self.plot.plotCompareFractionalConfidenceIntervalFeature0d(feature="feature0d")
+        self.compare_plot("feature0d_confidence-interval_compare_fractional",
+                          compare=True)
 
 
 
 
-    def test_plotCompareData(self):
+    def test_Compare1dFeatures(self):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareData("TestingModel1d", reference_name="pc",
-                                  compare_name="mc_",)
+        self.plot.plotCompare1dFeatures()
+
+        self.compare_plot("directComparison_mean_compare", compare=True)
+        self.compare_plot("directComparison_variance_compare", compare=True)
+        self.compare_plot("directComparison_mean-variance_compare", compare=True)
+        self.compare_plot("directComparison_confidence-interval_compare", compare=True)
+
+        self.compare_plot("feature1d_mean_compare", compare=True)
+        self.compare_plot("feature1d_variance_compare", compare=True)
+        self.compare_plot("feature1d_mean-variance_compare", compare=True)
+        self.compare_plot("feature1d_confidence-interval_compare", compare=True)
+
+
+    def test_plotCompareFractional1dFeatures(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareFractional1dFeatures()
+
+        self.compare_plot("directComparison_mean_compare_fractional", compare=True)
+        self.compare_plot("directComparison_variance_compare_fractional", compare=True)
+        self.compare_plot("directComparison_confidence-interval_compare_fractional", compare=True)
+
+        self.compare_plot("feature1d_mean_compare_fractional", compare=True)
+        self.compare_plot("feature1d_variance_compare_fractional", compare=True)
+        self.compare_plot("feature1d_confidence-interval_compare_fractional", compare=True)
+
+
+    def test_Compare0dFeatures(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompare0dFeatures()
+
+        self.compare_plot("feature0d_mean_compare", compare=True)
+        self.compare_plot("feature0d_variance_compare", compare=True)
+        self.compare_plot("feature0d_confidence-interval_compare", compare=True)
+
+
+    def test_plotCompareFractional0dFeatures(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareFractional0dFeatures()
+
+        self.compare_plot("feature0d_mean_compare_fractional", compare=True)
+        self.compare_plot("feature0d_variance_compare_fractional", compare=True)
+        self.compare_plot("feature0d_confidence-interval_compare_fractional", compare=True)
+
+
+    def test_plotCompareFractional(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareFractional()
+
+        self.compare_plot("feature0d_mean_compare_fractional", compare=True)
+        self.compare_plot("feature0d_variance_compare_fractional", compare=True)
+        self.compare_plot("feature0d_confidence-interval_compare_fractional", compare=True)
+
+        self.compare_plot("directComparison_mean_compare_fractional", compare=True)
+        self.compare_plot("directComparison_variance_compare_fractional", compare=True)
+        self.compare_plot("directComparison_confidence-interval_compare_fractional", compare=True)
+
+        self.compare_plot("feature1d_mean_compare_fractional", compare=True)
+        self.compare_plot("feature1d_variance_compare_fractional", compare=True)
+        self.compare_plot("feature1d_confidence-interval_compare_fractional", compare=True)
+
+
+    def test_plotCompare(self):
+        self.plot.loadCompareData("TestingModel1d",
+                                  compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompare()
+
+        self.compare_plot("feature0d_mean_compare", compare=True)
+        self.compare_plot("feature0d_variance_compare", compare=True)
+        self.compare_plot("feature0d_confidence-interval_compare", compare=True)
+
+        self.compare_plot("directComparison_mean_compare", compare=True)
+        self.compare_plot("directComparison_variance_compare", compare=True)
+        self.compare_plot("directComparison_mean-variance_compare", compare=True)
+        self.compare_plot("directComparison_confidence-interval_compare", compare=True)
+
+        self.compare_plot("feature1d_mean_compare", compare=True)
+        self.compare_plot("feature1d_variance_compare", compare=True)
+        self.compare_plot("feature1d_mean-variance_compare", compare=True)
+        self.compare_plot("feature1d_confidence-interval_compare", compare=True)
+
+
+
+    def test_plotCompareAll(self):
+        # self.plot.loadCompareData("TestingModel1d",
+        #                           compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.plot.plotCompareAll("TestingModel1d",
+                                 compare_folders=["pc", "mc_10", "mc_100"])
+
+        self.compare_plot("feature0d_mean_compare", compare=True)
+        self.compare_plot("feature0d_variance_compare", compare=True)
+        self.compare_plot("feature0d_confidence-interval_compare", compare=True)
+
+        self.compare_plot("directComparison_mean_compare", compare=True)
+        self.compare_plot("directComparison_variance_compare", compare=True)
+        self.compare_plot("directComparison_mean-variance_compare", compare=True)
+        self.compare_plot("directComparison_confidence-interval_compare", compare=True)
+
+        self.compare_plot("feature1d_mean_compare", compare=True)
+        self.compare_plot("feature1d_variance_compare", compare=True)
+        self.compare_plot("feature1d_mean-variance_compare", compare=True)
+        self.compare_plot("feature1d_confidence-interval_compare", compare=True)
+
+
+        self.compare_plot("feature0d_mean_compare_fractional", compare=True)
+        self.compare_plot("feature0d_variance_compare_fractional", compare=True)
+        self.compare_plot("feature0d_confidence-interval_compare_fractional", compare=True)
+
+        self.compare_plot("directComparison_mean_compare_fractional", compare=True)
+        self.compare_plot("directComparison_variance_compare_fractional", compare=True)
+        self.compare_plot("directComparison_confidence-interval_compare_fractional", compare=True)
+
+        self.compare_plot("feature1d_mean_compare_fractional", compare=True)
+        self.compare_plot("feature1d_variance_compare_fractional", compare=True)
+        self.compare_plot("feature1d_confidence-interval_compare_fractional", compare=True)
 
 
 
@@ -556,6 +808,8 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 # TODO test plotAllDataFromExploration
 # TODO test plotAllDataInFolder
+
+
 
 if __name__ == "__main__":
     unittest.main()

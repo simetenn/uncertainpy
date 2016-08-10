@@ -1113,9 +1113,9 @@ class PlotUncertainty():
 
 
 
-    def plotCompareFractionalFeature1d(self, feature="directComparison", attribute="E",
-                                       attribute_name="mean", reference_name="pc",
-                                       hardcopy=True, show=False, **kwargs):
+    def plotCompareAttributeFeature1dFractional(self, feature="directComparison", attribute="E",
+                                                attribute_name="mean", reference_name="pc",
+                                                hardcopy=True, show=False, **kwargs):
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -1139,8 +1139,8 @@ class PlotUncertainty():
             legend.append(compare.replace("_", " "))
 
             value = getattr(self, attribute + "_compare")
-            fractional_difference_mean = self.fractional_difference(value[reference_name][feature],
-                                                                    value[compare][feature])
+            fractional_difference_mean = self._fractional_difference(value[reference_name][feature],
+                                                                     value[compare][feature])
             min_values.append(fractional_difference_mean.min())
             max_values.append(fractional_difference_mean.max())
 
@@ -1174,29 +1174,27 @@ class PlotUncertainty():
 
     def plotCompareFractionalMean(self, feature="directComparison",
                                   hardcopy=True, show=False, **kwargs):
-        self.plotCompareFractionalFeature1d(feature=feature,
-                                            attribute="E",
-                                            attribute_name="mean",
-                                            hardcopy=hardcopy,
-                                            show=show,
-                                            **kwargs)
+        self.plotCompareAttributeFeature1dFractional(feature=feature,
+                                                     attribute="E",
+                                                     attribute_name="mean",
+                                                     hardcopy=hardcopy,
+                                                     show=show,
+                                                     **kwargs)
 
 
     def plotCompareFractionalVariance(self, feature="directComparison",
                                       hardcopy=True, show=False, **kwargs):
-        self.plotCompareFractionalFeature1d(feature=feature,
-                                            attribute="Var",
-                                            attribute_name="variance",
-                                            hardcopy=hardcopy,
-                                            show=show,
-                                            **kwargs)
+        self.plotCompareAttributeFeature1dFractional(feature=feature,
+                                                     attribute="Var",
+                                                     attribute_name="variance",
+                                                     hardcopy=hardcopy,
+                                                     show=show,
+                                                     **kwargs)
 
 
 
 
     def plotCompareFractionalConfidenceInterval(self, feature="directComparison",
-                                                attribute="E",
-                                                attribute_name="mean",
                                                 reference_name="pc",
                                                 hardcopy=True,
                                                 show=False,
@@ -1219,12 +1217,12 @@ class PlotUncertainty():
         compares.remove(reference_name)
 
         for compare in compares:
-            fractional_difference_mean = self.fractional_difference(self.E_compare[reference_name][feature],
-                                                                    self.E_compare[compare][feature])
-            fractional_difference_05 = self.fractional_difference(self.p_05_compare[reference_name][feature],
-                                                                  self.p_05_compare[compare][feature])
-            fractional_difference_95 = self.fractional_difference(self.p_95_compare[reference_name][feature],
-                                                                  self.p_95_compare[compare][feature])
+            fractional_difference_mean = self._fractional_difference(self.E_compare[reference_name][feature],
+                                                                     self.E_compare[compare][feature])
+            fractional_difference_05 = self._fractional_difference(self.p_05_compare[reference_name][feature],
+                                                                   self.p_05_compare[compare][feature])
+            fractional_difference_95 = self._fractional_difference(self.p_95_compare[reference_name][feature],
+                                                                   self.p_95_compare[compare][feature])
 
             min_values.append(fractional_difference_mean.min())
             max_values.append(fractional_difference_mean.max())
@@ -1271,7 +1269,7 @@ class PlotUncertainty():
 
 
 
-    def fractional_difference(self, x, y):
+    def _fractional_difference(self, x, y):
         return abs(x - y)/x
 
 
@@ -1389,8 +1387,8 @@ class PlotUncertainty():
             xticks.append(pos + width)
             index.extend([pos + 0.5*width])
 
-            value = self.fractional_difference(self.p_05_compare[reference_name][feature],
-                                               self.p_05_compare[compare][feature])
+            value = self._fractional_difference(self.p_05_compare[reference_name][feature],
+                                                self.p_05_compare[compare][feature])
             values.append(value)
 
             min_values.append(value.min())
@@ -1412,8 +1410,8 @@ class PlotUncertainty():
             xticks.append(pos + width)
             index.extend([pos + 1.5*width])
 
-            value = self.fractional_difference(self.p_95_compare[reference_name][feature],
-                                               self.p_95_compare[compare][feature])
+            value = self._fractional_difference(self.p_95_compare[reference_name][feature],
+                                                self.p_95_compare[compare][feature])
             values.append(value)
 
             min_values.append(value.min())
@@ -1493,7 +1491,7 @@ class PlotUncertainty():
         self.plotCompare0dFeatures(hardcopy=hardcopy, show=show)
 
 
-    def plotCompareData(self, filename, compare_folders,
+    def plotCompareAll(self, filename, compare_folders,
                         hardcopy=True, show=False):
         self.logger.info("Comparing data")
 

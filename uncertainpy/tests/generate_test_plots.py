@@ -1,10 +1,7 @@
 import os
 
-import chaospy as cp
-
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from uncertainpy import UncertaintyEstimations, TestingFeatures, TestingModel1d
-from uncertainpy import Parameters
+
 
 def generate_plots_plotUncertainty():
     folder = os.path.dirname(os.path.realpath(__file__))
@@ -12,7 +9,7 @@ def generate_plots_plotUncertainty():
     data_file = "test_plot_data"
     test_data_dir = os.path.join(folder, "data")
     output_test_dir = os.path.join(folder, "data")
-    output_test_dir = os.path.join(folder, "../../test_data")
+    # output_test_dir = os.path.join(folder, "../../test_data")
 
 
     plot = PlotUncertainty(data_dir=test_data_dir,
@@ -33,7 +30,7 @@ def generate_plots_compare():
     compare_folders = ["pc", "mc_10", "mc_100"]
     test_data_dir = os.path.join(folder, "data")
     output_test_dir = os.path.join(folder, "data")
-    output_test_dir = os.path.join(folder, "../../test_data")
+    # output_test_dir = os.path.join(folder, "../../test_data")
 
     plot = PlotUncertainty(data_dir=test_data_dir,
                            output_dir_figures=output_test_dir,
