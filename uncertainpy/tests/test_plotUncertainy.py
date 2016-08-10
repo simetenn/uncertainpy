@@ -199,17 +199,30 @@ class TestPlotUncertainpy(unittest.TestCase):
 #
 #
 #
-#     def test_plotConfidenceInterval(self):
-#         self.plot.loadData(self.data_file)
-#
-#         self.compare_plotType("plotConfidenceInterval", "confidence-interval", "directComparison")
-#         self.compare_plotType("plotConfidenceInterval", "confidence-interval", "feature1d")
-#
-#         with self.assertRaises(ValueError):
-#             self.plot.plotConfidenceInterval(feature="feature0d")
-#
-#         with self.assertRaises(ValueError):
-#             self.plot.plotConfidenceInterval(feature="feature2d")
+    def test_plotConfidenceIntervaldirectComparison(self):
+        self.plot.loadData(self.data_file)
+
+        self.plotConfidenceInterval(feature="directComparison")
+
+        self.compare_plot("directComparison_confidence-interval")
+
+
+    def test_plotConfidenceIntervalFeature0d(self):
+        self.plot.loadData(self.data_file)
+
+        self.plotConfidenceInterval(feature="feature1d")
+
+        self.compare_plot("feature1d_confidence-interval")
+
+
+   def test_plotConfidenceIntervalError(self):
+       self.plot.loadData(self.data_file)
+
+        with self.assertRaises(ValueError):
+            self.plot.plotConfidenceInterval(feature="feature0d")
+
+        with self.assertRaises(ValueError):
+            self.plot.plotConfidenceInterval(feature="feature2d")
 
 
     def test_plotSensitivityDirectComparison(self):
