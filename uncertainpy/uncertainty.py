@@ -859,7 +859,7 @@ For example on use see:
         padding = len(str(len(self.U["directComparison"]) + 1))
         for U in self.U["directComparison"]:
             prettyPlot(self.t["directComparison"], U,
-                       xlabel="Time, ms", ylabel="Voltage")
+                       xlabel="time", ylabel="voltage")
             plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding)))
             i += 1
 

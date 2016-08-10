@@ -5,7 +5,7 @@ import shutil
 import chaospy as cp
 
 
-from uncertainpy import UncertaintyEstimations, Parameters
+from uncertainpy import UncertaintyEstimations, Parameters, Distribution
 from uncertainpy.features import TestingFeatures
 from uncertainpy.models import TestingModel1d
 
@@ -27,14 +27,12 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.seed = 10
 
 
-        def mock_distribution(x):
-            return cp.Uniform(0, 1)
-
-        parameterlist = [["a", 1, mock_distribution],
-                         ["b", 2, mock_distribution]]
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
 
         self.uncertainty = UncertaintyEstimations(model,
                                                   features=TestingFeatures(),

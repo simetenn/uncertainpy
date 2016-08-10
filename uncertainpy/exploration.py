@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import multiprocessing as mp
 
 from uncertainpy import UncertaintyEstimation, Distribution
-from uncertainpy import prettyPlot, prettyBar, create_logger
+from uncertainpy import prettyPlot, create_logger
 
 
 class UncertaintyEstimations():
@@ -220,140 +220,6 @@ class UncertaintyEstimations():
             del self.uncertainty_estimations
 
             run_times.append(time.time() - time_1)
-
-
-
-
-        ### Code to compare MC to PC
-        #
-        # output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
-        # if not os.path.isdir(output_dir_compare):
-        #     os.makedirs(output_dir_compare)
-
-
-        # for feature in features_2d:
-        #     new_figure = True
-        #     color = 0
-        #     max_var = 0
-        #     min_var = 0
-        #     legend = []
-        #     for nr_mc_sample in sorted(self.mc_var):
-        #         difference_var = self.mc_var[nr_mc_sample][feature]/self.pc_var[feature]
-        #
-        #         if difference_var.max() > max_var:
-        #             max_var = difference_var.max()
-        #
-        #         if difference_var.min() < min_var:
-        #             min_var = difference_var.min()
-        #
-        #         legend.append("MC samples " + str(nr_mc_sample))
-        #
-        #         print self.t_pc[feature]
-        #         print difference_var
-        #         prettyPlot(self.t_pc[feature], difference_var,
-        #                    new_figure=new_figure, color=color,
-        #                    xlabel="Time", ylabel="Variance, mv",
-        #                    title="MC variance/PC variance(%d), %s" % (nr_pc_samples, feature))
-        #         new_figure = False
-        #         color += 2
-        #
-        #     plt.ylim([min_var, max_var])
-        #     plt.legend(legend)
-        #     plt.savefig(os.path.join(output_dir_compare,
-        #                              "variance-diff-MC-PC_" + feature + self.figureformat))
-        #     # plt.show()
-        #     plt.close()
-
-
-
-        # for feature in features_1d:
-        #     # new_figure = True
-        #     # color = 0
-        #     # max_var = 0
-        #     # min_var = 0
-        #     # legend = []
-        #     #
-        #     # difference_var = []
-        #     # legend = []
-        #     # for mc_estimation in sorted(self.mc_var):
-        #     #     fractional_difference_var = abs(self.pc_var[feature] - self.mc_var[mc_estimation][feature])/self.pc_var[feature]
-        #     #
-        #     #
-        #     #     print self.mc_var[mc_estimation][feature]
-        #     #     print self.pc_var[feature]
-        #     #     print difference_var
-        #     #
-        #     #     legend.append("MC " + str(mc_estimation))
-        #     #
-        #     #     # prettyBar(difference_var,
-        #     #     #           xlabels=legend, ylabel="Variance, mv",
-        #     #     #           title="MC variance/PC variance, " + feature)
-        #     #
-        #     #
-        #     #     prettyPlot(self.t_pc[feature], fractional_difference_var,
-        #     #                xlabel="time, ms", ylabel="Variance, mv",
-        #     #                title="${|PC_{variance} - MC_{variance}|}{PC_{variance}}$, " + feature)
-        #     #
-        #     #     new_figure = False
-        #     #     color += 2
-        #     #
-        #     # plt.show()
-        #     # plt.savefig(os.path.join(output_dir_compare,
-        #     #                          "variance-diff-MC-PC_" + feature + self.figureformat))
-        #     # plt.close()
-        #
-        #
-        #
-        #
-        #
-        #
-        #     color = 0
-        #     max_var = 0
-        #     min_var = 10**10
-        #     legend = []
-        #     new_figure = True
-        #
-        #     for nr_mc_sample in sorted(self.mc_var):
-        #
-        #         if self.mc_var[nr_mc_sample]["directComparison"].max() > max_var:
-        #             max_var = self.mc_var[nr_mc_sample]["directComparison"].max()
-        #
-        #         if self.mc_var[nr_mc_sample]["directComparison"].min() < min_var:
-        #             min_var = self.mc_var[nr_mc_sample]["directComparison"].min()
-        #
-        #         legend.append("MC samples " + str(nr_mc_sample))
-        #
-        #         prettyPlot(self.t_pc["directComparison"], self.mc_var[nr_mc_sample]["directComparison"],
-        #                    new_figure=new_figure, color=color,
-        #                    xlabel="Time", ylabel="Variance, mv",
-        #                    title="Variance")
-        #         new_figure = False
-        #         color += 2
-        #
-        #
-        #     if self.pc_var["directComparison"].max() > max_var:
-        #         max_var = self.pc_var["directComparison"].max()
-        #
-        #     if self.pc_var["directComparison"].min() < min_var:
-        #         min_var = self.pc_var["directComparison"].min()
-        #
-        #     legend.append("PC")
-        #
-        #     prettyPlot(self.t_pc["directComparison"], self.pc_var["directComparison"],
-        #                new_figure=new_figure, color=color,
-        #                xlabel="Time", ylabel="Variance, mv",
-        #                title="Variance")
-        #     new_figure = False
-        #     color += 2
-        #
-        #     plt.ylim([min_var*0.99, max_var*1.01])
-        #     plt.legend(legend)
-        #     plt.show()
-        #     plt.savefig(os.path.join(output_dir_compare,
-        #                              "variance-MC-PC_" + self.figureformat))
-        #     # plt.show()
-        #     plt.close()
-
 
 
         return run_times

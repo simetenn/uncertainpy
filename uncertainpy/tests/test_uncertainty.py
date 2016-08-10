@@ -35,7 +35,7 @@ class TestUncertainty(unittest.TestCase):
                                                  output_dir_figures=self.output_test_dir,
                                                  seed=self.seed)
 
-    
+
 
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
@@ -1122,9 +1122,6 @@ class TestUncertainty(unittest.TestCase):
             plot_count += 1
 
         self.assertEqual(plot_count, 5)
-
-        if os.path.isdir(self.output_test_dir):
-            shutil.rmtree(self.output_test_dir)
 
 
 # TODO create tests for:

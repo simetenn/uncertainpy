@@ -39,3 +39,7 @@ class TestDistribution(unittest.TestCase):
         result = self.distribution.uniform(120)
 
         self.assertIsInstance(result, cp.Dist)
+
+
+if __name__ == "__main__":
+    unittest.main()

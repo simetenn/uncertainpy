@@ -110,6 +110,7 @@ def generate_data_compareMC():
     model = uncertainpy.TestingModel1d(parameters)
     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
+
     uncertainty = uncertainpy.UncertaintyEstimations(model,
                                                      features=uncertainpy.TestingFeatures(),
                                                      feature_list="all",

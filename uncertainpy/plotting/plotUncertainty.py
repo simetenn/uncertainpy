@@ -34,6 +34,9 @@ from uncertainpy.utils import create_logger
 
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 
+
+# TODO plot simulator_results
+
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",

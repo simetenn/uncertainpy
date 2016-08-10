@@ -1,7 +1,9 @@
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-
+from uncertainpy.plotting.prettyPlot import prettyPlot
 
 def generate_plots_plotUncertainty():
     folder = os.path.dirname(os.path.realpath(__file__))
@@ -38,11 +40,24 @@ def generate_plots_compare():
                            verbose_level="error")
 
 
-    plot.plotCompareData(data_file, compare_folders)
+    plot.plotCompareAll(data_file, compare_folders)
 
+
+def generate_simulator_plot():
+    folder = os.path.dirname(os.path.realpath(__file__))
+    test_data_dir = os.path.join(folder, "data")
+    output_test_dir = os.path.join(folder, "data")
+
+    U = np.load(os.path.join(test_data_dir, "U_test.npy"))
+    t = np.load(os.path.join(test_data_dir, "t_test.npy"))
+
+    prettyPlot(t, U, xlabel="time", ylabel="voltage")
+
+    plt.savefig(os.path.join(output_test_dir, "U.png"))
 
 
 
 if __name__ == "__main__":
     generate_plots_plotUncertainty()
     generate_plots_compare()
+    generate_simulator_plot()
