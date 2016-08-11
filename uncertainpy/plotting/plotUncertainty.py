@@ -44,7 +44,7 @@ class PlotUncertainty():
                  output_dir_gif="gifs/",
                  figureformat=".png",
                  verbose_level="info",
-                 verbose_filename=None,):
+                 verbose_filename=None):
 
         self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
@@ -59,10 +59,10 @@ class PlotUncertainty():
         self.loaded_flag = False
         self.loaded_compare_flag = False
 
+
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
-
 
 
 
@@ -138,6 +138,7 @@ class PlotUncertainty():
 
 
         self.features_0d, self.features_1d = self.sortFeatures(self.E)
+
 
         if foldername is None:
             self.filename = ""

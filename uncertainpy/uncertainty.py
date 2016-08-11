@@ -14,8 +14,6 @@
 
 # TODO have the option of saving the exploration by parameters instead of by distribution
 
-# Figures are always saved on the format:
-# output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
 
 # TODO use sumatra when starting runs
 
@@ -51,11 +49,9 @@
 # TODO create a progressbar using tqdm
 
 
-# TODO Make 3d plots of 2d features and 2d plots of 1d features
+# TODO Make 3d plots of 2d features
 
 # TODO calculate sensitivity in MC method
-
-# TODO Shoud single parameter results be stored?
 
 # TODO rewrite plotting code to be a series of functions?
 
@@ -64,8 +60,6 @@
 # TODO use _ before hidden variables
 
 # TODO Add a option for models with variable timesteps
-
-# TODO Fix what seems to be memory leak in code
 
 # TODO Profile the code using line profiler or
 # python -m cProfile %1
@@ -81,8 +75,6 @@
 # TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
 
 # TODO make it possible to create dependent variables.
-
-# TODO Check if averageAPWidth seems correct
 
 # TODO Move plotDirectComparison to plotUncertainty.
 
@@ -108,6 +100,11 @@
 
 # TODO make it possible to use ones own plotting class
 
+
+# Figures are always saved on the format:
+# output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
+
+
 import time
 import os
 import h5py
@@ -119,7 +116,9 @@ import multiprocessing as mp
 import matplotlib.pyplot as plt
 import logging
 
+
 from xvfbwrapper import Xvfb
+from SALib.analyze import sobol
 
 # Imported from uncertainpy
 from uncertainpy.features import NeuronFeatures
@@ -310,10 +309,17 @@ For example on use see:
 
         self.resetValues()
 
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
+
+
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=output_dir_figures,
                                     output_dir_gif=output_dir_gif,
-                                    figureformat=figureformat)
+                                    figureformat=figureformat,
+                                    verbose_level=verbose_level,
+                                    verbose_filename=verbose_filename)
 
 
         if output_data_filename is None:
@@ -322,9 +328,6 @@ For example on use see:
             self.output_data_filename = output_data_filename
 
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
 
         if seed is not None:
             cp.seed(seed)
@@ -504,7 +507,7 @@ For example on use see:
             # self.U[feature] = np.array(self.U[feature])
 
         # self.t[feature] = np.array(self.t[feature])
-        # self.U[feature] = np.array(self.U[feature])
+        self.U[feature] = np.array(self.U[feature])
 
 
 
@@ -664,6 +667,7 @@ For example on use see:
 
             self.p_05[feature] = np.percentile(self.U[feature], 5, 0)
             self.p_95[feature] = np.percentile(self.U[feature], 95, 0)
+
 
 
     def timePassed(self):
@@ -865,9 +869,8 @@ For example on use see:
 
 
     # TODO make sure this function works
-    def plotAll(self, foldername):
-        self.plot.setData(foldername=foldername,
-                          t=self.t,
+    def plotAll(self):
+        self.plot.setData(t=self.t,
                           U=self.U,
                           E=self.E,
                           Var=self.Var,
