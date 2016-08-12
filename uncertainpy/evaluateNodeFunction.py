@@ -52,6 +52,7 @@ def evaluateNodeFunction(data):
         cmd.append(parameter)
         cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
+
     simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
@@ -79,6 +80,7 @@ def evaluateNodeFunction(data):
         sys.path.insert(0, feature_cmd[0])
         module = __import__(feature_cmd[1].split(".")[0])
         features = getattr(module, feature_cmd[2])(t, U, **kwargs)
+
 
 
         feature_results = features.calculateFeatures(feature_list)

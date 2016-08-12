@@ -752,7 +752,6 @@ class TestTestingModelNoU(unittest.TestCase):
 #
 #         filepath = os.path.abspath(__file__)
 #         filedir = os.path.dirname(filepath)
-#         print os.path.join(filedir, model_file)
 #         self.model = NeuronModel(model_file=model_file, model_path=os.path.join(filedir, model_path))
 #
 #     def test_load(self):

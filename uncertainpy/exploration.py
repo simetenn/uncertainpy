@@ -21,7 +21,6 @@ class UncertaintyEstimations():
                  supress_model_graphics=True,
                  supress_model_output=True,
                  CPUs=mp.cpu_count(),
-                 interpolate_union=False,
                  rosenblatt=False,
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
@@ -55,7 +54,6 @@ class UncertaintyEstimations():
         self.supress_model_graphics = supress_model_graphics
         self.supress_model_output = supress_model_output
         self.CPUs = CPUs
-        self.interpolate_union = interpolate_union
         self.rosenblatt = rosenblatt
         self.figureformat = figureformat
         self.features = features
@@ -111,7 +109,6 @@ class UncertaintyEstimations():
                                           supress_model_graphics=self.supress_model_graphics,
                                           supress_model_output=self.supress_model_output,
                                           CPUs=self.CPUs,
-                                          interpolate_union=self.interpolate_union,
                                           rosenblatt=self.rosenblatt,
                                           nr_mc_samples=self.nr_mc_samples,
                                           nr_pc_mc_samples=self.nr_pc_mc_samples,
@@ -152,7 +149,6 @@ class UncertaintyEstimations():
                                   supress_model_graphics=self.supress_model_graphics,
                                   supress_model_output=self.supress_model_output,
                                   CPUs=self.CPUs,
-                                  interpolate_union=self.interpolate_union,
                                   rosenblatt=self.rosenblatt,
                                   nr_pc_mc_samples=self.nr_pc_mc_samples,
                                   verbose_level=self.verbose_level,
@@ -199,7 +195,6 @@ class UncertaintyEstimations():
                                       supress_model_graphics=self.supress_model_graphics,
                                       supress_model_output=self.supress_model_output,
                                       CPUs=self.CPUs,
-                                      interpolate_union=self.interpolate_union,
                                       rosenblatt=self.rosenblatt,
                                       nr_mc_samples=nr_mc_sample,
                                       nr_pc_mc_samples=self.nr_pc_mc_samples,

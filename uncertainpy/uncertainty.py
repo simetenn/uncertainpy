@@ -118,7 +118,6 @@ import logging
 
 
 from xvfbwrapper import Xvfb
-from SALib.analyze import sobol
 
 # Imported from uncertainpy
 from uncertainpy.features import NeuronFeatures
@@ -298,7 +297,13 @@ For example on use see:
 
         self.rosenblatt = rosenblatt
 
-        self.kwargs = kwargs
+        # self.kwargs = kwargs
+
+
+        if "feature_options" in kwargs:
+            self.feature_kwargs = kwargs["feature_options"]
+        else:
+            self.feature_kwargs = {}
 
         # if self.warning_flag:
         #     warnings.simplefilter('ignore')
@@ -374,11 +379,6 @@ For example on use see:
     def evaluateNodeFunctionList(self, nodes):
         data = []
 
-        if "feature_options" in self.kwargs:
-            tmp_kwargs = self.kwargs["feature_options"]
-        else:
-            tmp_kwargs = {}
-
         for node in nodes:
             data.append((self.model.cmd(),
                          self.supress_model_output,
@@ -387,7 +387,7 @@ For example on use see:
                          self.uncertain_parameters,
                          self.feature_list,
                          self.features.cmd(),
-                         tmp_kwargs))
+                         self.feature_kwargs))
         return data
 
 
@@ -413,7 +413,7 @@ For example on use see:
                                                         self.uncertain_parameters,
                                                         self.feature_list,
                                                         self.features.cmd(),
-                                                        self.kwargs]))
+                                                        self.feature_kwargs]))
         except MemoryError:
             return -1
 
@@ -699,7 +699,7 @@ For example on use see:
                 filename = "%s_single-parameter-%s" \
                     % (self.output_data_filename, uncertain_parameter)
                 self.logger.info("Saving plots as: {}".format(filename))
-                self.plotAll(filename)
+                self.plotAll()
 
 
 

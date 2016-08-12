@@ -53,7 +53,7 @@ pip_install pandas
 pip_install numpy
 pip_install seaborn
 pip_install -e git+https://github.com/hplgit/chaospy.git#egg=chaospy
-pip_install SALib
+
 
 pip_install xvfbwrapper
 pip_install psutil
