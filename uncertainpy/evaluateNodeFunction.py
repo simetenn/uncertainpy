@@ -6,6 +6,7 @@ import os
 import numpy as np
 import multiprocessing as mp
 
+# TODO see if neuron models can be run directly from this class
 
 
 __all__ = ["evaluateNodeFunction"]

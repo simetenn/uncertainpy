@@ -15,9 +15,6 @@ def main():
     # args = parser.parse_args()
     args, _ = parser.parse_known_args()
 
-    print sys.modules.keys()
-
-
     sys.path.insert(0, args.file_dir)
     module = __import__(args.file_name.split(".")[0])
     model = getattr(module, args.model_name)
