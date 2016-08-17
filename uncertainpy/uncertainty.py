@@ -149,7 +149,7 @@ class UncertaintyEstimation():
                  verbose_level="info",
                  verbose_filename=None,
                  seed=None,
-                 **kwargs):
+                 feature_options={}):
         """
 Uncertainty Estimation object
 
@@ -230,10 +230,8 @@ verbose_filename : None/str
     Default is None.
 seed : None/ int or array_like, optional
     Setting a seed, usefull for testing purposes
-**kwargs : dict
-    Optional arguments to be sent to other classes.
-    Currently only features support recieving optional
-    arguments.
+feature_options : dict
+    Optional arguments to be sent to features.
 
 Methods
 -------
@@ -297,14 +295,7 @@ For example on use see:
 
         self.rosenblatt = rosenblatt
 
-        # self.kwargs = kwargs
-
-
-        if "feature_options" in kwargs:
-            self.feature_kwargs = kwargs["feature_options"]
-        else:
-            self.feature_kwargs = {}
-
+        self.feature_options = feature_options
         # if self.warning_flag:
         #     warnings.simplefilter('ignore')
 
@@ -387,7 +378,7 @@ For example on use see:
                          self.uncertain_parameters,
                          self.feature_list,
                          self.features.cmd(),
-                         self.feature_kwargs))
+                         self.feature_options))
         return data
 
 
@@ -413,7 +404,7 @@ For example on use see:
                                                         self.uncertain_parameters,
                                                         self.feature_list,
                                                         self.features.cmd(),
-                                                        self.feature_kwargs]))
+                                                        self.feature_options]))
         except MemoryError:
             return -1
 
@@ -699,7 +690,7 @@ For example on use see:
                 filename = "%s_single-parameter-%s" \
                     % (self.output_data_filename, uncertain_parameter)
                 self.logger.info("Saving plots as: {}".format(filename))
-                self.plotAll()
+                self.plotAll(filename)
 
 
 

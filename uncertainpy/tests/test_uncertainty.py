@@ -133,8 +133,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(result[0], result[1])
         self.assertEqual(result[1], result[2])
 
-        self.uncertainty.kwargs["feature_options"] = {"correct": True}
-        self.uncertainty.kwargs["something_else"] = {"wrong": False}
+        self.uncertainty.feature_options = {"correct": True}
 
         result = self.uncertainty.evaluateNodeFunctionList(nodes)
         self.assertEqual(result[0][7], {"correct": True})
