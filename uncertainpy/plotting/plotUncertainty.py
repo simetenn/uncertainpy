@@ -644,6 +644,9 @@ class PlotUncertainty():
 
     def plotCompareMean(self, feature="directComparison",
                         hardcopy=True, show=False, **kwargs):
+
+        self.logger.debug("plotting: {}, mean, compare".format(feature))
+
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -690,6 +693,9 @@ class PlotUncertainty():
     # As with compare 0d features
     def plotCompareVariance(self, feature="directComparison",
                             hardcopy=True, show=False, **kwargs):
+
+        self.logger.debug("plotting: {}, variance, compare".format(feature))
+
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -738,6 +744,11 @@ class PlotUncertainty():
     def plotCompareMeanAndVariance(self, feature="directComparison",
                                    hardcopy=True, show=False, sns_style="dark",
                                    **kwargs):
+
+        self.logger.debug("plotting: {}, mean and variance, compare".format(feature))
+
+
+
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -830,6 +841,9 @@ class PlotUncertainty():
 
     def plotCompareConfidenceInterval(self, feature="directComparison",
                                       hardcopy=True, show=False, **kwargs):
+
+        self.logger.debug("plotting: {}, confidence-interval, compare".format(feature))
+
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -898,6 +912,10 @@ class PlotUncertainty():
     # TODO not tested since MC currently does not calculate sensitivity
     def plotCompareSensitivity(self, feature="directComparison",
                                hardcopy=True, show=False, **kwargs):
+
+
+        self.logger.debug("plotting: {}, sensitivity, compare".format(feature))
+
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -943,6 +961,9 @@ class PlotUncertainty():
 
     def plotCompareAttributeFeature0d(self, feature, attribute="E", attribute_name="mean",
                                       hardcopy=True, show=False, **kwargs):
+        self.logger.debug("plotting: {}, {}, compare".format(feature, attribute_name))
+
+
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
@@ -1005,6 +1026,9 @@ class PlotUncertainty():
 
     def plotCompareConfidenceIntervalFeature0d(self, feature, hardcopy=True,
                                                show=False, **kwargs):
+
+        self.logger.debug("plotting: {}, confidence-interval, compare".format(feature))
+
 
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
@@ -1462,13 +1486,13 @@ class PlotUncertainty():
 
 
     def plotCompareAll(self, filename, compare_folders,
-                        hardcopy=True, show=False):
+                       hardcopy=True, show=False):
         self.logger.info("Comparing data")
 
         self.loadCompareData(filename, compare_folders)
 
-        self.plotCompareFractional(hardcopy=hardcopy, show=show)
         self.plotCompare(hardcopy=hardcopy, show=show)
+        # self.plotCompareFractional(hardcopy=hardcopy, show=show)
 
 
 

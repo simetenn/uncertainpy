@@ -41,5 +41,5 @@ exploration.compareMC(mc_samples)
 
 memory.end()
 
-subprocess.Popen(["play", "-q", "ship_bell.wav"])
+subprocess.call(["play", "-q", "ship_bell.wav"])
 print "The total runtime is: " + str(datetime.timedelta(seconds=(exploration.timePassed())))
