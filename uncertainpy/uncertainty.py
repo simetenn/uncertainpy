@@ -596,12 +596,6 @@ For example on use see:
         solves = self.evaluateNodes(nodes)
 
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
-        print "---------solves----------"
-        print solves[0].keys()
-        for i in solves:
-            print len(i["directComparison"][0])
-            print len(i["directComparison"][1])
-
         self.storeResults(solves)
 
         # Calculate PC for each feature
@@ -613,15 +607,6 @@ For example on use see:
                 masked_nodes, masked_U = self.createMask(nodes, feature)
 
             # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-
-
-            print "---------p----------"
-            print self.P
-            print "--------masked_nodes-----------"
-            print masked_nodes.shape
-            print "--------masked_U-----------"
-            print masked_U.shape
-
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
 

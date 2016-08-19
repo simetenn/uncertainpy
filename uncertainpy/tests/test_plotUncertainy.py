@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import sys
 import unittest
 import subprocess
 import shutil
@@ -15,7 +14,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.folder = os.path.dirname(os.path.realpath(__file__))
 
         self.test_data_dir = os.path.join(self.folder, "data")
-        self.data_file = "test_plot_data"  
+        self.data_file = "test_plot_data"
         self.output_test_dir = ".tests/"
 
         if os.path.isdir(self.output_test_dir):
