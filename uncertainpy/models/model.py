@@ -26,14 +26,17 @@ class Model():
 
     Run must store the results from the simulation in self.t and self.U
     """
-    def __init__(self, parameters=None):
+    def __init__(self, parameters=None, adaptive_model=False):
         self.U = None
         self.t = None
 
         self.parameters = parameters
+        self.adaptive_model = adaptive_model
 
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
+
+
 
     def load(self):
         pass

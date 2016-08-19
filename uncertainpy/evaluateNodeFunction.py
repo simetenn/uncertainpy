@@ -47,7 +47,9 @@ def evaluateNodeFunction(data):
     else:
         current_process = "0"
 
-    cmd = cmd + ["--CPU", current_process, "--save_path", filedir, "--parameters"]
+    cmd = cmd + ["--CPU", current_process,
+                 "--save_path", filedir,
+                 "--parameters"]
 
     for parameter in tmp_parameters:
         cmd.append(parameter)

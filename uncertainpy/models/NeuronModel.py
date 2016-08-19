@@ -7,8 +7,10 @@ from model import Model
 
 
 class NeuronModel(Model):
-    def __init__(self, parameters=None, model_file=None, model_path=None):
-        Model.__init__(self, parameters=parameters)
+    def __init__(self, parameters=None, model_file=None,
+                 model_path=None, adaptive_model=False):
+        Model.__init__(self, parameters=parameters,
+                       adaptive_model=adaptive_model)
 
         if model_file is None or model_path is None:
             parser = argparse.ArgumentParser()

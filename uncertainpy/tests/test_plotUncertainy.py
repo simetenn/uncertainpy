@@ -15,7 +15,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.folder = os.path.dirname(os.path.realpath(__file__))
 
         self.test_data_dir = os.path.join(self.folder, "data")
-        self.data_file = "test_plot_data"
+        self.data_file = "test_plot_data"  
         self.output_test_dir = ".tests/"
 
         if os.path.isdir(self.output_test_dir):
@@ -25,7 +25,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot = PlotUncertainty(data_dir=self.test_data_dir,
                                     output_dir_figures=self.output_test_dir,
                                     output_dir_gif=self.output_test_dir,
-                                    verbose_level="debug")
+                                    verbose_level="error")
 
 
 

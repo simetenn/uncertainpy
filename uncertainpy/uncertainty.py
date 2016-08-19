@@ -141,7 +141,6 @@ class UncertaintyEstimation():
                  output_data_filename=None,
                  supress_model_graphics=True,
                  supress_model_output=True,
-                 adaptive_model=False,
                  CPUs=mp.cpu_count(),
                  rosenblatt=False,
                  nr_mc_samples=10**3,
@@ -291,7 +290,6 @@ For example on use see:
         self.CPUs = CPUs
 
         self.model = model
-        self.adaptive_model = adaptive_model
 
         self.rosenblatt = rosenblatt
 
@@ -373,7 +371,7 @@ For example on use see:
         for node in nodes:
             data.append((self.model.cmd(),
                          self.supress_model_output,
-                         self.adaptive_model,
+                         self.model.adaptive_model,
                          node,
                          self.uncertain_parameters,
                          self.feature_list,
@@ -399,7 +397,7 @@ For example on use see:
                 for node in nodes.T:
                     solves.append(evaluateNodeFunction([self.model.cmd(),
                                                         self.supress_model_output,
-                                                        self.adaptive_model,
+                                                        self.model.adaptive_model,
                                                         node,
                                                         self.uncertain_parameters,
                                                         self.feature_list,
@@ -459,7 +457,7 @@ For example on use see:
         self.all_features = self.features_0d + self.features_1d + self.features_2d
 
         for feature in self.features_2d:
-            if self.adaptive_model and feature == "directComparison":
+            if self.model.adaptive_model and feature == "directComparison":
                 raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
 
             else:
@@ -472,7 +470,7 @@ For example on use see:
                 # self.U[feature] = np.array(self.U[feature])
 
         for feature in self.features_1d:
-            if self.adaptive_model and feature == "directComparison":
+            if self.model.adaptive_model and feature == "directComparison":
                 ts = []
                 interpolation = []
                 for solved in solves:
@@ -598,6 +596,12 @@ For example on use see:
         solves = self.evaluateNodes(nodes)
 
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
+        print "---------solves----------"
+        print solves[0].keys()
+        for i in solves:
+            print len(i["directComparison"][0])
+            print len(i["directComparison"][1])
+
         self.storeResults(solves)
 
         # Calculate PC for each feature
@@ -609,6 +613,15 @@ For example on use see:
                 masked_nodes, masked_U = self.createMask(nodes, feature)
 
             # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+
+
+            print "---------p----------"
+            print self.P
+            print "--------masked_nodes-----------"
+            print masked_nodes.shape
+            print "--------masked_U-----------"
+            print masked_U.shape
+
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
 
