@@ -1492,7 +1492,7 @@ class PlotUncertainty():
         self.loadCompareData(filename, compare_folders)
 
         self.plotCompare(hardcopy=hardcopy, show=show)
-        # self.plotCompareFractional(hardcopy=hardcopy, show=show)
+        self.plotCompareFractional(hardcopy=hardcopy, show=show)
 
 
 
