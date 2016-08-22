@@ -617,16 +617,16 @@ For example on use see:
             self.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
 
-            if len(self.uncertain_parameters) > 1:
-                    self.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
-
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
-
 
             if len(self.uncertain_parameters) > 1:
                 self.U_mc[feature] = self.U_hat[feature](*samples)
+                self.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
+
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
+                self.sensitivity[feature] = None
+
 
             self.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
             self.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
@@ -803,7 +803,7 @@ For example on use see:
                 group.create_dataset("p_05", data=self.p_05[feature])
             if feature in self.p_95:
                 group.create_dataset("p_95", data=self.p_95[feature])
-            if feature in self.sensitivity:
+            if feature in self.sensitivity and self.sensitivity[feature] is not None:
                 group.create_dataset("sensitivity", data=self.sensitivity[feature])
             # if feature == "directComparison":
             #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
@@ -858,8 +858,9 @@ For example on use see:
 
 
     # TODO make sure this function works
-    def plotAll(self):
-        self.plot.setData(t=self.t,
+    def plotAll(self, foldername):
+        self.plot.setData(foldername=foldername,
+                          t=self.t,
                           U=self.U,
                           E=self.E,
                           Var=self.Var,

@@ -1,6 +1,5 @@
 import os
 import h5py
-import sys
 import shutil
 import glob
 import argparse
@@ -478,7 +477,7 @@ class PlotUncertainty():
 
         ax = prettyBar(values, index=xticks, xlabels=xlabels, ylabel="Value",
                        palette=get_colormap_tableu20())
-        # plt.show()
+
 
         if self.sensitivity[feature] is not None:
             pos = 2*distance + 2*width

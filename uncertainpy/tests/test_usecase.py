@@ -1,17 +1,7 @@
-import numpy as np
 import unittest
-import scipy.interpolate
-import chaospy as cp
 import os
 import shutil
-import subprocess
-import glob
 
-from uncertainpy import UncertaintyEstimation
-from uncertainpy.features import TestingFeatures, NeuronFeatures
-from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
-from uncertainpy.parameters import Parameters
-from uncertainpy import Distribution
 import uncertainpy
 
 
@@ -33,6 +23,17 @@ class TestUseCases(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
+    def list_files(self):
+        result = []
+        for dir_content in os.walk(self.output_test_dir):
+            for filename in dir_content[2]:
+                result.append(os.path.join(dir_content[0].split(os.path.sep)[-1], filename))
+
+        result.sort()
+
+        return result
+
+
     def test_CoffeeCupPointModelExploreParameters(self):
         parameterlist = [["kappa", -0.05, None],
                          ["u_env", 20, None]]
@@ -46,130 +47,175 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         save_figures=True)
 
 
         percentages = [0.1, 0.2, 0.3]
         test_distributions = {"uniform": percentages}
         exploration.exploreParameters(test_distributions)
 
+        result = self.list_files()
 
+        print result
 
-    def test_CoffeeCupPointModelCompareMC(self):
-        parameterlist = [["kappa", -0.05, None],
-                         ["u_env", 20, None]]
+        files = ['uniform_0.1/CoffeeCupPointModel',
+                 'uniform_0.1/CoffeeCupPointModel_single-parameter-kappa',
+                 'uniform_0.1/CoffeeCupPointModel_single-parameter-u_env',
+                 'uniform_0.2/CoffeeCupPointModel',
+                 'uniform_0.2/CoffeeCupPointModel_single-parameter-kappa',
+                 'uniform_0.2/CoffeeCupPointModel_single-parameter-u_env',
+                 'uniform_0.3/CoffeeCupPointModel',
+                 'uniform_0.3/CoffeeCupPointModel_single-parameter-kappa',
+                 'uniform_0.3/CoffeeCupPointModel_single-parameter-u_env']
 
-
-        parameters = uncertainpy.Parameters(parameterlist)
-        model = uncertainpy.CoffeeCupPointModel(parameters)
-        model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
-
-
-        exploration = uncertainpy.UncertaintyEstimations(model,
-                                                         feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
-                                                         nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
-
-
-        mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
-
-
-    def test_HodkinHuxleyModelExploreParameters(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-
-        parameters = uncertainpy.Parameters(parameterlist)
-        model = uncertainpy.HodkinHuxleyModel(parameters)
-
-        exploration = uncertainpy.UncertaintyEstimations(model,
-                                                         feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
-                                                         nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
-
-
-        percentages = [0.1, 0.2, 0.3]
-        test_distributions = {"uniform": percentages}
-        exploration.exploreParameters(test_distributions)
+        self.assertEqual(files, result)
 
 
 
-    def test_HodkinHuxleyModelCompareMC(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-
-        parameters = uncertainpy.Parameters(parameterlist)
-        model = uncertainpy.HodkinHuxleyModel(parameters)
-        model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
-
-
-        exploration = uncertainpy.UncertaintyEstimations(model,
-                                                         feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
-                                                         nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
-
-
-        mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
-
-
-    def test_IzhikevichModelExploreParameters(self):
-        parameterlist = [["a", 0.02, None],
-                         ["b", 0.2, None],
-                         ["c", -65, None],
-                         ["d", 8, None]]
-
-
-        parameters = uncertainpy.Parameters(parameterlist)
-        model = uncertainpy.IzhikevichModel(parameters)
-
-        exploration = uncertainpy.UncertaintyEstimations(model,
-                                                         feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
-                                                         nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
-
-
-        percentages = [0.1, 0.2, 0.3]
-        test_distributions = {"uniform": percentages}
-        exploration.exploreParameters(test_distributions)
-
-
-
-    def test_IzhikevichModelCompareMC(self):
-        parameterlist = [["a", 0.02, None],
-                         ["b", 0.2, None],
-                         ["c", -65, None],
-                         ["d", 8, None]]
-
-
-        parameters = uncertainpy.Parameters(parameterlist)
-        model = uncertainpy.IzhikevichModel(parameters)
-        model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
-
-
-        exploration = uncertainpy.UncertaintyEstimations(model,
-                                                         feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
-                                                         nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
-
-
-        mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
-
+    #
+    # def test_CoffeeCupPointModelCompareMC(self):
+    #     parameterlist = [["kappa", -0.05, None],
+    #                      ["u_env", 20, None]]
+    #
+    #
+    #     parameters = uncertainpy.Parameters(parameterlist)
+    #     model = uncertainpy.CoffeeCupPointModel(parameters)
+    #     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+    #
+    #
+    #     exploration = uncertainpy.UncertaintyEstimations(model,
+    #                                                      feature_list="all",
+    #                                                      output_dir_data=self.output_test_dir,
+    #                                                      output_dir_figures=self.output_test_dir,
+    #                                                      nr_mc_samples=10**1,
+    #                                                      nr_pc_mc_samples=10**2)
+    #
+    #
+    #     mc_samples = [10, 100]
+    #     exploration.compareMC(mc_samples)
+    #
+    #     result = self.list_files()
+    #
+    #     files = ['mc_10/CoffeeCupPointModel',
+    #              'mc_100/CoffeeCupPointModel',
+    #              'pc/CoffeeCupPointModel']
+    #
+    #     self.assertEqual(files, result)
+    #
+    #
+    #
+    # def test_HodkinHuxleyModelExploreParameters(self):
+    #     parameterlist = [["gbar_Na", 120, None],
+    #                      ["gbar_K", 36, None],
+    #                      ["gbar_l", 0.3, None]]
+    #
+    #
+    #     parameters = uncertainpy.Parameters(parameterlist)
+    #     model = uncertainpy.HodkinHuxleyModel(parameters)
+    #
+    #     exploration = uncertainpy.UncertaintyEstimations(model,
+    #                                                      feature_list="all",
+    #                                                      output_dir_data=self.output_test_dir,
+    #                                                      output_dir_figures=self.output_test_dir,
+    #                                                      nr_mc_samples=10**1,
+    #                                                      nr_pc_mc_samples=10**2)
+    #
+    #
+    #     percentages = [0.1, 0.2, 0.3]
+    #     test_distributions = {"uniform": percentages}
+    #     exploration.exploreParameters(test_distributions)
+    #
+    #
+    #
+    # def test_HodkinHuxleyModelCompareMC(self):
+    #     parameterlist = [["gbar_Na", 120, None],
+    #                      ["gbar_K", 36, None],
+    #                      ["gbar_l", 0.3, None]]
+    #
+    #
+    #     parameters = uncertainpy.Parameters(parameterlist)
+    #     model = uncertainpy.HodkinHuxleyModel(parameters)
+    #     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+    #
+    #
+    #     exploration = uncertainpy.UncertaintyEstimations(model,
+    #                                                      feature_list="all",
+    #                                                      output_dir_data=self.output_test_dir,
+    #                                                      output_dir_figures=self.output_test_dir,
+    #                                                      nr_mc_samples=10**1,
+    #                                                      nr_pc_mc_samples=10**2)
+    #
+    #
+    #     mc_samples = [10, 100]
+    #     exploration.compareMC(mc_samples)
+    #
+    #
+    #     result = self.list_files()
+    #
+    #     files = ['mc_10/HodkinHuxleyModel',
+    #              'mc_100/HodkinHuxleyModel',
+    #              'pc/HodkinHuxleyModel']
+    #
+    #     self.assertEqual(files, result)
+    #
+    #
+    #
+    # def test_IzhikevichModelExploreParameters(self):
+    #     parameterlist = [["a", 0.02, None],
+    #                      ["b", 0.2, None],
+    #                      ["c", -65, None],
+    #                      ["d", 8, None]]
+    #
+    #
+    #     parameters = uncertainpy.Parameters(parameterlist)
+    #     model = uncertainpy.IzhikevichModel(parameters)
+    #
+    #     exploration = uncertainpy.UncertaintyEstimations(model,
+    #                                                      feature_list="all",
+    #                                                      output_dir_data=self.output_test_dir,
+    #                                                      output_dir_figures=self.output_test_dir,
+    #                                                      nr_mc_samples=10**1,
+    #                                                      nr_pc_mc_samples=10**2)
+    #
+    #
+    #     percentages = [0.1, 0.2, 0.3]
+    #     test_distributions = {"uniform": percentages}
+    #     exploration.exploreParameters(test_distributions)
+    #
+    #
+    #
+    # def test_IzhikevichModelCompareMC(self):
+    #     parameterlist = [["a", 0.02, None],
+    #                      ["b", 0.2, None],
+    #                      ["c", -65, None],
+    #                      ["d", 8, None]]
+    #
+    #
+    #     parameters = uncertainpy.Parameters(parameterlist)
+    #     model = uncertainpy.IzhikevichModel(parameters)
+    #     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+    #
+    #
+    #     exploration = uncertainpy.UncertaintyEstimations(model,
+    #                                                      feature_list="all",
+    #                                                      output_dir_data=self.output_test_dir,
+    #                                                      output_dir_figures=self.output_test_dir,
+    #                                                      nr_mc_samples=10**1,
+    #                                                      nr_pc_mc_samples=10**2)
+    #
+    #
+    #     mc_samples = [10, 100]
+    #     exploration.compareMC(mc_samples)
+    #
+    #
+    #     result = self.list_files()
+    #
+    #     files = ['mc_10/IzhikevichModel',
+    #              'mc_100/IzhikevichModel',
+    #              'pc/IzhikevichModel']
+    #
+    #     self.assertEqual(files, result)
 
 
     # def test_LgnExploreParameters(self):
