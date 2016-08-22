@@ -598,6 +598,17 @@ For example on use see:
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
         self.storeResults(solves)
 
+        # TODO keep this test for adaptive_model ?
+        # test if it is an adaptive model
+        if not self.model.adaptive_model:
+            for feature in self.features_1d + self.features_2d:
+                u_prev = self.U[feature][0]
+                for u in self.U[feature][1:]:
+                    if u_prev.shape != u.shape:
+                        raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
+                    u_prev = u
+
+
         # Calculate PC for each feature
         for feature in self.all_features:
             if self.rosenblatt:
@@ -858,7 +869,7 @@ For example on use see:
 
 
     # TODO make sure this function works
-    def plotAll(self, foldername):
+    def plotAll(self, foldername=None):
         self.plot.setData(foldername=foldername,
                           t=self.t,
                           U=self.U,

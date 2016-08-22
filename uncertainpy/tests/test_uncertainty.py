@@ -10,6 +10,7 @@ import glob
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.features import TestingFeatures, NeuronFeatures
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
+from uncertainpy.models import TestingModel1dAdaptive
 from uncertainpy.parameters import Parameters
 from uncertainpy import Distribution
 
@@ -291,7 +292,7 @@ class TestUncertainty(unittest.TestCase):
     def test_storeResultsModel1dFeaturesAllAdaptive(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.adaptive_model = True
+        self.uncertainty.model.adaptive_model = True
         self.uncertainty.feature_list = ["feature0d", "feature1d", "feature2d",
                                          "featureInvalid"]
 
@@ -382,7 +383,7 @@ class TestUncertainty(unittest.TestCase):
     def test_performInterpolation(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.uncertain_parameters = ["a", "b"]
-        self.uncertainty.adaptive_model = True
+        self.uncertainty.model.adaptive_model = True
         self.uncertainty.feature_list = []
 
         results = self.uncertainty.evaluateNodes(nodes)
@@ -644,10 +645,25 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(self.uncertainty.U_hat["directComparison"], cp.Poly)
 
 
+    def test_createPCExpansionAdaptiveError(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1dAdaptive(parameters, adaptive_model=False)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 feature_list=["feature1d",
+                                                               "feature2d"],
+                                                 verbose_level="error")
+        with self.assertRaises(ValueError):
+            self.uncertainty.createPCExpansion()
+
+
     def test_createPCExpansionFeatureInvalid(self):
-
-
-
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 

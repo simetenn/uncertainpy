@@ -156,10 +156,19 @@ class PlotUncertainty():
 
         self.loaded_flag = True
 
-    def toLatex(text):
-        txt = text.split("_")
-        return "$" + txt[0] + "{" + txt[1:] + "}"
+    def toLatex(self, text):
+        if "_" in text:
+            txt = text.split("_")
+            return "$" + txt[0] + "_{" + "-".join(txt[1:]) + "}$"
+        else:
+            return text
 
+    def listToLatex(self, texts):
+        tmp = []
+        for txt in texts:
+            tmp.append(self.toLatex(txt))
+
+        return tmp
 
     def sortFeatures(self, results):
         features_1d = []
@@ -233,7 +242,8 @@ class PlotUncertainty():
 
 
     def plotMeanAndVariance(self, feature="directComparison", new_figure=True,
-                            hardcopy=True, show=False, color=0, **kwargs):
+                            hardcopy=True, show=False, color=0, sns_style="dark",
+                            **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -244,7 +254,7 @@ class PlotUncertainty():
 
         ax = prettyPlot(self.t[feature], self.E[feature],
                         feature + ", mean and variance", "time", "voltage, mean",
-                        **kwargs)
+                        sns_style=sns_style, **kwargs)
 
         colors = get_current_colormap()
 
@@ -427,7 +437,7 @@ class PlotUncertainty():
         if len(self.sensitivity[feature]) > 4:
             plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
 
-        set_legend(self.uncertain_parameters)
+        set_legend(self.listToLatex(self.uncertain_parameters))
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
@@ -516,7 +526,8 @@ class PlotUncertainty():
             xlabels.append("sensitivity")
 
             location = (0.5, 1.01 + legend_width*0.095)
-            lgd = plt.legend(legend_bars, self.uncertain_parameters,
+            lgd = plt.legend(legend_bars,
+                             self.listToLatex(self.uncertain_parameters),
                              loc='upper center', bbox_to_anchor=location,
                              ncol=legend_size)
             lgd.get_frame().set_edgecolor(axis_grey)
@@ -954,7 +965,7 @@ class PlotUncertainty():
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                         feature + "_sensitivity_" + parameter_names[i]  + "_compare" + self.figureformat),
+                                         feature + "_sensitivity_" + parameter_names[i] + "_compare" + self.figureformat),
                             bbox_inches="tight")
                 if not show:
                     plt.close()

@@ -388,22 +388,31 @@ WARNING - plotUncertainty - No support for more than 0d and 1d plotting."""
         self.compare_plot("feature0d")
 
 
-    #
-    # def test_plotAllData(self):
-    #     self.plot.loadData(self.data_file)
-    #
-    #     self.plot.plotAllData()
-    #
-    #
-    #     self.compare_plot("feature1d_mean")
-    #     self.compare_plot("feature1d_variance")
-    #     self.compare_plot("feature1d_mean-variance")
-    #     self.compare_plot("feature1d_confidence-interval")
-    #     self.compare_plot("feature1d_sensitivity_a")
-    #     self.compare_plot("feature1d_sensitivity_b")
-    #     self.compare_plot("feature1d_sensitivity")
-    #     self.compare_plot("feature1d_sensitivity_grid")
-    #     self.compare_plot("feature0d")
+
+    def test_plotAllData(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plotAllData()
+
+        self.compare_plot("directComparison_mean")
+        self.compare_plot("directComparison_variance")
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+        self.compare_plot("directComparison_sensitivity_a")
+        self.compare_plot("directComparison_sensitivity_b")
+        self.compare_plot("directComparison_sensitivity")
+        self.compare_plot("directComparison_sensitivity_grid")
+
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_a")
+        self.compare_plot("feature1d_sensitivity_b")
+        self.compare_plot("feature1d_sensitivity")
+        self.compare_plot("feature1d_sensitivity_grid")
+
+        self.compare_plot("feature0d")
 
 
     def test_loadCompareData(self):

@@ -13,4 +13,4 @@ from NestNetwork import NestNetwork
 from model import Model
 from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
 from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime, TestingModel2dNoTime
-from TestingModel import TestingModelNoU, TestingModel1dConstant
+from TestingModel import TestingModelNoU, TestingModel1dConstant, TestingModel1dAdaptive

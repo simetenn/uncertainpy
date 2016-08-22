@@ -25,6 +25,18 @@ class TestingModel1d(Model):
         self.U = np.arange(0, 10) + self.a + self.b
 
 
+class TestingModel1dAdaptive(Model):
+    def __init__(self, parameters=None, adaptive_model=True):
+        Model.__init__(self, parameters=parameters, adaptive_model=adaptive_model)
+
+        self.a = 1
+        self.b = 2
+
+    def run(self):
+        self.t = np.arange(0, 10 + self.a + self.b)
+        self.U = np.arange(0, 10 + self.a + self.b) + self.a + self.b
+
+
 class TestingModel1dConstant(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
