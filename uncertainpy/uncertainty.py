@@ -294,8 +294,6 @@ For example on use see:
         self.rosenblatt = rosenblatt
 
         self.feature_options = feature_options
-        # if self.warning_flag:
-        #     warnings.simplefilter('ignore')
 
         self.M = 3
         self.nr_mc_samples = nr_mc_samples

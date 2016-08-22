@@ -10,7 +10,7 @@ from uncertainpy.models import HodkinHuxleyModel, CoffeeCupPointModel
 from uncertainpy.models import IzhikevichModel, Model, NeuronModel
 from uncertainpy.models import TestingModel0d, TestingModel1d, TestingModel2d
 from uncertainpy.models import TestingModel0dNoTime, TestingModel1dNoTime
-from uncertainpy.models import TestingModel2dNoTime, TestingModelNoU
+from uncertainpy.models import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
 from uncertainpy import Parameters
 
 
@@ -747,6 +747,51 @@ class TestTestingModelNoU(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.model.save(1)
 
+
+    class TestTestingModel1dAdaptive(unittest.TestCase):
+        def setUp(self):
+            self.model = TestingModel1dAdaptive()
+
+
+        def test_load(self):
+            self.model.load()
+
+
+        def test_run(self):
+            self.model.run()
+
+            t = np.arange(0, 13)
+            U = np.arange(0, 13) + 3
+
+            self.assertTrue(np.array_equal(self.model.t, t))
+            self.assertTrue(np.array_equal(self.model.U, U))
+
+
+        def test_cmd(self):
+            result = self.model.cmd()
+
+            self.assertIn("TestingModel1dAdaptive", result)
+            self.assertIsInstance(result, list)
+            self.assertEqual(result[0], "python")
+
+
+        def test_useCase(self):
+            self.model = TestingModelNoU()
+            self.model.load()
+
+            parameters = {"a": 1, "b": 2}
+            self.model.setParameterValues(parameters)
+
+            self.model.run()
+
+            self.assertIsNone(self.model.t)
+            self.assertIsNone(self.model.U)
+
+            with self.assertRaises(ValueError):
+                self.model.save()
+
+            with self.assertRaises(ValueError):
+                self.model.save(1)
 
 class TestNeuronModel(unittest.TestCase):
     def setUp(self):

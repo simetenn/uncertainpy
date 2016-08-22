@@ -49,6 +49,7 @@ def create_logger(logger_level, logger_filename=None, logger_name="logger"):
     logger = logging.getLogger(logger_name)
     logger.setLevel(numeric_level)
 
+    logging.captureWarnings(True)
 
     if logger_filename is None:
         console = logging.StreamHandler(stream=sys.stdout)
