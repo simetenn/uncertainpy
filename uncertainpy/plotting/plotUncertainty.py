@@ -156,6 +156,10 @@ class PlotUncertainty():
 
         self.loaded_flag = True
 
+    def toLatex(text):
+        txt = text.split("_")
+        return "$" + txt[0] + "{" + txt[1:] + "}"
+
 
     def sortFeatures(self, results):
         features_1d = []
@@ -192,9 +196,11 @@ class PlotUncertainty():
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
+
         value = getattr(self, attribute)
+        title = feature + ", " + attribute_name
         prettyPlot(self.t[feature], value[feature],
-                   feature + ", " + attribute_name, "time", "voltage", **kwargs)
+                   title, "time", "voltage", **kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -328,7 +334,7 @@ class PlotUncertainty():
 
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       title=feature + ", sensitivity, " + parameter_names[i],
+                       title=feature + ", sensitivity, " + self.toLatex(parameter_names[i]),
                        xlabel="time", ylabel="sensitivity",
                        new_figure=True, **kwargs)
             plt.ylim([0, 1.05])
@@ -375,7 +381,7 @@ class PlotUncertainty():
 
 
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       title=parameter_names[i], color=i, nr_hues=nr_plots,
+                       title=self.toLatex(parameter_names[i]), color=i, nr_hues=nr_plots,
                        xlabel="time", ylabel="sensitivity", ax=ax,
                        **kwargs)
             ax.set_ylim([0, 1.05])
