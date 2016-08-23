@@ -1389,9 +1389,6 @@ class PlotUncertainty():
         compares = self.compare_folders[:]
         compares.remove(reference_name)
 
-
-        # TODO working Here, plot fractional difference values
-
         for compare in compares:
             xlabels.append(compare.replace("_", " "))
             xticks.append(pos + width)
@@ -1637,7 +1634,6 @@ class PlotUncertainty():
 
                         # # PLot sensitivity each single plot
                         # if feature not in self.features_1d:
-                        #     # TODO is this the right error to raise?
                         #     raise ValueError("%s is not a 1d feature" % (feature))
                         #
                         # if "sensitivity" not in self.f[feature].keys():

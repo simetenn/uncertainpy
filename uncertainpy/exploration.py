@@ -222,7 +222,6 @@ class UncertaintyEstimations():
 
     def plot_compareMC_1d(self, feature):
         if feature not in self.features_1d:
-            # TODO is this the right error to raise?
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
 

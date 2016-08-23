@@ -1194,7 +1194,7 @@ class TestUncertainty(unittest.TestCase):
 
 # TODO create tests for:
 # load()
-# plotall()
+
 
 
 

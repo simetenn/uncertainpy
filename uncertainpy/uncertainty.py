@@ -27,10 +27,6 @@
 
 # TODO make it so setup.py install all requirements
 
-# TODO make it so rosenblatt transform code looks pretier and easier
-
-# TODO Rewrite model.py so it use kwargs to send options back and forth instead of argparse
-
 # TODO find out where to save parameter distributions and parameter objects. In
 # the least remove the problems with parameters and setParameters beeing two
 # different things
@@ -44,7 +40,7 @@
 # TODO Decide if the HH model should return Vm - 65 or just Vm
 
 # TODO Make sending of model keywords simpler than it currently is. Use a
-# dictionary similar to kwargs?
+# dictionary similar to kwargs?. model.py
 
 # TODO create a progressbar using tqdm
 
@@ -53,13 +49,9 @@
 
 # TODO calculate sensitivity in MC method
 
-# TODO rewrite plotting code to be a series of functions?
-
 # TODO combine save_data and save_data_dir into the save variable?
 
-# TODO use _ before hidden variables
 
-# TODO Add a option for models with variable timesteps
 
 # TODO Profile the code using line profiler or
 # python -m cProfile %1
@@ -78,8 +70,6 @@
 
 # TODO Move plotDirectComparison to plotUncertainty.
 
-# TODO Create full test coverage
-
 # TODO Add support for 2d interpolation
 
 # TODO Refactor so private variables are "hidden", starts with _
@@ -89,8 +79,6 @@
 
 # TODO Does it make any sense to perform an interpolation for features?
 # Currently features are excluded from interpolation
-
-# TODO finish testing
 
 # TODO move creation of all_features to where the class is initiated
 
@@ -866,7 +854,6 @@ For example on use see:
             i += 1
 
 
-    # TODO make sure this function works
     def plotAll(self, foldername=None):
         self.plot.setData(foldername=foldername,
                           t=self.t,
