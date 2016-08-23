@@ -13,6 +13,6 @@ from evaluateNodeFunction import *
 from parameters import *
 from uncertainty import *
 from exploration import *
-from spikes import *
+
 
 from tests import *

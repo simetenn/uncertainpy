@@ -2,7 +2,6 @@ import os
 import unittest
 import subprocess
 import shutil
-import chaospy as cp
 
 
 from uncertainpy import UncertaintyEstimations, Parameters, Distribution
@@ -10,7 +9,7 @@ from uncertainpy.features import TestingFeatures
 from uncertainpy.models import TestingModel1d
 
 
-class TestPlotUncertainpy(unittest.TestCase):
+class TestExploration(unittest.TestCase):
     def setUp(self):
         self.folder = os.path.dirname(os.path.realpath(__file__))
 

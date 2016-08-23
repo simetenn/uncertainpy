@@ -5,7 +5,7 @@ __author__ = "Simen Tennøe"
 
 from test_distribution import TestDistribution
 from test_evaluateNodeFunction import TestEvaluateNodeFunction
-from test_exploration import TestPlotUncertainpy
+from test_exploration import TestExploration
 from test_features import TestGeneralFeatures, TestGeneralNeuronFeatures, TestNeuronFeatures, TestTestingFeatures
 from test_logger import TestLogger
 from test_models import TestModel, TestHodkinHuxleyModel, TestCoffeeCupPointModel
