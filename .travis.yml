@@ -17,5 +17,6 @@ install:
   - "sh -e /etc/init.d/xvfb start"
   - sudo python setup.py install --full-dependencies --neuron
 script:
+  - python2.7 .c "import chaospy"
   - python2.7 test.py --all
   # - python2.7 -c "import neuron"
