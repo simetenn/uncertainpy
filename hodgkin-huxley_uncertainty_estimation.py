@@ -2,8 +2,8 @@ import subprocess
 import datetime
 import uncertainpy
 
-memory = uncertainpy.Memory(10)
-memory.start()
+# memory = uncertainpy.Memory(10)
+# memory.start()
 
 # parameterlist = [["V_rest", 0, None],
 #                  ["gbar_Na", 120, None],
@@ -29,17 +29,16 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  CPUs=7,
                                                  output_dir_data="data/hodgkin-huxley",
                                                  output_dir_figures="figures/hodgkin-huxley",
-                                                 save_figures=True,
-                                                 rosenblatt=True)
+                                                 save_figures=True)
 
-# percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
-# test_distributions = {"uniform": percentages}
-# exploration.exploreParameters(test_distributions)
+percentages = [0.01, 0.03]
+test_distributions = {"uniform": percentages}
+exploration.exploreParameters(test_distributions)
 
 mc_samples = [10, 100, 1000]
 exploration.compareMC(mc_samples)
 
-memory.end()
+# memory.end()
 
 subprocess.call(["play", "-q", "ship_bell.wav"])
 print "The total runtime is: " + str(datetime.timedelta(seconds=(exploration.timePassed())))

@@ -52,7 +52,6 @@
 # TODO combine save_data and save_data_dir into the save variable?
 
 
-
 # TODO Profile the code using line profiler or
 # python -m cProfile %1
 
@@ -653,6 +652,7 @@ For example on use see:
 
             self.p_05[feature] = np.percentile(self.U[feature], 5, 0)
             self.p_95[feature] = np.percentile(self.U[feature], 95, 0)
+            self.sensitivity[feature] = None
 
 
 

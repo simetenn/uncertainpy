@@ -1317,7 +1317,10 @@ class PlotUncertainty():
         for compare in compares:
             xlabels.append(compare.replace("_", " "))
             xticks.append(pos + 0.5*width)
-            values.append(getattr(self, attribute + "_compare")[compare][feature])
+            getattr(self, attribute + "_compare")[compare][feature]
+            values.append(self._fractional_difference(getattr(self, attribute + "_compare")[reference_name][feature],
+                                                      getattr(self, attribute + "_compare")[compare][feature]))
+
 
             pos += distance + width
 
@@ -1492,7 +1495,7 @@ class PlotUncertainty():
 
 
     def plotCompare(self, hardcopy=True, show=False):
-        self.logger.info("Plotting compare data")
+        self.logger.info("Plotting MC/PC compare data")
 
         self.plotCompare1dFeatures(hardcopy=hardcopy, show=show)
         self.plotCompare0dFeatures(hardcopy=hardcopy, show=show)
@@ -1500,7 +1503,7 @@ class PlotUncertainty():
 
     def plotCompareAll(self, filename, compare_folders,
                        hardcopy=True, show=False):
-        self.logger.info("Comparing data")
+        self.logger.info("Comparing MC/PC data")
 
         self.loadCompareData(filename, compare_folders)
 

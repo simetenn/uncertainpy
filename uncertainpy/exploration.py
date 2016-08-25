@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 
-from uncertainpy import UncertaintyEstimation, Distribution
+from uncertainpy import UncertaintyEstimation, Distribution, PlotUncertainty
 from uncertainpy import prettyPlot, create_logger
 
 
@@ -24,7 +24,7 @@ class UncertaintyEstimations():
                  rosenblatt=False,
                  nr_mc_samples=10**3,
                  nr_pc_mc_samples=10**5,
-                 verbose_level="error",
+                 verbose_level="info",
                  verbose_filename=None,
                  seed=None,
                  **kwargs):
@@ -76,6 +76,8 @@ class UncertaintyEstimations():
                                     self.__class__.__name__)
 
         self.seed = seed
+
+        self.output_data_filename = self.model.__class__.__name__
 
 
 
@@ -134,7 +136,7 @@ class UncertaintyEstimations():
         output_dir_figures = os.path.join(self.output_dir_figures, name)
         output_dir_data = os.path.join(self.output_dir_data, name)
 
-
+        compare_folders = [name]
 
         self.uncertainty_estimations =\
             UncertaintyEstimation(self.model,
@@ -182,6 +184,8 @@ class UncertaintyEstimations():
             current_output_dir_figures = os.path.join(self.output_dir_figures, name)
             tmp_output_dir_data = os.path.join(self.output_dir_data, name)
 
+            compare_folders.append(name)
+
             self.uncertainty_estimations =\
                 UncertaintyEstimation(self.model,
                                       feature_list=self.feature_list,
@@ -217,10 +221,20 @@ class UncertaintyEstimations():
             run_times.append(time.time() - time_1)
 
 
+        if self.save_figures:
+            plot = PlotUncertainty(data_dir=self.output_dir_data,
+                                   output_dir_figures=self.output_dir_figures,
+                                   figureformat=self.figureformat,
+                                   verbose_level=self.verbose_level,
+                                   verbose_filename=self.verbose_filename)
+
+            plot.plotCompareAll(self.output_data_filename, compare_folders=compare_folders)
+
         return run_times
 
 
     def plot_compareMC_1d(self, feature):
+        raise DeprecationWarning("deprecated")
         if feature not in self.features_1d:
             raise RuntimeError("%s is not a 1D feature" % (feature))
 
