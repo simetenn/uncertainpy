@@ -233,64 +233,6 @@ class UncertaintyEstimations():
         return run_times
 
 
-    def plot_compareMC_1d(self, feature):
-        raise DeprecationWarning("deprecated")
-        if feature not in self.features_1d:
-            raise RuntimeError("%s is not a 1D feature" % (feature))
-
-
-        output_dir_compare = os.path.join(self.output_dir_figures, "MC-compare")
-        if not os.path.isdir(output_dir_compare):
-            os.makedirs(output_dir_compare)
-
-        color = 0
-        max_var = 0
-        min_var = 10**10
-        legend = []
-        new_figure = True
-
-        for nr_mc_sample in sorted(self.mc_var):
-
-            if self.mc_var[nr_mc_sample]["directComparison"].max() > max_var:
-                max_var = self.mc_var[nr_mc_sample]["directComparison"].max()
-
-            if self.mc_var[nr_mc_sample]["directComparison"].min() < min_var:
-                min_var = self.mc_var[nr_mc_sample]["directComparison"].min()
-
-            legend.append("MC samples " + str(nr_mc_sample))
-
-            prettyPlot(self.t_pc["directComparison"], self.mc_var[nr_mc_sample]["directComparison"],
-                       new_figure=new_figure, color=color,
-                       xlabel="Time", ylabel="Variance, mv",
-                       title="Variance")
-            new_figure = False
-            color += 2
-
-
-        if self.pc_var["directComparison"].max() > max_var:
-            max_var = self.pc_var["directComparison"].max()
-
-        if self.pc_var["directComparison"].min() < min_var:
-            min_var = self.pc_var["directComparison"].min()
-
-        legend.append("PC")
-
-        prettyPlot(self.t_pc["directComparison"], self.pc_var["directComparison"],
-                   new_figure=new_figure, color=color,
-                   xlabel="Time", ylabel="Variance, mv",
-                   title="Variance")
-        new_figure = False
-        color += 2
-
-        plt.ylim([min_var*0.99, max_var*1.01])
-        plt.legend(legend)
-        plt.show()
-        plt.savefig(os.path.join(output_dir_compare,
-                                 "variance-MC-PC_" + self.figureformat))
-        # plt.show()
-        plt.close()
-
-
 
     def timePassed(self):
         return time.time() - self.t_start
