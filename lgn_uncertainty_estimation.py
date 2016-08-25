@@ -18,11 +18,14 @@ parameterlist = [["cap", 1.1, None],
                  ["gahp", 6.4e-5, None],
                  ["gcat", 1.17e-5, None]]
 
-memory = uncertainpy.Memory(10)
-memory.start()
+# memory = uncertainpy.Memory(10)
+# memory.start()
 
 parameters = uncertainpy.Parameters(parameterlist)
-model = uncertainpy.NeuronModel(parameters=parameters, model_file=model_file, model_path=model_path)
+model = uncertainpy.NeuronModel(parameters=parameters,
+                                model_file=model_file,
+                                model_path=model_path,
+                                adaptive_model=True)
 model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
 
 
@@ -38,11 +41,11 @@ percentages = [0.02, 0.03, 0.04]
 distributions = {"uniform": percentages}
 exploration.exploreParameters(distributions)
 
-# mc_samples = [50, 100, 200, 500, 1000, 1500, 2000]
-# exploration.compareMC(mc_samples)
+mc_samples = [10, 100, 1000]
+exploration.compareMC(mc_samples)
 
-
-memory.end()
+#
+# memory.end()
 
 
 subprocess.Popen(["play", "-q", "ship_bell.wav"])
