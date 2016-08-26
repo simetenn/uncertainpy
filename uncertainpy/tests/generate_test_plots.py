@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
+from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
 from uncertainpy.plotting.prettyPlot import prettyPlot
 
 def generate_plots_plotUncertainty():
@@ -16,7 +17,6 @@ def generate_plots_plotUncertainty():
 
     plot = PlotUncertainty(data_dir=test_data_dir,
                            output_dir_figures=output_test_dir,
-                           output_dir_gif=output_test_dir,
                            verbose_level="error")
 
     plot.loadData(data_file)
@@ -34,10 +34,9 @@ def generate_plots_compare():
     output_test_dir = os.path.join(folder, "data")
     # output_test_dir = os.path.join(folder, "../../test_data")
 
-    plot = PlotUncertainty(data_dir=test_data_dir,
-                           output_dir_figures=output_test_dir,
-                           output_dir_gif=output_test_dir,
-                           verbose_level="error")
+    plot = PlotUncertaintyCompare(data_dir=test_data_dir,
+                                  output_dir_figures=output_test_dir,
+                                  verbose_level="error")
 
 
     plot.plotCompareAll(data_file, compare_folders)

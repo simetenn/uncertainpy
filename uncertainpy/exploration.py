@@ -1,11 +1,10 @@
 import time
 import os
 
-import matplotlib.pyplot as plt
 import multiprocessing as mp
 
-from uncertainpy import UncertaintyEstimation, Distribution, PlotUncertainty
-from uncertainpy import prettyPlot, create_logger
+from uncertainpy import UncertaintyEstimation, Distribution, PlotUncertaintyCompare
+from uncertainpy import create_logger
 
 
 class UncertaintyEstimations():
@@ -222,11 +221,11 @@ class UncertaintyEstimations():
 
 
         if self.save_figures:
-            plot = PlotUncertainty(data_dir=self.output_dir_data,
-                                   output_dir_figures=self.output_dir_figures,
-                                   figureformat=self.figureformat,
-                                   verbose_level=self.verbose_level,
-                                   verbose_filename=self.verbose_filename)
+            plot = PlotUncertaintyCompare(data_dir=self.output_dir_data,
+                                          output_dir_figures=self.output_dir_figures,
+                                          figureformat=self.figureformat,
+                                          verbose_level=self.verbose_level,
+                                          verbose_filename=self.verbose_filename)
 
             plot.plotCompareAll(self.output_data_filename, compare_folders=compare_folders)
 

@@ -5,3 +5,4 @@ __author__ = "Simen Tennøe"
 
 from prettyPlot import prettyPlot, prettyBar
 from plotUncertainty import PlotUncertainty
+from plotUncertaintyCompare import PlotUncertaintyCompare

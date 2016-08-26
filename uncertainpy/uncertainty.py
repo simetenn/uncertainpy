@@ -124,7 +124,6 @@ class UncertaintyEstimation():
                  combined_features=True,
                  save_data=True,
                  output_dir_data="data/",
-                 output_dir_gif="gif/",
                  output_data_filename=None,
                  supress_model_graphics=True,
                  supress_model_output=True,
@@ -295,7 +294,6 @@ For example on use see:
 
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=output_dir_figures,
-                                    output_dir_gif=output_dir_gif,
                                     figureformat=figureformat,
                                     verbose_level=verbose_level,
                                     verbose_filename=verbose_filename)

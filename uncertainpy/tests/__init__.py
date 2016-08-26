@@ -15,6 +15,7 @@ from test_models import TestTestingModel2dNoTime, TestTestingModelNoU, TestNeuro
 from test_parameters import TestParameter, TestParameters
 from test_plotting import TestPrettyPlot, TestPrettyBar
 from test_plotUncertainty import TestPlotUncertainpy
+from test_plotUncertaintyCompare import TestPlotUncertainpyCompare
 from test_runModel import TestRunModel
 from test_spike_sorting import TestSpike, TestSpikes
 from test_uncertainty import TestUncertainty
