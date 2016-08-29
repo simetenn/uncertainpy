@@ -3,6 +3,7 @@ import os
 import unittest
 import subprocess
 import shutil
+import scipy
 
 
 from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
@@ -43,6 +44,125 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         result = subprocess.call(["diff", plot_file, compare_file])
         self.assertEqual(result, 0)
 
+
+
+
+
+    def test_adaptiveFeatures(self):
+        self.plot.E_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                      "constant_feature": np.zeros(10)},
+                               "mc_10": {"adaptive_feature": np.zeros(100),
+                                         "constant_feature": np.zeros(10)},
+                               "mc_100": {"adaptive_feature": np.zeros(10),
+                                          "constant_feature": np.zeros(10)}}
+
+        self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
+        self.plot.features_1d = ["adaptive_feature", "constant_feature"]
+
+
+        self.assertEqual(self.plot.adaptiveFeatures(), ["adaptive_feature"])
+
+    def test_setData(self):
+        self.plot.E_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                      "constant_feature": np.zeros(10)},
+                               "mc_10": {"adaptive_feature": np.zeros(100),
+                                         "constant_feature": np.zeros(10)},
+                               "mc_100": {"adaptive_feature": np.zeros(10),
+                                          "constant_feature": np.zeros(10)}}
+
+        data = {"pc": np.arange(100), "mc_10": np.arange(100), "mc_100": np.arange(100)}
+
+        self.plot.setData(self.plot.E_compare, data, "adaptive_feature")
+
+
+        print self.plot.E_compare["pc"]["adaptive_feature"]
+        self.assertTrue(np.array_equal(self.plot.E_compare["pc"]["adaptive_feature"],
+                                       np.arange(100)))
+        self.assertTrue(np.array_equal(self.plot.E_compare["mc_10"]["adaptive_feature"],
+                                       np.arange(100)))
+        self.assertTrue(np.array_equal(self.plot.E_compare["mc_100"]["adaptive_feature"],
+                                       np.arange(100)))
+
+        self.assertTrue(np.array_equal(self.plot.E_compare["pc"]["constant_feature"], np.zeros(10)))
+        self.assertTrue(np.array_equal(self.plot.E_compare["mc_10"]["constant_feature"], np.zeros(10)))
+        self.assertTrue(np.array_equal(self.plot.E_compare["mc_100"]["constant_feature"], np.zeros(10)))
+
+
+    def test_getData(self):
+        self.plot.E_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                      "constant_feature": np.zeros(10)},
+                               "mc_10": {"adaptive_feature": np.zeros(100),
+                                         "constant_feature": np.zeros(10)},
+                               "mc_100": {"adaptive_feature": np.zeros(10),
+                                          "constant_feature": np.zeros(10)}}
+
+
+        self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
+
+        constant_result = self.plot.getData(self.plot.E_compare, "constant_feature")
+        self.assertTrue(np.array_equal(constant_result["pc"], np.zeros(10)))
+        self.assertTrue(np.array_equal(constant_result["mc_10"], np.zeros(10)))
+        self.assertTrue(np.array_equal(constant_result["mc_100"], np.zeros(10)))
+
+        adaptive_result = self.plot.getData(self.plot.E_compare, "adaptive_feature")
+        self.assertTrue(np.array_equal(adaptive_result["pc"], np.zeros(10)))
+        self.assertTrue(np.array_equal(adaptive_result["mc_10"], np.zeros(100)))
+        self.assertTrue(np.array_equal(adaptive_result["mc_100"], np.zeros(10)))
+
+
+    def test_creatInterpolation(self):
+        self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
+
+        data = {"pc": np.zeros(10), "mc_10": np.zeros(100), "mc_100": np.zeros(10)}
+        t = {"pc": np.arange(10), "mc_10": np.arange(100), "mc_100": np.arange(10)}
+
+        result = self.plot.createInterpolation(data, t)
+
+        self.assertIsInstance(result["pc"], scipy.interpolate.fitpack2.InterpolatedUnivariateSpline)
+        self.assertIsInstance(result["mc_10"], scipy.interpolate.fitpack2.InterpolatedUnivariateSpline)
+        self.assertIsInstance(result["mc_100"], scipy.interpolate.fitpack2.InterpolatedUnivariateSpline)
+
+
+
+    def test_performInterpolation(self):
+        self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
+
+        data = {"pc": np.zeros(10), "mc_10": np.zeros(100), "mc_100": np.zeros(10)}
+        t = {"pc": np.arange(10), "mc_10": np.arange(100), "mc_100": np.arange(10)}
+
+        interpolations = self.plot.createInterpolation(data, t)
+
+        t, results = self.plot.performInterpolation(t, interpolations)
+
+        self.assertTrue(np.array_equal(t["pc"], np.arange(100)))
+        self.assertTrue(np.array_equal(t["mc_10"], np.arange(100)))
+        self.assertTrue(np.array_equal(t["mc_100"], np.arange(100)))
+        self.assertTrue(np.array_equal(results["pc"], np.zeros(100)))
+        self.assertTrue(np.array_equal(results["mc_10"], np.zeros(100)))
+        self.assertTrue(np.array_equal(results["mc_100"], np.zeros(100)))
+
+
+    def test_interpolateData(self):
+        self.plot.E_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                      "constant_feature": np.zeros(10)},
+                               "mc_10": {"adaptive_feature": np.zeros(100),
+                                         "constant_feature": np.zeros(10)},
+                               "mc_100": {"adaptive_feature": np.zeros(10),
+                                          "constant_feature": np.zeros(10)}}
+
+        self.plot.t_compare = {"pc": {"adaptive_feature": np.arange(10),
+                                      "constant_feature": np.arange(10)},
+                               "mc_10": {"adaptive_feature": np.arange(100),
+                                         "constant_feature": np.arange(10)},
+                               "mc_100": {"adaptive_feature": np.arange(10),
+                                          "constant_feature": np.arange(10)}}
+
+
+        self.plot.loaded_compare_flag = True
+        self.plot.features_1d = ["adaptive_feature", "constant_feature"]
+        self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
+
+        self.plot.interpolateData()
 
 
     def test_loadCompareData(self):

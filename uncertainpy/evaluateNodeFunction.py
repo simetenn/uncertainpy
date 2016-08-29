@@ -122,7 +122,7 @@ def evaluateNodeFunction(data):
 
     if adaptive_model:
         if len(U.shape) == 0:
-            raise AttributeError("Model returns a single value, unable to perform interpolation")
+            raise RuntimeWarning("Model returns a single value, unable to perform interpolation")
 
         elif len(U.shape) == 1:
             if np.all(np.isnan(t)):

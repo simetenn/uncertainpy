@@ -54,6 +54,8 @@ test_plotting = create_test_suite([TestPrettyPlot, TestPrettyBar])
 
 test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
 
+test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
+
 test_uncertainty = create_test_suite([TestUncertainty])
 
 test_exploration = create_test_suite([TestExploration])
@@ -73,7 +75,8 @@ test_prerequisites = unittest.TestSuite([test_utils,
 
 test_basic = unittest.TestSuite([test_prerequisites,
                                 test_uncertainty,
-                                test_plotUncertainty])
+                                test_plotUncertainty,
+                                test_plotUncertaintyCompare])
 
 test_fast = unittest.TestSuite([test_basic, test_exploration])
 
@@ -96,6 +99,7 @@ parser.add_argument("--distribution", help="Distribution tests", action="store_t
 parser.add_argument("--evaluatenodefunction", help="evaluatenodefunction tests", action="store_true")
 parser.add_argument("--spike_sorting", help="spike_sorting tests", action="store_true")
 parser.add_argument("--plotuncertainty", help="PlotUncertainty tests", action="store_true")
+parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests", action="store_true")
 parser.add_argument("--features", help="Features tests", action="store_true")
 parser.add_argument("--model", help="Model tests", action="store_true")
 parser.add_argument("--runmodel", help="RunModel tests", action="store_true")
@@ -156,6 +160,10 @@ if args.plotuncertainty:
     print "-----------------------------------------"
     print "Running testsuite: plotUncertainty"
     results["plotUncertainty"] = test_runner.run(test_plotUncertainty)
+if args.plotuncertaintycompare:
+    print "-----------------------------------------"
+    print "Running testsuite: plotUncertaintyCompare"
+    results["plotUncertainty"] = test_runner.run(test_plotUncertaintyCompare)
 if args.features:
     print "-----------------------------------------"
     print "Running testsuite: features"

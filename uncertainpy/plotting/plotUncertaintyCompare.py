@@ -1,13 +1,15 @@
 import os
 import argparse
+import scipy
 
+import numpy as np
 import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
 from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap
 # from uncertainpy.plotting.prettyPlot import set_legend, get_colormap_tableu20
-from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize  #, titlesize
+from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize  # , titlesize
 
 
 # TODO find a good way to find the directory where the data files are
@@ -66,6 +68,92 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
         self.loaded_compare_flag = True
 
+
+    def adaptiveFeatures(self):
+        if len(self.features_1d) < 1:
+            raise ValueError("No 1D features")
+
+
+        adaptive_features = []
+
+        for feature in self.features_1d:
+            E_prev = self.E_compare[self.compare_folders[0]][feature]
+            for data in self.compare_folders[1:]:
+                E = self.E_compare[data][feature]
+                if E.shape != E_prev.shape:
+                    adaptive_features.append(feature)
+                    break
+                E_prev = E
+
+        return adaptive_features
+
+
+    def setData(self, dictionary, data, feature):
+        for k, d in data.items():
+            dictionary[k][feature] = d
+
+    def getData(self, data, feature):
+
+        def _get(dictionary, feature):
+            return dictionary[feature]
+
+        result = {}
+        for k, d in data.items():
+            result[k] = _get(d, feature)
+
+        return result
+
+
+
+    def interpolateData(self):
+        if not self.loaded_compare_flag:
+            raise ValueError("Datafiles must be loaded")
+
+        self.adaptive_features = self.adaptiveFeatures()
+
+        for feature in self.adaptive_features:
+            current_data = self.getData(self.E_compare, feature)
+            current_t = self.getData(self.t_compare, feature)
+
+            interpolations = self.createInterpolation(current_data, current_t)
+            t, interpolated = self.performInterpolation(current_t, interpolations)
+
+            self.setData(self.E_compare, interpolated, feature)
+
+
+    def createInterpolation(self, data, t):
+        interpolations = {}
+        for folder in self.compare_folders:
+            if np.all(np.isnan(t[folder])):
+                raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+
+            if len(data[folder].shape) == 0:
+                raise RuntimeWarning("Data is single values, unable to perform interpolation")
+            elif len(data[folder].shape) == 1:
+                interpolations[folder] = scipy.interpolate.InterpolatedUnivariateSpline(t[folder], data[folder], k=3)
+            else:
+                raise NotImplementedError("No support yet for >= 2d interpolation")
+
+        return interpolations
+
+
+
+    def performInterpolation(self, t, interpolations):
+        lengths = []
+
+        for folder in self.compare_folders:
+            lengths.append(len(t[folder]))
+
+        index_max_len = np.argmax(lengths)
+        t = t[self.compare_folders[index_max_len]]
+
+        interpolated_solves = {}
+        final_t = {}
+        for inter in interpolations:
+            interpolated_solves[inter] = interpolations[inter](t)
+            final_t[inter] = t
+
+        return final_t, interpolated_solves
 
 
 

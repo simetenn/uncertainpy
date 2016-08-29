@@ -57,6 +57,8 @@ class PlotUncertainty():
                                     verbose_filename,
                                     self.__class__.__name__)
 
+        self.features_0d = []
+        self.features_1d = []
 
 
     def loadData(self, filename, create_output_folder=True):
