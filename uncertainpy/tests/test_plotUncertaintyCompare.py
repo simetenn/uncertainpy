@@ -75,7 +75,6 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.plot.setData(self.plot.E_compare, data, "adaptive_feature")
 
 
-        print self.plot.E_compare["pc"]["adaptive_feature"]
         self.assertTrue(np.array_equal(self.plot.E_compare["pc"]["adaptive_feature"],
                                        np.arange(100)))
         self.assertTrue(np.array_equal(self.plot.E_compare["mc_10"]["adaptive_feature"],
@@ -142,6 +141,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.assertTrue(np.array_equal(results["mc_100"], np.zeros(100)))
 
 
+
     def test_interpolateData(self):
         self.plot.E_compare = {"pc": {"adaptive_feature": np.zeros(10),
                                       "constant_feature": np.zeros(10)},
@@ -159,10 +159,96 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
 
         self.plot.loaded_compare_flag = True
-        self.plot.features_1d = ["adaptive_feature", "constant_feature"]
         self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
 
-        self.plot.interpolateData()
+        self.plot.interpolateData(self.plot.E_compare, "adaptive_feature")
+
+        self.compare_data(self.plot.E_compare)
+
+
+    def compare_data(self, data):
+        self.assertTrue(np.array_equal(data["pc"]["adaptive_feature"],
+                                       np.zeros(100)))
+        self.assertTrue(np.array_equal(data["mc_10"]["adaptive_feature"],
+                                       np.zeros(100)))
+        self.assertTrue(np.array_equal(data["mc_100"]["adaptive_feature"],
+                                       np.zeros(100)))
+
+        self.assertTrue(np.array_equal(data["pc"]["constant_feature"], np.zeros(10)))
+        self.assertTrue(np.array_equal(data["mc_10"]["constant_feature"], np.zeros(10)))
+        self.assertTrue(np.array_equal(data["mc_100"]["constant_feature"], np.zeros(10)))
+
+
+
+    def test_interpolateAllData(self):
+        self.plot.E_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                      "constant_feature": np.zeros(10)},
+                               "mc_10": {"adaptive_feature": np.zeros(100),
+                                         "constant_feature": np.zeros(10)},
+                               "mc_100": {"adaptive_feature": np.zeros(10),
+                                          "constant_feature": np.zeros(10)}}
+
+
+        self.plot.Var_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                        "constant_feature": np.zeros(10)},
+                                 "mc_10": {"adaptive_feature": np.zeros(100),
+                                           "constant_feature": np.zeros(10)},
+                                 "mc_100": {"adaptive_feature": np.zeros(10),
+                                            "constant_feature": np.zeros(10)}}
+
+        self.plot.p_05_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                         "constant_feature": np.zeros(10)},
+                                  "mc_10": {"adaptive_feature": np.zeros(100),
+                                            "constant_feature": np.zeros(10)},
+                                  "mc_100": {"adaptive_feature": np.zeros(10),
+                                             "constant_feature": np.zeros(10)}}
+
+        self.plot.p_95_compare = {"pc": {"adaptive_feature": np.zeros(10),
+                                         "constant_feature": np.zeros(10)},
+                                  "mc_10": {"adaptive_feature": np.zeros(100),
+                                            "constant_feature": np.zeros(10)},
+                                  "mc_100": {"adaptive_feature": np.zeros(10),
+                                             "constant_feature": np.zeros(10)}}
+
+
+        self.plot.sensitivity_compare = {"pc": {"adaptive_feature": None,
+                                                "constant_feature": None},
+                                         "mc_10": {"adaptive_feature": None,
+                                                   "constant_feature": None},
+                                         "mc_100": {"adaptive_feature": None,
+                                                    "constant_feature": None}}
+
+        self.plot.t_compare = {"pc": {"adaptive_feature": np.arange(10),
+                                      "constant_feature": np.arange(10)},
+                               "mc_10": {"adaptive_feature": np.arange(100),
+                                         "constant_feature": np.arange(10)},
+                               "mc_100": {"adaptive_feature": np.arange(10),
+                                          "constant_feature": np.arange(10)}}
+
+
+        self.plot.loaded_compare_flag = True
+        self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
+        self.plot.features_1d = ["adaptive_feature", "constant_feature"]
+
+
+        self.plot.interpolateAllData()
+
+        self.compare_data(self.plot.E_compare)
+        self.compare_data(self.plot.Var_compare)
+        self.compare_data(self.plot.p_05_compare)
+        self.compare_data(self.plot.p_95_compare)
+
+
+        self.assertEqual(self.plot.sensitivity_compare, {"pc": {"adaptive_feature": None,
+                                                                "constant_feature": None},
+                                                         "mc_10": {"adaptive_feature": None,
+                                                                   "constant_feature": None},
+                                                         "mc_100": {"adaptive_feature": None,
+                                                                    "constant_feature": None}})
+
+
+
+
 
 
     def test_loadCompareData(self):

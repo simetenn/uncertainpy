@@ -68,6 +68,8 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
         self.loaded_compare_flag = True
 
+        self.interpolateAllData()
+
 
     def adaptiveFeatures(self):
         if len(self.features_1d) < 1:
@@ -104,35 +106,49 @@ class PlotUncertaintyCompare(PlotUncertainty):
         return result
 
 
+    def interpolateData(self, data, feature):
+        current_t = self.getData(self.t_compare, feature)
+        current_data = self.getData(data, feature)
 
-    def interpolateData(self):
+        interpolations = self.createInterpolation(current_data, current_t)
+        t, interpolated = self.performInterpolation(current_t, interpolations)
+
+        self.setData(data, interpolated, feature)
+
+        return t
+
+
+    def interpolateAllData(self):
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
         self.adaptive_features = self.adaptiveFeatures()
 
         for feature in self.adaptive_features:
-            current_data = self.getData(self.E_compare, feature)
-            current_t = self.getData(self.t_compare, feature)
+            t = self.interpolateData(self.E_compare, feature)
+            self.interpolateData(self.Var_compare, feature)
+            self.interpolateData(self.p_05_compare, feature)
+            self.interpolateData(self.p_95_compare, feature)
+            self.interpolateData(self.sensitivity_compare, feature)
 
-            interpolations = self.createInterpolation(current_data, current_t)
-            t, interpolated = self.performInterpolation(current_t, interpolations)
-
-            self.setData(self.E_compare, interpolated, feature)
+            self.setData(self.t_compare, t, feature)
 
 
     def createInterpolation(self, data, t):
         interpolations = {}
         for folder in self.compare_folders:
-            if np.all(np.isnan(t[folder])):
-                raise AttributeError("Model does not return any t values. Unable to perform interpolation")
-
-            if len(data[folder].shape) == 0:
-                raise RuntimeWarning("Data is single values, unable to perform interpolation")
-            elif len(data[folder].shape) == 1:
-                interpolations[folder] = scipy.interpolate.InterpolatedUnivariateSpline(t[folder], data[folder], k=3)
+            if data[folder] is None:
+                interpolations[folder] = None
             else:
-                raise NotImplementedError("No support yet for >= 2d interpolation")
+                if np.all(np.isnan(t[folder])):
+                    raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+
+                if len(data[folder].shape) == 0:
+                    raise RuntimeWarning("Data is single values, unable to perform interpolation")
+                elif len(data[folder].shape) == 1:
+                    interpolations[folder] = scipy.interpolate.InterpolatedUnivariateSpline(t[folder], data[folder], k=3)
+                else:
+                    raise NotImplementedError("No support yet for >= 2d interpolation")
 
         return interpolations
 
@@ -150,7 +166,10 @@ class PlotUncertaintyCompare(PlotUncertainty):
         interpolated_solves = {}
         final_t = {}
         for inter in interpolations:
-            interpolated_solves[inter] = interpolations[inter](t)
+            if interpolations[inter] is None:
+                interpolated_solves[inter] = None
+            else:
+                interpolated_solves[inter] = interpolations[inter](t)
             final_t[inter] = t
 
         return final_t, interpolated_solves
