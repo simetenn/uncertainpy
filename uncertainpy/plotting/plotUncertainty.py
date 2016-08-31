@@ -396,7 +396,7 @@ class PlotUncertainty():
                        title=self.toLatex(parameter_names[i]), color=i,
                        nr_hues=nr_plots, ax=ax,
                        **kwargs)
-            ax.set_ylabel("sensitivity", fontsize=20)
+            ax.set_ylabel("sensitivity", fontsize=10)
             ax.set_xlabel(self.xlabel, fontsize=10)
 
         title = feature + ", sensitivity"
