@@ -124,12 +124,16 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
         self.adaptive_features = self.adaptiveFeatures()
 
+
         for feature in self.adaptive_features:
             t = self.interpolateData(self.E_compare, feature)
+            # IMPROVEMENT do not recalculate the t every time
+
             self.interpolateData(self.Var_compare, feature)
             self.interpolateData(self.p_05_compare, feature)
             self.interpolateData(self.p_95_compare, feature)
-            self.interpolateData(self.sensitivity_compare, feature)
+            # TODO make support for comparing sensitivity
+            # self.interpolateData(self.sensitivity_compare, feature)
 
             self.setData(self.t_compare, t, feature)
 
@@ -1035,25 +1039,22 @@ class PlotUncertaintyCompare(PlotUncertainty):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Plot data")
-    parser.add_argument("-d", "--data_dir", help="Directory the data is stored in")
+    parser.add_argument("data_dir", help="Directory the data is stored in")
+    parser.add_argument("filename", help="Name of file to be compared")
+    parser.add_argument("compare_folders", nargs="*", help="Folders to find compare files")
+    parser.add_argument("-o", "--output_dir", nargs="*", help="Folders to find compare files", default="figures/")
 
     args = parser.parse_args()
 
-    data_dir = "data/"
-    output_dir_figures = "figures/"
     figureformat = ".png"
 
-    if args.data_dir:
-        data_dir = "%s/" % os.path.join(data_dir, args.data_dir)
-        output_dir_figures = "%s/" % os.path.join(output_dir_figures, args.data_dir)
-
-
-    plot = PlotUncertaintyCompare(data_dir=data_dir,
-                                  output_dir_figures=output_dir_figures,
+    plot = PlotUncertaintyCompare(data_dir=args.data_dir,
+                                  output_dir_figures=args.output_dir,
                                   figureformat=figureformat)
 
-    # plot.plotAllData()
-    plot.plotCompareAll()
+
+
+    plot.plotCompareAll(args.filename, args.compare_folders)
 
 
     # sortByParameters(path=output_dir_figures, outputpath=output_dir_figures)
