@@ -9,7 +9,7 @@ import numpy as np
 # Fix Remove import * once finished
 from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
 from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap
-from uncertainpy.plotting.prettyPlot import set_legend, get_colormap_tableu20
+from uncertainpy.plotting.prettyPlot import set_legend, get_colormap_tableu20, set_style
 from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize, titlesize
 from uncertainpy.utils import create_logger
 
@@ -383,26 +383,45 @@ class PlotUncertainty():
 
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size)
 
-        for i in range(0, nr_plots):
+
+        # Add a larger subplot to use to set a common xlabel and ylabel
+        set_style("white")
+        ax = fig.add_subplot(111, zorder=-10)
+        spines_edge_color(ax, edges={"top": "None", "bottom": "None",
+                                     "right": "None", "left": "None"})
+        ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel('sensitivity')
+
+        for i in range(0, grid_x_size*grid_y_size):
             nx = i % grid_x_size
             ny = int(np.floor(i/float(grid_x_size)))
+
             if grid_y_size == 1:
                 ax = axes[nx]
             else:
                 ax = axes[ny][nx]
 
+            if i < nr_plots:
+                prettyPlot(self.t[feature], self.sensitivity[feature][i],
+                           title=self.toLatex(parameter_names[i]), color=i,
+                           nr_hues=nr_plots, ax=ax,
+                           **kwargs)
 
-            prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       title=self.toLatex(parameter_names[i]), color=i,
-                       nr_hues=nr_plots, ax=ax,
-                       **kwargs)
-            ax.set_ylabel("sensitivity", fontsize=10)
-            ax.set_xlabel(self.xlabel, fontsize=10)
+                for tick in ax.get_xticklabels():
+                    tick.set_rotation(-30)
+
+                ax.set_ylim([0, 1.05])
+                # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
+                ax.tick_params(labelsize=10)
+            else:
+                ax.axis("off")
 
         title = feature + ", sensitivity"
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
+
 
 
         if hardcopy:

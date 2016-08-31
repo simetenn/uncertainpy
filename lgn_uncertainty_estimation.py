@@ -18,8 +18,6 @@ parameterlist = [["cap", 1.1, None],
                  ["gahp", 6.4e-5, None],
                  ["gcat", 1.17e-5, None]]
 
-# memory = uncertainpy.Memory(10)
-# memory.start()
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.NeuronModel(parameters=parameters,
@@ -29,23 +27,21 @@ model = uncertainpy.NeuronModel(parameters=parameters,
 model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
 
 
-exploration = uncertainpy.UncertaintyEstimations(model, CPUs=7, supress_model_output=True,
+exploration = uncertainpy.UncertaintyEstimations(model, CPUs=8, supress_model_output=True,
                                                  feature_list="all",
                                                  output_dir_data="data/lgn",
                                                  save_figures=True,
                                                  output_dir_figures="figures/lgn")
 
-#distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-# percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10]
-percentages = [0.02, 0.03, 0.04]
-distributions = {"uniform": percentages}
-exploration.exploreParameters(distributions)
 
-mc_samples = [10, 100, 1000]
+mc_samples = [10, 100, 1000, 10000]
 exploration.compareMC(mc_samples)
 
-#
-# memory.end()
+#distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
+percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
+# percentages = [0.02, 0.03, 0.04]
+distributions = {"uniform": percentages}
+exploration.exploreParameters(distributions)
 
 
 subprocess.Popen(["play", "-q", "ship_bell.wav"])
