@@ -225,7 +225,9 @@ class UncertaintyEstimations():
                                           output_dir_figures=self.output_dir_figures,
                                           figureformat=self.figureformat,
                                           verbose_level=self.verbose_level,
-                                          verbose_filename=self.verbose_filename)
+                                          verbose_filename=self.verbose_filename,
+                                          xlabel=self.model.xlabel,
+                                          ylabel=self.model.ylabel)
 
             plot.plotCompareAll(self.output_data_filename, compare_folders=compare_folders)
 

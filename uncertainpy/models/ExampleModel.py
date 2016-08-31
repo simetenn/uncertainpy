@@ -19,6 +19,8 @@ class ExampleModel(Model):
         """
         Model.__init__(self)
 
+        self.xlabel = "time [ms]"
+        self.ylabel = "voltage [mv]"
 
     def run(self):
         """

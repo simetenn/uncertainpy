@@ -12,6 +12,9 @@ class NeuronModel(Model):
         Model.__init__(self, parameters=parameters,
                        adaptive_model=adaptive_model)
 
+        self.xlabel = "time [ms]"
+        self.ylabel = "voltage [mv]"
+
         if model_file is None or model_path is None:
             parser = argparse.ArgumentParser()
             parser.add_argument("--model_file")

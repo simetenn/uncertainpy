@@ -6,6 +6,9 @@ class IzhikevichModel(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
 
+        self.xlabel = "time [ms]"
+        self.ylabel = "voltage [mv]"
+
         self.a = 0.02
         self.b = 0.2
         self.c = -50

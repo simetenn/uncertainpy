@@ -8,6 +8,9 @@ class TestingModel0d(Model):
         self.a = 1
         self.b = 2
 
+        self.xlabel = "x"
+        self.ylabel = "y"
+
     def run(self):
         self.t = 1
         self.U = self.b
@@ -19,6 +22,9 @@ class TestingModel1d(Model):
 
         self.a = 1
         self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
 
     def run(self):
         self.t = np.arange(0, 10)
@@ -32,6 +38,9 @@ class TestingModel1dAdaptive(Model):
         self.a = 1
         self.b = 2
 
+        self.xlabel = "x"
+        self.ylabel = "y"
+
     def run(self):
         self.t = np.arange(0, 10 + self.a + self.b)
         self.U = np.arange(0, 10 + self.a + self.b) + self.a + self.b
@@ -43,6 +52,9 @@ class TestingModel1dConstant(Model):
 
         self.a = 1
         self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
 
     def run(self):
         self.t = np.arange(0, 10)
@@ -57,6 +69,9 @@ class TestingModel2d(Model):
         self.a = 1
         self.b = 2
 
+        self.xlabel = "x"
+        self.ylabel = "y"
+
     def run(self):
         self.t = np.arange(0, 10)
         self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
@@ -70,6 +85,9 @@ class TestingModel0dNoTime(Model):
         self.a = 1
         self.b = 2
 
+        self.xlabel = "x"
+        self.ylabel = "y"
+
     def run(self):
         self.U = self.b
 
@@ -80,6 +98,9 @@ class TestingModel1dNoTime(Model):
 
         self.a = 1
         self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
 
     def run(self):
         self.U = np.arange(0, 10) + self.a + self.b
@@ -92,6 +113,9 @@ class TestingModel2dNoTime(Model):
         self.a = 1
         self.b = 2
 
+        self.xlabel = "x"
+        self.ylabel = "y"
+
     def run(self):
         self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
 
@@ -102,6 +126,9 @@ class TestingModelNoU(Model):
 
         self.a = 1
         self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
 
 
     def run(self):

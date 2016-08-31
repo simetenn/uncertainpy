@@ -36,6 +36,9 @@ class Model():
         self.filepath = os.path.abspath(__file__)
         self.filedir = os.path.dirname(self.filepath)
 
+        self.xlabel = ""
+        self.ylabel = ""
+
 
 
     def load(self):

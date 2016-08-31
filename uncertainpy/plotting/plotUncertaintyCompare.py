@@ -320,7 +320,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
             if new_figure:
                 ax = prettyPlot(self.t[feature], self.E[feature],
-                                feature + ", mean and variance", "time", "voltage, mean",
+                                feature + ", mean and variance", self.xlabel, self.ylabel + ", mean",
                                 sns_style=sns_style, nr_hues=2*len(self.compare_folders),
                                 new_figure=new_figure, **kwargs)
 
@@ -350,7 +350,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
                           "right": axis_grey, "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=axis_grey, labelcolor="black", labelsize=labelsize)
-        ax2.set_ylabel('voltage, variance', color="black", fontsize=labelsize)
+        ax2.set_ylabel(self.ylabel + ', variance', color="black", fontsize=labelsize)
         ax2.yaxis.offsetText.set_fontsize(labelsize)
 
 
@@ -403,7 +403,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             if new_figure:
                 ax = prettyPlot(self.t[feature], self.E[feature],
                                 title=feature + " ,90\% Confidence interval",
-                                xlabel="time", ylabel="voltage", color=color,
+                                xlabel=self.xlabel, ylabel=self.ylabel, color=color,
                                 label=compare.replace("_", " ") + ", Mean", **kwargs)
 
                 colors = get_current_colormap()
@@ -477,7 +477,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
                 prettyPlot(self.t[feature], self.sensitivity[feature][i],
                            title=feature + ", sensitivity",
-                           xlabel="time", ylabel="sensitivity",
+                           xlabel=self.xlabel, ylabel="sensitivity",
                            new_figure=new_figure, **kwargs)
 
                 new_figure = False
@@ -681,7 +681,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             title = feature + ", $\\frac{{|{0}_{{{2}}} - {1}_{{{2}}}|}}{{{0}_{{{2}}}}}$".format(reference_name.upper(), compare.split("_")[0].upper(), attribute_name)
 
             prettyPlot(self.t[feature], fractional_difference_mean,
-                       title, "time", "voltage",
+                       title, self.xlabel, self.ylabel,
                        new_figure=new_figure, nr_hues=len(compares),
                        **kwargs)
 
@@ -768,7 +768,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
             if new_figure:
                 ax = prettyPlot(self.t[feature], fractional_difference_mean, title=title,
-                                xlabel="time", ylabel="voltage", color=color,
+                                xlabel=self.xlabel, ylabel=self.ylabel, color=color,
                                 nr_hues=len(compares), label=compare.replace("_", " ") + ", Mean",
                                 **kwargs)
 
@@ -1038,11 +1038,11 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Plot data")
+    parser = argparse.ArgumentParser(description="Plot comapre data")
     parser.add_argument("data_dir", help="Directory the data is stored in")
     parser.add_argument("filename", help="Name of file to be compared")
     parser.add_argument("compare_folders", nargs="*", help="Folders to find compare files")
-    parser.add_argument("-o", "--output_dir", nargs="*", help="Folders to find compare files", default="figures/")
+    parser.add_argument("-o", "--output_dir", help="Folders to find compare files", default="figures/")
 
     args = parser.parse_args()
 

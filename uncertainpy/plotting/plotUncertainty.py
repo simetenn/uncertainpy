@@ -40,7 +40,9 @@ class PlotUncertainty():
                  output_dir_figures="figures/",
                  figureformat=".png",
                  verbose_level="info",
-                 verbose_filename=None):
+                 verbose_filename=None,
+                 xlabel="time [ms]",
+                 ylabel="voltage [mv]"):
 
         self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
@@ -59,6 +61,9 @@ class PlotUncertainty():
 
         self.features_0d = []
         self.features_1d = []
+
+        self.xlabel = xlabel
+        self.ylabel = ylabel
 
 
     def loadData(self, filename, create_output_folder=True):
@@ -205,7 +210,7 @@ class PlotUncertainty():
         value = getattr(self, attribute)
         title = feature + ", " + attribute_name
         prettyPlot(self.t[feature], value[feature],
-                   title, "time", "voltage", **kwargs)
+                   title, self.xlabel, self.ylabel, **kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -249,7 +254,7 @@ class PlotUncertainty():
 
 
         ax = prettyPlot(self.t[feature], self.E[feature],
-                        feature + ", mean and variance", "time", "voltage, mean",
+                        feature + ", mean and variance", self.xlabel, self.ylabel + ", mean",
                         sns_style=sns_style, **kwargs)
 
         colors = get_current_colormap()
@@ -260,7 +265,7 @@ class PlotUncertainty():
                                       "right": colors[color+1], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
-        ax2.set_ylabel('voltage, variance', color=colors[color+1], fontsize=labelsize)
+        ax2.set_ylabel(self.ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
 
         # ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
         # ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
@@ -275,7 +280,7 @@ class PlotUncertainty():
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
 
-        ax.set_ylabel('voltage, mean', color=colors[color], fontsize=16)
+        ax.set_ylabel(self.ylabel + ', mean', color=colors[color], fontsize=16)
 
 
         if hardcopy:
@@ -302,7 +307,7 @@ class PlotUncertainty():
             raise ValueError("%s is not a 1D feature" % (feature))
 
         prettyPlot(self.t[feature], self.E[feature], title=feature + ", 90\\% confidence interval",
-                   xlabel="time", ylabel="voltage", color=0,
+                   xlabel=self.xlabel, ylabel=self.ylabel, color=0,
                    **kwargs)
 
         colors = get_current_colormap()
@@ -341,9 +346,10 @@ class PlotUncertainty():
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title=feature + ", sensitivity, " + self.toLatex(parameter_names[i]),
-                       xlabel="time", ylabel="sensitivity",
-                       new_figure=True, **kwargs)
-            plt.ylim([0, 1.05])
+                       xlabel=self.xlabel, ylabel="sensitivity",
+                       color=i, new_figure=True,
+                       nr_hues=len(self.uncertain_parameters), **kwargs)
+            # plt.ylim([0, 1.05])
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
@@ -388,7 +394,7 @@ class PlotUncertainty():
 
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title=self.toLatex(parameter_names[i]), color=i, nr_hues=nr_plots,
-                       xlabel="time", ylabel="sensitivity", ax=ax,
+                       xlabel=self.xlabel, ylabel="sensitivity", ax=ax,
                        **kwargs)
             ax.set_ylim([0, 1.05])
 
@@ -426,8 +432,10 @@ class PlotUncertainty():
         for i in range(len(self.sensitivity[feature])):
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
                        title=feature + ", sensitivity",
-                       xlabel="time", ylabel="sensitivity",
-                       new_figure=False, **kwargs)
+                       xlabel=self.xlabel, ylabel="sensitivity",
+                       new_figure=False, color=i,
+                       nr_hues=len(self.uncertain_parameters),
+                       **kwargs)
 
         plt.ylim([0, 1.05])
         if len(self.sensitivity[feature]) > 4:
@@ -611,21 +619,16 @@ class PlotUncertainty():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot data")
-    parser.add_argument("-d", "--data_dir", help="Directory the data is stored in")
+    parser.add_argument("-d", "--data_dir", help="Directory the data is stored in", default="data")
+    parser.add_argument("-o", "--output_dir", help="Folders to find compare files", default="figures")
 
     args = parser.parse_args()
 
-    data_dir = "data/"
-    output_dir_figures = "figures/"
     figureformat = ".png"
 
-    if args.data_dir:
-        data_dir = "%s/" % os.path.join(data_dir, args.data_dir)
-        output_dir_figures = "%s/" % os.path.join(output_dir_figures, args.data_dir)
 
-
-    plot = PlotUncertainty(data_dir=data_dir,
-                           output_dir_figures=output_dir_figures,
+    plot = PlotUncertainty(data_dir=args.data_dir,
+                           output_dir_figures=args.output_dir,
                            figureformat=figureformat)
 
     # plot.plotAllData()

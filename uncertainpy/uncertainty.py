@@ -296,7 +296,9 @@ For example on use see:
                                     output_dir_figures=output_dir_figures,
                                     figureformat=figureformat,
                                     verbose_level=verbose_level,
-                                    verbose_filename=verbose_filename)
+                                    verbose_filename=verbose_filename,
+                                    xlabel=self.model.xlabel,
+                                    ylabel=self.model.ylabel)
 
 
         if output_data_filename is None:

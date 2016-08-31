@@ -63,6 +63,9 @@ class HodkinHuxleyModel(Model):
                 self.I[i] = 10  # uA/cm2
 
 
+        self.xlabel = "time [ms]"
+        self.ylabel = "voltage [mv]"
+
     def run(self):
 
         Vm = np.zeros(len(self.t))  # mV
