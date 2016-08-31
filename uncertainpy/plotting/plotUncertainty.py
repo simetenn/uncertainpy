@@ -393,10 +393,11 @@ class PlotUncertainty():
 
 
             prettyPlot(self.t[feature], self.sensitivity[feature][i],
-                       title=self.toLatex(parameter_names[i]), color=i, nr_hues=nr_plots,
-                       xlabel=self.xlabel, ylabel="sensitivity", ax=ax,
+                       title=self.toLatex(parameter_names[i]), color=i,
+                       nr_hues=nr_plots, ax=ax,
                        **kwargs)
-            ax.set_ylim([0, 1.05])
+            ax.set_ylabel("sensitivity", fontsize=20)
+            ax.set_xlabel(self.xlabel, fontsize=10)
 
         title = feature + ", sensitivity"
         plt.suptitle(title, fontsize=titlesize)
