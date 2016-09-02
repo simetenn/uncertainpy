@@ -27,18 +27,18 @@ model = uncertainpy.NeuronModel(parameters=parameters,
 model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
 
 
-exploration = uncertainpy.UncertaintyEstimations(model, CPUs=8, supress_model_output=True,
+exploration = uncertainpy.UncertaintyEstimations(model, CPUs=6, supress_model_output=True,
                                                  feature_list="all",
                                                  output_dir_data="data/lgn",
-                                                 save_figures=True,
+                                                 save_figures=False,
                                                  output_dir_figures="figures/lgn")
 
 
-mc_samples = [10, 100, 1000, 10000]
-exploration.compareMC(mc_samples)
+# mc_samples = [10, 100, 1000]
+# exploration.compareMC(mc_samples)
 
 #distributions = {"uniform": np.linspace(0.01, 0.1, 10), "normal": np.linspace(0.01, 0.1, 10)}
-percentages = [0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
+percentages = [0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
 # percentages = [0.02, 0.03, 0.04]
 distributions = {"uniform": percentages}
 exploration.exploreParameters(distributions)

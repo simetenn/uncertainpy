@@ -19,6 +19,7 @@ class UncertaintyEstimations():
                  plot_simulator_results=False,
                  supress_model_graphics=True,
                  supress_model_output=True,
+                 single_parameter_runs=True,
                  CPUs=mp.cpu_count(),
                  rosenblatt=False,
                  nr_mc_samples=10**3,
@@ -75,6 +76,7 @@ class UncertaintyEstimations():
                                     self.__class__.__name__)
 
         self.seed = seed
+        self.single_parameter_runs = single_parameter_runs
 
         self.output_data_filename = self.model.__class__.__name__
 
@@ -118,7 +120,8 @@ class UncertaintyEstimations():
                                           seed=self.seed,
                                           **self.kwargs)
 
-                self.uncertainty_estimations.singleParameters()
+                if self.single_parameter_runs:
+                    self.uncertainty_estimations.singleParameters()
                 self.uncertainty_estimations.allParameters()
 
                 if self.plot_simulator_results:

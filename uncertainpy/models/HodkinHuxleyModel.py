@@ -37,10 +37,6 @@ class HodkinHuxleyModel(Model):
         self.beta_h = lambda v: 1/(np.exp((-v + 30)/10) + 1)
         self.h_inf = lambda v: self.alpha_h(v)/(self.alpha_h(v) + self.beta_h(v))
 
-        ### channel activity ###
-        self.v = np.arange(-50, 151)  # mV
-
-
         ## setup parameters and state variables
         self.T = 45    # ms
         self.dt = 0.025  # ms
@@ -86,4 +82,3 @@ class HodkinHuxleyModel(Model):
             Vm[i] = Vm[i-1] + (self.I[i-1] - g_Na*(Vm[i-1] - self.E_Na) - g_K*(Vm[i-1] - self.E_K) - g_l*(Vm[i-1] - self.E_l))/self.Cm*self.dt
 
         self.U = Vm - 65
-        # self.U = Vm
