@@ -185,7 +185,7 @@ def set_style(sns_style="darkgrid", nr_hues=6, palette=None):
 def prettyPlot(x=[], y=None, title="", xlabel="", ylabel="",
                nr_hues=6, sns_style="darkgrid",
                linestyle="solid", marker=None,
-               ax=None, palette=None,
+               ax=None, palette=None, linewidth=2,
                color=None, new_figure=True, **kwargs):
 
     """
@@ -282,7 +282,7 @@ ax : matplotlib ax Object
 
 
     ax.plot(x, y, linestyle=linestyle, marker=marker,
-            markersize=8, markeredgewidth=2, linewidth=2, antialiased=True,
+            markersize=8, markeredgewidth=2, linewidth=linewidth, antialiased=True,
             zorder=3, color=color, **kwargs)
 
     ax.yaxis.offsetText.set_fontsize(labelsize)

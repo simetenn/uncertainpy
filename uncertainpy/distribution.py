@@ -12,8 +12,14 @@ class Distribution():
         return self.function(parameter, self.interval)
 
     def normal(self, parameter):
+        if parameter == 0:
+            raise ValueError("Creating a percentage distribution around 0 does not work")
+
         return cp.Normal(parameter, abs(self.interval*parameter))
 
     def uniform(self, parameter):
+        if parameter == 0:
+            raise ValueError("Creating a percentage distribution around 0 does not work")
+
         return cp.Uniform(parameter - abs(self.interval/2.*parameter),
                           parameter + abs(self.interval/2.*parameter))
