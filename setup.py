@@ -76,7 +76,7 @@ Custom commandline arguments:
     """
 
 if "--virtual" in sys.argv:
-    subprocess.call("sudo ./uncertainpy/install_scripts/install_virtual.sh", shell=True)
+    # subprocess.call("sudo ./uncertainpy/install_scripts/install_virtual.sh", shell=True)
     activate_virtualev()
     sys.argv.remove("--virtual")
 
