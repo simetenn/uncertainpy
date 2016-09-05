@@ -17,7 +17,6 @@ install:
   - "sh -e /etc/init.d/xvfb start"
   - sudo ./uncertainpy/install_scripts/install_virtual.sh
   - mkvirtualenv test
-  - workon test
   - sudo python setup.py install --virtual --neuron
 script:
   - workon uncertainpy
