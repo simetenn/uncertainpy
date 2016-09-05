@@ -16,7 +16,7 @@ except ImportError:
 
 
 
-name = "uncertainpy"
+name = "test"
 virtual_enviroment = name
 
 
@@ -27,19 +27,23 @@ dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
 
 
 
-def activate_virtualev(virtual_enviroment=virtual_enviroment):
-    subprocess.call("source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && mkvirtualenv "
-                    + virtual_enviroment + " --system-site-packages",
-                    executable='bash', shell=True)
+def activate_virtualev(virtual_enviroment=virtual_enviroment, system_site_packages=False):
+    cmd = "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && mkvirtualenv " + virtual_enviroment
+
+    if system_site_packages:
+        cmd = cmd + "--system-site-packages"
+
+    subprocess.call(cmd, executable='bash', shell=True)
     virtual_path = os.environ["VIRTUALENVWRAPPER_HOOK_DIR"] + "/" + virtual_enviroment
     activate_this_file = virtual_path + "/bin/activate_this.py"
+
     execfile(activate_this_file, dict(__file__=activate_this_file))
 
 
 
 def setupInstall():
     if not platform.system() == "Linux":
-        print "Warning: OS not supported, the installation may fail"
+        print "Warning: OS not supported, installation may fail"
 
     subprocess.call("./uncertainpy/install_scripts/install_dependencies.sh", shell=True)
 
@@ -55,24 +59,6 @@ class CustomInstall(_install):
         setupInstall()
         _install.run(self)
 
-def setupFullInstall():
-    if not platform.system() == "Linux":
-        print "Warning: OS not supported, the installation may fail"
-
-    subprocess.call("./uncertainpy/install_scripts/install_all_dependencies.sh", shell=True)
-
-
-class CustomFullDevelop(_develop):
-    def run(self):
-        setupFullInstall()
-        _develop.run(self)
-
-
-class CustomFullInstall(_install):
-    def run(self):
-        setupFullInstall()
-        _install.run(self)
-
 
 cmdclass = {'install': CustomInstall,
             'develop': CustomDevelop}
@@ -85,7 +71,6 @@ Custom commandline arguments:
     --virtual: Install in a virtual enviroment
     --neuron: Install neuron
     --no-dependencies: Only install uncertainpy
-    --full-dependencies: Install all dependencies through bash
     install: Install uncertainpy with dependencies
     develop: Install uncertainpy with dependencies as a developer
     """
@@ -104,14 +89,6 @@ if "--no-dependencies" in sys.argv:
     uncertainpy_req = []
     chaospy_req = []
     sys.argv.remove("--no-dependencies")
-
-
-if "--full-dependencies" in sys.argv:
-    cmdclass = {'install': CustomFullInstall,
-                'develop': CustomFullDevelop}
-    uncertainpy_req = []
-    chaospy_req = []
-    sys.argv.remove("--full-dependencies")
 
 
 setup(name=name,
