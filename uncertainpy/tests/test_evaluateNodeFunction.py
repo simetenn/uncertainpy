@@ -140,7 +140,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.feature_list = []
 
         self.model = TestingModel0d(self.parameters)
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
     def test_evaluateNodeFunctionModel0dFeature0dAdaptive(self):
@@ -148,7 +148,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.feature_list = ["feature0d"]
 
         self.model = TestingModel0d(self.parameters)
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
 
@@ -157,7 +157,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.feature_list = ["feature1d"]
 
         self.model = TestingModel0d(self.parameters)
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
 
@@ -166,7 +166,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.feature_list = ["feature2d"]
 
         self.model = TestingModel0d(self.parameters)
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
 
@@ -175,7 +175,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.feature_list = ["featureInvalid"]
 
         self.model = TestingModel0d(self.parameters)
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
 
@@ -183,7 +183,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.adaptive_model = True
 
         self.model = TestingModel0d(self.parameters)
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
 
@@ -421,7 +421,7 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.adaptive_model = True
         self.model = TestingModel0dNoTime(self.parameters)
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(RuntimeWarning):
             evaluateNodeFunction(self.setUpData())
 
 
