@@ -9,7 +9,7 @@ parameterlist = [["a", 0.02, None],
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.models.IzhikevichModel(parameters)
-model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
+model.setAllDistributions(uncertainpy.Distribution(1).uniform)
 
 
 exploration = uncertainpy.UncertaintyEstimations(model,
