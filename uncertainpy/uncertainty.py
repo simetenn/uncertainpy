@@ -57,11 +57,6 @@
 
 ### After meeting
 
-# TODO Variance of mean and variance of the model is two seperate things.
-# Variance of mean tells how well I have calculated the mean while
-# variance of the model tells how well the model is.
-# Make sure that I calculate the correct one of those in PC and MC method
-# Also make sure I compare the same ones when comparing MC with PC
 
 # TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
 
@@ -789,7 +784,7 @@ For example on use see:
 
             if feature in self.t and self.t[feature] is not None:
                 group.create_dataset("t", data=self.t[feature])
-            # TODO do not save U to save space?
+            # IMPROVEMENT do not save U to save space?
             if feature in self.U:
                 group.create_dataset("U", data=self.U[feature])
             if feature in self.E:

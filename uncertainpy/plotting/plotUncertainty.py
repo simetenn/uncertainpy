@@ -34,6 +34,8 @@ from uncertainpy.utils import create_logger
 
 # TODO plot simulator_results
 
+# plt.switch_backend('GTKAgg')
+
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",

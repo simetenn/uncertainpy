@@ -1,4 +1,4 @@
-### TODO
+# TODO
 # Check if cvode is active, if it is inactive avoid doing the interpolation
 # Currently no way of testing if cvode is active. One way is to test if the amount of
 # numbers between two different simulations are different
