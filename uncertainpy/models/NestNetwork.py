@@ -6,6 +6,7 @@ import numpy as np
 class NestNetwork(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
+
         # Network parameters. These are given in Brunel (2000) J.Comp.Neuro.
         self.g = 5.0  # Ratio of IPSP to EPSP amplitude: J_I/J_E
         self.eta = 1.0  # rate of external population in multiples of threshold rate
