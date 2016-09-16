@@ -6,11 +6,10 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Fix Remove import * once finished
-from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
-from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap
-from uncertainpy.plotting.prettyPlot import set_legend, get_colormap_tableu20, set_style
-from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize, titlesize
+from prettyplot import prettyPlot, prettyBar
+from prettyplot import spines_edge_color, get_current_colormap
+from prettyplot import set_legend, get_colormap_tableu20, set_style
+from prettyplot import axis_grey, labelsize, fontsize, titlesize
 from uncertainpy.utils import create_logger
 
 # TODO rewrite gif() to use less memory when creating GIF

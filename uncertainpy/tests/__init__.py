@@ -13,7 +13,6 @@ from test_models import TestIzhikevichModel, TestTestingModel0d, TestTestingMode
 from test_models import TestTestingModel2d, TestTestingModel0dNoTime, TestTestingModel1dNoTime
 from test_models import TestTestingModel2dNoTime, TestTestingModelNoU, TestNeuronModel
 from test_parameters import TestParameter, TestParameters
-from test_plotting import TestPrettyPlot, TestPrettyBar
 from test_plotUncertainty import TestPlotUncertainpy
 from test_plotUncertaintyCompare import TestPlotUncertainpyCompare
 from test_runModel import TestRunModel

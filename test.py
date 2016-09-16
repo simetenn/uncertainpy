@@ -50,8 +50,6 @@ test_model.addTest(test_runModel)
 
 test_parameters = create_test_suite([TestParameter, TestParameters])
 
-test_plotting = create_test_suite([TestPrettyPlot, TestPrettyBar])
-
 test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
 
 test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
@@ -63,7 +61,7 @@ test_exploration = create_test_suite([TestExploration])
 test_usecase = create_test_suite([TestUseCases])
 
 
-test_utils = unittest.TestSuite([test_logger, test_plotting])
+test_utils = unittest.TestSuite([test_logger])
 test_prerequisites = unittest.TestSuite([test_utils,
                                         test_parameters,
                                         test_distribution,
