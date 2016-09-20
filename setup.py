@@ -11,8 +11,8 @@ try:
     from setuptools.command.develop import develop as _develop
 
 except ImportError:
-    print "Setuptools is needed to install all dependencies"
-    print "Setuptools: https://pypi.python.org/pypi/setuptools"
+    print("Setuptools is needed to install all dependencies")
+    print("Setuptools: https://pypi.python.org/pypi/setuptools")
 
 
 
@@ -43,7 +43,7 @@ def activate_virtualev(virtual_enviroment=virtual_enviroment, system_site_packag
 
 def setupInstall():
     if not platform.system() == "Linux":
-        print "Warning: OS not supported, installation may fail"
+        print("Warning: OS not supported, installation may fail")
 
     subprocess.call("./uncertainpy/install_scripts/install_dependencies.sh", shell=True)
 
@@ -66,14 +66,14 @@ cmdclass = {'install': CustomInstall,
 
 
 if "-h" in sys.argv:
-    print """
+    print("""
 Custom commandline arguments:
     --virtual: Install in a virtual enviroment
     --neuron: Install neuron
     --no-dependencies: Only install uncertainpy
     install: Install uncertainpy with dependencies
     develop: Install uncertainpy with dependencies as a developer
-    """
+    """)
 
 if "--virtual" in sys.argv:
     # subprocess.call("sudo ./uncertainpy/install_scripts/install_virtual.sh", shell=True)
