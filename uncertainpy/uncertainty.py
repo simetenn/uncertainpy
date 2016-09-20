@@ -103,7 +103,7 @@ from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.prettyPlot import prettyPlot
 from uncertainpy.utils import create_logger
-
+from uncertainpy import Data
 
 class UncertaintyEstimation():
     def __init__(self, model,
@@ -276,7 +276,11 @@ For example on use see:
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
 
+        self.data = Data
+
         self.resetValues()
+
+
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,

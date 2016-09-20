@@ -12,10 +12,6 @@ from prettyplot import set_legend, get_colormap_tableu20, set_style
 from prettyplot import axis_grey, labelsize, fontsize, titlesize
 from uncertainpy.utils import create_logger
 
-# TODO rewrite gif() to use less memory when creating GIF
-# (Only load one dataset at the time)
-
-# TODO Add feature plots to gif()
 
 # TODO find a good way to find the directory where the data files are
 
