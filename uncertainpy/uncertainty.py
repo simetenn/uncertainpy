@@ -25,8 +25,6 @@
 
 # TODO problems with new neuron models, and their path
 
-# TODO make it so setup.py install all requirements
-
 # TODO find out where to save parameter distributions and parameter objects. In
 # the least remove the problems with parameters and setParameters beeing two
 # different things
@@ -79,8 +77,6 @@
 # TODO save data from each singleParameter run or not in the class?
 
 # TODO remove feature list from UncertaintyEstimation, and add it to feature class instead
-
-# TODO make it possible to use ones own plotting class
 
 
 # Figures are always saved on the format:
