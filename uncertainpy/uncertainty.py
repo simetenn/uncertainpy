@@ -312,8 +312,8 @@ For example on use see:
 
 
 
-    def __del__(self):
-        pass
+    # def __del__(self):
+    #     pass
 
 
     # def __getstate__(self):
@@ -362,29 +362,16 @@ For example on use see:
 
 
     def evaluateNodes(self, nodes):
+
         if self.supress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()
 
         solves = []
-        try:
-            if self.CPUs > 1:
-                pool = mp.Pool(processes=self.CPUs)
-                solves = pool.map(evaluateNodeFunction,
-                                  self.evaluateNodeFunctionList(nodes.T))
-                pool.close()
-            else:
-                for node in nodes.T:
-                    solves.append(evaluateNodeFunction([self.model.cmd(),
-                                                        self.supress_model_output,
-                                                        self.model.adaptive_model,
-                                                        node,
-                                                        self.uncertain_parameters,
-                                                        self.feature_list,
-                                                        self.features.cmd(),
-                                                        self.feature_options]))
-        except MemoryError:
-            return -1
+        pool = mp.Pool(processes=self.CPUs)
+        solves = pool.map(evaluateNodeFunction,
+                          self.evaluateNodeFunctionList(nodes.T))
+        pool.close()
 
         if self.supress_model_graphics:
             vdisplay.stop()
