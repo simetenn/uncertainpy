@@ -28,7 +28,7 @@ class Data:
         self.features_0d = []
         self.features_1d = []
         self.features_2d = []
-        self.sfeatures = []
+        self.feature_list = []
 
 
         self.U = {}
@@ -48,10 +48,10 @@ class Data:
 
         # f.attrs["name"] = self.output_file.split("/")[-1]
         f.attrs["uncertain parameters"] = self.uncertain_parameters
-        f.attrs["features"] = self.features
+        f.attrs["features"] = self.feature_list
 
 
-        for feature in self.all_features:
+        for feature in self.feature_list:
             group = f.create_group(feature)
 
             if feature in self.t and self.t[feature] is not None:
@@ -106,11 +106,16 @@ class Data:
             # else:
             #     self.t[feature] = None
 
-        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(self.E)
-
+        self.setFeatures(self.E)
         self.uncertain_parameters = f.attrs["uncertain parameters"]
 
         self.loaded_flag = True
+
+
+    def setFeatures(self, results):
+        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
+        self.feature_list = self.features_0d + self.features_1d + self.features_2d
+
 
 
     def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters,
@@ -125,8 +130,7 @@ class Data:
         self.sensitivity = sensitivity
         self.uncertain_parameters = uncertain_parameters
 
-
-        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(self.E)
+        self.setFeatures(self.E)
 
         self.loaded_flag = True
 

@@ -79,34 +79,36 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.parameter_names = -1
         self.uncertainty.parameter_space = -1
 
-        self.uncertainty.U = -1
+        self.uncertainty.U_mc = -1
         self.uncertainty.U_hat = -1
         self.uncertainty.distribution = -1
-        self.uncertainty.solves = -1
-        self.uncertainty.t = -1
-        self.uncertainty.E = -1
-        self.uncertainty.Var = -1
-        self.uncertainty.U_mc = -1
-        self.uncertainty.p_05 = -1
-        self.uncertainty.p_95 = -1
-        self.uncertainty.sensitivity = -1
         self.uncertainty.P = -1
+
+
+        self.uncertainty.data.U = -1
+        self.uncertainty.solves = -1
+        self.uncertainty.data.t = -1
+        self.uncertainty.data.E = -1
+        self.uncertainty.data.Var = -1
+        self.uncertainty.data.p_05 = -1
+        self.uncertainty.data.p_95 = -1
+        self.uncertainty.data.sensitivity = -1
 
         self.uncertainty.resetValues()
 
         self.assertIsNone(self.uncertainty.parameter_names)
         self.assertIsNone(self.uncertainty.parameter_space)
-        self.assertEqual(self.uncertainty.U, {})
+        self.assertEqual(self.uncertainty.data.U, {})
         self.assertEqual(self.uncertainty.U_hat, {})
         self.assertIsNone(self.uncertainty.distribution)
         self.assertIsNone(self.uncertainty.solves)
-        self.assertEqual(self.uncertainty.t, {})
-        self.assertEqual(self.uncertainty.E, {})
-        self.assertEqual(self.uncertainty.Var, {})
+        self.assertEqual(self.uncertainty.data.t, {})
+        self.assertEqual(self.uncertainty.data.E, {})
+        self.assertEqual(self.uncertainty.data.Var, {})
         self.assertEqual(self.uncertainty.U_mc, {})
-        self.assertEqual(self.uncertainty.p_05, {})
-        self.assertEqual(self.uncertainty.p_95, {})
-        self.assertEqual(self.uncertainty.sensitivity, {})
+        self.assertEqual(self.uncertainty.data.p_05, {})
+        self.assertEqual(self.uncertainty.data.p_95, {})
+        self.assertEqual(self.uncertainty.data.sensitivity, {})
         self.assertIsNone(self.uncertainty.P)
 
 
@@ -114,7 +116,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_evaluateNodeFunctionList(self):
         nodes = [[0, 1], [1, 2], [2, 3]]
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         result = self.uncertainty.evaluateNodeFunctionList(nodes)
 
         self.assertEqual(len(result), 3)
@@ -148,9 +150,10 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_level="error")
 
         self.CPUs = 1
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
+
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
@@ -164,7 +167,7 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list="all",
                                                  verbose_level="error")
         self.CPUs = 3
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
 
@@ -176,7 +179,7 @@ class TestUncertainty(unittest.TestCase):
     def test_evaluateNodesSequentialModel1d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.CPUs = 1
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
 
@@ -188,7 +191,7 @@ class TestUncertainty(unittest.TestCase):
     def test_evaluateNodesParallelModel1D(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.CPUs = 3
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
 
@@ -203,7 +206,7 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list="all")
 
         self.CPUs = 1
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
 
@@ -219,7 +222,7 @@ class TestUncertainty(unittest.TestCase):
                                                  feature_list="all",
                                                  verbose_level="error")
         self.CPUs = 3
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
 
@@ -230,28 +233,28 @@ class TestUncertainty(unittest.TestCase):
 
     def test_evaluateNodesNotSupressOutput(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.supress_model_output = False
         self.uncertainty.evaluateNodes(nodes)
 
 
     def test_evaluateNodesSupressOutput(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.supress_model_output = True
         self.uncertainty.evaluateNodes(nodes)
 
 
     def test_evaluateNodesNotSupressGraphics(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.supress_model_graphics = False
         self.uncertainty.evaluateNodes(nodes)
 
 
     def test_evaluateNodesSupressGraphics(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.supress_model_supress_model_graphics = True
         self.uncertainty.evaluateNodes(nodes)
 
@@ -259,27 +262,27 @@ class TestUncertainty(unittest.TestCase):
 
     def test_storeResultsModel1dFeaturesAll(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.assertEqual(set(self.uncertainty.U.keys()),
+        self.assertEqual(set(self.uncertainty.data.U.keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "directComparison", "featureInvalid"]))
 
-        self.assertEqual(set(self.uncertainty.t.keys()),
+        self.assertEqual(set(self.uncertainty.data.t.keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "directComparison", "featureInvalid"]))
 
-        self.assertIn("directComparison", self.uncertainty.U.keys())
-        self.assertTrue(np.array_equal(self.uncertainty.t["directComparison"],
+        self.assertIn("directComparison", self.uncertainty.data.U.keys())
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["directComparison"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.uncertainty.U["directComparison"][0],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["directComparison"][0],
                                        np.arange(0, 10) + 1))
-        self.assertTrue(np.array_equal(self.uncertainty.U["directComparison"][1],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["directComparison"][1],
                                        np.arange(0, 10) + 3))
-        self.assertTrue(np.array_equal(self.uncertainty.U["directComparison"][2],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["directComparison"][2],
                                        np.arange(0, 10) + 5))
 
 
@@ -291,30 +294,30 @@ class TestUncertainty(unittest.TestCase):
 
     def test_storeResultsModel1dFeaturesAllAdaptive(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.model.adaptive_model = True
-        self.uncertainty.feature_list = ["feature0d", "feature1d", "feature2d",
-                                         "featureInvalid"]
+        self.uncertainty.data.feature_list = ["feature0d", "feature1d", "feature2d",
+                                             "featureInvalid"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.assertEqual(set(self.uncertainty.U.keys()),
+        self.assertEqual(set(self.uncertainty.data.U.keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "directComparison", "featureInvalid"]))
 
-        self.assertEqual(set(self.uncertainty.t.keys()),
+        self.assertEqual(set(self.uncertainty.data.t.keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "directComparison", "featureInvalid"]))
 
-        self.assertIn("directComparison", self.uncertainty.U.keys())
-        self.assertTrue(np.array_equal(self.uncertainty.t["directComparison"],
+        self.assertIn("directComparison", self.uncertainty.data.U.keys())
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["directComparison"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.allclose(self.uncertainty.U["directComparison"][0],
+        self.assertTrue(np.allclose(self.uncertainty.data.U["directComparison"][0],
                                     np.arange(0, 10) + 1))
-        self.assertTrue(np.allclose(self.uncertainty.U["directComparison"][1],
+        self.assertTrue(np.allclose(self.uncertainty.data.U["directComparison"][1],
                                     np.arange(0, 10) + 3))
-        self.assertTrue(np.allclose(self.uncertainty.U["directComparison"][2],
+        self.assertTrue(np.allclose(self.uncertainty.data.U["directComparison"][2],
                                     np.arange(0, 10) + 5))
 
         self.assertFeature0d(results)
@@ -324,67 +327,55 @@ class TestUncertainty(unittest.TestCase):
 
 
     def assertFeature0d(self, results):
-        self.assertIn("feature0d", self.uncertainty.U.keys())
-        self.assertIsNone(self.uncertainty.t["feature0d"])
-        self.assertEqual(self.uncertainty.U["feature0d"][0], 1)
-        self.assertEqual(self.uncertainty.U["feature0d"][1], 1)
-        self.assertEqual(self.uncertainty.U["feature0d"][2], 1)
+        self.assertIn("feature0d", self.uncertainty.data.U.keys())
+        self.assertIsNone(self.uncertainty.data.t["feature0d"])
+        self.assertEqual(self.uncertainty.data.U["feature0d"][0], 1)
+        self.assertEqual(self.uncertainty.data.U["feature0d"][1], 1)
+        self.assertEqual(self.uncertainty.data.U["feature0d"][2], 1)
 
 
     def assertFeature1d(self, results):
-        self.assertIn("feature1d", self.uncertainty.U.keys())
-        self.assertTrue(np.array_equal(self.uncertainty.t["feature1d"],
+        self.assertIn("feature1d", self.uncertainty.data.U.keys())
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["feature1d"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.uncertainty.U["feature1d"][0],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1d"][0],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.uncertainty.U["feature1d"][1],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1d"][1],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.uncertainty.U["feature1d"][2],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1d"][2],
                                        np.arange(0, 10)))
 
 
     def assertFeature2d(self, results):
-        self.assertIn("feature2d", self.uncertainty.U.keys())
-        self.assertTrue(np.array_equal(self.uncertainty.t["feature2d"],
+        self.assertIn("feature2d", self.uncertainty.data.U.keys())
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["feature2d"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.uncertainty.U["feature2d"][0],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature2d"][0],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(self.uncertainty.U["feature2d"][1],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature2d"][1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(self.uncertainty.U["feature2d"][2],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature2d"][2],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
 
 
     def assertFeatureInvalid(self, results):
-        self.assertIn("featureInvalid", self.uncertainty.U.keys())
-        self.assertIsNone(self.uncertainty.t["featureInvalid"])
-        self.assertTrue(np.isnan(self.uncertainty.U["featureInvalid"][0]))
-        self.assertTrue(np.isnan(self.uncertainty.U["featureInvalid"][1]))
-        self.assertTrue(np.isnan(self.uncertainty.U["featureInvalid"][2]))
+        self.assertIn("featureInvalid", self.uncertainty.data.U.keys())
+        self.assertIsNone(self.uncertainty.data.t["featureInvalid"])
+        self.assertTrue(np.isnan(self.uncertainty.data.U["featureInvalid"][0]))
+        self.assertTrue(np.isnan(self.uncertainty.data.U["featureInvalid"][1]))
+        self.assertTrue(np.isnan(self.uncertainty.data.U["featureInvalid"][2]))
 
 
-    def test_sortFeatures(self):
-        nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
-
-        results = self.uncertainty.evaluateNodes(nodes)
-        features_0d, features_1d, features_2d = self.uncertainty.sortFeatures(results[0])
-
-        self.assertIn("directComparison", features_1d)
-        self.assertIn("feature2d", features_2d)
-        self.assertIn("feature1d", features_1d)
-        self.assertIn("feature0d", features_0d)
-        self.assertIn("featureInvalid", features_0d)
 
 
     def test_performInterpolation(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.model.adaptive_model = True
-        self.uncertainty.feature_list = []
+        self.uncertainty.data.feature_list = []
 
         results = self.uncertainty.evaluateNodes(nodes)
         ts = []
@@ -430,7 +421,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskDirectComparison(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -446,12 +437,12 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskDirectComparisonNaN(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.uncertainty.U["directComparison"][1] = np.nan
+        self.uncertainty.data.U["directComparison"][1] = np.nan
 
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "directComparison")
 
@@ -476,13 +467,13 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_filename=logfile)
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.verbose_filename = logfile
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.uncertainty.U["directComparison"][1] = np.nan
+        self.uncertainty.data.U["directComparison"][1] = np.nan
 
         self.uncertainty.createMask(nodes, "directComparison")
 
@@ -494,13 +485,13 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature0d")
-        self.assertIn("feature0d", self.uncertainty.U.keys())
+        self.assertIn("feature0d", self.uncertainty.data.U.keys())
         self.assertEqual(masked_U[0], 1)
         self.assertEqual(masked_U[1], 1)
         self.assertEqual(masked_U[2], 1)
@@ -509,12 +500,12 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature0dNan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.uncertainty.U["feature0d"] = np.array([1, np.nan, 1])
+        self.uncertainty.data.U["feature0d"] = np.array([1, np.nan, 1])
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature0d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
@@ -524,7 +515,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature1d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -540,12 +531,12 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature1dNan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.uncertainty.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
+        self.uncertainty.data.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature1d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
@@ -555,7 +546,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
@@ -576,12 +567,12 @@ class TestUncertainty(unittest.TestCase):
 
     def test_createMaskFeature2dNan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.uncertainty.U["feature2d"][1] = np.nan
+        self.uncertainty.data.U["feature2d"][1] = np.nan
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
@@ -599,12 +590,12 @@ class TestUncertainty(unittest.TestCase):
     def test_createMaskFeature2dnodes1DNaN(self):
         nodes = np.array([0, 1, 2])
 
-        self.uncertainty.uncertain_parameters = ["a"]
+        self.uncertainty.data.uncertain_parameters = ["a"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
 
-        self.uncertainty.U["feature2d"][1] = np.nan
+        self.uncertainty.data.U["feature2d"][1] = np.nan
         masked_nodes, masked_U = self.uncertainty.createMask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([0, 2])))
@@ -737,14 +728,14 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_level="error")
 
 
-        self.uncertainty.all_features = ["feature0d", "feature1d",
-                                         "feature2d", "directComparison"]
+        self.uncertainty.data.feature_list = ["feature0d", "feature1d",
+                                              "feature2d", "directComparison"]
 
         q0, q1 = cp.variable(2)
         parameter_space = model.parameters.getUncertain("parameter_space")
         self.uncertainty.distribution = cp.J(*parameter_space)
 
-        self.uncertainty.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
 
 
         self.uncertainty.U_hat["directComparison"] = cp.Poly([q0, q1*q0, q1])
@@ -756,30 +747,30 @@ class TestUncertainty(unittest.TestCase):
 
 
         # Test if all calculated properties actually exists
-        self.assertIsInstance(self.uncertainty.p_05["directComparison"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.p_05["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.p_05["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.p_05["feature2d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_05["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_05["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_05["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_05["feature2d"], np.ndarray)
 
-        self.assertIsInstance(self.uncertainty.p_95["directComparison"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.p_95["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.p_95["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.p_95["feature2d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_95["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_95["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_95["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.p_95["feature2d"], np.ndarray)
 
-        self.assertIsInstance(self.uncertainty.E["directComparison"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.E["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.E["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.E["feature2d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.E["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.E["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.E["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.E["feature2d"], np.ndarray)
 
-        self.assertIsInstance(self.uncertainty.Var["directComparison"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.Var["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.Var["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.Var["feature2d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.Var["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.Var["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.Var["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.Var["feature2d"], np.ndarray)
 
-        self.assertIsInstance(self.uncertainty.sensitivity["directComparison"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.sensitivity["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.sensitivity["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.sensitivity["feature2d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity["feature2d"], np.ndarray)
 
         self.assertIsInstance(self.uncertainty.U_mc["directComparison"], np.ndarray)
         self.assertIsInstance(self.uncertainty.U_mc["feature0d"], np.ndarray)
@@ -809,13 +800,13 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.MC()
 
-        self.assertTrue(np.allclose(self.uncertainty.E["directComparison"],
+        self.assertTrue(np.allclose(self.uncertainty.data.E["directComparison"],
                                     np.arange(0, 10) + 3, atol=0.1))
-        self.assertTrue(np.allclose(self.uncertainty.Var["directComparison"],
+        self.assertTrue(np.allclose(self.uncertainty.data.Var["directComparison"],
                                     np.zeros(10), atol=0.1))
-        self.assertTrue(np.all(np.less(self.uncertainty.p_05["directComparison"],
+        self.assertTrue(np.all(np.less(self.uncertainty.data.p_05["directComparison"],
                                        np.arange(0, 10) + 3)))
-        self.assertTrue(np.all(np.greater(self.uncertainty.p_95["directComparison"],
+        self.assertTrue(np.all(np.greater(self.uncertainty.data.p_95["directComparison"],
                                           np.arange(0, 10) + 3)))
 
 
@@ -839,12 +830,12 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.MC()
 
-        self.assertTrue(np.array_equal(self.uncertainty.E["feature0d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature0d"],
                                        features.feature0d()))
-        self.assertEqual(self.uncertainty.Var["feature0d"], 0)
-        self.assertTrue(np.array_equal(self.uncertainty.p_05["feature0d"],
+        self.assertEqual(self.uncertainty.data.Var["feature0d"], 0)
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature0d"],
                                        features.feature0d()))
-        self.assertTrue(np.array_equal(self.uncertainty.p_95["feature0d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["feature0d"],
                                        features.feature0d()))
 
 
@@ -868,13 +859,13 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.MC()
 
-        self.assertTrue(np.array_equal(self.uncertainty.E["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature1d"],
                                        features.feature1d()))
-        self.assertTrue(np.array_equal(self.uncertainty.Var["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.Var["feature1d"],
                                        np.zeros(10)))
-        self.assertTrue(np.array_equal(self.uncertainty.p_05["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1d"],
                                        features.feature1d()))
-        self.assertTrue(np.array_equal(self.uncertainty.p_95["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["feature1d"],
                                        features.feature1d()))
 
 
@@ -899,13 +890,13 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.MC()
 
-        self.assertTrue(np.array_equal(self.uncertainty.E["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature2d"],
                                        features.feature2d()))
-        self.assertTrue(np.array_equal(self.uncertainty.Var["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.Var["feature2d"],
                                        np.zeros((2, 10))))
-        self.assertTrue(np.array_equal(self.uncertainty.p_05["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature2d"],
                                        features.feature2d()))
-        self.assertTrue(np.array_equal(self.uncertainty.p_95["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["feature2d"],
                                        features.feature2d()))
 
 
@@ -1085,7 +1076,7 @@ class TestUncertainty(unittest.TestCase):
             return cp.Uniform(0, 1)
 
         self.uncertainty.all_features = ["feature1", "directComparison"]
-        self.uncertainty.feature_list = ["feature1"]
+        self.uncertainty.data.feature_list = ["feature1"]
         parameterlist = [["a", 1, f],
                          ["b", 2, f]]
 
@@ -1093,8 +1084,8 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         self.uncertainty.model.parameters = parameters
 
-        self.uncertainty.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.uncertainty.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.uncertainty.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.uncertainty.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.uncertainty.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
@@ -1115,10 +1106,10 @@ class TestUncertainty(unittest.TestCase):
     def test_plotSimulatorResults(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.uncertainty.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
+        self.uncertainty.data.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
         U = np.load(os.path.join(folder, "data/U_test.npy"))
 
-        self.uncertainty.U["directComparison"] = [U, U, U, U, U]
+        self.uncertainty.data.U["directComparison"] = [U, U, U, U, U]
 
         self.uncertainty.plotSimulatorResults()
 
@@ -1190,11 +1181,6 @@ class TestUncertainty(unittest.TestCase):
         result = subprocess.call(["diff", plot_file, compare_file])
 
         self.assertEqual(result, 0)
-
-
-# TODO create tests for:
-# load()
-
 
 
 

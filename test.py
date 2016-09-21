@@ -50,6 +50,9 @@ test_model.addTest(test_runModel)
 
 test_parameters = create_test_suite([TestParameter, TestParameters])
 
+
+test_data = create_test_suite([TestData])
+
 test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
 
 test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
@@ -61,13 +64,15 @@ test_exploration = create_test_suite([TestExploration])
 test_usecase = create_test_suite([TestUseCases])
 
 
+
 test_utils = unittest.TestSuite([test_logger])
 test_prerequisites = unittest.TestSuite([test_utils,
                                         test_parameters,
                                         test_distribution,
                                         test_features,
                                         test_evaluateNodeFunction,
-                                        test_model])
+                                        test_model,
+                                        test_data])
 
 
 
@@ -104,6 +109,7 @@ parser.add_argument("--runmodel", help="RunModel tests", action="store_true")
 parser.add_argument("--logger", help="Logger tests", action="store_true")
 parser.add_argument("--plotting", help="Plotting tests", action="store_true")
 parser.add_argument("--usecase", help="Usecase tests", action="store_true")
+parser.add_argument("--data", help="Data tests", action="store_true")
 
 args = parser.parse_args()
 
@@ -186,6 +192,12 @@ if args.usecase:
     print "-----------------------------------------"
     print "Running testsuite: usecase"
     results["usecase"] = test_runner.run(test_usecase)
+if args.data:
+    print "-----------------------------------------"
+    print "Running testsuite: data"
+    results["data"] = test_runner.run(test_data)
+
+
 
 total_run = 0
 total_errors = 0

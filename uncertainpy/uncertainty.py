@@ -240,6 +240,8 @@ For example on use see:
         """
 
 
+        self.data = Data()
+
         # TODO there is something weird with features here. the Default should
         # probably not be NeuronFeatures
         if features is None:
@@ -255,6 +257,7 @@ For example on use see:
             self.feature_list = [feature_list]
         else:
             self.feature_list = feature_list
+
 
         self.save_figures = save_figures
         self.figureformat = figureformat
@@ -276,7 +279,6 @@ For example on use see:
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
 
-        self.data = Data
 
         self.resetValues()
 
@@ -330,19 +332,13 @@ For example on use see:
         self.parameter_names = None
         self.parameter_space = None
 
-        self.U = {}
         self.U_hat = {}
         self.distribution = None
         self.solves = None
-        self.t = {}
-        self.E = {}
-        self.Var = {}
         self.U_mc = {}  # TODO Is this needed to save?
-        self.p_05 = {}
-        self.p_95 = {}
-        self.sensitivity = {}
         self.P = None
 
+        self.data.resetValues()
 
 
     def evaluateNodeFunctionList(self, nodes):
@@ -353,7 +349,7 @@ For example on use see:
                          self.supress_model_output,
                          self.model.adaptive_model,
                          node,
-                         self.uncertain_parameters,
+                         self.data.uncertain_parameters,
                          self.feature_list,
                          self.features.cmd(),
                          self.feature_options))
@@ -380,23 +376,23 @@ For example on use see:
 
 
 
-    def sortFeatures(self, results):
-        features_0d = []
-        features_1d = []
-        features_2d = []
-
-        for feature in results:
-            if hasattr(results[feature][1], "__iter__"):
-                if len(results[feature][1].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature][1].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    features_2d.append(feature)
-            else:
-                features_0d.append(feature)
-
-        return features_0d, features_1d, features_2d
+    # def sortFeatures(self, results):
+    #     features_0d = []
+    #     features_1d = []
+    #     features_2d = []
+    #
+    #     for feature in results:
+    #         if hasattr(results[feature][1], "__iter__"):
+    #             if len(results[feature][1].shape) == 0:
+    #                 features_0d.append(feature)
+    #             elif len(results[feature][1].shape) == 1:
+    #                 features_1d.append(feature)
+    #             else:
+    #                 features_2d.append(feature)
+    #         else:
+    #             features_0d.append(feature)
+    #
+    #     return features_0d, features_1d, features_2d
 
 
 
@@ -419,24 +415,23 @@ For example on use see:
 
 
     def storeResults(self, solves):
-        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(solves[0])
+        self.data.setFeatures(solves[0])
 
-        self.all_features = self.features_0d + self.features_1d + self.features_2d
 
-        for feature in self.features_2d:
+        for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":
                 raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
 
             else:
-                self.t[feature] = solves[0][feature][0]
+                self.data.t[feature] = solves[0][feature][0]
 
-                self.U[feature] = []
+                self.data.U[feature] = []
                 for solved in solves:
-                    self.U[feature].append(solved[feature][1])
+                    self.data.U[feature].append(solved[feature][1])
 
                 # self.U[feature] = np.array(self.U[feature])
 
-        for feature in self.features_1d:
+        for feature in self.data.features_1d:
             if self.model.adaptive_model and feature == "directComparison":
                 ts = []
                 interpolation = []
@@ -444,45 +439,45 @@ For example on use see:
                     ts.append(solved[feature][0])
                     interpolation.append(solved[feature][2])
 
-                self.t[feature], self.U[feature] = self.performInterpolation(ts, interpolation)
+                self.data.t[feature], self.data.U[feature] = self.performInterpolation(ts, interpolation)
             else:
-                self.t[feature] = solves[0][feature][0]
-                self.U[feature] = []
+                self.data.t[feature] = solves[0][feature][0]
+                self.data.U[feature] = []
                 for solved in solves:
-                    self.U[feature].append(solved[feature][1])
+                    self.data.U[feature].append(solved[feature][1])
 
-                # self.U[feature] = np.array(self.U[feature])
+                # self.data.U[feature] = np.array(self.U[feature])
 
 
-        for feature in self.features_0d:
-            self.U[feature] = []
-            self.t[feature] = None
+        for feature in self.data.features_0d:
+            self.data.U[feature] = []
+            self.data.t[feature] = None
             for solved in solves:
-                self.U[feature].append(solved[feature][1])
+                self.data.U[feature].append(solved[feature][1])
 
             # self.U[feature] = np.array(self.U[feature])
 
         # self.t[feature] = np.array(self.t[feature])
-        self.U[feature] = np.array(self.U[feature])
+        self.data.U[feature] = np.array(self.data.U[feature])
 
 
 
 
     def createMask(self, nodes, feature):
 
-        if feature not in self.all_features:
+        if feature not in self.data.feature_list:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
         i = 0
         masked_U = []
         masked_nodes = []
-        mask = np.ones(len(self.U[feature]), dtype=bool)
+        mask = np.ones(len(self.data.U[feature]), dtype=bool)
 
-        for result in self.U[feature]:
+        for result in self.data.U[feature]:
             if not isinstance(result, np.ndarray) and np.isnan(result):
                 mask[i] = False
             else:
-                if feature in self.all_features:
+                if feature in self.data.feature_list:
                     masked_U.append(result)
 
                 else:
@@ -512,10 +507,10 @@ For example on use see:
         # TODO find a good way to solve the parameter_name poblem
         if parameter_name is None:
             parameter_space = self.model.parameters.getUncertain("parameter_space")
-            self.uncertain_parameters = self.model.parameters.getUncertain()
+            self.data.uncertain_parameters = self.model.parameters.getUncertain()
         else:
             parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            self.uncertain_parameters = [parameter_name]
+            self.data.uncertain_parameters = [parameter_name]
 
 
 
@@ -568,16 +563,16 @@ For example on use see:
         # TODO keep this test for adaptive_model ?
         # test if it is an adaptive model
         if not self.model.adaptive_model:
-            for feature in self.features_1d + self.features_2d:
-                u_prev = self.U[feature][0]
-                for u in self.U[feature][1:]:
+            for feature in self.data.features_1d + self.data.features_2d:
+                u_prev = self.data.U[feature][0]
+                for u in self.data.U[feature][1:]:
                     if u_prev.shape != u.shape:
                         raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
                     u_prev = u
 
 
         # Calculate PC for each feature
-        for feature in self.all_features:
+        for feature in self.data.feature_list:
             if self.rosenblatt:
                 masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
 
@@ -588,36 +583,40 @@ For example on use see:
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
 
+        # # perform for directComparison outside, since masking is not needed.
+        # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
+        #                                                    self.data.U["directComparison"], rule="T")
 
 
     def PCAnalysis(self):
-        for feature in self.all_features:
-            self.E[feature] = cp.E(self.U_hat[feature], self.distribution)
-            self.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
+        for feature in self.data.feature_list:
+            self.data.E[feature] = cp.E(self.U_hat[feature], self.distribution)
+            self.data.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
 
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 
-            if len(self.uncertain_parameters) > 1:
+            if len(self.data.uncertain_parameters) > 1:
                 self.U_mc[feature] = self.U_hat[feature](*samples)
-                self.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
+                self.data.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
 
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
-                self.sensitivity[feature] = None
+                self.data.sensitivity[feature] = None
 
 
-            self.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
-            self.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
+            self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
+            self.data.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
 
 
 
     def MC(self, parameter_name=None):
         if parameter_name is None:
             parameter_space = self.model.parameters.getUncertain("parameter_space")
-            self.uncertain_parameters = self.model.parameters.getUncertain()
+            self.data.uncertain_parameters = self.model.parameters.getUncertain()
         else:
             parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            self.uncertain_parameters = [parameter_name]
+            self.data.uncertain_parameters = [parameter_name]
 
         self.distribution = cp.J(*parameter_space)
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
@@ -628,13 +627,13 @@ For example on use see:
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
         self.storeResults(solves)
 
-        for feature in self.all_features:
-            self.E[feature] = np.mean(self.U[feature], 0)
-            self.Var[feature] = np.var(self.U[feature], 0)
+        for feature in self.data.feature_list:
+            self.data.E[feature] = np.mean(self.data.U[feature], 0)
+            self.data.Var[feature] = np.var(self.data.U[feature], 0)
 
-            self.p_05[feature] = np.percentile(self.U[feature], 5, 0)
-            self.p_95[feature] = np.percentile(self.U[feature], 95, 0)
-            self.sensitivity[feature] = None
+            self.data.p_05[feature] = np.percentile(self.data.U[feature], 5, 0)
+            self.data.p_95[feature] = np.percentile(self.data.U[feature], 95, 0)
+            self.data.sensitivity[feature] = None
 
 
 
@@ -758,94 +757,44 @@ For example on use see:
             os.makedirs(self.output_dir_data)
 
         ### TODO expand the save funcition to also save parameters and model information
+        self.data.save(os.path.join(self.output_dir_data, filename))
 
-        f = h5py.File(os.path.join(self.output_dir_data, filename), 'w')
-
-        # f.attrs["name"] = self.output_file.split("/")[-1]
-        f.attrs["uncertain parameters"] = self.model.parameters.getUncertain("name")
-        f.attrs["features"] = self.feature_list
-
-
-        for feature in self.all_features:
-            group = f.create_group(feature)
-
-            if feature in self.t and self.t[feature] is not None:
-                group.create_dataset("t", data=self.t[feature])
-            # IMPROVEMENT do not save U to save space?
-            if feature in self.U:
-                group.create_dataset("U", data=self.U[feature])
-            if feature in self.E:
-                group.create_dataset("E", data=self.E[feature])
-            if feature in self.Var:
-                group.create_dataset("Var", data=self.Var[feature])
-            if feature in self.p_05:
-                group.create_dataset("p_05", data=self.p_05[feature])
-            if feature in self.p_95:
-                group.create_dataset("p_95", data=self.p_95[feature])
-            if feature in self.sensitivity and self.sensitivity[feature] is not None:
-                group.create_dataset("sensitivity", data=self.sensitivity[feature])
-            # if feature == "directComparison":
-            #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
-
-        f.close()
 
 
 
     # TODO not finished
     def load(self, filename):
-        self.filename = filename
-        f = h5py.File(os.path.join(self.data_dir, self.filename), 'r')
-
-        self.features_0d = []
-        self.features_1d = []
-
-        self.features_0d, self.features_1d = self.sortFeatures(self.E)
+        # self.filename = filename
+        self.data.load(os.path.join(self.data_dir, filename))
 
 
-        for feature in f.keys():
-            self.U[feature] = f[feature]["U"][()]
-            self.E[feature] = f[feature]["E"][()]
-            self.Var[feature] = f[feature]["Var"][()]
-            self.p_05[feature] = f[feature]["p_05"][()]
-            self.p_95[feature] = f[feature]["p_95"][()]
-
-            if "sensitivity" in f[feature].keys():
-                self.sensitivity[feature] = f[feature]["sensitivity"][()]
-            else:
-                self.sensitivity[feature] = None
-
-            if "t" in f[feature].keys():
-                self.t = f[feature]["t"][()]
-            # else:
-            #     self.t[feature] = None
-
-        self.uncertain_parameters = f.attrs["uncertain parameters"]
-
-
+    # Move this to plotting code somewhere
     def plotSimulatorResults(self, foldername="simulator_results"):
         i = 1
         save_folder = os.path.join(self.output_dir_figures, foldername)
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        padding = len(str(len(self.U["directComparison"]) + 1))
-        for U in self.U["directComparison"]:
-            prettyPlot(self.t["directComparison"], U,
-                       xlabel="time", ylabel="voltage")
+        padding = len(str(len(self.data.U["directComparison"]) + 1))
+        for U in self.data.U["directComparison"]:
+            prettyPlot(self.data.t["directComparison"], U,
+                       xlabel=self.model.xlabel, ylabel=self.model.ylabel)
             plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding)))
             i += 1
 
 
     def plotAll(self, foldername=None):
-        self.plot.setData(foldername=foldername,
-                          t=self.t,
-                          U=self.U,
-                          E=self.E,
-                          Var=self.Var,
-                          p_05=self.p_05,
-                          p_95=self.p_95,
-                          uncertain_parameters=self.uncertain_parameters,
-                          sensitivity=self.sensitivity)
-
-
-        self.plot.plotAllData()
+        # self.plot.setData(foldername=foldername,
+        #                   t=self.t,
+        #                   U=self.U,
+        #                   E=self.E,
+        #                   Var=self.Var,
+        #                   p_05=self.p_05,
+        #                   p_95=self.p_95,
+        #                   uncertain_parameters=self.data.uncertain_parameters,
+        #                   sensitivity=self.sensitivity)
+        #
+        #
+        # self.plot.plotAllData()
+        # TODO update this
+        ""

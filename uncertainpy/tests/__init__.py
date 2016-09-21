@@ -19,3 +19,4 @@ from test_runModel import TestRunModel
 from test_spike_sorting import TestSpike, TestSpikes
 from test_uncertainty import TestUncertainty
 from test_usecase import TestUseCases
+from test_data import TestData
