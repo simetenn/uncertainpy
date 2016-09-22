@@ -26,11 +26,14 @@ class TestData(unittest.TestCase):
 
 
     def test_sortFeatures(self):
-        nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.uncertainty.data.uncertain_parameters = ["a", "b"]
+        test_result = {"directComparison": np.arange(0, 10),
+                       "feature2d": np.array([np.arange(0, 10),
+                                              np.arange(0, 10)]),
+                       "feature1d":np.arange(0, 10),
+                       "feature0d": 1,
+                       "featureInvalid": np.nan}
 
-        results = self.uncertainty.evaluateNodes(nodes)
-        features_0d, features_1d, features_2d = self.uncertainty.data.sortFeatures(results[0])
+        features_0d, features_1d, features_2d = self.data.sortFeatures(test_result)
 
         self.assertIn("directComparison", features_1d)
         self.assertIn("feature2d", features_2d)

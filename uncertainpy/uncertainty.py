@@ -376,23 +376,23 @@ For example on use see:
 
 
 
-    # def sortFeatures(self, results):
-    #     features_0d = []
-    #     features_1d = []
-    #     features_2d = []
-    #
-    #     for feature in results:
-    #         if hasattr(results[feature][1], "__iter__"):
-    #             if len(results[feature][1].shape) == 0:
-    #                 features_0d.append(feature)
-    #             elif len(results[feature][1].shape) == 1:
-    #                 features_1d.append(feature)
-    #             else:
-    #                 features_2d.append(feature)
-    #         else:
-    #             features_0d.append(feature)
-    #
-    #     return features_0d, features_1d, features_2d
+    def sortFeaturesFromResults(self, results):
+        features_0d = []
+        features_1d = []
+        features_2d = []
+
+        for feature in results:
+            if hasattr(results[feature][1], "__iter__"):
+                if len(results[feature][1].shape) == 0:
+                    features_0d.append(feature)
+                elif len(results[feature][1].shape) == 1:
+                    features_1d.append(feature)
+                else:
+                    features_2d.append(feature)
+            else:
+                features_0d.append(feature)
+
+        return features_0d, features_1d, features_2d
 
 
 
@@ -415,8 +415,13 @@ For example on use see:
 
 
     def storeResults(self, solves):
-        self.data.setFeatures(solves[0])
+        features_0d, features_1d, features_2d = self.sortFeaturesFromResults(solves[0])
 
+
+        self.data.features_0d = features_0d
+        self.data.features_1d = features_1d
+        self.data.features_2d = features_2d
+        self.data.feature_list = features_0d + features_1d +features_2d
 
         for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":

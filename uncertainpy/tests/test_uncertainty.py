@@ -259,6 +259,19 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.evaluateNodes(nodes)
 
 
+    def test_sortFeaturesFromResults(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
+
+        results = self.uncertainty.evaluateNodes(nodes)
+        features_0d, features_1d, features_2d = self.uncertainty.sortFeaturesFromResults(results[0])
+
+        self.assertIn("directComparison", features_1d)
+        self.assertIn("feature2d", features_2d)
+        self.assertIn("feature1d", features_1d)
+        self.assertIn("feature0d", features_0d)
+        self.assertIn("featureInvalid", features_0d)
+
 
     def test_storeResultsModel1dFeaturesAll(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -297,7 +310,7 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
         self.uncertainty.model.adaptive_model = True
         self.uncertainty.data.feature_list = ["feature0d", "feature1d", "feature2d",
-                                             "featureInvalid"]
+                                              "featureInvalid"]
 
         results = self.uncertainty.evaluateNodes(nodes)
         self.uncertainty.storeResults(results)
