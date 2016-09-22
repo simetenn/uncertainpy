@@ -136,20 +136,20 @@ class Data:
 
 
 
-def sortFeatures(self, results):
-    features_2d = []
-    features_1d = []
-    features_0d = []
+    def sortFeatures(self, results):
+        features_2d = []
+        features_1d = []
+        features_0d = []
 
-    for feature in results:
-        if hasattr(results[feature], "__iter__"):
-            if len(results[feature].shape) == 0:
-                features_0d.append(feature)
-            elif len(results[feature].shape) == 1:
-                features_1d.append(feature)
+        for feature in results:
+            if hasattr(results[feature], "__iter__"):
+                if len(results[feature].shape) == 0:
+                    features_0d.append(feature)
+                elif len(results[feature].shape) == 1:
+                    features_1d.append(feature)
+                else:
+                    features_2d.append(feature)
             else:
-                features_2d.append(feature)
-        else:
-            features_0d.append(feature)
+                features_0d.append(feature)
 
-    return features_0d, features_1d, features_2d
+        return features_0d, features_1d, features_2d

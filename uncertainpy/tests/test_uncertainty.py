@@ -1099,11 +1099,11 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.uncertainty.data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.uncertainty.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.uncertainty.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.uncertainty.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.uncertainty.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.uncertainty.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.uncertainty.data.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.data.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+        self.uncertainty.data.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
 
         self.uncertainty.save("test_save_mock")
 
