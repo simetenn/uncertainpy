@@ -121,21 +121,41 @@ class PlotUncertainty():
         self.loaded_flag = True
 
 
-    def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters,
-                sensitivity, foldername=None):
+    # def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters,
+    #             sensitivity, foldername=None):
+    #
+    #     self.t = t
+    #     self.U = U
+    #     self.E = E
+    #     self.Var = Var
+    #     self.p_05 = p_05
+    #     self.p_95 = p_95
+    #     self.sensitivity = sensitivity
+    #     self.uncertain_parameters = uncertain_parameters
+    #
+    #
+    #     self.features_0d, self.features_1d = self.sortFeatures(self.E)
+    #
+    #
+    #     if foldername is None:
+    #         self.filename = ""
+    #         self.full_output_dir_figures = self.output_dir_figures
+    #     else:
+    #         self.filename = foldername
+    #         self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
+    #
+    #
+    #     if os.path.isfile(self.full_output_dir_figures):
+    #         self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
+    #
+    #     if not os.path.isdir(self.full_output_dir_figures):
+    #         os.makedirs(self.full_output_dir_figures)
+    #
+    #
+    #     self.loaded_flag = True
 
-        self.t = t
-        self.U = U
-        self.E = E
-        self.Var = Var
-        self.p_05 = p_05
-        self.p_95 = p_95
-        self.sensitivity = sensitivity
-        self.uncertain_parameters = uncertain_parameters
 
-
-        self.features_0d, self.features_1d = self.sortFeatures(self.E)
-
+    def setData(self, data, foldername=None):
 
         if foldername is None:
             self.filename = ""
@@ -150,7 +170,6 @@ class PlotUncertainty():
 
         if not os.path.isdir(self.full_output_dir_figures):
             os.makedirs(self.full_output_dir_figures)
-
 
         self.loaded_flag = True
 

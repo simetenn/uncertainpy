@@ -10,8 +10,6 @@ class Data:
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
-        self.loaded_flag = False
-
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
@@ -76,7 +74,7 @@ class Data:
 
 
 
-    def loadData(self, filename):
+    def load(self, filename):
         self.filename = filename
 
         f = h5py.File(self.filename, 'r')
@@ -109,31 +107,10 @@ class Data:
         self.setFeatures(self.E)
         self.uncertain_parameters = f.attrs["uncertain parameters"]
 
-        self.loaded_flag = True
-
 
     def setFeatures(self, results):
         self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
         self.feature_list = self.features_0d + self.features_1d + self.features_2d
-
-
-
-    def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters,
-                sensitivity):
-
-        self.t = t
-        self.U = U
-        self.E = E
-        self.Var = Var
-        self.p_05 = p_05
-        self.p_95 = p_95
-        self.sensitivity = sensitivity
-        self.uncertain_parameters = uncertain_parameters
-
-        self.setFeatures(self.E)
-
-        self.loaded_flag = True
-
 
 
     def sortFeatures(self, results):

@@ -773,7 +773,7 @@ For example on use see:
         self.data.load(os.path.join(self.data_dir, filename))
 
 
-    # Move this to plotting code somewhere
+    # TODO Move this to plotting code somewhere
     def plotSimulatorResults(self, foldername="simulator_results"):
         i = 1
         save_folder = os.path.join(self.output_dir_figures, foldername)
@@ -789,17 +789,6 @@ For example on use see:
 
 
     def plotAll(self, foldername=None):
-        # self.plot.setData(foldername=foldername,
-        #                   t=self.t,
-        #                   U=self.U,
-        #                   E=self.E,
-        #                   Var=self.Var,
-        #                   p_05=self.p_05,
-        #                   p_95=self.p_95,
-        #                   uncertain_parameters=self.data.uncertain_parameters,
-        #                   sensitivity=self.sensitivity)
-        #
-        #
-        # self.plot.plotAllData()
-        # TODO update this
-        ""
+        self.plot.setData(self.data)
+
+        self.plot.plotAllData()

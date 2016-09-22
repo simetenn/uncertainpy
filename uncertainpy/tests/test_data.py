@@ -92,3 +92,64 @@ class TestData(unittest.TestCase):
         result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
+
+    def test_load(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock")
+
+
+        self.data.load(compare_file)
+
+        self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.U["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.E["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.E["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.Var["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.Var["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.p_05["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.p_05["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.p_95["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.p_95["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity["directComparison"], [3., 4.]))
+
+        self.assertEqual(self.data.uncertain_parameters[0], "a")
+        self.assertEqual(self.data.uncertain_parameters[1], "b")
+
+        self.assertEqual(self.data.feature_list[0], "directComparison")
+        self.assertEqual(self.data.feature_list[1], "feature1")
+
+
+    def test_resetValues(self):
+        self.uncertain_parameters = None
+
+        self.data.features_0d = -1
+        self.data.features_1d = -1
+        self.data.features_2d = -1
+        self.data.feature_list = -1
+
+        self.data.U = -1
+        self.data.t = -1
+        self.data.E = -1
+        self.data.Var = -1
+        self.data.p_05 = -1
+        self.data.p_95 = -1
+        self.data.sensitivity = -1
+
+        self.data.resetValues()
+
+
+        self.assertEqual(self.data.features_0d, [])
+
+        self.assertEqual(self.data.features_1d, [])
+        self.assertEqual(self.data.features_2d, [])
+        self.assertEqual(self.data.feature_list, [])
+        self.assertEqual(self.data.U, {})
+        self.assertEqual(self.data.t, {})
+        self.assertEqual(self.data.E, {})
+        self.assertEqual(self.data.Var, {})
+        self.assertEqual(self.data.p_05, {})
+        self.assertEqual(self.data.p_95, {})
+        self.assertEqual(self.data.sensitivity, {})
