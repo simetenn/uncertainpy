@@ -4,10 +4,10 @@ __version__ = "0.1"
 __author__ = "Simen Tennøe"
 
 from models import *
-from plotting import *
-from utils import *
-from features import *
 from data import *
+from utils import *
+from plotting import *
+from features import *
 
 from distribution import *
 from evaluateNodeFunction import *

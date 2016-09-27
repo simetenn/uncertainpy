@@ -14,14 +14,9 @@ from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize  # , 
 
 # TODO find a good way to find the directory where the data files are
 
-
-# TODO move load() to it's own class
-
 # TODO compare plots in a grid of all plots,
 # such as plotting all features in a grid plot
 
-# TODO Move some parts of the ploting code into it's own class for increased
-# readability
 
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 

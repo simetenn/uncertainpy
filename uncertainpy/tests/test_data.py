@@ -30,7 +30,7 @@ class TestData(unittest.TestCase):
         test_result = {"directComparison": np.arange(0, 10),
                        "feature2d": np.array([np.arange(0, 10),
                                               np.arange(0, 10)]),
-                       "feature1d":np.arange(0, 10),
+                       "feature1d": np.arange(0, 10),
                        "feature0d": 1,
                        "featureInvalid": np.nan}
 
@@ -48,7 +48,7 @@ class TestData(unittest.TestCase):
         test_result = {"directComparison": np.arange(0, 10),
                        "feature2d": np.array([np.arange(0, 10),
                                               np.arange(0, 10)]),
-                       "feature1d":np.arange(0, 10),
+                       "feature1d": np.arange(0, 10),
                        "feature0d": 1,
                        "featureInvalid": np.nan}
 
@@ -92,6 +92,7 @@ class TestData(unittest.TestCase):
         result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
+
 
     def test_load(self):
         folder = os.path.dirname(os.path.realpath(__file__))

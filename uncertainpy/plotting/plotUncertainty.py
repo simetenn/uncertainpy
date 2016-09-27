@@ -1,11 +1,11 @@
 import os
-import h5py
 import glob
 import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+from uncertainpy import Data
 from prettyplot import prettyPlot, prettyBar
 from prettyplot import spines_edge_color, get_current_colormap
 from prettyplot import set_legend, get_colormap_tableu20, set_style
@@ -29,7 +29,7 @@ from uncertainpy.utils import create_logger
 
 # TODO plot simulator_results
 
-plt.switch_backend('GTKAgg')
+# plt.switch_backend('GTKAgg')
 
 class PlotUncertainty():
     def __init__(self,
@@ -52,13 +52,13 @@ class PlotUncertainty():
 
         self.loaded_flag = False
 
+        self.data = Data()
+
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
 
-        self.features_0d = []
-        self.features_1d = []
-
+        # TODO move labels to Data
         self.xlabel = xlabel
         self.ylabel = ylabel
 
@@ -67,8 +67,7 @@ class PlotUncertainty():
         self.filename = filename
         full_path = os.path.join(self.data_dir, self.filename)
 
-        f = h5py.File(full_path, 'r')
-
+        self.data.load(full_path)
         # TODO what to do if output folder and data folder is the same.
         # Two options create the figures in the same folder, or create a new
         # folder with _figures added to the name?
@@ -89,70 +88,9 @@ class PlotUncertainty():
         if not os.path.isdir(self.full_output_dir_figures) and create_output_folder:
             os.makedirs(self.full_output_dir_figures)
 
-        self.t = {}
-        self.U = {}
-        self.E = {}
-        self.Var = {}
-        self.p_05 = {}
-        self.p_95 = {}
-        self.sensitivity = {}
-
-        for feature in f.keys():
-            self.U[feature] = f[feature]["U"][()]
-            self.E[feature] = f[feature]["E"][()]
-            self.Var[feature] = f[feature]["Var"][()]
-            self.p_05[feature] = f[feature]["p_05"][()]
-            self.p_95[feature] = f[feature]["p_95"][()]
-
-            if "sensitivity" in f[feature].keys():
-                self.sensitivity[feature] = f[feature]["sensitivity"][()]
-            else:
-                self.sensitivity[feature] = None
-
-
-            if "t" in f[feature].keys():
-                self.t[feature] = f[feature]["t"][()]
-            # else:
-            #     self.t[feature] = None
-
-        self.features_0d, self.features_1d = self.sortFeatures(self.E)
-
-        self.uncertain_parameters = f.attrs["uncertain parameters"]
         self.loaded_flag = True
 
 
-    # def setData(self, t, U, E, Var, p_05, p_95, uncertain_parameters,
-    #             sensitivity, foldername=None):
-    #
-    #     self.t = t
-    #     self.U = U
-    #     self.E = E
-    #     self.Var = Var
-    #     self.p_05 = p_05
-    #     self.p_95 = p_95
-    #     self.sensitivity = sensitivity
-    #     self.uncertain_parameters = uncertain_parameters
-    #
-    #
-    #     self.features_0d, self.features_1d = self.sortFeatures(self.E)
-    #
-    #
-    #     if foldername is None:
-    #         self.filename = ""
-    #         self.full_output_dir_figures = self.output_dir_figures
-    #     else:
-    #         self.filename = foldername
-    #         self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
-    #
-    #
-    #     if os.path.isfile(self.full_output_dir_figures):
-    #         self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
-    #
-    #     if not os.path.isdir(self.full_output_dir_figures):
-    #         os.makedirs(self.full_output_dir_figures)
-    #
-    #
-    #     self.loaded_flag = True
 
 
     def setData(self, data, foldername=None):
@@ -173,6 +111,7 @@ class PlotUncertainty():
 
         self.loaded_flag = True
 
+
     def toLatex(self, text):
         if "_" in text:
             txt = text.split("_")
@@ -180,30 +119,13 @@ class PlotUncertainty():
         else:
             return text
 
+
     def listToLatex(self, texts):
         tmp = []
         for txt in texts:
             tmp.append(self.toLatex(txt))
 
         return tmp
-
-    def sortFeatures(self, results):
-        features_1d = []
-        features_0d = []
-
-        for feature in results:
-            if hasattr(results[feature], "__iter__"):
-                if len(results[feature].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    self.logger.warning("No support for more than 0d and 1d plotting.")
-
-            else:
-                features_0d.append(feature)
-
-        return features_0d, features_1d
 
 
     def plotAttributeFeature1d(self, feature="directComparison",
@@ -214,7 +136,7 @@ class PlotUncertainty():
             raise ValueError("Datafile must be loaded")
 
 
-        if feature not in self.features_1d:
+        if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
 
@@ -223,9 +145,9 @@ class PlotUncertainty():
 
 
 
-        value = getattr(self, attribute)
+        value = getattr(self.data, attribute)
         title = feature + ", " + attribute_name
-        prettyPlot(self.t[feature], value[feature],
+        prettyPlot(self.data.t[feature], value[feature],
                    title, self.xlabel, self.ylabel, **kwargs)
 
 
@@ -265,11 +187,11 @@ class PlotUncertainty():
             raise ValueError("Datafile must be loaded")
 
 
-        if feature not in self.features_1d:
+        if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
 
-        ax = prettyPlot(self.t[feature], self.E[feature],
+        ax = prettyPlot(self.data.t[feature], self.data.E[feature],
                         feature + ", mean and variance", self.xlabel, self.ylabel + ", mean",
                         sns_style=sns_style, **kwargs)
 
@@ -283,10 +205,10 @@ class PlotUncertainty():
                         color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
         ax2.set_ylabel(self.ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
 
-        # ax2.set_xlim([min(self.t[feature]), max(self.t[feature])])
+        # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
         # ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
 
-        ax2.plot(self.t[feature], self.Var[feature],
+        ax2.plot(self.data.t[feature], self.Var[feature],
                  color=colors[color+1], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -319,15 +241,15 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
-        if feature not in self.features_1d:
+        if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        prettyPlot(self.t[feature], self.E[feature], title=feature + ", 90\\% confidence interval",
+        prettyPlot(self.data.t[feature], self.data.E[feature], title=feature + ", 90\\% confidence interval",
                    xlabel=self.xlabel, ylabel=self.ylabel, color=0,
                    **kwargs)
 
         colors = get_current_colormap()
-        plt.fill_between(self.t[feature], self.p_05[feature], self.p_95[feature],
+        plt.fill_between(self.data.t[feature], self.data.p_05[feature], self.data.p_95[feature],
                          alpha=0.5, color=colors[0])
 
 
@@ -351,16 +273,16 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
-        if feature not in self.features_1d:
+        if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if feature not in self.sensitivity or self.sensitivity[feature] is None:
+        if feature not in self.sensitivity or self.data.sensitivity[feature] is None:
             return
 
         parameter_names = self.uncertain_parameters
 
-        for i in range(len(self.sensitivity[feature])):
-            prettyPlot(self.t[feature], self.sensitivity[feature][i],
+        for i in range(len(self.data.sensitivity[feature])):
+            prettyPlot(self.data.t[feature], self.data.sensitivity[feature][i],
                        title=feature + ", sensitivity, " + self.toLatex(parameter_names[i]),
                        xlabel=self.xlabel, ylabel="sensitivity",
                        color=i, new_figure=True,
@@ -383,10 +305,10 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
-        if feature not in self.features_1d:
+        if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if feature not in self.sensitivity or self.sensitivity[feature] is None:
+        if feature not in self.sensitivity or self.data.sensitivity[feature] is None:
             return
 
         parameter_names = self.uncertain_parameters
@@ -419,7 +341,7 @@ class PlotUncertainty():
                 ax = axes[ny][nx]
 
             if i < nr_plots:
-                prettyPlot(self.t[feature], self.sensitivity[feature][i],
+                prettyPlot(self.data.t[feature], self.data.sensitivity[feature][i],
                            title=self.toLatex(parameter_names[i]), color=i,
                            nr_hues=nr_plots, ax=ax,
                            **kwargs)
@@ -458,15 +380,15 @@ class PlotUncertainty():
             raise ValueError("Datafile must be loaded")
 
 
-        if feature not in self.features_1d:
+        if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if feature not in self.sensitivity or self.sensitivity[feature] is None:
+        if feature not in self.sensitivity or self.data.sensitivity[feature] is None:
             return
 
 
-        for i in range(len(self.sensitivity[feature])):
-            prettyPlot(self.t[feature], self.sensitivity[feature][i],
+        for i in range(len(self.data.sensitivity[feature])):
+            prettyPlot(self.data.t[feature], self.data.sensitivity[feature][i],
                        title=feature + ", sensitivity",
                        xlabel=self.xlabel, ylabel="sensitivity",
                        new_figure=False, color=i,
@@ -474,8 +396,8 @@ class PlotUncertainty():
                        **kwargs)
 
         plt.ylim([0, 1.05])
-        if len(self.sensitivity[feature]) > 4:
-            plt.xlim([self.t[feature][0], 1.3*self.t[feature][-1]])
+        if len(self.data.sensitivity[feature]) > 4:
+            plt.xlim([self.data.t[feature][0], 1.3*self.data.t[feature][-1]])
 
         set_legend(self.listToLatex(self.uncertain_parameters))
 
@@ -491,7 +413,7 @@ class PlotUncertainty():
 
 
     def plot1dFeatures(self):
-        for feature in self.features_1d:
+        for feature in self.data.features_1d:
             self.plotMean(feature=feature)
             self.plotVariance(feature=feature)
             self.plotMeanAndVariance(feature=feature)
@@ -510,7 +432,7 @@ class PlotUncertainty():
             raise ValueError("Datafile must be loaded")
 
 
-        if feature not in self.features_0d:
+        if feature not in self.data.features_0d:
             raise ValueError("%s is not a 0D feature" % (feature))
 
 
@@ -527,15 +449,15 @@ class PlotUncertainty():
         xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
-        values = [self.E[feature], self.Var[feature],
-                  self.p_05[feature], self.p_95[feature]]
+        values = [self.data.E[feature], self.Var[feature],
+                  self.data.p_05[feature], self.data.p_95[feature]]
 
 
         ax = prettyBar(values, index=xticks, xlabels=xlabels, ylabel="Value",
                        palette=get_colormap_tableu20())
 
 
-        if self.sensitivity[feature] is not None:
+        if self.data.sensitivity[feature] is not None:
             pos = 2*distance + 2*width
 
             ax2 = ax.twinx()
@@ -554,7 +476,7 @@ class PlotUncertainty():
 
             for parameter in self.uncertain_parameters:
 
-                l = ax2.bar(pos, self.sensitivity[feature][i], width=width,
+                l = ax2.bar(pos, self.data.sensitivity[feature][i], width=width,
                             align='center', color=colors[4+i], linewidth=0)
 
                 legend_bars.append(l)
@@ -603,7 +525,7 @@ class PlotUncertainty():
             raise ValueError("Datafile must be loaded")
 
 
-        for feature in self.features_0d:
+        for feature in self.data.features_0d:
             self.plot0dFeature(feature, hardcopy=hardcopy, show=show)
 
 

@@ -1,7 +1,9 @@
 import os
 import h5py
 
-from uncertainpy import create_logger
+from uncertainpy.utils import create_logger
+
+
 
 class Data:
     def __init__(self,
