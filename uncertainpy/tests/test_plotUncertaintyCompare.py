@@ -57,7 +57,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
                                           "constant_feature": np.zeros(10)}}
 
         self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
-        self.plot.features_1d = ["adaptive_feature", "constant_feature"]
+        self.plot.data.features_1d = ["adaptive_feature", "constant_feature"]
 
 
         self.assertEqual(self.plot.adaptiveFeatures(), ["adaptive_feature"])
@@ -114,6 +114,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         data = {"pc": np.zeros(10), "mc_10": np.zeros(100), "mc_100": np.zeros(10)}
         t = {"pc": np.arange(10), "mc_10": np.arange(100), "mc_100": np.arange(10)}
+
 
         result = self.plot.createInterpolation(data, t)
 
@@ -228,7 +229,8 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.plot.loaded_compare_flag = True
         self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
-        self.plot.features_1d = ["adaptive_feature", "constant_feature"]
+        self.plot.data.features_1d = ["adaptive_feature", "constant_feature"]
+
 
 
         self.plot.interpolateAllData()
@@ -261,8 +263,8 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         feature = TestingFeatures()
 
-        self.assertTrue(np.array_equal(self.plot.t["directComparison"], t))
-        self.assertTrue(np.array_equal(self.plot.t["feature1d"], t))
+        self.assertTrue(np.array_equal(self.plot.data.t["directComparison"], t))
+        self.assertTrue(np.array_equal(self.plot.data.t["feature1d"], t))
 
 
         self.assertTrue(np.allclose(self.plot.E_compare["pc"]["directComparison"], U, atol=0.05))
@@ -272,7 +274,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.assertTrue(np.allclose(self.plot.Var_compare["pc"]["feature1d"], np.zeros(10), atol=0.001))
 
 
-        self.assertTrue(np.all(np.less(self.plot.p_05["directComparison"], U)))
+        self.assertTrue(np.all(np.less(self.plot.p_05_compare["pc"]["directComparison"], U)))
         self.assertTrue(np.allclose(self.plot.p_05_compare["pc"]["feature1d"], feature.feature1d(), atol=0.001))
 
         self.assertTrue(np.all(np.greater(self.plot.p_95_compare["pc"]["directComparison"], U)))
@@ -281,10 +283,10 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.assertTrue(self.plot.sensitivity_compare["pc"]["directComparison"].shape, (10, 2))
         self.assertTrue(self.plot.sensitivity_compare["pc"]["feature1d"].shape, (10, 2))
 
-        self.assertEqual(len(self.plot.features_0d), 2)
-        self.assertEqual(len(self.plot.features_1d), 2)
+        self.assertEqual(len(self.plot.data.features_0d), 2)
+        self.assertEqual(len(self.plot.data.features_1d), 2)
 
-        self.assertEqual(len(self.plot.uncertain_parameters), 2)
+        self.assertEqual(len(self.plot.data.uncertain_parameters), 2)
         self.assertTrue(self.plot.loaded_flag)
 
 

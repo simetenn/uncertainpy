@@ -7,6 +7,7 @@ from uncertainpy.utils import create_logger
 
 class Data:
     def __init__(self,
+                 filename=None,
                  verbose_level="info",
                  verbose_filename=None):
 
@@ -17,9 +18,10 @@ class Data:
                                     self.__class__.__name__)
 
 
-
-        self.resetValues()
-
+        if filename is None:
+            self.resetValues()
+        else:
+            self.load(filename)
 
 
     def resetValues(self):
