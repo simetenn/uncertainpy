@@ -1099,6 +1099,7 @@ class TestUncertainty(unittest.TestCase):
 
 
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
+        self.uncertainty.data.feature_list = ["feature1", "directComparison"]
         self.uncertainty.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.uncertainty.data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.uncertainty.data.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}

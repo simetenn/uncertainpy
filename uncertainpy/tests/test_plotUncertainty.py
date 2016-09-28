@@ -8,6 +8,7 @@ import shutil
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.features import TestingFeatures
 from uncertainpy.models import TestingModel1d
+from uncertainpy import Data
 
 class TestPlotUncertainpy(unittest.TestCase):
     def setUp(self):
@@ -61,15 +62,11 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_setData(self):
-        self.data = PlotUncertainty(data_dir=self.test_data_dir,
-                                    output_dir_figures=self.output_test_dir,
-                                    verbose_level="error")
+        data = Data()
 
+        data.load(os.path.join(self.test_data_dir, "test_save_data"))
 
-        self.data.loadData("test_save_data")
-
-
-        self.plot.setData(self.data)
+        self.plot.setData(data)
 
         self.assertData()
 

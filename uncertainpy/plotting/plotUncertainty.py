@@ -109,6 +109,8 @@ class PlotUncertainty():
         if not os.path.isdir(self.full_output_dir_figures):
             os.makedirs(self.full_output_dir_figures)
 
+        self.data = data
+
         self.loaded_flag = True
 
 
@@ -206,9 +208,9 @@ class PlotUncertainty():
         ax2.set_ylabel(self.ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
 
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
-        # ax2.set_ylim([min(self.Var[feature]), max(self.Var[feature])])
+        # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
 
-        ax2.plot(self.data.t[feature], self.Var[feature],
+        ax2.plot(self.data.t[feature], self.data.Var[feature],
                  color=colors[color+1], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -276,17 +278,17 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if feature not in self.sensitivity or self.data.sensitivity[feature] is None:
+        if feature not in self.data.sensitivity or self.data.sensitivity[feature] is None:
             return
 
-        parameter_names = self.uncertain_parameters
+        parameter_names = self.data.uncertain_parameters
 
         for i in range(len(self.data.sensitivity[feature])):
             prettyPlot(self.data.t[feature], self.data.sensitivity[feature][i],
                        title=feature + ", sensitivity, " + self.toLatex(parameter_names[i]),
                        xlabel=self.xlabel, ylabel="sensitivity",
                        color=i, new_figure=True,
-                       nr_hues=len(self.uncertain_parameters), **kwargs)
+                       nr_hues=len(self.data.uncertain_parameters), **kwargs)
             # plt.ylim([0, 1.05])
 
             if hardcopy:
@@ -308,10 +310,10 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if feature not in self.sensitivity or self.data.sensitivity[feature] is None:
+        if feature not in self.data.sensitivity or self.data.sensitivity[feature] is None:
             return
 
-        parameter_names = self.uncertain_parameters
+        parameter_names = self.data.uncertain_parameters
 
         # get size of the grid in x and y directions
         nr_plots = len(parameter_names)
@@ -383,7 +385,7 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if feature not in self.sensitivity or self.data.sensitivity[feature] is None:
+        if feature not in self.data.sensitivity or self.data.sensitivity[feature] is None:
             return
 
 
@@ -392,14 +394,14 @@ class PlotUncertainty():
                        title=feature + ", sensitivity",
                        xlabel=self.xlabel, ylabel="sensitivity",
                        new_figure=False, color=i,
-                       nr_hues=len(self.uncertain_parameters),
+                       nr_hues=len(self.data.uncertain_parameters),
                        **kwargs)
 
         plt.ylim([0, 1.05])
         if len(self.data.sensitivity[feature]) > 4:
             plt.xlim([self.data.t[feature][0], 1.3*self.data.t[feature][-1]])
 
-        set_legend(self.listToLatex(self.uncertain_parameters))
+        set_legend(self.listToLatex(self.data.uncertain_parameters))
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
@@ -436,12 +438,12 @@ class PlotUncertainty():
             raise ValueError("%s is not a 0D feature" % (feature))
 
 
-        if len(self.uncertain_parameters) > max_legend_size:
+        if len(self.data.uncertain_parameters) > max_legend_size:
             legend_size = max_legend_size
         else:
-            legend_size = len(self.uncertain_parameters)
+            legend_size = len(self.data.uncertain_parameters)
 
-        legend_width = np.ceil(len(self.uncertain_parameters)/float(max_legend_size))
+        legend_width = np.ceil(len(self.data.uncertain_parameters)/float(max_legend_size))
 
         width = 0.2
         distance = 0.5
@@ -449,7 +451,7 @@ class PlotUncertainty():
         xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
-        values = [self.data.E[feature], self.Var[feature],
+        values = [self.data.E[feature], self.data.Var[feature],
                   self.data.p_05[feature], self.data.p_95[feature]]
 
 
@@ -474,7 +476,7 @@ class PlotUncertainty():
             legend_bars = []
             colors = get_current_colormap()
 
-            for parameter in self.uncertain_parameters:
+            for parameter in self.data.uncertain_parameters:
 
                 l = ax2.bar(pos, self.data.sensitivity[feature][i], width=width,
                             align='center', color=colors[4+i], linewidth=0)
@@ -489,7 +491,7 @@ class PlotUncertainty():
 
             location = (0.5, 1.01 + legend_width*0.095)
             lgd = plt.legend(legend_bars,
-                             self.listToLatex(self.uncertain_parameters),
+                             self.listToLatex(self.data.uncertain_parameters),
                              loc='upper center', bbox_to_anchor=location,
                              ncol=legend_size)
             lgd.get_frame().set_edgecolor(axis_grey)
