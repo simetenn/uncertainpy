@@ -41,75 +41,78 @@ class Data:
         self.p_95 = {}
         self.sensitivity = {}
 
+        self.xlabel = ""
+        self.ylabel = ""
+
 
 
     def save(self, filename):
         ### TODO expand the save funcition to also save parameters and model information
 
-        f = h5py.File(os.path.join(filename), 'w')
+        with h5py.File(os.path.join(filename), 'w') as f:
 
-        # f.attrs["name"] = self.output_file.split("/")[-1]
-        f.attrs["uncertain parameters"] = self.uncertain_parameters
-        f.attrs["features"] = self.feature_list
+            # f.attrs["name"] = self.output_file.split("/")[-1]
+            f.attrs["uncertain parameters"] = self.uncertain_parameters
+            f.attrs["features"] = self.feature_list
+            f.attrs["xlabel"] = self.xlabel
+            f.attrs["ylabel"] = self.ylabel
 
+            for feature in self.feature_list:
+                group = f.create_group(feature)
 
-        for feature in self.feature_list:
-            group = f.create_group(feature)
-
-            if feature in self.t and self.t[feature] is not None:
-                group.create_dataset("t", data=self.t[feature])
-            # IMPROVEMENT do not save U to save space?
-            if feature in self.U:
-                group.create_dataset("U", data=self.U[feature])
-            if feature in self.E:
-                group.create_dataset("E", data=self.E[feature])
-            if feature in self.Var:
-                group.create_dataset("Var", data=self.Var[feature])
-            if feature in self.p_05:
-                group.create_dataset("p_05", data=self.p_05[feature])
-            if feature in self.p_95:
-                group.create_dataset("p_95", data=self.p_95[feature])
-            if feature in self.sensitivity and self.sensitivity[feature] is not None:
-                group.create_dataset("sensitivity", data=self.sensitivity[feature])
-            # if feature == "directComparison":
-            #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
-
-        f.close()
-
+                if feature in self.t and self.t[feature] is not None:
+                    group.create_dataset("t", data=self.t[feature])
+                # IMPROVEMENT do not save U to save space?
+                if feature in self.U:
+                    group.create_dataset("U", data=self.U[feature])
+                if feature in self.E:
+                    group.create_dataset("E", data=self.E[feature])
+                if feature in self.Var:
+                    group.create_dataset("Var", data=self.Var[feature])
+                if feature in self.p_05:
+                    group.create_dataset("p_05", data=self.p_05[feature])
+                if feature in self.p_95:
+                    group.create_dataset("p_95", data=self.p_95[feature])
+                if feature in self.sensitivity and self.sensitivity[feature] is not None:
+                    group.create_dataset("sensitivity", data=self.sensitivity[feature])
+                # if feature == "directComparison":
+                #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
 
 
     def load(self, filename):
         self.filename = filename
 
-        f = h5py.File(self.filename, 'r')
+        with h5py.File(self.filename, 'r') as f:
+            self.t = {}
+            self.U = {}
+            self.E = {}
+            self.Var = {}
+            self.p_05 = {}
+            self.p_95 = {}
+            self.sensitivity = {}
 
-        self.t = {}
-        self.U = {}
-        self.E = {}
-        self.Var = {}
-        self.p_05 = {}
-        self.p_95 = {}
-        self.sensitivity = {}
+            for feature in f.keys():
+                self.U[feature] = f[feature]["U"][()]
+                self.E[feature] = f[feature]["E"][()]
+                self.Var[feature] = f[feature]["Var"][()]
+                self.p_05[feature] = f[feature]["p_05"][()]
+                self.p_95[feature] = f[feature]["p_95"][()]
 
-        for feature in f.keys():
-            self.U[feature] = f[feature]["U"][()]
-            self.E[feature] = f[feature]["E"][()]
-            self.Var[feature] = f[feature]["Var"][()]
-            self.p_05[feature] = f[feature]["p_05"][()]
-            self.p_95[feature] = f[feature]["p_95"][()]
+                if "sensitivity" in f[feature].keys():
+                    self.sensitivity[feature] = f[feature]["sensitivity"][()]
+                else:
+                    self.sensitivity[feature] = None
 
-            if "sensitivity" in f[feature].keys():
-                self.sensitivity[feature] = f[feature]["sensitivity"][()]
-            else:
-                self.sensitivity[feature] = None
+                if "t" in f[feature].keys():
+                    self.t[feature] = f[feature]["t"][()]
+                # else:
+                #     self.t[feature] = None
 
-            if "t" in f[feature].keys():
-                self.t[feature] = f[feature]["t"][()]
-            # else:
-            #     self.t[feature] = None
+            self.setFeatures(self.E)
+            self.uncertain_parameters = f.attrs["uncertain parameters"]
 
-        self.setFeatures(self.E)
-        self.uncertain_parameters = f.attrs["uncertain parameters"]
+            self.xlabel = f.attrs["xlabel"]
+            self.ylabel = f.attrs["ylabel"]
 
 
     def setFeatures(self, results):

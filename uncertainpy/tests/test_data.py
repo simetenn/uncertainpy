@@ -78,7 +78,8 @@ class TestData(unittest.TestCase):
         self.data.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
 
         self.data.uncertain_parameters = ["a", "b"]
-
+        self.data.xlabel = "xlabel"
+        self.data.ylabel = "ylabel"
         self.data.feature_list = ["directComparison", "feature1"]
 
 
@@ -87,7 +88,6 @@ class TestData(unittest.TestCase):
         filename = os.path.join(self.output_test_dir, "test_save_mock")
 
         self.data.save(filename)
-
 
         result = subprocess.call(["h5diff", filename, compare_file])
 
@@ -119,6 +119,9 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.uncertain_parameters[0], "a")
         self.assertEqual(self.data.uncertain_parameters[1], "b")
 
+        self.assertEqual(self.data.xlabel, "xlabel")
+        self.assertEqual(self.data.ylabel, "ylabel")
+
         self.assertEqual(self.data.feature_list[0], "directComparison")
         self.assertEqual(self.data.feature_list[1], "feature1")
 
@@ -138,6 +141,9 @@ class TestData(unittest.TestCase):
         self.data.p_05 = -1
         self.data.p_95 = -1
         self.data.sensitivity = -1
+
+        self.data.xlabel = -1
+        self.data.ylabel = -1
 
         self.data.resetValues()
 

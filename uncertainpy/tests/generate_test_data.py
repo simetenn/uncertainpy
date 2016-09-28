@@ -1,8 +1,4 @@
 import os
-import unittest
-import subprocess
-import shutil
-import chaospy as cp
 import uncertainpy
 
 
@@ -126,9 +122,28 @@ def generate_data_compareMC():
 
 
 
+def generate_data_data():
+    data = uncertainpy.Data()
+
+    data.uncertain_parameters = ["a", "b"]
+    data.feature_list = ["directComparison", "feature1"]
+    data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+    data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+    data.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+    data.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+    data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+    data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
+    data.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
+    data.xlabel = "xlabel"
+    data.ylabel = "ylabel"
+
+    data.save(os.path.join(test_data_dir, "test_save_mock"))
+
+
 if __name__ == "__main__":
     generate_data_allParameters()
     generate_data_singleParameters()
     generate_data_allParametersMC()
     generate_data_singleParametersMC()
     generate_data_compareMC()
+    generate_data_data()
