@@ -16,7 +16,8 @@ from test_parameters import TestParameter, TestParameters
 from test_plotUncertainty import TestPlotUncertainpy
 from test_plotUncertaintyCompare import TestPlotUncertainpyCompare
 from test_runModel import TestRunModel
-from test_spike_sorting import TestSpike, TestSpikes
+from test_spike import TestSpike
+from test_spikes import TestSpikes
 from test_uncertainty import TestUncertainty
 from test_usecase import TestUseCases
 from test_data import TestData
