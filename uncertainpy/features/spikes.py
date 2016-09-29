@@ -30,15 +30,19 @@ class Spikes:
         self.spikes = []
         self.nr_spikes = 0
 
+
     def __iter__(self):
         for spike in self.spikes:
             yield spike
 
+
     def __len__(self):
         return self.nr_spikes
 
+
     def __getitem__(self, i):
         return self.spikes[i]
+
 
     def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
 
@@ -96,31 +100,32 @@ class Spikes:
 
 
     def plot(self, save_name=None):
-        color = 0
         u_max = []
         u_min = []
         t_max = []
         labels = []
+
         i = 1
         for spike in self.spikes:
-            print spike.U
             u_max.append(max(spike.U))
             u_min.append(min(spike.U))
             t_max.append(len(spike.t))
+
             plotting.prettyPlot(range(len(spike.t)), spike.U,
                                 title="Spikes",
                                 xlabel="index",
                                 ylabel="Voltage, mV",
-                                color=color,
-                                new_figure=False)
+                                new_figure=False,
+                                nr_hues=self.nr_spikes)
+
             labels.append("spike %d" % (i))
-            color += 2
             i += 1
 
 
         plt.ylim([min(u_min), max(u_max)])
         plt.xlim([0, max(t_max)*1.25])
         plt.legend(labels)
+
         if save_name is None:
             plt.show()
         else:

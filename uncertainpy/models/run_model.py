@@ -12,7 +12,6 @@ def main():
     # parser.add_argument("--kwargs", nargs="*")
 
 
-    # args = parser.parse_args()
     args, _ = parser.parse_known_args()
 
     sys.path.insert(0, args.file_dir)

@@ -1,4 +1,4 @@
-from uncertainpy.spikes import Spikes
+from uncertainpy.features.spikes import Spikes
 from uncertainpy.features import GeneralFeatures
 
 

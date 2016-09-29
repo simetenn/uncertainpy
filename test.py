@@ -20,6 +20,8 @@ def create_test_suite(test_classes_to_run):
 test_distribution = create_test_suite([TestDistribution])
 test_evaluateNodeFunction = create_test_suite([TestEvaluateNodeFunction])
 
+test_spike = create_test_suite([TestSpike])
+test_spikes = create_test_suite([TestSpikes])
 
 test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
 
@@ -100,7 +102,9 @@ parser.add_argument("--exploration", help="UncertaintyEstimations (explorations)
 parser.add_argument("--parameters", help="Parameter tests", action="store_true")
 parser.add_argument("--distribution", help="Distribution tests", action="store_true")
 parser.add_argument("--evaluatenodefunction", help="evaluatenodefunction tests", action="store_true")
-parser.add_argument("--spike_sorting", help="spike_sorting tests", action="store_true")
+parser.add_argument("--spike", help="Spike tests", action="store_true")
+parser.add_argument("--spikes", help="Spikes tests ", action="store_true")
+parser.add_argument("--spike_sorting", help="Test spike sorting", action="store_true")
 parser.add_argument("--plotuncertainty", help="PlotUncertainty tests", action="store_true")
 parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests", action="store_true")
 parser.add_argument("--features", help="Features tests", action="store_true")
@@ -159,7 +163,15 @@ if args.evaluatenodefunction:
 if args.spike_sorting:
     print "-----------------------------------------"
     print "Running testsuite: spike_sorting"
-    results["spike_sorting"] = test_runner.run(test_spike_sorting)
+    results["spike"] = test_runner.run(test_spike_sorting)
+if args.spike:
+    print "-----------------------------------------"
+    print "Running testsuite: spike"
+    results["spike"] = test_runner.run(test_spike)
+if args.spikes:
+    print "-----------------------------------------"
+    print "Running testsuite: spikes"
+    results["spikes"] = test_runner.run(test_spikes)
 if args.plotuncertainty:
     print "-----------------------------------------"
     print "Running testsuite: plotUncertainty"

@@ -9,7 +9,7 @@ test_data_dir = os.path.join(folder, "data")
 seed = 10
 
 
-def generate_data_allParameters():
+def generate_data_allParameters(): # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
