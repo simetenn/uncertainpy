@@ -9,7 +9,7 @@ from uncertainpy.plotting.prettyPlot import prettyPlot
 def generate_plots_plotUncertainty():
     folder = os.path.dirname(os.path.realpath(__file__))
 
-    data_file = "test_plot_data"
+    data_file = "TestingModel1d"
     test_data_dir = os.path.join(folder, "data")
     output_test_dir = os.path.join(folder, "data")
     # output_test_dir = os.path.join(folder, "../../test_data")
@@ -50,7 +50,7 @@ def generate_simulator_plot():
     U = np.load(os.path.join(test_data_dir, "U_test.npy"))
     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
-    prettyPlot(t, U, xlabel="time", ylabel="voltage")
+    prettyPlot(t, U, xlabel="x", ylabel="y")
 
     plt.savefig(os.path.join(output_test_dir, "U.png"))
 

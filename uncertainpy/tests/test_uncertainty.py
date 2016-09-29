@@ -34,7 +34,7 @@ class TestUncertainty(unittest.TestCase):
                                                  seed=self.seed)
 
 
-    # 
+    #
     # def tearDown(self):
     #     if os.path.isdir(self.output_test_dir):
     #         shutil.rmtree(self.output_test_dir)
@@ -1081,114 +1081,79 @@ class TestUncertainty(unittest.TestCase):
     #     result = subprocess.call(["h5diff", filename, compare_file])
     #
     #     self.assertEqual(result, 0)
+
+
+
+    def test_plotSimulatorResults(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.uncertainty.data.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
+        U = np.load(os.path.join(folder, "data/U_test.npy"))
+
+        self.uncertainty.data.U["directComparison"] = [U, U, U, U, U]
+
+        self.uncertainty.plotSimulatorResults()
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/U.png")
+
+        plot_count = 0
+        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+            result = subprocess.call(["diff", plot, compare_file])
+
+            self.assertEqual(result, 0)
+
+            plot_count += 1
+
+        self.assertEqual(plot_count, 5)
+
     #
-    #
-    # def test_save(self):
-    #
-    #     def f(x):
-    #         return cp.Uniform(0, 1)
-    #
-    #     self.uncertainty.all_features = ["feature1", "directComparison"]
-    #     self.uncertainty.data.feature_list = ["feature1"]
-    #     parameterlist = [["a", 1, f],
-    #                      ["b", 2, f]]
-    #
+    # def test_plotAll(self):
+    #     parameterlist = [["a", 1, None],
+    #                      ["b", 2, None]]
     #
     #     parameters = Parameters(parameterlist)
-    #     self.uncertainty.model.parameters = parameters
+    #     model = TestingModel1d(parameters)
+    #     model.setAllDistributions(Distribution(0.5).uniform)
+    #
+    #     self.uncertainty = UncertaintyEstimation(model,
+    #                                              features=TestingFeatures(),
+    #                                              feature_list="all",
+    #                                              save_data=False,
+    #                                              save_figures=False,
+    #                                              output_dir_data=self.output_test_dir,
+    #                                              output_dir_figures=self.output_test_dir,
+    #                                              verbose_level="error",
+    #                                              seed=self.seed)
     #
     #
-    #     self.uncertainty.data.uncertain_parameters = ["a", "b"]
-    #     self.uncertainty.data.feature_list = ["feature1", "directComparison"]
-    #     self.uncertainty.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    #     self.uncertainty.data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    #     self.uncertainty.data.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    #     self.uncertainty.data.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    #     self.uncertainty.data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    #     self.uncertainty.data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    #     self.uncertainty.data.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
+    #     self.uncertainty.allParameters()
+    #     self.uncertainty.plotAll()
     #
-    #     self.uncertainty.save("test_save_mock")
+    #     self.compare_plot("feature1d_mean")
+    #     self.compare_plot("feature1d_variance")
+    #     self.compare_plot("feature1d_mean-variance")
+    #     # self.compare_plot("feature1d_confidence-interval")
+    #     self.compare_plot("feature1d_sensitivity_a")
+    #     self.compare_plot("feature1d_sensitivity_b")
+    #     self.compare_plot("feature1d_sensitivity")
+    #     self.compare_plot("feature1d_sensitivity_grid")
     #
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/test_save_mock")
-    #     filename = os.path.join(self.output_test_dir, "test_save_mock")
+    #     self.compare_plot("feature0d")
     #
-    #     result = subprocess.call(["h5diff", filename, compare_file])
+    #     self.compare_plot("directComparison_variance")
+    #     self.compare_plot("directComparison_mean-variance")
+    #     # self.compare_plot("feature1d_confidence-interval")
+    #     self.compare_plot("directComparison_sensitivity_a")
+    #     self.compare_plot("directComparison_sensitivity_b")
+    #     self.compare_plot("directComparison_sensitivity")
+    #     self.compare_plot("directComparison_sensitivity_grid")
     #
-    #     self.assertEqual(result, 0)
-    #
-    #
-    # def test_plotSimulatorResults(self):
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #
-    #     self.uncertainty.data.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
-    #     U = np.load(os.path.join(folder, "data/U_test.npy"))
-    #
-    #     self.uncertainty.data.U["directComparison"] = [U, U, U, U, U]
-    #
-    #     self.uncertainty.plotSimulatorResults()
-    #
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/U.png")
-    #
-    #     plot_count = 0
-    #     for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
-    #         result = subprocess.call(["diff", plot, compare_file])
-    #
-    #         self.assertEqual(result, 0)
-    #
-    #         plot_count += 1
-    #
-    #     self.assertEqual(plot_count, 5)
-    #
-
-    def test_plotAll(self):
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
-
-        parameters = Parameters(parameterlist)
-        model = TestingModel1d(parameters)
-        model.setAllDistributions(Distribution(0.5).uniform)
-
-        self.uncertainty = UncertaintyEstimation(model,
-                                                 features=TestingFeatures(),
-                                                 feature_list="all",
-                                                 save_data=False,
-                                                 save_figures=False,
-                                                 output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error",
-                                                 seed=self.seed)
-
-
-        self.uncertainty.allParameters()
-        self.uncertainty.plotAll()
-
-        self.compare_plot("feature1d_mean")
-        self.compare_plot("feature1d_variance")
-        self.compare_plot("feature1d_mean-variance")
-        # self.compare_plot("feature1d_confidence-interval")
-        self.compare_plot("feature1d_sensitivity_a")
-        self.compare_plot("feature1d_sensitivity_b")
-        self.compare_plot("feature1d_sensitivity")
-        self.compare_plot("feature1d_sensitivity_grid")
-
-        self.compare_plot("feature0d")
-
-        self.compare_plot("directComparison_variance")
-        self.compare_plot("directComparison_mean-variance")
-        # self.compare_plot("feature1d_confidence-interval")
-        self.compare_plot("directComparison_sensitivity_a")
-        self.compare_plot("directComparison_sensitivity_b")
-        self.compare_plot("directComparison_sensitivity")
-        self.compare_plot("directComparison_sensitivity_grid")
-
 
 
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+        compare_file = os.path.join(folder, "data/TestingModel1d_figures",
                                     name + ".png")
 
         plot_file = os.path.join(self.output_test_dir,

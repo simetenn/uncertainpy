@@ -315,7 +315,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
             if new_figure:
                 ax = prettyPlot(t[feature], E[feature],
-                                feature + ", mean and variance", self.xlabel, self.ylabel + ", mean",
+                                feature + ", mean and variance", self.data.xlabel, self.data.ylabel + ", mean",
                                 sns_style=sns_style, nr_hues=2*len(self.compare_folders),
                                 new_figure=new_figure, **kwargs)
 
@@ -345,7 +345,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
                           "right": axis_grey, "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=axis_grey, labelcolor="black", labelsize=labelsize)
-        ax2.set_ylabel(self.ylabel + ', variance', color="black", fontsize=labelsize)
+        ax2.set_ylabel(self.data.ylabel + ', variance', color="black", fontsize=labelsize)
         ax2.yaxis.offsetText.set_fontsize(labelsize)
 
 
@@ -398,7 +398,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             if new_figure:
                 ax = prettyPlot(t[feature], E[feature],
                                 title=feature + " ,90\% Confidence interval",
-                                xlabel=self.xlabel, ylabel=self.ylabel, color=color,
+                                xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=color,
                                 label=compare.replace("_", " ") + ", Mean", **kwargs)
 
                 colors = get_current_colormap()
@@ -471,7 +471,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
                 prettyPlot(self.t_compare[compare], self.sensitivity[feature][i],
                            title=feature + ", sensitivity",
-                           xlabel=self.xlabel, ylabel="sensitivity",
+                           xlabel=self.data.xlabel, ylabel="sensitivity",
                            new_figure=new_figure, **kwargs)
 
                 new_figure = False
@@ -675,7 +675,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             title = feature + ", $\\frac{{|{0}_{{{2}}} - {1}_{{{2}}}|}}{{{0}_{{{2}}}}}$".format(reference_name.upper(), compare.split("_")[0].upper(), attribute_name)
 
             prettyPlot(self.t_compare[compare][feature], fractional_difference_mean,
-                       title, self.xlabel, self.ylabel,
+                       title, self.data.xlabel, self.data.ylabel,
                        new_figure=new_figure, nr_hues=len(compares),
                        **kwargs)
 
@@ -762,7 +762,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
             if new_figure:
                 ax = prettyPlot(self.t_compare[compare][feature], fractional_difference_mean, title=title,
-                                xlabel=self.xlabel, ylabel=self.ylabel, color=color,
+                                xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=color,
                                 nr_hues=len(compares), label=compare.replace("_", " ") + ", Mean",
                                 **kwargs)
 

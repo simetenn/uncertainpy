@@ -1,4 +1,5 @@
 import numpy as np
+import glob
 import os
 import unittest
 import subprocess
@@ -15,7 +16,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.folder = os.path.dirname(os.path.realpath(__file__))
 
         self.test_data_dir = os.path.join(self.folder, "data")
-        self.data_file = "test_plot_data"
+        self.data_file = "TestingModel1d"
         self.output_test_dir = ".tests/"
 
         if os.path.isdir(self.output_test_dir):
@@ -36,7 +37,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/test_plot_data_figures",
+        compare_file = os.path.join(folder, "data/TestingModel1d_figures",
                                     name + ".png")
 
         plot_file = os.path.join(self.output_test_dir, self.data_file,
@@ -44,6 +45,31 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         result = subprocess.call(["diff", plot_file, compare_file])
         self.assertEqual(result, 0)
+
+
+
+    def test_plotSimulatorResults(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.plot.data.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
+        U = np.load(os.path.join(folder, "data/U_test.npy"))
+
+        self.plot.data.U["directComparison"] = [U, U, U, U, U]
+
+        self.plot.plotSimulatorResults()
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/U.png")
+
+        plot_count = 0
+        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+            result = subprocess.call(["diff", plot, compare_file])
+
+            self.assertEqual(result, 0)
+
+            plot_count += 1
+
+        self.assertEqual(plot_count, 5)
 
 
 
@@ -56,7 +82,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_loadData(self):
-        self.plot.loadData("test_save_data")
+        self.plot.loadData("TestingModel1d")
 
         self.assertData()
 
@@ -64,7 +90,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_setData(self):
         data = Data()
 
-        data.load(os.path.join(self.test_data_dir, "test_save_data"))
+        data.load(os.path.join(self.test_data_dir, "TestingModel1d"))
 
         self.plot.setData(data)
 
@@ -102,7 +128,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertTrue(self.plot.data.sensitivity["directComparison"].shape, (10, 2))
         self.assertTrue(self.plot.data.sensitivity["feature1d"].shape, (10, 2))
 
-        self.assertEqual(len(self.plot.data.features_0d), 0)
+        self.assertEqual(len(self.plot.data.features_0d), 2)
         self.assertEqual(len(self.plot.data.features_1d), 2)
 
         self.assertEqual(len(self.plot.data.uncertain_parameters), 2)

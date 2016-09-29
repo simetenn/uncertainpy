@@ -242,6 +242,7 @@ For example on use see:
 
         self.data = Data()
 
+
         # TODO there is something weird with features here. the Default should
         # probably not be NeuronFeatures
         if features is None:
@@ -282,6 +283,8 @@ For example on use see:
 
         self.resetValues()
 
+        self.data.xlabel = self.model.xlabel
+        self.data.ylabel = self.model.ylabel
 
 
         self.logger = create_logger(verbose_level,
@@ -293,9 +296,7 @@ For example on use see:
                                     output_dir_figures=output_dir_figures,
                                     figureformat=figureformat,
                                     verbose_level=verbose_level,
-                                    verbose_filename=verbose_filename,
-                                    xlabel=self.model.xlabel,
-                                    ylabel=self.model.ylabel)
+                                    verbose_filename=verbose_filename)
 
 
         if output_data_filename is None:
