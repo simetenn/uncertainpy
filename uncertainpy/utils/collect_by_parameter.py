@@ -41,4 +41,3 @@ def sortByParameters(path=path, outputpath=outputpath, hardcopy=False):
 
 if __name__ == '__main__':
         sortByParameters()
-        #createGIF()
