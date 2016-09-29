@@ -39,27 +39,6 @@ def sortByParameters(path=path, outputpath=outputpath, hardcopy=False):
                     os.symlink(os.path.join(current_path, f), filename)
 
 
-def createGIF():
-    print "Creating GIFs..."
-
-    os.chdir(outputpath)
-    for distribution in os.listdir("."):
-        os.chdir(distribution)
-        for value in os.listdir("."):
-            os.chdir(value)
-            values = []
-            for f in glob.glob("*" + file_extension):
-                interval, value = f.split(file_extension)[0].split("/")[-1].split("_")
-                values.append(value)
-
-            for gif_value in set(values):
-                cmd = "convert -set delay 100 *_%s%s %s.gif" % (gif_value, file_extension, gif_value)
-                os.system(cmd)
-
-            os.chdir("..")
-        os.chdir("..")
-    os.chdir("../..")
-
 if __name__ == '__main__':
         sortByParameters()
         #createGIF()

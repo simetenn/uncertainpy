@@ -1050,5 +1050,4 @@ if __name__ == "__main__":
 
     plot.plotCompareAll(args.filename, args.compare_folders)
 
-
     # sortByParameters(path=output_dir_figures, outputpath=output_dir_figures)
