@@ -50,7 +50,7 @@ def generate_simulator_plot():
     U = np.load(os.path.join(test_data_dir, "U_test.npy"))
     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
-    prettyPlot(t, U, xlabel="x", ylabel="y")
+    prettyPlot(t, U, xlabel="", ylabel="")
 
     plt.savefig(os.path.join(output_test_dir, "U.png"))
 

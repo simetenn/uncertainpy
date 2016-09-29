@@ -105,6 +105,9 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         feature = TestingFeatures()
 
+        # TODO currently only tests for directComparison and feature1d,
+        # does not test data of the rest
+
         self.assertTrue(np.array_equal(self.plot.data.t["directComparison"], t))
         self.assertTrue(np.array_equal(self.plot.data.t["feature1d"], t))
 

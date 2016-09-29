@@ -53,8 +53,6 @@
 # TODO Profile the code using line profiler or
 # python -m cProfile %1
 
-### After meeting
-
 
 # TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
 
@@ -85,13 +83,10 @@
 
 import time
 import os
-import h5py
-import sys
 
 import numpy as np
 import chaospy as cp
 import multiprocessing as mp
-import matplotlib.pyplot as plt
 import logging
 
 
@@ -101,7 +96,6 @@ from xvfbwrapper import Xvfb
 from uncertainpy.features import NeuronFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from uncertainpy.plotting.prettyPlot import prettyPlot
 from uncertainpy.utils import create_logger
 from uncertainpy import Data
 
@@ -283,8 +277,7 @@ For example on use see:
 
         self.resetValues()
 
-        self.data.xlabel = self.model.xlabel
-        self.data.ylabel = self.model.ylabel
+
 
 
         self.logger = create_logger(verbose_level,
@@ -340,6 +333,9 @@ For example on use see:
         self.P = None
 
         self.data.resetValues()
+
+        self.data.xlabel = self.model.xlabel
+        self.data.ylabel = self.model.ylabel
 
 
     def evaluateNodeFunctionList(self, nodes):
@@ -766,28 +762,10 @@ For example on use see:
         self.data.save(os.path.join(self.output_dir_data, filename))
 
 
-
-
-    # TODO not finished
+    # TODO never tested
     def load(self, filename):
-        # self.filename = filename
+        self.filename = filename
         self.data.load(os.path.join(self.data_dir, filename))
-
-
-    # TODO Move this to plotting code somewhere
-    def plotSimulatorResults(self, foldername="simulator_results"):
-        i = 1
-        save_folder = os.path.join(self.output_dir_figures, foldername)
-        if not os.path.isdir(save_folder):
-            os.makedirs(save_folder)
-
-        padding = len(str(len(self.data.U["directComparison"]) + 1))
-        for U in self.data.U["directComparison"]:
-            prettyPlot(self.data.t["directComparison"], U,
-                       xlabel=self.model.xlabel, ylabel=self.model.ylabel)
-            plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding)))
-            i += 1
-
 
     def plotAll(self, foldername=None):
         self.plot.setData(self.data)
