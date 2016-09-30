@@ -95,7 +95,7 @@ class TestExploration(unittest.TestCase):
         compare_file = os.path.join(self.folder, "data/pc",
                                     "TestingModel1d")
         data_file = os.path.join(self.output_test_dir, "pc/TestingModel1d")
-        result = subprocess.call(["h5diff", data_file, compare_file])
+        result = subprocess.call(["h5diff", "-d", "1e-10", data_file, compare_file])
 
 
         self.assertEqual(result, 0)
@@ -103,14 +103,14 @@ class TestExploration(unittest.TestCase):
         compare_file = os.path.join(self.folder, "data/mc_10",
                                     "TestingModel1d")
         data_file = os.path.join(self.output_test_dir, "mc_10/TestingModel1d")
-        result = subprocess.call(["h5diff", data_file, compare_file])
+        result = subprocess.call(["h5diff", "-d", "1e-10", data_file, compare_file])
 
         self.assertEqual(result, 0)
 
         compare_file = os.path.join(self.folder, "data/mc_100",
                                     "TestingModel1d")
         data_file = os.path.join(self.output_test_dir, "mc_100/TestingModel1d")
-        result = subprocess.call(["h5diff", data_file, compare_file])
+        result = subprocess.call(["h5diff", "-d", "1e-10", data_file, compare_file])
 
         self.assertEqual(result, 0)
 

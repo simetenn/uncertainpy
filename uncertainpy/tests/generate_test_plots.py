@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
-from uncertainpy.plotting.prettyPlot import prettyPlot
+from prettyPlot import prettyPlot
 
 def generate_plots_plotUncertainty():
     folder = os.path.dirname(os.path.realpath(__file__))
@@ -55,8 +55,21 @@ def generate_simulator_plot():
     plt.savefig(os.path.join(output_test_dir, "U.png"))
 
 
+def generate_spike_plot():
+    folder = os.path.dirname(os.path.realpath(__file__))
+    output_test_dir = os.path.join(folder, "data")
+
+    t = np.arange(0, 10)
+    U = np.arange(0, 10) + 10
+
+    prettyPlot(t, U, title="Spike",
+               xlabel="time", ylabel="voltage")
+
+
+    plt.savefig(os.path.join(output_test_dir, "spike.png"))
 
 if __name__ == "__main__":
     generate_plots_plotUncertainty()
     generate_plots_compare()
     generate_simulator_plot()
+    generate_spike_plot()

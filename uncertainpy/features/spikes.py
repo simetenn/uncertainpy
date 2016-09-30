@@ -1,11 +1,12 @@
-from uncertainpy import plotting
+from prettyplot import prettyPlot
 
 import pylab as plt
 import numpy as np
 
 
 class Spike:
-    def __init__(self, t, U, t_spike, U_spike, global_index):
+    def __init__(self, t, U, t_spike, U_spike, global_index,
+                 xlabel="", ylabel=""):
         self.t = t
         self.U = U
 
@@ -14,9 +15,15 @@ class Spike:
 
         self.global_index = global_index
 
+        self.xlabel = xlabel
+        self.xlabel = xlabel
 
     def plot(self, save_name=None):
-        plotting.prettyPlot(self.t, self.U, title="Spike", xlabel="Time, ms", ylabel="Voltage, mV", new_figure=True)
+        prettyPlot(self.t, self.U,
+                   title="Spike",
+                   xlabel=self.xlabel,
+                   ylabel=self.xlabel)
+
         if save_name is None:
             plt.show()
         else:
@@ -26,9 +33,12 @@ class Spike:
 
 
 class Spikes:
-    def __init__(self):
+    def __init__(self, xlabel="", ylabel=""):
         self.spikes = []
         self.nr_spikes = 0
+
+        self.xlabel = xlabel
+        self.ylabel = ylabel
 
 
     def __iter__(self):
@@ -111,12 +121,12 @@ class Spikes:
             u_min.append(min(spike.U))
             t_max.append(len(spike.t))
 
-            plotting.prettyPlot(range(len(spike.t)), spike.U,
-                                title="Spikes",
-                                xlabel="index",
-                                ylabel="Voltage, mV",
-                                new_figure=False,
-                                nr_hues=self.nr_spikes)
+            prettyPlot(range(len(spike.t)), spike.U,
+                       title="Spikes",
+                       xlabel="index",
+                       ylabel=self.ylabel,
+                       new_figure=False,
+                       nr_hues=self.nr_spikes)
 
             labels.append("spike %d" % (i))
             i += 1
