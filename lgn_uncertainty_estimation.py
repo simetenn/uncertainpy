@@ -3,7 +3,8 @@ import datetime
 
 import uncertainpy
 
-model_file = "INmodel.hoc"
+# model_file = "INmodel.hoc"
+model_file = "mosinit.hoc"
 model_path = "uncertainpy/models/neuron_models/dLGN_modelDB/"
 
 

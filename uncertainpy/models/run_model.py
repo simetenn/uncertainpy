@@ -33,7 +33,6 @@ def main():
     if len(args.parameters) % 2 != 0:
         raise ValueError("Number of parameters does not match number of parametervalues sent to simulation")
 
-    print args.save_path
 
     simulation.setParameterValues(parameters)
     simulation.run()
