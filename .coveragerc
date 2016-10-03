@@ -1,0 +1,21 @@
+# .coveragerc to control coverage.py
+[run]
+source = uncertainpy
+omit = uncertainpy/tests/*
+       # Runs in a subprocess and is tested in test_RunModel,
+       # but is not caught by coverage.py
+       uncertainpy/models/run_model.py 
+
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run:
+    if __name__ == .__main__.:
