@@ -21,17 +21,19 @@ def main():
     simulation = model()
     simulation.load()
 
+    if args.parameters is None:
+        args.parameters = []
+
     parameters = {}
     i = 0
     while i < len(args.parameters):
         parameters[args.parameters[i]] = float(args.parameters[i+1])
         i += 2
 
-
     if len(args.parameters) % 2 != 0:
-        print "ERROR: Number of parameters does not match number"
-        print "       of parametervalues sent to simulation"
-        sys.exit(1)
+        raise ValueError("Number of parameters does not match number of parametervalues sent to simulation")
+
+    print args.save_path
 
     simulation.setParameterValues(parameters)
     simulation.run()

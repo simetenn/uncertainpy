@@ -52,7 +52,7 @@ class NeuronModel(Model):
 
 
     def toArray(self, hocObject):
-        array = np.zeros(hocObject.size())
+        array = np.zeros(int(round(hocObject.size())))
         hocObject.to_python(array)
         return array
 

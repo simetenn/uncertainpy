@@ -52,7 +52,8 @@ pip_install pandas
 pip_install numpy
 pip_install matplotlib
 pip_install seaborn
-pip_install -e https://github.com/simetenn/prettyplot.git#egg=prettyplot
+pip_install -e git+https://github.com/simetenn/prettyplot.git#egg=prettyplot
+pip_install coverage
 
 pip_install xvfbwrapper
 pip_install psutil

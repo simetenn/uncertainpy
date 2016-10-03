@@ -1,7 +1,7 @@
 from model import Model
 
 # The class name and file name must be the same
-class ExampleModel(Model):
+class ExampleModel(Model): # pragma: no cover
     """
     The model must be able to handle these calls
 
@@ -36,5 +36,5 @@ class ExampleModel(Model):
 
 
     def cmd(self):
-        additional_cmds = []#additional_cmds needed to run this model from the command line
+        additional_cmds = []  # additional_cmds needed to run this model from the command line
         return Model.cmd(self, additional_cmds)

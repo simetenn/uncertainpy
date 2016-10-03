@@ -1,4 +1,4 @@
-from prettyplot import prettyPlot
+from prettyplot import prettyPlot, new_figure
 
 import pylab as plt
 import numpy as np
@@ -16,13 +16,14 @@ class Spike:
         self.global_index = global_index
 
         self.xlabel = xlabel
-        self.xlabel = xlabel
+        self.ylabel = ylabel
+
 
     def plot(self, save_name=None):
         prettyPlot(self.t, self.U,
                    title="Spike",
                    xlabel=self.xlabel,
-                   ylabel=self.xlabel)
+                   ylabel=self.ylabel)
 
         if save_name is None:
             plt.show()
@@ -33,12 +34,15 @@ class Spike:
 
 
 class Spikes:
-    def __init__(self, xlabel="", ylabel=""):
+    def __init__(self, t=None, U=None, xlabel="", ylabel=""):
         self.spikes = []
         self.nr_spikes = 0
 
         self.xlabel = xlabel
         self.ylabel = ylabel
+
+        if t is not None and U is not None:
+            self.detectSpikes(t, U)
 
 
     def __iter__(self):
@@ -116,6 +120,9 @@ class Spikes:
         labels = []
 
         i = 1
+
+        new_figure(nr_hues=self.nr_spikes)
+
         for spike in self.spikes:
             u_max.append(max(spike.U))
             u_min.append(min(spike.U))

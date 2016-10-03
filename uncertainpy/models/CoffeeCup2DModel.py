@@ -2,8 +2,9 @@ from model import Model
 
 import numpy as np
 
+# TODO under construction
 
-class CoffeeCup2DModel(Model):
+class CoffeeCup2DModel(Model): # pragma: no cover
     """
     The model must be able to handle these calls
 

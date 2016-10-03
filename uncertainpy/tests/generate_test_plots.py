@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
-from prettyPlot import prettyPlot
+from prettyplot import prettyPlot
+from uncertainpy.features.spikes import Spikes
+
 
 def generate_plots_plotUncertainty():
     folder = os.path.dirname(os.path.realpath(__file__))
@@ -68,8 +70,24 @@ def generate_spike_plot():
 
     plt.savefig(os.path.join(output_test_dir, "spike.png"))
 
+
+def generate_spikes_plot():
+    folder = os.path.dirname(os.path.realpath(__file__))
+    test_data_dir = os.path.join(folder, "data")
+    output_test_dir = os.path.join(folder, "data")
+
+    U = np.load(os.path.join(test_data_dir, "U_test.npy"))
+    t = np.load(os.path.join(test_data_dir, "t_test.npy"))
+
+
+    spikes = Spikes(t, U, xlabel="xlabel", ylabel="ylabel")
+
+    spikes.plot(os.path.join(output_test_dir, "spikes.png"), nr_hues=1)
+
+
 if __name__ == "__main__":
     generate_plots_plotUncertainty()
     generate_plots_compare()
     generate_simulator_plot()
     generate_spike_plot()
+    generate_spikes_plot()

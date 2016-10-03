@@ -4,7 +4,7 @@ import unittest
 import chaospy as cp
 
 from xvfbwrapper import Xvfb
-
+import subprocess
 
 from uncertainpy.models import HodkinHuxleyModel, CoffeeCupPointModel
 from uncertainpy.models import IzhikevichModel, Model, NeuronModel
@@ -819,12 +819,16 @@ class TestNeuronModel(unittest.TestCase):
 
 
 
-    # TODO This creates an XIO fatal error. Does it matter?
     def test_run(self):
-
         with Xvfb() as xvfb:
-            self.model.load()
-            # self.model.run()
+            cmd = self.model.cmd()
+            cmd += ["--CPU", "1", "--save_path", ""]
+            simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ut, err = simulation.communicate()
+
+
+        if simulation.returncode != 0:
+            raise RuntimeError(err)
 
 
     def test_save(self):
@@ -846,6 +850,8 @@ class TestNeuronModel(unittest.TestCase):
 
     def test_cmd(self):
         self.model.cmd()
+
+
 
 
 if __name__ == "__main__":

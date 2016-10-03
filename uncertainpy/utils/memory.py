@@ -22,11 +22,11 @@ class Memory:
 
 
     def __del__(self):
-        #self.f.close()
         try:
             self.total_f.close()
         except:
             pass
+
 
     def _VmB(self, VmKey):
         """
