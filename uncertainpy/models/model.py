@@ -26,7 +26,7 @@ class Model():
 
     Run must store the results from the simulation in self.t and self.U
     """
-    def __init__(self, parameters=None, adaptive_model=False):
+    def __init__(self, parameters=None, adaptive_model=False, **additional_cmds):
         self.U = None
         self.t = None
 
@@ -39,6 +39,12 @@ class Model():
         self.xlabel = ""
         self.ylabel = ""
 
+        self.additional_cmds = additional_cmds.keys()
+        for cmd in self.additional_cmds:
+            if hasattr(self, cmd):
+                raise RuntimeWarning("{} already have attribute {}".format(self.__class__.__name__, cmd))
+
+            setattr(self, cmd, additional_cmds[cmd])
 
 
     def load(self):
@@ -91,7 +97,7 @@ class Model():
             np.save(os.path.join(save_path, ".tmp_t_%d" % CPU), self.t)
 
 
-    def cmd(self, additional_cmds=[]):
+    def cmd(self):
         original_path = os.path.abspath(__file__)
         original_dir = os.path.dirname(original_path)
 
@@ -103,12 +109,13 @@ class Model():
             filedir = os.path.dirname(os.path.abspath(filename))
 
 
+        cmds = ["python", original_dir + "/run_model.py",
+                "--model_name", self.__class__.__name__,
+                "--file_dir", filedir,
+                "--file_name", filename,
+                "--kwargs"]
 
-        cmd = ["python", original_dir + "/run_model.py",
-               "--model_name", self.__class__.__name__,
-               "--file_dir", filedir,
-               "--file_name", filename]
+        for cmd in self.additional_cmds:
+            cmds += [cmd, getattr(self, cmd)]
 
-        cmd = cmd + additional_cmds
-
-        return cmd
+        return cmds

@@ -28,6 +28,10 @@ class TestRunModel(unittest.TestCase):
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
 
+        if simulation.returncode != 0:
+            print ut
+            raise RuntimeError(err)
+
         U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
         t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
@@ -56,6 +60,11 @@ class TestRunModel(unittest.TestCase):
 
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
+
+        if simulation.returncode != 0:
+            print ut
+            raise RuntimeError(err)
+
 
         U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
         t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
@@ -87,6 +96,12 @@ class TestRunModel(unittest.TestCase):
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
 
+
+        if simulation.returncode != 0:
+            print ut
+            raise RuntimeError(err)
+
+
         U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
         t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
@@ -115,6 +130,12 @@ class TestRunModel(unittest.TestCase):
 
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
+
+
+        if simulation.returncode != 0:
+            print ut
+            raise RuntimeError(err)
+
 
         self.assertEqual(simulation.returncode, 0)
 
@@ -146,6 +167,11 @@ class TestRunModel(unittest.TestCase):
 
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
+
+        if simulation.returncode != 0:
+            print ut
+            raise RuntimeError(err)
+
 
         self.assertEqual(simulation.returncode, 0)
 
@@ -179,6 +205,12 @@ class TestRunModel(unittest.TestCase):
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
 
+
+        if simulation.returncode != 0:
+            print ut
+            raise RuntimeError(err)
+
+
         self.assertEqual(simulation.returncode, 0)
 
         U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
@@ -210,7 +242,6 @@ class TestRunModel(unittest.TestCase):
 
         simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         ut, err = simulation.communicate()
-
 
         exc = err.split("\n")[-2].split(":")[0]
         msg = err.split("\n")[-2].split(":")[-1].strip()

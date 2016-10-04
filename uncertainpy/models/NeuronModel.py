@@ -7,26 +7,14 @@ from model import Model
 
 
 class NeuronModel(Model):
-    def __init__(self, parameters=None, model_file=None,
-                 model_path=None, adaptive_model=False):
+    def __init__(self, parameters=None, adaptive_model=False,
+                 model_file=None, model_path=None):
         Model.__init__(self, parameters=parameters,
-                       adaptive_model=adaptive_model)
+                       adaptive_model=adaptive_model,
+                       model_file=model_file, model_path=model_path)
 
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
-
-        if model_file is None or model_path is None:
-            parser = argparse.ArgumentParser()
-            parser.add_argument("--model_file")
-            parser.add_argument("--model_path")
-
-            args, parameter_args = parser.parse_known_args()
-
-            self.model_file = args.model_file
-            self.model_path = args.model_path
-        else:
-            self.model_file = model_file
-            self.model_path = model_path
 
         self.h = None
 
@@ -94,9 +82,3 @@ class NeuronModel(Model):
     def setParameterValues(self, parameters):
         for parameter in parameters:
             self.h(parameter + " = " + str(parameters[parameter]))
-
-
-    def cmd(self):
-        additional_cmds = ["--model_file", self.model_file,
-                           "--model_path", self.model_path]
-        return Model.cmd(self, additional_cmds)

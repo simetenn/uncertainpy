@@ -823,11 +823,12 @@ class TestNeuronModel(unittest.TestCase):
         with Xvfb() as xvfb:
             cmd = self.model.cmd()
             cmd += ["--CPU", "1", "--save_path", ""]
+
             simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             ut, err = simulation.communicate()
 
-
         if simulation.returncode != 0:
+            print ut
             raise RuntimeError(err)
 
 
