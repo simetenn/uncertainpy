@@ -1,5 +1,9 @@
 import unittest
+import os
+
 import chaospy as cp
+
+
 from uncertainpy import Parameter, Parameters
 
 
@@ -7,6 +11,7 @@ class TestParameter(unittest.TestCase):
     def setUp(self):
         self.parameter = Parameter("gbar_Na", 120)
 
+        self.parameter_filename = "example_hoc.hoc"
 
     def test_initNone(self):
         parameter = Parameter("gbar_Na", 120)
@@ -57,7 +62,7 @@ class TestParameter(unittest.TestCase):
             with self.assertRaises(TypeError):
                 self.parameter.setDistribution(distribution_function)
 
-            
+
     def test_setDistributionInt(self):
         distribution = 1
         with self.assertRaises(TypeError):
@@ -70,6 +75,20 @@ class TestParameter(unittest.TestCase):
 
         # self.assertEqual(self.parameter.parameter_space, cp.Uniform(110, 130))
         self.assertIsInstance(self.parameter.parameter_space, cp.Dist)
+
+
+    def test_setParameterValues(self):
+        self.folder = os.path.dirname(os.path.realpath(__file__))
+        self.test_data_dir = os.path.join(self.folder, "data")
+
+
+        self.parameter = Parameter("test", 120)
+
+        self.parameter.setParameterValue(os.path.join(self.test_data_dir,
+                                                      self.parameter_filename))
+
+
+
 
 
 class TestParameters(unittest.TestCase):

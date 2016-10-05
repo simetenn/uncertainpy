@@ -1,4 +1,3 @@
-import argparse
 import os
 
 import numpy as np
@@ -8,15 +7,17 @@ from model import Model
 
 class NeuronModel(Model):
     def __init__(self, parameters=None, adaptive_model=False,
-                 model_file=None, model_path=None):
+                 model_file="mosinit.hoc", model_path=None):
         Model.__init__(self, parameters=parameters,
                        adaptive_model=adaptive_model,
-                       model_file=model_file, model_path=model_path)
+                       model_file=model_file,
+                       model_path=model_path)
 
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
 
-        self.h = None
+        # self.h = None
+
 
     def load(self):
 

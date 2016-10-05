@@ -34,6 +34,18 @@ class TestModel(unittest.TestCase):
         self.model.load()
 
 
+    def test_addCmds(self):
+        cmds = {"a": 1, "b": 2}
+
+        self.model.addCmds(cmds)
+
+        self.assertEqual(self.model.a, 1)
+        self.assertEqual(self.model.b, 2)
+
+        self.assertIn("a", self.model.additional_cmds)
+        self.assertIn("b", self.model.additional_cmds)
+
+
     def test_setParametervalues(self):
         parameters = parameters = {"random1": -1, "random2": -1}
         self.model.setParameterValues(parameters)

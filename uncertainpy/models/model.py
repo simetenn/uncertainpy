@@ -39,12 +39,16 @@ class Model():
         self.xlabel = ""
         self.ylabel = ""
 
-        self.additional_cmds = additional_cmds.keys()
+        self.addCmds(additional_cmds)
+
+
+    def addCmds(self, cmds):
+        self.additional_cmds = cmds.keys()
         for cmd in self.additional_cmds:
             if hasattr(self, cmd):
                 raise RuntimeWarning("{} already have attribute {}".format(self.__class__.__name__, cmd))
 
-            setattr(self, cmd, additional_cmds[cmd])
+            setattr(self, cmd, cmds[cmd])
 
 
     def load(self):

@@ -1,4 +1,5 @@
 import chaospy as cp
+import re
 
 __all__ = ["Parameters", "Parameter"]
 __version__ = "0.1"
@@ -26,6 +27,16 @@ class Parameter():
             raise TypeError("Argument is neither a function nor a Chaospy distribution")
 
 
+    def setParameterValue(self, filename):
+        search_string = r"(\A|\b)" + self.name + r"(\s*=\s*)(([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))($|\b)"
+        print search_string
+        pattern = re.compile(search_string)
+
+        with open(filename) as f:
+            for line in f:
+                m = re.search(pattern, line)
+                if m:
+                    print m.group()
 
 class Parameters():
     def __init__(self, parameterlist):
