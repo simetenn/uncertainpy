@@ -5,26 +5,22 @@ import sys
 
 class Model():
     """
-    The model must be able to handle these calls
+The model must be able to handle these calls
 
-    #Note __init__ must be able to run with no arguments
-    simulation = model()
+simulation = model() -> __init__ must be able to run with no arguments
+simulation.load()
+simulation.setParameterValues(parameters -> dictionary)
+simulation.run()
+simulation.save(current_process -> int)
+simulation.cmd()
 
+If you create your own model it must either be in it's own file
+or the main part of the program must be inside
 
-    simulation.load()
-    simulation.setParameterValues(parameters -> dictionary)
-    simulation.run()
-    simulation.save(current_process -> int)
+if __name__ == "__main__":
+    # Main part of the program here
 
-    simulation.cmd()
-
-    If you create your own model it must either be in it's own file
-    or the main part of the program must be inside
-
-    if __name__ == "__main__":
-        # Main part of the program here
-
-    Run must store the results from the simulation in self.t and self.U
+Run must store the results from the simulation in self.t and self.U
     """
     def __init__(self, parameters=None, adaptive_model=False, **additional_cmds):
         self.U = None
@@ -82,7 +78,7 @@ class Model():
         """
         Run must store the results from the simulation in self.t and self.U
         """
-        raise NotImplementedError("No run() function implemented")
+        raise NotImplementedError("No run() method implemented")
 
 
     def save(self, CPU=None, save_path=""):

@@ -29,12 +29,12 @@ class Parameter():
 
     def setParameterValue(self, filename):
         search_string = r"(\A|\b)" + self.name + r"(\s*=\s*)(([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))($|\b)"
-        print search_string
         pattern = re.compile(search_string)
 
         with open(filename) as f:
             for line in f:
                 m = re.search(pattern, line)
+                # pattern.sub()
                 if m:
                     print m.group()
 
