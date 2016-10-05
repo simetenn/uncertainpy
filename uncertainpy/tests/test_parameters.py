@@ -85,7 +85,7 @@ class TestParameter(unittest.TestCase):
         self.parameter = Parameter("test", 120)
 
         self.parameter.setParameterValue(os.path.join(self.test_data_dir,
-                                                      self.parameter_filename))
+                                                      self.parameter_filename), 12)
 
 
 

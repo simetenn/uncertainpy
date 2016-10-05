@@ -11,13 +11,16 @@ soma gbar_kslow = 361.584735
 soma gbar_nap = 0.873246
 
 soma test = 0.873246
+soma test = -0.873246
 soma test=0.8
 soma   test =      0.873246
 soma test = .873246
-soma test = -23
+soma something test = -23
   test = 0.873246
 soma test = 2.
 soma test = .
+soma test = 2.7e-10
+soma test = 2.7E10
 
 soma gbar_km = 7.123963
 basal gbar_ih = 15.709707

@@ -27,16 +27,16 @@ class Parameter():
             raise TypeError("Argument is neither a function nor a Chaospy distribution")
 
 
-    def setParameterValue(self, filename):
-        search_string = r"(\A|\b)" + self.name + r"(\s*=\s*)(([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))($|\b)"
+    def setParameterValue(self, filename, value):
+        search_string = r"(\A|\b)(" + self.name + r")(\s*=\s*)((([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))([eE][+-]?\d+)*)($|\b)"
         pattern = re.compile(search_string)
 
         with open(filename) as f:
             for line in f:
-                m = re.search(pattern, line)
-                # pattern.sub()
-                if m:
-                    print m.group()
+                # m = re.search(pattern, line)
+                print pattern.sub(r"\1\2\3 " + str(value), line)
+                # if m:
+                #     print m.group()
 
 class Parameters():
     def __init__(self, parameterlist):
