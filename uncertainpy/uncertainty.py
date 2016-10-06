@@ -361,9 +361,7 @@ For example on use see:
             vdisplay.start()
 
         solves = []
-        print "Creating pool"
         pool = mp.Pool(processes=self.CPUs)
-        print "Pool created"
         solves = pool.map(evaluateNodeFunction,
                           self.evaluateNodeFunctionList(nodes.T))
         pool.close()
@@ -740,6 +738,10 @@ For example on use see:
             self.plotAll(self.output_data_filename)
 
 
+    def getData(self):
+        return self.data
+
+
     # TODO does not work
     def sensitivityRanking(self):
         self.sensitivity_ranking = {}
@@ -770,6 +772,6 @@ For example on use see:
         self.data.load(os.path.join(self.data_dir, filename))
 
     def plotAll(self, foldername=None):
-        self.plot.setData(self.data)
+        self.plot.setData(self.data, foldername=foldername)
 
         self.plot.plotAllData()
