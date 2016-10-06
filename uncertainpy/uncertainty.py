@@ -361,7 +361,9 @@ For example on use see:
             vdisplay.start()
 
         solves = []
+        print "Creating pool"
         pool = mp.Pool(processes=self.CPUs)
+        print "Pool created"
         solves = pool.map(evaluateNodeFunction,
                           self.evaluateNodeFunctionList(nodes.T))
         pool.close()

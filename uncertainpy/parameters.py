@@ -1,5 +1,7 @@
 import chaospy as cp
 import re
+import fileinput
+import sys
 
 __all__ = ["Parameters", "Parameter"]
 __version__ = "0.1"
@@ -31,12 +33,13 @@ class Parameter():
         search_string = r"(\A|\b)(" + self.name + r")(\s*=\s*)((([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))([eE][+-]?\d+)*)($|\b)"
         pattern = re.compile(search_string)
 
-        with open(filename) as f:
-            for line in f:
-                # m = re.search(pattern, line)
-                print pattern.sub(r"\1\2\3 " + str(value), line)
-                # if m:
-                #     print m.group()
+        for line in fileinput.input(filename, inplace=True):
+            sys.stdout.write(pattern.sub(r"\g<1>\g<2>\g<3>" + str(value), line))
+
+
+    def resetParameterValue(self, filename):
+        self.setParameterValue(filename, self.value)
+
 
 class Parameters():
     def __init__(self, parameterlist):
@@ -82,3 +85,13 @@ parameterlist = [ParameterObject1, ParameterObject2,...]
             return self.parameters[item]
 
         return [getattr(parameter, item) for parameter in self.parameters.values()]
+
+
+    def setParameterValues(self, filename, parameters):
+        for parameter in parameters:
+            self.parameters[parameter].setParameterValue(filename, parameters[parameter])
+
+
+    def resetParameterValues(self, filename):
+        for parameter in self.parameters:
+            self.parameters[parameter].setParameterValue(filename, self.parameters[parameter].value)

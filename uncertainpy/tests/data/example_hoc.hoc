@@ -22,6 +22,7 @@ soma test = .
 soma test = 2.7e-10
 soma test = 2.7E10
 
+
 soma gbar_km = 7.123963
 basal gbar_ih = 15.709707
 tuft gbar_ih = 17.694744
@@ -37,6 +38,7 @@ apical Ra = Ra_apical
 tuft gbar_sca = 3.67649485
 tuft vshift_sca = 7.4783781
 tuft gbar_kca = 9.75672674
+
 
 recalculate_passive_properties()
 recalculate_channel_densities()

@@ -1,5 +1,7 @@
 import unittest
 import os
+import shutil
+import subprocess
 
 import chaospy as cp
 
@@ -12,6 +14,22 @@ class TestParameter(unittest.TestCase):
         self.parameter = Parameter("gbar_Na", 120)
 
         self.parameter_filename = "example_hoc.hoc"
+
+        self.folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.test_data_dir = os.path.join(self.folder, "data")
+        self.data_file = "example_hoc.hoc"
+        self.output_test_dir = ".tests/"
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.makedirs(self.output_test_dir)
+
+
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
 
     def test_initNone(self):
         parameter = Parameter("gbar_Na", 120)
@@ -78,27 +96,56 @@ class TestParameter(unittest.TestCase):
 
 
     def test_setParameterValues(self):
-        self.folder = os.path.dirname(os.path.realpath(__file__))
-        self.test_data_dir = os.path.join(self.folder, "data")
+        parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
 
+        shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
+                    parameter_file)
 
         self.parameter = Parameter("test", 120)
 
-        self.parameter.setParameterValue(os.path.join(self.test_data_dir,
-                                                      self.parameter_filename), 12)
+        self.parameter.setParameterValue(parameter_file, 12)
 
 
+        compare_file = os.path.join(self.test_data_dir, "example_hoc_control.hoc")
 
+        result = subprocess.call(["diff", parameter_file, compare_file])
+        self.assertEqual(result, 0)
+
+    def test_resetParameterValues(self):
+        parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
+
+        shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
+                    parameter_file)
+
+        self.parameter = Parameter("test", 12)
+
+        self.parameter.resetParameterValue(parameter_file)
+
+        compare_file = os.path.join(self.test_data_dir, "example_hoc_control.hoc")
+
+        result = subprocess.call(["diff", parameter_file, compare_file])
+        self.assertEqual(result, 0)
 
 
 class TestParameters(unittest.TestCase):
-    # def setUp(self):
-    #     parameterlist = [["gbar_Na", 120, None],
-    #                      ["gbar_K", 36, None],
-    #                      ["gbar_l", 0.3, None]]
-    #
-    #     self.parameters = Parameters(parameterlist)
-    #
+    def setUp(self):
+        self.parameter_filename = "example_hoc.hoc"
+
+        self.folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.test_data_dir = os.path.join(self.folder, "data")
+        self.data_file = "example_hoc.hoc"
+        self.output_test_dir = ".tests/"
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.makedirs(self.output_test_dir)
+
+
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
 
     def test_initListNone(self):
         parameterlist = [["gbar_Na", 120, None],
@@ -247,6 +294,47 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(result[0], cp.Dist)
         self.assertIsInstance(result[1], cp.Dist)
         self.assertIsInstance(result[2], cp.Dist)
+
+    def test_setParameterValues(self):
+        parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
+
+        shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
+                    parameter_file)
+
+        parameter_change = {"soma gbar_nat": 10, "basal gbar_ih": 10, "iseg vshift2_nat": 10}
+
+        parameterlist = [["soma gbar_nat", 284.546493, None],
+                         ["basal gbar_ih", 15.709707, None],
+                         ["iseg vshift2_nat", -9.802976, None]]
+
+        self.parameters = Parameters(parameterlist)
+
+        self.parameters.setParameterValues(parameter_file, parameter_change)
+
+
+        compare_file = os.path.join(self.test_data_dir, "example_hoc_control_parameters.hoc")
+
+        result = subprocess.call(["diff", parameter_file, compare_file])
+        self.assertEqual(result, 0)
+
+    def test_resetParameterValues(self):
+        parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
+
+        shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
+                    parameter_file)
+
+        parameterlist = [["soma gbar_nat", 10, None],
+                         ["basal gbar_ih", 10, None],
+                         ["iseg vshift2_nat", 10, None]]
+
+        self.parameters = Parameters(parameterlist)
+
+        self.parameters.resetParameterValues(parameter_file)
+
+        compare_file = os.path.join(self.test_data_dir, "example_hoc_control_parameters.hoc")
+
+        result = subprocess.call(["diff", parameter_file, compare_file])
+        self.assertEqual(result, 0)
 
 
 if __name__ == "__main__":

@@ -41,6 +41,9 @@ def evaluateNodeFunction(data):
         tmp_parameters[parameter] = node[j]
         j += 1
 
+
+    print mp.current_process()
+    print "in evaluateNodeFunction"
     current_process = mp.current_process().name.split("-")
     if current_process[0] == "PoolWorker":
         current_process = str(current_process[-1])
