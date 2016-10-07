@@ -19,6 +19,7 @@ def main():
     model = getattr(module, args.model_name)
 
     simulation_arguments = dict(zip(args.kwargs[::2], args.kwargs[1::2]))
+    print simulation_arguments
     simulation = model(**simulation_arguments)
 
     simulation.load()

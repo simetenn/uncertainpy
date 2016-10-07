@@ -34,16 +34,30 @@ class TestModel(unittest.TestCase):
         self.model.load()
 
 
-    def test_addCmds(self):
+    def test_set_properties(self):
         cmds = {"a": 1, "b": 2}
 
-        self.model.addCmds(cmds)
+        self.model.set_properties(cmds)
 
         self.assertEqual(self.model.a, 1)
         self.assertEqual(self.model.b, 2)
 
         self.assertIn("a", self.model.additional_cmds)
         self.assertIn("b", self.model.additional_cmds)
+
+
+    def test_reset_properties(self):
+        cmds = {"a": 1, "b": 2}
+
+        self.model.set_properties(cmds)
+        self.model.reset_properties()
+        self.assertEqual(self.model.additional_cmds, [])
+
+        with self.assertRaises(AttributeError):
+            self.model.a
+
+        with self.assertRaises(AttributeError):
+            self.model.b
 
 
     def test_setParametervalues(self):

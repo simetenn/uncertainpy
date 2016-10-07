@@ -12,11 +12,9 @@ class NeuronModel(Model):
                        adaptive_model=adaptive_model,
                        model_file=model_file,
                        model_path=model_path)
-
+        
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
-
-        # self.h = None
 
 
     def load(self):

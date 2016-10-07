@@ -42,7 +42,6 @@ class PlotUncertainty():
         self.figureformat = figureformat
         self.f = None
 
-        self.tmp_gif_output = ".tmp_gif_output/"
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.features_in_combined_plot = 3
 
@@ -158,7 +157,7 @@ class PlotUncertainty():
         value = getattr(self.data, attribute)
         title = feature + ", " + attribute_name
         prettyPlot(self.data.t[feature], value[feature],
-                   title, self.data.xlabel, self.data.ylabel, **kwargs)
+                   self.toLatex(title), self.data.xlabel, self.data.ylabel, **kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -200,9 +199,9 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-
+        title = feature + ", mean and variance"
         ax = prettyPlot(self.data.t[feature], self.data.E[feature],
-                        feature + ", mean and variance", self.data.xlabel, self.data.ylabel + ", mean",
+                        self.toLatex(title), self.data.xlabel, self.data.ylabel + ", mean",
                         sns_style=sns_style, **kwargs)
 
         colors = get_current_colormap()
@@ -254,7 +253,8 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        prettyPlot(self.data.t[feature], self.data.E[feature], title=feature + ", 90\\% confidence interval",
+        title = feature + ", 90\\% confidence interval"
+        prettyPlot(self.data.t[feature], self.data.E[feature], title=self.toLatex(title),
                    xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
                    **kwargs)
 
@@ -399,7 +399,7 @@ class PlotUncertainty():
 
         for i in range(len(self.data.sensitivity[feature])):
             prettyPlot(self.data.t[feature], self.data.sensitivity[feature][i],
-                       title=feature + ", sensitivity",
+                       title=self.toLatex(feature) + ", sensitivity",
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        new_figure=False, color=i,
                        nr_hues=len(self.data.uncertain_parameters),
@@ -514,7 +514,7 @@ class PlotUncertainty():
 
         # title = self.filename + ", " + feature
         # title = title.replace("_", "\_")
-        plt.suptitle(feature, fontsize=titlesize)
+        plt.suptitle(self.toLatex(feature), fontsize=titlesize)
 
         save_name = feature + self.figureformat
 

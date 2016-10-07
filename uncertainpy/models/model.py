@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
 Run must store the results from the simulation in self.t and self.U
     """
-    def __init__(self, parameters=None, adaptive_model=False, **additional_cmds):
+    def __init__(self, parameters=None, adaptive_model=False, **additional_properties):
         self.U = None
         self.t = None
 
@@ -35,16 +35,24 @@ Run must store the results from the simulation in self.t and self.U
         self.xlabel = ""
         self.ylabel = ""
 
-        self.addCmds(additional_cmds)
+        self.set_properties(additional_properties)
 
 
-    def addCmds(self, cmds):
+    def set_properties(self, cmds):
         self.additional_cmds = cmds.keys()
         for cmd in self.additional_cmds:
             if hasattr(self, cmd):
                 raise RuntimeWarning("{} already have attribute {}".format(self.__class__.__name__, cmd))
 
             setattr(self, cmd, cmds[cmd])
+
+
+    def reset_properties(self):
+        for cmd in self.additional_cmds:
+            delattr(self, cmd)
+
+        self.additional_cmds = []
+
 
 
     def load(self):

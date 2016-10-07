@@ -65,6 +65,7 @@ def evaluateNodeFunction(data):
 
 
     if simulation.returncode != 0:
+        print ut
         raise RuntimeError(err)
 
 
