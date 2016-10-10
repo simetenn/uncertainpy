@@ -512,8 +512,6 @@ class PlotUncertainty():
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
 
-        # title = self.filename + ", " + feature
-        # title = title.replace("_", "\_")
         plt.suptitle(self.toLatex(feature), fontsize=titlesize)
 
         save_name = feature + self.figureformat

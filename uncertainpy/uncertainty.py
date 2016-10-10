@@ -40,9 +40,6 @@
 # TODO Make sending of model keywords simpler than it currently is. Use a
 # dictionary similar to kwargs?. model.py
 
-# TODO create a progressbar using tqdm
-
-
 # TODO Make 3d plots of 2d features
 
 # TODO calculate sensitivity in MC method
@@ -88,7 +85,7 @@ import numpy as np
 import chaospy as cp
 import multiprocessing as mp
 import logging
-
+from tqdm import tqdm
 
 from xvfbwrapper import Xvfb
 
@@ -106,7 +103,6 @@ class UncertaintyEstimation():
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
-                 combined_features=True,
                  save_data=True,
                  output_dir_data="data/",
                  output_data_filename=None,
@@ -362,8 +358,13 @@ For example on use see:
 
         solves = []
         pool = mp.Pool(processes=self.CPUs)
-        solves = pool.map(evaluateNodeFunction,
-                          self.evaluateNodeFunctionList(nodes.T))
+        # solves = pool.imap(evaluateNodeFunction,
+        #                   self.evaluateNodeFunctionList(nodes.T))
+        for result in tqdm(pool.imap(evaluateNodeFunction, self.evaluateNodeFunctionList(nodes.T)),
+                           desc="Running model", total=len(nodes.T), leave=False):
+            solves.append(result)
+
+
         pool.close()
 
         if self.supress_model_graphics:
@@ -418,7 +419,7 @@ For example on use see:
         self.data.features_0d = features_0d
         self.data.features_1d = features_1d
         self.data.features_2d = features_2d
-        self.data.feature_list = features_0d + features_1d +features_2d
+        self.data.feature_list = features_0d + features_1d + features_2d
 
         for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":
@@ -556,7 +557,7 @@ For example on use see:
         # if len(nodes.shape) == 1:
         #     nodes = np.array([nodes])
 
-
+        # Running the model
         solves = self.evaluateNodes(nodes)
 
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
