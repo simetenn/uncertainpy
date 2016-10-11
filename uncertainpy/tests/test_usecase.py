@@ -48,7 +48,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         percentages = [0.1, 0.2, 0.3]
@@ -87,7 +88,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         mc_samples = [10, 100]
@@ -117,7 +119,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         percentages = [0.1, 0.2, 0.3]
@@ -158,7 +161,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         mc_samples = [10, 100]
@@ -189,7 +193,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         percentages = [0.1, 0.2, 0.3]
@@ -234,7 +239,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         mc_samples = [10, 100]
@@ -282,7 +288,8 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
 
 
         percentages = [0.1, 0.2, 0.3]
@@ -325,8 +332,9 @@ class TestUseCases(unittest.TestCase):
                                                          output_dir_data=self.output_test_dir,
                                                          output_dir_figures=self.output_test_dir,
                                                          nr_mc_samples=10**1,
-                                                         nr_pc_mc_samples=10**2)
-        
+                                                         nr_pc_mc_samples=10**2,
+                                                         verbose_level="Error")
+
 
         mc_samples = [10, 100]
         exploration.compareMC(mc_samples)

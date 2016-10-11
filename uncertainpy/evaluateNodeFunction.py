@@ -18,14 +18,15 @@ filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
-    all_data = (model_cmds,
-                supress_model_output,
-                adaptive_model,
-                node,
-                tmp_parameter_names,
-                feature_cmds,
-                feature_kwargs)
+all_data = (model_cmds,
+            supress_model_output,
+            adaptive_model,
+            node,
+            tmp_parameter_names,
+            feature_cmds,
+            feature_kwargs)
     """
+    
     model_cmds = data[0]
     supress_model_output = data[1]
     adaptive_model = data[2]

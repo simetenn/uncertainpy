@@ -1,6 +1,5 @@
 import numpy as np
 import unittest
-import chaospy as cp
 import scipy.interpolate
 
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction

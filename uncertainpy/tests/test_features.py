@@ -142,7 +142,7 @@ class TestGeneralNeuronFeatures(unittest.TestCase):
 
 
     def test_init(self):
-        self.features = GeneralNeuronFeatures(self.t, self.U)
+        self.features = GeneralNeuronFeatures(t=self.t, U=self.U)
 
         self.assertIsInstance(self.features, GeneralNeuronFeatures)
         self.assertIsNotNone(self.features.spikes)
@@ -164,7 +164,7 @@ class TestNeuronFeatures(unittest.TestCase):
                                      "averageAHPDepth", "averageAPWidth",
                                      "accomondationIndex"]
 
-        self.features = NeuronFeatures(self.t, self.U)
+        self.features = NeuronFeatures(t=self.t, U=self.U)
 
 
     def test_initNone(self):
@@ -175,8 +175,6 @@ class TestNeuronFeatures(unittest.TestCase):
 
 
     def test_init(self):
-        self.features = NeuronFeatures(self.t, self.U)
-
         self.assertIsInstance(self.features, NeuronFeatures)
         self.assertIsNotNone(self.features.spikes)
         self.assertEqual(self.features.spikes.nr_spikes, 12)

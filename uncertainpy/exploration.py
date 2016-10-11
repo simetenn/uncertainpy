@@ -9,7 +9,6 @@ from uncertainpy import create_logger
 
 class UncertaintyEstimations():
     def __init__(self, model,
-                 feature_list=[],
                  features=None,
                  save_figures=False,
                  output_dir_figures="figures/",
@@ -57,7 +56,6 @@ class UncertaintyEstimations():
         self.rosenblatt = rosenblatt
         self.figureformat = figureformat
         self.features = features
-        self.feature_list = feature_list
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
 
@@ -101,7 +99,6 @@ class UncertaintyEstimations():
 
                 self.uncertainty_estimations =\
                     UncertaintyEstimation(self.model,
-                                          feature_list=self.feature_list,
                                           features=self.features,
                                           save_figures=self.save_figures,
                                           output_dir_figures=current_output_dir_figures,
@@ -142,7 +139,6 @@ class UncertaintyEstimations():
 
         self.uncertainty_estimations =\
             UncertaintyEstimation(self.model,
-                                  feature_list=self.feature_list,
                                   features=self.features,
                                   save_figures=self.save_figures,
                                   output_dir_figures=output_dir_figures,
@@ -190,7 +186,6 @@ class UncertaintyEstimations():
 
             self.uncertainty_estimations =\
                 UncertaintyEstimation(self.model,
-                                      feature_list=self.feature_list,
                                       features=self.features,
                                       save_figures=self.save_figures,
                                       output_dir_figures=current_output_dir_figures,
