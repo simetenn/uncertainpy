@@ -8,6 +8,7 @@ class Model():
 The model must be able to handle these calls
 
 simulation = model() -> __init__ must be able to run with no arguments
+simulation.set_properties(properties set at runtime -> dict)
 simulation.load()
 simulation.setParameterValues(parameters -> dictionary)
 simulation.run()
@@ -22,20 +23,17 @@ if __name__ == "__main__":
 
 Run must store the results from the simulation in self.t and self.U
     """
-    def __init__(self, parameters=None, adaptive_model=False, **additional_properties):
+    def __init__(self, parameters=None, adaptive_model=False):
         self.U = None
         self.t = None
 
         self.parameters = parameters
         self.adaptive_model = adaptive_model
 
-        self.filepath = os.path.abspath(__file__)
-        self.filedir = os.path.dirname(self.filepath)
-
         self.xlabel = ""
         self.ylabel = ""
 
-        self.set_properties(additional_properties)
+        self.additional_cmds = []
 
 
     def set_properties(self, cmds):

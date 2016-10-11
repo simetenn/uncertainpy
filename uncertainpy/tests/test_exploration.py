@@ -77,14 +77,14 @@ class TestExploration(unittest.TestCase):
 
         self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
                                                     folder,
-                                                    "TestingModel1d")))
+                                                    "TestingModel1d.h5")))
         self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
                                                     folder,
-                                                    "TestingModel1d_single-parameter-a")))
+                                                    "TestingModel1d_single-parameter-a.h5")))
 
         self.assertTrue(os.path.isfile(os.path.join(self.output_test_dir,
                                                     folder,
-                                                    "TestingModel1d_single-parameter-b")))
+                                                    "TestingModel1d_single-parameter-b.h5")))
 
 
     def test_compareMC(self):
@@ -93,23 +93,23 @@ class TestExploration(unittest.TestCase):
         self.uncertainty.compareMC(mc_samples)
 
         compare_file = os.path.join(self.folder, "data/pc",
-                                    "TestingModel1d")
-        data_file = os.path.join(self.output_test_dir, "pc/TestingModel1d")
+                                    "TestingModel1d.h5")
+        data_file = os.path.join(self.output_test_dir, "pc/TestingModel1d.h5")
         result = subprocess.call(["h5diff", "-d", "1e-10", data_file, compare_file])
 
 
         self.assertEqual(result, 0)
 
         compare_file = os.path.join(self.folder, "data/mc_10",
-                                    "TestingModel1d")
-        data_file = os.path.join(self.output_test_dir, "mc_10/TestingModel1d")
+                                    "TestingModel1d.h5")
+        data_file = os.path.join(self.output_test_dir, "mc_10/TestingModel1d.h5")
         result = subprocess.call(["h5diff", "-d", "1e-10", data_file, compare_file])
 
         self.assertEqual(result, 0)
 
         compare_file = os.path.join(self.folder, "data/mc_100",
-                                    "TestingModel1d")
-        data_file = os.path.join(self.output_test_dir, "mc_100/TestingModel1d")
+                                    "TestingModel1d.h5")
+        data_file = os.path.join(self.output_test_dir, "mc_100/TestingModel1d.h5")
         result = subprocess.call(["h5diff", "-d", "1e-10", data_file, compare_file])
 
         self.assertEqual(result, 0)

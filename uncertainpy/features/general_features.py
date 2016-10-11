@@ -5,7 +5,7 @@ import numpy as np
 
 class GeneralFeatures():
     def __init__(self, features_to_run="all", t=None, U=None,
-                 new_utility_methods=None, **additional_properties):
+                 new_utility_methods=None):
         self.t = t
         self.U = U
 
@@ -42,8 +42,7 @@ class GeneralFeatures():
         else:
             self.features_to_run = features_to_run
 
-
-        self.set_properties(additional_properties)
+        self.additional_kwargs = []
 
 
     def set_properties(self, kwargs):

@@ -56,7 +56,7 @@ class PlotUncertainty():
 
     def loadData(self, filename, create_output_folder=True):
         self.filename = filename
-        full_path = os.path.join(self.data_dir, self.filename)
+        full_path = os.path.join(self.data_dir, self.filename + ".h5")
 
         self.data.load(full_path)
 

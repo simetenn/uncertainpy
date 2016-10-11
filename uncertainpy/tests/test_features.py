@@ -48,7 +48,8 @@ class TestGeneralFeatures(unittest.TestCase):
     def test_kwargs(self):
         self.assertEqual(self.features.kwargs(), {"features_to_run": []})
 
-        self.features = GeneralFeatures(test1=1, test2=2)
+        self.features = GeneralFeatures()
+        self.features.set_properties({"test1": 1, "test2": 2})
 
         self.assertEqual(self.features.kwargs(), {"features_to_run": [], "test1": 1, "test2": 2})
 

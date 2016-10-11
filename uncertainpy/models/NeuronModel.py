@@ -9,10 +9,11 @@ class NeuronModel(Model):
     def __init__(self, parameters=None, adaptive_model=False,
                  model_file="mosinit.hoc", model_path=None):
         Model.__init__(self, parameters=parameters,
-                       adaptive_model=adaptive_model,
-                       model_file=model_file,
-                       model_path=model_path)
-        
+                       adaptive_model=adaptive_model)
+
+        self.set_properties({"model_file": model_file,
+                             "model_path": model_path})
+
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
 

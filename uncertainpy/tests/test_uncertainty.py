@@ -916,16 +916,16 @@ class TestUncertainty(unittest.TestCase):
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a")
+        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
         result = subprocess.call(["h5diff",  "-d", "1e-10", filename, compare_file])
 
 
         self.assertEqual(result, 0)
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b")
+        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
         result = subprocess.call(["h5diff",  "-d", "1e-10", filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -963,8 +963,8 @@ class TestUncertainty(unittest.TestCase):
         # self.assertTrue(os.path.isfile(filename))
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d")
+        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
 
         # TODO find out why this is needed for different machines
         result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
@@ -1005,15 +1005,15 @@ class TestUncertainty(unittest.TestCase):
         #                                "test_save_data_MC_single-parameter-b")))
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-a")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-a.h5")
 
         result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
 
         self.assertEqual(result, 0)
 
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b.h5")
 
         result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
 
@@ -1051,8 +1051,8 @@ class TestUncertainty(unittest.TestCase):
         # self.assertTrue(os.path.isfile(filename))
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
 
         result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
 

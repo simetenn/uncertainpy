@@ -850,6 +850,7 @@ class TestNeuronModel(unittest.TestCase):
             cmd = self.model.cmd()
             cmd += ["--CPU", "1", "--save_path", ""]
 
+
             simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             ut, err = simulation.communicate()
 
