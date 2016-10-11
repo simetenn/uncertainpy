@@ -1,0 +1,24 @@
+load_file("stdrun.hoc")
+load_file("../reduced_model.hoc")
+
+forall e_pas = -80.753389
+Rm_axosomatic = 14711.977820
+forsec axosomatic_list cm = 2.506244
+spinefactor = 0.500000
+soma gbar_nat = 371.426181
+soma gbar_kfast = 48.253662
+soma gbar_kslow = 621.740747
+soma gbar_nap = 4.160887
+soma gbar_km = 7.001287
+basal gbar_ih = 22.091222
+tuft gbar_ih = 3.344451
+tuft gbar_nat = 87.601656
+decay_kfast = 67.524548
+decay_kslow = 83.026382
+hillock gbar_nat = 8407.043322
+iseg gbar_nat = 15509.309335
+iseg vshift2_nat = -8.471039
+
+
+recalculate_passive_properties()
+recalculate_channel_densities()

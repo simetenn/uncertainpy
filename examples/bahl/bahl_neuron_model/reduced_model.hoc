@@ -1,0 +1,113 @@
+nrn_load_dll("./channels/x86_64/.libs/libnrnmech.so")
+
+celsius = 37
+
+load_file("reduced_geometry_20com.hoc")
+
+/////////////////////////////////////////////
+// Define The Sections for Each Conductance
+
+objref nat_list
+objref kfast_list
+objref kslow_list
+objref ih_list
+
+nat_list = new SectionList()
+kslow_list = new SectionList()
+kfast_list = new SectionList()
+ih_list = new SectionList()
+
+basal			ih_list.append()
+apical			ih_list.append()
+tuft			ih_list.append()
+
+soma			nat_list.append()
+hillock			nat_list.append()
+iseg			nat_list.append()
+apical			nat_list.append()
+tuft 			nat_list.append()
+
+soma			kfast_list.append()
+apical			kfast_list.append()
+tuft			kfast_list.append()
+
+soma			kslow_list.append()
+apical			kslow_list.append()
+tuft			kslow_list.append()
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Insert the Channels in the Correct Section and Set the Reversal Potentials
+
+forall {
+	insert pas
+	g_pas = 1./15000
+	e_pas = -70
+	cm = 1.0
+}
+
+forsec ih_list {
+	insert ih
+	ehd_ih = -47
+}
+
+forsec nat_list {
+	insert nat
+	ena = 55
+	vshift_nat = 10
+}
+
+forsec kfast_list {
+	insert kfast
+	ek = -80
+}
+
+forsec kslow_list {
+	insert kslow
+	ek = -80
+}
+
+tuft {
+	insert cad
+	insert sca
+	insert kca
+
+	eca = 140
+	ion_style("ca_ion",0,1,0,0,0)
+}
+
+soma insert nap
+soma insert km
+
+Rm_axosomatic = 15000
+spinefactor = 2.0
+
+decay_kfast = 50.0
+decay_kslow = 50.0
+
+proc recalculate_passive_properties() {
+	forsec axosomatic_list g_pas = 1./Rm_axosomatic
+	forsec apicaltree_list g_pas = soma.g_pas*spinefactor 
+	
+	forsec apicaltree_list cm = soma.cm*spinefactor
+}
+
+proc recalculate_channel_densities() {
+	
+	// See Keren et al. 2009
+	
+	soma distance()
+	
+	forsec apicaltree_list {
+	 for(x) gbar_kfast(x) = soma.gbar_kfast(0.5) * exp(-distance(x)/decay_kfast)
+	 for(x) gbar_kslow(x) = soma.gbar_kslow(0.5) * exp(-distance(x)/decay_kslow)
+	}
+	
+	tuft mih = gbar_ih/distance(0)
+	tuft mnat = (gbar_nat-soma.gbar_nat(0.5))/distance(0)
+	
+	apical for(x) gbar_nat(x) = mnat*distance(x) + soma.gbar_nat(0.5)
+	apical for(x) gbar_ih(x) = mih*distance(x)
+}
+
+recalculate_passive_properties()
+recalculate_channel_densities()

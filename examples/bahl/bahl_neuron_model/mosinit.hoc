@@ -1,0 +1,3 @@
+//moddir channels
+load_file("nrngui.hoc")
+load_file("example3.hoc")

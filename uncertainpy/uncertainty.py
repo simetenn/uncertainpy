@@ -749,13 +749,13 @@ For example on use see:
             os.makedirs(self.output_dir_data)
 
         ### TODO expand the save funcition to also save parameters and model information
-        self.data.save(os.path.join(self.output_dir_data, filename))
+        self.data.save(os.path.join(self.output_dir_data, filename + ".h5"))
 
 
     # TODO never tested
     def load(self, filename):
         self.filename = filename
-        self.data.load(os.path.join(self.data_dir, filename))
+        self.data.load(os.path.join(self.data_dir, filename + ".h5"))
 
     def plotAll(self, foldername=None):
         self.plot.setData(self.data, foldername=foldername)

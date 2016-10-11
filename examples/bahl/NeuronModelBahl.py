@@ -1,4 +1,4 @@
-from NeuronModel import NeuronModel
+from uncertainpy import NeuronModel
 
 class NeuronModelBahl(NeuronModel):
     def __init__(self, parameters=None, adaptive_model=False):
@@ -9,7 +9,7 @@ class NeuronModelBahl(NeuronModel):
 
         self.adaptive_model = True
 
-        self.model_path = "uncertainpy/models/neuron_models/bahl/"
+        self.model_path = "bahl_neuron_model"
         self.model_file = "mosinit.hoc"
 
 

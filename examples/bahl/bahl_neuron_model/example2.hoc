@@ -1,0 +1,2 @@
+load_file("./init_models_with_ca/init_model2.hoc")
+load_file("ca_spike1.ses")
