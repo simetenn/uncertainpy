@@ -26,14 +26,6 @@ class TestEvaluateNodeFunction(unittest.TestCase):
         self.adaptive_model = False
         self.uncertain_parameters = ["a", "b"]
         self.node = [2, 3]
-        self.feature_list = self.features.implementedFeatures()
-        self.tmp_kwargs = {}
-
-
-        # all_data = (cmds, supress_model_output, adaptive_model,
-        #             node, tmp_parameter_names,
-        #             feature_list, feature_cmd, kwargs)
-
 
 
     def setUpData(self):
@@ -42,9 +34,8 @@ class TestEvaluateNodeFunction(unittest.TestCase):
                 self.adaptive_model,
                 self.node,
                 self.uncertain_parameters,
-                self.feature_list,
                 self.features.cmd(),
-                self.tmp_kwargs)
+                self.features.kwargs())
 
         return data
 

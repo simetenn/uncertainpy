@@ -121,7 +121,7 @@ Run must store the results from the simulation in self.t and self.U
                 "--model_name", self.__class__.__name__,
                 "--file_dir", filedir,
                 "--file_name", filename,
-                "--kwargs"]
+                "--simulation_kwargs"]
 
         for cmd in self.additional_cmds:
             cmds += [cmd, getattr(self, cmd)]

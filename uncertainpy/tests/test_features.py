@@ -11,7 +11,7 @@ class TestGeneralFeatures(unittest.TestCase):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + 1
 
-        self.features = GeneralFeatures(t, U)
+        self.features = GeneralFeatures(t=t, U=U)
 
 
     def test_initNone(self):
@@ -23,7 +23,7 @@ class TestGeneralFeatures(unittest.TestCase):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + 1
 
-        features = GeneralFeatures(t, U)
+        features = GeneralFeatures(t=t, U=U)
 
         self.assertIsInstance(features, GeneralFeatures)
 
@@ -38,12 +38,19 @@ class TestGeneralFeatures(unittest.TestCase):
 
         new_utility_methods = ["new"]
 
-        features = GeneralFeatures(t, U, new_utility_methods)
+        features = GeneralFeatures(t=t, U=U, new_utility_methods=new_utility_methods)
 
         self.assertTrue(np.array_equal(features.t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(features.U, np.arange(0, 10) + 1))
         self.assertIn("new", features.utility_methods)
 
+
+    def test_kwargs(self):
+        self.assertEqual(self.features.kwargs(), {"features_to_run": []})
+
+        self.features = GeneralFeatures(test1=1, test2=2)
+
+        self.assertEqual(self.features.kwargs(), {"features_to_run": [], "test1": 1, "test2": 2})
 
     def test_cmd(self):
         result = self.features.cmd()
@@ -69,6 +76,25 @@ class TestGeneralFeatures(unittest.TestCase):
     def test_calculateAllFeatures(self):
         self.assertEqual(self.features.calculateAllFeatures(), {})
 
+    def test_intitFeatureList(self):
+        features = GeneralFeatures(features_to_run=None)
+        self.assertEqual(features.features_to_run, [])
+
+        features = GeneralFeatures(features_to_run=["feature1", "feature2"])
+        self.assertEqual(features.features_to_run,
+                         ["feature1", "feature2"])
+
+
+    def test_set_properties(self):
+        cmds = {"a": 1, "b": 2}
+
+        self.features.set_properties(cmds)
+
+        self.assertEqual(self.features.a, 1)
+        self.assertEqual(self.features.b, 2)
+
+        self.assertIn("a", self.features.additional_kwargs)
+        self.assertIn("b", self.features.additional_kwargs)
 
 
 
@@ -258,6 +284,19 @@ class TestTestingFeatures(unittest.TestCase):
         self.assertEqual(set(self.features.calculateAllFeatures().keys()),
                          set(self.implemented_features))
 
+    def test_intitFeatureList(self):
+        features = TestingFeatures(features_to_run=None)
+        self.assertEqual(features.features_to_run, [])
+
+        features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
+        self.assertEqual(features.features_to_run,
+                         ["feature1d", "feature2d"])
+
+        features = TestingFeatures(features_to_run="all")
+        self.assertEqual(features.features_to_run, self.implemented_features)
+
+    def test_kwargs(self):
+        self.assertEqual(self.features.kwargs(), {"features_to_run": self.implemented_features})
 
 
 if __name__ == "__main__":

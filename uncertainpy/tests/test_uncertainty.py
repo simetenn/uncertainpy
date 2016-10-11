@@ -55,25 +55,6 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
-    def test_intitFeatureList(self):
-        uncertainty = UncertaintyEstimation(TestingModel1d(),
-                                            features=TestingFeatures(),
-                                            verbose_level="error")
-        self.assertEqual(uncertainty.feature_list, [])
-
-        uncertainty = UncertaintyEstimation(TestingModel1d(),
-                                            features=TestingFeatures(),
-                                            feature_list="all",
-                                            verbose_level="error")
-        self.assertEqual(uncertainty.feature_list,
-                         ["feature0d", "feature1d", "feature2d", "featureInvalid"])
-
-        uncertainty = UncertaintyEstimation(TestingModel1d(),
-                                            feature_list=["feature1", "feature2"],
-                                            verbose_level="error")
-        self.assertEqual(uncertainty.feature_list,
-                         ["feature1", "feature2"])
-
 
     def test_resetValues(self):
         self.uncertainty.parameter_names = -1
@@ -126,20 +107,14 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(result[1][3], [1, 2])
         self.assertTrue(result[2][3], [2, 3])
         self.assertEqual(result[0][4], ["a", "b"])
-        self.assertEqual(result[0][5], ["feature0d", "feature1d",
-                                        "feature2d", "featureInvalid"])
-        self.assertEqual(result[0][7], {})
+        self.assertEqual(result[0][6], {"features_to_run": ["feature0d", "feature1d",
+                                                            "feature2d", "featureInvalid"]})
 
         nodes = [[0, 1], [0, 1], [0, 1]]
         result = self.uncertainty.evaluateNodeFunctionList(nodes)
 
         self.assertEqual(result[0], result[1])
         self.assertEqual(result[1], result[2])
-
-        self.uncertainty.feature_options = {"correct": True}
-
-        result = self.uncertainty.evaluateNodeFunctionList(nodes)
-        self.assertEqual(result[0][7], {"correct": True})
 
 
     def test_evaluateNodesSequentialModel0d(self):

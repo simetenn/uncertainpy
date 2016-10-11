@@ -9,16 +9,15 @@ def main():
     parser.add_argument("--save_path")
     parser.add_argument("--CPU", type=int)
     parser.add_argument("--parameters", nargs="*")
-    parser.add_argument("--kwargs", nargs="*")
-
-
+    parser.add_argument("--simulation_kwargs", nargs="*")
+    
     args, _ = parser.parse_known_args()
 
     sys.path.insert(0, args.file_dir)
     module = __import__(args.file_name.split(".")[0])
     model = getattr(module, args.model_name)
 
-    simulation_arguments = dict(zip(args.kwargs[::2], args.kwargs[1::2]))
+    simulation_arguments = dict(zip(args.simulation_kwargs[::2], args.simulation_kwargs[1::2]))
     simulation = model(**simulation_arguments)
 
     simulation.load()

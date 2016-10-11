@@ -14,7 +14,6 @@
 
 # TODO have the option of saving the exploration by parameters instead of by distribution
 
-
 # TODO use sumatra when starting runs
 
 # TODO save the entire class to file
@@ -114,8 +113,7 @@ class UncertaintyEstimation():
                  nr_pc_mc_samples=10**5,
                  verbose_level="info",
                  verbose_filename=None,
-                 seed=None,
-                 feature_options={}):
+                 seed=None):
         """
 Uncertainty Estimation object
 
@@ -196,8 +194,6 @@ verbose_filename : None/str
     Default is None.
 seed : None/ int or array_like, optional
     Setting a seed, usefull for testing purposes
-feature_options : dict
-    Optional arguments to be sent to features.
 
 Methods
 -------
@@ -240,16 +236,6 @@ For example on use see:
         else:
             self.features = features
 
-        if feature_list == "all":
-            self.feature_list = self.features.implementedFeatures()
-        elif feature_list is None:
-            self.feature_list = []
-        elif isinstance(feature_list, str):
-            self.feature_list = [feature_list]
-        else:
-            self.feature_list = feature_list
-
-
         self.save_figures = save_figures
         self.figureformat = figureformat
         self.save_data = save_data
@@ -263,8 +249,6 @@ For example on use see:
         self.model = model
 
         self.rosenblatt = rosenblatt
-
-        self.feature_options = feature_options
 
         self.M = 3
         self.nr_mc_samples = nr_mc_samples
@@ -343,9 +327,8 @@ For example on use see:
                          self.model.adaptive_model,
                          node,
                          self.data.uncertain_parameters,
-                         self.feature_list,
                          self.features.cmd(),
-                         self.feature_options))
+                         self.features.kwargs()))
         return data
 
 
@@ -360,10 +343,12 @@ For example on use see:
         pool = mp.Pool(processes=self.CPUs)
         # solves = pool.imap(evaluateNodeFunction,
         #                   self.evaluateNodeFunctionList(nodes.T))
-        for result in tqdm(pool.imap(evaluateNodeFunction, self.evaluateNodeFunctionList(nodes.T)),
-                           desc="Running model", total=len(nodes.T), leave=False):
+        for result in tqdm(pool.imap(evaluateNodeFunction,
+                                     self.evaluateNodeFunctionList(nodes.T)),
+                           desc="Running model",
+                           total=len(nodes.T),
+                           leave=False):
             solves.append(result)
-
 
         pool.close()
 

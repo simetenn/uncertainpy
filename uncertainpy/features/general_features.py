@@ -4,7 +4,8 @@ import numpy as np
 
 
 class GeneralFeatures():
-    def __init__(self, t=None, U=None, new_utility_methods=None):
+    def __init__(self, features_to_run="all", t=None, U=None,
+                 new_utility_methods=None, **additional_properties):
         self.t = t
         self.U = U
 
@@ -14,12 +15,15 @@ class GeneralFeatures():
                                 "calculateAllFeatures",
                                 "__init__",
                                 "implementedFeatures",
-                                "cmd"]
+                                "cmd",
+                                "kwargs",
+                                "set_properties"]
 
         if new_utility_methods is None:
             new_utility_methods = []
 
-        self.utility_methods = self.utility_methods + new_utility_methods
+
+        self.utility_methods += new_utility_methods
 
         self.filepath = sys.modules[self.__class__.__module__].__file__
         self.filedir = os.path.dirname(self.filepath)
@@ -29,8 +33,39 @@ class GeneralFeatures():
             self.filedir = os.path.dirname(os.path.abspath(self.filename))
 
 
+        if features_to_run == "all":
+            self.features_to_run = self.implementedFeatures()
+        elif features_to_run is None:
+            self.features_to_run = []
+        elif isinstance(features_to_run, str):
+            self.features_to_run = [features_to_run]
+        else:
+            self.features_to_run = features_to_run
+
+
+        self.set_properties(additional_properties)
+
+
+    def set_properties(self, kwargs):
+        self.additional_kwargs = kwargs.keys()
+        for cmd in self.additional_kwargs:
+            if hasattr(self, cmd):
+                raise RuntimeWarning("{} already have attribute {}".format(self.__class__.__name__, cmd))
+
+            setattr(self, cmd, kwargs[cmd])
+
+
     def cmd(self):
         return self.filedir, self.filename, self.__class__.__name__
+
+
+    def kwargs(self):
+        kwargs = {"features_to_run": self.features_to_run}
+
+        for kwarg in self.additional_kwargs:
+            kwargs[kwarg] = getattr(self, kwarg)
+
+        return kwargs
 
 
     def calculateFeature(self, feature_name):
@@ -42,14 +77,15 @@ class GeneralFeatures():
 
         tmp_result = getattr(self, feature_name)()
         if tmp_result is None:
-            return None # np.NaN
+            return None  # np.NaN
         else:
             return np.array(tmp_result)
 
 
-    def calculateFeatures(self, feature_names):
+
+    def calculateFeatures(self):
         results = {}
-        for feature in feature_names:
+        for feature in self.features_to_run:
             results[feature] = self.calculateFeature(feature)
 
         return results

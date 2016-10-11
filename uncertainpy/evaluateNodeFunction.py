@@ -18,18 +18,21 @@ filedir = os.path.dirname(filepath)
 
 def evaluateNodeFunction(data):
     """
-    all_data = (cmds, supress_model_output, adaptive_model, node, tmp_parameter_names,
-                feature_list, feature_cmd, kwargs)
+    all_data = (model_cmds,
+                supress_model_output,
+                adaptive_model,
+                node,
+                tmp_parameter_names,
+                feature_cmds,
+                feature_kwargs)
     """
-    cmd = data[0]
+    model_cmds = data[0]
     supress_model_output = data[1]
     adaptive_model = data[2]
     node = data[3]
     tmp_parameter_names = data[4]
-    feature_list = data[5]
-    feature_cmd = data[6]
-
-    kwargs = data[7]
+    feature_cmds = data[5]
+    feature_kwargs = data[6]
 
     if isinstance(node, float) or isinstance(node, int):
         node = [node]
@@ -48,16 +51,16 @@ def evaluateNodeFunction(data):
     else:
         current_process = "0"
 
-    cmd = cmd + ["--CPU", current_process,
-                 "--save_path", filedir,
-                 "--parameters"]
+    model_cmds += ["--CPU", current_process,
+                   "--save_path", filedir,
+                   "--parameters"]
 
     for parameter in tmp_parameters:
-        cmd.append(parameter)
-        cmd.append("{:.16f}".format(tmp_parameters[parameter]))
+        model_cmds.append(parameter)
+        model_cmds.append("{:.16f}".format(tmp_parameters[parameter]))
 
 
-    simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     ut, err = simulation.communicate()
 
     if not supress_model_output and len(ut) != 0:
@@ -76,52 +79,51 @@ def evaluateNodeFunction(data):
     os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
 
-    results = {}
 
+    # Calculate features from the model results
+    results = {}
 
     # TODO Should t be stored for all results? Or should none be used for features
 
-    if len(feature_list) > 0:
-        sys.path.insert(0, feature_cmd[0])
-        module = __import__(feature_cmd[1].split(".")[0])
-        features = getattr(module, feature_cmd[2])(t, U, **kwargs)
+    sys.path.insert(0, feature_cmds[0])
+    module = __import__(feature_cmds[1].split(".")[0])
+    features = getattr(module, feature_cmds[2])(t=t, U=U, **feature_kwargs)
 
+    feature_results = features.calculateFeatures()
 
+    for feature in feature_results:
+        tmp_result = feature_results[feature]
 
-        feature_results = features.calculateFeatures(feature_list)
+        if tmp_result is None:
+            results[feature] = (None, np.nan, None)
 
-        for feature in feature_results:
-            tmp_result = feature_results[feature]
+        # elif adaptive_model:
+        #     if len(U.shape) == 0:
+        #         raise AttributeError("Model returns a single value, unable to perform interpolation")
+        #
+        #     if len(tmp_result.shape) == 0:
+        #         # print "Warning: {} returns a single number, no interpolation performed".format(feature)
+        #         results[feature] = (None, tmp_result, None)
+        #
+        #     elif len(tmp_result.shape) == 1:
+        #         if np.all(np.isnan(t)):
+        #             raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+        #
+        #         interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
+        #         results[feature] = (t, tmp_result, interpolation)
+        #
+        #     else:
+        #         raise NotImplementedError("Error: No support yet for >= 2d interpolation")
 
-            if tmp_result is None:
-                results[feature] = (None, np.nan, None)
-
-            # elif adaptive_model:
-            #     if len(U.shape) == 0:
-            #         raise AttributeError("Model returns a single value, unable to perform interpolation")
-            #
-            #     if len(tmp_result.shape) == 0:
-            #         # print "Warning: {} returns a single number, no interpolation performed".format(feature)
-            #         results[feature] = (None, tmp_result, None)
-            #
-            #     elif len(tmp_result.shape) == 1:
-            #         if np.all(np.isnan(t)):
-            #             raise AttributeError("Model does not return any t values. Unable to perform interpolation")
-            #
-            #         interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
-            #         results[feature] = (t, tmp_result, interpolation)
-            #
-            #     else:
-            #         raise NotImplementedError("Error: No support yet for >= 2d interpolation")
-
+        else:
+            if np.all(np.isnan(t)):
+                results[feature] = (None, tmp_result, None)
             else:
-                if np.all(np.isnan(t)):
-                    results[feature] = (None, tmp_result, None)
-                else:
-                    results[feature] = (t, tmp_result, None)
-            # results[feature] = (t, tmp_result, None)
+                results[feature] = (t, tmp_result, None)
+        # results[feature] = (t, tmp_result, None)
 
 
+    # Create interpolation
     if adaptive_model:
         if len(U.shape) == 0:
             raise RuntimeWarning("Model returns a single value, unable to perform interpolation")
