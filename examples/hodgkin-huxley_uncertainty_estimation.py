@@ -27,8 +27,8 @@ model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  feature_list="all",
                                                  CPUs=7,
-                                                 output_dir_data="data/hodgkin-huxley",
-                                                 output_dir_figures="figures/hodgkin-huxley",
+                                                 output_dir_data="../../uncertainpy_results/data/hodgkin-huxley",
+                                                 output_dir_figures="../../uncertainpy_results/figures/hodgkin-huxley",
                                                  save_figures=True)
 
 percentages = [0.01, 0.03]

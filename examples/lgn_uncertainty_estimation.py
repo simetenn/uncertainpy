@@ -30,9 +30,9 @@ model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
 
 exploration = uncertainpy.UncertaintyEstimations(model, CPUs=6, supress_model_output=True,
                                                  feature_list="all",
-                                                 output_dir_data="data/lgn",
+                                                 output_dir_data="../../uncertainpy_results/data/lgn",
                                                  save_figures=False,
-                                                 output_dir_figures="figures/lgn")
+                                                 output_dir_figures="../../uncertainpy_results/figures/lgn")
 
 
 # mc_samples = [10, 100, 1000]

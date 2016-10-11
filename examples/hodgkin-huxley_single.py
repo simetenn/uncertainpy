@@ -49,8 +49,8 @@ model = uncertainpy.HodkinHuxleyModel(parameters)
 exploration = uncertainpy.UncertaintyEstimation(model,
                                                 feature_list="all",
                                                 CPUs=7,
-                                                output_dir_data="data/hodgkin-huxley_single",
-                                                output_dir_figures="figures/hodgkin-huxley_single",
+                                                output_dir_data="../../uncertainpy_results/data/hodgkin-huxley_single",
+                                                output_dir_figures="../../uncertainpy_results/figures/hodgkin-huxley_single",
                                                 save_figures=True)
 
 exploration.allParameters()

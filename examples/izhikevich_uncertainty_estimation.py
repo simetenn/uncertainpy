@@ -17,8 +17,8 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  save_figures=True,
                                                  single_parameter_runs=True,
                                                  feature_list="all",
-                                                 output_dir_data="data/izhikevich",
-                                                 output_dir_figures="figures/izhikevich",
+                                                 output_dir_data="../../uncertainpy_results/data/izhikevich",
+                                                 output_dir_figures="../../uncertainpy_results/figures/izhikevich",
                                                  rosenblatt=False)
 
 percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]

@@ -21,8 +21,8 @@ uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 supress_model_output=True,
                                                 feature_list=None,
                                                 save_figures=True,
-                                                output_dir_data="data/coffee",
-                                                output_dir_figures="figures/coffee",
+                                                output_dir_data="../../uncertainpy_results/data/coffee",
+                                                output_dir_figures="../../uncertainpy_results/figures/coffee",
                                                 rosenblatt=False,
                                                 verbose_filename="test.log")
 

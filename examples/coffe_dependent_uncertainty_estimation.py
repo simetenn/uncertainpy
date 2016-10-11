@@ -20,8 +20,8 @@ model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  feature_list=None,
                                                  save_figures=True,
-                                                 output_dir_data="data/coffee_dependent",
-                                                 output_dir_figures="figures/coffee_dependent")
+                                                 output_dir_data="../../uncertainpy_results/data/coffee_dependent",
+                                                 output_dir_figures="../../uncertainpy_results/figures/coffee_dependent")
 
 
 

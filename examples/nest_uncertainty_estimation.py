@@ -17,8 +17,8 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  CPUs=8,
                                                  save_figures=True,
                                                  feature_list="all",
-                                                 output_dir_data="data/nest",
-                                                 output_dir_figures="figures/nest",
+                                                 output_dir_data="../../uncertainpy_results/data/nest",
+                                                 output_dir_figures="../../uncertainpy_results/figures/nest",
                                                  nr_mc_samples=10**2)
 
 #percentages = [0.01, 0.03, 0.05, 0.07, 0.09, 0.11, 0.13, 0.15, 0.17, 0.19]
