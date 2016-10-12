@@ -6,10 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from uncertainpy.plotting.prettyPlot import prettyPlot, prettyBar
-from uncertainpy.plotting.prettyPlot import spines_edge_color, get_current_colormap
-# from uncertainpy.plotting.prettyPlot import set_legend, get_colormap_tableu20
-from uncertainpy.plotting.prettyPlot import axis_grey, labelsize, fontsize  # , titlesize
+from prettyplot import prettyPlot, prettyBar
+from prettyplot import spines_edge_color, get_current_colormap
+# from prettyplot import set_legend, get_colormap_tableu20
+from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 
 
 # TODO find a good way to find the directory where the data files are
