@@ -58,15 +58,15 @@ class TestUseCases(unittest.TestCase):
 
         result = self.list_files()
 
-        files = ['uniform_0.1/CoffeeCupPointModel',
-                 'uniform_0.1/CoffeeCupPointModel_single-parameter-kappa',
-                 'uniform_0.1/CoffeeCupPointModel_single-parameter-u_env',
-                 'uniform_0.2/CoffeeCupPointModel',
-                 'uniform_0.2/CoffeeCupPointModel_single-parameter-kappa',
-                 'uniform_0.2/CoffeeCupPointModel_single-parameter-u_env',
-                 'uniform_0.3/CoffeeCupPointModel',
-                 'uniform_0.3/CoffeeCupPointModel_single-parameter-kappa',
-                 'uniform_0.3/CoffeeCupPointModel_single-parameter-u_env']
+        files = ['uniform_0.1/CoffeeCupPointModel.h5',
+                 'uniform_0.1/CoffeeCupPointModel_single-parameter-kappa.h5',
+                 'uniform_0.1/CoffeeCupPointModel_single-parameter-u_env.h5',
+                 'uniform_0.2/CoffeeCupPointModel.h5',
+                 'uniform_0.2/CoffeeCupPointModel_single-parameter-kappa.h5',
+                 'uniform_0.2/CoffeeCupPointModel_single-parameter-u_env.h5',
+                 'uniform_0.3/CoffeeCupPointModel.h5',
+                 'uniform_0.3/CoffeeCupPointModel_single-parameter-kappa.h5',
+                 'uniform_0.3/CoffeeCupPointModel_single-parameter-u_env.h5']
 
         self.assertEqual(files, result)
 
@@ -97,9 +97,9 @@ class TestUseCases(unittest.TestCase):
 
         result = self.list_files()
 
-        files = ['mc_10/CoffeeCupPointModel',
-                 'mc_100/CoffeeCupPointModel',
-                 'pc/CoffeeCupPointModel']
+        files = ['mc_10/CoffeeCupPointModel.h5',
+                 'mc_100/CoffeeCupPointModel.h5',
+                 'pc/CoffeeCupPointModel.h5']
 
         self.assertEqual(files, result)
 
@@ -129,18 +129,18 @@ class TestUseCases(unittest.TestCase):
 
         result = self.list_files()
 
-        files = ['uniform_0.1/HodkinHuxleyModel',
-                 'uniform_0.1/HodkinHuxleyModel_single-parameter-gbar_K',
-                 'uniform_0.1/HodkinHuxleyModel_single-parameter-gbar_Na',
-                 'uniform_0.1/HodkinHuxleyModel_single-parameter-gbar_l',
-                 'uniform_0.2/HodkinHuxleyModel',
-                 'uniform_0.2/HodkinHuxleyModel_single-parameter-gbar_K',
-                 'uniform_0.2/HodkinHuxleyModel_single-parameter-gbar_Na',
-                 'uniform_0.2/HodkinHuxleyModel_single-parameter-gbar_l',
+        files = ['uniform_0.1/HodkinHuxleyModel.h5',
+                 'uniform_0.1/HodkinHuxleyModel_single-parameter-gbar_K.h5',
+                 'uniform_0.1/HodkinHuxleyModel_single-parameter-gbar_Na.h5',
+                 'uniform_0.1/HodkinHuxleyModel_single-parameter-gbar_l.h5',
+                 'uniform_0.2/HodkinHuxleyModel.h5',
+                 'uniform_0.2/HodkinHuxleyModel_single-parameter-gbar_K.h5',
+                 'uniform_0.2/HodkinHuxleyModel_single-parameter-gbar_Na.h5',
+                 'uniform_0.2/HodkinHuxleyModel_single-parameter-gbar_l.h5',
                  'uniform_0.3/HodkinHuxleyModel',
-                 'uniform_0.3/HodkinHuxleyModel_single-parameter-gbar_K',
-                 'uniform_0.3/HodkinHuxleyModel_single-parameter-gbar_Na',
-                 'uniform_0.3/HodkinHuxleyModel_single-parameter-gbar_l']
+                 'uniform_0.3/HodkinHuxleyModel_single-parameter-gbar_K.h5',
+                 'uniform_0.3/HodkinHuxleyModel_single-parameter-gbar_Na.h5',
+                 'uniform_0.3/HodkinHuxleyModel_single-parameter-gbar_l.h5']
 
         self.assertEqual(files, result)
 
@@ -171,9 +171,9 @@ class TestUseCases(unittest.TestCase):
 
         result = self.list_files()
 
-        files = ['mc_10/HodkinHuxleyModel',
-                 'mc_100/HodkinHuxleyModel',
-                 'pc/HodkinHuxleyModel']
+        files = ['mc_10/HodkinHuxleyModel.h5',
+                 'mc_100/HodkinHuxleyModel.h5',
+                 'pc/HodkinHuxleyModel.h5']
 
         self.assertEqual(files, result)
 
@@ -203,21 +203,21 @@ class TestUseCases(unittest.TestCase):
 
         result = self.list_files()
 
-        files = ['uniform_0.1/IzhikevichModel',
-                 'uniform_0.1/IzhikevichModel_single-parameter-a',
-                 'uniform_0.1/IzhikevichModel_single-parameter-b',
-                 'uniform_0.1/IzhikevichModel_single-parameter-c',
-                 'uniform_0.1/IzhikevichModel_single-parameter-d',
-                 'uniform_0.2/IzhikevichModel',
-                 'uniform_0.2/IzhikevichModel_single-parameter-a',
-                 'uniform_0.2/IzhikevichModel_single-parameter-b',
-                 'uniform_0.2/IzhikevichModel_single-parameter-c',
-                 'uniform_0.2/IzhikevichModel_single-parameter-d',
-                 'uniform_0.3/IzhikevichModel',
-                 'uniform_0.3/IzhikevichModel_single-parameter-a',
-                 'uniform_0.3/IzhikevichModel_single-parameter-b',
-                 'uniform_0.3/IzhikevichModel_single-parameter-c',
-                 'uniform_0.3/IzhikevichModel_single-parameter-d']
+        files = ['uniform_0.1/IzhikevichModel.h5',
+                 'uniform_0.1/IzhikevichModel_single-parameter-a.h5',
+                 'uniform_0.1/IzhikevichModel_single-parameter-b.h5',
+                 'uniform_0.1/IzhikevichModel_single-parameter-c.h5',
+                 'uniform_0.1/IzhikevichModel_single-parameter-d.h5',
+                 'uniform_0.2/IzhikevichModel.h5',
+                 'uniform_0.2/IzhikevichModel_single-parameter-a.h5',
+                 'uniform_0.2/IzhikevichModel_single-parameter-b.h5',
+                 'uniform_0.2/IzhikevichModel_single-parameter-c.h5',
+                 'uniform_0.2/IzhikevichModel_single-parameter-d.h5',
+                 'uniform_0.3/IzhikevichModel.h5',
+                 'uniform_0.3/IzhikevichModel_single-parameter-a.h5',
+                 'uniform_0.3/IzhikevichModel_single-parameter-b.h5',
+                 'uniform_0.3/IzhikevichModel_single-parameter-c.h5',
+                 'uniform_0.3/IzhikevichModel_single-parameter-d.h5']
 
         self.assertEqual(files, result)
 
@@ -249,9 +249,9 @@ class TestUseCases(unittest.TestCase):
 
         result = self.list_files()
 
-        files = ['mc_10/IzhikevichModel',
-                 'mc_100/IzhikevichModel',
-                 'pc/IzhikevichModel']
+        files = ['mc_10/IzhikevichModel.h5',
+                 'mc_100/IzhikevichModel.h5',
+                 'pc/IzhikevichModel.h5']
 
         self.assertEqual(files, result)
 
