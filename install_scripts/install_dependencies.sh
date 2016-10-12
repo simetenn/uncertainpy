@@ -44,20 +44,15 @@ apt_install h5utils
 
 
 echo "Installing virtual envionment packages"
-pip install pip --upgrade
-pip_install cython
-pip_install scipy
-pip_install h5py
-pip_install networkx
-pip_install pandas
 pip_install numpy
-pip_install matplotlib
-pip_install seaborn
-pip_install -e git+https://github.com/simetenn/prettyplot.git#egg=prettyplot
-pip_install coverage
-pip_install tqdm
-
-pip_install xvfbwrapper
+pip_install cython
+pip_install pandas
+pip_install h5py
 pip_install psutil
-pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
+pip_install matplotlib
+pip_install scipy
 pip_install chaospy
+pip_install tqdm
+pip_install xvfbwrapper
+pip_install -e git+https://github.com/simetenn/prettyplot.git#egg=prettyplot
+pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy

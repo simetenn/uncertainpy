@@ -19,11 +19,11 @@ except ImportError:
 name = "uncertainpy"
 virtual_enviroment = name
 
-
-chaospy_req = ["networkx", "cython"]
-uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "pandas"]
-dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
-                    "http://github.com/hplgit/chaospy/tarball/master#egg=chaospy"]
+uncertainpy_req = []
+dependency_links = []
+# uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "pandas"]
+# dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
+#                     "http://github.com/hplgit/chaospy/tarball/master#egg=chaospy"]
 
 
 
@@ -48,22 +48,22 @@ def setupInstall():
     subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
-class CustomDevelop(_develop):
-    def run(self):
-        setupInstall()
-        _develop.run(self)
+# class CustomDevelop(_develop):
+#     def run(self):
+#         setupInstall()
+#         _develop.run(self)
+#
+#
+# class CustomInstall(_install):
+#     def run(self):
+#         setupInstall()
+#         _install.run(self)
+#
+#
+# cmdclass = {'install': CustomInstall,
+#             'develop': CustomDevelop}
 
-
-class CustomInstall(_install):
-    def run(self):
-        setupInstall()
-        _install.run(self)
-
-
-cmdclass = {'install': CustomInstall,
-            'develop': CustomDevelop}
-
-
+cmdclass = {}
 
 if "-h" in sys.argv:
     print("""
@@ -86,10 +86,9 @@ if "--neuron" in sys.argv:
 
 
 if "--no-dependencies" in sys.argv:
-    cmdclass = {}
-    uncertainpy_req = []
-    chaospy_req = []
     sys.argv.remove("--no-dependencies")
+elif "develop" in sys.argv or "install" in sys.argv:
+    subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
 setup(name=name,
@@ -100,6 +99,6 @@ setup(name=name,
       platforms='linux',
       packages=find_packages(),
       cmdclass=cmdclass,
-      install_requires=uncertainpy_req + chaospy_req,
+      install_requires=uncertainpy_req,
       dependency_links=dependency_links
       )
