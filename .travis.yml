@@ -14,7 +14,8 @@ dist: trusty
 install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  - sudo python setup.py install #--neuron
+  - ./install_scripts/install_dependencies.sh
+  - sudo python setup.py install --no-dependencies #--neuron
 script:
   - python2.7 test.py --all
   # - python2.7 -c "import neuron"
