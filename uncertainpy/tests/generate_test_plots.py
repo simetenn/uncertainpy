@@ -82,7 +82,7 @@ def generate_spikes_plot():
 
     spikes = Spikes(t, U, xlabel="xlabel", ylabel="ylabel")
 
-    spikes.plot(os.path.join(output_test_dir, "spikes.png"), nr_hues=1)
+    spikes.plot(os.path.join(output_test_dir, "spikes.png"))
 
 
 if __name__ == "__main__":

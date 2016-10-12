@@ -90,7 +90,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_setData(self):
         data = Data()
 
-        data.load(os.path.join(self.test_data_dir, "TestingModel1d"))
+        data.load(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
         self.plot.setData(data)
 

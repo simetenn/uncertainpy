@@ -44,6 +44,7 @@ apt_install h5utils
 
 
 echo "Installing virtual envionment packages"
+pip install pip --upgrade
 pip_install cython
 pip_install scipy
 pip_install h5py
@@ -59,3 +60,4 @@ pip_install tqdm
 pip_install xvfbwrapper
 pip_install psutil
 pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
+pip_install chaospy

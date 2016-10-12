@@ -45,7 +45,7 @@ def setupInstall():
     if not platform.system() == "Linux":
         print("Warning: OS not supported, installation may fail")
 
-    subprocess.call("./uncertainpy/install_scripts/install_dependencies.sh", shell=True)
+    subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
 class CustomDevelop(_develop):
@@ -81,7 +81,7 @@ if "--virtual" in sys.argv:
     sys.argv.remove("--virtual")
 
 if "--neuron" in sys.argv:
-    subprocess.call("sudo ./uncertainpy/install_scripts/install_neuron.sh", shell=True)
+    subprocess.call("sudo ./install_scripts/install_neuron.sh", shell=True)
     sys.argv.remove("--neuron")
 
 
