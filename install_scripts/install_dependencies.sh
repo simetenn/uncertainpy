@@ -38,6 +38,7 @@ apt_install gfortran
 echo "Installing system wide packages for uncertainpy"
 apt_install python-dev
 apt_install xvfb
+apt_install texlive-full
 
 echo "Installing system wide packages for testing"
 apt_install h5utils
