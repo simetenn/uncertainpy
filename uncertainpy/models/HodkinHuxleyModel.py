@@ -43,7 +43,7 @@ class HodkinHuxleyModel(Model):
         self.t = np.arange(0, self.T + self.dt, self.dt)
 
         ## HH Parameters
-        self.V_rest = 0     # mV
+        self.V_rest = -65     # mV
         self.Cm = 1         # uF/cm2
         self.gbar_Na = 120  # mS/cm2
         self.gbar_K = 36    # mS/cm2
@@ -81,4 +81,4 @@ class HodkinHuxleyModel(Model):
 
             Vm[i] = Vm[i-1] + (self.I[i-1] - g_Na*(Vm[i-1] - self.E_Na) - g_K*(Vm[i-1] - self.E_K) - g_l*(Vm[i-1] - self.E_l))/self.Cm*self.dt
 
-        self.U = Vm - 65
+        self.U = Vm
