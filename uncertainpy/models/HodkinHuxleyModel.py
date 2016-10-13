@@ -16,7 +16,7 @@ class HodkinHuxleyModel(Model):
 
     simulation.cmd()
     """
-    def __init__(self, parameters=None):
+    def __init__(self, parameters=None, I=None):
         """
         Init must be able to be called with 0 arguments
         """
@@ -41,17 +41,22 @@ class HodkinHuxleyModel(Model):
         self.n0 = 0.0003    # unitless
         self.h0 = 0.9998    # unitless
 
+        if I is None:
+            self.I = self.I_default
+        else:
+            self.I = I
+
 
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
 
-        self.I = lambda t: 0
 
-    # def I(self, t):
-    #     if t >= 5 and t <= 30:
-    #         return 10
-    #     else:
-    #         return 0
+    def I_default(self, t):
+        if t >= 5 and t <= 35:
+            return 10
+        else:
+            return 0
+
 
     # K channel
     def alpha_n(self, V):
@@ -117,29 +122,3 @@ class HodkinHuxleyModel(Model):
 
         self.t = t
         self.U = X[:, 0]
-
-
-    # def run(self):
-    #
-    #     Vm = np.zeros(len(self.t))  # mV
-    #     Vm[0] = self.V_rest
-    #
-    #     m = self.m0
-    #     h = self.h0
-    #     n = self.n0
-    #
-    #
-    #     for i in range(1, len(self.t)):
-    #         g_Na = self.gbar_Na*(m**3)*h
-    #         g_K = self.gbar_K*(n**4)
-    #         g_l = self.gbar_l
-    #
-    #         m += self.dt*self.m_f(m, Vm[i-1])
-    #         h += self.dt*self.h_f(h, Vm[i-1])
-    #         n += self.dt*self.n_f(n, Vm[i-1])
-    #
-    #         Vm[i] = Vm[i-1] + (self.I[i-1] - g_Na*(Vm[i-1] - self.E_Na) \
-    #                            - g_K*(Vm[i-1] - self.E_K) - g_l*(Vm[i-1] - self.E_l))/self.Cm*self.dt
-    #
-    #
-    #     self.U = Vm
