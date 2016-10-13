@@ -1,7 +1,7 @@
 from model import Model
 
 import numpy as np
-import scipy as sp
+import odespy
 
 # The class name and file name must be the same
 class HodkinHuxleyModel(Model):
@@ -42,18 +42,16 @@ class HodkinHuxleyModel(Model):
         self.h0 = 0.9998    # unitless
 
 
-
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
 
-        self.set_I()
+        self.I = lambda t: 0
 
-    def set_I(self):
-        self.I = np.zeros(len(self.t))  # uA/cm*2
-
-        for i, t in enumerate(self.t):
-            if 5 <= t <= 30:
-                self.I[i] = 10
+    # def I(self, t):
+    #     if t >= 5 and t <= 30:
+    #         return 10
+    #     else:
+    #         return 0
 
     # K channel
     def alpha_n(self, V):
@@ -88,54 +86,57 @@ class HodkinHuxleyModel(Model):
         return self.alpha_h(V)*(1 - h) - self.beta_h(V)*h
 
 
-    #
-    # def alpha_m(self, V):
-    #     """Channel gating kinetics. Functions of membrane voltage"""
-    #     return 0.1*(V+40.0)/(1.0 - sp.exp(-(V+40.0) / 10.0))
-    #
-    # def beta_m(self, V):
-    #     """Channel gating kinetics. Functions of membrane voltage"""
-    #     return 4.0*sp.exp(-(V+65.0) / 18.0)
-    #
-    # def alpha_h(self, V):
-    #     """Channel gating kinetics. Functions of membrane voltage"""
-    #     return 0.07*sp.exp(-(V+65.0) / 20.0)
-    #
-    # def beta_h(self, V):
-    #     """Channel gating kinetics. Functions of membrane voltage"""
-    #     return 1.0/(1.0 + sp.exp(-(V+35.0) / 10.0))
-    #
-    # def alpha_n(self, V):
-    #     """Channel gating kinetics. Functions of membrane voltage"""
-    #     return 0.01*(V+55.0)/(1.0 - sp.exp(-(V+55.0) / 10.0))
-    #
-    # def beta_n(self, V):
-    #     """Channel gating kinetics. Functions of membrane voltage"""
-    #     return 0.125*sp.exp(-(V+65) / 80.0)
+    def dXdt(self, X, t):
+        V, h, m, n = X
+
+        g_Na = self.gbar_Na*(m**3)*h
+        g_K = self.gbar_K*(n**4)
+        g_l = self.gbar_l
+
+        dmdt = self.m_f(m, V)
+        dhdt = self.h_f(h, V)
+        dndt = self.n_f(n, V)
+
+        print t
+        print self.I(t)
+
+        dVdt = (self.I(t) - g_Na*(V - self.E_Na) - g_K*(V - self.E_K) - g_l*(V - self.E_l))/self.Cm
+
+        return [dVdt, dhdt, dmdt, dndt]
+
 
     def run(self):
 
-        Vm = np.zeros(len(self.t))  # mV
-        Vm[0] = self.V_rest
+        solver = odespy.RK4(self.dXdt)
+        solver.set_initial_condition([self.V_rest, self.h0, self.m0, self.n0])
 
-        m = self.m0
-        h = self.h0
-        n = self.n0
+        X, t = solver.solve(self.t)
 
-
-
-        for i in range(1, len(self.t)):
-            g_Na = self.gbar_Na*(m**3)*h
-            g_K = self.gbar_K*(n**4)
-            g_l = self.gbar_l
-
-            m += self.dt*self.m_f(m, Vm[i-1])
-            h += self.dt*self.h_f(h, Vm[i-1])
-            n += self.dt*self.n_f(n, Vm[i-1])
-
-            print m
-            Vm[i] = Vm[i-1] + (self.I[i-1] - g_Na*(Vm[i-1] - self.E_Na) \
-                               - g_K*(Vm[i-1] - self.E_K) - g_l*(Vm[i-1] - self.E_l))/self.Cm*self.dt
+        self.t = t
+        self.U = X[:, 0]
 
 
-        self.U = Vm
+    # def run(self):
+    #
+    #     Vm = np.zeros(len(self.t))  # mV
+    #     Vm[0] = self.V_rest
+    #
+    #     m = self.m0
+    #     h = self.h0
+    #     n = self.n0
+    #
+    #
+    #     for i in range(1, len(self.t)):
+    #         g_Na = self.gbar_Na*(m**3)*h
+    #         g_K = self.gbar_K*(n**4)
+    #         g_l = self.gbar_l
+    #
+    #         m += self.dt*self.m_f(m, Vm[i-1])
+    #         h += self.dt*self.h_f(h, Vm[i-1])
+    #         n += self.dt*self.n_f(n, Vm[i-1])
+    #
+    #         Vm[i] = Vm[i-1] + (self.I[i-1] - g_Na*(Vm[i-1] - self.E_Na) \
+    #                            - g_K*(Vm[i-1] - self.E_K) - g_l*(Vm[i-1] - self.E_l))/self.Cm*self.dt
+    #
+    #
+    #     self.U = Vm
