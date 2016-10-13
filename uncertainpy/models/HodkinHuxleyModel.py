@@ -97,9 +97,6 @@ class HodkinHuxleyModel(Model):
         dhdt = self.h_f(h, V)
         dndt = self.n_f(n, V)
 
-        print t
-        print self.I(t)
-
         dVdt = (self.I(t) - g_Na*(V - self.E_Na) - g_K*(V - self.E_K) - g_l*(V - self.E_l))/self.Cm
 
         return [dVdt, dhdt, dmdt, dndt]
@@ -107,9 +104,15 @@ class HodkinHuxleyModel(Model):
 
     def run(self):
 
-        solver = odespy.RK4(self.dXdt)
-        solver.set_initial_condition([self.V_rest, self.h0, self.m0, self.n0])
+        self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
+        self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
+        self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
 
+        initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
+
+
+        solver = odespy.RK4(self.dXdt)
+        solver.set_initial_condition(initial_conditions)
         X, t = solver.solve(self.t)
 
         self.t = t
