@@ -545,7 +545,7 @@ class PlotUncertainty():
 
         prettyBar(self.data.total_sensitivity[feature],
                   title="total sensitivity, " + self.toLatex(feature),
-                  xlabels=self.data.uncertain_parameters,
+                  xlabels=self.listToLatex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
                   nr_hues=len(self.data.uncertain_parameters),
                   index=index)
@@ -676,7 +676,7 @@ class PlotUncertainty():
                 if i < nr_plots:
                     prettyBar(self.data.total_sensitivity[self.data.feature_list[i]],
                               title=self.toLatex(self.data.feature_list[i]),
-                              xlabels=self.data.uncertain_parameters,
+                              xlabels=self.listToLatex(self.data.uncertain_parameters),
                               nr_hues=len(self.data.uncertain_parameters),
                               index=index,
                               ax=ax,
