@@ -78,6 +78,9 @@ class TestData(unittest.TestCase):
         self.data.sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
         self.data.total_sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
 
+        self.data.sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.data.total_sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
+
 
         self.data.uncertain_parameters = ["a", "b"]
         self.data.xlabel = "xlabel"
@@ -120,6 +123,14 @@ class TestData(unittest.TestCase):
         self.assertTrue(np.array_equal(self.data.total_sensitivity_1["feature1"], [1., 2.]))
         self.assertTrue(np.array_equal(self.data.total_sensitivity_1["directComparison"], [3., 4.]))
 
+        print self.data.total_sensitivity_t
+
+        self.assertTrue(np.array_equal(self.data.sensitivity_t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["directComparison"], [3., 4.]))
+
+
         self.assertEqual(self.data.uncertain_parameters[0], "a")
         self.assertEqual(self.data.uncertain_parameters[1], "b")
 
@@ -146,6 +157,8 @@ class TestData(unittest.TestCase):
         self.data.p_95 = -1
         self.data.sensitivity_1 = -1
         self.data.total_sensitivity_1 = -1
+        self.data.sensitivity_t = -1
+        self.data.total_sensitivity_t = -1
 
 
         self.data.xlabel = -1
@@ -167,3 +180,5 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.p_95, {})
         self.assertEqual(self.data.sensitivity_1, {})
         self.assertEqual(self.data.total_sensitivity_1, {})
+        self.assertEqual(self.data.sensitivity_t, {})
+        self.assertEqual(self.data.total_sensitivity_t, {})

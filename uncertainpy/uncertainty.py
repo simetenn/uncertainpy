@@ -580,16 +580,19 @@ For example on use see:
 
                 self.U_mc[feature] = self.U_hat[feature](*samples)
                 self.data.sensitivity_1[feature] = cp.Sens_m(self.U_hat[feature], self.distribution)
+                self.data.sensitivity_t[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
 
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
                 self.data.sensitivity_1[feature] = None
+                self.data.sensitivity_t[feature] = None
 
 
             self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
             self.data.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
 
-        self.totalSensitivity()
+        self.totalSensitivity(sensitivity="sensitivity_1")
+        self.totalSensitivity(sensitivity="sensitivity_t")
 
 
 
@@ -618,6 +621,8 @@ For example on use see:
             self.data.p_95[feature] = np.percentile(self.data.U[feature], 95, 0)
             self.data.sensitivity_1[feature] = None
             self.data.total_sensitivity_1[feature] = None
+            self.data.sensitivity_t[feature] = None
+            self.data.total_sensitivity_t[feature] = None
 
 
     def timePassed(self):
