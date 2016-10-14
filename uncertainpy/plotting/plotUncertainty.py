@@ -295,7 +295,7 @@ class PlotUncertainty():
 
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=feature + ", sensitivity, " + self.toLatex(parameter_names[i]),
+                       title=feature + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(parameter_names[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i, new_figure=True,
                        nr_hues=len(self.data.uncertain_parameters), **kwargs)
@@ -303,7 +303,7 @@ class PlotUncertainty():
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                         feature + "_sensitivity_" + parameter_names[i] + self.figureformat),
+                                         feature + "_" + sensitivity + "_" + parameter_names[i] + self.figureformat),
                             bbox_inches="tight")
                 if not show:
                     plt.close()
@@ -372,16 +372,15 @@ class PlotUncertainty():
             else:
                 ax.axis("off")
 
-        title = feature + ", sensitivity"
+        title = feature + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
 
 
-
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_sensitivity_grid" + self.figureformat),
+                                     feature + "_" + sensitivity + "_grid" + self.figureformat),
                         bbox_inches="tight")
             if not show:
                 plt.close()
@@ -408,7 +407,7 @@ class PlotUncertainty():
 
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=self.toLatex(feature) + ", sensitivity",
+                       title=self.toLatex(feature) + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1],
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        new_figure=False, color=i,
                        nr_hues=len(self.data.uncertain_parameters),
@@ -422,7 +421,7 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_sensitivity" + self.figureformat),
+                                     feature + "_" +sensitivity + self.figureformat),
                         bbox_inches="tight")
             if not show:
                 plt.close()
@@ -505,7 +504,7 @@ class PlotUncertainty():
                 pos += width
 
             xticks.append(pos - (i/2. + 0.5)*width)
-            xlabels.append("sensitivity")
+            xlabels.append(sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
 
             location = (0.5, 1.01 + legend_width*0.095)
             lgd = plt.legend(legend_bars,
@@ -555,7 +554,7 @@ class PlotUncertainty():
 
 
         prettyBar(total_sense[feature],
-                  title="total sensitivity, " + self.toLatex(feature),
+                  title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(feature),
                   xlabels=self.listToLatex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
                   nr_hues=len(self.data.uncertain_parameters),
@@ -565,7 +564,7 @@ class PlotUncertainty():
         plt.ylim([0, 1])
 
 
-        save_name = feature + "_total-sensitivity" + self.figureformat
+        save_name = feature + "_total-" + sensitivity + self.figureformat
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
@@ -576,12 +575,12 @@ class PlotUncertainty():
             plt.show()
 
 
-    def plotAllTotalSensitivity(self, hardcopy=True, show=False):
+    def plotAllTotalSensitivity(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
         for feature in self.data.feature_list:
-            self.plotTotalSensitivity(feature=feature, hardcopy=hardcopy, show=show)
+            self.plotTotalSensitivity(feature=feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
 
 
     def plot0dFeatures(self, hardcopy=True, show=False):
@@ -671,7 +670,7 @@ class PlotUncertainty():
                                          "right": "None", "left": "None"})
             ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
             # ax.set_xlabel(self.data.xlabel)
-            ax.set_ylabel('\% total sensitivity')
+            ax.set_ylabel('\% total ' + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
 
             width = 0.2
             index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
@@ -705,7 +704,7 @@ class PlotUncertainty():
                 else:
                     ax.axis("off")
 
-            title = "total sensitivity"
+            title = "total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
             plt.suptitle(title, fontsize=titlesize)
             plt.tight_layout()
             plt.subplots_adjust(top=0.85)
@@ -713,7 +712,7 @@ class PlotUncertainty():
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                        "total-sensitivity_grid" + self.figureformat),
+                                        "total-" + sensitivity + "_grid" + self.figureformat),
                             bbox_inches="tight")
                 if not show:
                     plt.close()
