@@ -40,6 +40,8 @@ class Data:
         self.p_05 = {}
         self.p_95 = {}
         self.sensitivity = {}
+        self.total_sensitivity = {}
+
 
         self.xlabel = ""
         self.ylabel = ""
@@ -75,8 +77,8 @@ class Data:
                     group.create_dataset("p_95", data=self.p_95[feature])
                 if feature in self.sensitivity and self.sensitivity[feature] is not None:
                     group.create_dataset("sensitivity", data=self.sensitivity[feature])
-                # if feature == "directComparison":
-                #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
+                if feature == "directComparison":
+                    group.create_dataset("total_sensitivity", data=self.total_sensitivity[feature])
 
 
     def load(self, filename):
@@ -102,6 +104,13 @@ class Data:
                     self.sensitivity[feature] = f[feature]["sensitivity"][()]
                 else:
                     self.sensitivity[feature] = None
+
+
+                if "total_sensitivity" in f[feature].keys():
+                    self.total_sensitivity[feature] = f[feature]["totals_ensitivity"][()]
+                else:
+                    self.total_sensitivity[feature] = None
+
 
                 if "t" in f[feature].keys():
                     self.t[feature] = f[feature]["t"][()]

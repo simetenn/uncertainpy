@@ -58,4 +58,4 @@ exploration = uncertainpy.UncertaintyEstimation(model,
 
 exploration.allParameters()
 
-print exploration.data.sensitivity_ranking
+print exploration.data.total_sensitivity

@@ -731,22 +731,22 @@ For example on use see:
 
 
     def sensitivityRanking(self):
-        self.data.sensitivity_ranking = {}
+        self.data.total_sensitivity = {}
 
         for feature in self.data.sensitivity:
             i = 0
             self.data.sensitivity_ranking[feature] = {}
             for parameter in self.data.uncertain_parameters:
-                self.data.sensitivity_ranking[feature][parameter] = np.sum(self.data.sensitivity[feature][i])
+                self.data.total_sensitivity[feature][parameter] = np.sum(self.data.sensitivity[feature][i])
                 i += 1
 
             total_sensitivity = 0
-            for parameter in self.data.sensitivity_ranking[feature]:
-                total_sensitivity += self.data.sensitivity_ranking[feature][parameter]
+            for parameter in self.data.total_sensitivity[feature]:
+                total_sensitivity += self.data.total_sensitivity[feature][parameter]
 
             for parameter in self.data.sensitivity_ranking[feature]:
                 if not total_sensitivity == 0:
-                    self.data.sensitivity_ranking[feature][parameter] /= total_sensitivity
+                    self.data.total_sensitivity[feature][parameter] /= total_sensitivity
 
 
 
