@@ -17,6 +17,7 @@ from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 # TODO compare plots in a grid of all plots,
 # such as plotting all features in a grid plot
 
+# TODO add suprot for more than one type of sensitivity
 
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 
@@ -53,7 +54,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             self.Var_compare[name] = self.data.Var.copy()
             self.p_05_compare[name] = self.data.p_05.copy()
             self.p_95_compare[name] = self.data.p_95.copy()
-            self.sensitivity_compare[name] = self.data.sensitivity.copy()
+            self.sensitivity_compare[name] = self.data.sensitivity_1.copy()
 
 
         self.compare_output_dir_figures = os.path.join(self.output_dir_figures, "compare")

@@ -156,8 +156,8 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertTrue(np.all(np.greater(self.plot.data.p_95["directComparison"], U)))
         self.assertTrue(np.allclose(self.plot.data.p_95["feature1d"], feature.feature1d(), atol=0.001))
 
-        self.assertTrue(self.plot.data.sensitivity["directComparison"].shape, (10, 2))
-        self.assertTrue(self.plot.data.sensitivity["feature1d"].shape, (10, 2))
+        self.assertTrue(self.plot.data.sensitivity_1["directComparison"].shape, (10, 2))
+        self.assertTrue(self.plot.data.sensitivity_1["feature1d"].shape, (10, 2))
 
         self.assertEqual(len(self.plot.data.features_0d), 2)
         self.assertEqual(len(self.plot.data.features_1d), 2)

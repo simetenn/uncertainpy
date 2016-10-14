@@ -39,8 +39,8 @@ class Data:
         self.Var = {}
         self.p_05 = {}
         self.p_95 = {}
-        self.sensitivity = {}
-        self.total_sensitivity = {}
+        self.sensitivity_1 = {}
+        self.total_sensitivity_1 = {}
 
 
         self.xlabel = ""
@@ -75,10 +75,10 @@ class Data:
                     group.create_dataset("p_05", data=self.p_05[feature])
                 if feature in self.p_95:
                     group.create_dataset("p_95", data=self.p_95[feature])
-                if feature in self.sensitivity and self.sensitivity[feature] is not None:
-                    group.create_dataset("sensitivity", data=self.sensitivity[feature])
-                if feature in self.total_sensitivity and self.total_sensitivity[feature] is not None:
-                    group.create_dataset("total_sensitivity", data=self.total_sensitivity[feature])
+                if feature in self.sensitivity_1 and self.sensitivity_1[feature] is not None:
+                    group.create_dataset("sensitivity_1", data=self.sensitivity_1[feature])
+                if feature in self.total_sensitivity_1 and self.total_sensitivity_1[feature] is not None:
+                    group.create_dataset("total_sensitivity_1", data=self.total_sensitivity_1[feature])
 
 
     def load(self, filename):
@@ -91,7 +91,7 @@ class Data:
             self.Var = {}
             self.p_05 = {}
             self.p_95 = {}
-            self.sensitivity = {}
+            self.sensitivity_1 = {}
 
             for feature in f.keys():
                 self.U[feature] = f[feature]["U"][()]
@@ -100,16 +100,16 @@ class Data:
                 self.p_05[feature] = f[feature]["p_05"][()]
                 self.p_95[feature] = f[feature]["p_95"][()]
 
-                if "sensitivity" in f[feature].keys():
-                    self.sensitivity[feature] = f[feature]["sensitivity"][()]
+                if "sensitivity_1" in f[feature].keys():
+                    self.sensitivity_1[feature] = f[feature]["sensitivity_1"][()]
                 else:
-                    self.sensitivity[feature] = None
+                    self.sensitivity_1[feature] = None
 
 
-                if "total_sensitivity" in f[feature].keys():
-                    self.total_sensitivity[feature] = f[feature]["total_sensitivity"][()]
+                if "total_sensitivity_1" in f[feature].keys():
+                    self.total_sensitivity_1[feature] = f[feature]["total_sensitivity_1"][()]
                 else:
-                    self.total_sensitivity[feature] = None
+                    self.total_sensitivity_1[feature] = None
 
 
                 if "t" in f[feature].keys():

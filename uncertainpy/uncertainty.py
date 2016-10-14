@@ -577,12 +577,13 @@ For example on use see:
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 
             if len(self.data.uncertain_parameters) > 1:
+
                 self.U_mc[feature] = self.U_hat[feature](*samples)
-                self.data.sensitivity[feature] = cp.Sens_m(self.U_hat[feature], self.distribution)
+                self.data.sensitivity_1[feature] = cp.Sens_m(self.U_hat[feature], self.distribution)
 
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
-                self.data.sensitivity[feature] = None
+                self.data.sensitivity_1[feature] = None
 
 
             self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
@@ -615,8 +616,8 @@ For example on use see:
 
             self.data.p_05[feature] = np.percentile(self.data.U[feature], 5, 0)
             self.data.p_95[feature] = np.percentile(self.data.U[feature], 95, 0)
-            self.data.sensitivity[feature] = None
-            self.data.total_sensitivity[feature] = None
+            self.data.sensitivity_1[feature] = None
+            self.data.total_sensitivity_1[feature] = None
 
 
     def timePassed(self):
@@ -723,27 +724,29 @@ For example on use see:
 
 
 
-    def totalSensitivity(self):
-        self.data.total_sensitivity = {}
+    def totalSensitivity(self, sensitivity="sensitivity_1"):
 
-        for feature in self.data.sensitivity:
+        sense = getattr(self.data, sensitivity)
+        total_sense = {}
 
-            if self.data.sensitivity[feature] is None:
+        for feature in sense:
+            if sense[feature] is None:
                 continue
 
             total_sensitivity = 0
-            self.data.total_sensitivity[feature] = []
+            total_sense[feature] = []
             for i in xrange(0, len(self.data.uncertain_parameters)):
-                tmp_sum_sensitivity = np.sum(self.data.sensitivity[feature][i])
+                tmp_sum_sensitivity = np.sum(sense[feature][i])
 
                 total_sensitivity += tmp_sum_sensitivity
-                self.data.total_sensitivity[feature].append(tmp_sum_sensitivity)
+                total_sense[feature].append(tmp_sum_sensitivity)
 
             for i in xrange(0, len(self.data.uncertain_parameters)):
                 if not total_sensitivity == 0:
-                    self.data.total_sensitivity[feature][i] /= float(total_sensitivity)
+                    total_sense[feature][i] /= float(total_sensitivity)
 
 
+        setattr(self.data, "total_" + sensitivity, total_sense)
 
 
     def save(self, filename):
