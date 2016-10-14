@@ -16,17 +16,15 @@ class HodkinHuxleyModel(Model):
 
     simulation.cmd()
     """
-    def __init__(self, parameters=None, I=None):
+    def __init__(self, parameters=None):
         """
         Init must be able to be called with 0 arguments
         """
         Model.__init__(self, parameters=parameters)
 
 
-        ## setup parameters and state variables
-        self.T = 45    # ms
-        self.dt = 0.025  # ms
-        self.t = np.arange(0, self.T + self.dt, self.dt)
+
+
 
         ## HH Parameters
         self.V_rest = -65   # mV
@@ -37,23 +35,27 @@ class HodkinHuxleyModel(Model):
         self.E_Na = 50      # mV
         self.E_K = -77      # mV
         self.E_l = -54.4    # mV
+
         self.m0 = 0.0011    # unitless
         self.n0 = 0.0003    # unitless
         self.h0 = 0.9998    # unitless
 
-        if I is None:
-            self.I = self.I_default
-        else:
-            self.I = I
+
+
+        ## setup parameters and state variables
+        self.I_value = 10
+        T = 15    # ms
+        dt = 0.025  # ms
+        self.t = np.arange(0, T + dt, dt)
 
 
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
 
 
-    def I_default(self, t):
-        if t >= 5 and t <= 35:
-            return 10
+    def I(self, t):
+        if t >= 5 and t <= 30:
+            return self.I_value
         else:
             return 0
 
@@ -112,6 +114,10 @@ class HodkinHuxleyModel(Model):
         self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
         self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
         self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
+
+        print self.h0
+        print self.m0
+        print self.n0
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 

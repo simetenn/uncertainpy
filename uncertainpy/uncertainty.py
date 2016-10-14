@@ -346,8 +346,7 @@ For example on use see:
         for result in tqdm(pool.imap(evaluateNodeFunction,
                                      self.evaluateNodeFunctionList(nodes.T)),
                            desc="Running model",
-                           total=len(nodes.T),
-                           leave=False):
+                           total=len(nodes.T)):
             solves.append(result)
 
         pool.close()
@@ -586,7 +585,7 @@ For example on use see:
 
             if len(self.data.uncertain_parameters) > 1:
                 self.U_mc[feature] = self.U_hat[feature](*samples)
-                self.data.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
+                self.data.sensitivity[feature] = cp.Sens_m(self.U_hat[feature], self.distribution)
 
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
@@ -595,6 +594,8 @@ For example on use see:
 
             self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
             self.data.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
+
+        self.sensitivityRanking()
 
 
 
@@ -728,20 +729,26 @@ For example on use see:
         return self.data
 
 
-    # TODO does not work
+
     def sensitivityRanking(self):
-        self.sensitivity_ranking = {}
-        i = 0
-        for parameter in self.model.parameters.getUncertain("name"):
-            self.sensitivity_ranking[parameter] = sum(self.sensitivity["directComparison"][i])
-            i += 1
+        self.data.sensitivity_ranking = {}
 
-        total_sensitivity = 0
-        for parameter in self.sensitivity_ranking:
-            total_sensitivity += self.sensitivity_ranking[parameter]
+        for feature in self.data.sensitivity:
+            i = 0
+            self.data.sensitivity_ranking[feature] = {}
+            for parameter in self.data.uncertain_parameters:
+                self.data.sensitivity_ranking[feature][parameter] = np.sum(self.data.sensitivity[feature][i])
+                i += 1
 
-        for parameter in self.sensitivity_ranking:
-            self.sensitivity_ranking[parameter] /= total_sensitivity
+            total_sensitivity = 0
+            for parameter in self.data.sensitivity_ranking[feature]:
+                total_sensitivity += self.data.sensitivity_ranking[feature][parameter]
+
+            for parameter in self.data.sensitivity_ranking[feature]:
+                if not total_sensitivity == 0:
+                    self.data.sensitivity_ranking[feature][parameter] /= total_sensitivity
+
+
 
 
     def save(self, filename):
