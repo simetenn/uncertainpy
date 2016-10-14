@@ -29,15 +29,15 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
 
-    def tearDown(self):
-        if os.path.isdir(self.output_test_dir):
-            shutil.rmtree(self.output_test_dir)
+    # def tearDown(self):
+    #     if os.path.isdir(self.output_test_dir):
+    #         shutil.rmtree(self.output_test_dir)
 
 
 
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_figures",
+        compare_file = os.path.join(folder, "data/TestingModel1d",
                                     name + ".png")
 
         plot_file = os.path.join(self.output_test_dir, self.data_file,
@@ -46,6 +46,34 @@ class TestPlotUncertainpy(unittest.TestCase):
         result = subprocess.call(["diff", plot_file, compare_file])
         self.assertEqual(result, 0)
 
+
+
+    def test_plotTotalSensitivityGrid(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plotTotalSensitivityGrid(hardcopy=True)
+
+        self.compare_plot("total-sensitivity_grid")
+
+
+
+    def test_plotTotalSensitivity(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plotTotalSensitivity(feature="feature1d", hardcopy=True)
+
+        self.compare_plot("feature1d_total-sensitivity")
+
+    def test_plotAllTotalSensitivity(self):
+        self.plot.loadData(self.data_file)
+
+        self.plot.plotAllTotalSensitivity(hardcopy=True)
+
+        self.compare_plot("directComparison_total-sensitivity")
+        self.compare_plot("feature0d_total-sensitivity")
+        self.compare_plot("feature1d_total-sensitivity")
+        self.compare_plot("feature2d_total-sensitivity")
+        self.compare_plot("featureInvalid_total-sensitivity")
 
 
     def test_plotSimulatorResults(self):
@@ -90,7 +118,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_setData(self):
         data = Data()
 
-        data.load(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
+        data.load(os.path.join(self.test_data_dir, self.data_file + ".h5"))
 
         self.plot.setData(data)
 
@@ -398,6 +426,13 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.compare_plot("feature0d")
 
+        self.compare_plot("directComparison_total-sensitivity")
+        self.compare_plot("feature0d_total-sensitivity")
+        self.compare_plot("feature1d_total-sensitivity")
+        self.compare_plot("feature2d_total-sensitivity")
+        self.compare_plot("featureInvalid_total-sensitivity")
+
+        self.compare_plot("total-sensitivity_grid")
 
 # TODO test combined features 0 for many features
 

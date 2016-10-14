@@ -74,8 +74,8 @@ class PlotUncertainty():
 
 
         self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
-        if os.path.isfile(self.full_output_dir_figures):
-            self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
+        # if os.path.isfile(self.full_output_dir_figures):
+        #     self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
 
         if not os.path.isdir(self.full_output_dir_figures) and create_output_folder:
             os.makedirs(self.full_output_dir_figures)
@@ -329,6 +329,7 @@ class PlotUncertainty():
         grid_x_size = int(grid_size)
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
+        set_style("darkgrid")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size)
 
 
@@ -527,6 +528,50 @@ class PlotUncertainty():
         return ax
 
 
+    def plotTotalSensitivity(self, feature, hardcopy=True, show=False):
+        if not self.loaded_flag:
+            raise ValueError("Datafile must be loaded")
+
+        if feature not in self.data.feature_list:
+            raise ValueError("%s is not a feature" % (feature))
+
+
+        if feature not in self.data.total_sensitivity.keys():
+            raise ValueError("No total sensitivity calculated for {}".format(feature))
+
+        width = 0.2
+
+        index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
+
+        prettyBar(self.data.total_sensitivity[feature],
+                  title="total sensitivity, " + self.toLatex(feature),
+                  xlabels=self.data.uncertain_parameters,
+                  ylabel="\% total sensitivity",
+                  nr_hues=len(self.data.uncertain_parameters),
+                  index=index)
+
+
+        plt.ylim([0, 1])
+
+
+        save_name = feature + "_total-sensitivity" + self.figureformat
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
+
+
+    def plotAllTotalSensitivity(self, hardcopy=True, show=False):
+        if not self.loaded_flag:
+            raise ValueError("Datafile must be loaded")
+
+        for feature in self.data.feature_list:
+            self.plotTotalSensitivity(feature=feature, hardcopy=hardcopy, show=show)
+
 
     def plot0dFeatures(self, hardcopy=True, show=False):
         if not self.loaded_flag:
@@ -551,8 +596,13 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
+
         self.plot1dFeatures()
         self.plot0dFeatures()
+
+
+        self.plotAllTotalSensitivity()
+        self.plotTotalSensitivityGrid()
 
 
 
@@ -580,6 +630,84 @@ class PlotUncertainty():
         self.output_dir_figures = original_output_dir_figures
 
 
+
+
+
+    def plotTotalSensitivityGrid(self, hardcopy=True, show=False, **kwargs):
+            if not self.loaded_flag:
+                raise ValueError("Datafile must be loaded")
+
+            # get size of the grid in x and y directions
+            nr_plots = len(self.data.feature_list)
+            grid_size = np.ceil(np.sqrt(nr_plots))
+            grid_x_size = int(grid_size)
+            grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
+
+            # plt.close("all")
+
+
+            set_style("dark")
+            fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size)
+            set_style("white")
+
+
+            # Add a larger subplot to use to set a common xlabel and ylabel
+
+            ax = fig.add_subplot(111, zorder=-10)
+            spines_edge_color(ax, edges={"top": "None", "bottom": "None",
+                                         "right": "None", "left": "None"})
+            ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+            # ax.set_xlabel(self.data.xlabel)
+            ax.set_ylabel('\% total sensitivity')
+
+            width = 0.2
+            index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
+
+
+            for i in range(0, grid_x_size*grid_y_size):
+                nx = i % grid_x_size
+                ny = int(np.floor(i/float(grid_x_size)))
+
+                if grid_y_size == 1:
+                    ax = axes[nx]
+                else:
+                    ax = axes[ny][nx]
+
+                if i < nr_plots:
+                    prettyBar(self.data.total_sensitivity[self.data.feature_list[i]],
+                              title=self.toLatex(self.data.feature_list[i]),
+                              xlabels=self.data.uncertain_parameters,
+                              nr_hues=len(self.data.uncertain_parameters),
+                              index=index,
+                              ax=ax,
+                              **kwargs)
+
+
+
+                    for tick in ax.get_xticklabels():
+                        tick.set_rotation(-30)
+
+                    ax.set_ylim([0, 1.05])
+                    # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
+                    ax.tick_params(labelsize=10)
+                else:
+                    ax.axis("off")
+
+            title = "total sensitivity"
+            plt.suptitle(title, fontsize=titlesize)
+            plt.tight_layout()
+            plt.subplots_adjust(top=0.85)
+
+
+            if hardcopy:
+                plt.savefig(os.path.join(self.full_output_dir_figures,
+                                        "total-sensitivity_grid" + self.figureformat),
+                            bbox_inches="tight")
+                if not show:
+                    plt.close()
+
+            if show:
+                plt.show()
 
 
 

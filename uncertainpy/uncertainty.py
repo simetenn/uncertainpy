@@ -595,7 +595,7 @@ For example on use see:
             self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
             self.data.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
 
-        self.sensitivityRanking()
+        self.totalSensitivity()
 
 
 
@@ -730,7 +730,7 @@ For example on use see:
 
 
 
-    def sensitivityRanking(self):
+    def totalSensitivity(self):
         self.data.total_sensitivity = {}
 
         for feature in self.data.sensitivity:
@@ -748,7 +748,7 @@ For example on use see:
 
             for i in xrange(0, len(self.data.uncertain_parameters)):
                 if not total_sensitivity == 0:
-                    self.data.total_sensitivity[feature][i] /= total_sensitivity
+                    self.data.total_sensitivity[feature][i] /= float(total_sensitivity)
 
 
 

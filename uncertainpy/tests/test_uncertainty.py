@@ -534,6 +534,18 @@ class TestUncertainty(unittest.TestCase):
 
 
 
+    def test_totalSensitivity(self):
+        self.uncertainty.data.sensitivity = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
+
+        self.uncertainty.totalSensitivity()
+        print self.uncertainty.data.total_sensitivity
+        self.assertEqual(self.uncertainty.data.total_sensitivity["test2D"][0], 1/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity["test2D"][1], 2/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity["test1D"][0], 1/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity["test1D"][1], 2/3.)
+
+
     def test_createMaskFeature2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
