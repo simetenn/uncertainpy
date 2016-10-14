@@ -30,11 +30,6 @@
 
 # TODO implement a feature description in features
 
-# TODO Reimplement sensitivity ranking, but for all features and not only the diirect_comparison
-
-# TODO placement of feature bar plots
-
-# TODO Decide if the HH model should return Vm - 65 or just Vm
 
 # TODO Make sending of model keywords simpler than it currently is. Use a
 # dictionary similar to kwargs?. model.py
@@ -69,8 +64,6 @@
 # TODO move creation of all_features to where the class is initiated
 
 # TODO save data from each singleParameter run or not in the class?
-
-# TODO remove feature list from UncertaintyEstimation, and add it to feature class instead
 
 
 # Figures are always saved on the format:

@@ -27,7 +27,8 @@ class HodkinHuxleyModel(Model):
 
 
         ## HH Parameters
-        self.V_rest = -65   # mV
+
+        self.V_rest = -75   # mV
         self.Cm = 1         # uF/cm**2
         self.gbar_Na = 120  # mS/cm**2
         self.gbar_K = 36    # mS/cm**2
@@ -36,14 +37,17 @@ class HodkinHuxleyModel(Model):
         self.E_K = -77      # mV
         self.E_l = -54.4    # mV
 
-        self.m0 = 0.0011    # unitless
-        self.n0 = 0.0003    # unitless
-        self.h0 = 0.9998    # unitless
+        # self.m0 = 0.0011    # unitless
+        # self.n0 = 0.0003    # unitless
+        # self.h0 = 0.9998    # unitless
 
+        self.m0 = 0.05    # unitless
+        self.n0 = 0.32    # unitless
+        self.h0 = 0.60    # unitless
 
 
         ## setup parameters and state variables
-        self.I_value = 10
+        self.I_value = 150
         T = 15    # ms
         dt = 0.025  # ms
         self.t = np.arange(0, T + dt, dt)
@@ -54,11 +58,11 @@ class HodkinHuxleyModel(Model):
 
 
     def I(self, t):
-        if t >= 5 and t <= 30:
-            return self.I_value
-        else:
-            return 0
-
+        # if t >= 5 and t <= 30:
+        #     return self.I_value
+        # else:
+        #     return 0
+        return self.I_value
 
     # K channel
     def alpha_n(self, V):
@@ -111,13 +115,13 @@ class HodkinHuxleyModel(Model):
 
     def run(self):
 
-        self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
-        self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
-        self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
-
-        print self.h0
-        print self.m0
-        print self.n0
+        # self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
+        # self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
+        # self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
+        #
+        # print self.h0
+        # print self.m0
+        # print self.n0
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
@@ -128,3 +132,7 @@ class HodkinHuxleyModel(Model):
 
         self.t = t
         self.U = X[:, 0]
+
+        # print "h: ", X[-1, 1]
+        # print "m: ", X[-1, 2]
+        # print "n: ", X[-1, 3]
