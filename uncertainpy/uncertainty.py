@@ -623,7 +623,7 @@ For example on use see:
             self.data.p_05[feature] = np.percentile(self.data.U[feature], 5, 0)
             self.data.p_95[feature] = np.percentile(self.data.U[feature], 95, 0)
             self.data.sensitivity[feature] = None
-
+            self.data.total_sensitivity[feature] = None
 
 
     def timePassed(self):
@@ -734,19 +734,21 @@ For example on use see:
         self.data.total_sensitivity = {}
 
         for feature in self.data.sensitivity:
-            i = 0
-            self.data.sensitivity_ranking[feature] = {}
-            for parameter in self.data.uncertain_parameters:
-                self.data.total_sensitivity[feature][parameter] = np.sum(self.data.sensitivity[feature][i])
-                i += 1
+
+            if self.data.sensitivity[feature] is None:
+                continue
 
             total_sensitivity = 0
-            for parameter in self.data.total_sensitivity[feature]:
-                total_sensitivity += self.data.total_sensitivity[feature][parameter]
+            self.data.total_sensitivity[feature] = []
+            for i in xrange(0, len(self.data.uncertain_parameters)):
+                tmp_sum_sensitivity = np.sum(self.data.sensitivity[feature][i])
 
-            for parameter in self.data.sensitivity_ranking[feature]:
+                total_sensitivity += tmp_sum_sensitivity
+                self.data.total_sensitivity[feature].append(tmp_sum_sensitivity)
+
+            for i in xrange(0, len(self.data.uncertain_parameters)):
                 if not total_sensitivity == 0:
-                    self.data.total_sensitivity[feature][parameter] /= total_sensitivity
+                    self.data.total_sensitivity[feature][i] /= total_sensitivity
 
 
 

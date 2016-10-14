@@ -77,7 +77,7 @@ class Data:
                     group.create_dataset("p_95", data=self.p_95[feature])
                 if feature in self.sensitivity and self.sensitivity[feature] is not None:
                     group.create_dataset("sensitivity", data=self.sensitivity[feature])
-                if feature == "directComparison":
+                if feature in self.total_sensitivity and self.total_sensitivity[feature] is not None:
                     group.create_dataset("total_sensitivity", data=self.total_sensitivity[feature])
 
 
@@ -107,7 +107,7 @@ class Data:
 
 
                 if "total_sensitivity" in f[feature].keys():
-                    self.total_sensitivity[feature] = f[feature]["totals_ensitivity"][()]
+                    self.total_sensitivity[feature] = f[feature]["total_sensitivity"][()]
                 else:
                     self.total_sensitivity[feature] = None
 

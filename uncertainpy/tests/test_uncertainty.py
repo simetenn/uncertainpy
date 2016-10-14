@@ -74,6 +74,7 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.data.p_05 = -1
         self.uncertainty.data.p_95 = -1
         self.uncertainty.data.sensitivity = -1
+        self.uncertainty.data.total_sensitivity = -1
 
         self.uncertainty.resetValues()
 
@@ -90,6 +91,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data.p_05, {})
         self.assertEqual(self.uncertainty.data.p_95, {})
         self.assertEqual(self.uncertainty.data.sensitivity, {})
+        self.assertEqual(self.uncertainty.data.total_sensitivity, {})
         self.assertIsNone(self.uncertainty.P)
 
 
@@ -759,6 +761,12 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(self.uncertainty.data.sensitivity["feature0d"], np.ndarray)
         self.assertIsInstance(self.uncertainty.data.sensitivity["feature1d"], np.ndarray)
         self.assertIsInstance(self.uncertainty.data.sensitivity["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity["directComparison"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity["feature0d"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity["feature1d"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity["feature2d"], list)
+
 
         self.assertIsInstance(self.uncertainty.U_mc["directComparison"], np.ndarray)
         self.assertIsInstance(self.uncertainty.U_mc["feature0d"], np.ndarray)

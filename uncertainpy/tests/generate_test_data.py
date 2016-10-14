@@ -134,6 +134,7 @@ def generate_data_data():
     data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
     data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
     data.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
+    data.total_sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
     data.xlabel = "xlabel"
     data.ylabel = "ylabel"
 
