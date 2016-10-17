@@ -767,7 +767,14 @@ For example on use see:
         self.filename = filename
         self.data.load(os.path.join(self.data_dir, filename + ".h5"))
 
+
     def plotAll(self, foldername=None):
         self.plot.setData(self.data, foldername=foldername)
 
-        self.plot.plotAllData()
+        self.plot.plotAllDataSensitivity()
+
+
+    def plotResults(self, foldername=None):
+        self.plot.setData(self.data, foldername=foldername)
+
+        self.plot.plotResults()

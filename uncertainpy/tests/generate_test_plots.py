@@ -23,7 +23,7 @@ def generate_plots_plotUncertainty():
 
     plot.loadData(data_file)
 
-    plot.plotAllData()
+    plot.plotAllDataSensitivity()
 
 
 

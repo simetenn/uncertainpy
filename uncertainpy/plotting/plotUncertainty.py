@@ -421,7 +421,7 @@ class PlotUncertainty():
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures,
-                                     feature + "_" +sensitivity + self.figureformat),
+                                     feature + "_" + sensitivity + self.figureformat),
                         bbox_inches="tight")
             if not show:
                 plt.close()
@@ -430,15 +430,16 @@ class PlotUncertainty():
             plt.show()
 
 
-    def plot1dFeatures(self):
+    def plot1dFeatures(self, sensitivity="sensitivity_1"):
         for feature in self.data.features_1d:
             self.plotMean(feature=feature)
             self.plotVariance(feature=feature)
             self.plotMeanAndVariance(feature=feature)
             self.plotConfidenceInterval(feature=feature)
-            self.plotSensitivity(feature=feature)
-            self.plotSensitivityCombined(feature=feature)
-            self.plotSensitivityGrid(feature=feature)
+
+            self.plotSensitivity(feature=feature, sensitivity=sensitivity)
+            self.plotSensitivityCombined(feature=feature, sensitivity=sensitivity)
+            self.plotSensitivityGrid(feature=feature, sensitivity=sensitivity)
 
 
 
@@ -523,7 +524,7 @@ class PlotUncertainty():
 
         plt.suptitle(self.toLatex(feature), fontsize=titlesize)
 
-        save_name = feature + self.figureformat
+        save_name = feature + "_" + sensitivity + self.figureformat
 
         if hardcopy:
             plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
@@ -575,7 +576,7 @@ class PlotUncertainty():
             plt.show()
 
 
-    def plotAllTotalSensitivity(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
+    def plotTotalSensitivityAllFeatures(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -583,13 +584,13 @@ class PlotUncertainty():
             self.plotTotalSensitivity(feature=feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
 
 
-    def plot0dFeatures(self, hardcopy=True, show=False):
+    def plot0dFeatures(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
 
         for feature in self.data.features_0d:
-            self.plot0dFeature(feature, hardcopy=hardcopy, show=show)
+            self.plot0dFeature(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
 
 
 
@@ -602,17 +603,37 @@ class PlotUncertainty():
             self.plotAllData()
 
 
-    def plotAllData(self):
+    def plotAllData(self, sensitivity="sensitivity_1"):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
 
-        self.plot1dFeatures()
-        self.plot0dFeatures()
+        self.plot1dFeatures(sensitivity=sensitivity)
+        self.plot0dFeatures(sensitivity=sensitivity)
+
+        self.plotTotalSensitivityAllFeatures(sensitivity=sensitivity)
+        self.plotTotalSensitivityGrid(sensitivity=sensitivity)
 
 
-        self.plotAllTotalSensitivity()
-        self.plotTotalSensitivityGrid()
+    # TODO find a more descriptive name
+    def plotAllDataSensitivity(self, sensitivity="sensitivity_1"):
+        if not self.loaded_flag:
+            raise ValueError("Datafile must be loaded")
+
+        self.plotAllData(sensitivity="sensitivity_1")
+        self.plotAllData(sensitivity="sensitivity_t")
+
+
+
+    def plotResults(self, sensitivity="sensitivity_1"):
+        for feature in self.data.features_1d:
+            self.plotMeanAndVariance(feature=feature)
+            self.plotConfidenceInterval(feature=feature)
+
+            self.plotSensitivityGrid(feature=feature, sensitivity=sensitivity)
+
+        self.plot0dFeatures(sensitivity=sensitivity)
+        self.plotTotalSensitivityGrid(sensitivity=sensitivity)
 
 
 
@@ -632,9 +653,7 @@ class PlotUncertainty():
 
                 self.loadData(filename.split("/")[-1])
 
-                self.plot1dFeatures()
-
-                self.plot0dFeatures()
+            self.plotAllData()
 
         self.data_dir = original_data_dir
         self.output_dir_figures = original_output_dir_figures
