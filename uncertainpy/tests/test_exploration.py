@@ -35,7 +35,6 @@ class TestExploration(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimations(model,
                                                   features=TestingFeatures(),
-                                                  feature_list="all",
                                                   verbose_level="error",
                                                   output_dir_data=self.output_test_dir,
                                                   output_dir_figures=self.output_test_dir,
@@ -50,7 +49,6 @@ class TestExploration(unittest.TestCase):
     def test_init(self):
         self.uncertainty = UncertaintyEstimations(TestingModel1d(),
                                                   features=TestingFeatures(),
-                                                  feature_list="all",
                                                   verbose_level="error",
                                                   output_dir_data=self.output_test_dir,
                                                   output_dir_figures=self.output_test_dir,

@@ -27,7 +27,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(TestingModel1d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  verbose_level="error",
                                                  output_dir_data=self.output_test_dir,
                                                  output_dir_figures=self.output_test_dir,
@@ -73,7 +72,11 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.data.Var = -1
         self.uncertainty.data.p_05 = -1
         self.uncertainty.data.p_95 = -1
-        self.uncertainty.data.sensitivity = -1
+        self.uncertainty.data.sensitivity_1 = -1
+        self.uncertainty.data.total_sensitivity_1 = -1
+        self.uncertainty.data.sensitivity_t = -1
+        self.uncertainty.data.total_sensitivity_t = -1
+
 
         self.uncertainty.resetValues()
 
@@ -89,7 +92,10 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.U_mc, {})
         self.assertEqual(self.uncertainty.data.p_05, {})
         self.assertEqual(self.uncertainty.data.p_95, {})
-        self.assertEqual(self.uncertainty.data.sensitivity, {})
+        self.assertEqual(self.uncertainty.data.sensitivity_1, {})
+        self.assertEqual(self.uncertainty.data.total_sensitivity_1, {})
+        self.assertEqual(self.uncertainty.data.sensitivity_t, {})
+        self.assertEqual(self.uncertainty.data.total_sensitivity_t, {})
         self.assertIsNone(self.uncertainty.P)
 
 
@@ -121,7 +127,6 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel0d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  verbose_level="error")
 
         self.CPUs = 1
@@ -139,7 +144,6 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel0d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  verbose_level="error")
         self.CPUs = 3
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
@@ -177,8 +181,7 @@ class TestUncertainty(unittest.TestCase):
     def test_evaluateNodesSequentialModel2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel2d(),
-                                                 features=TestingFeatures(),
-                                                 feature_list="all")
+                                                 features=TestingFeatures(),)
 
         self.CPUs = 1
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
@@ -194,7 +197,6 @@ class TestUncertainty(unittest.TestCase):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty = UncertaintyEstimation(TestingModel2d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  verbose_level="error")
         self.CPUs = 3
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
@@ -450,7 +452,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(TestingModel1d(),
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  verbose_level="warning",
                                                  verbose_filename=logfile)
 
@@ -532,6 +533,30 @@ class TestUncertainty(unittest.TestCase):
 
 
 
+    def test_totalSensitivity1(self):
+        self.uncertainty.data.sensitivity_1 = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
+
+        self.uncertainty.totalSensitivity(sensitivity="sensitivity_1")
+
+        self.assertEqual(self.uncertainty.data.total_sensitivity_1["test2D"][0], 1/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity_1["test2D"][1], 2/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity_1["test1D"][0], 1/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity_1["test1D"][1], 2/3.)
+
+
+    def test_totalSensitivityT(self):
+        self.uncertainty.data.sensitivity_t = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
+        self.uncertainty.data.uncertain_parameters = ["a", "b"]
+
+        self.uncertainty.totalSensitivity(sensitivity="sensitivity_t")
+
+        self.assertEqual(self.uncertainty.data.total_sensitivity_t["test2D"][0], 1/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity_t["test2D"][1], 2/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity_t["test1D"][0], 1/3.)
+        self.assertEqual(self.uncertainty.data.total_sensitivity_t["test1D"][1], 2/3.)
+
+
     def test_createMaskFeature2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.uncertainty.data.uncertain_parameters = ["a", "b"]
@@ -611,10 +636,9 @@ class TestUncertainty(unittest.TestCase):
 
 
         self.uncertainty = UncertaintyEstimation(model,
-                                                 features=TestingFeatures(),
-                                                 feature_list=["feature0d",
-                                                               "feature1d",
-                                                               "feature2d"],
+                                                 features=TestingFeatures(features_to_run=["feature0d",
+                                                                                           "feature1d",
+                                                                                           "feature2d"]),
                                                  verbose_level="error")
         self.uncertainty.createPCExpansion()
 
@@ -634,9 +658,8 @@ class TestUncertainty(unittest.TestCase):
 
 
         self.uncertainty = UncertaintyEstimation(model,
-                                                 features=TestingFeatures(),
-                                                 feature_list=["feature1d",
-                                                               "feature2d"],
+                                                 features=TestingFeatures(features_to_run=["feature1d",
+                                                                                           "feature2d"]),
                                                  verbose_level="error")
         with self.assertRaises(ValueError):
             self.uncertainty.createPCExpansion()
@@ -657,8 +680,7 @@ class TestUncertainty(unittest.TestCase):
         logfile = os.path.join(self.output_test_dir, "test.log")
 
         self.uncertainty = UncertaintyEstimation(model,
-                                                 features=TestingFeatures(),
-                                                 feature_list="featureInvalid",
+                                                 features=TestingFeatures(features_to_run="featureInvalid"),
                                                  verbose_level="warning",
                                                  verbose_filename=logfile)
 
@@ -684,7 +706,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  rosenblatt=True,
                                                  verbose_level="error")
 
@@ -709,10 +730,9 @@ class TestUncertainty(unittest.TestCase):
 
 
         self.uncertainty = UncertaintyEstimation(model,
-                                                 features=TestingFeatures(),
-                                                 feature_list=["feature0d",
-                                                               "feature1d",
-                                                               "feature2d"],
+                                                 features=TestingFeatures(features_to_run=["feature0d",
+                                                                                           "feature1d",
+                                                                                           "feature2d"]),
                                                  verbose_level="error")
 
 
@@ -755,10 +775,28 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(self.uncertainty.data.Var["feature1d"], np.ndarray)
         self.assertIsInstance(self.uncertainty.data.Var["feature2d"], np.ndarray)
 
-        self.assertIsInstance(self.uncertainty.data.sensitivity["directComparison"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.data.sensitivity["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.data.sensitivity["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty.data.sensitivity["feature2d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_1["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_1["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_1["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_1["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_1["directComparison"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_1["feature0d"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_1["feature1d"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_1["feature2d"], list)
+
+
+        self.assertIsInstance(self.uncertainty.data.sensitivity_t["directComparison"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_t["feature0d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_t["feature1d"], np.ndarray)
+        self.assertIsInstance(self.uncertainty.data.sensitivity_t["feature2d"], np.ndarray)
+
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_t["directComparison"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_t["feature0d"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_t["feature1d"], list)
+        self.assertIsInstance(self.uncertainty.data.total_sensitivity_t["feature2d"], list)
+
+
 
         self.assertIsInstance(self.uncertainty.U_mc["directComparison"], np.ndarray)
         self.assertIsInstance(self.uncertainty.U_mc["feature0d"], np.ndarray)
@@ -775,11 +813,10 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
-        features = TestingFeatures()
+        features = TestingFeatures(features_to_run=None)
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 feature_list=None,
                                                  nr_mc_samples=10**1,
                                                  verbose_level="error")
 
@@ -805,11 +842,10 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
-        features = TestingFeatures()
+        features = TestingFeatures(features_to_run=["feature0d"])
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 feature_list=["feature0d"],
                                                  nr_mc_samples=10**1,
                                                  verbose_level="error")
 
@@ -834,11 +870,10 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
-        features = TestingFeatures()
+        features = TestingFeatures(features_to_run=["feature1d"])
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 feature_list=["feature1d"],
                                                  nr_mc_samples=10**1,
                                                  verbose_level="error")
 
@@ -865,11 +900,10 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
         model.setAllDistributions(Distribution(0.5).uniform)
-        features = TestingFeatures()
+        features = TestingFeatures(features_to_run=["feature2d"])
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 feature_list=["feature2d"],
                                                  nr_mc_samples=10**1,
                                                  verbose_level="error")
 
@@ -904,7 +938,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_dir_data=self.output_test_dir,
@@ -950,7 +983,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_dir_data=self.output_test_dir,
@@ -988,7 +1020,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_data_filename="TestingModel1d_MC",
@@ -1036,7 +1067,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_data_filename="TestingModel1d_MC",
@@ -1069,7 +1099,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=TestingFeatures(),
-                                                 feature_list="all",
                                                  save_data=False,
                                                  save_figures=False,
                                                  output_dir_data=self.output_test_dir,
@@ -1081,30 +1110,105 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.allParameters()
         self.uncertainty.plotAll()
 
+        self.compare_plot("directComparison_mean")
+        self.compare_plot("directComparison_variance")
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+
+        self.compare_plot("directComparison_sensitivity_1_a")
+        self.compare_plot("directComparison_sensitivity_1_b")
+        self.compare_plot("directComparison_sensitivity_1")
+        self.compare_plot("directComparison_sensitivity_1_grid")
+
+
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        # self.compare_plot("feature1d_confidence-interval")
-        self.compare_plot("feature1d_sensitivity_a")
-        self.compare_plot("feature1d_sensitivity_b")
-        self.compare_plot("feature1d_sensitivity")
-        self.compare_plot("feature1d_sensitivity_grid")
+        self.compare_plot("feature1d_confidence-interval")
 
-        self.compare_plot("feature0d")
+        self.compare_plot("feature1d_sensitivity_1_a")
+        self.compare_plot("feature1d_sensitivity_1_b")
+        self.compare_plot("feature1d_sensitivity_1")
+        self.compare_plot("feature1d_sensitivity_1_grid")
+        self.compare_plot("feature0d_total-sensitivity_1")
 
-        self.compare_plot("directComparison_variance")
+        self.compare_plot("directComparison_total-sensitivity_1")
+        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature1d_total-sensitivity_1")
+        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("featureInvalid_total-sensitivity_1")
+
+        self.compare_plot("feature1d_sensitivity_t_a")
+        self.compare_plot("feature1d_sensitivity_t_b")
+        self.compare_plot("feature1d_sensitivity_t")
+        self.compare_plot("feature1d_sensitivity_t_grid")
+
+
+
+        self.compare_plot("directComparison_sensitivity_t_a")
+        self.compare_plot("directComparison_sensitivity_t_b")
+        self.compare_plot("directComparison_sensitivity_t")
+        self.compare_plot("directComparison_sensitivity_t_grid")
+
+        self.compare_plot("feature0d_total-sensitivity_t")
+
+
+        self.compare_plot("directComparison_total-sensitivity_t")
+        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature1d_total-sensitivity_t")
+        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("featureInvalid_total-sensitivity_t")
+
+
+
+        self.compare_plot("total-sensitivity_t_grid")
+        self.compare_plot("total-sensitivity_1_grid")
+
+
+
+
+
+    def test_plotResults(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=TestingFeatures(),
+                                                 save_data=False,
+                                                 save_figures=False,
+                                                 output_dir_data=self.output_test_dir,
+                                                 output_dir_figures=self.output_test_dir,
+                                                 verbose_level="error",
+                                                 seed=self.seed)
+
+
+        self.uncertainty.allParameters()
+        self.uncertainty.plotResults()
+
         self.compare_plot("directComparison_mean-variance")
-        # self.compare_plot("feature1d_confidence-interval")
-        self.compare_plot("directComparison_sensitivity_a")
-        self.compare_plot("directComparison_sensitivity_b")
-        self.compare_plot("directComparison_sensitivity")
-        self.compare_plot("directComparison_sensitivity_grid")
+        self.compare_plot("directComparison_confidence-interval")
+        self.compare_plot("directComparison_sensitivity_1_grid")
+
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_1_grid")
+
+        self.compare_plot("feature0d_sensitivity_1")
+
+        self.compare_plot("featureInvalid_sensitivity_1")
+
+        self.compare_plot("total-sensitivity_1_grid")
+
 
 
 
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_figures",
+        compare_file = os.path.join(folder, "data/TestingModel1d",
                                     name + ".png")
 
         plot_file = os.path.join(self.output_test_dir,

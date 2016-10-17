@@ -39,7 +39,11 @@ class Data:
         self.Var = {}
         self.p_05 = {}
         self.p_95 = {}
-        self.sensitivity = {}
+        self.sensitivity_1 = {}
+        self.total_sensitivity_1 = {}
+        self.sensitivity_t = {}
+        self.total_sensitivity_t = {}
+
 
         self.xlabel = ""
         self.ylabel = ""
@@ -73,10 +77,14 @@ class Data:
                     group.create_dataset("p_05", data=self.p_05[feature])
                 if feature in self.p_95:
                     group.create_dataset("p_95", data=self.p_95[feature])
-                if feature in self.sensitivity and self.sensitivity[feature] is not None:
-                    group.create_dataset("sensitivity", data=self.sensitivity[feature])
-                # if feature == "directComparison":
-                #    group.create_dataset("total sensitivity", data=self.sensitivity_ranking[parameter])
+                if feature in self.sensitivity_1 and self.sensitivity_1[feature] is not None:
+                    group.create_dataset("sensitivity_1", data=self.sensitivity_1[feature])
+                if feature in self.total_sensitivity_1 and self.total_sensitivity_1[feature] is not None:
+                    group.create_dataset("total_sensitivity_1", data=self.total_sensitivity_1[feature])
+                if feature in self.sensitivity_t and self.sensitivity_t[feature] is not None:
+                    group.create_dataset("sensitivity_t", data=self.sensitivity_t[feature])
+                if feature in self.total_sensitivity_t and self.total_sensitivity_t[feature] is not None:
+                    group.create_dataset("total_sensitivity_t", data=self.total_sensitivity_t[feature])
 
 
     def load(self, filename):
@@ -89,7 +97,7 @@ class Data:
             self.Var = {}
             self.p_05 = {}
             self.p_95 = {}
-            self.sensitivity = {}
+            self.sensitivity_1 = {}
 
             for feature in f.keys():
                 self.U[feature] = f[feature]["U"][()]
@@ -98,10 +106,29 @@ class Data:
                 self.p_05[feature] = f[feature]["p_05"][()]
                 self.p_95[feature] = f[feature]["p_95"][()]
 
-                if "sensitivity" in f[feature].keys():
-                    self.sensitivity[feature] = f[feature]["sensitivity"][()]
+
+                if "sensitivity_1" in f[feature].keys():
+                    self.sensitivity_1[feature] = f[feature]["sensitivity_1"][()]
                 else:
-                    self.sensitivity[feature] = None
+                    self.sensitivity_1[feature] = None
+
+                if "total_sensitivity_1" in f[feature].keys():
+                    self.total_sensitivity_1[feature] = f[feature]["total_sensitivity_1"][()]
+                else:
+                    self.total_sensitivity_1[feature] = None
+
+
+
+                if "sensitivity_t" in f[feature].keys():
+                    self.sensitivity_t[feature] = f[feature]["sensitivity_t"][()]
+                else:
+                    self.sensitivity_t[feature] = None
+
+                if "total_sensitivity_t" in f[feature].keys():
+                    self.total_sensitivity_t[feature] = f[feature]["total_sensitivity_t"][()]
+                else:
+                    self.total_sensitivity_t[feature] = None
+
 
                 if "t" in f[feature].keys():
                     self.t[feature] = f[feature]["t"][()]
@@ -118,7 +145,7 @@ class Data:
     def setFeatures(self, results):
         self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
         self.feature_list = self.features_0d + self.features_1d + self.features_2d
-
+        self.feature_list.sort()
 
     def sortFeatures(self, results):
         features_2d = []

@@ -75,7 +75,12 @@ class TestData(unittest.TestCase):
         self.data.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.sensitivity = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.data.sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.data.total_sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
+
+        self.data.sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.data.total_sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
+
 
         self.data.uncertain_parameters = ["a", "b"]
         self.data.xlabel = "xlabel"
@@ -113,8 +118,16 @@ class TestData(unittest.TestCase):
         self.assertTrue(np.array_equal(self.data.p_05["feature1"], [1., 2.]))
         self.assertTrue(np.array_equal(self.data.p_95["directComparison"], [3., 4.]))
         self.assertTrue(np.array_equal(self.data.p_95["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.sensitivity["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.sensitivity["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_1["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_1["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_1["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_1["directComparison"], [3., 4.]))
+
+        self.assertTrue(np.array_equal(self.data.sensitivity_t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["directComparison"], [3., 4.]))
+
 
         self.assertEqual(self.data.uncertain_parameters[0], "a")
         self.assertEqual(self.data.uncertain_parameters[1], "b")
@@ -140,7 +153,11 @@ class TestData(unittest.TestCase):
         self.data.Var = -1
         self.data.p_05 = -1
         self.data.p_95 = -1
-        self.data.sensitivity = -1
+        self.data.sensitivity_1 = -1
+        self.data.total_sensitivity_1 = -1
+        self.data.sensitivity_t = -1
+        self.data.total_sensitivity_t = -1
+
 
         self.data.xlabel = -1
         self.data.ylabel = -1
@@ -159,4 +176,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.Var, {})
         self.assertEqual(self.data.p_05, {})
         self.assertEqual(self.data.p_95, {})
-        self.assertEqual(self.data.sensitivity, {})
+        self.assertEqual(self.data.sensitivity_1, {})
+        self.assertEqual(self.data.total_sensitivity_1, {})
+        self.assertEqual(self.data.sensitivity_t, {})
+        self.assertEqual(self.data.total_sensitivity_t, {})

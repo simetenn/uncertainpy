@@ -30,11 +30,6 @@
 
 # TODO implement a feature description in features
 
-# TODO Reimplement sensitivity ranking, but for all features and not only the diirect_comparison
-
-# TODO placement of feature bar plots
-
-# TODO Decide if the HH model should return Vm - 65 or just Vm
 
 # TODO Make sending of model keywords simpler than it currently is. Use a
 # dictionary similar to kwargs?. model.py
@@ -70,8 +65,6 @@
 
 # TODO save data from each singleParameter run or not in the class?
 
-# TODO remove feature list from UncertaintyEstimation, and add it to feature class instead
-
 
 # Figures are always saved on the format:
 # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
@@ -98,7 +91,6 @@ from uncertainpy import Data
 class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,
-                 feature_list=None,
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -346,8 +338,7 @@ For example on use see:
         for result in tqdm(pool.imap(evaluateNodeFunction,
                                      self.evaluateNodeFunctionList(nodes.T)),
                            desc="Running model",
-                           total=len(nodes.T),
-                           leave=False):
+                           total=len(nodes.T)):
             solves.append(result)
 
         pool.close()
@@ -405,6 +396,8 @@ For example on use see:
         self.data.features_1d = features_1d
         self.data.features_2d = features_2d
         self.data.feature_list = features_0d + features_1d + features_2d
+
+        self.data.feature_list.sort()
 
         for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":
@@ -585,16 +578,22 @@ For example on use see:
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 
             if len(self.data.uncertain_parameters) > 1:
+
                 self.U_mc[feature] = self.U_hat[feature](*samples)
-                self.data.sensitivity[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
+                self.data.sensitivity_1[feature] = cp.Sens_m(self.U_hat[feature], self.distribution)
+                self.data.sensitivity_t[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
 
             else:
                 self.U_mc[feature] = self.U_hat[feature](samples)
-                self.data.sensitivity[feature] = None
+                self.data.sensitivity_1[feature] = None
+                self.data.sensitivity_t[feature] = None
 
 
             self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
             self.data.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
+
+        self.totalSensitivity(sensitivity="sensitivity_1")
+        self.totalSensitivity(sensitivity="sensitivity_t")
 
 
 
@@ -621,8 +620,10 @@ For example on use see:
 
             self.data.p_05[feature] = np.percentile(self.data.U[feature], 5, 0)
             self.data.p_95[feature] = np.percentile(self.data.U[feature], 95, 0)
-            self.data.sensitivity[feature] = None
-
+            self.data.sensitivity_1[feature] = None
+            self.data.total_sensitivity_1[feature] = None
+            self.data.sensitivity_t[feature] = None
+            self.data.total_sensitivity_t[feature] = None
 
 
     def timePassed(self):
@@ -659,10 +660,6 @@ For example on use see:
 
 
     def allParameters(self):
-        # if len(self.model.parameters.uncertain_parameters) <= 1:
-        #     print "Only 1 uncertain parameter"
-        #     return
-
         self.resetValues()
 
         self.logger.info("Running for all parameters")
@@ -728,20 +725,30 @@ For example on use see:
         return self.data
 
 
-    # TODO does not work
-    def sensitivityRanking(self):
-        self.sensitivity_ranking = {}
-        i = 0
-        for parameter in self.model.parameters.getUncertain("name"):
-            self.sensitivity_ranking[parameter] = sum(self.sensitivity["directComparison"][i])
-            i += 1
 
-        total_sensitivity = 0
-        for parameter in self.sensitivity_ranking:
-            total_sensitivity += self.sensitivity_ranking[parameter]
+    def totalSensitivity(self, sensitivity="sensitivity_1"):
 
-        for parameter in self.sensitivity_ranking:
-            self.sensitivity_ranking[parameter] /= total_sensitivity
+        sense = getattr(self.data, sensitivity)
+        total_sense = {}
+
+        for feature in sense:
+            if sense[feature] is None:
+                continue
+
+            total_sensitivity = 0
+            total_sense[feature] = []
+            for i in xrange(0, len(self.data.uncertain_parameters)):
+                tmp_sum_sensitivity = np.sum(sense[feature][i])
+
+                total_sensitivity += tmp_sum_sensitivity
+                total_sense[feature].append(tmp_sum_sensitivity)
+
+            for i in xrange(0, len(self.data.uncertain_parameters)):
+                if not total_sensitivity == 0:
+                    total_sense[feature][i] /= float(total_sensitivity)
+
+
+        setattr(self.data, "total_" + sensitivity, total_sense)
 
 
     def save(self, filename):
@@ -757,7 +764,18 @@ For example on use see:
         self.filename = filename
         self.data.load(os.path.join(self.data_dir, filename + ".h5"))
 
+
     def plotAll(self, foldername=None):
         self.plot.setData(self.data, foldername=foldername)
 
-        self.plot.plotAllData()
+        if foldername is None:
+            foldername = self.output_dir_figures
+
+
+        self.plot.plotAllDataSensitivity()
+
+
+    def plotResults(self, foldername=None):
+        self.plot.setData(self.data, foldername=foldername)
+
+        self.plot.plotResults()
