@@ -115,13 +115,10 @@ class HodkinHuxleyModel(Model):
 
     def run(self):
 
-        # self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
-        # self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
-        # self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
-        #
-        # print self.h0
-        # print self.m0
-        # print self.n0
+        self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
+        self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
+        self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
+
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
@@ -132,7 +129,3 @@ class HodkinHuxleyModel(Model):
 
         self.t = t
         self.U = X[:, 0]
-
-        # print "h: ", X[-1, 1]
-        # print "m: ", X[-1, 2]
-        # print "n: ", X[-1, 3]
