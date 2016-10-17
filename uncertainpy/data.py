@@ -145,7 +145,7 @@ class Data:
     def setFeatures(self, results):
         self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
         self.feature_list = self.features_0d + self.features_1d + self.features_2d
-
+        self.feature_list.sort()
 
     def sortFeatures(self, results):
         features_2d = []

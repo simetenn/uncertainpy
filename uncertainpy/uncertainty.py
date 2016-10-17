@@ -91,7 +91,6 @@ from uncertainpy import Data
 class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,
-                 feature_list=None,
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -398,6 +397,8 @@ For example on use see:
         self.data.features_2d = features_2d
         self.data.feature_list = features_0d + features_1d + features_2d
 
+        self.data.feature_list.sort()
+
         for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":
                 raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
@@ -659,10 +660,6 @@ For example on use see:
 
 
     def allParameters(self):
-        # if len(self.model.parameters.uncertain_parameters) <= 1:
-        #     print "Only 1 uncertain parameter"
-        #     return
-
         self.resetValues()
 
         self.logger.info("Running for all parameters")
@@ -770,6 +767,10 @@ For example on use see:
 
     def plotAll(self, foldername=None):
         self.plot.setData(self.data, foldername=foldername)
+
+        if foldername is None:
+            foldername = self.output_dir_figures
+
 
         self.plot.plotAllDataSensitivity()
 

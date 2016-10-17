@@ -21,7 +21,6 @@ def generate_data_allParameters(): # pragma: no cover
 
     test = uncertainpy.UncertaintyEstimation(model,
                                              features=uncertainpy.TestingFeatures(),
-                                             feature_list="all",
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              verbose_level="error",
@@ -41,7 +40,6 @@ def generate_data_singleParameters():
 
     test = uncertainpy.UncertaintyEstimation(model,
                                              features=uncertainpy.TestingFeatures(),
-                                             feature_list="all",
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              verbose_level="error",
@@ -63,7 +61,6 @@ def generate_data_allParametersMC():
 
     test = uncertainpy.UncertaintyEstimation(model,
                                              features=uncertainpy.TestingFeatures(),
-                                             feature_list="all",
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              output_data_filename="TestingModel1d_MC",
@@ -85,7 +82,6 @@ def generate_data_singleParametersMC():
 
     test = uncertainpy.UncertaintyEstimation(model,
                                              features=uncertainpy.TestingFeatures(),
-                                             feature_list="all",
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              output_data_filename="TestingModel1d_MC",
@@ -109,7 +105,6 @@ def generate_data_compareMC():
 
     uncertainty = uncertainpy.UncertaintyEstimations(model,
                                                      features=uncertainpy.TestingFeatures(),
-                                                     feature_list="all",
                                                      verbose_level="error",
                                                      output_dir_data=test_data_dir,
                                                      output_dir_figures=test_data_dir,

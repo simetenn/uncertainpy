@@ -123,8 +123,6 @@ class TestData(unittest.TestCase):
         self.assertTrue(np.array_equal(self.data.total_sensitivity_1["feature1"], [1., 2.]))
         self.assertTrue(np.array_equal(self.data.total_sensitivity_1["directComparison"], [3., 4.]))
 
-        print self.data.total_sensitivity_t
-
         self.assertTrue(np.array_equal(self.data.sensitivity_t["feature1"], [1., 2.]))
         self.assertTrue(np.array_equal(self.data.sensitivity_t["directComparison"], [3., 4.]))
         self.assertTrue(np.array_equal(self.data.total_sensitivity_t["feature1"], [1., 2.]))

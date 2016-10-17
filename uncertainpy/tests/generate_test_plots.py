@@ -14,8 +14,6 @@ def generate_plots_plotUncertainty():
     data_file = "TestingModel1d"
     test_data_dir = os.path.join(folder, "data")
     output_test_dir = os.path.join(folder, "data")
-    # output_test_dir = os.path.join(folder, "../../test_data")
-
 
     plot = PlotUncertainty(data_dir=test_data_dir,
                            output_dir_figures=output_test_dir,
@@ -23,8 +21,8 @@ def generate_plots_plotUncertainty():
 
     plot.loadData(data_file)
 
-    plot.plotAllDataSensitivity()
 
+    plot.plotAllDataSensitivity()
 
 
 def generate_plots_compare():
