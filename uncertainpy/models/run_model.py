@@ -39,6 +39,5 @@ def main():
     simulation.run()
     simulation.save(CPU=args.CPU, save_path=args.save_path)
 
-
 if __name__ == "__main__":
     main()

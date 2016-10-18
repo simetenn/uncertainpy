@@ -333,13 +333,17 @@ For example on use see:
 
         solves = []
         pool = mp.Pool(processes=self.CPUs)
-        # solves = pool.imap(evaluateNodeFunction,
+        # solves = pool.map(evaluateNodeFunction,
         #                   self.evaluateNodeFunctionList(nodes.T))
+        #
         for result in tqdm(pool.imap(evaluateNodeFunction,
                                      self.evaluateNodeFunctionList(nodes.T)),
                            desc="Running model",
                            total=len(nodes.T)):
+
+
             solves.append(result)
+
 
         pool.close()
 
@@ -699,7 +703,7 @@ For example on use see:
 
             if self.save_figures:
                 self.logger.info("Saving plots as: {}".format(filename))
-                self.plotAll(filename)
+                self.plotAllSingle(filename)
 
 
     def allParametersMC(self):
@@ -718,7 +722,7 @@ For example on use see:
 
         if self.save_figures:
             self.logger.info("Saving plots as: {}".format(self.output_data_filename))
-            self.plotAll(self.output_data_filename)
+            self.plotAllSingle(self.output_data_filename)
 
 
     def getData(self):

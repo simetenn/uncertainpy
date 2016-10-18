@@ -24,7 +24,6 @@ class HodkinHuxleyModel(Model):
 
 
         ## HH Parameters
-
         self.V_rest = -65   # mV
         self.Cm = 1         # uF/cm**2
         self.gbar_Na = 120  # mS/cm**2
