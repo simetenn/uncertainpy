@@ -74,6 +74,9 @@ class HodkinHuxleyModel(Model):
     def n_f(self, n, V):
         return self.alpha_n(V)*(1 - n) - self.beta_n(V)*n
 
+    def n_inf(self, V):
+        return self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
+
 
     # Na channel (activating)
     def alpha_m(self, V):
@@ -85,6 +88,9 @@ class HodkinHuxleyModel(Model):
     def m_f(self, m, V):
         return self.alpha_m(V)*(1 - m) - self.beta_m(V)*m
 
+    def m_inf(self, V):
+        return self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
+
 
     # Na channel (inactivating)
     def alpha_h(self, V):
@@ -95,6 +101,9 @@ class HodkinHuxleyModel(Model):
 
     def h_f(self, h, V):
         return self.alpha_h(V)*(1 - h) - self.beta_h(V)*h
+
+    def h_inf(self, V):
+        return self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
 
 
     def dXdt(self, X, t):
@@ -115,9 +124,9 @@ class HodkinHuxleyModel(Model):
 
     def run(self):
 
-        self.h0 = self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
-        self.m0 = self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
-        self.n0 = self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
+        self.h0 = self.h_inf(self.V_rest)
+        self.m0 = self.m_inf(self.V_rest)
+        self.n0 = self.n_inf(self.V_rest)
 
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]

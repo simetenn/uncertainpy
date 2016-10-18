@@ -48,16 +48,28 @@ orignal_parameters = [["Cm", 1, cp.Uniform(0.8, 1.5)],
 #                       ["E_l", -50.613, cp.Uniform(-61, -43)]]
 #
 
-old_parameters = [["E_Na", 112, cp.Uniform(30, 54)],
+old_parameters = [["V_rest", -10, None],
+                  ["Cm", 1, cp.Uniform(0.8, 1.5)],
+                  ["gbar_Na", 120, cp.Uniform(64, 260)],
+                  ["gbar_K", 36, cp.Uniform(26, 49)],
+                  ["gbar_l", 0.3, cp.Uniform(0.13, 0.5)],
+                  ["m0", 0.0011, None],
+                  ["n0", 0.0003, None],
+                  ["h0", 0.9998, None],
+                  ["E_Na", 112, cp.Uniform(30, 54)],
                   ["E_K", -12, cp.Uniform(-74, -79)],
                   ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
+# old_parameters = [["E_Na", 112, cp.Uniform(30, 54)],
+#                   ["E_K", -12, cp.Uniform(-74, -79)],
+#                   ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
-parameters = uncertainpy.Parameters(orignal_parameters)
 
-model = uncertainpy.HodkinHuxleyModel(parameters=parameters)
+parameters = uncertainpy.Parameters(old_parameters)
 
-# model = uncertainpy.HodkinHuxleyModelOld(parameters=parameters)
+# model = uncertainpy.HodkinHuxleyModel(parameters=parameters)
+
+model = uncertainpy.HodkinHuxleyModelOld(parameters=parameters)
 
 model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
@@ -68,6 +80,6 @@ exploration = uncertainpy.UncertaintyEstimation(model,
                                                 features=features,
                                                 CPUs=7,
                                                 save_figures=True,
-                                                rosenblatt=False)
+                                                rosenblatt=True)
 
 exploration.allParameters()
