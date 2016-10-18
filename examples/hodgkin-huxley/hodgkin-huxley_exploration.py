@@ -20,15 +20,13 @@ model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 features = uncertainpy.NeuronFeatures(features_to_run="all")
 
 exploration = uncertainpy.UncertaintyEstimations(model,
-
                                                  supress_model_output=False,
-                                                 CPUs=1,
                                                  features=features,
                                                  save_figures=True)
 
-# percentages = [0.01, 0.03]
-# test_distributions = {"uniform": percentages}
-# exploration.exploreParameters(test_distributions)
+percentages = [0.01, 0.03]
+test_distributions = {"uniform": percentages}
+exploration.exploreParameters(test_distributions)
 
-mc_samples = [10, 100, 1000]
+mc_samples = [10, 100, 1000, 10000]
 exploration.compareMC(mc_samples)
