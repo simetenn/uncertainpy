@@ -603,6 +603,16 @@ class PlotUncertainty():
             self.plotAllData()
 
 
+    # TODO Not Tested
+    def plotAllDataNoSensitivity(self, sensitivity="sensitivity_1"):
+        if not self.loaded_flag:
+            raise ValueError("Datafile must be loaded")
+
+
+        self.plot1dFeatures(sensitivity=sensitivity)
+        self.plot0dFeatures(sensitivity=sensitivity)
+
+
     def plotAllData(self, sensitivity="sensitivity_1"):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")

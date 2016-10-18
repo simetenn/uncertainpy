@@ -655,7 +655,7 @@ For example on use see:
                 filename = "%s_single-parameter-%s" \
                     % (self.output_data_filename, uncertain_parameter)
                 self.logger.info("Saving plots as: {}".format(filename))
-                self.plotAll(filename)
+                self.plotAllSingle(filename)
 
 
 
@@ -773,6 +773,17 @@ For example on use see:
 
 
         self.plot.plotAllDataSensitivity()
+
+
+    def plotAllSingle(self, foldername=None):
+        self.plot.setData(self.data, foldername=foldername)
+
+        if foldername is None:
+            foldername = self.output_dir_figures
+
+
+        self.plot.plotAllDataNoSensitivity()
+
 
 
     def plotResults(self, foldername=None):
