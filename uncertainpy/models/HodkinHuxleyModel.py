@@ -23,12 +23,9 @@ class HodkinHuxleyModel(Model):
         Model.__init__(self, parameters=parameters)
 
 
-
-
-
         ## HH Parameters
 
-        self.V_rest = -75   # mV
+        self.V_rest = -65   # mV
         self.Cm = 1         # uF/cm**2
         self.gbar_Na = 120  # mS/cm**2
         self.gbar_K = 36    # mS/cm**2
@@ -36,14 +33,6 @@ class HodkinHuxleyModel(Model):
         self.E_Na = 50      # mV
         self.E_K = -77      # mV
         self.E_l = -54.4    # mV
-
-        # self.m0 = 0.0011    # unitless
-        # self.n0 = 0.0003    # unitless
-        # self.h0 = 0.9998    # unitless
-
-        self.m0 = 0.05    # unitless
-        self.n0 = 0.32    # unitless
-        self.h0 = 0.60    # unitless
 
 
         ## setup parameters and state variables

@@ -23,9 +23,6 @@ class OriginalHodkinHuxleyModel(Model):
         Model.__init__(self, parameters=parameters)
 
 
-
-
-
         ## HH Parameters
         self.V_rest = -10   # mV
         self.Cm = 1         # uF/cm**2
@@ -34,16 +31,16 @@ class OriginalHodkinHuxleyModel(Model):
         self.gbar_l = 0.3   # mS/cm**2
         self.E_Na = 115     # mV
         self.E_K = -12      # mV
-        self.E_l = 10.6   # mV
+        self.E_l = 10.6     # mV
 
         self.m0 = 0.0011    # unitless
         self.n0 = 0.0003    # unitless
         self.h0 = 0.9998    # unitless
 
         ## setup parameters and state variables
-        self.I_value = 150
-        T = 15    # ms
-        dt = 0.025  # ms
+        self.I_value = 150     # mA
+        T = 15                 # ms
+        dt = 0.025             # ms
         self.t = np.arange(0, T + dt, dt)
 
 
@@ -60,44 +57,44 @@ class OriginalHodkinHuxleyModel(Model):
 
     # K channel
     def alpha_n(self, V):
-        return 0.01*(V + 10)/(np.exp((V + 10)/10.) -10)
+        return 0.01*(10 - V)/(np.exp((10 - V)/10.) - 1)
 
     def beta_n(self, V):
-        return 0.125*np.exp(V/80.)
+        return 0.125*np.exp(-V/80.)
 
     def n_f(self, n, V):
         return self.alpha_n(V)*(1 - n) - self.beta_n(V)*n
 
     def n_inf(self, V):
-        return self.alpha_n(self.V_rest)/(self.alpha_n(self.V_rest) + self.beta_n(self.V_rest))
+        return self.alpha_n(V)/(self.alpha_n(V) + self.beta_n(V))
 
 
     # Na channel (activating)
     def alpha_m(self, V):
-        return 0.1*(V + 25)/(np.exp((V + 25)/10.) - 1)
+        return 0.1*(25 - V)/(np.exp((25 - V)/10.) - 1)
 
     def beta_m(self, V):
-        return 4*np.exp(V/18.)
+        return 4*np.exp(-V/18.)
 
     def m_f(self, m, V):
         return self.alpha_m(V)*(1 - m) - self.beta_m(V)*m
 
     def m_inf(self, V):
-        return self.alpha_m(self.V_rest)/(self.alpha_m(self.V_rest) + self.beta_m(self.V_rest))
+        return self.alpha_m(V)/(self.alpha_m(V) + self.beta_m(V))
 
 
     # Na channel (inactivating)
     def alpha_h(self, V):
-        return 0.07*np.exp(V/20.)
+        return 0.07*np.exp(-V/20.)
 
     def beta_h(self, V):
-        return 1/(np.exp((V + 30)/10.) + 1)
+        return 1/(np.exp((30 - V)/10.) + 1)
 
     def h_f(self, h, V):
         return self.alpha_h(V)*(1 - h) - self.beta_h(V)*h
 
     def h_inf(self, V):
-        return self.alpha_h(self.V_rest)/(self.alpha_h(self.V_rest) + self.beta_h(self.V_rest))
+        return self.alpha_h(V)/(self.alpha_h(V) + self.beta_h(V))
 
 
     def dXdt(self, X, t):

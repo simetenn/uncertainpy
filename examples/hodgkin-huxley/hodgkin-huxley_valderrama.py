@@ -14,23 +14,19 @@ parameters = [["V_rest", -10, None],
               ["E_K", -12, cp.Uniform(-74, -79)],
               ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
-# old_parameters = [["E_Na", 112, cp.Uniform(30, 54)],
-#                   ["E_K", -12, cp.Uniform(-74, -79)],
-#                   ["E_l", 10.613, cp.Uniform(-61, -43)]]
-
 
 parameters = uncertainpy.Parameters(parameters)
 
 model = uncertainpy.OriginalHodkinHuxleyModel(parameters=parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
-features = uncertainpy.NeuronFeatures(features_to_run="all")
+features = uncertainpy.NeuronFeatures(features_to_run="all", thresh="auto")
 
 exploration = uncertainpy.UncertaintyEstimation(model,
                                                 seed=10,
                                                 features=features,
                                                 CPUs=7,
                                                 save_figures=True,
-                                                rosenblatt=True)
+                                                rosenblatt=False)
 
 exploration.allParameters()
