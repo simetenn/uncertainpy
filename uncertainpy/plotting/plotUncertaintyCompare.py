@@ -24,6 +24,22 @@ from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 # TODO plot simulator_results
 
 class PlotUncertaintyCompare(PlotUncertainty):
+    def __init__(self, data_dir="data/",
+                 output_dir_figures="figures/",
+                 figureformat=".png",
+                 verbose_level="info",
+                 verbose_filename=None,
+                 xlabel="x",
+                 ylabel="y"):
+
+        PlotUncertainty.__init__(self, data_dir=data_dir,
+                                 output_dir_figures=output_dir_figures,
+                                 figureformat=figureformat,
+                                 verbose_level=verbose_level,
+                                 verbose_filename=verbose_filename)
+
+        self.xlabel = xlabel
+        self.ylabel = ylabel
 
 
     # TODO expand this to work with regex?

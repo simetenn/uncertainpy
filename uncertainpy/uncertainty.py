@@ -105,6 +105,7 @@ class UncertaintyEstimation():
                  nr_pc_mc_samples=10**5,
                  verbose_level="info",
                  verbose_filename=None,
+                 logger=None,
                  seed=None):
         """
 Uncertainty Estimation object
@@ -252,10 +253,12 @@ For example on use see:
 
 
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
-
+        if logger is None:
+            self.logger = create_logger(verbose_level,
+                                        verbose_filename,
+                                        self.__class__.__name__)
+        else:
+            self.logger = logger
 
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=output_dir_figures,
@@ -652,7 +655,6 @@ For example on use see:
                 filename = "%s_single-parameter-%s" \
                     % (self.output_data_filename, uncertain_parameter)
 
-                self.logger.info("Saving data as: {}".format(filename))
                 self.save(filename)
 
             if self.save_figures:
@@ -674,7 +676,6 @@ For example on use see:
         self.PCAnalysis()
 
         if self.save_data:
-            self.logger.info("Saving data as: {}".format(self.output_data_filename))
             self.save(self.output_data_filename)
 
 
@@ -697,7 +698,6 @@ For example on use see:
                 % (self.output_data_filename, uncertain_parameter)
 
             if self.save_data:
-                self.logger.info("Saving data as: {}".format(filename))
                 self.save(filename)
 
 
@@ -716,7 +716,6 @@ For example on use see:
         self.MC()
 
         if self.save_data:
-            self.logger.info("Saving data as: {}".format(self.output_data_filename))
             self.save(self.output_data_filename)
 
 
@@ -758,6 +757,8 @@ For example on use see:
     def save(self, filename):
         if not os.path.isdir(self.output_dir_data):
             os.makedirs(self.output_dir_data)
+
+        self.logger.info("Saving data as: {}".format(filename))
 
         ### TODO expand the save funcition to also save parameters and model information
         self.data.save(os.path.join(self.output_dir_data, filename + ".h5"))

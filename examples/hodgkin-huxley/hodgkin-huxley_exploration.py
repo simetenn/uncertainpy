@@ -28,5 +28,5 @@ percentages = [0.01, 0.03]
 test_distributions = {"uniform": percentages}
 exploration.exploreParameters(test_distributions)
 
-mc_samples = [10, 100, 1000, 10000]
+mc_samples = [10, 100, 1000]
 exploration.compareMC(mc_samples)
