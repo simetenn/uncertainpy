@@ -9,7 +9,7 @@ parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.models.IzhikevichModel(parameters)
 model.setAllDistributions(uncertainpy.Distribution(1).uniform)
 
-features = uncertainpy.NeuronFeatures(features_to_run="all", extended_spikes=True)
+features = uncertainpy.NeuronFeatures(features_to_run="all")
 
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  CPUs=1,

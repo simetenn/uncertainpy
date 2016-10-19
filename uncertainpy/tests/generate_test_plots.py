@@ -82,6 +82,11 @@ def generate_spikes_plot():
 
     spikes.plot(os.path.join(output_test_dir, "spikes.png"))
 
+    spikes = Spikes(t, U, xlabel="xlabel", ylabel="ylabel", extended_spikes=True)
+
+    spikes.plot(os.path.join(output_test_dir, "spikes_extended.png"))
+
+
 
 if __name__ == "__main__":
     generate_plots_plotUncertainty()

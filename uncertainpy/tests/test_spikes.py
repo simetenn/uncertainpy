@@ -104,5 +104,12 @@ class TestSpikes(unittest.TestCase):
         self.compare_plot("spikes")
 
 
+    def test_plotExtended(self):
+        self.spikes = Spikes(self.t, self.U, xlabel="xlabel", ylabel="ylabel", extended_spikes=True)
+
+        self.spikes.plot(os.path.join(self.output_test_dir, "spikes_extended.png"))
+        self.compare_plot("spikes_extended")
+
+
 if __name__ == "__main__":
     unittest.main()
