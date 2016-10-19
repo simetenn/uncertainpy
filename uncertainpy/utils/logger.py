@@ -51,17 +51,19 @@ def create_logger(logger_level, logger_filename=None, logger_name="logger"):
 
     logging.captureWarnings(True)
 
-    if logger_filename is None:
-        console = logging.StreamHandler(stream=sys.stdout)
-        console.setLevel(numeric_level)
-        console.setFormatter(MyFormatter())
+    # Only add a handler if there are no handlers present.
+    if len(logger.handlers) == 0:
+        if logger_filename is None:
+            console = logging.StreamHandler(stream=sys.stdout)
+            console.setLevel(numeric_level)
+            console.setFormatter(MyFormatter())
 
-        logger.addHandler(console)
-    else:
-        handler = logging.FileHandler(filename=logger_filename, mode='w')
-        handler.setLevel(numeric_level)
-        handler.setFormatter(MyFormatter())
+            logger.addHandler(console)
+        else:
+            handler = logging.FileHandler(filename=logger_filename, mode='w')
+            handler.setLevel(numeric_level)
+            handler.setFormatter(MyFormatter())
 
-        logger.addHandler(handler)
+            logger.addHandler(handler)
 
     return logger

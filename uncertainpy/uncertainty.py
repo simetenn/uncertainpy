@@ -105,7 +105,6 @@ class UncertaintyEstimation():
                  nr_pc_mc_samples=10**5,
                  verbose_level="info",
                  verbose_filename=None,
-                 logger=None,
                  seed=None):
         """
 Uncertainty Estimation object
@@ -253,12 +252,10 @@ For example on use see:
 
 
 
-        if logger is None:
-            self.logger = create_logger(verbose_level,
-                                        verbose_filename,
-                                        self.__class__.__name__)
-        else:
-            self.logger = logger
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
+
 
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=output_dir_figures,

@@ -73,8 +73,6 @@ class UncertaintyEstimations():
                                     verbose_filename,
                                     self.__class__.__name__)
 
-        print self.logger
-
         self.seed = seed
         self.single_parameter_runs = single_parameter_runs
 
@@ -114,7 +112,8 @@ class UncertaintyEstimations():
                                           rosenblatt=self.rosenblatt,
                                           nr_mc_samples=self.nr_mc_samples,
                                           nr_pc_mc_samples=self.nr_pc_mc_samples,
-                                          logger=self.logger,
+                                          verbose_level=self.verbose_level,
+                                          verbose_filename=self.verbose_filename,
                                           seed=self.seed,
                                           **self.kwargs)
 
@@ -152,7 +151,8 @@ class UncertaintyEstimations():
                                   CPUs=self.CPUs,
                                   rosenblatt=self.rosenblatt,
                                   nr_pc_mc_samples=self.nr_pc_mc_samples,
-                                  logger=self.logger,
+                                  verbose_level=self.verbose_level,
+                                  verbose_filename=self.verbose_filename,
                                   seed=self.seed,
                                   **self.kwargs)
 
@@ -199,7 +199,8 @@ class UncertaintyEstimations():
                                       rosenblatt=self.rosenblatt,
                                       nr_mc_samples=nr_mc_sample,
                                       nr_pc_mc_samples=self.nr_pc_mc_samples,
-                                      logger=self.logger,
+                                      verbose_level=self.verbose_level,
+                                      verbose_filename=self.verbose_filename,
                                       seed=self.seed,
                                       **self.kwargs)
 
