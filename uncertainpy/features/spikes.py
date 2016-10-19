@@ -60,7 +60,7 @@ class Spikes:
 
     def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
 
-        min_dist_from_peak = 3
+        min_dist_from_peak = 2
         derivative_cutoff = 0.5
 
         self.spikes = []

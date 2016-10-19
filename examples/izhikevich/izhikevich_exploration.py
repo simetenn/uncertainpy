@@ -9,7 +9,7 @@ parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.models.IzhikevichModel(parameters)
 model.setAllDistributions(uncertainpy.Distribution(1).uniform)
 
-features = uncertainpy.NeuronFeatures(features_to_run="all")
+features = uncertainpy.NeuronFeatures(features_to_run="all", extended_spikes=True)
 
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  CPUs=1,
@@ -19,10 +19,10 @@ exploration = uncertainpy.UncertaintyEstimations(model,
                                                  single_parameter_runs=True,
                                                  rosenblatt=False)
 #
-percentages = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25]
-
-test_distributions = {"uniform": percentages}
-exploration.exploreParameters(test_distributions)
+# percentages = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25]
+#
+# test_distributions = {"uniform": percentages}
+# exploration.exploreParameters(test_distributions)
 
 mc_samples = [10, 100]
 exploration.compareMC(mc_samples)

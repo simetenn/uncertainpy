@@ -163,11 +163,6 @@ class UncertaintyEstimations():
         if self.plot_simulator_results:
             self.uncertainty_estimations.plotSimulatorResults()
 
-        # self.pc_var = self.uncertainty_estimations.Var
-        # self.t_pc = self.uncertainty_estimations.t
-        # nr_pc_samples = self.uncertainty_estimations.nr_pc_samples
-        # features_2d = self.uncertainty_estimations.features_2d
-        # features_1d = self.uncertainty_estimations.features_1d
 
         del self.uncertainty_estimations
 

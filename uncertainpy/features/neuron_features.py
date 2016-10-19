@@ -61,6 +61,8 @@ class NeuronFeatures(GeneralNeuronFeatures):
             # root1 = scipy.optimize.fsolve(U_interpolation, (spike.t_spike - spike.t[0])/2. + spike.t[0])
             # root2 = scipy.optimize.fsolve(U_interpolation, (spike.t[-1] - spike.t_spike)/2. + spike.t_spike)
 
+            print U_interpolation(spike.t)
+
             root1 = scipy.optimize.brentq(U_interpolation, spike.t[0], spike.t_spike)
             root2 = scipy.optimize.brentq(U_interpolation, spike.t_spike, spike.t[-1])
 
