@@ -60,8 +60,6 @@ class Spikes:
 
     def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
 
-        np.save("tmp_array", U)
-
         min_dist_from_peak = 1
         derivative_cutoff = 0.5
 
@@ -128,6 +126,7 @@ class Spikes:
             d_prev = d
 
         return result
+
 
     def plot(self, save_name=None):
         u_max = []
