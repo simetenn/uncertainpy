@@ -1,6 +1,6 @@
 import uncertainpy
 
-model_path = "../../uncertainpy/models/neuron_models/dLGN_modelDB/"
+model_path = "dLGN_modelDB/"
 
 
 parameterlist = [["cap", 1.1, None],

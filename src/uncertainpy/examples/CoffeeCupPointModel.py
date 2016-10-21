@@ -1,0 +1,1 @@
+../../../examples/coffee/CoffeeCupPointModel.py

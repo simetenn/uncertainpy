@@ -1,1 +1,1 @@
-find ./uncertainpy/ -name '*.pyc' -delete
+find ./src/ -name '*.pyc' -delete

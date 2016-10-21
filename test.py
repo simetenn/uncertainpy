@@ -2,7 +2,7 @@ import unittest
 import sys
 import argparse
 
-from uncertainpy.tests import *
+from tests import *
 
 def create_test_suite(test_classes_to_run):
     loader = unittest.TestLoader()

@@ -7,9 +7,6 @@ import platform
 
 try:
     from setuptools import setup, find_packages
-    from setuptools.command.install import install as _install
-    from setuptools.command.develop import develop as _develop
-
 except ImportError:
     print("Setuptools is needed to install all dependencies")
     print("Setuptools: https://pypi.python.org/pypi/setuptools")
@@ -91,13 +88,15 @@ elif "develop" in sys.argv or "install" in sys.argv:
     subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
-setup(name=name,
-      version="0.1",
+
+setup(name="uncertainpy",
+      version="0.9",
       url="https://github.com/simetenn/uncertainpy",
       author="Simen Tennøe",
       description='Parameter estimation and uncertainty quantification',
       platforms='linux',
-      packages=find_packages(),
+      packages=find_packages("src"),
+      package_dir={"": "src"},
       cmdclass=cmdclass,
       install_requires=uncertainpy_req,
       dependency_links=dependency_links
