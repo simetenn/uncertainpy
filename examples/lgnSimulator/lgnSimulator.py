@@ -13,11 +13,12 @@ class LgnSimulator(Model):
                  config_file=None,
                  output_file=None):
 
-        Model.__init__(self, parameters=parameters,
-                       config_file_base=config_file_base,
-                       config_file=config_file,
-                       output_file=output_file)
+        Model.__init__(self, parameters=parameters, adaptive_model=False)
 
+
+        self.set_properties({"config_file_base": config_file_base,
+                             "config_file": config_file,
+                             "output_file": output_file})
 
         self.xlabel = "spatial points"
         self.ylabel = "response"
@@ -55,6 +56,7 @@ class LgnSimulator(Model):
 
         print "Building in:\n", build_path
 
+
         #build and run----------------------------------------------------------------------------------
         if not os.path.exists(build_path):
             os.makedirs(build_path)
@@ -67,7 +69,9 @@ class LgnSimulator(Model):
         env = dict(os.environ)
         env['LD_LIBRARY_PATH'] = lib_path
 
-        run_argument = ["./lgnSimulator_spatialSummation", self.config_file, os.path.dirname(self.config_file)]
+        run_argument = ["./lgnSimulator_spatialSummation",
+                        self.config_file,
+                        os.path.dirname(self.config_file)]
         print " ".join(run_argument)
         proc = subprocess.call(run_argument, cwd=app_path, env=env)
 
@@ -96,6 +100,8 @@ if __name__ == "__main__":
 
     parameters = {"w_rc": 1.0, "w_ic": 1.0}
 
-    l = LgnSimulator(config_file=config_file, config_file_base=config_file_base, output_file=output_file)
-    l.setParameterValues(parameters=parameters)
-    l.run()
+    lgn = LgnSimulator(config_file=config_file,
+                       config_file_base=config_file_base,
+                       output_file=output_file)
+    lgn.setParameterValues(parameters=parameters)
+    lgn.run()

@@ -24,13 +24,9 @@ model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
 
 features = uncertainpy.NeuronFeatures(features_to_run="all")
 
-exploration = uncertainpy.UncertaintyEstimations(model,
-                                                 features=features,
-                                                 CPUs=7,
-                                                 save_figures=True)
+exploration = uncertainpy.UncertaintyEstimation(model,
+                                                features=features,
+                                                CPUs=7,
+                                                save_figures=True)
 
-
-percentages = [0.01, 0.05, 0.1]
-
-distributions = {"uniform": percentages}
-exploration.exploreParameters(distributions)
+exploration.allParameters()

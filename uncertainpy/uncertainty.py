@@ -82,7 +82,7 @@ from tqdm import tqdm
 from xvfbwrapper import Xvfb
 
 # Imported from uncertainpy
-from uncertainpy.features import NeuronFeatures
+from uncertainpy.features import GeneralFeatures
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.utils import create_logger
@@ -211,20 +211,14 @@ Returns
 Examples
 --------
 For example on use see:
-    hodgkin-huxley_uncertainty_estimation.py
-    izhikevich_uncertainty_estimation.py
-    lgn_uncertainty_estimation.py
-    coffe_uncertainty_estimation.py
         """
 
 
         self.data = Data()
 
 
-        # TODO there is something weird with features here. the Default should
-        # probably not be NeuronFeatures
         if features is None:
-            self.features = NeuronFeatures()
+            self.features = GeneralFeatures(features_to_run=None)
         else:
             self.features = features
 

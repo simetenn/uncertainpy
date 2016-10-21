@@ -336,7 +336,7 @@ class PlotUncertainty():
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
         set_style("darkgrid")
-        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size)
+        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
 
 
         # Add a larger subplot to use to set a common xlabel and ylabel
@@ -352,10 +352,7 @@ class PlotUncertainty():
             nx = i % grid_x_size
             ny = int(np.floor(i/float(grid_x_size)))
 
-            if grid_y_size == 1:
-                ax = axes[nx]
-            else:
-                ax = axes[ny][nx]
+            ax = axes[ny][nx]
 
             if i < nr_plots:
                 prettyPlot(self.data.t[feature], sense[feature][i],
@@ -688,7 +685,7 @@ class PlotUncertainty():
 
 
             set_style("dark")
-            fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size)
+            fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
             set_style("white")
 
 
@@ -709,10 +706,7 @@ class PlotUncertainty():
                 nx = i % grid_x_size
                 ny = int(np.floor(i/float(grid_x_size)))
 
-                if grid_y_size == 1:
-                    ax = axes[nx]
-                else:
-                    ax = axes[ny][nx]
+                ax = axes[ny][nx]
 
                 if i < nr_plots:
                     prettyBar(total_sense[self.data.feature_list[i]],

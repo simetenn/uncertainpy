@@ -1,6 +1,9 @@
 from model import Model
+
 import pandas as pd
 import numpy as np
+import nest
+
 
 
 class NestNetwork(Model):
@@ -20,15 +23,13 @@ class NestNetwork(Model):
 
         self.J_E = 0.5  # J_I = -g*J_E
 
-        self.N_neurons = 10000
+        self.N_neurons = 1000
         self.P_E = .8  # P_I = 1 - P_E
 
         self.N_rec = 100   # Number of neurons to record from
-        self.simtime = 1000
+        self.simtime = 100
 
     def load(self):
-        import nest
-
         nest.ResetKernel()
 
         N_E = int(self.N_neurons * self.P_E)
@@ -61,14 +62,14 @@ class NestNetwork(Model):
 
         # Connect neurons with each other
         nest.CopyModel("static_synapse", "excitatory",
-                       {"weight": self.J_E, "delay": self.delay})
+                       {"weight": float(self.J_E), "delay": float(self.delay)})
 
         nest.Connect(nodes_E, nodes,
                      {"rule": 'fixed_indegree', "indegree": C_E},
                      "excitatory")
 
         nest.CopyModel("static_synapse", "inhibitory",
-                       {"weight": J_I, "delay": self.delay})
+                       {"weight": float(J_I), "delay": float(self.delay)})
 
         nest.Connect(nodes_I, nodes,
                      {"rule": 'fixed_indegree', "indegree": C_I},
@@ -76,8 +77,8 @@ class NestNetwork(Model):
 
         # Add stimulation and recording devices
         noise = nest.Create("poisson_generator", params={"rate": p_rate})
-
         # connect using all_to_all: one noise generator to all neurons
+
         nest.Connect(noise, nodes, syn_spec="excitatory")
 
         spikes = nest.Create("spike_detector", 2,
@@ -100,8 +101,6 @@ class NestNetwork(Model):
             return np.nan
 
     def run(self):
-        self.load()
-
         nest.Simulate(self.simtime)
         events_E = pd.DataFrame(nest.GetStatus(self.spike_detec_E, 'events')[0])
         cv = []
@@ -111,5 +110,12 @@ class NestNetwork(Model):
 
         self.U = np.nanmean(np.array(cv))
         self.t = 1
-        print self.U
-        print self.t
+
+
+if __name__ == "__main__":
+    parameters = {"J_E": 4, "g": 4}
+
+    nest_network = NestNetwork()
+    nest_network.setParameterValues(parameters=parameters)
+    nest_network.load()
+    nest_network.run()

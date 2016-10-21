@@ -44,10 +44,8 @@ echo "Installing system wide packages for testing"
 apt_install h5utils
 
 
-echo "Installing virtual envionment packages"
+echo "Installing virtual envionment packages for uncertainpy"
 pip_install numpy
-pip_install cython
-pip_install pandas
 pip_install h5py
 pip_install psutil
 pip_install matplotlib
@@ -56,4 +54,10 @@ pip_install chaospy
 pip_install tqdm
 pip_install xvfbwrapper
 pip_install -e git+https://github.com/simetenn/prettyplot.git#egg=prettyplot
+
+
+echo "Installing dependencies for example models"
+pip_install cython
+pip_install pandas
+pip_install pyyaml
 pip_install -e git+https://github.com/hplgit/odespy.git#egg=odespy
