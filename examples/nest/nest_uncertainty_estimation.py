@@ -5,7 +5,7 @@ parameterlist = [["J_E", 4, None],
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.models.NestNetwork(parameters)
-model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
+model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
 exploration = uncertainpy.UncertaintyEstimation(model,
