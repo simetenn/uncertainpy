@@ -5,7 +5,7 @@ import numpy as np
 
 
 
-class NestNetwork(Model):
+class BrunelNetworkModel(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
 
@@ -106,6 +106,7 @@ class NestNetwork(Model):
 
         nest.Simulate(self.simtime)
         events_E = pd.DataFrame(nest.GetStatus(self.spike_detec_E, 'events')[0])
+
         cv = []
         for idx, sender in enumerate(events_E.senders):
             spikes = events_E[events_E.senders == sender].times
