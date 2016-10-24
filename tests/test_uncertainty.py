@@ -9,7 +9,7 @@ import subprocess
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
-from uncertainpy.features import NeuronFeatures
+from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 
 from TestingFeatures import TestingFeatures
@@ -48,7 +48,7 @@ class TestUncertainty(unittest.TestCase):
     def test_intitFeatures(self):
         uncertainty = UncertaintyEstimation(TestingModel1d(),
                                             verbose_level="error")
-        self.assertIsInstance(uncertainty.features, NeuronFeatures)
+        self.assertIsInstance(uncertainty.features, GeneralFeatures)
 
         uncertainty = UncertaintyEstimation(TestingModel1d(),
                                             features=TestingFeatures(),

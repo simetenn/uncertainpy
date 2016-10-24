@@ -833,9 +833,7 @@ class TestNeuronModel(unittest.TestCase):
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)
-        print filedir
-        print model_path
-        print os.path.join(filedir, model_path)
+
         self.model = NeuronModel(model_file=model_file,
                                  model_path=os.path.join(filedir, model_path))
 

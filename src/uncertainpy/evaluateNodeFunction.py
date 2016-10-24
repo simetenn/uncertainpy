@@ -155,8 +155,8 @@ all_data = (model_cmds,
         return results
 
     except Exception as e:
-        print "Caught exception in evaluateNodeFunction:"
-        print
+        print("Caught exception in evaluateNodeFunction:")
+        print("")
         traceback.print_exc()
-        print
+        print("")
         raise e
