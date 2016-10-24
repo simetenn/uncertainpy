@@ -2,9 +2,7 @@ import os
 import uncertainpy
 
 
-folder = os.path.dirname(os.path.realpath(__file__))
-
-test_data_dir = os.path.join(folder, "data")
+test_data_dir = os.path.dirname(os.path.realpath(__file__))
 
 seed = 10
 

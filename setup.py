@@ -87,8 +87,9 @@ if "--no-dependencies" in sys.argv:
 elif "develop" in sys.argv or "install" in sys.argv:
     subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
+print find_packages("examples")
 
-
+packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name="uncertainpy",
       version="0.9",
       url="https://github.com/simetenn/uncertainpy",
@@ -96,7 +97,7 @@ setup(name="uncertainpy",
       description='Parameter estimation and uncertainty quantification',
       platforms='linux',
       packages=find_packages("src"),
-      package_dir={"": "src"},
+      package_dir={"": "src", "uncertainpy.examples": "examples"},
       cmdclass=cmdclass,
       install_requires=uncertainpy_req,
       dependency_links=dependency_links

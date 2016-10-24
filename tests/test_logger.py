@@ -15,9 +15,10 @@ class TestLogger(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-    # def tearDown(self):
-    #     if os.path.isdir(self.output_test_dir):
-    #         shutil.rmtree(self.output_test_dir)
+
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
 
 
     def test_debug(self):
@@ -29,11 +30,12 @@ class TestLogger(unittest.TestCase):
         self.logger.info("info message")
         self.logger.warning("warning message")
         self.logger.error("error message")
+        print self.logger.handlers
 
-        message = """DEBUG - test_logger - test_logger.py - 28 - debug message
+        message = """DEBUG - test_logger - test_logger.py - 29 - debug message
 info message
 WARNING - test_logger - warning message
-ERROR - test_logger - test_logger.py - 31 - error message"""
+ERROR - test_logger - test_logger.py - 32 - error message"""
 
         self.assertTrue(message in open(self.full_path).read())
 
@@ -51,7 +53,7 @@ ERROR - test_logger - test_logger.py - 31 - error message"""
 
         message = """info message
 WARNING - test_logger - warning message
-ERROR - test_logger - test_logger.py - 49 - error message"""
+ERROR - test_logger - test_logger.py - 51 - error message"""
 
         self.assertTrue(message in open(self.full_path).read())
 
@@ -67,7 +69,7 @@ ERROR - test_logger - test_logger.py - 49 - error message"""
         self.logger.error("error message")
 
         message = """WARNING - test_logger - warning message
-ERROR - test_logger - test_logger.py - 67 - error message"""
+ERROR - test_logger - test_logger.py - 69 - error message"""
 
         self.assertTrue(message in open(self.full_path).read())
 
@@ -82,7 +84,7 @@ ERROR - test_logger - test_logger.py - 67 - error message"""
         self.logger.warning("warning message")
         self.logger.error("error message")
 
-        message = "ERROR - test_logger - test_logger.py - 83 - error message"
+        message = "ERROR - test_logger - test_logger.py - 85 - error message"
 
         self.assertTrue(message in open(self.full_path).read())
 

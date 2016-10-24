@@ -25,7 +25,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append(parameter)
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
         if simulation.returncode != 0:
@@ -58,7 +58,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append(parameter)
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
         if simulation.returncode != 0:
@@ -93,7 +93,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
 
@@ -128,7 +128,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append(parameter)
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
 
@@ -165,7 +165,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append(parameter)
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
         if simulation.returncode != 0:
@@ -202,7 +202,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
 
@@ -240,7 +240,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
 
-        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
         exc = err.split("\n")[-2].split(":")[0]

@@ -65,7 +65,7 @@ all_data = (model_cmds,
             model_cmds.append("{:.16f}".format(tmp_parameters[parameter]))
 
 
-        simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
         ut, err = simulation.communicate()
 
         if not supress_model_output and len(ut) != 0:

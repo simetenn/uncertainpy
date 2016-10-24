@@ -4,7 +4,7 @@ import numpy as np
 import odespy
 
 # The class name and file name must be the same
-class HodkinHuxleyModel(Model):
+class HodgkinHuxleyModel(Model):
     """
     The model must be able to handle these calls
 

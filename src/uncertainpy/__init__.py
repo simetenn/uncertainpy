@@ -8,4 +8,3 @@ from exploration import UncertaintyEstimations
 from plotting import *
 from uncertainpy.features import *
 from uncertainpy.models import *
-from uncertainpy.examples import *

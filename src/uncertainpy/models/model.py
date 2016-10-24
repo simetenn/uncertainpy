@@ -115,7 +115,7 @@ Run must store the results from the simulation in self.t and self.U
             filedir = os.path.dirname(os.path.abspath(filename))
 
 
-        cmds = ["python", original_dir + "/run_model.py",
+        cmds = [sys.executable, original_dir + "/run_model.py",
                 "--model_name", self.__class__.__name__,
                 "--file_dir", filedir,
                 "--file_name", filename,

@@ -7,7 +7,7 @@ __all__ = ["TestDistribution",
            "TestTestingFeatures",
            "TestLogger",
            "TestModel",
-           "TestHodkinHuxleyModel",
+           "TestHodgkinHuxleyModel",
            "TestCoffeeCupPointModel",
            "TestIzhikevichModel",
            "TestTestingModel0d",
@@ -34,7 +34,7 @@ from test_evaluateNodeFunction import TestEvaluateNodeFunction
 from test_exploration import TestExploration
 from test_features import TestGeneralFeatures, TestGeneralNeuronFeatures, TestNeuronFeatures, TestTestingFeatures
 from test_logger import TestLogger
-from test_models import TestModel, TestHodkinHuxleyModel, TestCoffeeCupPointModel
+from test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupPointModel
 from test_models import TestIzhikevichModel, TestTestingModel0d, TestTestingModel1d
 from test_models import TestTestingModel2d, TestTestingModel0dNoTime, TestTestingModel1dNoTime
 from test_models import TestTestingModel2dNoTime, TestTestingModelNoU, TestNeuronModel

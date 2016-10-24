@@ -1,6 +1,7 @@
 import uncertainpy
 import chaospy as cp
 
+from ValderramaHodgkinHuxleyModel import ValderramaHodgkinHuxleyModel
 
 parameters = [["V_rest", -10, None],
               ["Cm", 1, cp.Uniform(0.8, 1.5)],
@@ -17,7 +18,7 @@ parameters = [["V_rest", -10, None],
 
 parameters = uncertainpy.Parameters(parameters)
 
-model = uncertainpy.OriginalHodkinHuxleyModel(parameters=parameters)
+model = ValderramaHodgkinHuxleyModel(parameters=parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
 features = uncertainpy.NeuronFeatures(features_to_run="all", thresh="auto")

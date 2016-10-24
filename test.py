@@ -37,7 +37,7 @@ test_logger = create_test_suite([TestLogger])
 test_runModel = create_test_suite([TestRunModel])
 
 test_model = create_test_suite([TestModel,
-                                TestHodkinHuxleyModel,
+                                TestHodgkinHuxleyModel,
                                 TestCoffeeCupPointModel,
                                 TestIzhikevichModel,
                                 TestTestingModel0d,

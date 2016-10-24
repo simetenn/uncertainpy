@@ -1,17 +1,24 @@
 import numpy as np
 import os
 import unittest
+import sys
+import subprocess
 import chaospy as cp
 
 from xvfbwrapper import Xvfb
-import subprocess
 
-from uncertainpy.examples import HodkinHuxleyModel, CoffeeCupPointModel, IzhikevichModel
+from models.HodgkinHuxleyModel import HodgkinHuxleyModel
+from models.CoffeeCupPointModel import CoffeeCupPointModel
+from models.IzhikevichModel import IzhikevichModel
+
 from uncertainpy.models import Model, NeuronModel
 from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
 from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime
 from TestingModel import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
 from uncertainpy import Parameters
+
+
+folder = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestModel(unittest.TestCase):
@@ -144,7 +151,7 @@ class TestModel(unittest.TestCase):
 
         self.assertIn("Model", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_setDistribution(self):
@@ -198,9 +205,9 @@ class TestModel(unittest.TestCase):
             self.model.setAllDistributions(distribution_function)
 
 
-class TestHodkinHuxleyModel(unittest.TestCase):
+class TestHodgkinHuxleyModel(unittest.TestCase):
     def setUp(self):
-        self.model = HodkinHuxleyModel()
+        self.model = HodgkinHuxleyModel()
 
 
     def test_load(self):
@@ -214,13 +221,13 @@ class TestHodkinHuxleyModel(unittest.TestCase):
     def test_cmd(self):
         result = self.model.cmd()
 
-        self.assertIn("HodkinHuxleyModel", result)
+        self.assertIn("HodgkinHuxleyModel", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
-        self.model = HodkinHuxleyModel()
+        self.model = HodgkinHuxleyModel()
         self.model.load()
 
         parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
@@ -278,7 +285,7 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
         self.assertIn("CoffeeCupPointModel", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
@@ -326,7 +333,7 @@ class TestIzhikevichModel(unittest.TestCase):
 
         self.assertIn("IzhikevichModel", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
 
@@ -387,7 +394,7 @@ class TestTestingModel0d(unittest.TestCase):
 
         self.assertIn("TestingModel0d", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
 
@@ -452,7 +459,7 @@ class TestTestingModel1d(unittest.TestCase):
 
         self.assertIn("TestingModel1d", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
@@ -509,7 +516,7 @@ class TestTestingModel2d(unittest.TestCase):
 
         self.assertIn("TestingModel2d", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
@@ -574,7 +581,7 @@ class TestTestingModel0dNoTime(unittest.TestCase):
 
         self.assertIn("TestingModel0dNoTime", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
 
@@ -639,7 +646,7 @@ class TestTestingModel1dNoTime(unittest.TestCase):
 
         self.assertIn("TestingModel1dNoTime", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
@@ -696,7 +703,7 @@ class TestTestingModel2dNoTime(unittest.TestCase):
 
         self.assertIn("TestingModel2dNoTime", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
@@ -752,7 +759,7 @@ class TestTestingModelNoU(unittest.TestCase):
 
         self.assertIn("TestingModelNoU", result)
         self.assertIsInstance(result, list)
-        self.assertEqual(result[0], "python")
+        self.assertEqual(result[0], sys.executable)
 
 
     def test_useCase(self):
@@ -798,7 +805,7 @@ class TestTestingModelNoU(unittest.TestCase):
 
             self.assertIn("TestingModel1dAdaptive", result)
             self.assertIsInstance(result, list)
-            self.assertEqual(result[0], "python")
+            self.assertEqual(result[0], sys.executable)
 
 
         def test_useCase(self):
@@ -822,10 +829,13 @@ class TestTestingModelNoU(unittest.TestCase):
 class TestNeuronModel(unittest.TestCase):
     def setUp(self):
         model_file = "mosinit.hoc"
-        model_path = "../models/neuron_models/dLGN_modelDB/"
+        model_path = "models/dLGN_modelDB/"
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)
+        print filedir
+        print model_path
+        print os.path.join(filedir, model_path)
         self.model = NeuronModel(model_file=model_file,
                                  model_path=os.path.join(filedir, model_path))
 

@@ -1,4 +1,5 @@
 import uncertainpy
+from HodgkinHuxleyModel import HodgkinHuxleyModel
 
 orignal_parameters = [["V_rest", -65, None],
                       ["Cm", 1, None],
@@ -14,7 +15,7 @@ orignal_parameters = [["V_rest", -65, None],
 
 parameters = uncertainpy.Parameters(orignal_parameters)
 
-model = uncertainpy.HodkinHuxleyModel(parameters)
+model = HodgkinHuxleyModel(parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
 features = uncertainpy.NeuronFeatures(features_to_run="all")
