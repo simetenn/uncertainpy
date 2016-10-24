@@ -1,1 +1,0 @@
-../../../examples/bahl/NeuronModelBahl.py

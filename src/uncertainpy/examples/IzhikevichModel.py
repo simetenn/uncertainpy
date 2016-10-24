@@ -1,1 +1,0 @@
-../../../examples/izhikevich/IzhikevichModel.py
