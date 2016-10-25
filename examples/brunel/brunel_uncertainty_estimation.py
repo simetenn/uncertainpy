@@ -1,11 +1,13 @@
 import uncertainpy
+from BrunelNetworkModel import BrunelNetworkModel
+
 
 parameterlist = [["J_E", 4, None],
                  ["g", 4, None]]
 
 parameters = uncertainpy.Parameters(parameterlist)
 
-model = uncertainpy.models.BrunelNetworkModel(parameters)
+model = BrunelNetworkModel(parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 

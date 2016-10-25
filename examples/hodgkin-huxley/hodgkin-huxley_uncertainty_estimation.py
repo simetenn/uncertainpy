@@ -1,6 +1,7 @@
 import uncertainpy
 import chaospy as cp
 
+from HodgkinHuxleyModel import HodgkinHuxleyModel
 
 def cdf(x, a, b, c, d):
     if x <= b:
@@ -37,7 +38,7 @@ parameters = [["V_rest", -65, None],
 
 parameters = uncertainpy.Parameters(parameters)
 
-model = uncertainpy.HodkinHuxleyModel(parameters=parameters)
+model = HodgkinHuxleyModel(parameters=parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
 features = uncertainpy.NeuronFeatures(features_to_run="all")

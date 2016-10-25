@@ -19,17 +19,21 @@ class CoffeeCupPointModelDependent(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
 
-        self.kappa = -0.1
-        self.alpha = 0.1
+        self.kappa = -0.05
+        self.alpha = 1
         self.u_env = 20
 
         self.u0 = 95
-        self.t_points = np.linspace(0, 360, 150)
+        self.t_points = np.linspace(0, 200, 150)
 
-        self.x = np.linspace(0, 10, 500)
+
+        self.xlabel = "time [s]"
+        self.ylabel = "Temperature [C]"
+
 
     def f(self, u, t):
         return self.kappa*self.alpha*(u - self.u_env)
+
 
     def run(self):
 
@@ -38,4 +42,5 @@ class CoffeeCupPointModelDependent(Model):
         solver.set_initial_condition(self.u0)
 
         self.U, self.t = solver.solve(self.t_points)
+
         return self.t, self.U
