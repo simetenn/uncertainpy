@@ -24,9 +24,6 @@ class YourOwnCoffeeModel(uncertainpy.Model):
         return self.t, self.U
 
 class CoffeeFeatures(uncertainpy.GeneralFeatures):
-    # def __init__(self, t=None, U=None):
-    #     uncertainpy.GeneralFeatures.__init__(self, t=t, U=U)
-
     def averageValue(self):
         return np.mean(self.U)
 
@@ -42,8 +39,5 @@ if __name__ == "__main__":
     exploration = uncertainpy.UncertaintyEstimations(model,
                                                      distributions,
                                                      features=CoffeeFeatures(),
-                                                     feature_list="all",
-                                                     output_dir_data="data/coffee")
-    exploration.exploreParameters()
-    plot = uncertainpy.PlotUncertainty(data_dir="data/coffee", output_figures_dir="figures/coffee")
-    plot.plotAllData()
+                                                     output_dir_data="data/coffee",
+                                                     save_figures=True)

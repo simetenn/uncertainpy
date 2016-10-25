@@ -1,2 +1,1 @@
-# parameter_estimation
-parameter_estimation
+# Uncertainty quantification of (Neuroscience) models
