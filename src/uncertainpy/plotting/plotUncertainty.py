@@ -132,7 +132,7 @@ class PlotUncertainty():
         for U in self.data.U["directComparison"]:
             prettyPlot(self.data.t["directComparison"], U,
                        xlabel=self.data.xlabel, ylabel=self.data.ylabel)
-            plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding)))
+            plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding) + figureformat))
             i += 1
 
 
