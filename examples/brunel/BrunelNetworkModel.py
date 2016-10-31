@@ -119,7 +119,7 @@ class BrunelNetworkModel(Model):
 if __name__ == "__main__":
     parameters = {"J_E": 4, "g": 4}
 
-    nest_network = NestNetwork()
+    nest_network = BrunelNetworkModel()
     nest_network.setParameterValues(parameters=parameters)
     nest_network.load()
     nest_network.run()

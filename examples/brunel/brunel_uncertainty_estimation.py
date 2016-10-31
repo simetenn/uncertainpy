@@ -14,6 +14,7 @@ model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 exploration = uncertainpy.UncertaintyEstimation(model,
                                                 CPUs=8,
                                                 features=None,
-                                                save_figures=True)
+                                                save_figures=True,
+                                                figureformat=".pdf")
 
 exploration.allParameters()

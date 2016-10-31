@@ -33,9 +33,6 @@ parameters = [["V_rest", -65, None],
               ["E_K", -77, cp.Uniform(-74, -79)],
               ["E_l", -50.613, cp.Uniform(-61, -43)]]
 
-
-
-
 parameters = uncertainpy.Parameters(parameters)
 
 model = HodgkinHuxleyModel(parameters=parameters)
@@ -48,6 +45,7 @@ exploration = uncertainpy.UncertaintyEstimation(model,
                                                 features=features,
                                                 CPUs=7,
                                                 save_figures=True,
-                                                rosenblatt=True)
+                                                rosenblatt=True,
+                                                figureformat=".pdf")
 
 exploration.allParameters()

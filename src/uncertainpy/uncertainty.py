@@ -44,13 +44,6 @@
 # TODO Profile the code using line profiler or
 # python -m cProfile %1
 
-
-# TODO in CoffeeCupPointModel set kappa=beta*phi and see how dependent variables work.
-
-# TODO make it possible to create dependent variables.
-
-# TODO Move plotDirectComparison to plotUncertainty.
-
 # TODO Add support for 2d interpolation
 
 # TODO Refactor so private variables are "hidden", starts with _
@@ -61,10 +54,10 @@
 # TODO Does it make any sense to perform an interpolation for features?
 # Currently features are excluded from interpolation
 
-# TODO move creation of all_features to where the class is initiated
-
 # TODO save data from each singleParameter run or not in the class?
 
+
+# TODO create network features
 
 # Figures are always saved on the format:
 # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
@@ -87,6 +80,8 @@ from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.utils import create_logger
 from uncertainpy import Data
+
+
 
 class UncertaintyEstimation():
     def __init__(self, model,
