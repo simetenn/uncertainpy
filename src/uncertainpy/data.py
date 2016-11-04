@@ -18,9 +18,8 @@ class Data:
                                     self.__class__.__name__)
 
 
-        if filename is None:
-            self.resetValues()
-        else:
+        self.resetValues()
+        if filename is not None:
             self.load(filename)
 
 

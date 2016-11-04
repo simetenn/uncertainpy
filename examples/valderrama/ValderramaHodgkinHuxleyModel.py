@@ -127,5 +127,10 @@ class ValderramaHodgkinHuxleyModel(Model):
         solver.set_initial_condition(initial_conditions)
         X, t = solver.solve(self.t)
 
-        self.t = t
-        self.U = X[:, 0]
+        self.t = t[t > 5]
+        self.U = X[:, 0][t > 5]
+
+
+if __name__ == "__main__":
+    model = ValderramaHodgkinHuxleyModel()
+    model.run()
