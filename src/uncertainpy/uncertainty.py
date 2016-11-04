@@ -65,7 +65,9 @@
 # Figures are always saved on the format:
 # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
 
-# TODO add feature description fo
+# TODO add feature description features
+
+# TODO possible bug in prettyplot, axis limit is outside of the region of interest
 
 import time
 import os
