@@ -28,6 +28,8 @@ exploration = uncertainpy.UncertaintyEstimation(model,
                                                 features=features,
                                                 CPUs=7,
                                                 save_figures=True,
-                                                rosenblatt=False)
+                                                rosenblatt=False,
+                                                figureformat=".pdf")
 
 exploration.allParameters()
+exploration.plot.plotSimulatorResults()

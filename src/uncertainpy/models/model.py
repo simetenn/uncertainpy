@@ -70,7 +70,7 @@ Run must store the results from the simulation in self.t and self.U
 
         self.parameters.setAllDistributions(distribution_function)
 
-
+    # TODO This should raise a NotImplementedError, to make sure that users change it 
     def setParameterValues(self, parameters):
         """
         Parameters: dictionary with all parameters

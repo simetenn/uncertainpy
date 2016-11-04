@@ -30,6 +30,7 @@
 
 # TODO implement a feature description in features
 
+# TODO make a an autoatic model tester code that tests if a user created model is correctly implemented
 
 # TODO Make sending of model keywords simpler than it currently is. Use a
 # dictionary similar to kwargs?. model.py
@@ -40,6 +41,7 @@
 
 # TODO combine save_data and save_data_dir into the save variable?
 
+# TODO Add functionality for saving all results and then performing UQ calculations
 
 # TODO Profile the code using line profiler or
 # python -m cProfile %1
@@ -56,12 +58,14 @@
 
 # TODO save data from each singleParameter run or not in the class?
 
+# TODO create an own UQ class that peforms the UQ calculations
 
 # TODO create network features
 
 # Figures are always saved on the format:
 # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
 
+# TODO add feature description fo
 
 import time
 import os

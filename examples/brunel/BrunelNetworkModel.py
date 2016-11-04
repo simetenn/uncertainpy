@@ -2,8 +2,10 @@ from uncertainpy import Model
 
 import pandas as pd
 import numpy as np
+import nest
+import nest.raster_plot
 
-
+import matplotlib.pyplot as plt
 
 class BrunelNetworkModel(Model):
     def __init__(self, parameters=None):
@@ -28,7 +30,13 @@ class BrunelNetworkModel(Model):
         self.N_rec = 100   # Number of neurons to record from
         self.simtime = 100
 
-    def load(self):
+
+    def setParameterValues(self, parameters=None):
+        Model.setParameterValues(self, parameters=parameters)
+        self.reset()
+
+
+    def reset(self):
         import nest
 
         nest.ResetKernel()
@@ -93,6 +101,7 @@ class BrunelNetworkModel(Model):
         nest.Connect(nodes_E[:self.N_rec], self.spike_detec_E)
         nest.Connect(nodes_I[:self.N_rec], self.spike_detec_I)
 
+
     def calc_CV(self, spikes):
         isi = np.diff(spikes)
         if len(isi) > 0:
@@ -121,5 +130,7 @@ if __name__ == "__main__":
 
     nest_network = BrunelNetworkModel()
     nest_network.setParameterValues(parameters=parameters)
-    nest_network.load()
+    nest_network.reset()
     nest_network.run()
+    nest.raster_plot.from_device(nest_network.spike_detec_E)
+    plt.savefig("nest_E.png")
