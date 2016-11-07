@@ -16,7 +16,7 @@ install:
   - "sh -e /etc/init.d/xvfb start"
 
   - ./install_scripts/install_dependencies.sh
-  - apt-get install libncurses5-dev
+  - sudo apt-get install libncurses5-dev
 
   - mkdir neuron/
 
