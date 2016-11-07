@@ -10,46 +10,10 @@ compiler:
   - gcc
 sudo: required
 dist: trusty
-
-install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-
-  - ./install_scripts/install_dependencies.sh
-  - sudo apt-get install libncurses5-dev
-
-  - mkdir neuron/
-
-  - cd neuron/
-  - wget http://www.neuron.yale.edu/ftp/neuron/versions/v7.4/nrn-7.4.tar.gz
-  - wget http://www.neuron.yale.edu/ftp/neuron/versions/v7.4/iv-19.tar.gz
-
-  - tar xzf iv-19.tar.gz
-  - tar xzf nrn-7.4.tar.gz
-  - rm iv-19.tar.gz
-  - rm nrn-7.4.tar.gz
-  # renaming the new directories iv and nrn makes life simpler later on
-  - mv iv-19 iv
-  - mv nrn-7.4 nrn
-
-  - cd iv
-  - ./configure --prefix='neuron/iv'
-  - make
-  - make install
-
-  - cd ../nrn
-  - ./configure --prefix="neuron/nrn" --with-iv="/usr/local/neuron/iv" --with-nrnpython --with-numpy
-
-  - make
-  - make install
-
-  - cd neuron/nrn/src/nrnpython
-  - python setup.py install
-  - export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python2.7/site-packages/
-
-  - cd
-
-  - sudo python setup.py install --no-dependencies
+services: docker
+before_install:
+    - docker build -t simetenn/uncertainpy -f Dockerfile .
 script:
-  - python2.7 test.py --all
+    - docker run -v $(pwd):/app miladh/lgn-simulator bash docker.sh
+  #- python2.7 test.py --all
   # - python2.7 -c "import neuron"
