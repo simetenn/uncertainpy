@@ -39,6 +39,7 @@ echo "Installing system wide packages for uncertainpy"
 apt_install python-dev
 apt_install xvfb
 apt_install texlive-full
+apt-install python-tk
 
 echo "Installing system wide packages for testing"
 apt_install h5utils

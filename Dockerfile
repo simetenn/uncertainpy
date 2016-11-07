@@ -14,7 +14,8 @@ RUN pip install h5py
 
 RUN apt-get -y install gfortran\
                         xvfb\
-                        python-dev
+                        python-dev\
+                        python-tk
                         #texlive-full
 
 
@@ -23,7 +24,8 @@ RUN pip install xvfbwrapper\
                 chaospy\
                 tqdm\
                 pandas\
-                pyyaml
+                pyyaml\
+                psutil
 
 RUN pip install -e git+https://github.com/simetenn/prettyplot.git#egg=prettyplot
 RUN pip install -e git+https://github.com/hplgit/odespy.git#egg=odespy
