@@ -1,8 +1,13 @@
 import unittest
 import sys
 import argparse
+import matplotlib
+
+matplotlib.use('Agg')
 
 from tests import *
+
+
 
 def create_test_suite(test_classes_to_run):
     loader = unittest.TestLoader()
@@ -59,15 +64,19 @@ test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
 
 test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
 
+
 test_uncertainty = create_test_suite([TestUncertainty])
 
 test_exploration = create_test_suite([TestExploration])
 
 test_usecase = create_test_suite([TestUseCases])
 
-
-
 test_utils = unittest.TestSuite([test_logger])
+
+
+
+test_plotting = unittest.TestSuite([test_plotUncertainty, test_plotUncertaintyCompare])
+
 test_prerequisites = unittest.TestSuite([test_utils,
                                         test_parameters,
                                         test_distribution,
@@ -76,16 +85,14 @@ test_prerequisites = unittest.TestSuite([test_utils,
                                         test_model,
                                         test_data])
 
-
-
 test_basic = unittest.TestSuite([test_prerequisites,
                                 test_uncertainty,
-                                test_plotUncertainty,
-                                test_plotUncertaintyCompare])
+                                test_plotting])
 
 test_fast = unittest.TestSuite([test_basic, test_exploration])
 
 test_all = unittest.TestSuite([test_fast, test_usecase])
+
 
 
 test_runner = unittest.TextTestRunner()

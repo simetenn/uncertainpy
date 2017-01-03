@@ -19,15 +19,12 @@ from uncertainpy.utils import create_logger
 # TODO compare plots in a grid of all plots,
 # such as plotting all features in a grid plot
 
-# TODO Move some parts of the ploting code into it's own class for increased
-# readability
 
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 
 
 # TODO plot simulator_results
 
-# plt.switch_backend('GTKAgg')
 
 class PlotUncertainty():
     def __init__(self,
