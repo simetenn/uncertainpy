@@ -85,6 +85,7 @@ test_prerequisites = unittest.TestSuite([test_utils,
                                         test_model,
                                         test_data])
 
+
 test_basic = unittest.TestSuite([test_prerequisites,
                                 test_uncertainty,
                                 test_plotting])

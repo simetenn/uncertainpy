@@ -1,24 +1,25 @@
 import os
 import uncertainpy
+from models import TestingModel1d
+from features import TestingFeatures
 
-
-test_data_dir = os.path.dirname(os.path.realpath(__file__))
+folder = os.path.dirname(os.path.realpath(__file__))
+test_data_dir = os.path.join(folder, "data")
 
 seed = 10
 
 
-def generate_data_allParameters(): # pragma: no cover
+def generate_data_allParameters():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
     parameters = uncertainpy.Parameters(parameterlist)
-    model = uncertainpy.models.TestingModel1d(parameters)
+    model = TestingModel1d(parameters)
     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
-
     test = uncertainpy.UncertaintyEstimation(model,
-                                             features=uncertainpy.TestingFeatures(),
+                                             features=TestingFeatures(),
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              verbose_level="error",
@@ -26,18 +27,18 @@ def generate_data_allParameters(): # pragma: no cover
 
     test.allParameters()
 
-def generate_data_singleParameters():
+
+def generate_data_singleParameters():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
     parameters = uncertainpy.Parameters(parameterlist)
-    model = uncertainpy.models.TestingModel1d(parameters)
+    model = TestingModel1d(parameters)
     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
-
     test = uncertainpy.UncertaintyEstimation(model,
-                                             features=uncertainpy.TestingFeatures(),
+                                             features=TestingFeatures(),
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              verbose_level="error",
@@ -47,18 +48,17 @@ def generate_data_singleParameters():
     test.singleParameters()
 
 
-def generate_data_allParametersMC():
+def generate_data_allParametersMC():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
     parameters = uncertainpy.Parameters(parameterlist)
-    model = uncertainpy.models.TestingModel1d(parameters)
+    model = TestingModel1d(parameters)
     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
-
     test = uncertainpy.UncertaintyEstimation(model,
-                                             features=uncertainpy.TestingFeatures(),
+                                             features=TestingFeatures(),
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              output_data_filename="TestingModel1d_MC",
@@ -68,18 +68,17 @@ def generate_data_allParametersMC():
 
     test.allParametersMC()
 
-def generate_data_singleParametersMC():
+def generate_data_singleParametersMC(): # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
     parameters = uncertainpy.Parameters(parameterlist)
-    model = uncertainpy.models.TestingModel1d(parameters)
+    model = TestingModel1d(parameters)
     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
-
     test = uncertainpy.UncertaintyEstimation(model,
-                                             features=uncertainpy.TestingFeatures(),
+                                             features=TestingFeatures(),
                                              output_dir_data=test_data_dir,
                                              output_dir_figures=test_data_dir,
                                              output_data_filename="TestingModel1d_MC",
@@ -92,17 +91,17 @@ def generate_data_singleParametersMC():
 
 
 
-def generate_data_compareMC():
+def generate_data_compareMC():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
     parameters = uncertainpy.Parameters(parameterlist)
-    model = uncertainpy.TestingModel1d(parameters)
+    model = TestingModel1d(parameters)
     model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
     uncertainty = uncertainpy.UncertaintyEstimations(model,
-                                                     features=uncertainpy.TestingFeatures(),
+                                                     features=TestingFeatures(),
                                                      verbose_level="error",
                                                      output_dir_data=test_data_dir,
                                                      output_dir_figures=test_data_dir,
@@ -115,7 +114,7 @@ def generate_data_compareMC():
 
 
 
-def generate_data_data():
+def generate_data_data():  # pragma: no cover
     data = uncertainpy.Data()
 
     data.uncertain_parameters = ["a", "b"]
@@ -136,7 +135,7 @@ def generate_data_data():
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     generate_data_allParameters()
     generate_data_singleParameters()
     generate_data_allParametersMC()

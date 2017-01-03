@@ -12,12 +12,13 @@ from prettyplot import prettyPlot
 from uncertainpy.features.spikes import Spikes
 
 
-def generate_plots_plotUncertainty():
-    folder = os.path.dirname(os.path.realpath(__file__))
+folder = os.path.dirname(os.path.realpath(__file__))
+test_data_dir = os.path.join(folder, "data")
+output_test_dir = os.path.join(folder, "figures")
 
+
+def generate_plots_plotUncertainty():
     data_file = "TestingModel1d"
-    test_data_dir = folder
-    output_test_dir = folder
 
     plot = PlotUncertainty(data_dir=test_data_dir,
                            output_dir_figures=output_test_dir,
@@ -30,13 +31,8 @@ def generate_plots_plotUncertainty():
 
 
 def generate_plots_compare():
-    folder = os.path.dirname(os.path.realpath(__file__))
-
     data_file = "TestingModel1d"
     compare_folders = ["pc", "mc_10", "mc_100"]
-    test_data_dir = folder
-    output_test_dir = folder
-    # output_test_dir = os.path.join(folder, "../../test_data")
 
     plot = PlotUncertaintyCompare(data_dir=test_data_dir,
                                   output_dir_figures=output_test_dir,
@@ -47,10 +43,6 @@ def generate_plots_compare():
 
 
 def generate_simulator_plot():
-    folder = os.path.dirname(os.path.realpath(__file__))
-    test_data_dir = folder
-    output_test_dir = folder
-
     U = np.load(os.path.join(test_data_dir, "U_test.npy"))
     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
@@ -60,9 +52,6 @@ def generate_simulator_plot():
 
 
 def generate_spike_plot():
-    folder = os.path.dirname(os.path.realpath(__file__))
-    output_test_dir = folder
-
     t = np.arange(0, 10)
     U = np.arange(0, 10) + 10
 
@@ -74,10 +63,6 @@ def generate_spike_plot():
 
 
 def generate_spikes_plot():
-    folder = os.path.dirname(os.path.realpath(__file__))
-    test_data_dir = folder
-    output_test_dir = folder
-
     U = np.load(os.path.join(test_data_dir, "U_test.npy"))
     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
