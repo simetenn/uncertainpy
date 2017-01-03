@@ -37,7 +37,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d",
+        compare_file = os.path.join(folder, "figures/TestingModel1d",
                                     name + ".png")
 
         plot_file = os.path.join(self.output_test_dir, self.data_file,
