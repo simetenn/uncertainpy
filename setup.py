@@ -18,9 +18,8 @@ virtual_enviroment = name
 
 uncertainpy_req = []
 dependency_links = []
-# uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "pandas"]
-# dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy",
-#                     "http://github.com/hplgit/chaospy/tarball/master#egg=chaospy"]
+uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "pandas", "tqdm"]
+dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy"]
 
 
 
@@ -94,7 +93,7 @@ setup(name="uncertainpy",
       version="0.9",
       url="https://github.com/simetenn/uncertainpy",
       author="Simen Tennøe",
-      description='Parameter estimation and uncertainty quantification',
+      description='Uncertainty quantification',
       platforms='linux',
       packages=find_packages("src"),
       package_dir={"": "src", "uncertainpy.examples": "examples"},
