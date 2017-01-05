@@ -117,7 +117,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.plotSimulatorResults()
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/U.png")
+        compare_file = os.path.join(folder, "figures/U.png")
 
         plot_count = 0
         for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):

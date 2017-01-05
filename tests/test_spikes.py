@@ -28,7 +28,7 @@ class TestSpikes(unittest.TestCase):
 
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/",
+        compare_file = os.path.join(folder, "figures/",
                                     name + ".png")
 
         plot_file = os.path.join(self.output_test_dir, name + ".png")

@@ -10,7 +10,6 @@ RUN pip install -U pip
 RUN pip install -U setuptools
 RUN pip install h5py
 
-
 RUN apt-get -y install gfortran
 RUN apt-get -y install xvfb
 RUN apt-get -y install python-dev
@@ -25,7 +24,6 @@ RUN apt-get -y install libcairo2-dev
 RUN apt-get -y install h5utils
 
 RUN pip install xvfbwrapper
-
 RUN pip install chaospy
 RUN pip install tqdm
 RUN pip install pandas
@@ -37,7 +35,7 @@ RUN pip install -e git+https://github.com/hplgit/odespy.git#egg=odespy
 
 COPY . uncertainpy
 WORKDIR uncertainpy
+
+RUN cp -r tests/figures_docker/. tests/figures
+
 RUN python2.7 setup.py install --no-dependencies
-
-
-RUN python tests/data/generate_test_plots.py
