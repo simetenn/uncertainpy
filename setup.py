@@ -12,6 +12,8 @@ except ImportError:
     print("Setuptools: https://pypi.python.org/pypi/setuptools")
 
 
+if not platform.system() == "Linux":
+    print("Warning: OS not supported, installation may fail")
 
 name = "uncertainpy"
 virtual_enviroment = name
@@ -37,11 +39,11 @@ def activate_virtualev(virtual_enviroment=virtual_enviroment, system_site_packag
 
 
 
-def setupInstall():
-    if not platform.system() == "Linux":
-        print("Warning: OS not supported, installation may fail")
-
-    subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
+# def setupInstall():
+#     if not platform.system() == "Linux":
+#         print("Warning: OS not supported, installation may fail")
+#
+#     subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
 # class CustomDevelop(_develop):
@@ -86,7 +88,6 @@ if "--no-dependencies" in sys.argv:
 elif "develop" in sys.argv or "install" in sys.argv:
     subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
-print find_packages("examples")
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name="uncertainpy",
