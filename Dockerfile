@@ -64,6 +64,8 @@ RUN cd src/nrnpython; python setup.py install
 
 COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
+RUN pwd
+RUN ls
 RUN cp -r tests/figures_docker/. tests/figures
 
 RUN python setup.py install --no-dependencies
