@@ -24,6 +24,8 @@ class NeuronModel(Model):
         os.chdir(self.model_path)
 
         import neuron
+        # To work on devices without nrngui
+        #from neuron import gui
         self.h = neuron.h
         self.h.load_file(1, self.model_file)
 
