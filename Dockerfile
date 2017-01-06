@@ -24,6 +24,7 @@ RUN conda install -c conda-forge xvfbwrapper
 # Downgrade the pyqt package to solve a bug in anaconda
 RUN conda install pyqt=4.11
 RUN conda install -c anaconda pandas
+RUN conda install -c anaconda seaborn
 RUN pip install -e git+https://github.com/simetenn/prettyplot.git#egg=prettyplot
 
 
