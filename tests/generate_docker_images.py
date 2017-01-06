@@ -7,7 +7,7 @@ from uncertainpy.utils import create_logger
 folder = os.path.dirname(os.path.realpath(__file__))
 docker_test_dir = os.path.join(folder, "figures_docker")
 
-logger = create_logger("debug")
+logger = create_logger("error")
 
 
 def system(cmds):
