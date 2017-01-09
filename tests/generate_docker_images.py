@@ -7,7 +7,7 @@ from uncertainpy.utils import create_logger
 folder = os.path.dirname(os.path.realpath(__file__))
 docker_test_dir = os.path.join(folder, "figures_docker")
 
-logger = create_logger("error")
+logger = create_logger("debug")
 
 
 def system(cmds):
@@ -43,13 +43,14 @@ def system(cmds):
 
 def generate_docker_images():
     system("docker build {} -t generate_test_plots".format(os.path.join(folder, "..")))
-    docker_id = system("docker create generate_test_plots").strip()
-    system("docker start {}".format(docker_id))
+    #docker_id = system("docker create generate_test_plots").strip()
+    # system("docker start {}".format(docker_id))
     # system("docker exec {} python uncertainpy/tests/generate_test_data.py".format(docker_id))
-    system("docker exec {} python tests/generate_test_plots.py".format(docker_id))
+    docker_id = system("docker run --name='generate_test_plot_container' --rm=False generate_test_plots python tests/generate_test_plots.py").strip()
+
     system("docker cp {}:/home/docker/uncertainpy/tests/figures/. {}/.".format(docker_id, docker_test_dir))
-    system("docker stop {}".format(docker_id))
-    system("docker rm -v {}".format(docker_id))
+    system("docker stop generate_test_plot_container".format(docker_id))
+    system("docker rm  generate_test_plot_container".format(docker_id))
     system("docker rmi generate_test_plots")
 
 
