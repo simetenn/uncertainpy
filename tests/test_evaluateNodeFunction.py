@@ -6,9 +6,9 @@ from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.parameters import Parameters
 
 from features import TestingFeatures
-from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
-from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime
-from TestingModel import TestingModel2dNoTime, TestingModelNoU
+from models import TestingModel0d, TestingModel1d, TestingModel2d
+from models import TestingModel0dNoTime, TestingModel1dNoTime
+from models import TestingModel2dNoTime, TestingModelNoU
 
 
 class TestEvaluateNodeFunction(unittest.TestCase):

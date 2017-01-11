@@ -5,8 +5,8 @@ import shutil
 
 
 from uncertainpy import UncertaintyEstimations, Parameters, Distribution
-from TestingFeatures import TestingFeatures
-from TestingModel import TestingModel1d
+from features import TestingFeatures
+from models import TestingModel1d
 
 
 class TestExploration(unittest.TestCase):

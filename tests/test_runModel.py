@@ -3,9 +3,9 @@ import os
 import unittest
 import subprocess
 
-from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
-from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime
-from TestingModel import TestingModel2dNoTime, TestingModelNoU
+from models import TestingModel0d, TestingModel1d, TestingModel2d
+from models import TestingModel0dNoTime, TestingModel1dNoTime
+from models import TestingModel2dNoTime, TestingModelNoU
 
 
 

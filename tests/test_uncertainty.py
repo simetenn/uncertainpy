@@ -12,9 +12,9 @@ from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 
-from TestingFeatures import TestingFeatures
-from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
-from TestingModel import TestingModel1dAdaptive
+from features import TestingFeatures
+from models import TestingModel0d, TestingModel1d, TestingModel2d
+from models import TestingModel1dAdaptive
 
 
 class TestUncertainty(unittest.TestCase):

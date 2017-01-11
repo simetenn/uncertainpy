@@ -7,15 +7,15 @@ import chaospy as cp
 
 from xvfbwrapper import Xvfb
 
-from models.HodgkinHuxleyModel import HodgkinHuxleyModel
-from models.CoffeeCupPointModel import CoffeeCupPointModel
-from models.IzhikevichModel import IzhikevichModel
-
 from uncertainpy.models import Model, NeuronModel
-from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
-from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime
-from TestingModel import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
 from uncertainpy import Parameters
+
+from models import HodgkinHuxleyModel
+from models import CoffeeCupPointModel
+from models import IzhikevichModel
+from models import TestingModel0d, TestingModel1d, TestingModel2d
+from models import TestingModel0dNoTime, TestingModel1dNoTime
+from models import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
 
 
 folder = os.path.dirname(os.path.realpath(__file__))
