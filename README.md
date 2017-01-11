@@ -2,10 +2,5 @@
 
 [![Build Status](https://travis-ci.org/simetenn/uncertainpy.png?branch=master)](https://travis-ci.org/simetenn/uncertainpy)
 
-![coverage](coverage.svg?raw=true)
 
 # Uncertainty quantification of (Neuroscience) models
-
-
-.. |coverage| image:: coverage.svg
-    :target: https://github.com/simetenn/uncertainpy
