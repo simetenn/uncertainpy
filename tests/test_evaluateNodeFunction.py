@@ -5,7 +5,7 @@ import scipy.interpolate
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.parameters import Parameters
 
-from TestingFeatures import TestingFeatures
+from features import TestingFeatures
 from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
 from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime
 from TestingModel import TestingModel2dNoTime, TestingModelNoU
