@@ -43,9 +43,6 @@ def system(cmds):
 
 def generate_docker_images():
     system("docker build {} -t generate_test_plots".format(os.path.join(folder, "..")))
-    #docker_id = system("docker create generate_test_plots").strip()
-    # system("docker start {}".format(docker_id))
-    # system("docker exec {} python uncertainpy/tests/generate_test_data.py".format(docker_id))
     docker_id = system("docker run --name='generate_test_plot_container' --rm=False generate_test_plots python tests/generate_test_plots.py").strip()
 
     system("docker cp {}:/home/docker/uncertainpy/tests/figures/. {}/.".format(docker_id, docker_test_dir))
