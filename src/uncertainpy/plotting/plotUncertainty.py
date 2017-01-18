@@ -129,7 +129,8 @@ class PlotUncertainty():
         for U in self.data.U["directComparison"]:
             prettyPlot(self.data.t["directComparison"], U,
                        xlabel=self.data.xlabel, ylabel=self.data.ylabel)
-            plt.savefig(os.path.join(save_folder, "U_{0:0{1}d}".format(i, padding) + self.figureformat))
+            plt.savefig(os.path.join(save_folder,
+                                     "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             i += 1
 
 
@@ -732,7 +733,7 @@ class PlotUncertainty():
 
             if hardcopy:
                 plt.savefig(os.path.join(self.full_output_dir_figures,
-                                        "total-" + sensitivity + "_grid" + self.figureformat),
+                                         "total-" + sensitivity + "_grid" + self.figureformat),
                             bbox_inches="tight")
                 if not show:
                     plt.close()

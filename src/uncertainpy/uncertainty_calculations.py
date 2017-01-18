@@ -38,11 +38,6 @@ class UncertaintyCalculations:
         U_hat = cp.fit_regression(self.P, nodes, U, rule="T")
         return U_hat
 
-    def createPCE(self):
-
-    def createPCERosenblatt(self):
-
-
 
     def createMask(self, nodes, feature):
 
@@ -82,69 +77,12 @@ class UncertaintyCalculations:
 
 
 
-    def performInterpolation(self, ts, interpolation):
-        lengths = []
-        for s in ts:
-            lengths.append(len(s))
+    def createPCE(self):
 
-        index_max_len = np.argmax(lengths)
-        t = ts[index_max_len]
-
-        interpolated_solves = []
-        for inter in interpolation:
-            interpolated_solves.append(inter(t))
-
-        interpolated_solves = np.array(interpolated_solves)
-
-        return t, interpolated_solves
+    def createPCERosenblatt(self):
 
 
 
-    def storeResults(self, solves):
-
-        self.data.setFeatures(solves[0])
-
-        for feature in self.data.features_2d:
-            if self.model.adaptive_model and feature == "directComparison":
-                raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
-
-            else:
-                self.data.t[feature] = solves[0][feature][0]
-
-                self.data.U[feature] = []
-                for solved in solves:
-                    self.data.U[feature].append(solved[feature][1])
-
-                # self.U[feature] = np.array(self.U[feature])
-
-        for feature in self.data.features_1d:
-            if self.model.adaptive_model and feature == "directComparison":
-                ts = []
-                interpolation = []
-                for solved in solves:
-                    ts.append(solved[feature][0])
-                    interpolation.append(solved[feature][2])
-
-                self.data.t[feature], self.data.U[feature] = self.performInterpolation(ts, interpolation)
-            else:
-                self.data.t[feature] = solves[0][feature][0]
-                self.data.U[feature] = []
-                for solved in solves:
-                    self.data.U[feature].append(solved[feature][1])
-
-                # self.data.U[feature] = np.array(self.U[feature])
-
-
-        for feature in self.data.features_0d:
-            self.data.U[feature] = []
-            self.data.t[feature] = None
-            for solved in solves:
-                self.data.U[feature].append(solved[feature][1])
-
-            # self.U[feature] = np.array(self.U[feature])
-
-        # self.t[feature] = np.array(self.t[feature])
-        self.data.U[feature] = np.array(self.data.U[feature])
 
 
 
@@ -208,7 +146,6 @@ class UncertaintyCalculations:
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
         self.storeResults(solves)
 
-        # TODO keep this test for adaptive_model ?
         # test if it is an adaptive model
         if not self.model.adaptive_model:
             self.isAdaptiveError()
@@ -295,9 +232,31 @@ class UncertaintyCalculations:
             self.data.total_sensitivity_1[feature] = None
             self.data.sensitivity_t[feature] = None
             self.data.total_sensitivity_t[feature] = None
+
+
     def totalSensitivity(self, sensitivity="sensitivity_1"):
 
+        sense = getattr(self.data, sensitivity)
+        total_sense = {}
 
+        for feature in sense:
+            if sense[feature] is None:
+                continue
+
+            total_sensitivity = 0
+            total_sense[feature] = []
+            for i in xrange(0, len(self.data.uncertain_parameters)):
+                tmp_sum_sensitivity = np.sum(sense[feature][i])
+
+                total_sensitivity += tmp_sum_sensitivity
+                total_sense[feature].append(tmp_sum_sensitivity)
+
+            for i in xrange(0, len(self.data.uncertain_parameters)):
+                if not total_sensitivity == 0:
+                    total_sense[feature][i] /= float(total_sensitivity)
+
+
+        setattr(self.data, "total_" + sensitivity, total_sense)
 
     def calculateNodes(self):
         return nodes

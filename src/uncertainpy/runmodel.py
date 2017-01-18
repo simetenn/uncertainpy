@@ -1,15 +1,26 @@
+import numpy as np
+
 from tqdm import tqdm
 from xvfbwrapper import Xvfb
 
 class RunModel:
     def __init__(self,
-                 rosenblatt=False,
-                 M=3,
-                 nr_pc_samples=None,
-                 seed=None):
+                 model,
+                 features,
+                 CPUs=mp.cpu_count(),
+                 supress_model_output=True,
+                 supress_model_graphics=True):
 
-        model
-        feature
+
+
+        self.model = model
+        self.features = features
+
+        self.CPUs = CPUs
+
+        self.supress_model_graphics = supress_model_graphics
+        self.supress_model_output = supress_model_output
+
 
 
     def performInterpolation(self, ts, interpolation):

@@ -6,7 +6,6 @@ import time
 import os
 
 import numpy as np
-import chaospy as cp
 import multiprocessing as mp
 import logging
 
@@ -145,7 +144,7 @@ For example on use see:
         """
 
 
-        self.data = Data()
+        # self.data = Data()
 
 
         if features is None:
@@ -165,17 +164,10 @@ For example on use see:
 
         self.model = model
 
-        self.rosenblatt = rosenblatt
-
-        self.M = 3
-        self.nr_mc_samples = nr_mc_samples
-        self.nr_pc_mc_samples = nr_pc_mc_samples
-
-
-        self.resetValues()
-
-
-
+        # self.rosenblatt = rosenblatt
+        # self.M = 3
+        # self.nr_mc_samples = nr_mc_samples
+        # self.nr_pc_mc_samples = nr_pc_mc_samples
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -195,12 +187,6 @@ For example on use see:
             self.output_data_filename = output_data_filename
 
 
-
-        if seed is not None:
-            cp.seed(seed)
-            np.random.seed(seed)
-        # self.seed = seed
-
         self.t_start = time.time()
 
 
@@ -217,22 +203,6 @@ For example on use see:
     #
     # def __setstate__(self, state):
     #     self.__dict__.update(state)
-
-
-    def resetValues(self):
-        self.parameter_names = None
-        self.parameter_space = None
-
-        self.U_hat = {}
-        self.distribution = None
-        self.solves = None
-        self.U_mc = {}  # TODO Is this needed to save?
-        self.P = None
-
-        self.data.resetValues()
-
-        self.data.xlabel = self.model.xlabel
-        self.data.ylabel = self.model.ylabel
 
 
 
