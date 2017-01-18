@@ -38,9 +38,7 @@ class UncertaintyCalculations:
 
     def createPCERosenblatt(self):
 
-
-
-    def performInterpolation(self, ts, interpolation):
+    def isAdaptiveError(self):
 
 
     def createMask(self, nodes, feature):

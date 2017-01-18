@@ -17,7 +17,8 @@ __version__ = "0.1"
 filepath = os.path.abspath(__file__)
 filedir = os.path.dirname(filepath)
 
-
+# In it's own function since the multiprocessing library is unable to picle
+# methods in a class.
 def evaluateNodeFunction(data):
     """
 all_data = (model_cmds,
