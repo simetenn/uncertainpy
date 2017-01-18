@@ -22,7 +22,6 @@
 
 # TODO incorporate singleNeuronRun into a class of file
 
-# TODO problems with new neuron models, and their path
 
 # TODO find out where to save parameter distributions and parameter objects. In
 # the least remove the problems with parameters and setParameters beeing two
@@ -269,7 +268,7 @@ For example on use see:
         if seed is not None:
             cp.seed(seed)
             np.random.seed(seed)
-        self.seed = seed
+        # self.seed = seed
 
         self.t_start = time.time()
 
@@ -349,24 +348,6 @@ For example on use see:
 
 
 
-    def sortFeaturesFromResults(self, results):
-        features_0d = []
-        features_1d = []
-        features_2d = []
-
-        for feature in results:
-            if hasattr(results[feature][1], "__iter__"):
-                if len(results[feature][1].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature][1].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    features_2d.append(feature)
-            else:
-                features_0d.append(feature)
-
-        return features_0d, features_1d, features_2d
-
 
 
     def performInterpolation(self, ts, interpolation):
@@ -388,15 +369,8 @@ For example on use see:
 
 
     def storeResults(self, solves):
-        features_0d, features_1d, features_2d = self.sortFeaturesFromResults(solves[0])
 
-
-        self.data.features_0d = features_0d
-        self.data.features_1d = features_1d
-        self.data.features_2d = features_2d
-        self.data.feature_list = features_0d + features_1d + features_2d
-
-        self.data.feature_list.sort()
+        self.data.setFeatures(solves[0])
 
         for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":
@@ -543,12 +517,7 @@ For example on use see:
         # TODO keep this test for adaptive_model ?
         # test if it is an adaptive model
         if not self.model.adaptive_model:
-            for feature in self.data.features_1d + self.data.features_2d:
-                u_prev = self.data.U[feature][0]
-                for u in self.data.U[feature][1:]:
-                    if u_prev.shape != u.shape:
-                        raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
-                    u_prev = u
+            self.isAdaptiveError()
 
 
         # Calculate PC for each feature
@@ -567,6 +536,15 @@ For example on use see:
         # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
         # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
         #                                                    self.data.U["directComparison"], rule="T")
+
+
+    def isAdaptiveError(self):
+        for feature in self.data.features_1d + self.data.features_2d:
+            u_prev = self.data.U[feature][0]
+            for u in self.data.U[feature][1:]:
+                if u_prev.shape != u.shape:
+                    raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
+                u_prev = u
 
 
     def PCAnalysis(self):

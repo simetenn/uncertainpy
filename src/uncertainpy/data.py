@@ -146,16 +146,19 @@ class Data:
         self.feature_list = self.features_0d + self.features_1d + self.features_2d
         self.feature_list.sort()
 
+
     def sortFeatures(self, results):
         features_2d = []
         features_1d = []
         features_0d = []
 
+
+
         for feature in results:
-            if hasattr(results[feature], "__iter__"):
-                if len(results[feature].shape) == 0:
+            if hasattr(results[feature][1], "__iter__"):
+                if len(results[feature][1].shape) == 0:
                     features_0d.append(feature)
-                elif len(results[feature].shape) == 1:
+                elif len(results[feature][1].shape) == 1:
                     features_1d.append(feature)
                 else:
                     features_2d.append(feature)
