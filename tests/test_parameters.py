@@ -325,10 +325,12 @@ class TestParameters(unittest.TestCase):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
+        
         self.parameters = Parameters(parameterlist)
 
         with self.assertRaises(AttributeError):
-            self.parameters.get("not_a_parameters")
+            self.parameters.get("not_a_parameter")
+
 
     def test_getDistribution(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
