@@ -1,21 +1,27 @@
 import chaospy as cp
 import numpy as np
+import multiprocessing as mp
 
+from uncertainpy import RunModel
 
 class UncertaintyCalculations:
     def __init__(self,
+                 model,
+                 features,
                  rosenblatt=False,
+                 CPUs=mp.cpu_count(),
                  M=3,
                  nr_pc_samples=None,
                  seed=None):
 
-        model
-        feature
-
+        self.model = model
+        self.features = features
 
         self.P = None
         self.M = M
         self.distribution = None
+
+        self.runmodel = RunModel(self.model, self.features)
 
         self.rosenblatt = rosenblatt
 
@@ -30,13 +36,17 @@ class UncertaintyCalculations:
             np.random.seed(seed)
 
 
-    def createDistribution(self, parameter_space):
-        ""
+    def createDistribution(self, parameter_names=None):
+        if parameter_names is None:
+            parameter_space = self.model.parameters.getUncertain("distribution")
+            self.data.uncertain_parameters = self.model.parameters.getUncertain()
+        else:
+            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
+            self.data.uncertain_parameters = [parameter_name]
 
 
-    def calculatePC(self, nodes, U):
-        U_hat = cp.fit_regression(self.P, nodes, U, rule="T")
-        return U_hat
+
+        self.distribution = cp.J(*parameter_space)
 
 
     def createMask(self, nodes, feature):
@@ -78,16 +88,40 @@ class UncertaintyCalculations:
 
 
     def createPCE(self):
+        self.nr_pc_samples = nr_pc_samples
+
+        # TODO find a good way to solve the parameter_name poblem
+
+
+        self.P = cp.orth_ttr(self.M, self.distribution)
+
+        if self.nr_pc_samples is None:
+            self.nr_pc_samples = 2*len(self.P) + 2
+
+
+        nodes = self.distribution.sample(self.nr_pc_samples, "M")
+        # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
+
+        # Running the model
+        self.data = self.runmodel.run()
+
+        # Calculate PC for each feature
+        for feature in self.data.feature_list:
+            masked_nodes, masked_U = self.createMask(nodes, feature)
+
+            # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+            self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                                                    masked_U, rule="T")
+
+        # TODO perform for directComparison outside, since masking is not needed.?
+        # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
+        # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
+        #                                                    self.data.U["directComparison"], rule="T")
+
+
+
 
     def createPCERosenblatt(self):
-
-
-
-
-
-
-    def createPCExpansion(self, parameter_name=None, nr_pc_samples=None):
-
         self.nr_pc_samples = nr_pc_samples
 
         # TODO find a good way to solve the parameter_name poblem
@@ -99,46 +133,30 @@ class UncertaintyCalculations:
             self.data.uncertain_parameters = [parameter_name]
 
 
+        # Create the Multivariat normal distribution
+        dist_MvNormal = []
+        for parameter in self.model.parameters.getUncertain("value"):
+            dist_MvNormal.append(cp.Normal())
 
-        if self.rosenblatt:
-            # Create the Multivariat normal distribution
-            dist_MvNormal = []
-            for parameter in self.model.parameters.getUncertain("value"):
-                dist_MvNormal.append(cp.Normal())
-
-            dist_MvNormal = cp.J(*dist_MvNormal)
+        dist_MvNormal = cp.J(*dist_MvNormal)
 
 
-            self.distribution = cp.J(*parameter_space)
-            self.P = cp.orth_ttr(self.M, dist_MvNormal)
+        self.distribution = cp.J(*parameter_space)
+        self.P = cp.orth_ttr(self.M, dist_MvNormal)
 
-            if self.nr_pc_samples is None:
-                self.nr_pc_samples = 2*len(self.P) + 1
+        if self.nr_pc_samples is None:
+            self.nr_pc_samples = 2*len(self.P) + 1
 
-            nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
-            # nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
-            #                                                           rule="J", sparse=True)
+        nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
+        # nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
+        #                                                           rule="J", sparse=True)
 
-            nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
-            # weights = weights_MvNormal*\
-            #    self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
+        nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
+        # weights = weights_MvNormal*\
+        #    self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
 
-            self.distribution = dist_MvNormal
+        self.distribution = dist_MvNormal
 
-        else:
-            self.distribution = cp.J(*parameter_space)
-
-            self.P = cp.orth_ttr(self.M, self.distribution)
-
-            if self.nr_pc_samples is None:
-                self.nr_pc_samples = 2*len(self.P) + 2
-
-
-            nodes = self.distribution.sample(self.nr_pc_samples, "M")
-            # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
-
-        # if len(nodes.shape) == 1:
-        #     nodes = np.array([nodes])
 
         # Running the model
         solves = self.evaluateNodes(nodes)
@@ -146,18 +164,13 @@ class UncertaintyCalculations:
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
         self.storeResults(solves)
 
-        # test if it is an adaptive model
-        if not self.model.adaptive_model:
-            self.isAdaptiveError()
+
+
 
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
-            if self.rosenblatt:
-                masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
-
-            else:
-                masked_nodes, masked_U = self.createMask(nodes, feature)
+            masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
 
             # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
@@ -169,13 +182,14 @@ class UncertaintyCalculations:
         #                                                    self.data.U["directComparison"], rule="T")
 
 
-    def isAdaptiveError(self):
-        for feature in self.data.features_1d + self.data.features_2d:
-            u_prev = self.data.U[feature][0]
-            for u in self.data.U[feature][1:]:
-                if u_prev.shape != u.shape:
-                    raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
-                u_prev = u
+
+    def calculatePC(self, nodes, U):
+        U_hat = cp.fit_regression(self.P, nodes, U, rule="T")
+        return U_hat
+
+
+    def calculateNodes(self):
+        return nodes
 
 
     def PCAnalysis(self):
@@ -258,8 +272,7 @@ class UncertaintyCalculations:
 
         setattr(self.data, "total_" + sensitivity, total_sense)
 
-    def calculateNodes(self):
-        return nodes
+
 
     def getNrSamples(self):
         return self.M

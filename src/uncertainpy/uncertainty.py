@@ -5,7 +5,6 @@
 import time
 import os
 
-import numpy as np
 import multiprocessing as mp
 import logging
 
@@ -14,7 +13,6 @@ import logging
 from uncertainpy.features import GeneralFeatures
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.utils import create_logger
-from uncertainpy import Data
 
 
 
@@ -86,22 +84,22 @@ supress_model_output : True
     Supress terminal output from the model.
     Note: set this to false when debugging your model,
     otherwise print statements will be supressed.
-    Defualt is True.
+    Default is True.
 CPUs : int
     The number of CPUs to perform
     calculations on.
-    Defualt is mp.cpu_count() - the number of CPUs on your computer
+    Default is mp.cpu_count() - the number of CPUs on your computer
 rosenblatt : False
     If a rosenblatt transformation should be used.
     Use this if you have dependent uncertain
     parameters.
     Note: not been tested on dependent uncertain
     parameters.
-    Defualt is False.
+    Default is False.
 nr_mc_samples : int
     The number of samples usend when performing a Monte Carlo
     Method.
-    Defualt is 10**3.
+    Default is 10**3.
 nr_pc_mc_samples : int
     The number of samples when using the polynomal chaos
     polynomial as a surrogate model for a Monte Carlo method.
@@ -114,7 +112,7 @@ verbose_level : str
 verbose_filename : None/str
     redirect output to a file. If None print to terminal.
     Default is None.
-seed : None/ int or array_like, optional
+seed : None | int | array_like, optional
     Setting a seed, usefull for testing purposes
 
 Methods
@@ -158,8 +156,6 @@ For example on use see:
         self.output_dir_data = output_dir_data
         self.output_dir_figures = output_dir_figures
 
-        self.supress_model_graphics = supress_model_graphics
-        self.supress_model_output = supress_model_output
         self.CPUs = CPUs
 
         self.model = model
@@ -187,6 +183,8 @@ For example on use see:
             self.output_data_filename = output_data_filename
 
 
+        # self.seed = seed
+
         self.t_start = time.time()
 
 
@@ -203,9 +201,6 @@ For example on use see:
     #
     # def __setstate__(self, state):
     #     self.__dict__.update(state)
-
-
-
 
 
 
@@ -306,30 +301,6 @@ For example on use see:
         return self.data
 
 
-
-    def totalSensitivity(self, sensitivity="sensitivity_1"):
-
-        sense = getattr(self.data, sensitivity)
-        total_sense = {}
-
-        for feature in sense:
-            if sense[feature] is None:
-                continue
-
-            total_sensitivity = 0
-            total_sense[feature] = []
-            for i in xrange(0, len(self.data.uncertain_parameters)):
-                tmp_sum_sensitivity = np.sum(sense[feature][i])
-
-                total_sensitivity += tmp_sum_sensitivity
-                total_sense[feature].append(tmp_sum_sensitivity)
-
-            for i in xrange(0, len(self.data.uncertain_parameters)):
-                if not total_sensitivity == 0:
-                    total_sense[feature][i] /= float(total_sensitivity)
-
-
-        setattr(self.data, "total_" + sensitivity, total_sense)
 
 
     def save(self, filename):

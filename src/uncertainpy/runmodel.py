@@ -1,7 +1,11 @@
-import numpy as np
-
 from tqdm import tqdm
 from xvfbwrapper import Xvfb
+
+import numpy as np
+import multiprocessing as mp
+
+from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
+from uncertainty import Data
 
 class RunModel:
     def __init__(self,
@@ -12,7 +16,6 @@ class RunModel:
                  supress_model_graphics=True):
 
 
-
         self.model = model
         self.features = features
 
@@ -21,6 +24,7 @@ class RunModel:
         self.supress_model_graphics = supress_model_graphics
         self.supress_model_output = supress_model_output
 
+        self.data = Data()
 
 
     def performInterpolation(self, ts, interpolation):
@@ -44,6 +48,9 @@ class RunModel:
     def storeResults(self, solves):
 
         self.data.setFeatures(solves[0])
+
+        self.isAdaptiveError()
+
 
         for feature in self.data.features_2d:
             if self.model.adaptive_model and feature == "directComparison":
@@ -89,17 +96,17 @@ class RunModel:
 
 
     def evaluateNodeFunctionList(self, nodes):
-        data = []
+        data_list = []
 
         for node in nodes:
-            data.append((self.model.cmd(),
-                         self.supress_model_output,
-                         self.model.adaptive_model,
-                         node,
-                         self.data.uncertain_parameters,
-                         self.features.cmd(),
-                         self.features.kwargs()))
-        return data
+            data_list.append((self.model.cmd(),
+                              self.supress_model_output,
+                              self.model.adaptive_model,
+                              node,
+                              self.data.uncertain_parameters,
+                              self.features.cmd(),
+                              self.features.kwargs()))
+        return data_list
 
 
 
@@ -111,9 +118,7 @@ class RunModel:
 
         solves = []
         pool = mp.Pool(processes=self.CPUs)
-        # solves = pool.map(evaluateNodeFunction,
-        #                   self.evaluateNodeFunctionList(nodes.T))
-        #
+
         for result in tqdm(pool.imap(evaluateNodeFunction,
                                      self.evaluateNodeFunctionList(nodes.T)),
                            desc="Running model",
@@ -129,3 +134,27 @@ class RunModel:
             vdisplay.stop()
 
         return np.array(solves)
+
+
+    def isAdaptiveError(self):
+        """
+Test if the model returned an adaptive result,
+Raise a ValueError if that is the case
+"""
+        if not self.model.adaptive_model:
+            for feature in self.data.features_1d + self.data.features_2d:
+                u_prev = self.data.U[feature][0]
+                for u in self.data.U[feature][1:]:
+                    if u_prev.shape != u.shape:
+                        raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
+                    u_prev = u
+
+
+    def run(self, nodes):
+
+        self.data.resetValues()
+
+        solves = self.evaluateNodes(nodes)
+        self.storeResults(solves)
+
+        return self.data

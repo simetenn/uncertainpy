@@ -210,9 +210,9 @@ List of the property of all uncertain parameters
         return items
 
 
-    def get(self, prop="name"):
+    def get(self, prop="name", parameter_names=None):
         """
-Get a property of all uncertain parameters(parameters that have a distribution=
+Get the property of all parameters in parameter_names
 
 Parameters
 ----------
@@ -220,16 +220,23 @@ Required arguments
 
 prop: "name" | "value" | "distribution"
     The name of the property to be returned
-
+parameter_names: None | list
+    A list of all parameters of which property should be returned
+    If None, the property all parameters are returned.
+    Default is None.
 Returns
 -------
 List of the property of all uncertain parameters
         """
 
-        if prop in self.parameters.keys():
-            return self.parameters[prop]
+        if parameter_names is None:
+            parameter_names = self.parameters.keys()
 
-        return [getattr(parameter, prop) for parameter in self.parameters.values()]
+        return_parameters = []
+        for parameter_name in parameter_names:
+            return_parameters.append(self.parameters[parameter_name])
+
+        return [getattr(parameter, prop) for parameter in return_parameters]
 
 
     def setParameterValues(self, filename, parameters):

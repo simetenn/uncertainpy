@@ -19,6 +19,7 @@ class Data:
 
 
         self.resetValues()
+        
         if filename is not None:
             self.load(filename)
 
