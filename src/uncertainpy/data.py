@@ -49,6 +49,18 @@ class Data:
         self.ylabel = ""
 
 
+    def isAdaptive(self):
+        """
+Test if the model returned an adaptive result
+        """
+        for feature in self.features_1d + self.features_2d:
+            u_prev = self.U[feature][0]
+            for u in self.U[feature][1:]:
+                if u_prev.shape != u.shape:
+                    return True
+                u_prev = u
+        return False
+
 
     def save(self, filename):
         ### TODO expand the save funcition to also save parameters and model information
@@ -152,7 +164,6 @@ class Data:
         features_2d = []
         features_1d = []
         features_0d = []
-
 
         for feature in results:
             if hasattr(results[feature][1], "__iter__"):

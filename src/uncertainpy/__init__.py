@@ -4,6 +4,7 @@ from parameters import Parameter, Parameters
 from evaluateNodeFunction import evaluateNodeFunction
 from uncertainty import UncertaintyEstimation
 from exploration import UncertaintyEstimations
+from runmodel import RunModel
 
 from plotting import *
 from uncertainpy.features import *

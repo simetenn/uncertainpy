@@ -5,8 +5,8 @@ import numpy as np
 import multiprocessing as mp
 
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
-from uncertainty import Data
-from uncertainty import GeneralFeatures
+from uncertainpy import Data
+from uncertainpy.features import GeneralFeatures
 
 class RunModel:
     def __init__(self,
@@ -54,7 +54,7 @@ class RunModel:
 
         self.data.setFeatures(solves[0])
 
-        self.isAdaptiveError()
+        self.isAdaptiveError(solves)
 
 
         for feature in self.data.features_2d:
@@ -141,18 +141,22 @@ class RunModel:
         return np.array(solves)
 
 
-    def isAdaptiveError(self):
+    def isAdaptiveError(self, solves):
         """
-Test if the model returned an adaptive result,
+Test if solves returned an adaptive result,
 Raise a ValueError if that is the case
-"""
+        """
         if not self.model.adaptive_model:
             for feature in self.data.features_1d + self.data.features_2d:
-                u_prev = self.data.U[feature][0]
-                for u in self.data.U[feature][1:]:
+
+                u_prev = solves[0][feature][1]
+                for solve in solves[1:]:
+                    u = solve[feature][1]
                     if u_prev.shape != u.shape:
+                        # TODO if the model is adaptive perform the complete interpolation here instead.
                         raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
                     u_prev = u
+
 
 
     def run(self, nodes):

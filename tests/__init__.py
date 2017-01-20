@@ -2,6 +2,7 @@ __all__ = ["TestDistribution",
            "TestEvaluateNodeFunction",
            "TestExploration",
            "TestGeneralFeatures",
+           "TestRunModelClass",
            "TestGeneralNeuronFeatures",
            "TestNeuronFeatures",
            "TestTestingFeatures",
@@ -47,3 +48,4 @@ from test_spikes import TestSpikes
 from test_uncertainty import TestUncertainty
 from test_usecase import TestUseCases
 from test_data import TestData
+from test_runModelClass import TestRunModelClass

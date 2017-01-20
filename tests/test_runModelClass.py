@@ -15,7 +15,7 @@ from models import TestingModel0d, TestingModel1d, TestingModel2d
 from models import TestingModel1dAdaptive
 
 
-class TestUncertainty(unittest.TestCase):
+class TestRunModelClass(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
         self.seed = 10
@@ -27,10 +27,8 @@ class TestUncertainty(unittest.TestCase):
 
         self.runmodel = RunModel(TestingModel1d(),
                                  features=TestingFeatures(),
-                                 verbose_level="error",
-                                 output_dir_data=self.output_test_dir,
-                                 output_dir_figures=self.output_test_dir,
-                                 seed=self.seed)
+                                 supress_model_output=True,
+                                 supress_model_graphics=True)
 
 
 
@@ -43,314 +41,295 @@ class TestUncertainty(unittest.TestCase):
         RunModel(TestingModel1d())
 
 
-    # def test_evaluateNodeFunctionList(self):
-    #     nodes = [[0, 1], [1, 2], [2, 3]]
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     result = self.runmodel.evaluateNodeFunctionList(nodes)
-    #
-    #     self.assertEqual(len(result), 3)
-    #     self.assertTrue(result[0][1])
-    #     self.assertFalse(result[0][2])
-    #     self.assertTrue(result[0][3], [0, 1])
-    #     self.assertTrue(result[1][3], [1, 2])
-    #     self.assertTrue(result[2][3], [2, 3])
-    #     self.assertEqual(result[0][4], ["a", "b"])
-    #     self.assertEqual(result[0][6], {"features_to_run": ["feature0d", "feature1d",
-    #                                                         "feature2d", "featureInvalid"]})
-    #
-    #     nodes = [[0, 1], [0, 1], [0, 1]]
-    #     result = self.runmodel.evaluateNodeFunctionList(nodes)
-    #
-    #     self.assertEqual(result[0], result[1])
-    #     self.assertEqual(result[1], result[2])
-    #
-    #
-    # def test_evaluateNodesSequentialModel0d(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel = UncertaintyEstimation(TestingModel0d(),
-    #                                              features=TestingFeatures(),
-    #                                              verbose_level="error")
-    #
-    #     self.CPUs = 1
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #
-    #
-    #     self.assertEqual(set(results[0].keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #
-    # def test_evaluateNodesParallelModel0D(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel = UncertaintyEstimation(TestingModel0d(),
-    #                                              features=TestingFeatures(),
-    #                                              verbose_level="error")
-    #     self.CPUs = 3
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #
-    #     self.assertEqual(set(results[0].keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #
-    # def test_evaluateNodesSequentialModel1d(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.CPUs = 1
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #
-    #     self.assertEqual(set(results[0].keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #
-    # def test_evaluateNodesParallelModel1D(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.CPUs = 3
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #
-    #     self.assertEqual(set(results[0].keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    # def test_evaluateNodesSequentialModel2d(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel = UncertaintyEstimation(TestingModel2d(),
-    #                                              features=TestingFeatures(),)
-    #
-    #     self.CPUs = 1
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #
-    #     self.assertEqual(set(results[0].keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #
-    # def test_evaluateNodesParallelModel2D(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel = UncertaintyEstimation(TestingModel2d(),
-    #                                              features=TestingFeatures(),
-    #                                              verbose_level="error")
-    #     self.CPUs = 3
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #
-    #     self.assertEqual(set(results[0].keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #
-    # def test_evaluateNodesNotSupressOutput(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     self.runmodel.supress_model_output = False
-    #     self.runmodel.evaluateNodes(nodes)
-    #
-    #
-    # def test_evaluateNodesSupressOutput(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     self.runmodel.supress_model_output = True
-    #     self.runmodel.evaluateNodes(nodes)
-    #
-    #
-    # def test_evaluateNodesNotSupressGraphics(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     self.runmodel.supress_model_graphics = False
-    #     self.runmodel.evaluateNodes(nodes)
-    #
-    #
-    # def test_evaluateNodesSupressGraphics(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     self.runmodel.supress_model_supress_model_graphics = True
-    #     self.runmodel.evaluateNodes(nodes)
-    #
-    #
-    # def test_sortFeaturesFromResults(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #     features_0d, features_1d, features_2d = self.runmodel.sortFeaturesFromResults(results[0])
-    #
-    #     self.assertIn("directComparison", features_1d)
-    #     self.assertIn("feature2d", features_2d)
-    #     self.assertIn("feature1d", features_1d)
-    #     self.assertIn("feature0d", features_0d)
-    #     self.assertIn("featureInvalid", features_0d)
-    #
-    #
-    # def test_storeResultsModel1dFeaturesAll(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #     self.runmodel.storeResults(results)
-    #
-    #     self.assertEqual(set(self.runmodel.data.U.keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #     self.assertEqual(set(self.runmodel.data.t.keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #     self.assertIn("directComparison", self.runmodel.data.U.keys())
-    #     self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
-    #                                    np.arange(0, 10)))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][0],
-    #                                    np.arange(0, 10) + 1))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][1],
-    #                                    np.arange(0, 10) + 3))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][2],
-    #                                    np.arange(0, 10) + 5))
-    #
-    #
-    #     self.assertFeature0d(results)
-    #     self.assertFeature1d(results)
-    #     self.assertFeature2d(results)
-    #     self.assertFeatureInvalid(results)
-    #
-    #
-    # def test_storeResultsModel1dFeaturesAllAdaptive(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     self.runmodel.model.adaptive_model = True
-    #     self.runmodel.data.feature_list = ["feature0d", "feature1d", "feature2d",
-    #                                           "featureInvalid"]
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #     self.runmodel.storeResults(results)
-    #
-    #     self.assertEqual(set(self.runmodel.data.U.keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #     self.assertEqual(set(self.runmodel.data.t.keys()),
-    #                      set(["feature0d", "feature1d", "feature2d",
-    #                           "directComparison", "featureInvalid"]))
-    #
-    #     self.assertIn("directComparison", self.runmodel.data.U.keys())
-    #     self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
-    #                                    np.arange(0, 10)))
-    #     self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][0],
-    #                                 np.arange(0, 10) + 1))
-    #     self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][1],
-    #                                 np.arange(0, 10) + 3))
-    #     self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][2],
-    #                                 np.arange(0, 10) + 5))
-    #
-    #     self.assertFeature0d(results)
-    #     self.assertFeature1d(results)
-    #     self.assertFeature2d(results)
-    #     self.assertFeatureInvalid(results)
-    #
-    #
-    # def assertFeature0d(self, results):
-    #     self.assertIn("feature0d", self.runmodel.data.U.keys())
-    #     self.assertIsNone(self.runmodel.data.t["feature0d"])
-    #     self.assertEqual(self.runmodel.data.U["feature0d"][0], 1)
-    #     self.assertEqual(self.runmodel.data.U["feature0d"][1], 1)
-    #     self.assertEqual(self.runmodel.data.U["feature0d"][2], 1)
-    #
-    #
-    # def assertFeature1d(self, results):
-    #     self.assertIn("feature1d", self.runmodel.data.U.keys())
-    #     self.assertTrue(np.array_equal(self.runmodel.data.t["feature1d"],
-    #                                    np.arange(0, 10)))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["feature1d"][0],
-    #                                    np.arange(0, 10)))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["feature1d"][1],
-    #                                    np.arange(0, 10)))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["feature1d"][2],
-    #                                    np.arange(0, 10)))
-    #
-    #
-    # def assertFeature2d(self, results):
-    #     self.assertIn("feature2d", self.runmodel.data.U.keys())
-    #     self.assertTrue(np.array_equal(self.runmodel.data.t["feature2d"],
-    #                                    np.arange(0, 10)))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["feature2d"][0],
-    #                                    np.array([np.arange(0, 10),
-    #                                              np.arange(0, 10)])))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["feature2d"][1],
-    #                                    np.array([np.arange(0, 10),
-    #                                              np.arange(0, 10)])))
-    #     self.assertTrue(np.array_equal(self.runmodel.data.U["feature2d"][2],
-    #                                    np.array([np.arange(0, 10),
-    #                                              np.arange(0, 10)])))
-    #
-    #
-    # def assertFeatureInvalid(self, results):
-    #     self.assertIn("featureInvalid", self.runmodel.data.U.keys())
-    #     self.assertIsNone(self.runmodel.data.t["featureInvalid"])
-    #     self.assertTrue(np.isnan(self.runmodel.data.U["featureInvalid"][0]))
-    #     self.assertTrue(np.isnan(self.runmodel.data.U["featureInvalid"][1]))
-    #     self.assertTrue(np.isnan(self.runmodel.data.U["featureInvalid"][2]))
-    #
-    #
-    #
-    #
-    # def test_performInterpolation(self):
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    #     self.runmodel.model.adaptive_model = True
-    #     self.runmodel.data.feature_list = []
-    #
-    #     results = self.runmodel.evaluateNodes(nodes)
-    #     ts = []
-    #     interpolation = []
-    #
-    #     for solved in results:
-    #         ts.append(solved["directComparison"][0])
-    #         interpolation.append(solved["directComparison"][2])
-    #
-    #     self.assertTrue(np.array_equal(ts[0], ts[1]))
-    #     self.assertTrue(np.array_equal(ts[1], ts[2]))
-    #
-    #     self.assertIsInstance(interpolation[0],
-    #                           scipy.interpolate.fitpack2.UnivariateSpline)
-    #     self.assertIsInstance(interpolation[1],
-    #                           scipy.interpolate.fitpack2.UnivariateSpline)
-    #     self.assertIsInstance(interpolation[2],
-    #                           scipy.interpolate.fitpack2.UnivariateSpline)
-    #
-    #     t, interpolated_solves = self.runmodel.performInterpolation(ts, interpolation)
-    #
-    #     self.assertTrue(np.array_equal(t, np.arange(0, 10)))
-    #     self.assertTrue(np.allclose(interpolated_solves[0],
-    #                                 np.arange(0, 10) + 1))
-    #     self.assertTrue(np.allclose(interpolated_solves[1],
-    #                                 np.arange(0, 10) + 3.))
-    #     self.assertTrue(np.allclose(interpolated_solves[2],
-    #                                 np.arange(0, 10) + 5.))
-    #
-    #     ts[1] = np.arange(0, 20)
-    #
-    #     t, interpolated_solves = self.runmodel.performInterpolation(ts, interpolation)
-    #
-    #     self.assertTrue(np.array_equal(t, np.arange(0, 20)))
-    #     self.assertTrue(np.allclose(interpolated_solves[0],
-    #                                 np.arange(0, 20) + 1))
-    #     self.assertTrue(np.allclose(interpolated_solves[1],
-    #                                 np.arange(0, 20) + 3.))
-    #     self.assertTrue(np.allclose(interpolated_solves[2],
-    #                                 np.arange(0, 20) + 5.))
-    #
-    #
-    #
+    def test_evaluateNodeFunctionList(self):
+        nodes = [[0, 1], [1, 2], [2, 3]]
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        result = self.runmodel.evaluateNodeFunctionList(nodes)
+
+        self.assertEqual(len(result), 3)
+        self.assertTrue(result[0][1])
+        self.assertFalse(result[0][2])
+        self.assertTrue(result[0][3], [0, 1])
+        self.assertTrue(result[1][3], [1, 2])
+        self.assertTrue(result[2][3], [2, 3])
+        self.assertEqual(result[0][4], ["a", "b"])
+        self.assertEqual(result[0][6], {"features_to_run": ["feature0d", "feature1d",
+                                                            "feature2d", "featureInvalid"]})
+
+        nodes = [[0, 1], [0, 1], [0, 1]]
+        result = self.runmodel.evaluateNodeFunctionList(nodes)
+
+        self.assertEqual(result[0], result[1])
+        self.assertEqual(result[1], result[2])
+
+
+    def test_evaluateNodesSequentialModel0d(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel = RunModel(TestingModel0d(), features=TestingFeatures())
+
+        self.CPUs = 1
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+
+    def test_evaluateNodesParallelModel0D(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel = RunModel(TestingModel0d(), features=TestingFeatures())
+        self.CPUs = 3
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+
+    def test_evaluateNodesSequentialModel1d(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.CPUs = 1
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+
+    def test_evaluateNodesParallelModel1D(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.CPUs = 3
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+    def test_evaluateNodesSequentialModel2d(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel = RunModel(TestingModel2d(), features=TestingFeatures())
+
+        self.CPUs = 1
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+
+    def test_evaluateNodesParallelModel2D(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel = RunModel(TestingModel2d(), features=TestingFeatures())
+        self.CPUs = 3
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+
+    def test_evaluateNodesNotSupressOutput(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        self.runmodel.supress_model_output = False
+        self.runmodel.evaluateNodes(nodes)
+
+
+    def test_evaluateNodesSupressOutput(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        self.runmodel.supress_model_output = True
+        self.runmodel.evaluateNodes(nodes)
+
+
+    def test_evaluateNodesNotSupressGraphics(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        self.runmodel.supress_model_graphics = False
+        self.runmodel.evaluateNodes(nodes)
+
+
+    def test_evaluateNodesSupressGraphics(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        self.runmodel.supress_model_supress_model_graphics = True
+        self.runmodel.evaluateNodes(nodes)
+
+
+
+    def test_storeResultsModel1dFeaturesAll(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        self.runmodel.storeResults(results)
+
+        self.assertEqual(set(self.runmodel.data.U.keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+        self.assertEqual(set(self.runmodel.data.t.keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+        self.assertIn("directComparison", self.runmodel.data.U.keys())
+        self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][0],
+                                       np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][1],
+                                       np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][2],
+                                       np.arange(0, 10) + 5))
+
+
+        self.assertFeature0d(results)
+        self.assertFeature1d(results)
+        self.assertFeature2d(results)
+        self.assertFeatureInvalid(results)
+
+
+    def test_storeResultsModel1dFeaturesAllAdaptive(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        self.runmodel.model.adaptive_model = True
+        self.runmodel.data.feature_list = ["feature0d", "feature1d", "feature2d",
+                                           "featureInvalid"]
+
+        results = self.runmodel.evaluateNodes(nodes)
+        self.runmodel.storeResults(results)
+
+        self.assertEqual(set(self.runmodel.data.U.keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+        self.assertEqual(set(self.runmodel.data.t.keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "directComparison", "featureInvalid"]))
+
+        self.assertIn("directComparison", self.runmodel.data.U.keys())
+        self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][0],
+                                    np.arange(0, 10) + 1))
+        self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][1],
+                                    np.arange(0, 10) + 3))
+        self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][2],
+                                    np.arange(0, 10) + 5))
+
+        self.assertFeature0d(results)
+        self.assertFeature1d(results)
+        self.assertFeature2d(results)
+        self.assertFeatureInvalid(results)
+
+
+    def assertFeature0d(self, results):
+        self.assertIn("feature0d", self.runmodel.data.U.keys())
+        self.assertIsNone(self.runmodel.data.t["feature0d"])
+        self.assertEqual(self.runmodel.data.U["feature0d"][0], 1)
+        self.assertEqual(self.runmodel.data.U["feature0d"][1], 1)
+        self.assertEqual(self.runmodel.data.U["feature0d"][2], 1)
+
+
+    def assertFeature1d(self, results):
+        self.assertIn("feature1d", self.runmodel.data.U.keys())
+        self.assertTrue(np.array_equal(self.runmodel.data.t["feature1d"],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["feature1d"][0],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["feature1d"][1],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["feature1d"][2],
+                                       np.arange(0, 10)))
+
+
+    def assertFeature2d(self, results):
+        self.assertIn("feature2d", self.runmodel.data.U.keys())
+        self.assertTrue(np.array_equal(self.runmodel.data.t["feature2d"],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["feature2d"][0],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["feature2d"][1],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["feature2d"][2],
+                                       np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])))
+
+
+    def assertFeatureInvalid(self, results):
+        self.assertIn("featureInvalid", self.runmodel.data.U.keys())
+        self.assertIsNone(self.runmodel.data.t["featureInvalid"])
+        self.assertTrue(np.isnan(self.runmodel.data.U["featureInvalid"][0]))
+        self.assertTrue(np.isnan(self.runmodel.data.U["featureInvalid"][1]))
+        self.assertTrue(np.isnan(self.runmodel.data.U["featureInvalid"][2]))
+
+
+
+
+    def test_performInterpolation(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        self.runmodel.model.adaptive_model = True
+        self.runmodel.data.feature_list = []
+
+        results = self.runmodel.evaluateNodes(nodes)
+        ts = []
+        interpolation = []
+
+        for solved in results:
+            ts.append(solved["directComparison"][0])
+            interpolation.append(solved["directComparison"][2])
+
+        self.assertTrue(np.array_equal(ts[0], ts[1]))
+        self.assertTrue(np.array_equal(ts[1], ts[2]))
+
+        self.assertIsInstance(interpolation[0],
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+        self.assertIsInstance(interpolation[1],
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+        self.assertIsInstance(interpolation[2],
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+
+        t, interpolated_solves = self.runmodel.performInterpolation(ts, interpolation)
+
+        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
+        self.assertTrue(np.allclose(interpolated_solves[0],
+                                    np.arange(0, 10) + 1))
+        self.assertTrue(np.allclose(interpolated_solves[1],
+                                    np.arange(0, 10) + 3.))
+        self.assertTrue(np.allclose(interpolated_solves[2],
+                                    np.arange(0, 10) + 5.))
+
+        ts[1] = np.arange(0, 20)
+
+        t, interpolated_solves = self.runmodel.performInterpolation(ts, interpolation)
+
+        self.assertTrue(np.array_equal(t, np.arange(0, 20)))
+        self.assertTrue(np.allclose(interpolated_solves[0],
+                                    np.arange(0, 20) + 1))
+        self.assertTrue(np.allclose(interpolated_solves[1],
+                                    np.arange(0, 20) + 3.))
+        self.assertTrue(np.allclose(interpolated_solves[2],
+                                    np.arange(0, 20) + 5.))
+
+
+
     # def test_createMaskDirectComparison(self):
     #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
     #     self.runmodel.data.uncertain_parameters = ["a", "b"]
@@ -392,7 +371,7 @@ class TestUncertainty(unittest.TestCase):
     #
     #     logfile = os.path.join(self.output_test_dir, "test.log")
     #
-    #     self.runmodel = UncertaintyEstimation(TestingModel1d(),
+    #     self.runmodel = RunModel(TestingModel1d(),
     #                                              features=TestingFeatures(),
     #                                              verbose_level="warning",
     #                                              verbose_filename=logfile)

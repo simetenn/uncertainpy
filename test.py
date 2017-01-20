@@ -39,7 +39,7 @@ test_features.addTest(test_spike_sorting)
 
 test_logger = create_test_suite([TestLogger])
 
-test_runModel = create_test_suite([TestRunModel])
+test_runModel = create_test_suite([TestRunModel, TestRunModelClass])
 
 test_model = create_test_suite([TestModel,
                                 TestHodgkinHuxleyModel,

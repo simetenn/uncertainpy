@@ -27,12 +27,12 @@ class TestData(unittest.TestCase):
 
 
     def test_sortFeatures(self):
-        test_result = {"directComparison": np.arange(0, 10),
-                       "feature2d": np.array([np.arange(0, 10),
-                                              np.arange(0, 10)]),
-                       "feature1d": np.arange(0, 10),
-                       "feature0d": 1,
-                       "featureInvalid": np.nan}
+        test_result = {"directComparison": (None, np.arange(0, 10), None),
+                       "feature2d": (None, np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)]), None),
+                       "feature1d": (None, np.arange(0, 10), None),
+                       "feature0d": (None, 1, None),
+                       "featureInvalid": (None, np.nan, None)}
 
         features_0d, features_1d, features_2d = self.data.sortFeatures(test_result)
 
@@ -44,13 +44,14 @@ class TestData(unittest.TestCase):
 
 
 
+
     def test_setFeatures(self):
-        test_result = {"directComparison": np.arange(0, 10),
-                       "feature2d": np.array([np.arange(0, 10),
-                                              np.arange(0, 10)]),
-                       "feature1d": np.arange(0, 10),
-                       "feature0d": 1,
-                       "featureInvalid": np.nan}
+        test_result = {"directComparison": (None, np.arange(0, 10), None),
+                       "feature2d": (None, np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)]), None),
+                       "feature1d": (None, np.arange(0, 10), None),
+                       "feature0d": (None, 1, None),
+                       "featureInvalid": (None, np.nan, None)}
 
         self.data.setFeatures(test_result)
 
@@ -67,6 +68,21 @@ class TestData(unittest.TestCase):
                                                            "feature2d",
                                                            "featureInvalid"]))
 
+
+    def test_isAdaptiveFalse(self):
+        self.data.U = {"feature1": [np.arange(1,4), np.arange(1,4), np.arange(1,4)],
+                       "directComparison": [np.arange(1,4), np.arange(1,4), np.arange(1,4)]}
+
+        self.assertFalse(self.data.isAdaptive())
+
+
+    def test_isAdaptiveTrue(self):
+        self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
+                       "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
+
+        self.data.features_1d = ["feature1", "directComparison"]
+
+        self.assertTrue(self.data.isAdaptive())
 
     def test_save(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
@@ -97,6 +113,8 @@ class TestData(unittest.TestCase):
         result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
+
+
 
 
     def test_load(self):
