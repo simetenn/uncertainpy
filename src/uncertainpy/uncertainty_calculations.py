@@ -10,9 +10,13 @@ class UncertaintyCalculations:
                  features,
                  rosenblatt=False,
                  CPUs=mp.cpu_count(),
+                 supress_model_output=True,
+                 supress_model_graphics=True,
                  M=3,
                  nr_pc_samples=None,
-                 seed=None):
+                 seed=None,
+                 verbose_level="info",
+                 verbose_filename=None,):
 
         self.model = model
         self.features = features
@@ -20,16 +24,23 @@ class UncertaintyCalculations:
         self.P = None
         self.M = M
         self.distribution = None
+        self.data = None
 
-        self.runmodel = RunModel(self.model, self.features)
+        self.runmodel = RunModel(self.model,
+                                 features=self.features,
+                                 CPUs=mp.cpu_count(),
+                                 supress_model_output=supress_model_output,
+                                 supress_model_graphics=supress_model_graphics)
+
+    self.logger = create_logger(verbose_level,
+                                verbose_filename,
+                                self.__class__.__name__)
+
 
         self.rosenblatt = rosenblatt
 
-        if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 2
+        self.nr_pc_samples = nr_pc_samples
 
-        if self.rosenblatt:
-            self.nr_pc_samples -= 1
 
         if seed is not None:
             cp.seed(seed)
@@ -37,20 +48,22 @@ class UncertaintyCalculations:
 
 
     def createDistribution(self, parameter_names=None):
-        if parameter_names is None:
-            parameter_space = self.model.parameters.getUncertain("distribution")
-            self.data.uncertain_parameters = self.model.parameters.getUncertain()
-        else:
-            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            self.data.uncertain_parameters = [parameter_name]
+
+        parameter_distributions = self.model.parameters.get("distribution", parameter_names)
+
+        self.data.uncertain_parameters = parameter_names
+        self.distribution = cp.J(*parameter_distributions)
 
 
+    def createDistributionRosenblatt(self, parameter_names=None):
 
-        self.distribution = cp.J(*parameter_space)
+        parameter_distributions = self.model.parameters.get("distribution", parameter_names)
+
+        self.data.uncertain_parameters = parameter_names
+        self.distribution = cp.J(*parameter_distributions)
 
 
-    def createMask(self, nodes, feature):
-
+    def createMask(self, nodes, feature, weights=None):
         if feature not in self.data.feature_list:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
@@ -77,21 +90,26 @@ class UncertaintyCalculations:
         else:
             masked_nodes = nodes[mask]
 
+        if weights is not None:
+            if len(nodes.shape) > 1:
+                masked_weights = weights[:, mask]
+            else:
+                masked_weights = weights[mask]
+
 
         if not np.all(mask):
             # raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
             self.logger.warning("Feature: {} does not yield results for all parameter combinations".format(feature))
 
-        return np.array(masked_nodes), np.array(masked_U)
+        if weights is None:
+            return np.array(masked_nodes), np.array(masked_U)
+        else:
+            return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights)
 
 
 
-
-    def createPCE(self):
-        self.nr_pc_samples = nr_pc_samples
-
-        # TODO find a good way to solve the parameter_name poblem
-
+    def createPCE(self, parameter_names=None):
+        self.createDistribution(parameter_names=parameter_names)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -103,7 +121,7 @@ class UncertaintyCalculations:
         # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
         # Running the model
-        self.data = self.runmodel.run()
+        self.data = self.runmodel.run(nodes)
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
@@ -122,26 +140,16 @@ class UncertaintyCalculations:
 
 
     def createPCERosenblatt(self):
-        self.nr_pc_samples = nr_pc_samples
-
-        # TODO find a good way to solve the parameter_name poblem
-        if parameter_name is None:
-            parameter_space = self.model.parameters.getUncertain("parameter_space")
-            self.data.uncertain_parameters = self.model.parameters.getUncertain()
-        else:
-            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            self.data.uncertain_parameters = [parameter_name]
+        self.createDistribution(parameter_names=parameter_names)
 
 
         # Create the Multivariat normal distribution
         dist_MvNormal = []
-        for parameter in self.model.parameters.getUncertain("value"):
+        for parameter in self.data.uncertain_parameters:
             dist_MvNormal.append(cp.Normal())
 
         dist_MvNormal = cp.J(*dist_MvNormal)
 
-
-        self.distribution = cp.J(*parameter_space)
         self.P = cp.orth_ttr(self.M, dist_MvNormal)
 
         if self.nr_pc_samples is None:
@@ -219,15 +227,9 @@ class UncertaintyCalculations:
 
 
 
-    def MCanalysis(self, parameter_name=None):
-        if parameter_name is None:
-            parameter_space = self.model.parameters.getUncertain("parameter_space")
-            self.data.uncertain_parameters = self.model.parameters.getUncertain()
-        else:
-            parameter_space = [self.model.parameters.get(parameter_name).parameter_space]
-            self.data.uncertain_parameters = [parameter_name]
+    def MCanalysis(self, parameter_names=None):
+        self.createDistribution(parameter_names=parameter_names)
 
-        self.distribution = cp.J(*parameter_space)
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
         solves = self.evaluateNodes(nodes)

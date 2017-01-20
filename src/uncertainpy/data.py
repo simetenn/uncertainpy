@@ -19,7 +19,7 @@ class Data:
 
 
         self.resetValues()
-        
+
         if filename is not None:
             self.load(filename)
 
@@ -152,7 +152,6 @@ class Data:
         features_2d = []
         features_1d = []
         features_0d = []
-
 
 
         for feature in results:

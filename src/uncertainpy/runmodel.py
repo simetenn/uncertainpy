@@ -6,18 +6,23 @@ import multiprocessing as mp
 
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainty import Data
+from uncertainty import GeneralFeatures
 
 class RunModel:
     def __init__(self,
                  model,
-                 features,
+                 features=None,
                  CPUs=mp.cpu_count(),
                  supress_model_output=True,
                  supress_model_graphics=True):
 
 
         self.model = model
-        self.features = features
+
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
 
         self.CPUs = CPUs
 
