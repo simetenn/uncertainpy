@@ -70,8 +70,10 @@ class TestData(unittest.TestCase):
 
 
     def test_isAdaptiveFalse(self):
-        self.data.U = {"feature1": [np.arange(1,4), np.arange(1,4), np.arange(1,4)],
-                       "directComparison": [np.arange(1,4), np.arange(1,4), np.arange(1,4)]}
+        self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
+                       "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
+
+        self.data.features_1d = ["feature1", "directComparison"]
 
         self.assertFalse(self.data.isAdaptive())
 

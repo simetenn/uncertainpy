@@ -54,7 +54,11 @@ class RunModel:
 
         self.data.setFeatures(solves[0])
 
-        self.isAdaptiveError(solves)
+        if self.isSolvesAdaptive(solves) and not self.model.adaptive_model:
+            # TODO if the model is adaptive perform the complete interpolation here instead.
+
+            raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
+
 
 
         for feature in self.data.features_2d:
@@ -124,6 +128,7 @@ class RunModel:
         solves = []
         pool = mp.Pool(processes=self.CPUs)
 
+        print nodes
         for result in tqdm(pool.imap(evaluateNodeFunction,
                                      self.evaluateNodeFunctionList(nodes.T)),
                            desc="Running model",
@@ -140,29 +145,23 @@ class RunModel:
 
         return np.array(solves)
 
-
-    def isAdaptiveError(self, solves):
+    # TODO should this check one specific feature.
+    # Return false for all features?
+    def isSolvesAdaptive(self, solves):
         """
-Test if solves returned an adaptive result,
-Raise a ValueError if that is the case
+Test if solves is an adaptive result
         """
-        if not self.model.adaptive_model:
-            for feature in self.data.features_1d + self.data.features_2d:
-
-                u_prev = solves[0][feature][1]
-                for solve in solves[1:]:
-                    u = solve[feature][1]
-                    if u_prev.shape != u.shape:
-                        # TODO if the model is adaptive perform the complete interpolation here instead.
-                        raise ValueError("The number of simulation points varies between simulations. Try setting adaptive_model=True in model()")
-                    u_prev = u
-
+        for feature in self.data.features_1d + self.data.features_2d:
+            u_prev = solves[0][feature][1]
+            for solve in solves[1:]:
+                u = solve[feature][1]
+                if u_prev.shape != u.shape:
+                    return True
+                u_prev = u
+        return False
 
 
     def run(self, nodes):
-
-        self.data.resetValues()
-
         solves = self.evaluateNodes(nodes)
         self.storeResults(solves)
 
