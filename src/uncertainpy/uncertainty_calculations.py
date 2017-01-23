@@ -3,6 +3,7 @@ import numpy as np
 import multiprocessing as mp
 
 from uncertainpy import RunModel
+from uncertainpy.utils import create_logger
 
 class UncertaintyCalculations:
     def __init__(self,
@@ -32,9 +33,9 @@ class UncertaintyCalculations:
                                  supress_model_output=supress_model_output,
                                  supress_model_graphics=supress_model_graphics)
 
-    self.logger = create_logger(verbose_level,
-                                verbose_filename,
-                                self.__class__.__name__)
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
 
 
         self.rosenblatt = rosenblatt
@@ -61,6 +62,7 @@ class UncertaintyCalculations:
 
         self.data.uncertain_parameters = parameter_names
         self.distribution = cp.J(*parameter_distributions)
+
 
 
     def createMask(self, nodes, feature, weights=None):
@@ -108,7 +110,36 @@ class UncertaintyCalculations:
 
 
 
-    def createPCE(self, parameter_names=None):
+
+    # TODO not tested
+    def PCEQuadrature(self, parameter_names=None):
+        self.createDistribution(parameter_names=parameter_names)
+
+        self.P = cp.orth_ttr(self.M, self.distribution)
+
+        if self.nr_pc_samples is None:
+            self.nr_pc_samples = 2*len(self.P) + 2
+
+
+        nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
+
+        # Running the model
+        self.data = self.runmodel.run(nodes)
+
+        # Calculate PC for each feature
+        for feature in self.data.feature_list:
+            masked_nodes, masked_U, masked_weights = self.createMask(nodes, feature, weights)
+
+            self.U_hat = cp.fit_quadrature(self.P, masked_nodes,
+                                           masked_weights, masked_U)
+
+        # TODO perform for directComparison outside, since masking is not needed.?
+        # self.U_hat["directComparison"] = cp.fit_quadrature(self.P, nodes, masked_weights, self.data.U[feature])
+
+
+
+
+    def PCERegression(self, parameter_names=None):
         self.createDistribution(parameter_names=parameter_names)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
@@ -118,7 +149,6 @@ class UncertaintyCalculations:
 
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
-        # nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
         # Running the model
         self.data = self.runmodel.run(nodes)
@@ -127,19 +157,17 @@ class UncertaintyCalculations:
         for feature in self.data.feature_list:
             masked_nodes, masked_U = self.createMask(nodes, feature)
 
-            # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
 
         # TODO perform for directComparison outside, since masking is not needed.?
-        # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
         # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
         #                                                    self.data.U["directComparison"], rule="T")
 
 
 
-
-    def createPCERosenblatt(self):
+    # TODO not tested
+    def PCEQuadratureRosenblatt(self, parameter_names=None):
         self.createDistribution(parameter_names=parameter_names)
 
 
@@ -155,13 +183,12 @@ class UncertaintyCalculations:
         if self.nr_pc_samples is None:
             self.nr_pc_samples = 2*len(self.P) + 1
 
-        nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
-        # nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
-        #                                                           rule="J", sparse=True)
-
+        nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
+                                                                  rule="J", sparse=True)
+        # TODO Is this correct, copy pasted from below.
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
-        # weights = weights_MvNormal*\
-        #    self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
+
+        weights = weights_MvNormal*self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
 
         self.distribution = dist_MvNormal
 
@@ -172,17 +199,12 @@ class UncertaintyCalculations:
         # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
         self.storeResults(solves)
 
-
-
-
-
         # Calculate PC for each feature
         for feature in self.data.feature_list:
-            masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
+            masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal, feature, weights)
 
-            # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-            self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                    masked_U, rule="T")
+            self.U_hat = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
+
 
         # # perform for directComparison outside, since masking is not needed.
         # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
@@ -191,13 +213,45 @@ class UncertaintyCalculations:
 
 
 
-    def calculatePC(self, nodes, U):
-        U_hat = cp.fit_regression(self.P, nodes, U, rule="T")
-        return U_hat
+    def PCERegressionRosenblatt(self, parameter_names=None):
+        self.createDistribution(parameter_names=parameter_names)
 
 
-    def calculateNodes(self):
-        return nodes
+        # Create the Multivariat normal distribution
+        dist_MvNormal = []
+        for parameter in self.data.uncertain_parameters:
+            dist_MvNormal.append(cp.Normal())
+
+        dist_MvNormal = cp.J(*dist_MvNormal)
+
+
+        self.P = cp.orth_ttr(self.M, dist_MvNormal)
+
+        if self.nr_pc_samples is None:
+            self.nr_pc_samples = 2*len(self.P) + 1
+
+        nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
+        nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
+
+        self.distribution = dist_MvNormal
+
+        # Running the model
+        solves = self.evaluateNodes(nodes)
+
+        # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
+        self.storeResults(solves)
+
+        # Calculate PC for each feature
+        for feature in self.data.feature_list:
+            masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
+
+            self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                                                    masked_U, rule="T")
+
+        # TODO perform for directComparison outside, since masking is not needed.
+        # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes_MvNormal,
+        #                                                    self.data.U["directComparison"], rule="T")
+
 
 
     def PCAnalysis(self):

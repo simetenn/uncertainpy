@@ -6,13 +6,9 @@ import shutil
 
 
 from uncertainpy import RunModel
-from uncertainpy.parameters import Parameters
-from uncertainpy.features import GeneralFeatures
-from uncertainpy import Distribution
 
 from features import TestingFeatures
 from models import TestingModel0d, TestingModel1d, TestingModel2d
-from models import TestingModel1dAdaptive
 
 
 class TestRunModelClass(unittest.TestCase):

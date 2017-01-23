@@ -128,7 +128,6 @@ class RunModel:
         solves = []
         pool = mp.Pool(processes=self.CPUs)
 
-        print nodes
         for result in tqdm(pool.imap(evaluateNodeFunction,
                                      self.evaluateNodeFunctionList(nodes.T)),
                            desc="Running model",
