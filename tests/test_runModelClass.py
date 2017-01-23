@@ -378,12 +378,12 @@ class TestRunModelClass(unittest.TestCase):
 
 
 
-    def test_run(self):
+    def test_runTwoUncertainParameters(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.runmodel = RunModel(TestingModel1d(), features=TestingFeatures(), CPUs=1)
-        self.runmodel.data.uncertain_parameters = ["a", "b"]
+        uncertain_parameters = ["a", "b"]
 
-        data = self.runmodel.run(nodes)
+        data = self.runmodel.run(nodes, uncertain_parameters)
 
 
         self.assertEqual(set(data.U.keys()),
@@ -409,3 +409,25 @@ class TestRunModelClass(unittest.TestCase):
         self.assertFeature1d(data)
         self.assertFeature2d(data)
         self.assertFeatureInvalid(data)
+
+
+    def test_runOneUncertainParameters(self):
+        nodes = np.array([0, 1, 2])
+        self.runmodel = RunModel(TestingModel1d(), features=None, CPUs=1)
+        uncertain_parameters = ["a"]
+
+        data = self.runmodel.run(nodes, uncertain_parameters)
+
+
+        self.assertEqual(data.U.keys(), ["directComparison"])
+        self.assertEqual(data.t.keys(), ["directComparison"])
+
+        self.assertIn("directComparison", data.U.keys())
+        self.assertTrue(np.array_equal(data.t["directComparison"],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(data.U["directComparison"][0],
+                                       np.arange(0, 10) + 2))
+        self.assertTrue(np.array_equal(data.U["directComparison"][1],
+                                       np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(data.U["directComparison"][2],
+                                       np.arange(0, 10) + 4))

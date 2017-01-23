@@ -321,13 +321,13 @@ class UncertaintyCalculations:
 
             total_sensitivity = 0
             total_sense[feature] = []
-            for i in xrange(0, len(self.data.uncertain_parameters)):
+            for i in range(0, len(self.data.uncertain_parameters)):
                 tmp_sum_sensitivity = np.sum(sense[feature][i])
 
                 total_sensitivity += tmp_sum_sensitivity
                 total_sense[feature].append(tmp_sum_sensitivity)
 
-            for i in xrange(0, len(self.data.uncertain_parameters)):
+            for i in range(0, len(self.data.uncertain_parameters)):
                 if not total_sensitivity == 0:
                     total_sense[feature][i] /= float(total_sensitivity)
 
