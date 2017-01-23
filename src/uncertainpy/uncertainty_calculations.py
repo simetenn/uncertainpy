@@ -4,11 +4,12 @@ import multiprocessing as mp
 
 from uncertainpy import RunModel
 from uncertainpy.utils import create_logger
+from uncertainpy.features import GeneralFeatures
 
 class UncertaintyCalculations:
     def __init__(self,
                  model,
-                 features,
+                 features=None,
                  rosenblatt=False,
                  CPUs=mp.cpu_count(),
                  supress_model_output=True,
@@ -26,6 +27,11 @@ class UncertaintyCalculations:
         self.M = M
         self.distribution = None
         self.data = None
+
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
 
         self.runmodel = RunModel(self.model,
                                  features=self.features,

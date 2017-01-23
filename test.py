@@ -39,6 +39,9 @@ test_features.addTest(test_spike_sorting)
 
 test_logger = create_test_suite([TestLogger])
 
+test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
+
+
 test_runModel = create_test_suite([TestRunModel, TestRunModelClass])
 
 test_model = create_test_suite([TestModel,
@@ -87,10 +90,10 @@ test_prerequisites = unittest.TestSuite([test_utils,
 
 
 test_basic = unittest.TestSuite([test_prerequisites,
-                                test_uncertainty,
+                                test_uncertaintycalculations,
                                 test_plotting])
 
-test_fast = unittest.TestSuite([test_basic, test_exploration])
+test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_exploration])
 
 test_all = unittest.TestSuite([test_fast, test_usecase])
 
@@ -122,6 +125,8 @@ parser.add_argument("--logger", help="Logger tests", action="store_true")
 parser.add_argument("--plotting", help="Plotting tests", action="store_true")
 parser.add_argument("--usecase", help="Usecase tests", action="store_true")
 parser.add_argument("--data", help="Data tests", action="store_true")
+parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests", action="store_true")
+
 
 args = parser.parse_args()
 
@@ -216,7 +221,10 @@ if args.data:
     print "-----------------------------------------"
     print "Running testsuite: data"
     results["data"] = test_runner.run(test_data)
-
+if args.uncertaintycalculations:
+    print "-----------------------------------------"
+    print "Running testsuite: uncertaintycalculations"
+    results["data"] = test_runner.run(test_uncertaintycalculations)
 
 
 total_run = 0

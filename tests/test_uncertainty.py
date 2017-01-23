@@ -1,6 +1,5 @@
 import numpy as np
 import unittest
-import scipy.interpolate
 import chaospy as cp
 import os
 import shutil
@@ -30,8 +29,6 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty = UncertaintyEstimation(TestingModel1d(),
                                                  features=TestingFeatures(),
                                                  verbose_level="error",
-                                                 output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=self.output_test_dir,
                                                  seed=self.seed)
 
 

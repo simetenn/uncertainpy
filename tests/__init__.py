@@ -28,7 +28,8 @@ __all__ = ["TestDistribution",
            "TestSpikes",
            "TestUncertainty",
            "TestUseCases",
-           "TestData"]
+           "TestData",
+           "TestUncertaintyCalculations"]
 
 from test_distribution import TestDistribution
 from test_evaluateNodeFunction import TestEvaluateNodeFunction
@@ -49,3 +50,4 @@ from test_uncertainty import TestUncertainty
 from test_usecase import TestUseCases
 from test_data import TestData
 from test_runModelClass import TestRunModelClass
+from test_uncertaintyCalculations import TestUncertaintyCalculations
