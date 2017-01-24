@@ -288,6 +288,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
             self.assertEqual(result, ["a", "b"])
 
+
     def test_PCERegressionAll(self):
 
         self.uncertainty_calculations.PCERegression()
@@ -310,11 +311,17 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
 
     def test_PCERegressionAdaptiveError(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
 
-        self.uncertainty_calculations.PCERegression("a")
+        parameters = Parameters(parameterlist)
+        model = TestingModel1dAdaptive(parameters, adaptive_model=False)
+        model.setAllDistributions(Distribution(0.5).uniform)
 
-        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
-        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
+        features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
+
+        self.uncertainty = UncertaintyCalculations(model,
+                                                   features=features,
+                                                   verbose_level="error")
+        with self.assertRaises(ValueError):
+            self.uncertainty_calculations.PCERegression()
