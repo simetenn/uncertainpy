@@ -273,6 +273,20 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
+    def test_uncertainParametersCheckList(self):
+        result = self.uncertainty_calculations.uncertainParametersCheck(["a", "b"])
+
+        self.assertEqual(result, ["a", "b"])
+
+    def test_uncertainParametersCheckString(self):
+        result = self.uncertainty_calculations.uncertainParametersCheck("a")
+
+        self.assertEqual(result, ["a"])
+
+    def test_uncertainParametersCheckNone(self):
+            result = self.uncertainty_calculations.uncertainParametersCheck(None)
+
+            self.assertEqual(result, ["a", "b"])
 
     def test_PCERegressionAll(self):
 
