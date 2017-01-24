@@ -270,3 +270,37 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(masked_U[1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
+
+
+
+
+    def test_PCERegressionAll(self):
+
+        self.uncertainty_calculations.PCERegression()
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
+
+
+    def test_PCERegressionOne(self):
+
+        self.uncertainty_calculations.PCERegression("a")
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
+
+    def test_PCERegressionAdaptiveError(self):
+
+        self.uncertainty_calculations.PCERegression("a")
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)

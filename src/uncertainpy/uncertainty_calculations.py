@@ -27,6 +27,7 @@ class UncertaintyCalculations:
         self.M = M
         self.distribution = None
         self.data = None
+        self.U_hat = {}
 
         if features is None:
             self.features = GeneralFeatures(features_to_run=None)
@@ -55,9 +56,7 @@ class UncertaintyCalculations:
 
 
     def createDistribution(self, uncertain_parameters=None):
-
-        if isinstance(uncertain_parameters, str):
-            uncertain_parameters = [uncertain_parameters]
+        uncertain_parameters = self.uncertain_parameters_check(uncertain_parameters)
 
         parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
@@ -65,12 +64,9 @@ class UncertaintyCalculations:
 
 
     def createDistributionRosenblatt(self, uncertain_parameters=None):
-
-        if isinstance(uncertain_parameters, str):
-            uncertain_parameters = [uncertain_parameters]
+        uncertain_parameters = self.uncertain_parameters_check(uncertain_parameters)
 
         parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
-
 
         self.distribution = cp.J(*parameter_distributions)
 
@@ -120,10 +116,19 @@ class UncertaintyCalculations:
             return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights)
 
 
+    def uncertain_parameters_check(self, uncertain_parameters):
+        if uncertain_parameters is None:
+            uncertain_parameters = self.model.parameters.getUncertain("name")
 
+        if isinstance(uncertain_parameters, str):
+            uncertain_parameters = [uncertain_parameters]
+
+        return uncertain_parameters
 
     # TODO not tested
     def PCEQuadrature(self, uncertain_parameters=None):
+        uncertain_parameters = self.uncertain_parameters_check(uncertain_parameters)
+
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
@@ -151,6 +156,8 @@ class UncertaintyCalculations:
 
 
     def PCERegression(self, uncertain_parameters=None):
+        uncertain_parameters = self.uncertain_parameters_check(uncertain_parameters)
+
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
@@ -179,6 +186,8 @@ class UncertaintyCalculations:
 
     # TODO not tested
     def PCEQuadratureRosenblatt(self, uncertain_parameters=None):
+        uncertain_parameters = self.uncertain_parameters_check(uncertain_parameters)
+
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
 
@@ -211,7 +220,7 @@ class UncertaintyCalculations:
         for feature in self.data.feature_list:
             masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal, feature, weights)
 
-            self.U_hat = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
+            self.data.U_hat = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
 
 
         # # perform for directComparison outside, since masking is not needed.
@@ -222,6 +231,8 @@ class UncertaintyCalculations:
 
 
     def PCERegressionRosenblatt(self, uncertain_parameters=None):
+        uncertain_parameters = self.uncertain_parameters_check(uncertain_parameters)
+
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
 

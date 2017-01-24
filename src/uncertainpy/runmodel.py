@@ -162,6 +162,9 @@ Test if solves is an adaptive result
 
     def run(self, nodes, uncertain_parameters):
 
+        if isinstance(uncertain_parameters, str):
+            uncertain_parameters = [uncertain_parameters]
+
         self.data.uncertain_parameters = uncertain_parameters
 
         solves = self.evaluateNodes(nodes)
