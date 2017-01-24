@@ -429,7 +429,7 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
-        result = subprocess.call(["h5diff",  "-d", "1e-10", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
 
 
         self.assertEqual(result, 0)
@@ -437,7 +437,7 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
-        result = subprocess.call(["h5diff",  "-d", "1e-10", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -681,194 +681,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_1_grid")
 
-
-def test_createMaskDirectComparison(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "directComparison")
-
-    self.assertEqual(len(masked_U), 3)
-    self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
-    self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10) + 3))
-    self.assertTrue(np.array_equal(masked_U[2], np.arange(0, 10) + 5))
-    self.assertTrue(np.array_equal(nodes, masked_nodes))
-
-
-def test_createMaskDirectComparisonNaN(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    self.runmodel.data.U["directComparison"][1] = np.nan
-
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "directComparison")
-
-
-    self.assertEqual(len(masked_U), 2)
-    self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
-    self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10) + 5))
-    self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
-
-
-def test_createMaskWarning(self):
-    if os.path.isdir(self.output_test_dir):
-        shutil.rmtree(self.output_test_dir)
-    os.mkdir(self.output_test_dir)
-
-    logfile = os.path.join(self.output_test_dir, "test.log")
-
-    self.runmodel = RunModel(TestingModel1d(),
-                                             features=TestingFeatures(),
-                                             verbose_level="warning",
-                                             verbose_filename=logfile)
-
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-    self.runmodel.verbose_filename = logfile
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    self.runmodel.data.U["directComparison"][1] = np.nan
-
-    self.runmodel.createMask(nodes, "directComparison")
-
-    message = "WARNING - uncertainty - Feature: directComparison does not yield results for all parameter combinations"
-    self.assertTrue(message in open(logfile).read())
-
-    shutil.rmtree(self.output_test_dir)
-
-
-def test_createMaskFeature0d(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature0d")
-    self.assertIn("feature0d", self.runmodel.data.U.keys())
-    self.assertEqual(masked_U[0], 1)
-    self.assertEqual(masked_U[1], 1)
-    self.assertEqual(masked_U[2], 1)
-    self.assertTrue(np.array_equal(nodes, masked_nodes))
-
-
-def test_createMaskFeature0dNan(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    self.runmodel.data.U["feature0d"] = np.array([1, np.nan, 1])
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature0d")
-
-    self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
-    self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
-
-
-
-def test_createMaskFeature1d(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    # feature1d
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature1d")
-    self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10)))
-    self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10)))
-    self.assertTrue(np.array_equal(masked_U[2], np.arange(0, 10)))
-    self.assertTrue(np.array_equal(nodes, masked_nodes))
-
-    # feature2d
-
-def test_createMaskFeature1dNan(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    self.runmodel.data.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature1d")
-
-    self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
-    self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
-
-
-
-def test_createMaskFeature2d(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature2d")
-    self.assertTrue(np.array_equal(masked_U[0],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
-    self.assertTrue(np.array_equal(masked_U[1],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
-    self.assertTrue(np.array_equal(masked_U[2],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
-    self.assertTrue(np.array_equal(nodes, masked_nodes))
-
-
-
-def test_createMaskFeature2dNan(self):
-    nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    self.runmodel.data.U["feature2d"][1] = np.nan
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature2d")
-
-    self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
-
-
-    self.assertEqual(len(masked_U), 2)
-    self.assertTrue(np.array_equal(masked_U[0],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
-    self.assertTrue(np.array_equal(masked_U[1],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
-
-
-def test_createMaskFeature2dnodes1DNaN(self):
-    nodes = np.array([0, 1, 2])
-
-    self.runmodel.data.uncertain_parameters = ["a"]
-
-    results = self.runmodel.evaluateNodes(nodes)
-    self.runmodel.storeResults(results)
-
-    self.runmodel.data.U["feature2d"][1] = np.nan
-    masked_nodes, masked_U = self.runmodel.createMask(nodes, "feature2d")
-
-    self.assertTrue(np.array_equal(masked_nodes, np.array([0, 2])))
-
-    self.assertEqual(len(masked_U), 2)
-    self.assertTrue(np.array_equal(masked_U[0],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
-    self.assertTrue(np.array_equal(masked_U[1],
-                                   np.array([np.arange(0, 10),
-                                             np.arange(0, 10)])))
 
 
 

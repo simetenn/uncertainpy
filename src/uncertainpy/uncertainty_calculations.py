@@ -56,17 +56,22 @@ class UncertaintyCalculations:
 
     def createDistribution(self, uncertain_parameters=None):
 
+        if isinstance(uncertain_parameters, str):
+            uncertain_parameters = [uncertain_parameters]
+
         parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
-        self.data.uncertain_parameters = uncertain_parameters
         self.distribution = cp.J(*parameter_distributions)
 
 
     def createDistributionRosenblatt(self, uncertain_parameters=None):
 
+        if isinstance(uncertain_parameters, str):
+            uncertain_parameters = [uncertain_parameters]
+
         parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
-        self.data.uncertain_parameters = uncertain_parameters
+
         self.distribution = cp.J(*parameter_distributions)
 
 
@@ -130,7 +135,7 @@ class UncertaintyCalculations:
         nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
         # Running the model
-        self.data = self.runmodel.run(nodes, self.uncertain_parameters)
+        self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
@@ -157,7 +162,7 @@ class UncertaintyCalculations:
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
 
         # Running the model
-        self.data = self.runmodel.run(nodes)
+        self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
@@ -198,12 +203,9 @@ class UncertaintyCalculations:
 
         self.distribution = dist_MvNormal
 
-
         # Running the model
-        solves = self.evaluateNodes(nodes)
 
-        # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
-        self.storeResults(solves)
+        self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
@@ -242,10 +244,7 @@ class UncertaintyCalculations:
         self.distribution = dist_MvNormal
 
         # Running the model
-        solves = self.evaluateNodes(nodes)
-
-        # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
-        self.storeResults(solves)
+        self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:

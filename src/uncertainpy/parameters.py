@@ -220,8 +220,8 @@ Required arguments
 
 prop: "name" | "value" | "distribution"
     The name of the property to be returned
-parameter_names: None | list
-    A list of all parameters of which property should be returned
+parameter_names: None | list | str
+    A list of all parameters of which property should be returned.
     If None, the property all parameters are returned.
     Default is None.
 Returns
@@ -231,6 +231,9 @@ List of the property of all uncertain parameters
 
         if parameter_names is None:
             parameter_names = self.parameters.keys()
+
+        if isinstance(parameter_names, str):
+            parameter_names = [parameter_names]
 
         return_parameters = []
         for parameter_name in parameter_names:
