@@ -163,7 +163,7 @@ Test if solves is an adaptive result
     def run(self, nodes, uncertain_parameters):
 
         self.data.uncertain_parameters = uncertain_parameters
-        
+
         solves = self.evaluateNodes(nodes)
         self.storeResults(solves)
 

@@ -54,19 +54,19 @@ class UncertaintyCalculations:
             np.random.seed(seed)
 
 
-    def createDistribution(self, parameter_names=None):
+    def createDistribution(self, uncertain_parameters=None):
 
-        parameter_distributions = self.model.parameters.get("distribution", parameter_names)
+        parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
-        self.data.uncertain_parameters = parameter_names
+        self.data.uncertain_parameters = uncertain_parameters
         self.distribution = cp.J(*parameter_distributions)
 
 
-    def createDistributionRosenblatt(self, parameter_names=None):
+    def createDistributionRosenblatt(self, uncertain_parameters=None):
 
-        parameter_distributions = self.model.parameters.get("distribution", parameter_names)
+        parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
-        self.data.uncertain_parameters = parameter_names
+        self.data.uncertain_parameters = uncertain_parameters
         self.distribution = cp.J(*parameter_distributions)
 
 
@@ -118,8 +118,8 @@ class UncertaintyCalculations:
 
 
     # TODO not tested
-    def PCEQuadrature(self, parameter_names=None):
-        self.createDistribution(parameter_names=parameter_names)
+    def PCEQuadrature(self, uncertain_parameters=None):
+        self.createDistribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -130,7 +130,7 @@ class UncertaintyCalculations:
         nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
         # Running the model
-        self.data = self.runmodel.run(nodes)
+        self.data = self.runmodel.run(nodes, self.uncertain_parameters)
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
@@ -145,8 +145,8 @@ class UncertaintyCalculations:
 
 
 
-    def PCERegression(self, parameter_names=None):
-        self.createDistribution(parameter_names=parameter_names)
+    def PCERegression(self, uncertain_parameters=None):
+        self.createDistribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -173,8 +173,8 @@ class UncertaintyCalculations:
 
 
     # TODO not tested
-    def PCEQuadratureRosenblatt(self, parameter_names=None):
-        self.createDistribution(parameter_names=parameter_names)
+    def PCEQuadratureRosenblatt(self, uncertain_parameters=None):
+        self.createDistribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
@@ -219,8 +219,8 @@ class UncertaintyCalculations:
 
 
 
-    def PCERegressionRosenblatt(self, parameter_names=None):
-        self.createDistribution(parameter_names=parameter_names)
+    def PCERegressionRosenblatt(self, uncertain_parameters=None):
+        self.createDistribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
@@ -287,8 +287,8 @@ class UncertaintyCalculations:
 
 
 
-    def MCanalysis(self, parameter_names=None):
-        self.createDistribution(parameter_names=parameter_names)
+    def MCanalysis(self, uncertain_parameters=None):
+        self.createDistribution(uncertain_parameters=uncertain_parameters)
 
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
