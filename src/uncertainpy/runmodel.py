@@ -52,7 +52,6 @@ class RunModel:
 
 
     def storeResults(self, solves):
-        print solves
 
         self.data.setFeatures(solves[0])
 
@@ -105,6 +104,7 @@ class RunModel:
         # self.t[feature] = np.array(self.t[feature])
         self.data.U[feature] = np.array(self.data.U[feature])
 
+        self.data.removeOnlyInvalidResults()
 
     def evaluateNodeFunctionList(self, nodes):
         data_list = []

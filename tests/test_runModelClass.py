@@ -22,6 +22,7 @@ class TestRunModelClass(unittest.TestCase):
         os.makedirs(self.output_test_dir)
 
 
+
         self.runmodel = RunModel(TestingModel1d(),
                                  features=TestingFeatures(),
                                  supress_model_output=True,
@@ -166,7 +167,20 @@ class TestRunModelClass(unittest.TestCase):
 
     def test_storeResultsModel1dFeaturesAll(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
+
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.runmodel = RunModel(TestingModel1d(),
+                                 features=features,
+                                 supress_model_output=True,
+                                 supress_model_graphics=True)
+
+
         self.runmodel.data.uncertain_parameters = ["a", "b"]
+
 
         results = self.runmodel.evaluateNodes(nodes)
 
@@ -174,15 +188,15 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(set(self.runmodel.data.U.keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertEqual(set(self.runmodel.data.t.keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertEqual(set(self.runmodel.data.feature_list),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
 
         self.assertIn("directComparison", self.runmodel.data.U.keys())
@@ -199,12 +213,64 @@ class TestRunModelClass(unittest.TestCase):
         self.assertFeature0d(self.runmodel.data)
         self.assertFeature1d(self.runmodel.data)
         self.assertFeature2d(self.runmodel.data)
-        self.assertFeatureInvalid(self.runmodel.data)
+
+
+    def test_storeResultsModel1dFeaturesAll(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+
+
+        features = TestingFeatures(features_to_run=["featureInvalid"])
+
+        self.runmodel = RunModel(TestingModel1d(),
+                                 features=features,
+                                 supress_model_output=True,
+                                 supress_model_graphics=True)
+
+
+        self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+
+        results = self.runmodel.evaluateNodes(nodes)
+
+        with self.assertRaises(RuntimeWarning):
+            self.runmodel.storeResults(results)
+
+            self.assertEqual(set(self.runmodel.data.U.keys()),
+                             set(["directComparison", "featureInvalid"]))
+
+            self.assertEqual(set(self.runmodel.data.t.keys()),
+                             set(["directComparison", "featureInvalid"]))
+
+            self.assertEqual(set(self.runmodel.data.feature_list),
+                             set(["directComparison"]))
+
+
+            self.assertIn("directComparison", self.runmodel.data.U.keys())
+            self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
+                                           np.arange(0, 10)))
+            self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][0],
+                                           np.arange(0, 10) + 1))
+            self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][1],
+                                           np.arange(0, 10) + 3))
+            self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][2],
+                                           np.arange(0, 10) + 5))
+
+
+            self.assertEqual(self.data.U["featureInvalid"], "Only invalid results for all set of parameters")
+
+            self.assertEqual(self.data.features_2d, [])
+            self.assertEqual(self.data.features_1d, ["directComparison"])
+            self.assertEqual(self.data.features_0d, [])
 
 
     def test_storeResultsModel1dFeaturesAllAdaptive(self):
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
         self.runmodel = RunModel(TestingModel1dAdaptive(adaptive_model=True),
-                                 features=TestingFeatures(),
+                                 features=features,
                                  supress_model_output=True,
                                  supress_model_graphics=True)
 
@@ -218,15 +284,15 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(set(self.runmodel.data.U.keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertEqual(set(self.runmodel.data.t.keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertEqual(set(self.runmodel.data.feature_list),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertIn("directComparison", self.runmodel.data.U.keys())
 
@@ -242,7 +308,6 @@ class TestRunModelClass(unittest.TestCase):
         self.assertFeature0d(self.runmodel.data)
         self.assertFeature1d(self.runmodel.data)
         self.assertFeature2d(self.runmodel.data)
-        self.assertFeatureInvalid(self.runmodel.data)
 
 
 
@@ -438,7 +503,11 @@ class TestRunModelClass(unittest.TestCase):
 
     def test_runTwoUncertainParameters(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel = RunModel(TestingModel1d(), features=TestingFeatures(), CPUs=1)
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.runmodel = RunModel(TestingModel1d(), features=features, CPUs=1)
         uncertain_parameters = ["a", "b"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -446,11 +515,11 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(set(data.U.keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertEqual(set(data.t.keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid"]))
+                              "directComparison"]))
 
         self.assertIn("directComparison", data.U.keys())
         self.assertTrue(np.array_equal(data.t["directComparison"],
@@ -466,7 +535,6 @@ class TestRunModelClass(unittest.TestCase):
         self.assertFeature0d(data)
         self.assertFeature1d(data)
         self.assertFeature2d(data)
-        self.assertFeatureInvalid(data)
 
 
     def test_runOneUncertainParameters(self):
