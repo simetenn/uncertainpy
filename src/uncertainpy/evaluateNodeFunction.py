@@ -151,7 +151,7 @@ all_data = (model_cmds,
             else:
                 results["directComparison"] = (t, U, None)
 
-        # All results are saved as {feature : (x, U, interpolation)} as appropriate.
+        # All results are saved as {feature: (x, U, interpolation)} as appropriate.
 
         return results
 

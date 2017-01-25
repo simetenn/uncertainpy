@@ -50,7 +50,9 @@ class RunModel:
 
 
 
+
     def storeResults(self, solves):
+        print solves
 
         self.data.setFeatures(solves[0])
 

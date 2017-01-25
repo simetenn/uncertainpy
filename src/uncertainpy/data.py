@@ -1,6 +1,8 @@
 import os
 import h5py
 
+import numpy as np
+
 from uncertainpy.utils import create_logger
 
 
@@ -177,3 +179,21 @@ Test if the model returned an adaptive result
                 features_0d.append(feature)
 
         return features_0d, features_1d, features_2d
+
+    def removeOnlyInvalidResults(self):
+        old_feature_list = self.feature_list[:]
+        for feature in old_feature_list:
+            if np.all(np.isnan(self.U[feature])):
+                raise RuntimeWarning("Feature: {} does not yield results for any parameter combinations".format(feature))
+
+                self.U[feature] = "Only invalid results for all set of parameters"
+                self.feature_list.remove(feature)
+
+                if feature in self.features_0d:
+                    self.features_0d.remove(feature)
+
+                if feature in self.features_2d:
+                    self.features_2d.remove(feature)
+
+                if feature in self.features_1d:
+                    self.features_1d.remove(feature)

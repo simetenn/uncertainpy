@@ -310,6 +310,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
         self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
 
+
+
     def test_PCERegressionAdaptiveError(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
@@ -325,3 +327,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                    verbose_level="error")
         with self.assertRaises(ValueError):
             self.uncertainty_calculations.PCERegression()
+
+
+    def test_PCERquadrature(self):
+
+        self.uncertainty_calculations.PCEQuadrature()
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
