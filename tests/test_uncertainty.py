@@ -207,11 +207,12 @@ class TestUncertainty(unittest.TestCase):
         model.setAllDistributions(Distribution(0.5).uniform)
 
 
-        self.uncertainty = UncertaintyEstimation(model,
-                                                 features=TestingFeatures(features_to_run=["feature0d",
-                                                                                           "feature1d",
-                                                                                           "feature2d"]),
-                                                 verbose_level="error")
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+        self.uncertainty = UncertaintyCalculations(model,
+                                                   features=features,
+                                                   verbose_level="error")
 
 
         self.uncertainty.data.feature_list = ["feature0d", "feature1d",

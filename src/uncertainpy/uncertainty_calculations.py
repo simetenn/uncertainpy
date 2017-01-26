@@ -16,6 +16,8 @@ class UncertaintyCalculations:
                  supress_model_graphics=True,
                  M=3,
                  nr_pc_samples=None,
+                 nr_mc_samples=10*3,
+                 nr_pc_mc_samples=10*5,
                  seed=None,
                  verbose_level="info",
                  verbose_filename=None,):
@@ -24,11 +26,15 @@ class UncertaintyCalculations:
         self.model = model
         self.features = features
 
-        self.P = None
+        self.nr_mc_samples = nr_mc_samples
+        self.nr_pc_mc_samples = nr_pc_mc_samples
         self.M = M
+
+        self.P = None
         self.distribution = None
         self.data = None
         self.U_hat = {}
+        self.U_mc = {}
 
         if features is None:
             self.features = GeneralFeatures(features_to_run=None)
@@ -278,7 +284,6 @@ class UncertaintyCalculations:
             samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 
             if len(self.data.uncertain_parameters) > 1:
-
                 self.U_mc[feature] = self.U_hat[feature](*samples)
                 self.data.sensitivity_1[feature] = cp.Sens_m(self.U_hat[feature], self.distribution)
                 self.data.sensitivity_t[feature] = cp.Sens_t(self.U_hat[feature], self.distribution)
