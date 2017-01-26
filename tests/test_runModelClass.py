@@ -215,7 +215,7 @@ class TestRunModelClass(unittest.TestCase):
         self.assertFeature2d(self.runmodel.data)
 
 
-    def test_storeResultsModel1dFeaturesAll(self):
+    def test_storeResultsModel1dFeaturesInvalid(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
 
 

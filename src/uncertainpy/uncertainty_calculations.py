@@ -107,10 +107,6 @@ class UncertaintyCalculations:
             # raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
             self.logger.warning("Feature: {} does not yield results for all parameter combinations".format(feature))
 
-        if not np.any(mask):
-            # raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
-            self.logger.warning("Feature: {} does not yield results for any parameter combinations".format(feature))
-
 
         if weights is None:
             return np.array(masked_nodes), np.array(masked_U)
@@ -148,13 +144,6 @@ class UncertaintyCalculations:
         for feature in self.data.feature_list:
             masked_nodes, masked_U, masked_weights = self.createMask(nodes, feature, weights)
 
-            print "======================"
-            print masked_nodes
-            print "======================"
-            print masked_weights
-            print "======================"
-            print masked_U
-            print "======================"
             self.U_hat = cp.fit_quadrature(self.P, masked_nodes,
                                            masked_weights, masked_U)
 
@@ -176,9 +165,14 @@ class UncertaintyCalculations:
 
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
+        print nodes
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
+
+        print self.data.U["directComparison"]
+        for element in self.data.U["directComparison"]:
+            print element.shape
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
