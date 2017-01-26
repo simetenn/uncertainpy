@@ -161,9 +161,6 @@ For example on use see:
         self.model = model
 
         # self.rosenblatt = rosenblatt
-        # self.M = 3
-        # self.nr_mc_samples = nr_mc_samples
-        # self.nr_pc_mc_samples = nr_pc_mc_samples
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,

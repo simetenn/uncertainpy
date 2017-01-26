@@ -491,3 +491,115 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature0d"], np.ndarray)
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature1d"], np.ndarray)
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature2d"], np.ndarray)
+
+
+    def test_MC(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                features=features,
+                                                                nr_mc_samples=10**1,
+                                                                verbose_level="error")
+
+
+        self.uncertainty_calculations.all_features = ["directComparison"]
+
+        self.uncertainty_calculations.MC()
+
+        self.assertTrue(np.allclose(self.uncertainty_calculations.data.E["directComparison"],
+                                    np.arange(0, 10) + 3, atol=0.1))
+        self.assertTrue(np.allclose(self.uncertainty_calculations.data.Var["directComparison"],
+                                    np.zeros(10), atol=0.1))
+        self.assertTrue(np.all(np.less(self.uncertainty_calculations.data.p_05["directComparison"],
+                                       np.arange(0, 10) + 3)))
+        self.assertTrue(np.all(np.greater(self.uncertainty_calculations.data.p_95["directComparison"],
+                                          np.arange(0, 10) + 3)))
+
+
+    def test_MC_feature0d(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+        features = TestingFeatures(features_to_run=["feature0d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                features=features,
+                                                                nr_mc_samples=10**1,
+                                                                verbose_level="error")
+
+
+
+        self.uncertainty_calculations.MC()
+
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature0d"],
+                                       features.feature0d()))
+        self.assertEqual(self.uncertainty_calculations.data.Var["feature0d"], 0)
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature0d"],
+                                       features.feature0d()))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature0d"],
+                                       features.feature0d()))
+
+
+    def test_MC_feature1d(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+        features = TestingFeatures(features_to_run=["feature1d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                features=features,
+                                                                nr_mc_samples=10**1,
+                                                                verbose_level="error")
+
+
+
+        self.uncertainty_calculations.MC()
+
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature1d"],
+                                       features.feature1d()))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.Var["feature1d"],
+                                       np.zeros(10)))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature1d"],
+                                       features.feature1d()))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature1d"],
+                                       features.feature1d()))
+
+
+
+    def test_MC_feature2d(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        model = TestingModel1d(parameters)
+        model.setAllDistributions(Distribution(0.5).uniform)
+        features = TestingFeatures(features_to_run=["feature2d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                features=features,
+                                                                nr_mc_samples=10**1,
+                                                                verbose_level="error")
+
+
+        self.uncertainty_calculations.MC()
+
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature2d"],
+                                       features.feature2d()))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.Var["feature2d"],
+                                       np.zeros((2, 10))))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature2d"],
+                                       features.feature2d()))
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature2d"],
+                                       features.feature2d()))

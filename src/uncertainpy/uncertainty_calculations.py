@@ -302,16 +302,15 @@ class UncertaintyCalculations:
 
 
 
-    def MCanalysis(self, uncertain_parameters=None):
+    def MC(self, uncertain_parameters=None):
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
-        solves = self.evaluateNodes(nodes)
+        self.data = self.runmodel.run(nodes, uncertain_parameters)
 
-        # Find 1d and 2d features
-        # Store the results from the runs in self.U and self.t, and interpolate U if there is a t
-        self.storeResults(solves)
 
         for feature in self.data.feature_list:
             self.data.E[feature] = np.mean(self.data.U[feature], 0)
@@ -319,6 +318,7 @@ class UncertaintyCalculations:
 
             self.data.p_05[feature] = np.percentile(self.data.U[feature], 5, 0)
             self.data.p_95[feature] = np.percentile(self.data.U[feature], 95, 0)
+
             self.data.sensitivity_1[feature] = None
             self.data.total_sensitivity_1[feature] = None
             self.data.sensitivity_t[feature] = None
@@ -348,6 +348,8 @@ class UncertaintyCalculations:
 
 
         setattr(self.data, "total_" + sensitivity, total_sense)
+
+
 
 
 
