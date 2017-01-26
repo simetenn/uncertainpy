@@ -288,18 +288,18 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_uncertainParametersCheckList(self):
-        result = self.uncertainty_calculations.uncertainParametersCheck(["a", "b"])
+    def test_convertUncertainParametersList(self):
+        result = self.uncertainty_calculations.convertUncertainParameters(["a", "b"])
 
         self.assertEqual(result, ["a", "b"])
 
-    def test_uncertainParametersCheckString(self):
-        result = self.uncertainty_calculations.uncertainParametersCheck("a")
+    def test_convertUncertainParametersString(self):
+        result = self.uncertainty_calculations.convertUncertainParameters("a")
 
         self.assertEqual(result, ["a"])
 
-    def test_uncertainParametersCheckNone(self):
-            result = self.uncertainty_calculations.uncertainParametersCheck(None)
+    def test_convertUncertainParametersNone(self):
+            result = self.uncertainty_calculations.convertUncertainParameters(None)
 
             self.assertEqual(result, ["a", "b"])
 
@@ -344,6 +344,28 @@ class TestUncertaintyCalculations(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.uncertainty_calculations.PCERegression()
 
+
+
+    def test_PCERegressionRosenblattAll(self):
+
+        self.uncertainty_calculations.PCERegressionRosenblatt()
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
+
+
+    def test_PCERegressionRosenblattOne(self):
+
+        self.uncertainty_calculations.PCERegressionRosenblatt("a")
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
 
     # def test_PCERquadrature(self):
     #

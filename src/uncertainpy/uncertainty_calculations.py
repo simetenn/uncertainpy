@@ -57,7 +57,7 @@ class UncertaintyCalculations:
 
 
     def createDistribution(self, uncertain_parameters=None):
-        uncertain_parameters = self.uncertainParametersCheck(uncertain_parameters)
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
@@ -65,7 +65,7 @@ class UncertaintyCalculations:
 
 
     def createDistributionRosenblatt(self, uncertain_parameters=None):
-        uncertain_parameters = self.uncertainParametersCheck(uncertain_parameters)
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
 
@@ -115,7 +115,8 @@ class UncertaintyCalculations:
             return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights)
 
 
-    def uncertainParametersCheck(self, uncertain_parameters):
+    def convertUncertainParameters(self, uncertain_parameters):
+
         if uncertain_parameters is None:
             uncertain_parameters = self.model.parameters.getUncertain("name")
 
@@ -126,7 +127,7 @@ class UncertaintyCalculations:
 
     # TODO not tested
     def PCEQuadrature(self, uncertain_parameters=None):
-        uncertain_parameters = self.uncertainParametersCheck(uncertain_parameters)
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
@@ -155,7 +156,7 @@ class UncertaintyCalculations:
 
 
     def PCERegression(self, uncertain_parameters=None):
-        uncertain_parameters = self.uncertainParametersCheck(uncertain_parameters)
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
@@ -185,7 +186,7 @@ class UncertaintyCalculations:
 
     # TODO not tested
     def PCEQuadratureRosenblatt(self, uncertain_parameters=None):
-        uncertain_parameters = self.uncertainParametersCheck(uncertain_parameters)
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
@@ -230,14 +231,14 @@ class UncertaintyCalculations:
 
 
     def PCERegressionRosenblatt(self, uncertain_parameters=None):
-        uncertain_parameters = self.uncertainParametersCheck(uncertain_parameters)
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         self.createDistribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
         dist_MvNormal = []
-        for parameter in self.data.uncertain_parameters:
+        for parameter in uncertain_parameters:
             dist_MvNormal.append(cp.Normal())
 
         dist_MvNormal = cp.J(*dist_MvNormal)
