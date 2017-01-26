@@ -287,7 +287,9 @@ filename: str
 
 
     def __str__(self):
-
+        """
+Return a readable string
+        """
         result = ""
         for name in self.parameters.keys():
             result += str(self.parameters[name]) + "\n"

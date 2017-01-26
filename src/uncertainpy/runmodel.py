@@ -55,9 +55,6 @@ class RunModel:
 
         self.data.setFeatures(solves[0])
 
-        # print self.model.adaptive_model
-        # print self.isSolvesAdaptive(solves)
-        # print solves
 
         if self.isSolvesAdaptive(solves) and not self.model.adaptive_model:
             # TODO if the model is adaptive perform the complete interpolation here instead.

@@ -20,6 +20,7 @@ class UncertaintyCalculations:
                  verbose_level="info",
                  verbose_filename=None,):
 
+
         self.model = model
         self.features = features
 
@@ -165,14 +166,9 @@ class UncertaintyCalculations:
 
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
-        print nodes
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
-
-        print self.data.U["directComparison"]
-        for element in self.data.U["directComparison"]:
-            print element.shape
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:

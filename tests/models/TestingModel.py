@@ -42,7 +42,6 @@ class TestingModel1dAdaptive(Model):
         self.ylabel = "y"
 
     def run(self):
-        print self.a, self.b
         self.t = np.arange(0, 10 + self.a + self.b)
         self.U = np.arange(0, 10 + self.a + self.b) + self.a + self.b
 
