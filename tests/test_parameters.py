@@ -129,6 +129,25 @@ class TestParameter(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
+    def test_str(self):
+        result = str(self.parameter)
+
+        self.assertEqual(result, "gbar_Na: 120")
+
+
+    def test_strUncertain(self):
+
+        self.parameter = Parameter("gbar_Na", 120, cp.Uniform(110, 130))
+
+        result = str(self.parameter)
+
+        self.assertEqual(result, "gbar_Na: 120 - Uncertain")
+
+
+
+
+
+
 class TestParameters(unittest.TestCase):
     def setUp(self):
         self.parameter_filename = "example_hoc.hoc"
@@ -388,6 +407,17 @@ class TestParameters(unittest.TestCase):
         result = subprocess.call(["diff", parameter_file, compare_file])
         self.assertEqual(result, 0)
 
+
+    def test_str(self):
+        parameterlist = [["gbar_Na", 120, None],
+                         ["gbar_K", 36, None],
+                         ["gbar_l", 0.3, cp.Uniform(0.1, 0.5)]]
+
+        parameters = Parameters(parameterlist)
+
+        result = str(parameters)
+
+        self.assertEqual(result, "gbar_K: 36\ngbar_Na: 120\ngbar_l: 0.3 - Uncertain")
 
 if __name__ == "__main__":
     unittest.main()

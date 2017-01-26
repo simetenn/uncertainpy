@@ -18,7 +18,7 @@ Parameters
 Required arguments
 
 name: str
-    name of the parameters
+    name of the parameter
 value: number
     the value of the paramter
 
@@ -45,7 +45,7 @@ Required arguments
 
 distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
     The distribution of the parameter.
-    A parameter is considered uncertain if if has a distributiona associated
+    A parameter is considered uncertain if if has a distribution associated
     with it.
         """
 
@@ -97,6 +97,18 @@ filename: str
         self.setParameterValue(filename, self.value)
 
 
+    def __str__(self):
+        """
+Return a readable string of a parameter
+        """
+        if self.distribution is None:
+            uncertain = ""
+        else:
+            uncertain = " - Uncertain"
+
+        return "{parameter}: {value}{uncertain}".format(parameter=self.name, value=self.value, uncertain=uncertain)
+
+# TODO add an iterator
 class Parameters():
     def __init__(self, parameterlist):
         """
@@ -150,6 +162,8 @@ Returns
 Parameter object
         """
         return self.parameters[name]
+
+
 
 
     def setDistribution(self, parameter, distribution):
@@ -270,3 +284,12 @@ filename: str
         """
         for parameter in self.parameters:
             self.parameters[parameter].setParameterValue(filename, self.parameters[parameter].value)
+
+
+    def __str__(self):
+
+        result = ""
+        for name in self.parameters.keys():
+            result += str(self.parameters[name]) + "\n"
+
+        return result.strip()
