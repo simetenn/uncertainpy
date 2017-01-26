@@ -685,28 +685,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_totalSensitivity1(self):
-        self.runmodel.data.sensitivity_1 = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
-        self.runmodel.data.uncertain_parameters = ["a", "b"]
 
-        self.runmodel.totalSensitivity(sensitivity="sensitivity_1")
-
-        self.assertEqual(self.runmodel.data.total_sensitivity_1["test2D"][0], 1/3.)
-        self.assertEqual(self.runmodel.data.total_sensitivity_1["test2D"][1], 2/3.)
-        self.assertEqual(self.runmodel.data.total_sensitivity_1["test1D"][0], 1/3.)
-        self.assertEqual(self.runmodel.data.total_sensitivity_1["test1D"][1], 2/3.)
-
-
-    def test_totalSensitivityT(self):
-        self.runmodel.data.sensitivity_t = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
-        self.runmodel.data.uncertain_parameters = ["a", "b"]
-
-        self.runmodel.totalSensitivity(sensitivity="sensitivity_t")
-
-        self.assertEqual(self.runmodel.data.total_sensitivity_t["test2D"][0], 1/3.)
-        self.assertEqual(self.runmodel.data.total_sensitivity_t["test2D"][1], 2/3.)
-        self.assertEqual(self.runmodel.data.total_sensitivity_t["test1D"][0], 1/3.)
-        self.assertEqual(self.runmodel.data.total_sensitivity_t["test1D"][1], 2/3.)
 
 
 
