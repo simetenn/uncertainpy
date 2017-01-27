@@ -493,6 +493,48 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature2d"], np.ndarray)
 
 
+    def test_PCAllParameters(self):
+        data = self.uncertainty_calculations.PC()
+
+        filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_PCParameterA(self):
+        data = self.uncertainty_calculations.PC("a")
+
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
+        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_PCParameterB(self):
+        data = self.uncertainty_calculations.PC("b")
+
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
+        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+
     def test_MC(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
@@ -508,7 +550,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 verbose_level="error")
 
 
-        self.uncertainty_calculations.all_features = ["directComparison"]
 
         self.uncertainty_calculations.MC()
 

@@ -28,6 +28,26 @@ def generate_data_allParameters():  # pragma: no cover
     test.allParameters()
 
 
+
+def generate_data_allParametersRosenblatt():  # pragma: no cover
+    parameterlist = [["a", 1, None],
+                     ["b", 2, None]]
+
+    parameters = uncertainpy.Parameters(parameterlist)
+    model = TestingModel1d(parameters)
+    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+
+
+    test = uncertainpy.UncertaintyEstimation(model,
+                                             features=TestingFeatures(),
+                                             output_dir_data=test_data_dir,
+                                             output_dir_figures=test_data_dir,
+                                             verbose_level="error",
+                                             rosenblatt=True,
+                                             seed=seed)
+
+    test.allParameters()
+
 def generate_data_singleParameters():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
@@ -142,3 +162,4 @@ if __name__ == "__main__":  # pragma: no cover
     generate_data_singleParametersMC()
     generate_data_compareMC()
     generate_data_data()
+    generate_data_allParametersRosenblatt()

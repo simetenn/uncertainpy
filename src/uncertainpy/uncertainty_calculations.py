@@ -301,6 +301,22 @@ class UncertaintyCalculations:
         self.totalSensitivity(sensitivity="sensitivity_t")
 
 
+    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+
+        if method == "regression":
+            if rosenblatt:
+                self.PCERegressionRosenblatt(uncertain_parameters)
+            else:
+                self.PCERegression(uncertain_parameters)
+        else:
+            raise ValueError("No method with name {}".format(method))
+
+        self.PCAnalysis()
+
+
+        return self.data
+
 
     def MC(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
@@ -323,6 +339,10 @@ class UncertaintyCalculations:
             self.data.total_sensitivity_1[feature] = None
             self.data.sensitivity_t[feature] = None
             self.data.total_sensitivity_t[feature] = None
+
+
+
+        return self.data
 
 
     def totalSensitivity(self, sensitivity="sensitivity_1"):
@@ -348,10 +368,3 @@ class UncertaintyCalculations:
 
 
         setattr(self.data, "total_" + sensitivity, total_sense)
-
-
-
-
-
-    def getNrSamples(self):
-        return self.M
