@@ -17,9 +17,9 @@ parameters = [["V_rest", -10, None],
 
 
 parameters = uncertainpy.Parameters(parameters)
+parameters.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
 model = ValderramaHodgkinHuxleyModel(parameters=parameters)
-model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
 features = uncertainpy.NeuronFeatures(features_to_run="all", thresh="auto")
 
@@ -30,6 +30,8 @@ exploration = uncertainpy.UncertaintyEstimation(model,
                                                 save_figures=True,
                                                 rosenblatt=False,
                                                 figureformat=".pdf")
+
+
 
 exploration.allParameters()
 exploration.plot.plotSimulatorResults()

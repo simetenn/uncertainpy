@@ -8,5 +8,6 @@ from runmodel import RunModel
 from uncertainty_calculations import UncertaintyCalculations
 
 from plotting import *
-from uncertainpy.features import *
-from uncertainpy.models import *
+from features import *
+from models import *
+from utils import *

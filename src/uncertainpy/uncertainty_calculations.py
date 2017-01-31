@@ -2,7 +2,7 @@ import chaospy as cp
 import numpy as np
 import multiprocessing as mp
 
-from uncertainpy import RunModel
+from runmodel import RunModel
 from uncertainpy.utils import create_logger
 from uncertainpy.features import GeneralFeatures
 
@@ -20,7 +20,7 @@ class UncertaintyCalculations:
                  nr_pc_mc_samples=10*5,
                  seed=None,
                  verbose_level="info",
-                 verbose_filename=None,):
+                 verbose_filename=None):
 
 
         self.model = model
@@ -43,7 +43,7 @@ class UncertaintyCalculations:
 
         self.runmodel = RunModel(self.model,
                                  features=self.features,
-                                 CPUs=mp.cpu_count(),
+                                 CPUs=CPUs,
                                  supress_model_output=supress_model_output,
                                  supress_model_graphics=supress_model_graphics)
 
@@ -131,6 +131,7 @@ class UncertaintyCalculations:
 
         return uncertain_parameters
 
+
     # TODO not tested
     def PCEQuadrature(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
@@ -152,8 +153,8 @@ class UncertaintyCalculations:
         for feature in self.data.feature_list:
             masked_nodes, masked_U, masked_weights = self.createMask(nodes, feature, weights)
 
-            self.U_hat = cp.fit_quadrature(self.P, masked_nodes,
-                                           masked_weights, masked_U)
+            self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
+                                                    masked_weights, masked_U)
 
         # TODO perform for directComparison outside, since masking is not needed.?
         # self.U_hat["directComparison"] = cp.fit_quadrature(self.P, nodes, masked_weights, self.data.U[feature])
@@ -301,6 +302,12 @@ class UncertaintyCalculations:
         self.totalSensitivity(sensitivity="sensitivity_t")
 
 
+
+    def PCRcustom(self):
+        raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
+
+
+
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
@@ -313,7 +320,6 @@ class UncertaintyCalculations:
             raise ValueError("No method with name {}".format(method))
 
         self.PCAnalysis()
-
 
         return self.data
 
@@ -339,8 +345,6 @@ class UncertaintyCalculations:
             self.data.total_sensitivity_1[feature] = None
             self.data.sensitivity_t[feature] = None
             self.data.total_sensitivity_t[feature] = None
-
-
 
         return self.data
 

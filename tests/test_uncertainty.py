@@ -201,7 +201,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    
+
 
     def test_singleParameters(self):
         if os.path.isdir(self.output_test_dir):
@@ -502,6 +502,23 @@ class TestUncertainty(unittest.TestCase):
         result = subprocess.call(["diff", plot_file, compare_file])
 
         self.assertEqual(result, 0)
+
+    def test_convertUncertainParametersList(self):
+        result = self.uncertainty.convertUncertainParameters(["a", "b"])
+
+        self.assertEqual(result, ["a", "b"])
+
+    def test_convertUncertainParametersString(self):
+        result = self.uncertainty.convertUncertainParameters("a")
+
+        self.assertEqual(result, ["a"])
+
+
+    def test_convertUncertainParametersNone(self):
+        result = self.uncertainty.convertUncertainParameters(None)
+
+        self.assertEqual(result, ["a", "b"])
+
 
 
 

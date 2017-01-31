@@ -10,6 +10,7 @@ import logging
 
 
 # Imported from uncertainpy
+from uncertainty_calculations import UncertaintyCalculations
 from uncertainpy.features import GeneralFeatures
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.utils import create_logger
@@ -19,18 +20,14 @@ from uncertainpy.utils import create_logger
 class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,
+                 uncertainty_calculations=None,
                  save_figures=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
                  output_data_filename=None,
-                 supress_model_graphics=True,
-                 supress_model_output=True,
-                 CPUs=mp.cpu_count(),
                  rosenblatt=False,
-                 nr_mc_samples=10**3,
-                 nr_pc_mc_samples=10**5,
                  verbose_level="info",
                  verbose_filename=None,
                  seed=None):
@@ -141,9 +138,7 @@ Examples
 For example on use see:
         """
 
-
-        # self.data = Data()
-
+        self.data = None
 
         if features is None:
             self.features = GeneralFeatures(features_to_run=None)
@@ -156,19 +151,31 @@ For example on use see:
         self.output_dir_data = output_dir_data
         self.output_dir_figures = output_dir_figures
 
-        self.CPUs = CPUs
-
         self.model = model
-
-        # self.rosenblatt = rosenblatt
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
 
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
+
+        if uncertainty_calculations is None:
+            self.uncertainty_calculations = UncertaintyCalculations(
+                model,
+                features=self.features,
+                rosenblatt=rosenblatt,
+                verbose_level=verbose_level,
+                verbose_filename=verbose_filename
+            )
+        else:
+            self.uncertainty_calculations = uncertainty_calculations
+
 
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
-                                    output_dir_figures=output_dir_figures,
+                                    output_dir_figures=self.output_dir_figures,
                                     figureformat=figureformat,
                                     verbose_level=verbose_level,
                                     verbose_filename=verbose_filename)
@@ -179,8 +186,6 @@ For example on use see:
         else:
             self.output_data_filename = output_data_filename
 
-
-        # self.seed = seed
 
         self.t_start = time.time()
 
@@ -199,6 +204,8 @@ For example on use see:
     # def __setstate__(self, state):
     #     self.__dict__.update(state)
 
+
+    # def uq(uncertain_parameters=None, method="pc", single=False):
 
 
 
@@ -341,3 +348,13 @@ For example on use see:
         self.plot.setData(self.data, foldername=foldername)
 
         self.plot.plotResults()
+
+
+    def convertUncertainParameters(self, uncertain_parameters):
+        if uncertain_parameters is None:
+            uncertain_parameters = self.model.parameters.getUncertain("name")
+
+        if isinstance(uncertain_parameters, str):
+            uncertain_parameters = [uncertain_parameters]
+
+        return uncertain_parameters
