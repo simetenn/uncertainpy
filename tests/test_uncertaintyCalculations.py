@@ -305,6 +305,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.assertEqual(result, ["a", "b"])
 
 
+    def test_PCECustom(self):
+        with self.assertRaises(NotImplementedError):
+            self.uncertainty_calculations.PCECustom()
+
     def test_PCERegressionAll(self):
 
         self.uncertainty_calculations.PCERegression()
@@ -504,6 +508,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
 
         self.assertEqual(result, 0)
+
+
+    def test_PCCustom(self):
+        with self.assertRaises(NotImplementedError):
+            self.uncertainty_calculations.PC(method="custom")
+
+    def test_PCError(self):
+        with self.assertRaises(ValueError):
+            self.uncertainty_calculations.PC(method="not implemented")
 
 
     def test_PCParameterA(self):

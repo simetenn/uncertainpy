@@ -10,7 +10,6 @@ class UncertaintyCalculations:
     def __init__(self,
                  model,
                  features=None,
-                 rosenblatt=False,
                  CPUs=mp.cpu_count(),
                  supress_model_output=True,
                  supress_model_graphics=True,
@@ -51,8 +50,6 @@ class UncertaintyCalculations:
                                     verbose_filename,
                                     self.__class__.__name__)
 
-
-        self.rosenblatt = rosenblatt
 
         self.nr_pc_samples = nr_pc_samples
 
@@ -303,7 +300,7 @@ class UncertaintyCalculations:
 
 
 
-    def PCRcustom(self):
+    def PCECustom(self, uncertain_parameters=None):
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
 
@@ -316,6 +313,9 @@ class UncertaintyCalculations:
                 self.PCERegressionRosenblatt(uncertain_parameters)
             else:
                 self.PCERegression(uncertain_parameters)
+        elif method == "custom":
+            self.PCECustom(uncertain_parameters)
+
         else:
             raise ValueError("No method with name {}".format(method))
 

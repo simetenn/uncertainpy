@@ -1,12 +1,8 @@
 #  Figures are always saved on the format:
 #  output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
 
-
-import time
 import os
 
-import multiprocessing as mp
-import logging
 
 
 # Imported from uncertainpy
@@ -27,7 +23,6 @@ class UncertaintyEstimation():
                  save_data=True,
                  output_dir_data="data/",
                  output_data_filename=None,
-                 rosenblatt=False,
                  verbose_level="info",
                  verbose_filename=None,
                  seed=None):
@@ -146,7 +141,6 @@ For example on use see:
             self.features = features
 
         self.save_figures = save_figures
-        self.figureformat = figureformat
         self.save_data = save_data
         self.output_dir_data = output_dir_data
         self.output_dir_figures = output_dir_figures
@@ -205,104 +199,112 @@ For example on use see:
     #     self.__dict__.update(state)
 
 
-    # def uq(uncertain_parameters=None, method="pc", single=False):
+    def uq(self,
+           uncertain_parameters=None,
+           method="pc",
+           single=False,
+           pc_method="regression",
+           rosenblatt=False):
+
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+
+        if method == "pc":
+            if single:
+                self.PCSingle(uncertain_parameters=uncertain_parameters,
+                              method=method,
+                              rosenblatt=rosenblatt)
+            else:
+                self.PC(uncertain_parameters=uncertain_parameters,
+                        method=method,
+                        rosenblatt=rosenblatt)
+        elif method == "mc":
+            if single:
+                self.MCSingle(uncertain_parameters=uncertain_parameters)
+            else:
+                self.MC(uncertain_parameters=uncertain_parameters)
 
 
+    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
+        if len(uncertain_parameters) > 20:
+            raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
 
-    def timePassed(self):
-        return time.time() - self.t_start
-
-
-    def singleParameters(self):
-        for uncertain_parameter in self.model.parameters.getUncertain():
-            message = "Running for " + uncertain_parameter + "                     "
-            self.logger.info(message)
-
-            self.resetValues()
-
-            if self.createPCExpansion(uncertain_parameter) == -1:
-                self.logger.warning("Calculations aborted for " + uncertain_parameter)
-                return -1
-
-            self.PCAnalysis()
-
-
-            if self.save_data:
-                filename = "%s_single-parameter-%s" \
-                    % (self.output_data_filename, uncertain_parameter)
-
-                self.save(filename)
-
-            if self.save_figures:
-                filename = "%s_single-parameter-%s" \
-                    % (self.output_data_filename, uncertain_parameter)
-                self.logger.info("Saving plots as: {}".format(filename))
-                self.plotAllSingle(filename)
-
-
-
-    def allParameters(self):
-        self.resetValues()
-
-        self.logger.info("Running for all parameters")
-        if self.createPCExpansion() == -1:
-            self.logger.warning("Calculations aborted for all")
-            return -1
-
-        self.PCAnalysis()
+        self.data = self.uncertainty_calculations.PC(
+            uncertain_parameters=uncertain_parameters,
+            method=method,
+            rosenblatt=rosenblatt
+        )
 
         if self.save_data:
             self.save(self.output_data_filename)
 
 
         if self.save_figures:
-            self.logger.info("Saving plots as: {}".format(self.output_data_filename))
+            self.plotAll(self.output_data_filename)
+
+
+    def MC(self, uncertain_parameters=None):
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+
+        self.data = self.uncertainty_calculations.MC()
+
+        if self.save_data:
+            self.save(self.output_data_filename)
+
+
+        if self.save_figures:
             self.plotAll(self.output_data_filename)
 
 
 
-    def singleParametersMC(self):
+    def PCSingle(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+
+        if len(uncertain_parameters) > 20:
+            raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
+
         for uncertain_parameter in self.model.parameters.getUncertain():
-            message = "Running MC for " + uncertain_parameter
-            logging.info(message)
+            self.logger.info("Running for " + uncertain_parameter)
 
-            self.resetValues()
+            self.data = self.uncertainty_calculations.PC(
+                uncertain_parameters=uncertain_parameters,
+                method=method,
+                rosenblatt=rosenblatt
+            )
 
-            self.MC(uncertain_parameter)
-
-            filename = "%s_single-parameter-%s" \
-                % (self.output_data_filename, uncertain_parameter)
 
             if self.save_data:
+                filename = "{}_single-parameter-{}".format(
+                    self.output_data_filename,
+                    uncertain_parameter
+                )
+
                 self.save(filename)
 
-
             if self.save_figures:
-                self.logger.info("Saving plots as: {}".format(filename))
+                filename = "{}_single-parameter-{}".format(
+                    self.output_data_filename,
+                    uncertain_parameter
+                )
+
                 self.plotAllSingle(filename)
 
 
-    def allParametersMC(self):
-        # if len(self.model.parameters.uncertain_parameters) <= 1:
-        #     print "Only 1 uncertain parameter"
-        #     return
 
-        self.resetValues()
+    def MCSingle(self, uncertain_parameters=None):
+        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        self.MC()
+        for uncertain_parameter in self.model.parameters.getUncertain():
+            self.logger.info("Running MC for " + uncertain_parameter)
 
-        if self.save_data:
-            self.save(self.output_data_filename)
+            self.data = self.uncertainty_calculations.MC()
 
+            if self.save_data:
+                self.save(self.output_data_filename)
 
-        if self.save_figures:
-            self.logger.info("Saving plots as: {}".format(self.output_data_filename))
-            self.plotAllSingle(self.output_data_filename)
-
-
-    def getData(self):
-        return self.data
+            if self.save_figures:
+                self.plotAll(self.output_data_filename)
 
 
 
@@ -319,11 +321,15 @@ For example on use see:
 
     # TODO never tested
     def load(self, filename):
+        raise NotImplementedError
+
         self.filename = filename
         self.data.load(os.path.join(self.data_dir, filename + ".h5"))
 
 
     def plotAll(self, foldername=None):
+        self.logger.info("Creating plots as: {}".format(self.output_data_filename))
+
         self.plot.setData(self.data, foldername=foldername)
 
         if foldername is None:
@@ -338,7 +344,6 @@ For example on use see:
 
         if foldername is None:
             foldername = self.output_dir_figures
-
 
         self.plot.plotAllDataNoSensitivity()
 

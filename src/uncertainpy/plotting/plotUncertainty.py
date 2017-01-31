@@ -26,6 +26,8 @@ from uncertainpy.utils import create_logger
 # TODO plot simulator_results
 
 
+# TODO Make it so plots are not created if the data is None
+
 class PlotUncertainty():
     def __init__(self,
                  data_dir="data/",
