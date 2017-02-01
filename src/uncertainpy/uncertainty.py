@@ -47,9 +47,12 @@ class UncertaintyEstimation():
         else:
             self.features = features
 
+
+        self.model = model
+
         if uncertainty_calculations is None:
             self.uncertainty_calculations = UncertaintyCalculations(
-                model=model,
+                model=self.model,
                 features=self.features,
                 verbose_level=verbose_level,
                 verbose_filename=verbose_filename
@@ -57,9 +60,8 @@ class UncertaintyEstimation():
         else:
             self.uncertainty_calculations = uncertainty_calculations
             self.uncertainty_calculations.set_model(model)
-            self.uncertainty_calculations.features = self.features
+            self.uncertainty_calculations.set_features(self.features)
 
-        self.model = model
 
 
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
