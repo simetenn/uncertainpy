@@ -57,7 +57,8 @@ class UncertaintyEstimation():
         else:
             self.uncertainty_calculations = uncertainty_calculations
             self.uncertainty_calculations.set_model(model)
-            self.model = model
+
+        self.model = model
 
 
         self.plot = PlotUncertainty(data_dir=self.output_dir_data,
@@ -154,7 +155,7 @@ class UncertaintyEstimation():
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
 
-        for uncertain_parameter in self.model.parameters.getUncertain():
+        for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running for " + uncertain_parameter)
 
             self.data = self.uncertainty_calculations.PC(
@@ -185,7 +186,7 @@ class UncertaintyEstimation():
     def MCSingle(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        for uncertain_parameter in self.model.parameters.getUncertain():
+        for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running MC for " + uncertain_parameter)
 
             self.data = self.uncertainty_calculations.MC()
