@@ -278,8 +278,13 @@ class PlotUncertainty():
             plt.show()
 
 
-    def plotSensitivity(self, feature="directComparison", sensitivity="sensitivity_1", hardcopy=True, show=False,
+    def plotSensitivity(self,
+                        feature="directComparison",
+                        sensitivity="sensitivity_1",
+                        hardcopy=True,
+                        show=False,
                         **kwargs):
+
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -573,7 +578,10 @@ class PlotUncertainty():
             plt.show()
 
 
-    def plotTotalSensitivityAllFeatures(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
+    def plotTotalSensitivityAllFeatures(self,
+                                        sensitivity="sensitivity_1",
+                                        hardcopy=True,
+                                        show=False):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 

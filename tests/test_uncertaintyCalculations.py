@@ -33,8 +33,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
+        parameters.setAllDistributions(Distribution(0.5).uniform)
         model = TestingModel1d(parameters)
-        model.setAllDistributions(Distribution(0.5).uniform)
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
@@ -70,6 +70,28 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                            features=TestingFeatures(),
                                                            verbose_level="error")
         self.assertIsInstance(uncertainty_calculations.features, TestingFeatures)
+
+
+    def test_set_model(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        parameters.setAllDistributions(Distribution(0.5).uniform)
+        model = TestingModel1d(parameters)
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed)
+
+        self.uncertainty_calculations.set_model(model)
+
+        self.assertIsInstance(self.uncertainty_calculations.model, TestingModel1d)
+        self.assertIsInstance(self.uncertainty_calculations.runmodel.model, TestingModel1d)
 
 
     def test_createDistributionNone(self):

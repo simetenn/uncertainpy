@@ -6,9 +6,10 @@ from runmodel import RunModel
 from uncertainpy.utils import create_logger
 from uncertainpy.features import GeneralFeatures
 
+# Model is now potentially set two places, is that a problem?
 class UncertaintyCalculations:
     def __init__(self,
-                 model,
+                 model=None,
                  features=None,
                  CPUs=mp.cpu_count(),
                  supress_model_output=True,
@@ -57,6 +58,11 @@ class UncertaintyCalculations:
         if seed is not None:
             cp.seed(seed)
             np.random.seed(seed)
+
+
+    def set_model(self, model):
+        self.model = model
+        self.runmodel.model = model
 
 
     def createDistribution(self, uncertain_parameters=None):
@@ -119,6 +125,8 @@ class UncertaintyCalculations:
 
 
     def convertUncertainParameters(self, uncertain_parameters):
+        if self.model is None:
+            raise RuntimeError("No model is set")
 
         if uncertain_parameters is None:
             uncertain_parameters = self.model.parameters.getUncertain("name")
