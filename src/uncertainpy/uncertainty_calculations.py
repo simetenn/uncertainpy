@@ -185,8 +185,6 @@ class UncertaintyCalculations:
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
 
-        print self.features
-
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 

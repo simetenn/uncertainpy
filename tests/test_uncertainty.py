@@ -209,16 +209,26 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.MC()
 
-        filename = os.path.join(self.output_test_dir, "test_save_data_MC")
-        self.assertTrue(os.path.isfile(filename))
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
+        self.assertTrue(os.path.isfile(filename))
 
         result = subprocess.call(["h5diff", "-d", self.difference, filename, compare_file])
 
         self.assertEqual(result, 0)
+
+
+
+
+
+
+
+
+
+
+
     # #
     #
     # def test_plotAll(self):

@@ -153,8 +153,13 @@ class PlotUncertainty():
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
-
         value = getattr(self.data, attribute)
+
+        if self.data.t[feature] is None or value[feature] is None:
+            msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
+            self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
+            return
+
         title = feature + ", " + attribute_name
         prettyPlot(self.data.t[feature], value[feature],
                    self.toLatex(title), self.data.xlabel, self.data.ylabel, **kwargs)
@@ -198,6 +203,10 @@ class PlotUncertainty():
 
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
+
+        if self.data.t[feature] is None or self.data.E[feature] is None or self.data.Var[feature] is None:
+            self.logger.warning("Mean and/or variance of {feature} is None. Unable to plot mean and variance".format(feature=feature))
+            return
 
         title = feature + ", mean and variance"
         ax = prettyPlot(self.data.t[feature], self.data.E[feature],
@@ -253,6 +262,13 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
+        if self.data.t[feature] is None or self.data.p_05[feature] is None or self.data.p_95[feature] is None:
+            msg = "p_05  and/or p_95 of {feature} is None. Unable to plot confidence interval"
+            self.logger.warning(msg.format(feature=feature))
+            return
+
+
+
         title = feature + ", 90\\% confidence interval"
         prettyPlot(self.data.t[feature], self.data.E[feature], title=self.toLatex(title),
                    xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
@@ -293,8 +309,16 @@ class PlotUncertainty():
 
         sense = getattr(self.data, sensitivity)
 
-        if feature not in sense or sense[feature] is None:
+        if feature not in sense:
+            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity}"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
+
+        if self.data.t[feature] is None or sense[feature] is None:
+            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
+
 
         parameter_names = self.data.uncertain_parameters
 
@@ -329,8 +353,17 @@ class PlotUncertainty():
         sense = getattr(self.data, sensitivity)
 
 
-        if feature not in sense or sense[feature] is None:
+        if feature not in sense:
+            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity} grid"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
+
+        if self.data.t[feature] is None or sense[feature] is None:
+            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity} grid"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
+
+
 
         parameter_names = self.data.uncertain_parameters
 
@@ -403,7 +436,14 @@ class PlotUncertainty():
 
         sense = getattr(self.data, sensitivity)
 
-        if feature not in sense or sense[feature] is None:
+        if feature not in sense:
+            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity} combined"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
+
+        if self.data.t[feature] is None or sense[feature] is None:
+            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity} combined"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
 
@@ -457,6 +497,12 @@ class PlotUncertainty():
             raise ValueError("%s is not a 0D feature" % (feature))
 
         sense = getattr(self.data, sensitivity)
+
+        if self.data.E[feature] is None or self.data.Var[feature] or self.data.p_05[feature] or self.data.p_05[feature] is None:
+            msg = "Missing 0D values for {feature}. Unable to plot"
+            self.logger.warning(msg.format(feature=feature))
+            return
+
 
         if len(self.data.uncertain_parameters) > max_legend_size:
             legend_size = max_legend_size
@@ -548,8 +594,15 @@ class PlotUncertainty():
 
         total_sense = getattr(self.data, "total_" + sensitivity)
 
-        if feature not in total_sense.keys():
-            raise ValueError("No total sensitivity calculated for {}".format(feature))
+        if feature not in total_sense:
+            msg = "{feature} not in total_{sensitivity}. Unable to plot total_{sensitivity}"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
+
+        if self.data.t[feature] is None or total_sense[feature] is None:
+            msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
 
         width = 0.2
 
@@ -678,78 +731,84 @@ class PlotUncertainty():
 
 
     def plotTotalSensitivityGrid(self, sensitivity="sensitivity_1", hardcopy=True, show=False, **kwargs):
-            if not self.loaded_flag:
-                raise ValueError("Datafile must be loaded")
+        if not self.loaded_flag:
+            raise ValueError("Datafile must be loaded")
 
-            total_sense = getattr(self.data, "total_" + sensitivity)
+        total_sense = getattr(self.data, "total_" + sensitivity)
 
-            # get size of the grid in x and y directions
-            nr_plots = len(self.data.feature_list)
-            grid_size = np.ceil(np.sqrt(nr_plots))
-            grid_x_size = int(grid_size)
-            grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
+        # get size of the grid in x and y directions
+        nr_plots = len(self.data.feature_list)
+        grid_size = np.ceil(np.sqrt(nr_plots))
+        grid_x_size = int(grid_size)
+        grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
-            # plt.close("all")
-
-
-            set_style("dark")
-            fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
-            set_style("white")
+        # plt.close("all")
 
 
-            # Add a larger subplot to use to set a common xlabel and ylabel
-
-            ax = fig.add_subplot(111, zorder=-10)
-            spines_edge_color(ax, edges={"top": "None", "bottom": "None",
-                                         "right": "None", "left": "None"})
-            ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
-            # ax.set_xlabel(self.data.xlabel)
-            ax.set_ylabel('\% total ' + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
-
-            width = 0.2
-            index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
+        set_style("dark")
+        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
+        set_style("white")
 
 
-            for i in range(0, grid_x_size*grid_y_size):
-                nx = i % grid_x_size
-                ny = int(np.floor(i/float(grid_x_size)))
+        # Add a larger subplot to use to set a common xlabel and ylabel
 
-                ax = axes[ny][nx]
+        ax = fig.add_subplot(111, zorder=-10)
+        spines_edge_color(ax, edges={"top": "None", "bottom": "None",
+                                     "right": "None", "left": "None"})
+        ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+        # ax.set_xlabel(self.data.xlabel)
+        ax.set_ylabel('\% total ' + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
 
-                if i < nr_plots:
-                    prettyBar(total_sense[self.data.feature_list[i]],
-                              title=self.toLatex(self.data.feature_list[i]),
-                              xlabels=self.listToLatex(self.data.uncertain_parameters),
-                              nr_hues=len(self.data.uncertain_parameters),
-                              index=index,
-                              ax=ax,
-                              **kwargs)
+        width = 0.2
+        index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
 
-                    for tick in ax.get_xticklabels():
-                        tick.set_rotation(-30)
+        for i in range(0, grid_x_size*grid_y_size):
+            nx = i % grid_x_size
+            ny = int(np.floor(i/float(grid_x_size)))
 
-                    ax.set_ylim([0, 1.05])
-                    # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
-                    ax.tick_params(labelsize=10)
-                else:
+            ax = axes[ny][nx]
+
+            if i < nr_plots:
+                if total_sense[self.data.feature_list[i]] is None:
+                    msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity} grid"
+                    self.logger.warning(msg.format(sensitivity=sensitivity, feature=self.data.feature_list[i]))
                     ax.axis("off")
+                    continue
 
-            title = "total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
-            plt.suptitle(title, fontsize=titlesize)
-            plt.tight_layout()
-            plt.subplots_adjust(top=0.85)
+                prettyBar(total_sense[self.data.feature_list[i]],
+                          title=self.toLatex(self.data.feature_list[i]),
+                          xlabels=self.listToLatex(self.data.uncertain_parameters),
+                          nr_hues=len(self.data.uncertain_parameters),
+                          index=index,
+                          ax=ax,
+                          **kwargs)
 
 
-            if hardcopy:
-                plt.savefig(os.path.join(self.full_output_dir_figures,
-                                         "total-" + sensitivity + "_grid" + self.figureformat),
-                            bbox_inches="tight")
-                if not show:
-                    plt.close()
+                for tick in ax.get_xticklabels():
+                    tick.set_rotation(-30)
 
-            if show:
-                plt.show()
+                ax.set_ylim([0, 1.05])
+                # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
+                ax.tick_params(labelsize=10)
+            else:
+                ax.axis("off")
+
+        title = "total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
+        plt.suptitle(title, fontsize=titlesize)
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.85)
+
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.full_output_dir_figures,
+                                     "total-" + sensitivity + "_grid" + self.figureformat),
+                        bbox_inches="tight")
+            if not show:
+                plt.close()
+
+        if show:
+            plt.show()
 
 
 

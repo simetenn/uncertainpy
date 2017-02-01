@@ -169,21 +169,15 @@ class UncertaintyEstimation():
                 rosenblatt=rosenblatt
             )
 
+            filename = "{}_single-parameter-{}".format(
+                self.output_data_filename,
+                uncertain_parameter
+            )
 
             if self.save_data:
-                filename = "{}_single-parameter-{}".format(
-                    self.output_data_filename,
-                    uncertain_parameter
-                )
-
                 self.save(filename)
 
             if self.save_figures:
-                filename = "{}_single-parameter-{}".format(
-                    self.output_data_filename,
-                    uncertain_parameter
-                )
-
                 self.plotAllSingle(filename)
 
 
@@ -196,11 +190,16 @@ class UncertaintyEstimation():
 
             self.data = self.uncertainty_calculations.MC()
 
+            filename = "{}_single-parameter-{}".format(
+                self.output_data_filename,
+                uncertain_parameter
+            )
+
             if self.save_data:
-                self.save(self.output_data_filename)
+                self.save(filename)
 
             if self.save_figures:
-                self.plotAll(self.output_data_filename)
+                self.plotAll(filename)
 
 
 
