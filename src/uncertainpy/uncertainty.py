@@ -57,6 +57,7 @@ class UncertaintyEstimation():
         else:
             self.uncertainty_calculations = uncertainty_calculations
             self.uncertainty_calculations.set_model(model)
+            self.uncertainty_calculations.features = self.features
 
         self.model = model
 
@@ -121,11 +122,13 @@ class UncertaintyEstimation():
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
 
+
         self.data = self.uncertainty_calculations.PC(
             uncertain_parameters=uncertain_parameters,
             method=method,
             rosenblatt=rosenblatt
         )
+
 
         if self.save_data:
             self.save(self.output_data_filename)

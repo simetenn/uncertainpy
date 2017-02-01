@@ -94,6 +94,26 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.runmodel.model, TestingModel1d)
 
 
+    def test_set_features(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        parameters.setAllDistributions(Distribution(0.5).uniform)
+        model = TestingModel1d(parameters)
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(verbose_level="error",
+                                                                seed=self.seed)
+
+        self.uncertainty_calculations.set_features(features)
+
+        self.assertIsInstance(self.uncertainty_calculations.features, TestingFeatures)
+        self.assertIsInstance(self.uncertainty_calculations.runmodel.features, TestingFeatures)
+
     def test_createDistributionNone(self):
 
         self.uncertainty_calculations.createDistribution()

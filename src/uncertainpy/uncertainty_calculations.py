@@ -65,6 +65,11 @@ class UncertaintyCalculations:
         self.runmodel.model = model
 
 
+    def set_features(self, features):
+        self.features = features
+        self.runmodel.features = features
+
+
     def createDistribution(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
@@ -180,8 +185,11 @@ class UncertaintyCalculations:
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
 
+        print self.features
+
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
+
 
         # Calculate PC for each feature
         for feature in self.data.feature_list:
@@ -189,6 +197,8 @@ class UncertaintyCalculations:
 
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
+
+
 
         # TODO perform for directComparison outside, since masking is not needed.?
         # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
@@ -232,7 +242,7 @@ class UncertaintyCalculations:
         for feature in self.data.feature_list:
             masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal, feature, weights)
 
-            self.data.U_hat = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
+            self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
 
 
         # # perform for directComparison outside, since masking is not needed.
@@ -326,6 +336,7 @@ class UncertaintyCalculations:
 
         else:
             raise ValueError("No method with name {}".format(method))
+
 
         self.PCAnalysis()
 
