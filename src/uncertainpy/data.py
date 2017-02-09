@@ -74,6 +74,10 @@ Test if the model returned an adaptive result
             f.attrs["features"] = self.feature_list
             f.attrs["xlabel"] = self.xlabel
             f.attrs["ylabel"] = self.ylabel
+            f.attrs["features_0d"] = self.features_0d
+            f.attrs["features_1d"] = self.features_1d
+            f.attrs["features_2d"] = self.features_2d
+
 
             for feature in self.feature_list:
                 group = f.create_group(feature)
@@ -113,6 +117,18 @@ Test if the model returned an adaptive result
             self.p_95 = {}
             self.sensitivity_1 = {}
 
+
+            self.uncertain_parameters = f.attrs["uncertain parameters"]
+
+            self.xlabel = f.attrs["xlabel"]
+            self.ylabel = f.attrs["ylabel"]
+
+            self.feature_list = f.attrs["features"]
+            self.features_0d = f.attrs["features_0d"]
+            self.features_1d = f.attrs["features_1d"]
+            self.features_2d = f.attrs["features_2d"]
+
+
             for feature in f.keys():
                 self.U[feature] = f[feature]["U"][()]
                 self.E[feature] = f[feature]["E"][()]
@@ -149,11 +165,7 @@ Test if the model returned an adaptive result
                 # else:
                 #     self.t[feature] = None
 
-            self.setFeatures(self.E)
-            self.uncertain_parameters = f.attrs["uncertain parameters"]
 
-            self.xlabel = f.attrs["xlabel"]
-            self.ylabel = f.attrs["ylabel"]
 
 
     def setFeatures(self, results):
@@ -163,12 +175,30 @@ Test if the model returned an adaptive result
 
 
     def sortFeatures(self, results):
+
+        """
+        results = {'directComparison': (None,
+                                        array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        None),
+                   'feature2d': (None,
+                                 array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                 None),
+                   'feature1d': (None,
+                                 array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                 None),
+                   'feature0d': (None,
+                                 1,
+                                 None)}
+        """
+
         features_2d = []
         features_1d = []
         features_0d = []
 
         for feature in results:
             if hasattr(results[feature][1], "__iter__"):
+
                 if len(results[feature][1].shape) == 0:
                     features_0d.append(feature)
                 elif len(results[feature][1].shape) == 1:
@@ -179,6 +209,8 @@ Test if the model returned an adaptive result
                 features_0d.append(feature)
 
         return features_0d, features_1d, features_2d
+
+
 
     def removeOnlyInvalidResults(self):
         old_feature_list = self.feature_list[:]

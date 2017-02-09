@@ -152,14 +152,19 @@ def generate_data_data():  # pragma: no cover
     data.xlabel = "xlabel"
     data.ylabel = "ylabel"
 
+    data.features_0d = ["directComparison", "features1"]
+    data.features_1d = []
+    data.features_2d = []
+
+
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
 
 if __name__ == "__main__":  # pragma: no cover
-    generate_data_allParameters()
-    generate_data_singleParameters()
-    generate_data_allParametersMC()
-    generate_data_singleParametersMC()
-    generate_data_compareMC()
+    # generate_data_allParameters()
+    # generate_data_singleParameters()
+    # generate_data_allParametersMC()
+    # generate_data_singleParametersMC()
+    # generate_data_compareMC()
+    # generate_data_allParametersRosenblatt()
     generate_data_data()
-    generate_data_allParametersRosenblatt()
