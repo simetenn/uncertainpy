@@ -167,7 +167,7 @@ class TestModel(unittest.TestCase):
 
         self.model.setDistribution("gbar_Na", distribution_function)
 
-        self.assertIsInstance(self.model.parameters["gbar_Na"].parameter_space, cp.Dist)
+        self.assertIsInstance(self.model.parameters["gbar_Na"].distribution, cp.Dist)
 
 
     def test_setDistributionNone(self):
@@ -192,9 +192,9 @@ class TestModel(unittest.TestCase):
 
         self.model.setAllDistributions(distribution_function)
 
-        self.assertIsInstance(self.model.parameters["gbar_Na"].parameter_space, cp.Dist)
-        self.assertIsInstance(self.model.parameters["gbar_K"].parameter_space, cp.Dist)
-        self.assertIsInstance(self.model.parameters["gbar_l"].parameter_space, cp.Dist)
+        self.assertIsInstance(self.model.parameters["gbar_Na"].distribution, cp.Dist)
+        self.assertIsInstance(self.model.parameters["gbar_K"].distribution, cp.Dist)
+        self.assertIsInstance(self.model.parameters["gbar_l"].distribution, cp.Dist)
 
 
     def test_setAllDistributionsNone(self):

@@ -155,7 +155,6 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.xlabel, "xlabel")
         self.assertEqual(self.data.ylabel, "ylabel")
 
-        print self.data.feature_list
         self.assertEqual(self.data.feature_list[0], "directComparison")
         self.assertEqual(self.data.feature_list[1], "feature1")
 
