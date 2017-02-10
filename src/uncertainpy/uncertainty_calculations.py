@@ -56,7 +56,7 @@ class UncertaintyCalculations:
 
 
         if seed is not None:
-            cp.seed(seed)
+            # cp.seed(seed)
             np.random.seed(seed)
 
 
@@ -291,6 +291,8 @@ class UncertaintyCalculations:
 
 
     def PCAnalysis(self):
+
+        np.random.seed(10)
         for feature in self.data.feature_list:
             self.data.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.data.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)

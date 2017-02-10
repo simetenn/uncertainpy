@@ -164,7 +164,7 @@ class UncertaintyEstimation():
             self.logger.info("Running for " + uncertain_parameter)
 
             self.data = self.uncertainty_calculations.PC(
-                uncertain_parameters=uncertain_parameters,
+                uncertain_parameters=uncertain_parameter,
                 method=method,
                 rosenblatt=rosenblatt
             )
@@ -175,6 +175,7 @@ class UncertaintyEstimation():
             )
 
             if self.save_data:
+                print filename
                 self.save(filename)
 
             if self.save_figures:

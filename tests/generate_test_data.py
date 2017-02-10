@@ -1,5 +1,7 @@
 import os
-import uncertainpy
+
+import numpy as np
+import uncertainpy as un
 from models import TestingModel1d
 from features import TestingFeatures
 
@@ -9,105 +11,143 @@ test_data_dir = os.path.join(folder, "data")
 seed = 10
 
 
-def generate_data_allParameters():  # pragma: no cover
+def generate_data_PC():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = uncertainpy.Parameters(parameterlist)
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
     model = TestingModel1d(parameters)
-    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+    uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
 
 
-    test = uncertainpy.UncertaintyEstimation(model,
-                                             features=TestingFeatures(),
-                                             output_dir_data=test_data_dir,
-                                             output_dir_figures=test_data_dir,
-                                             verbose_level="error",
-                                             seed=seed)
-
-    test.allParameters()
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    uncertainty_calculations=uncertainty_calculations,
+                                    output_dir_data=test_data_dir,
+                                    output_dir_figures=test_data_dir,
+                                    verbose_level="error")
 
 
+    test.PC()
 
-def generate_data_allParametersRosenblatt():  # pragma: no cover
+
+def generate_data_PCRosenblatt():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = uncertainpy.Parameters(parameterlist)
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
     model = TestingModel1d(parameters)
-    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+    uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
 
 
-    test = uncertainpy.UncertaintyEstimation(model,
-                                             features=TestingFeatures(),
-                                             output_dir_data=test_data_dir,
-                                             output_dir_figures=test_data_dir,
-                                             verbose_level="error",
-                                             rosenblatt=True,
-                                             seed=seed)
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    uncertainty_calculations=uncertainty_calculations,
+                                    output_dir_data=test_data_dir,
+                                    output_dir_figures=test_data_dir,
+                                    output_data_filename="TestingModel1d_Rosenblatt",
+                                    verbose_level="error")
 
-    test.allParameters()
 
-def generate_data_singleParameters():  # pragma: no cover
+    test.PC(rosenblatt=True)
+
+
+
+def generate_data_PCSingle():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = uncertainpy.Parameters(parameterlist)
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
     model = TestingModel1d(parameters)
-    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+    uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
 
 
-    test = uncertainpy.UncertaintyEstimation(model,
-                                             features=TestingFeatures(),
-                                             output_dir_data=test_data_dir,
-                                             output_dir_figures=test_data_dir,
-                                             verbose_level="error",
-                                             seed=seed)
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    uncertainty_calculations=uncertainty_calculations,
+                                    output_dir_data=test_data_dir,
+                                    output_dir_figures=test_data_dir,
+                                    verbose_level="error")
 
 
-    test.singleParameters()
+
+    test.PCSingle()
 
 
-def generate_data_allParametersMC():  # pragma: no cover
+def generate_data_MC():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = uncertainpy.Parameters(parameterlist)
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
     model = TestingModel1d(parameters)
-    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+    uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
 
 
-    test = uncertainpy.UncertaintyEstimation(model,
-                                             features=TestingFeatures(),
-                                             output_dir_data=test_data_dir,
-                                             output_dir_figures=test_data_dir,
-                                             output_data_filename="TestingModel1d_MC",
-                                             verbose_level="error",
-                                             seed=seed,
-                                             nr_mc_samples=10**1)
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    uncertainty_calculations=uncertainty_calculations,
+                                    output_dir_data=test_data_dir,
+                                    output_dir_figures=test_data_dir,
+                                    output_data_filename="TestingModel1d_MC",
+                                    verbose_level="error")
 
-    test.allParametersMC()
+    test.MC()
 
-def generate_data_singleParametersMC(): # pragma: no cover
+
+def generate_data_MCSingle(): # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = uncertainpy.Parameters(parameterlist)
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
     model = TestingModel1d(parameters)
-    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+    uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
 
 
-    test = uncertainpy.UncertaintyEstimation(model,
-                                             features=TestingFeatures(),
-                                             output_dir_data=test_data_dir,
-                                             output_dir_figures=test_data_dir,
-                                             output_data_filename="TestingModel1d_MC",
-                                             verbose_level="error",
-                                             seed=seed,
-                                             nr_mc_samples=10**1)
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    uncertainty_calculations=uncertainty_calculations,
+                                    output_dir_data=test_data_dir,
+                                    output_dir_figures=test_data_dir,
+                                    output_data_filename="TestingModel1d_MC",
+                                    verbose_level="error")
 
 
-    test.singleParametersMC()
+    test.MCSingle()
 
 
 
@@ -115,12 +155,12 @@ def generate_data_compareMC():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = uncertainpy.Parameters(parameterlist)
+    parameters = un.Parameters(parameterlist)
     model = TestingModel1d(parameters)
-    model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+    model.setAllDistributions(un.Distribution(0.5).uniform)
 
 
-    uncertainty = uncertainpy.UncertaintyEstimations(model,
+    uncertainty = un.UncertaintyEstimations(model,
                                                      features=TestingFeatures(),
                                                      verbose_level="error",
                                                      output_dir_data=test_data_dir,
@@ -135,7 +175,7 @@ def generate_data_compareMC():  # pragma: no cover
 
 
 def generate_data_data():  # pragma: no cover
-    data = uncertainpy.Data()
+    data = un.Data()
 
     data.uncertain_parameters = ["a", "b"]
     data.feature_list = ["directComparison", "feature1"]
@@ -160,11 +200,46 @@ def generate_data_data():  # pragma: no cover
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
 
+
+def generate_data_UncertaintyCalculations():  # pragma: no cover
+    np.random.seed(seed)
+
+    parameterlist = [["a", 1, None],
+                     ["b", 2, None]]
+
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
+    model = TestingModel1d(parameters)
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+
+    uncertainty_calculations = un.UncertaintyCalculations(model,
+                                                          features,
+                                                          seed=seed,
+                                                          nr_mc_samples=10)
+
+
+    data = uncertainty_calculations.PC("a")
+    data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-a.h5"))
+
+    np.random.seed(seed)
+
+    data = uncertainty_calculations.PC("b")
+    data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-b.h5"))
+
+
+
 if __name__ == "__main__":  # pragma: no cover
-    # generate_data_allParameters()
-    # generate_data_singleParameters()
-    # generate_data_allParametersMC()
-    # generate_data_singleParametersMC()
+    generate_data_PC()
+    generate_data_PCSingle()
+
+    generate_data_MC()
+    generate_data_MCSingle()
     # generate_data_compareMC()
-    # generate_data_allParametersRosenblatt()
+    generate_data_PCRosenblatt()
+    generate_data_UncertaintyCalculations()
     generate_data_data()
