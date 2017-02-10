@@ -574,6 +574,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.uncertainty_calculations.PC(method="custom")
 
+
+
     def test_PCError(self):
         with self.assertRaises(ValueError):
             self.uncertainty_calculations.PC(method="not implemented")

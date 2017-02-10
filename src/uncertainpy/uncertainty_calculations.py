@@ -323,8 +323,11 @@ class UncertaintyCalculations:
 
 
 
+
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+
+        getattr(self, method)
 
         if method == "regression":
             if rosenblatt:
