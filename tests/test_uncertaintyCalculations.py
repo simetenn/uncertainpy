@@ -404,6 +404,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
 
 
+
+
+
     def test_PCERegressionRosenblattOne(self):
 
         self.uncertainty_calculations.PCERegressionRosenblatt("a")
@@ -550,6 +553,21 @@ class TestUncertaintyCalculations(unittest.TestCase):
         result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
+
+
+
+    def test_PCRosenblatt(self):
+        data = self.uncertainty_calculations.PC(rosenblatt=True)
+
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_Rosenblatt.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt.h5")
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
 
 
     def test_PCCustom(self):
