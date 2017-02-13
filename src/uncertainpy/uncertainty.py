@@ -221,8 +221,17 @@ class UncertaintyEstimation():
         self.filename = filename
         self.data.load(os.path.join(self.data_dir, filename + ".h5"))
 
+    # TODO working here
+    # This will be the plot funciton to call
+    def plot(self, plot_type="all", sensitivity=True, foldername=None):
+        if plot_type == "all":
+            self.plotAll(foldername=foldername, sensitivity=sensitivity)
+        elif plot_type == "results":
+            self.plotResults(foldername=foldername)
 
-    def plotAll(self, foldername=None):
+
+
+    def plotAll(self, sensitivity=True, foldername=None):
         self.logger.info("Creating plots as: {}".format(self.output_data_filename))
 
         self.plot.setData(self.data, foldername=foldername)
@@ -230,17 +239,11 @@ class UncertaintyEstimation():
         if foldername is None:
             foldername = self.output_dir_figures
 
+        if sensitivity:
+            self.plot.plotAllDataSensitivity()
+        else:
+            self.plot.plotAllDataNoSensitivity()
 
-        self.plot.plotAllDataSensitivity()
-
-
-    def plotAllSingle(self, foldername=None):
-        self.plot.setData(self.data, foldername=foldername)
-
-        if foldername is None:
-            foldername = self.output_dir_figures
-
-        self.plot.plotAllDataNoSensitivity()
 
 
 

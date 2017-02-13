@@ -699,14 +699,25 @@ class PlotUncertainty():
         self.plotTotalSensitivityGrid(sensitivity=sensitivity)
 
 
+
     # TODO find a more descriptive name
-    def plotAllDataSensitivity(self, sensitivity="sensitivity_1"):
+    def plotAllDataAllSensitivity(self):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
-        self.plotAllData(sensitivity="sensitivity_1")
-        self.plotAllData(sensitivity="sensitivity_t")
 
+        self.plotAllData(sensitivity="sensitivity_1")
+        # self.plotAllData(sensitivity="sensitivity_t")
+
+        for feature in self.data.features_1d:
+            self.plotSensitivity(feature=feature, sensitivity="sensitivity_t")
+            self.plotSensitivityCombined(feature=feature, sensitivity="sensitivity_t")
+            self.plotSensitivityGrid(feature=feature, sensitivity="sensitivity_t")
+
+        self.plot0dFeatures(sensitivity="sensitivity_t")
+
+        self.plotTotalSensitivityAllFeatures(sensitivity="sensitivity_t")
+        self.plotTotalSensitivityGrid(sensitivity="sensitivity_t")
 
 
     def plotResults(self, sensitivity="sensitivity_1"):
