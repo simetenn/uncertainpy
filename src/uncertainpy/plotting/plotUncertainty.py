@@ -55,7 +55,7 @@ class PlotUncertainty():
 
     def loadData(self, filename, create_output_folder=True):
         self.filename = filename
-        full_path = os.path.join(self.data_dir, self.filename + ".h5")
+        full_path = os.path.join(self.data_dir, self.filename)
 
         self.data.load(full_path)
 
@@ -72,9 +72,9 @@ class PlotUncertainty():
         #         os.makedirs(self.full_output_dir_figures)
 
 
-        self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
-        # if os.path.isfile(self.full_output_dir_figures):
-        #     self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
+        self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename.strip(".h5"))
+        if os.path.isfile(self.full_output_dir_figures):
+            self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
 
         if not os.path.isdir(self.full_output_dir_figures) and create_output_folder:
             os.makedirs(self.full_output_dir_figures)
@@ -94,6 +94,7 @@ class PlotUncertainty():
             self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
 
 
+        self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
         if os.path.isfile(self.full_output_dir_figures):
             self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
 
@@ -498,11 +499,25 @@ class PlotUncertainty():
 
         sense = getattr(self.data, sensitivity)
 
-        if self.data.E[feature] is None or self.data.Var[feature] or self.data.p_05[feature] or self.data.p_05[feature] is None:
-            msg = "Missing 0D values for {feature}. Unable to plot"
+        if self.data.E[feature] is None:
+            msg = "Missing E for {feature}. Unable to plot"
             self.logger.warning(msg.format(feature=feature))
             return
 
+        if self.data.Var[feature] is None:
+            msg = "Missing var for {feature}. Unable to plot"
+            self.logger.warning(msg.format(feature=feature))
+            return
+
+        if self.data.p_05[feature] is None:
+            msg = "Missing p_05 for {feature}. Unable to plot"
+            self.logger.warning(msg.format(feature=feature))
+            return
+            
+        if self.data.p_95[feature] is None:
+            msg = "Missing p_95 for {feature}. Unable to plot"
+            self.logger.warning(msg.format(feature=feature))
+            return
 
         if len(self.data.uncertain_parameters) > max_legend_size:
             legend_size = max_legend_size
@@ -594,12 +609,13 @@ class PlotUncertainty():
 
         total_sense = getattr(self.data, "total_" + sensitivity)
 
+
         if feature not in total_sense:
             msg = "{feature} not in total_{sensitivity}. Unable to plot total_{sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data.t[feature] is None or total_sense[feature] is None:
+        if total_sense[feature] is None:
             msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return

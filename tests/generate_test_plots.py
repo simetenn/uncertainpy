@@ -18,7 +18,7 @@ output_test_dir = os.path.join(folder, "figures")
 
 
 def generate_plots_plotUncertainty():
-    data_file = "TestingModel1d"
+    data_file = "TestingModel1d.h5"
 
     plot = PlotUncertainty(data_dir=test_data_dir,
                            output_dir_figures=output_test_dir,
@@ -31,7 +31,7 @@ def generate_plots_plotUncertainty():
 
 
 def generate_plots_compare():
-    data_file = "TestingModel1d"
+    data_file = "TestingModel.h5"
     compare_folders = ["pc", "mc_10", "mc_100"]
 
     plot = PlotUncertaintyCompare(data_dir=test_data_dir,
@@ -80,7 +80,7 @@ def generate_spikes_plot():
 
 if __name__ == "__main__":
     generate_plots_plotUncertainty()
-    generate_plots_compare()
+    # generate_plots_compare()
     generate_simulator_plot()
     generate_spike_plot()
     generate_spikes_plot()

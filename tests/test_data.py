@@ -117,6 +117,12 @@ class TestData(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
+    # TODO add this check when changing to python 3
+    # def test_loadError(self):
+    #     compare_file = "this_file_should_not_exist"
+    #
+    #     with self.assertRaises(FileNotFoundError):
+    #         self.data.load(compare_file)
 
 
     def test_load(self):

@@ -59,12 +59,11 @@ feature_list
     def __str__(self):
         def border(msg):
             count = len(msg) + 6
-            dash = "="*(count+2)
-            space = " "*count
+            line = "="*(count + 2)
             string = """
-{dash}
+{line}
 |   {msg}   |
-{dash}\n\n""".format(dash=dash, msg=msg, space=space)
+{line}\n\n""".format(line=line, msg=msg)
             return string
 
         output_str = border("Information on Data")
@@ -72,7 +71,7 @@ feature_list
         for info in self.data_information:
             current_info = getattr(self, info)
             output_str += "{info}: {current_info}\n".format(info=info,
-                                                          current_info=current_info)
+                                                            current_info=current_info)
 
         output_str += border("Content of Data")
         for name in self.data_names:
@@ -169,6 +168,10 @@ Test if the model returned an adaptive result
 
     def load(self, filename):
         self.filename = filename
+
+        # TODO add this check when changing to python 3
+        # if not os.path.isfile(self.filename):
+        #     raise FileNotFoundError("{} file not found".format(self.filename))
 
         with h5py.File(self.filename, 'r') as f:
             self.t = {}
