@@ -94,7 +94,7 @@ class PlotUncertainty():
             self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
 
 
-        self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
+
         if os.path.isfile(self.full_output_dir_figures):
             self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
 

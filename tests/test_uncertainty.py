@@ -46,7 +46,7 @@ class TestUncertainty(unittest.TestCase):
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=os.path.join(self.output_test_dir, "figures"),
+                                                 output_dir_figures=self.output_test_dir,
                                                  verbose_level="error")
 
 
@@ -235,7 +235,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.PC()
         self.uncertainty.plotAll()
-        print self.uncertainty.output_dir_figures
+
 
         self.compare_plot("directComparison_mean")
         self.compare_plot("directComparison_variance")
