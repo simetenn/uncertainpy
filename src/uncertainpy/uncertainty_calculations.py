@@ -327,8 +327,6 @@ class UncertaintyCalculations:
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        getattr(self, method)
-
         if method == "regression":
             if rosenblatt:
                 self.PCERegressionRosenblatt(uncertain_parameters)
@@ -336,6 +334,14 @@ class UncertaintyCalculations:
                 self.PCERegression(uncertain_parameters)
         elif method == "custom":
             self.PCECustom(uncertain_parameters)
+
+        # TODO add support for more methods here byt using
+        # try:
+        #     getattr(self, method)
+        # excpect AttributeError:
+        #     raise NotImplementedError("{} not implemented".format{method})
+
+
 
         else:
             raise ValueError("No method with name {}".format(method))

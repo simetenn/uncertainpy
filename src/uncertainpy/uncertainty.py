@@ -175,7 +175,6 @@ class UncertaintyEstimation():
             )
 
             if self.save_data:
-                print filename
                 self.save(filename)
 
             if self.save_figures:
