@@ -210,7 +210,10 @@ class TestData(unittest.TestCase):
 
         self.data.load(compare_file)
 
-        print self.data
+        # TODO Test that the content of the data string is correct
+        self.assertIsInstance(str(self.data), str)
+
+
 
     def test_resetValues(self):
         self.uncertain_parameters = None
