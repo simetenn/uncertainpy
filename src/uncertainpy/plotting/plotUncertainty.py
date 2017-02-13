@@ -513,7 +513,7 @@ class PlotUncertainty():
             msg = "Missing p_05 for {feature}. Unable to plot"
             self.logger.warning(msg.format(feature=feature))
             return
-            
+
         if self.data.p_95[feature] is None:
             msg = "Missing p_95 for {feature}. Unable to plot"
             self.logger.warning(msg.format(feature=feature))

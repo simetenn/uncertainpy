@@ -7,8 +7,6 @@ import shutil
 
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from features import TestingFeatures
-from models import TestingModel1d
 from uncertainpy import Data
 
 class TestPlotUncertainpy(unittest.TestCase):
