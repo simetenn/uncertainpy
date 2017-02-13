@@ -335,7 +335,7 @@ class UncertaintyCalculations:
         elif method == "custom":
             self.PCECustom(uncertain_parameters)
 
-        # TODO add support for more methods here byt using
+        # TODO add support for more methods here by using
         # try:
         #     getattr(self, method)
         # excpect AttributeError:

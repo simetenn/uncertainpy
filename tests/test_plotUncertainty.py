@@ -155,50 +155,50 @@ class TestPlotUncertainpy(unittest.TestCase):
     #     self.assertData()
     #
     #
-    # def assertData(self):
-    #     model = TestingModel1d()
-    #     model.run()
-    #     t = model.t
-    #     U = model.U
-    #
-    #     feature = TestingFeatures()
-    #
-    #     # TODO currently only tests for directComparison and feature1d,
-    #     # does not test data of the rest
-    #     # TODO test total_sensitivity
-    #
-    #     self.assertTrue(np.array_equal(self.plot.data.t["directComparison"], t))
-    #     self.assertTrue(np.array_equal(self.plot.data.t["feature1d"], t))
-    #
-    #
-    #     self.assertTrue(self.plot.data.U["directComparison"].shape, (10, 21))
-    #     self.assertTrue(self.plot.data.U["feature1d"].shape, (10, 21))
-    #
-    #     self.assertTrue(np.allclose(self.plot.data.E["directComparison"], U, atol=0.001))
-    #     self.assertTrue(np.allclose(self.plot.data.E["feature1d"], feature.feature1d(), atol=0.001))
-    #
-    #     self.assertTrue(np.allclose(self.plot.data.Var["directComparison"], np.zeros(10) + 0.1, atol=0.01))
-    #     self.assertTrue(np.allclose(self.plot.data.Var["feature1d"], np.zeros(10), atol=0.001))
-    #
-    #
-    #     self.assertTrue(np.all(np.less(self.plot.data.p_05["directComparison"], U)))
-    #     self.assertTrue(np.allclose(self.plot.data.p_05["feature1d"], feature.feature1d(), atol=0.001))
-    #
-    #     self.assertTrue(np.all(np.greater(self.plot.data.p_95["directComparison"], U)))
-    #     self.assertTrue(np.allclose(self.plot.data.p_95["feature1d"], feature.feature1d(), atol=0.001))
-    #
-    #     self.assertTrue(self.plot.data.sensitivity_1["directComparison"].shape, (10, 2))
-    #     self.assertTrue(self.plot.data.sensitivity_1["feature1d"].shape, (10, 2))
-    #
-    #     self.assertTrue(self.plot.data.sensitivity_t["directComparison"].shape, (10, 2))
-    #     self.assertTrue(self.plot.data.sensitivity_t["feature1d"].shape, (10, 2))
-    #
-    #
-    #     self.assertEqual(len(self.plot.data.features_0d), 2)
-    #     self.assertEqual(len(self.plot.data.features_1d), 2)
-    #
-    #     self.assertEqual(len(self.plot.data.uncertain_parameters), 2)
-    #     self.assertTrue(self.plot.loaded_flag)
+    def assertData(self):
+        model = TestingModel1d()
+        model.run()
+        t = model.t
+        U = model.U
+
+        feature = TestingFeatures()
+
+        # TODO currently only tests for directComparison and feature1d,
+        # does not test data of the rest
+        # TODO test total_sensitivity
+
+        self.assertTrue(np.array_equal(self.plot.data.t["directComparison"], t))
+        self.assertTrue(np.array_equal(self.plot.data.t["feature1d"], t))
+
+
+        self.assertTrue(self.plot.data.U["directComparison"].shape, (10, 21))
+        self.assertTrue(self.plot.data.U["feature1d"].shape, (10, 21))
+
+        self.assertTrue(np.allclose(self.plot.data.E["directComparison"], U, atol=0.001))
+        self.assertTrue(np.allclose(self.plot.data.E["feature1d"], feature.feature1d(), atol=0.001))
+
+        self.assertTrue(np.allclose(self.plot.data.Var["directComparison"], np.zeros(10) + 0.1, atol=0.01))
+        self.assertTrue(np.allclose(self.plot.data.Var["feature1d"], np.zeros(10), atol=0.001))
+
+
+        self.assertTrue(np.all(np.less(self.plot.data.p_05["directComparison"], U)))
+        self.assertTrue(np.allclose(self.plot.data.p_05["feature1d"], feature.feature1d(), atol=0.001))
+
+        self.assertTrue(np.all(np.greater(self.plot.data.p_95["directComparison"], U)))
+        self.assertTrue(np.allclose(self.plot.data.p_95["feature1d"], feature.feature1d(), atol=0.001))
+
+        self.assertTrue(self.plot.data.sensitivity_1["directComparison"].shape, (10, 2))
+        self.assertTrue(self.plot.data.sensitivity_1["feature1d"].shape, (10, 2))
+
+        self.assertTrue(self.plot.data.sensitivity_t["directComparison"].shape, (10, 2))
+        self.assertTrue(self.plot.data.sensitivity_t["feature1d"].shape, (10, 2))
+
+
+        self.assertEqual(len(self.plot.data.features_0d), 2)
+        self.assertEqual(len(self.plot.data.features_1d), 2)
+
+        self.assertEqual(len(self.plot.data.uncertain_parameters), 2)
+        self.assertTrue(self.plot.loaded_flag)
     #
     #
     #

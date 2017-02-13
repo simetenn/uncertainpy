@@ -1,5 +1,6 @@
 import os
 import h5py
+import pprint
 
 import numpy as np
 
@@ -13,6 +14,35 @@ class Data:
                  verbose_level="info",
                  verbose_filename=None):
 
+        """
+U
+t
+E
+Var
+p_05
+p_95
+sensitivity_1
+total_sensitivity_1
+sensitivity_t
+total_sensitivity_t
+
+xlabel
+ylabel
+
+features_0d
+features_1d
+features_2d
+feature_list
+        """
+
+        self.data_names = ["U", "t", "E", "Var", "p_05", "p_95",
+                           "sensitivity_1", "total_sensitivity_1",
+                           "sensitivity_t", "total_sensitivity_t"]
+
+
+        self.data_information = ["xlabel", "ylabel", "features_0d",
+                                 "features_1d", "features_2d", "feature_list"]
+
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
         self.logger = create_logger(verbose_level,
@@ -24,6 +54,38 @@ class Data:
 
         if filename is not None:
             self.load(filename)
+
+
+    def __str__(self):
+        def border(msg):
+            count = len(msg) + 6
+            dash = "="*(count+2)
+            space = " "*count
+            string = """
+{dash}
+|   {msg}   |
+{dash}\n\n""".format(dash=dash, msg=msg, space=space)
+            return string
+
+        output_str = border("Information on Data")
+
+        for info in self.data_information:
+            current_info = getattr(self, info)
+            output_str += "{info}: {current_info}\n".format(info=info,
+                                                          current_info=current_info)
+
+        output_str += border("Content of Data")
+        for name in self.data_names:
+
+            output_str += border(name)
+            current_data = getattr(self, name)
+
+            for feature in self.feature_list:
+                output_str += "=== {feature} ===\n".format(feature=feature)
+                output_str += "{data}\n\n".format(data=current_data[feature])
+
+        return output_str.strip()
+
 
 
     def resetValues(self):
@@ -162,8 +224,8 @@ Test if the model returned an adaptive result
 
                 if "t" in f[feature].keys():
                     self.t[feature] = f[feature]["t"][()]
-                # else:
-                #     self.t[feature] = None
+                else:
+                    self.t[feature] = None
 
 
 

@@ -204,6 +204,14 @@ class TestData(unittest.TestCase):
             self.assertEqual(self.data.features_1d, ["feature1"])
 
 
+    def test_str(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+
+        self.data.load(compare_file)
+
+        print self.data
+
     def test_resetValues(self):
         self.uncertain_parameters = None
 
