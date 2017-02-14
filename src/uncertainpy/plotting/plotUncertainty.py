@@ -668,6 +668,7 @@ class PlotUncertainty():
 
 
 
+    # TODO Not Tested
     def plotAllDataInFolder(self):
         self.logger.info("Plotting all data in folder")
 
@@ -677,7 +678,7 @@ class PlotUncertainty():
             self.plotAllData()
 
 
-    # TODO Not Tested
+
     def plotAllDataNoSensitivity(self, sensitivity="sensitivity_1"):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
@@ -707,8 +708,7 @@ class PlotUncertainty():
 
 
         self.plotAllData(sensitivity="sensitivity_1")
-        # self.plotAllData(sensitivity="sensitivity_t")
-
+    
         for feature in self.data.features_1d:
             self.plotSensitivity(feature=feature, sensitivity="sensitivity_t")
             self.plotSensitivityCombined(feature=feature, sensitivity="sensitivity_t")

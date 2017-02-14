@@ -64,7 +64,7 @@ class UncertaintyEstimation():
 
 
 
-        self.plot = PlotUncertainty(data_dir=self.output_dir_data,
+        self.plotting = PlotUncertainty(data_dir=self.output_dir_data,
                                     output_dir_figures=self.output_dir_figures,
                                     figureformat=figureformat,
                                     verbose_level=verbose_level,
@@ -137,7 +137,7 @@ class UncertaintyEstimation():
 
 
         if self.save_figures:
-            self.plotAll(self.output_data_filename)
+            self.plottingAll(self.output_data_filename)
 
 
     def MC(self, uncertain_parameters=None):
@@ -150,7 +150,7 @@ class UncertaintyEstimation():
 
 
         if self.save_figures:
-            self.plotAll(self.output_data_filename)
+            self.plottingAll(self.output_data_filename)
 
 
 
@@ -178,7 +178,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plotAllSingle(filename)
+                self.plottingAllSingle(filename)
 
 
 
@@ -199,7 +199,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plotAll(filename)
+                self.plottingAll(filename)
 
 
 
@@ -218,36 +218,21 @@ class UncertaintyEstimation():
         self.data = Data()
         self.data.load(os.path.join(filename))
 
-    # TODO working here
-    # This will be the plot funciton to call
+
+
     def plot(self, plot_type="all", sensitivity=True, foldername=None):
-        if plot_type == "all":
-            self.plotAll(foldername=foldername, sensitivity=sensitivity)
-        elif plot_type == "results":
-            self.plotResults(foldername=foldername)
+        self.plotting.setData(self.data, foldername=foldername)
+
+        if plot_type == "results":
+            self.plotting.plotResults()
+        elif plot_type == "no_sensitivity":
+            self.plotting.plotAllDataNoSensitivity()
+        elif plot_type == "all":
+            self.plotting.plotAllDataAllSensitivity()
+        elif plot_type == "simulator_results":
+            self.plotting.plotSimulatorResults()
 
 
-
-    def plotAll(self, sensitivity=True, foldername=None):
-        self.logger.info("Creating plots as: {}".format(self.output_data_filename))
-
-        self.plot.setData(self.data, foldername=foldername)
-
-        if foldername is None:
-            foldername = self.output_dir_figures
-
-        if sensitivity:
-            self.plot.plotAllDataAllSensitivity()
-        else:
-            self.plot.plotAllDataNoSensitivity()
-
-
-
-
-    def plotResults(self, foldername=None):
-        self.plot.setData(self.data, foldername=foldername)
-
-        self.plot.plotResults()
 
 
     def convertUncertainParameters(self, uncertain_parameters):

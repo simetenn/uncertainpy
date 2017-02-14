@@ -286,9 +286,8 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_plotAll(self):
-
         self.uncertainty.PC()
-        self.uncertainty.plotAll()
+        self.uncertainty.plot(plot_type="all")
 
 
         self.compare_plot("directComparison_mean")
@@ -347,7 +346,7 @@ class TestUncertainty(unittest.TestCase):
     def test_plotResults(self):
 
         self.uncertainty.PC()
-        self.uncertainty.plotResults()
+        self.uncertainty.plot(plot_type="results")
 
         self.compare_plot("directComparison_mean-variance")
         self.compare_plot("directComparison_confidence-interval")
