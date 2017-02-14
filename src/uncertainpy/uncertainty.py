@@ -10,7 +10,7 @@ from uncertainty_calculations import UncertaintyCalculations
 from uncertainpy.features import GeneralFeatures
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.utils import create_logger
-
+from uncertainpy import Data
 
 
 class UncertaintyEstimation():
@@ -214,12 +214,9 @@ class UncertaintyEstimation():
         self.data.save(os.path.join(self.output_dir_data, filename + ".h5"))
 
 
-    # TODO never tested
     def load(self, filename):
-        raise NotImplementedError
-
-        self.filename = filename
-        self.data.load(os.path.join(self.data_dir, filename + ".h5"))
+        self.data = Data()
+        self.data.load(os.path.join(filename))
 
     # TODO working here
     # This will be the plot funciton to call
@@ -240,7 +237,7 @@ class UncertaintyEstimation():
             foldername = self.output_dir_figures
 
         if sensitivity:
-            self.plot.plotAllDataSensitivity()
+            self.plot.plotAllDataAllSensitivity()
         else:
             self.plot.plotAllDataNoSensitivity()
 

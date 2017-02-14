@@ -2,8 +2,8 @@ import unittest
 import os
 import shutil
 import subprocess
+import numpy as np
 
-import chaospy as cp
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
@@ -242,6 +242,41 @@ class TestUncertainty(unittest.TestCase):
 
 
 
+    def test_load(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
+
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.Var["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.Var["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["directComparison"], [3., 4.]))
+
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["directComparison"], [3., 4.]))
+
+
+        self.assertEqual(self.uncertainty.data.uncertain_parameters[0], "a")
+        self.assertEqual(self.uncertainty.data.uncertain_parameters[1], "b")
+
+        self.assertEqual(self.uncertainty.data.xlabel, "xlabel")
+        self.assertEqual(self.uncertainty.data.ylabel, "ylabel")
+
+        self.assertEqual(self.uncertainty.data.feature_list[0], "directComparison")
+        self.assertEqual(self.uncertainty.data.feature_list[1], "feature1")
 
 
 
@@ -328,7 +363,6 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-
     def compare_plot(self, name):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "figures/TestingModel1d",
@@ -340,6 +374,7 @@ class TestUncertainty(unittest.TestCase):
         result = subprocess.call(["diff", plot_file, compare_file])
 
         self.assertEqual(result, 0)
+
 
 
 

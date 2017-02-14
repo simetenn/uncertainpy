@@ -23,6 +23,7 @@ from models import TestingModel1dAdaptive
 class TestUncertaintyCalculations(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
+
         self.seed = 10
 
         if os.path.isdir(self.output_test_dir):
