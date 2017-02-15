@@ -66,8 +66,7 @@ class UncertaintyEstimation():
 
         self.plot_type = plot_type
 
-        self.plotting = PlotUncertainty(data_dir=self.output_dir_data,
-                                        output_dir_figures=self.output_dir_figures,
+        self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
                                         verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
@@ -154,7 +153,7 @@ class UncertaintyEstimation():
 
 
         if self.save_figures:
-            self.plot(foldername=self.output_data_filename, plot_type=self.plot_type)
+            self.plot(plot_type=self.plot_type)
 
 
 
@@ -182,7 +181,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(foldername=filename, plot_type="no_sensitivity")
+                self.plot(output_dir_figures=filename, plot_type="no_sensitivity")
 
 
 
@@ -203,7 +202,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(foldername=self.output_data_filename, plot_type="no_sensitivity")
+                self.plot(output_dir_figures=filename, plot_type="no_sensitivity")
 
 
 
@@ -223,14 +222,14 @@ class UncertaintyEstimation():
         self.data = Data(os.path.join(filename))
 
 
-    def plot(self, plot_type="results", foldername=None):
+    def plot(self, plot_type="results", output_dir_figures=None):
         """
 results
 no_sensitivity
 all
 simulator_results
         """
-        self.plotting.setData(self.data, foldername=foldername)
+        self.plotting.setData(self.data, output_dir=output_dir_figures)
 
         if plot_type == "results":
             self.plotting.plotResults()
