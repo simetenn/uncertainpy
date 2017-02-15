@@ -344,7 +344,6 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_plotResults(self):
-
         self.uncertainty.PC()
         self.uncertainty.plot(plot_type="results")
 
@@ -360,6 +359,28 @@ class TestUncertainty(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_1_grid")
 
+
+
+    def test_plotNoSensitivity(self):
+        self.uncertainty.PC()
+        self.uncertainty.plot(plot_type="no_sensitivity")
+
+        self.compare_plot("directComparison_mean")
+        self.compare_plot("directComparison_variance")
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+
+
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+
+
+
+    def test_plotSimulatorResults(self):
+        self.uncertainty.PC()
+        self.uncertainty.plot(plot_type="no_sensitivity")
 
 
     def compare_plot(self, name):
