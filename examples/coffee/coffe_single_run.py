@@ -6,14 +6,13 @@ parameterlist = [["kappa", -0.05, None],
 
 
 parameters = uncertainpy.Parameters(parameterlist)
-model = CoffeeCupPointModel(parameters)
+parameters.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
-model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+model = CoffeeCupPointModel(parameters)
 
 
 uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 features=None,
-                                                CPUs=1,
                                                 save_figures=True)
 
-uncertainty.allParameters()
+uncertainty.PC()

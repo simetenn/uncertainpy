@@ -18,6 +18,7 @@ class UncertaintyEstimation():
                  features=None,
                  uncertainty_calculations=None,
                  save_figures=False,
+                 plot_type="results",
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
@@ -63,12 +64,13 @@ class UncertaintyEstimation():
             self.uncertainty_calculations.set_features(self.features)
 
 
+        self.plot_type = plot_type
 
         self.plotting = PlotUncertainty(data_dir=self.output_dir_data,
-                                    output_dir_figures=self.output_dir_figures,
-                                    figureformat=figureformat,
-                                    verbose_level=verbose_level,
-                                    verbose_filename=verbose_filename)
+                                        output_dir_figures=self.output_dir_figures,
+                                        figureformat=figureformat,
+                                        verbose_level=verbose_level,
+                                        verbose_filename=verbose_filename)
 
 
         if output_data_filename is None:
@@ -93,7 +95,7 @@ class UncertaintyEstimation():
     #     self.__dict__.update(state)
 
 
-    def uq(self,
+    def UQ(self,
            uncertain_parameters=None,
            method="pc",
            single=False,
@@ -102,7 +104,7 @@ class UncertaintyEstimation():
 
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        if method == "pc":
+        if method.lowercase() == "pc":
             if single:
                 self.PCSingle(uncertain_parameters=uncertain_parameters,
                               method=method,
@@ -111,11 +113,12 @@ class UncertaintyEstimation():
                 self.PC(uncertain_parameters=uncertain_parameters,
                         method=method,
                         rosenblatt=rosenblatt)
-        elif method == "mc":
+        elif method.lowercase() == "mc":
             if single:
                 self.MCSingle(uncertain_parameters=uncertain_parameters)
             else:
-                self.MCSingle(uncertain_parameters=uncertain_parameters)
+                self.MC(uncertain_parameters=uncertain_parameters)
+
 
 
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
@@ -137,7 +140,8 @@ class UncertaintyEstimation():
 
 
         if self.save_figures:
-            self.plottingAll(self.output_data_filename)
+            print self.output_data_filename
+            self.plot(plot_type=self.plot_type)
 
 
     def MC(self, uncertain_parameters=None):
@@ -150,7 +154,7 @@ class UncertaintyEstimation():
 
 
         if self.save_figures:
-            self.plottingAll(self.output_data_filename)
+            self.plot(foldername=self.output_data_filename, plot_type=self.plot_type)
 
 
 
@@ -178,7 +182,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plottingAllSingle(filename)
+                self.plot(foldername=filename, plot_type="no_sensitivity")
 
 
 
@@ -199,7 +203,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plottingAll(filename)
+                self.plot(foldername=self.output_data_filename, plot_type="no_sensitivity")
 
 
 
@@ -214,13 +218,18 @@ class UncertaintyEstimation():
         self.data.save(os.path.join(self.output_dir_data, filename + ".h5"))
 
 
+
     def load(self, filename):
-        self.data = Data()
-        self.data.load(os.path.join(filename))
+        self.data = Data(os.path.join(filename))
 
 
-
-    def plot(self, plot_type="all", sensitivity=True, foldername=None):
+    def plot(self, plot_type="results", foldername=None):
+        """
+results
+no_sensitivity
+all
+simulator_results
+        """
         self.plotting.setData(self.data, foldername=foldername)
 
         if plot_type == "results":
@@ -231,7 +240,8 @@ class UncertaintyEstimation():
             self.plotting.plotAllDataAllSensitivity()
         elif plot_type == "simulator_results":
             self.plotting.plotSimulatorResults()
-
+        else:
+            raise ValueError("Invalid plot type: {plot_type}".format(plot_type=plot_type))
 
 
 

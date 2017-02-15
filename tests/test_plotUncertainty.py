@@ -9,6 +9,7 @@ import shutil
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy import Data
 
+
 class TestPlotUncertainpy(unittest.TestCase):
     def setUp(self):
         self.folder = os.path.dirname(os.path.realpath(__file__))
@@ -30,19 +31,6 @@ class TestPlotUncertainpy(unittest.TestCase):
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
-
-
-
-    def compare_plot(self, name):
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures/TestingModel1d",
-                                    name + ".png")
-
-        plot_file = os.path.join(self.output_test_dir, self.data_file.strip(".h5"),
-                                 name + ".png")
-
-        result = subprocess.call(["diff", plot_file, compare_file])
-        self.assertEqual(result, 0)
 
 
 
@@ -694,6 +682,17 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_t_grid")
 
+
+    def compare_plot(self, name):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "figures/TestingModel1d",
+                                    name + ".png")
+
+        plot_file = os.path.join(self.output_test_dir, self.data_file.strip(".h5"),
+                                 name + ".png")
+
+        result = subprocess.call(["diff", plot_file, compare_file])
+        self.assertEqual(result, 0)
 
 # TODO test combined features 0 for many features
 

@@ -27,7 +27,30 @@ def generate_plots_plotUncertainty():
     plot.loadData(data_file)
 
 
-    plot.plotAllDataSensitivity()
+    plot.plotAllDataAllSensitivity()
+
+
+
+def generate_plots_plotUncertainty_single():
+    data_file = "TestingModel1d_single-parameter-a.h5"
+
+    plot = PlotUncertainty(data_dir=test_data_dir,
+                           output_dir_figures=os.path.join(output_test_dir),
+                           verbose_level="error")
+
+    plot.loadData(data_file)
+
+    plot.plotAllDataAllSensitivity()
+
+    data_file = "TestingModel1d_single-parameter-b.h5"
+
+    plot = PlotUncertainty(data_dir=test_data_dir,
+                           output_dir_figures=os.path.join(output_test_dir),
+                           verbose_level="error")
+
+    plot.loadData(data_file)
+
+    plot.plotAllDataAllSensitivity()
 
 
 def generate_plots_compare():
@@ -84,3 +107,4 @@ if __name__ == "__main__":
     generate_simulator_plot()
     generate_spike_plot()
     generate_spikes_plot()
+    generate_plots_plotUncertainty_single()

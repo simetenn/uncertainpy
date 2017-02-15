@@ -6,6 +6,7 @@ import subprocess
 
 from uncertainpy.features.spikes import Spike
 
+
 class TestSpike(unittest.TestCase):
     def setUp(self):
         t = np.arange(0, 10)
@@ -29,17 +30,6 @@ class TestSpike(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
-
-    def compare_plot(self, name):
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures/",
-                                    name + ".png")
-
-        plot_file = os.path.join(self.output_test_dir, name + ".png")
-
-        result = subprocess.call(["diff", plot_file, compare_file])
-        self.assertEqual(result, 0)
-
     def test_init(self):
         self.assertIsInstance(self.spike, Spike)
         self.assertTrue(np.array_equal(self.spike.t, np.arange(0, 10)))
@@ -53,3 +43,14 @@ class TestSpike(unittest.TestCase):
         self.spike.plot(os.path.join(self.output_test_dir, "spike.png"))
 
         self.compare_plot("spike")
+
+
+    def compare_plot(self, name):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "figures/",
+                                    name + ".png")
+
+        plot_file = os.path.join(self.output_test_dir, name + ".png")
+
+        result = subprocess.call(["diff", plot_file, compare_file])
+        self.assertEqual(result, 0)

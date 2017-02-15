@@ -30,34 +30,36 @@ from uncertainpy.utils import create_logger
 
 class PlotUncertainty():
     def __init__(self,
-                 data_dir="data/",
+                 filename=None,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  verbose_level="info",
                  verbose_filename=None):
 
-        self.data_dir = data_dir
         self.output_dir_figures = output_dir_figures
         self.figureformat = figureformat
-        self.f = None
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.features_in_combined_plot = 3
 
         self.loaded_flag = False
 
-        self.data = Data()
+        if filename is None:
+            self.data = Data()
+        else:
+            self.loadData(filename)
+
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
 
 
-    def loadData(self, filename, create_output_folder=True):
-        self.filename = filename
-        full_path = os.path.join(self.data_dir, self.filename)
+    def loadData(self, filename):
 
-        self.data.load(full_path)
+        self.data.load(filename)
+
+        self.filename = filename.split(os.path.sep)[-1]
 
         # TODO what to do if output folder and data folder is the same.
         # Two options create the figures in the same folder, or create a new
@@ -708,7 +710,7 @@ class PlotUncertainty():
 
 
         self.plotAllData(sensitivity="sensitivity_1")
-    
+
         for feature in self.data.features_1d:
             self.plotSensitivity(feature=feature, sensitivity="sensitivity_t")
             self.plotSensitivityCombined(feature=feature, sensitivity="sensitivity_t")
