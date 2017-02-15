@@ -23,20 +23,18 @@ from uncertainpy.utils import create_logger
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 
 
-# TODO plot simulator_results
-
 
 # TODO Make it so plots are not created if the data is None
 
 class PlotUncertainty():
     def __init__(self,
                  filename=None,
-                 output_dir_figures="figures/",
+                 output_dir="figures/",
                  figureformat=".png",
                  verbose_level="info",
                  verbose_filename=None):
 
-        self.output_dir_figures = output_dir_figures
+        self.output_dir = output_dir
         self.figureformat = figureformat
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -45,9 +43,9 @@ class PlotUncertainty():
         self.loaded_flag = False
 
         if filename is None:
-            self.data = Data()
+            self.data = None
         else:
-            self.loadData(filename)
+            self.load(filename)
 
 
         self.logger = create_logger(verbose_level,
@@ -55,56 +53,23 @@ class PlotUncertainty():
                                     self.__class__.__name__)
 
 
-    def loadData(self, filename):
-
-        self.data.load(filename)
-
-        self.filename = filename.split(os.path.sep)[-1]
-
-        # TODO what to do if output folder and data folder is the same.
-        # Two options create the figures in the same folder, or create a new
-        # folder with _figures added to the name?
-
-        # full_output_dir_figures = os.path.join(self.output_dir_figures, filename)
-        # if os.path.isfile(full_output_dir_figures):
-        #     self.full_output_dir_figures = self.output_dir_figures
-        # else:
-        #     self.full_output_dir_figures = self.full_output_dir_figures
-        #     if not os.path.isdir(self.full_output_dir_figures):
-        #         os.makedirs(self.full_output_dir_figures)
+        if not os.path.isdir(self.output_dir):
+            os.makedirs(self.output_dir)
 
 
-        self.full_output_dir_figures = os.path.join(self.output_dir_figures, filename.strip(".h5"))
-        if os.path.isfile(self.full_output_dir_figures):
-            self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
-
-        if not os.path.isdir(self.full_output_dir_figures) and create_output_folder:
-            os.makedirs(self.full_output_dir_figures)
+    def load(self, filename):
+        self.data = Data(filename)
 
         self.loaded_flag = True
 
 
 
 
-    def setData(self, data, foldername=None):
-
-        if foldername is None:
-            self.filename = ""
-            self.full_output_dir_figures = self.output_dir_figures
-        else:
-            self.filename = foldername
-            self.full_output_dir_figures = os.path.join(self.output_dir_figures, self.filename)
-
-
-
-        if os.path.isfile(self.full_output_dir_figures):
-            self.full_output_dir_figures = self.full_output_dir_figures + "_figures"
-
-        if not os.path.isdir(self.full_output_dir_figures):
-            os.makedirs(self.full_output_dir_figures)
+    def setData(self, data, output_dir=None):
+        if output_dir is not None:
+            self.output_dir = output_dir
 
         self.data = data
-
         self.loaded_flag = True
 
 
@@ -126,7 +91,7 @@ class PlotUncertainty():
 
     def plotSimulatorResults(self, foldername="simulator_results"):
         i = 1
-        save_folder = os.path.join(self.output_dir_figures, foldername)
+        save_folder = os.path.join(self.output_dir, foldername)
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
@@ -171,7 +136,7 @@ class PlotUncertainty():
         save_name = feature + "_" + attribute_name
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
+            plt.savefig(os.path.join(self.output_dir,
                                      save_name + self.figureformat),
                         bbox_inches="tight")
             if not show:
@@ -243,7 +208,7 @@ class PlotUncertainty():
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
+            plt.savefig(os.path.join(self.output_dir,
                                      feature + "_mean-variance" + self.figureformat),
                         bbox_inches="tight")
             if not show:
@@ -287,7 +252,7 @@ class PlotUncertainty():
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
+            plt.savefig(os.path.join(self.output_dir,
                                      feature + "_confidence-interval" + self.figureformat),
                         bbox_inches="tight")
             if not show:
@@ -334,7 +299,7 @@ class PlotUncertainty():
             # plt.ylim([0, 1.05])
 
             if hardcopy:
-                plt.savefig(os.path.join(self.full_output_dir_figures,
+                plt.savefig(os.path.join(self.output_dir,
                                          feature + "_" + sensitivity + "_" + parameter_names[i] + self.figureformat),
                             bbox_inches="tight")
                 if not show:
@@ -417,7 +382,7 @@ class PlotUncertainty():
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
+            plt.savefig(os.path.join(self.output_dir,
                                      feature + "_" + sensitivity + "_grid" + self.figureformat),
                         bbox_inches="tight")
             if not show:
@@ -465,7 +430,7 @@ class PlotUncertainty():
         set_legend(self.listToLatex(self.data.uncertain_parameters))
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
+            plt.savefig(os.path.join(self.output_dir,
                                      feature + "_" + sensitivity + self.figureformat),
                         bbox_inches="tight")
             if not show:
@@ -592,7 +557,7 @@ class PlotUncertainty():
         save_name = feature + "_" + sensitivity + self.figureformat
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+            plt.savefig(os.path.join(self.output_dir, save_name))
             if not show:
                 plt.close()
 
@@ -641,7 +606,7 @@ class PlotUncertainty():
         save_name = feature + "_total-" + sensitivity + self.figureformat
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures, save_name))
+            plt.savefig(os.path.join(self.output_dir, save_name))
             if not show:
                 plt.close()
 
@@ -671,11 +636,11 @@ class PlotUncertainty():
 
 
     # TODO Not Tested
-    def plotAllDataInFolder(self):
+    def plotAllDataInFolder(self, data_dir):
         self.logger.info("Plotting all data in folder")
 
-        for f in glob.glob(os.path.join(self.data_dir, "*")):
-            self.loadData(f.split(os.path.sep)[-1])
+        for f in glob.glob(os.path.join(data_dir, "*")):
+            self.load(f.split(os.path.sep)[-1])
 
             self.plotAllData()
 
@@ -735,26 +700,26 @@ class PlotUncertainty():
 
 
 
-    def plotAllDataFromExploration(self):
-        self.logger.info("Plotting all data")
-
-        original_data_dir = self.data_dir
-        original_output_dir_figures = self.output_dir_figures
-
-        for folder in glob.glob(os.path.join(self.data_dir, "*")):
-            self.data_dir = os.path.join(original_data_dir, folder.split("/")[-1])
-            self.output_dir_figures = os.path.join(original_output_dir_figures,
-                                                   folder.split("/")[-1])
-
-            for filename in glob.glob(os.path.join(folder, "*")):
-
-                self.loadData(filename.split("/")[-1])
-
-            self.plotAllData()
-
-        self.data_dir = original_data_dir
-        self.output_dir_figures = original_output_dir_figures
-
+    # def plotAllDataFromExploration(self, exploration_folder):
+    #     self.logger.info("Plotting all data")
+    #
+    #     original_data_dir = self.data_dir
+    #     original_output_dir = self.output_dir
+    #
+    #     for folder in glob.glob(os.path.join(self.data_dir, "*")):
+    #         self.data_dir = os.path.join(original_data_dir, folder.split("/")[-1])
+    #         self.output_dir = os.path.join(original_output_dir,
+    #                                                folder.split("/")[-1])
+    #
+    #         for filename in glob.glob(os.path.join(folder, "*")):
+    #
+    #             self.loadData(filename.split("/")[-1])
+    #
+    #         self.plotAllData()
+    #
+    #     self.data_dir = original_data_dir
+    #     self.output_dir = original_output_dir
+    #
 
 
 
@@ -830,7 +795,7 @@ class PlotUncertainty():
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.full_output_dir_figures,
+            plt.savefig(os.path.join(self.output_dir,
                                      "total-" + sensitivity + "_grid" + self.figureformat),
                         bbox_inches="tight")
             if not show:
@@ -851,11 +816,11 @@ if __name__ == "__main__":
     figureformat = ".png"
 
 
-    plot = PlotUncertainty(data_dir=args.data_dir,
-                           output_dir_figures=args.output_dir,
-                           figureformat=figureformat)
+    # plot = PlotUncertainty(data_dir=args.data_dir,
+    #                        output_dir=args.output_dir,
+    #                        figureformat=figureformat)
+    #
+    # # plot.plotAllData()
+    # plot.plotAllDataFromExploration()
 
-    # plot.plotAllData()
-    plot.plotAllDataFromExploration()
-
-    # sortByParameters(path=output_dir_figures, outputpath=output_dir_figures)
+    # sortByParameters(path=output_dir, outputpath=output_dir)

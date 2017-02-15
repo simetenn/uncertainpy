@@ -16,14 +16,16 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.test_data_dir = os.path.join(self.folder, "data")
         self.data_file = "TestingModel1d.h5"
+        self.data_file_path = os.path.join(self.test_data_dir, self.data_file)
         self.output_test_dir = ".tests/"
+
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-        self.plot = PlotUncertainty(data_dir=self.test_data_dir,
-                                    output_dir_figures=self.output_test_dir,
+
+        self.plot = PlotUncertainty(output_dir=self.output_test_dir,
                                     verbose_level="warning")
 
 
@@ -35,14 +37,15 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotTotalSensitivityGrid1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotTotalSensitivityGrid(hardcopy=True, sensitivity="sensitivity_1")
 
         self.compare_plot("total-sensitivity_1_grid")
 
+
     def test_plotTotalSensitivityGridT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotTotalSensitivityGrid(hardcopy=True, sensitivity="sensitivity_t")
 
@@ -50,7 +53,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotTotalSensitivity1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotTotalSensitivity(feature="feature1d",
                                        sensitivity="sensitivity_1",
@@ -59,7 +62,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature1d_total-sensitivity_1")
 
     def test_plotTotalSensitivityT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotTotalSensitivity(feature="feature1d",
                                        sensitivity="sensitivity_t",
@@ -69,7 +72,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotTotalSensitivityAllFeatures1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotTotalSensitivityAllFeatures(hardcopy=True, sensitivity="sensitivity_1")
 
@@ -82,7 +85,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotTotalSensitivityAllFeaturesT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotTotalSensitivityAllFeatures(hardcopy=True, sensitivity="sensitivity_t")
 
@@ -94,6 +97,8 @@ class TestPlotUncertainpy(unittest.TestCase):
 
     def test_plotSimulatorResults(self):
         folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.plot.data = Data()
 
         self.plot.data.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
         U = np.load(os.path.join(folder, "data/U_test.npy"))
@@ -118,15 +123,14 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_init(self):
-        plot = PlotUncertainty(data_dir=self.test_data_dir,
-                               output_dir_figures=self.output_test_dir,
+        plot = PlotUncertainty(output_dir=self.output_test_dir,
                                verbose_level="error")
 
         self.assertIsInstance(plot, PlotUncertainty)
 
 
-    def test_loadData(self):
-        self.plot.loadData(os.path.join(self.test_data_dir, "test_save_mock"))
+    def test_load(self):
+        self.plot.load(os.path.join(self.test_data_dir, "test_save_mock"))
 
         self.assertData()
 
@@ -242,7 +246,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotAttributeFeature1dError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotAttributeFeature1d(feature="feature0d")
@@ -255,7 +259,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotAttributeFeature1dMean(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotAttributeFeature1d(feature="directComparison",
                                          attribute="E",
@@ -265,7 +269,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotAttributeFeature1dVariance(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotAttributeFeature1d(feature="directComparison",
                                          attribute="Var",
@@ -276,7 +280,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotMeanError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotMean(feature="feature0d")
@@ -286,7 +290,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotMeanDirectComparison(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotMean(feature="directComparison")
 
@@ -294,7 +298,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotMeanfeature1d(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotMean(feature="feature1d")
 
@@ -302,7 +306,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotVarianceError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotVariance(feature="feature0d")
@@ -312,7 +316,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotVarianceDirectComparison(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotVariance(feature="directComparison")
 
@@ -320,7 +324,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotVariancefeature1d(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotVariance(feature="feature1d")
 
@@ -329,7 +333,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotMeanAndVarianceError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotMeanAndVariance(feature="feature0d")
@@ -339,7 +343,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotMeanAndVarianceDirectComparison(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotMeanAndVariance(feature="directComparison")
 
@@ -347,7 +351,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotMeanAndVariancefeature1d(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotMeanAndVariance(feature="feature1d")
 
@@ -356,7 +360,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotConfidenceIntervalDirectComparison(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotConfidenceInterval(feature="directComparison")
 
@@ -364,7 +368,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotConfidenceIntervalFeature0d(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotConfidenceInterval(feature="feature1d")
 
@@ -372,7 +376,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotConfidenceIntervalError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotConfidenceInterval(feature="feature0d")
@@ -382,7 +386,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityDirectComparison1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivity(feature="directComparison", sensitivity="sensitivity_1")
 
@@ -391,7 +395,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityDirectComparisonT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivity(feature="directComparison", sensitivity="sensitivity_t")
 
@@ -400,7 +404,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityFeature1d1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivity(feature="feature1d", sensitivity="sensitivity_1")
 
@@ -410,7 +414,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityFeature1d1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivity(feature="feature1d", sensitivity="sensitivity_t")
 
@@ -420,7 +424,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotSensitivity(feature="feature0d")
@@ -431,7 +435,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityCombinedDirectComparison1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivityCombined(feature="directComparison", sensitivity="sensitivity_1")
 
@@ -439,7 +443,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityCombinedDirectComparisonT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivityCombined(feature="directComparison", sensitivity="sensitivity_t")
 
@@ -447,14 +451,14 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityCombinedFeature1d1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivityCombined(feature="feature1d", sensitivity="sensitivity_1")
 
         self.compare_plot("feature1d_sensitivity_1")
 
     def test_plotSensitivityCombinedFeature1dT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivityCombined(feature="feature1d", sensitivity="sensitivity_t")
 
@@ -462,7 +466,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotSensitivityCombinedError(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
             self.plot.plotSensitivityCombined(feature="feature0d")
@@ -473,7 +477,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plot1dFeatures(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plot1dFeatures(sensitivity="sensitivity_1")
 
@@ -488,7 +492,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plot0dFeature(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plot0dFeature(feature="feature0d", sensitivity="sensitivity_1")
 
@@ -504,7 +508,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plot0dFeatures1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plot0dFeature(feature="feature0d", sensitivity="sensitivity_1")
 
@@ -513,7 +517,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plot0dFeaturesT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plot0dFeature(feature="feature0d", sensitivity="sensitivity_t")
 
@@ -521,7 +525,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotResults(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotResults(sensitivity="sensitivity_1")
 
@@ -535,12 +539,11 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-
         self.compare_plot("total-sensitivity_1_grid")
 
 
     def test_plotAllData1(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotAllData("sensitivity_1")
 
@@ -577,7 +580,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("total-sensitivity_1_grid")
 
     def test_plotAllDataT(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotAllData("sensitivity_t")
 
@@ -607,7 +610,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotAllDataNoSensitivity(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotAllDataNoSensitivity()
 
@@ -626,7 +629,7 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def test_plotAllDataAllSensitivity(self):
-        self.plot.loadData(self.data_file)
+        self.plot.load(self.data_file_path)
 
         self.plot.plotAllDataAllSensitivity()
 
@@ -688,8 +691,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         compare_file = os.path.join(folder, "figures/TestingModel1d",
                                     name + ".png")
 
-        plot_file = os.path.join(self.output_test_dir, self.data_file.strip(".h5"),
-                                 name + ".png")
+        plot_file = os.path.join(self.output_test_dir, name + ".png")
 
         result = subprocess.call(["diff", plot_file, compare_file])
         self.assertEqual(result, 0)
