@@ -69,6 +69,11 @@ class PlotUncertainty():
         if output_dir is not None:
             self.output_dir = output_dir
 
+        if not os.path.isdir(self.output_dir):
+            os.makedirs(self.output_dir)
+
+        print self.output_dir
+
         self.data = data
         self.loaded_flag = True
 

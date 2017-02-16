@@ -81,7 +81,11 @@ feature_list
 
             for feature in self.feature_list:
                 output_str += "=== {feature} ===\n".format(feature=feature)
-                output_str += "{data}\n\n".format(data=current_data[feature])
+                if feature in current_data:
+                    output_str += "{data}\n\n".format(data=current_data[feature])
+                else:
+                    output_str += "No data\n\n"
+
 
         return output_str.strip()
 

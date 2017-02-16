@@ -188,8 +188,8 @@ class TestUncertainty(unittest.TestCase):
     #
     #
     #     self.compare_plot("total-sensitivity_1_grid")
-    #
-    #
+
+
 
     def test_PCSinglePlot(self):
         parameterlist = [["a", 1, None],
@@ -218,19 +218,12 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.PCSingle()
 
-        self.compare_plot("TestingModel1d_single-parameter-a/directComparison_mean-variance")
-        # self.compare_plot("directComparison_confidence-interval")
-        # self.compare_plot("directComparison_sensitivity_1_grid")
-        #
-        # self.compare_plot("feature1d_mean-variance")
-        # self.compare_plot("feature1d_confidence-interval")
-        # self.compare_plot("feature1d_sensitivity_1_grid")
-        #
-        # self.compare_plot("feature0d_sensitivity_1")
-        #
-        #
-        # self.compare_plot("total-sensitivity_1_grid")
-        #
+        self.compare_plot("TestingModel1d_single-parameter-a/directComparison_mean-variance", compare_folder="")
+        self.compare_plot("TestingModel1d_single-parameter-a/directComparison_confidence-interval", compare_folder="")
+
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance", compare_folder="")
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_confidence-interval", compare_folder="")
+
 
     # def test_MCSingle(self):
     #     parameterlist = [["a", 1, None],
@@ -475,6 +468,7 @@ class TestUncertainty(unittest.TestCase):
         compare_file = os.path.join(folder, "figures", compare_folder,
                                     name + ".png")
 
+        print self.output_test_dir
         plot_file = os.path.join(self.output_test_dir, name + ".png")
 
         result = subprocess.call(["diff", plot_file, compare_file])

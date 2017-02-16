@@ -139,7 +139,6 @@ class UncertaintyEstimation():
 
 
         if self.save_figures:
-            print self.output_data_filename
             self.plot(plot_type=self.plot_type)
 
 
@@ -172,16 +171,21 @@ class UncertaintyEstimation():
                 rosenblatt=rosenblatt
             )
 
+            print self.data.U
+
             filename = "{}_single-parameter-{}".format(
                 self.output_data_filename,
                 uncertain_parameter
             )
+            print self.data
 
             if self.save_data:
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(output_dir_figures=filename, plot_type="no_sensitivity")
+                self.plot(output_dir_figures=os.path.join(self.output_dir_figures,
+                                                          filename),
+                          plot_type=self.plot_type)
 
 
 
@@ -202,7 +206,7 @@ class UncertaintyEstimation():
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(output_dir_figures=filename, plot_type="no_sensitivity")
+                self.plot(output_dir_figures=filename, plot_type=self.plot_type)
 
 
 
@@ -229,6 +233,8 @@ no_sensitivity
 all
 simulator_results
         """
+
+
         self.plotting.setData(self.data, output_dir=output_dir_figures)
 
         if plot_type == "results":
