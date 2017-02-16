@@ -5,7 +5,7 @@ import shutil
 
 
 from uncertainpy import UncertaintyEstimations, Parameters, Distribution
-from features import TestingFeatures
+from testing_modules import TestingFeatures
 from models import TestingModel1d
 
 

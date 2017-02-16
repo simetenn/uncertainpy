@@ -15,7 +15,7 @@ from uncertainpy import Distribution
 from uncertainpy import RunModel
 from uncertainpy import Data
 
-from features import TestingFeatures
+from testing_modules import TestingFeatures
 from models import TestingModel0d, TestingModel1d, TestingModel2d
 from models import TestingModel1dAdaptive
 

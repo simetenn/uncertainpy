@@ -11,9 +11,8 @@ from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 from uncertainpy import UncertaintyCalculations
 
-from features import TestingFeatures
-from models import TestingModel0d, TestingModel1d, TestingModel2d
-from models import TestingModel1dAdaptive
+from testing_modules import TestingFeatures
+from models import TestingModel1d
 
 from TestingUncertaintyCalculations import TestingUncertaintyCalculations
 
@@ -52,7 +51,7 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_level="error")
 
 
-    
+
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)

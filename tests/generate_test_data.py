@@ -3,7 +3,7 @@ import os
 import numpy as np
 import uncertainpy as un
 from models import TestingModel1d
-from features import TestingFeatures
+from testing_modules import TestingFeatures
 
 folder = os.path.dirname(os.path.realpath(__file__))
 test_data_dir = os.path.join(folder, "data")
