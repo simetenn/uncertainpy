@@ -125,8 +125,10 @@ method: pc, mc
                 self.MCSingle(uncertain_parameters=uncertain_parameters)
             else:
                 self.MC(uncertain_parameters=uncertain_parameters)
+
         elif method.lower() == "custom":
             self.CustomUQ(**custom_kwargs)
+
 
 
     def CustomUQ(self, **custom_kwargs):
@@ -136,9 +138,10 @@ method: pc, mc
         if self.save_data:
             self.save(self.output_data_filename)
 
-
         if self.save_figures:
             self.plot(plot_type=self.plot_type)
+
+
 
 
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
@@ -166,7 +169,7 @@ method: pc, mc
     def MC(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        self.data = self.uncertainty_calculations.MC()
+        self.data = self.uncertainty_calculations.MC(uncertain_parameters=uncertain_parameters)
 
         if self.save_data:
             self.save(self.output_data_filename)
@@ -213,7 +216,7 @@ method: pc, mc
         for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running MC for " + uncertain_parameter)
 
-            self.data = self.uncertainty_calculations.MC()
+            self.data = self.uncertainty_calculations.MC(uncertain_parameter)
 
             filename = "{}_single-parameter-{}".format(
                 self.output_data_filename,

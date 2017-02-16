@@ -352,6 +352,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.uncertainty_calculations.PCECustom()
 
+
+    def test_CustomUQ(self):
+        with self.assertRaises(NotImplementedError):
+            self.uncertainty_calculations.CustomUQ()
+
     def test_PCERegressionAll(self):
 
         self.uncertainty_calculations.PCERegression()
