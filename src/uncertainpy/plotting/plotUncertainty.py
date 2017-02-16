@@ -72,8 +72,6 @@ class PlotUncertainty():
         if not os.path.isdir(self.output_dir):
             os.makedirs(self.output_dir)
 
-        print self.output_dir
-
         self.data = data
         self.loaded_flag = True
 

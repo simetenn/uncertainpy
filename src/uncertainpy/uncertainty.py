@@ -99,25 +99,46 @@ class UncertaintyEstimation():
            method="pc",
            single=False,
            pc_method="regression",
-           rosenblatt=False):
+           rosenblatt=False,
+           plot_type=None,
+           **custom_kwargs):
+        """
+method: pc, mc
 
+        """
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        if method.lowercase() == "pc":
+        if plot_type is not None:
+            self.plot_type = plot_type
+
+        if method.lower() == "pc":
             if single:
                 self.PCSingle(uncertain_parameters=uncertain_parameters,
-                              method=method,
+                              method=pc_method,
                               rosenblatt=rosenblatt)
             else:
                 self.PC(uncertain_parameters=uncertain_parameters,
-                        method=method,
+                        method=pc_method,
                         rosenblatt=rosenblatt)
-        elif method.lowercase() == "mc":
+        elif method.lower() == "mc":
             if single:
                 self.MCSingle(uncertain_parameters=uncertain_parameters)
             else:
                 self.MC(uncertain_parameters=uncertain_parameters)
+        elif method.lower() == "custom":
+            self.CustomUQ(**custom_kwargs)
 
+
+    def CustomUQ(self, **custom_kwargs):
+
+        self.data = self.uncertainty_calculations.CustomUQ(**custom_kwargs)
+
+        if self.save_data:
+            self.save(self.output_data_filename)
+
+
+        if self.save_figures:
+            self.plot(plot_type=self.plot_type)
 
 
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
@@ -175,7 +196,6 @@ class UncertaintyEstimation():
                 self.output_data_filename,
                 uncertain_parameter
             )
-            print self.data
 
             if self.save_data:
                 self.save(filename)

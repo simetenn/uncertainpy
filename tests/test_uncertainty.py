@@ -14,11 +14,11 @@ from features import TestingFeatures
 from models import TestingModel0d, TestingModel1d, TestingModel2d
 from models import TestingModel1dAdaptive
 
-
+from TestingUncertaintyCalculations import TestingUncertaintyCalculations
 
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
-        self.difference ="1e-8"
+        # self.difference ="1e-8"
         self.output_test_dir = ".tests/"
         self.seed = 10
 
@@ -188,43 +188,43 @@ class TestUncertainty(unittest.TestCase):
     #
     #
     #     self.compare_plot("total-sensitivity_1_grid")
-
-
-
-    def test_PCSinglePlot(self):
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
-
-        parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
-
-        model = TestingModel1d(parameters)
-
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
-
-
-        uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10)
-
-        self.uncertainty = UncertaintyEstimation(model,
-                                                 features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
-                                                 save_data=False,
-                                                 save_figures=True,
-                                                 output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error")
-
-
-        self.uncertainty.PCSingle()
-
-        self.compare_plot("TestingModel1d_single-parameter-a/directComparison_mean-variance", compare_folder="")
-        self.compare_plot("TestingModel1d_single-parameter-a/directComparison_confidence-interval", compare_folder="")
-
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance", compare_folder="")
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_confidence-interval", compare_folder="")
-
-
+    #
+    #
+    #
+    # def test_PCSinglePlot(self):
+    #     parameterlist = [["a", 1, None],
+    #                      ["b", 2, None]]
+    #
+    #     parameters = Parameters(parameterlist)
+    #     parameters.setAllDistributions(Distribution(0.5).uniform)
+    #
+    #     model = TestingModel1d(parameters)
+    #
+    #     features = TestingFeatures(features_to_run=["feature0d",
+    #                                                 "feature1d",
+    #                                                 "feature2d"])
+    #
+    #
+    #     uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10)
+    #
+    #     self.uncertainty = UncertaintyEstimation(model,
+    #                                              features=features,
+    #                                              uncertainty_calculations=uncertainty_calculations,
+    #                                              save_data=False,
+    #                                              save_figures=True,
+    #                                              output_dir_figures=self.output_test_dir,
+    #                                              verbose_level="error")
+    #
+    #
+    #     self.uncertainty.PCSingle()
+    #
+    #     self.compare_plot("TestingModel1d_single-parameter-a/directComparison_mean-variance", compare_folder="")
+    #     self.compare_plot("TestingModel1d_single-parameter-a/directComparison_confidence-interval", compare_folder="")
+    #
+    #     self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance", compare_folder="")
+    #     self.compare_plot("TestingModel1d_single-parameter-a/feature1d_confidence-interval", compare_folder="")
+    #
+    #
     # def test_MCSingle(self):
     #     parameterlist = [["a", 1, None],
     #                      ["b", 2, None]]
@@ -455,12 +455,45 @@ class TestUncertainty(unittest.TestCase):
     #     self.compare_plot("feature1d_variance")
     #     self.compare_plot("feature1d_mean-variance")
     #     self.compare_plot("feature1d_confidence-interval")
-    #
-    #
-    #
-    # def test_plotSimulatorResults(self):
-    #     self.uncertainty.PC()
-    #     self.uncertainty.plot(plot_type="no_sensitivity")
+
+
+
+    def test_plotSimulatorResults(self):
+        self.uncertainty.PC()
+        self.uncertainty.plot(plot_type="simulator_results")
+
+
+
+
+
+
+
+    def test_UQPCAll(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        parameters.setAllDistributions(Distribution(0.5).uniform)
+
+        model = TestingModel1d(parameters)
+
+        features = TestingFeatures(features_to_run=None)
+
+
+        uncertainty_calculations = TestingUncertaintyCalculations()
+
+        self.uncertainty = UncertaintyEstimation(model,
+                                                 features=features,
+                                                 uncertainty_calculations=uncertainty_calculations,
+                                                 save_data=False,
+                                                 save_figures=False,
+                                                 output_dir_data=self.output_test_dir,
+                                                 output_dir_figures=self.output_test_dir,
+                                                 verbose_level="error")
+
+
+        self.uncertainty.UQ(method="pc", plot_type="all")
+
 
 
     def compare_plot(self, name, compare_folder="TestingModel1d"):
@@ -468,7 +501,6 @@ class TestUncertainty(unittest.TestCase):
         compare_file = os.path.join(folder, "figures", compare_folder,
                                     name + ".png")
 
-        print self.output_test_dir
         plot_file = os.path.join(self.output_test_dir, name + ".png")
 
         result = subprocess.call(["diff", plot_file, compare_file])

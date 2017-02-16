@@ -322,6 +322,8 @@ class UncertaintyCalculations:
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
 
+    def CustomUQ(self, **kwargs):
+        raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
