@@ -433,7 +433,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_totalSensitivity1(self):
         self.uncertainty_calculations.data = Data()
-        self.uncertainty_calculations.data.sensitivity_1 = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
+        self.uncertainty_calculations.data.sensitivity_1 = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2], "testNone": None}
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.totalSensitivity(sensitivity="sensitivity_1")
@@ -442,11 +442,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test2D"][1], 2/3.)
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test1D"][0], 1/3.)
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test1D"][1], 2/3.)
+        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["testNone"], None)
 
 
     def test_totalSensitivityT(self):
         self.uncertainty_calculations.data = Data()
-        self.uncertainty_calculations.data.sensitivity_t = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2]}
+        self.uncertainty_calculations.data.sensitivity_t = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2], "testNone": None}
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.totalSensitivity(sensitivity="sensitivity_t")
@@ -455,6 +456,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test2D"][1], 2/3.)
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test1D"][0], 1/3.)
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test1D"][1], 2/3.)
+        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["testNone"], None)
 
 
     def test_PCAnalysis(self):

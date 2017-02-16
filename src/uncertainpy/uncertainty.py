@@ -171,8 +171,6 @@ class UncertaintyEstimation():
                 rosenblatt=rosenblatt
             )
 
-            print self.data.U
-
             filename = "{}_single-parameter-{}".format(
                 self.output_data_filename,
                 uncertain_parameter

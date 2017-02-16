@@ -384,6 +384,7 @@ class UncertaintyCalculations:
 
         for feature in sense:
             if sense[feature] is None:
+                total_sense[feature] = None
                 continue
 
             total_sensitivity = 0
