@@ -19,6 +19,7 @@ class UncertaintyEstimation():
                  uncertainty_calculations=None,
                  save_figures=False,
                  plot_type="results",
+                 plot_simulator_results=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
@@ -38,6 +39,7 @@ class UncertaintyEstimation():
         self.save_data = save_data
         self.output_dir_data = output_dir_data
         self.output_dir_figures = output_dir_figures
+        self.plot_simulator_results = plot_simulator_results
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -165,6 +167,10 @@ method: pc, mc
         if self.save_figures:
             self.plot(plot_type=self.plot_type)
 
+        if self.plot_simulator_results:
+            self.plot(plot_type="simulator_results")
+
+
 
     def MC(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
@@ -177,6 +183,11 @@ method: pc, mc
 
         if self.save_figures:
             self.plot(plot_type=self.plot_type)
+
+        if self.plot_simulator_results:
+            self.plot(plot_type="simulator_results")
+
+
 
 
 
@@ -208,6 +219,10 @@ method: pc, mc
                                                           filename),
                           plot_type=self.plot_type)
 
+            if self.plot_simulator_results:
+                self.plot(output_dir_figures=os.path.join(self.output_dir_figures,
+                                                          filename),
+                          plot_type="simulator_results")
 
 
     def MCSingle(self, uncertain_parameters=None):
@@ -229,6 +244,10 @@ method: pc, mc
             if self.save_figures:
                 self.plot(output_dir_figures=filename, plot_type=self.plot_type)
 
+            if self.plot_simulator_results:
+                self.plot(output_dir_figures=os.path.join(self.output_dir_figures,
+                                                          filename),
+                          plot_type="simulator_results")
 
 
 

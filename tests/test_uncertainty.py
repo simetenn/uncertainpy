@@ -468,6 +468,14 @@ class TestUncertainty(unittest.TestCase):
 
 
 
+    def test_PCplotSimulatorResults(self):
+        self.uncertainty.plot_simulator_results = True
+        self.uncertainty.PC()
+
+        self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png"))),
+                         self.uncertainty.uncertainty_calculations.nr_pc_samples)
+
+
 
     def setUpTestCalculations(self):
         parameterlist = [["a", 1, None],
