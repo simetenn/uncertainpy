@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import numpy as np
 import glob
+import sys
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
@@ -51,7 +52,7 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_level="error")
 
 
-
+    
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -369,6 +370,7 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.PC()
         self.uncertainty.plot(plot_type="all")
 
+        # sys.exit(1)
 
         self.compare_plot("directComparison_mean")
         self.compare_plot("directComparison_variance")
@@ -544,7 +546,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.plot_type, "all")
 
 
-    def test_UQMCSingle(self):
+    def test_UQCustom(self):
         self.setUpTestCalculations()
 
         self.uncertainty.UQ(method="custom", custom_keyword="value")

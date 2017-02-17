@@ -122,7 +122,7 @@ def generate_data_MC():  # pragma: no cover
     test.MC()
 
 
-def generate_data_MCSingle(): # pragma: no cover
+def generate_data_MCSingle():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -161,12 +161,12 @@ def generate_data_compareMC():  # pragma: no cover
 
 
     uncertainty = un.UncertaintyEstimations(model,
-                                                     features=TestingFeatures(),
-                                                     verbose_level="error",
-                                                     output_dir_data=test_data_dir,
-                                                     output_dir_figures=test_data_dir,
-                                                     nr_mc_samples=10**1,
-                                                     seed=seed)
+                                            features=TestingFeatures(),
+                                            verbose_level="error",
+                                            output_dir_data=test_data_dir,
+                                            output_dir_figures=test_data_dir,
+                                            nr_mc_samples=10**1,
+                                            seed=seed)
 
 
     mc_samples = [10, 100]

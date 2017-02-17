@@ -101,9 +101,10 @@ class PlotUncertainty():
         padding = len(str(len(self.data.U["directComparison"]) + 1))
         for U in self.data.U["directComparison"]:
             prettyPlot(self.data.t["directComparison"], U,
-                       xlabel=self.data.xlabel, ylabel=self.data.ylabel)
+                       xlabel=self.data.xlabel, ylabel=self.data.ylabel, new_figure=True)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
+            plt.clf()
             i += 1
 
 
