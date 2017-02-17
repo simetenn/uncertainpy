@@ -542,6 +542,22 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("total-sensitivity_1_grid")
 
 
+
+    def test_plotResultsNoSensitivity(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.plotResultsNoSensitivity(sensitivity="sensitivity_1")
+
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+
+        self.compare_plot("feature0d_sensitivity_1")
+
+
+
     def test_plotAllData1(self):
         self.plot.load(self.data_file_path)
 

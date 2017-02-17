@@ -13,16 +13,9 @@ model = NeuronModelBahl(parameters=parameters)
 uncertainty = un.UncertaintyEstimation(model,
                                        save_figures=True,
                                        plot_type="all",
-                                       plot_simulator_results=True)
+                                       plot_simulator_results=False)
 
 uncertainty.UQ()
 
-print "============================================"
-print uncertainty.data.total_sensitivity_1
-print "============================================"
 # Set plot_simulator_results to false so simulator results is not ploted
-uncertainty.simulator_results = False
 uncertainty.UQ(single=True)
-print "============================================"
-print uncertainty.data.total_sensitivity_1
-print "============================================"

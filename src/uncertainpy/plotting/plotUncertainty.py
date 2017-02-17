@@ -702,6 +702,12 @@ class PlotUncertainty():
         self.plotTotalSensitivityGrid(sensitivity=sensitivity)
 
 
+    def plotResultsNoSensitivity(self, sensitivity="sensitivity_1"):
+        for feature in self.data.features_1d:
+            self.plotMeanAndVariance(feature=feature)
+            self.plotConfidenceInterval(feature=feature)
+
+        self.plot0dFeatures(sensitivity=sensitivity)
 
 
     # def plotAllDataFromExploration(self, exploration_folder):

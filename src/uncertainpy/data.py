@@ -1,6 +1,5 @@
 import os
 import h5py
-import pprint
 
 import numpy as np
 
