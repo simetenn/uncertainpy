@@ -1,7 +1,12 @@
 import time
 import os
 
-import multiprocessing as mp
+from uncertainty_calculations import UncertaintyCalculations
+from uncertainpy.features import GeneralFeatures
+from uncertainpy.plotting.plotUncertainty import PlotUncertainty
+from uncertainpy.utils import create_logger
+from uncertainpy import Data
+
 
 from uncertainpy import UncertaintyEstimation, Distribution
 from uncertainpy.plotting import PlotUncertaintyCompare
@@ -11,22 +16,17 @@ from uncertainpy.utils import create_logger
 class UncertaintyEstimations():
     def __init__(self, model,
                  features=None,
+                 uncertainty_calculations=None,
                  save_figures=False,
+                 plot_type="results",
+                 plot_simulator_results=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
-                 plot_simulator_results=False,
-                 supress_model_graphics=True,
-                 supress_model_output=True,
-                 single_parameter_runs=True,
-                 CPUs=mp.cpu_count(),
-                 rosenblatt=False,
-                 nr_mc_samples=10**3,
-                 nr_pc_mc_samples=10**5,
+                 output_data_filename=None,
                  verbose_level="info",
                  verbose_filename=None,
-                 seed=None,
                  **kwargs):
         """
         Options can also be sent to the feature
@@ -37,47 +37,60 @@ class UncertaintyEstimations():
         # Figures are always saved on the format:
         # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
 
+        self.data = None
 
-
-        self.uncertainty_estimations = None
-
-        # original_parameters, uncertain_parameters, distributions,
-
-        self.model = model
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
 
         self.save_figures = save_figures
-        self.output_dir_figures = output_dir_figures
         self.save_data = save_data
         self.output_dir_data = output_dir_data
+        self.output_dir_figures = output_dir_figures
         self.plot_simulator_results = plot_simulator_results
-
-        self.supress_model_graphics = supress_model_graphics
-        self.supress_model_output = supress_model_output
-        self.CPUs = CPUs
-        self.rosenblatt = rosenblatt
-        self.figureformat = figureformat
-        self.features = features
-        self.nr_mc_samples = nr_mc_samples
-        self.nr_pc_mc_samples = nr_pc_mc_samples
-
-        self.kwargs = kwargs
-
-        self.t_start = time.time()
-
-        if not os.path.isdir(output_dir_data):
-            os.makedirs(output_dir_data)
-
-        self.verbose_level = verbose_level
-        self.verbose_filename = verbose_filename
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
 
-        self.seed = seed
-        self.single_parameter_runs = single_parameter_runs
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
 
-        self.output_data_filename = self.model.__class__.__name__
+
+        self.model = model
+
+        if uncertainty_calculations is None:
+            self.uncertainty_calculations = UncertaintyCalculations(
+                model=self.model,
+                features=self.features,
+                verbose_level=verbose_level,
+                verbose_filename=verbose_filename
+            )
+        else:
+            self.uncertainty_calculations = uncertainty_calculations
+            self.uncertainty_calculations.set_model(model)
+            self.uncertainty_calculations.set_features(self.features)
+
+
+        self.plot_type = plot_type
+
+        self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
+                                        figureformat=figureformat,
+                                        verbose_level=verbose_level,
+                                        verbose_filename=verbose_filename)
+
+
+        if output_data_filename is None:
+            self.output_data_filename = self.model.__class__.__name__
+        else:
+            self.output_data_filename = output_data_filename
+
+
+
+
 
 
 

@@ -20,11 +20,10 @@ output_test_dir = os.path.join(folder, "figures")
 def generate_plots_plotUncertainty():
     data_file = "TestingModel1d.h5"
 
-    plot = PlotUncertainty(data_dir=test_data_dir,
-                           output_dir_figures=output_test_dir,
+    plot = PlotUncertainty(output_dir=output_test_dir,
                            verbose_level="error")
 
-    plot.loadData(data_file)
+    plot.load(os.path.join(test_data_dir, data_file))
 
 
     plot.plotAllDataAllSensitivity()
@@ -34,21 +33,19 @@ def generate_plots_plotUncertainty():
 def generate_plots_plotUncertainty_single():
     data_file = "TestingModel1d_single-parameter-a.h5"
 
-    plot = PlotUncertainty(data_dir=test_data_dir,
-                           output_dir_figures=os.path.join(output_test_dir),
+    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir),
                            verbose_level="error")
 
-    plot.loadData(data_file)
+    plot.load(os.path.join(test_data_dir, data_file))
 
     plot.plotAllDataAllSensitivity()
 
     data_file = "TestingModel1d_single-parameter-b.h5"
 
-    plot = PlotUncertainty(data_dir=test_data_dir,
-                           output_dir_figures=os.path.join(output_test_dir),
+    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir),
                            verbose_level="error")
 
-    plot.loadData(data_file)
+    plot.load(os.path.join(test_data_dir, data_file))
 
     plot.plotAllDataAllSensitivity()
 
@@ -57,8 +54,7 @@ def generate_plots_compare():
     data_file = "TestingModel.h5"
     compare_folders = ["pc", "mc_10", "mc_100"]
 
-    plot = PlotUncertaintyCompare(data_dir=test_data_dir,
-                                  output_dir_figures=output_test_dir,
+    plot = PlotUncertaintyCompare(output_dir=output_test_dir,
                                   verbose_level="error")
 
 
