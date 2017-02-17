@@ -18,8 +18,6 @@ class UncertaintyEstimation():
                  features=None,
                  uncertainty_calculations=None,
                  save_figures=False,
-                 plot_type="results",
-                 plot_simulator_results=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
@@ -39,7 +37,6 @@ class UncertaintyEstimation():
         self.save_data = save_data
         self.output_dir_data = output_dir_data
         self.output_dir_figures = output_dir_figures
-        self.plot_simulator_results = plot_simulator_results
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -66,7 +63,6 @@ class UncertaintyEstimation():
             self.uncertainty_calculations.set_features(self.features)
 
 
-        self.plot_type = plot_type
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
@@ -103,6 +99,7 @@ class UncertaintyEstimation():
            pc_method="regression",
            rosenblatt=False,
            plot_type=None,
+           plot_simulator_results=False,
            **custom_kwargs):
         """
 method: pc, mc
@@ -110,23 +107,25 @@ method: pc, mc
         """
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        if plot_type is not None:
-            self.plot_type = plot_type
 
         if method.lower() == "pc":
             if single:
                 self.PCSingle(uncertain_parameters=uncertain_parameters,
                               method=pc_method,
-                              rosenblatt=rosenblatt)
+                              rosenblatt=rosenblatt,
+                              plot_simulator_results=plot_simulator_results)
             else:
                 self.PC(uncertain_parameters=uncertain_parameters,
                         method=pc_method,
-                        rosenblatt=rosenblatt)
+                        rosenblatt=rosenblatt,
+                        plot_simulator_results=plot_simulator_results)
         elif method.lower() == "mc":
             if single:
-                self.MCSingle(uncertain_parameters=uncertain_parameters)
+                self.MCSingle(uncertain_parameters=uncertain_parameters,
+                              plot_simulator_results=plot_simulator_results)
             else:
-                self.MC(uncertain_parameters=uncertain_parameters)
+                self.MC(uncertain_parameters=uncertain_parameters,
+                        plot_simulator_results=plot_simulator_results)
 
         elif method.lower() == "custom":
             self.CustomUQ(**custom_kwargs)
@@ -141,12 +140,12 @@ method: pc, mc
             self.save(self.output_data_filename)
 
         if self.save_figures:
-            self.plot(plot_type=self.plot_type)
+            self.plot()
 
 
 
 
-    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True, plot_simulator_results=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
@@ -164,14 +163,14 @@ method: pc, mc
             self.save(self.output_data_filename)
 
         if self.save_figures:
-            self.plot(plot_type=self.plot_type)
+            self.plot(plot_condensed=True)
 
-        if self.plot_simulator_results:
-            self.plot(plot_type="simulator_results")
+        if plot_simulator_results:
+            self.plot(simulator_results=True)
 
 
 
-    def MC(self, uncertain_parameters=None):
+    def MC(self, uncertain_parameters=None, plot_condensed=True, plot_simulator_results=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         self.data = self.uncertainty_calculations.MC(uncertain_parameters=uncertain_parameters)
@@ -181,16 +180,16 @@ method: pc, mc
 
 
         if self.save_figures:
-            self.plot(plot_type=self.plot_type)
+            self.plot(condensed=plot_condensed, sensitivity=False)
 
-        if self.plot_simulator_results:
-            self.plot(plot_type="simulator_results")
-
-
+        if plot_simulator_results:
+            self.plot(simulator_results=True)
 
 
 
-    def PCSingle(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+
+
+    def PCSingle(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True, plot_simulator_results=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
@@ -214,17 +213,17 @@ method: pc, mc
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(output_dir_figures=os.path.join(self.output_dir_figures,
-                                                          filename),
-                          plot_type=self.plot_type)
+                self.plot(condensed=plot_condensed, sensitivity=False,
+                          output_dir_figures=os.path.join(self.output_dir_figures,
+                                                          filename))
 
-            if self.plot_simulator_results:
-                self.plot(output_dir_figures=os.path.join(self.output_dir_figures,
-                                                          filename),
-                          plot_type="simulator_results")
+            if plot_simulator_results:
+                self.plot(simulator_results=True,
+                          output_dir_figures=os.path.join(self.output_dir_figures,
+                                                          filename))
 
 
-    def MCSingle(self, uncertain_parameters=None):
+    def MCSingle(self, uncertain_parameters=None, plot_condensed=True):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         for uncertain_parameter in uncertain_parameters:
@@ -241,12 +240,12 @@ method: pc, mc
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(output_dir_figures=filename, plot_type=self.plot_type)
+                self.plot(condensed=plot_condensed, output_dir_figures=filename)
 
             if self.plot_simulator_results:
-                self.plot(output_dir_figures=os.path.join(self.output_dir_figures,
-                                                          filename),
-                          plot_type="simulator_results")
+                self.plot(simulator_results=True,
+                          output_dir_figures=os.path.join(self.output_dir_figures,
+                                                          filename))
 
 
 
@@ -265,27 +264,52 @@ method: pc, mc
         self.data = Data(os.path.join(filename))
 
 
-    def plot(self, plot_type="results", output_dir_figures=None):
-        """
-results
-no_sensitivity
-all
-simulator_results
-        """
-
-
+    def plot(self, condensed=True, sensitivity=True, simulator_results=False, output_dir_figures=None):
         self.plotting.setData(self.data, output_dir=output_dir_figures)
 
-        if plot_type == "results":
-            self.plotting.plotResults()
-        elif plot_type == "no_sensitivity":
-            self.plotting.plotAllDataNoSensitivity()
-        elif plot_type == "all":
-            self.plotting.plotAllDataAllSensitivity()
-        elif plot_type == "simulator_results":
+        if simulator_results:
             self.plotting.plotSimulatorResults()
         else:
-            raise ValueError("Invalid plot type: {plot_type}".format(plot_type=plot_type))
+            if condensed:
+                if sensitivity:
+                    self.plotting.plotResults()
+                else:
+                    self.plotting.plotResultsNoSensitivity()
+            else:
+                if sensitivity:
+                    self.plotting.plotAllDataAllSensitivity()
+
+                else:
+                    self.plotting.plotAllDataNoSensitivity()
+
+
+
+
+
+#     def plot(self, plot_type="results", output_dir_figures=None):
+#         """
+# results
+# results_no_sensitivity
+# all
+# no_sensitivity
+# simulator_results
+#         """
+#
+#
+#         self.plotting.setData(self.data, output_dir=output_dir_figures)
+#
+#         if plot_type == "results":
+#             self.plotting.plotResults()
+#         elif plot_type == "results_no_sensitivity":
+#             self.plotting.plotResultsNoSensitivity()
+#         elif plot_type == "no_sensitivity":
+#             self.plotting.plotAllDataNoSensitivity()
+#         elif plot_type == "all":
+#             self.plotting.plotAllDataAllSensitivity()
+#         elif plot_type == "simulator_results":
+#             self.plotting.plotSimulatorResults()
+#         else:
+#             raise ValueError("Invalid plot type: {plot_type}".format(plot_type=plot_type))
 
 
 
