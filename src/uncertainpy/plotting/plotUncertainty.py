@@ -732,7 +732,20 @@ class PlotUncertainty():
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
+
+
         total_sense = getattr(self.data, "total_" + sensitivity)
+
+
+        no_sensitivity = True
+        for feature in self.data.feature_list:
+            if total_sense[feature] is not None:
+                no_sensitivity = False
+
+        if no_sensitivity:
+            msg = "All total_{sensitivity}s are None. Unable to plot total_{sensitivity}_grid"
+            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
 
         # get size of the grid in x and y directions
         nr_plots = len(self.data.feature_list)
@@ -769,7 +782,7 @@ class PlotUncertainty():
 
             if i < nr_plots:
                 if total_sense[self.data.feature_list[i]] is None:
-                    msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity} grid"
+                    msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}_grid"
                     self.logger.warning(msg.format(sensitivity=sensitivity, feature=self.data.feature_list[i]))
                     ax.axis("off")
                     continue

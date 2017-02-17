@@ -3,7 +3,7 @@ from uncertainpy import NeuronModel
 class NeuronModelBahl(NeuronModel):
     def __init__(self, parameters=None, adaptive_model=False):
         NeuronModel.__init__(self, parameters=parameters,
-                       adaptive_model=adaptive_model)
+                             adaptive_model=adaptive_model)
 
         self.reset_properties()
 

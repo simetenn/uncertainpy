@@ -70,6 +70,10 @@ class UncertaintyCalculations:
         self.runmodel.features = features
 
 
+    def reset(self, model):
+        self.model = model
+        self.runmodel.model = model
+
     def createDistribution(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 

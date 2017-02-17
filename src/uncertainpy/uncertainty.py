@@ -163,7 +163,6 @@ method: pc, mc
         if self.save_data:
             self.save(self.output_data_filename)
 
-
         if self.save_figures:
             self.plot(plot_type=self.plot_type)
 
