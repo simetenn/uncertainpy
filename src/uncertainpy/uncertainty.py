@@ -103,7 +103,7 @@ class UncertaintyEstimation():
            **custom_kwargs):
         """
 method: pc, mc
-
+pc_method: "regression"
         """
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 

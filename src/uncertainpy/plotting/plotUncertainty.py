@@ -190,7 +190,7 @@ class PlotUncertainty():
         ax2 = ax.twinx()
 
         spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                      "right": colors[color+1], "left": "None"})
+                                 "right": colors[color+1], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
         ax2.set_ylabel(self.data.ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
@@ -353,7 +353,7 @@ class PlotUncertainty():
         set_style("seaborn-white")
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
-                                     "right": "None", "left": "None"})
+                                "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         ax.set_xlabel(self.data.xlabel)
         ax.set_ylabel('sensitivity')
@@ -417,6 +417,7 @@ class PlotUncertainty():
             msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity} combined"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
+
 
 
         for i in range(len(sense[feature])):
@@ -831,8 +832,10 @@ class PlotUncertainty():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot data")
-    parser.add_argument("-d", "--data_dir", help="Directory the data is stored in", default="data")
-    parser.add_argument("-o", "--output_dir", help="Folders to find compare files", default="figures")
+    parser.add_argument("-d", "--data_dir",
+                        help="Directory the data is stored in", default="data")
+    parser.add_argument("-o", "--output_dir",
+                        help="Folders to find compare files", default="figures")
 
     args = parser.parse_args()
 

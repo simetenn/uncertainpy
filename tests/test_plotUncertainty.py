@@ -9,7 +9,6 @@ import shutil
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy import Data
 
-from prettyplot import reset_style
 
 class TestPlotUncertainpy(unittest.TestCase):
     def setUp(self):
@@ -149,27 +148,46 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
     def assertData(self):
-        self.assertTrue(np.array_equal(self.plot.data.U["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.U["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.E["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.E["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.t["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.Var["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.Var["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_05["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_05["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_95["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_95["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_1["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.U["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.U["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.E["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.E["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.t["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.t["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.Var["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.Var["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.p_05["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.p_05["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.p_95["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.p_95["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.sensitivity_1["feature1"],
+                                       [1., 2.]))
         self.assertTrue(np.array_equal(self.plot.data.sensitivity_1["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_1["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_1["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_1["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_1["directComparison"],
+                                       [3., 4.]))
 
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_t["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.sensitivity_t["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.sensitivity_t["directComparison"],
+                                       [3., 4.]))
+        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_t["feature1"],
+                                       [1., 2.]))
+        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_t["directComparison"],
+                                       [3., 4.]))
 
 
         self.assertEqual(self.plot.data.uncertain_parameters[0], "a")

@@ -11,11 +11,9 @@ parameters = un.Parameters(parameterlist)
 model = NeuronModelBahl(parameters=parameters)
 
 uncertainty = un.UncertaintyEstimation(model,
-                                       save_figures=True,
-                                       plot_type="all",
-                                       plot_simulator_results=False)
+                                       save_figures=True)
 
-uncertainty.UQ()
+uncertainty.UQ(plot_simulator_results=True)
 
-# Set plot_simulator_results to false so simulator results is not ploted
+# # Set plot_simulator_results to false so simulator results is not ploted
 uncertainty.UQ(single=True)
