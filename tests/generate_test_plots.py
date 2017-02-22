@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
-from prettyplot import prettyPlot
+from prettyplot import prettyPlot, reset_style
 from uncertainpy.features.spikes import Spikes
 
 
@@ -28,11 +28,11 @@ def generate_plots_plotUncertainty():
     plot.plotAllDataAllSensitivity()
 
 
-
 def generate_plots_plotUncertainty_single():
     data_file = "TestingModel1d_single-parameter-a.h5"
 
-    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir),
+    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir,
+                                                   "TestingModel1d_single-parameter-a"),
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
@@ -41,7 +41,8 @@ def generate_plots_plotUncertainty_single():
 
     data_file = "TestingModel1d_single-parameter-b.h5"
 
-    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir),
+    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir,
+                                                   "TestingModel1d_single-parameter-a"),
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
