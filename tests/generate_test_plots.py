@@ -25,7 +25,6 @@ def generate_plots_plotUncertainty():
 
     plot.load(os.path.join(test_data_dir, data_file))
 
-
     plot.plotAllDataAllSensitivity()
 
 

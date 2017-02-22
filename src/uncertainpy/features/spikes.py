@@ -140,7 +140,7 @@ class Spikes:
             raise RuntimeWarning("No spikes to plot")
             return
 
-        create_figure(nr_hues=self.nr_spikes)
+        create_figure(nr_colors=self.nr_spikes)
 
         for spike in self.spikes:
             u_max.append(max(spike.U))
@@ -151,8 +151,8 @@ class Spikes:
                        title="Spikes",
                        xlabel="index",
                        ylabel=self.ylabel,
-                       create_figure=False,
-                       nr_hues=self.nr_spikes)
+                       new_figure=False,
+                       nr_colors=self.nr_spikes)
 
             labels.append("spike %d" % (i))
             i += 1

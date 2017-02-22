@@ -771,7 +771,7 @@ class PlotUncertainty():
 
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
-                                     "right": "None", "left": "None"})
+                                "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         # ax.set_xlabel(self.data.xlabel)
         ax.set_ylabel('\% total ' + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
