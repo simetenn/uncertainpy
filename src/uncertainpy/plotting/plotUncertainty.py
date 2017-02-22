@@ -7,8 +7,8 @@ import numpy as np
 
 from uncertainpy import Data
 from prettyplot import prettyPlot, prettyBar
-from prettyplot import spines_edge_color, get_current_colormap
-from prettyplot import set_legend, get_colormap_tableu20, set_style
+from prettyplot import spines_color, get_current_colormap
+from prettyplot import get_colormap_tableu20, set_style
 from prettyplot import axis_grey, labelsize, fontsize, titlesize
 from uncertainpy.utils import create_logger
 
@@ -167,7 +167,7 @@ class PlotUncertainty():
 
 
     def plotMeanAndVariance(self, feature="directComparison", new_figure=True,
-                            hardcopy=True, show=False, color=0, sns_style="dark",
+                            hardcopy=True, show=False, color=0, style="seaborn-dark",
                             **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
@@ -183,13 +183,13 @@ class PlotUncertainty():
         title = feature + ", mean and variance"
         ax = prettyPlot(self.data.t[feature], self.data.E[feature],
                         self.toLatex(title), self.data.xlabel, self.data.ylabel + ", mean",
-                        sns_style=sns_style, **kwargs)
+                        style=style, **kwargs)
 
         colors = get_current_colormap()
 
         ax2 = ax.twinx()
 
-        spines_edge_color(ax2, edges={"top": "None", "bottom": "None",
+        spines_color(ax2, edges={"top": "None", "bottom": "None",
                                       "right": colors[color+1], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
@@ -251,7 +251,7 @@ class PlotUncertainty():
                          alpha=0.5, color=colors[0])
 
 
-        set_legend(["mean", "90\% confidence interval"])
+        plt.legend(["mean", "90\% confidence interval"])
 
 
 
@@ -299,7 +299,7 @@ class PlotUncertainty():
                        title=feature + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(parameter_names[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i, new_figure=True,
-                       nr_hues=len(self.data.uncertain_parameters), **kwargs)
+                       nr_colors=len(self.data.uncertain_parameters), **kwargs)
             # plt.ylim([0, 1.05])
 
             if hardcopy:
@@ -345,14 +345,14 @@ class PlotUncertainty():
         grid_x_size = int(grid_size)
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
-        set_style("darkgrid")
+        set_style("seaborn-darkgrid")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
 
 
         # Add a larger subplot to use to set a common xlabel and ylabel
-        set_style("white")
+        set_style("seaborn-white")
         ax = fig.add_subplot(111, zorder=-10)
-        spines_edge_color(ax, edges={"top": "None", "bottom": "None",
+        spines_color(ax, edges={"top": "None", "bottom": "None",
                                      "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         ax.set_xlabel(self.data.xlabel)
@@ -367,7 +367,7 @@ class PlotUncertainty():
             if i < nr_plots:
                 prettyPlot(self.data.t[feature], sense[feature][i],
                            title=self.toLatex(parameter_names[i]), color=i,
-                           nr_hues=nr_plots, ax=ax,
+                           nr_colors=nr_plots, ax=ax,
                            **kwargs)
 
                 for tick in ax.get_xticklabels():
@@ -424,14 +424,14 @@ class PlotUncertainty():
                        title=self.toLatex(feature) + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1],
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        new_figure=False, color=i,
-                       nr_hues=len(self.data.uncertain_parameters),
+                       nr_colors=len(self.data.uncertain_parameters),
                        **kwargs)
 
         plt.ylim([0, 1.05])
         if len(sense[feature]) > 4:
             plt.xlim([self.data.t[feature][0], 1.3*self.data.t[feature][-1]])
 
-        set_legend(self.listToLatex(self.data.uncertain_parameters))
+        plt.legend(self.listToLatex(self.data.uncertain_parameters))
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir,
@@ -516,7 +516,7 @@ class PlotUncertainty():
 
             ax2 = ax.twinx()
 
-            spines_edge_color(ax2, edges={"top": "None", "bottom": "None",
+            spines_color(ax2, edges={"top": "None", "bottom": "None",
                                           "right": axis_grey, "left": "None"})
             ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                             color=axis_grey, labelcolor="black", labelsize=labelsize)
@@ -600,7 +600,7 @@ class PlotUncertainty():
                   title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(feature),
                   xlabels=self.listToLatex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
-                  nr_hues=len(self.data.uncertain_parameters),
+                  nr_colors=len(self.data.uncertain_parameters),
                   index=index)
 
 
@@ -762,15 +762,15 @@ class PlotUncertainty():
         # plt.close("all")
 
 
-        set_style("dark")
+        set_style("seaborn-dark")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
-        set_style("white")
+        set_style("seaborn-white")
 
 
         # Add a larger subplot to use to set a common xlabel and ylabel
 
         ax = fig.add_subplot(111, zorder=-10)
-        spines_edge_color(ax, edges={"top": "None", "bottom": "None",
+        spines_color(ax, edges={"top": "None", "bottom": "None",
                                      "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         # ax.set_xlabel(self.data.xlabel)
@@ -796,7 +796,7 @@ class PlotUncertainty():
                 prettyBar(total_sense[self.data.feature_list[i]],
                           title=self.toLatex(self.data.feature_list[i]),
                           xlabels=self.listToLatex(self.data.uncertain_parameters),
-                          nr_hues=len(self.data.uncertain_parameters),
+                          nr_colors=len(self.data.uncertain_parameters),
                           index=index,
                           ax=ax,
                           **kwargs)

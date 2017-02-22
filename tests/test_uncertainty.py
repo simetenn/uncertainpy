@@ -52,7 +52,7 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_level="error")
 
 
-    
+
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -356,19 +356,9 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_plotError(self):
-        self.uncertainty.PC()
-        with self.assertRaises(ValueError):
-            self.uncertainty.plot(plot_type="no_plot_method")
-
-
-
-
-
-
     def test_plotAll(self):
         self.uncertainty.PC()
-        self.uncertainty.plot(plot_type="all")
+        self.uncertainty.plot(condensed=False, sensitivity=True)
 
         # sys.exit(1)
 
@@ -427,7 +417,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_plotResults(self):
         self.uncertainty.PC()
-        self.uncertainty.plot(plot_type="results")
+        self.uncertainty.plot()
 
         self.compare_plot("directComparison_mean-variance")
         self.compare_plot("directComparison_confidence-interval")
@@ -445,7 +435,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_plotNoSensitivity(self):
         self.uncertainty.PC()
-        self.uncertainty.plot(plot_type="no_sensitivity")
+        self.uncertainty.plot(condensed=False, sensitivity=False)
 
         self.compare_plot("directComparison_mean")
         self.compare_plot("directComparison_variance")
@@ -462,7 +452,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_plotSimulatorResults(self):
         self.uncertainty.PC()
-        self.uncertainty.plot(plot_type="simulator_results")
+        self.uncertainty.plot(simulator_results=True)
 
 
         self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png"))),
@@ -507,43 +497,50 @@ class TestUncertainty(unittest.TestCase):
     def test_UQPCAll(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="pc", plot_type="all")
+        self.uncertainty.UQ(method="pc", plot_condensed=False)
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
         self.assertEqual(self.uncertainty.data["method"], "regression")
         self.assertEqual(self.uncertainty.data["rosenblatt"], False)
-        self.assertEqual(self.uncertainty.plot_type, "all")
+        self.assertEqual(self.uncertainty.data["plot_condensed"], False)
+
 
     def test_UQPCSingleResultRosenblatt(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="pc", pc_method="regression", plot_type="result", single=True, rosenblatt=True)
+        self.uncertainty.UQ(method="pc",
+                            pc_method="regression",
+                            plot_condensed=True,
+                            single=True,
+                            rosenblatt=True)
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
         self.assertEqual(self.uncertainty.data["method"], "regression")
         self.assertEqual(self.uncertainty.data["rosenblatt"], True)
-        self.assertEqual(self.uncertainty.plot_type, "result")
+        self.assertEqual(self.uncertainty.data["plot_condensed"], True)
 
 
     def test_UQMC(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="mc", plot_type="all")
+        self.uncertainty.UQ(method="mc", plot_condensed=False)
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(self.uncertainty.plot_type, "all")
+        self.assertEqual(self.uncertainty.data["plot_condensed"], False)
+
 
     def test_UQMCSingle(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="mc", plot_type="all", single=True)
+        self.uncertainty.UQ(method="mc", plot_condensed=False, single=True)
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
-        self.assertEqual(self.uncertainty.plot_type, "all")
+        self.assertEqual(self.uncertainty.data["plot_condensed"], False)
+
 
 
     def test_UQCustom(self):
@@ -553,7 +550,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertEqual(self.uncertainty.data["function"], "CustomUQ")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
-        self.assertEqual(self.uncertainty.plot_type, "results")
+
 
     def test_CustomUQ(self):
         self.setUpTestCalculations()

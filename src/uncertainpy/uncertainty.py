@@ -98,7 +98,7 @@ class UncertaintyEstimation():
            single=False,
            pc_method="regression",
            rosenblatt=False,
-           plot_type=None,
+           plot_condensed=True,
            plot_simulator_results=False,
            **custom_kwargs):
         """
@@ -113,18 +113,22 @@ method: pc, mc
                 self.PCSingle(uncertain_parameters=uncertain_parameters,
                               method=pc_method,
                               rosenblatt=rosenblatt,
+                              plot_condensed=plot_condensed,
                               plot_simulator_results=plot_simulator_results)
             else:
                 self.PC(uncertain_parameters=uncertain_parameters,
                         method=pc_method,
                         rosenblatt=rosenblatt,
+                        plot_condensed=plot_condensed,
                         plot_simulator_results=plot_simulator_results)
         elif method.lower() == "mc":
             if single:
                 self.MCSingle(uncertain_parameters=uncertain_parameters,
+                              plot_condensed=plot_condensed,
                               plot_simulator_results=plot_simulator_results)
             else:
                 self.MC(uncertain_parameters=uncertain_parameters,
+                        plot_condensed=plot_condensed,
                         plot_simulator_results=plot_simulator_results)
 
         elif method.lower() == "custom":
@@ -145,7 +149,13 @@ method: pc, mc
 
 
 
-    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True, plot_simulator_results=False):
+    def PC(self,
+           uncertain_parameters=None,
+           method="regression",
+           rosenblatt=False,
+           plot_condensed=True,
+           plot_simulator_results=False):
+
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
@@ -163,7 +173,7 @@ method: pc, mc
             self.save(self.output_data_filename)
 
         if self.save_figures:
-            self.plot(plot_condensed=True)
+            self.plot(condensed=plot_condensed)
 
         if plot_simulator_results:
             self.plot(simulator_results=True)
@@ -189,7 +199,13 @@ method: pc, mc
 
 
 
-    def PCSingle(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True, plot_simulator_results=False):
+    def PCSingle(self,
+                 uncertain_parameters=None,
+                 method="regression",
+                 rosenblatt=False,
+                 plot_condensed=True,
+                 plot_simulator_results=False):
+
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
@@ -264,7 +280,12 @@ method: pc, mc
         self.data = Data(os.path.join(filename))
 
 
-    def plot(self, condensed=True, sensitivity=True, simulator_results=False, output_dir_figures=None):
+    def plot(self,
+             condensed=True,
+             sensitivity=True,
+             simulator_results=False,
+             output_dir_figures=None):
+
         self.plotting.setData(self.data, output_dir=output_dir_figures)
 
         if simulator_results:

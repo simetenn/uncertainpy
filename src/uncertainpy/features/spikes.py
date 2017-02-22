@@ -1,4 +1,4 @@
-from prettyplot import prettyPlot, new_figure
+from prettyplot import prettyPlot, create_figure
 
 import pylab as plt
 import numpy as np
@@ -140,7 +140,7 @@ class Spikes:
             raise RuntimeWarning("No spikes to plot")
             return
 
-        new_figure(nr_hues=self.nr_spikes)
+        create_figure(nr_hues=self.nr_spikes)
 
         for spike in self.spikes:
             u_max.append(max(spike.U))
@@ -151,7 +151,7 @@ class Spikes:
                        title="Spikes",
                        xlabel="index",
                        ylabel=self.ylabel,
-                       new_figure=False,
+                       create_figure=False,
                        nr_hues=self.nr_spikes)
 
             labels.append("spike %d" % (i))

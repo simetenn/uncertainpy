@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from prettyplot import prettyPlot, prettyBar
-from prettyplot import spines_edge_color, get_current_colormap
+from prettyplot import spines_color, get_current_colormap
 # from prettyplot import set_legend, get_colormap_tableu20
 from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 
@@ -358,7 +358,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
 
 
-        spines_edge_color(ax2, edges={"top": "None", "bottom": "None",
+        spines_color(ax2, edges={"top": "None", "bottom": "None",
                           "right": axis_grey, "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=axis_grey, labelcolor="black", labelsize=labelsize)
