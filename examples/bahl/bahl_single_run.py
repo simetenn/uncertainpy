@@ -4,7 +4,7 @@ import chaospy as cp
 from NeuronModelBahl import NeuronModelBahl
 
 parameterlist = [["apical Ra", 261, cp.Uniform(150, 300)],
-                 ["soma Ra", 82, cp.Uniform(80, 200)]]
+                 ["decay_kfast", 55.581656, cp.Uniform(4, 660)]]
 
 
 parameters = un.Parameters(parameterlist)
