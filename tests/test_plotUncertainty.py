@@ -434,7 +434,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature1d_sensitivity_1_b")
 
 
-    def test_plotSensitivityFeature1d1(self):
+    def test_plotSensitivityFeature1dt(self):
         self.plot.load(self.data_file_path)
 
         self.plot.plotSensitivity(feature="feature1d", sensitivity="sensitivity_t")
@@ -545,10 +545,10 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature0d_sensitivity_t")
 
 
-    def test_plotResults(self):
+    def test_plotCondensed(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.plotResults(sensitivity="sensitivity_1")
+        self.plot.plotCondensed(sensitivity="sensitivity_1")
 
         self.compare_plot("directComparison_mean-variance")
         self.compare_plot("directComparison_confidence-interval")
@@ -564,10 +564,10 @@ class TestPlotUncertainpy(unittest.TestCase):
 
 
 
-    def test_plotResultsNoSensitivity(self):
+    def test_plotCondensedNoSensitivity(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.plotResultsNoSensitivity(sensitivity="sensitivity_1")
+        self.plot.plotCondensedNoSensitivity()
 
         self.compare_plot("directComparison_mean-variance")
         self.compare_plot("directComparison_confidence-interval")
@@ -721,6 +721,117 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature2d_total-sensitivity_t")
 
         self.compare_plot("total-sensitivity_t_grid")
+
+
+
+    def test_plotPlotCondensed(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.plot(condensed=True, sensitivity=True)
+
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+        self.compare_plot("directComparison_sensitivity_1_grid")
+
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_1_grid")
+
+        self.compare_plot("feature0d_sensitivity_1")
+
+        self.compare_plot("total-sensitivity_1_grid")
+
+
+    def test_plotPlotCondensedNoSensitivity(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.plot(condensed=True, sensitivity=False)
+
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+
+        self.compare_plot("feature0d_sensitivity_1")
+
+
+
+    def test_plotPlotAllDataNoSensitivity(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.plot(condensed=False, sensitivity=False)
+
+        self.compare_plot("directComparison_mean")
+        self.compare_plot("directComparison_variance")
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+
+
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+
+
+
+    def test_plotPlotAllDataAllSensitivity(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.plot(condensed=False, sensitivity=False)
+
+        self.compare_plot("directComparison_mean")
+        self.compare_plot("directComparison_variance")
+        self.compare_plot("directComparison_mean-variance")
+        self.compare_plot("directComparison_confidence-interval")
+
+        self.compare_plot("directComparison_sensitivity_1_a")
+        self.compare_plot("directComparison_sensitivity_1_b")
+        self.compare_plot("directComparison_sensitivity_1")
+        self.compare_plot("directComparison_sensitivity_1_grid")
+
+
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+
+        self.compare_plot("feature1d_sensitivity_1_a")
+        self.compare_plot("feature1d_sensitivity_1_b")
+        self.compare_plot("feature1d_sensitivity_1")
+        self.compare_plot("feature1d_sensitivity_1_grid")
+        self.compare_plot("feature0d_total-sensitivity_1")
+
+        self.compare_plot("directComparison_total-sensitivity_1")
+        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature1d_total-sensitivity_1")
+        self.compare_plot("feature2d_total-sensitivity_1")
+
+        self.compare_plot("total-sensitivity_1_grid")
+
+
+        self.compare_plot("feature1d_sensitivity_t_a")
+        self.compare_plot("feature1d_sensitivity_t_b")
+        self.compare_plot("feature1d_sensitivity_t")
+        self.compare_plot("feature1d_sensitivity_t_grid")
+
+
+
+        self.compare_plot("directComparison_sensitivity_t_a")
+        self.compare_plot("directComparison_sensitivity_t_b")
+        self.compare_plot("directComparison_sensitivity_t")
+        self.compare_plot("directComparison_sensitivity_t_grid")
+
+        self.compare_plot("feature0d_total-sensitivity_t")
+
+
+        self.compare_plot("directComparison_total-sensitivity_t")
+        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature1d_total-sensitivity_t")
+        self.compare_plot("feature2d_total-sensitivity_t")
+
+        self.compare_plot("total-sensitivity_t_grid")
+
 
 
     def compare_plot(self, name):

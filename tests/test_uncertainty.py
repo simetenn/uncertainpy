@@ -438,7 +438,7 @@ class TestUncertainty(unittest.TestCase):
         self.compare_plot("total-sensitivity_1_grid")
 
 
-    def test_plotResults(self):
+    def test_plotCondensed(self):
         self.uncertainty.PC()
         self.uncertainty.plot()
 

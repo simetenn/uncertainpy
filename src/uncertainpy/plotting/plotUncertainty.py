@@ -518,7 +518,7 @@ class PlotUncertainty():
             ax2 = ax.twinx()
 
             spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                          "right": axis_grey, "left": "None"})
+                                     "right": axis_grey, "left": "None"})
             ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                             color=axis_grey, labelcolor="black", labelsize=labelsize)
             ax2.set_ylabel('sensitivity', fontsize=fontsize)
@@ -692,7 +692,7 @@ class PlotUncertainty():
         self.plotTotalSensitivityGrid(sensitivity="sensitivity_t")
 
 
-    def plotResults(self, sensitivity="sensitivity_1"):
+    def plotCondensed(self, sensitivity="sensitivity_1"):
         for feature in self.data.features_1d:
             self.plotMeanAndVariance(feature=feature)
             self.plotConfidenceInterval(feature=feature)
@@ -703,13 +703,27 @@ class PlotUncertainty():
         self.plotTotalSensitivityGrid(sensitivity=sensitivity)
 
 
-    def plotResultsNoSensitivity(self, sensitivity="sensitivity_1"):
+    def plotCondensedNoSensitivity(self):
         for feature in self.data.features_1d:
             self.plotMeanAndVariance(feature=feature)
             self.plotConfidenceInterval(feature=feature)
 
-        self.plot0dFeatures(sensitivity=sensitivity)
+        self.plot0dFeatures()
 
+
+    def plot(self, condensed=True, sensitivity=True):
+
+        if condensed:
+            if sensitivity:
+                self.plotCondensed()
+            else:
+                self.plotCondensedNoSensitivity()
+        else:
+            if sensitivity:
+                self.plotAllDataAllSensitivity()
+
+            else:
+                self.plotAllDataNoSensitivity()
 
     # def plotAllDataFromExploration(self, exploration_folder):
     #     self.logger.info("Plotting all data")

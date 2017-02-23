@@ -293,9 +293,9 @@ pc_method: "regression"
         else:
             if condensed:
                 if sensitivity:
-                    self.plotting.plotResults()
+                    self.plotting.plotCondensed()
                 else:
-                    self.plotting.plotResultsNoSensitivity()
+                    self.plotting.plotCondensedNoSensitivity()
             else:
                 if sensitivity:
                     self.plotting.plotAllDataAllSensitivity()
@@ -320,9 +320,9 @@ pc_method: "regression"
 #         self.plotting.setData(self.data, output_dir=output_dir_figures)
 #
 #         if plot_type == "results":
-#             self.plotting.plotResults()
+#             self.plotting.plotCondensed()
 #         elif plot_type == "results_no_sensitivity":
-#             self.plotting.plotResultsNoSensitivity()
+#             self.plotting.plotCondensedNoSensitivity()
 #         elif plot_type == "no_sensitivity":
 #             self.plotting.plotAllDataNoSensitivity()
 #         elif plot_type == "all":
