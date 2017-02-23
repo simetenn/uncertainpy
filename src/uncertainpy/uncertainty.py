@@ -291,20 +291,9 @@ pc_method: "regression"
         if simulator_results:
             self.plotting.plotSimulatorResults()
         else:
-            if condensed:
-                if sensitivity:
-                    self.plotting.plotCondensed()
-                else:
-                    self.plotting.plotCondensedNoSensitivity()
-            else:
-                if sensitivity:
-                    self.plotting.plotAllDataAllSensitivity()
-
-                else:
-                    self.plotting.plotAllDataNoSensitivity()
-
-
-
+            self.plotting.plot(condensed=condensed,
+                               sensitivity=sensitivity)
+        
 
 
 #     def plot(self, plot_type="results", output_dir_figures=None):
