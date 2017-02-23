@@ -16,4 +16,4 @@ uncertainty = un.UncertaintyEstimation(model,
 uncertainty.UQ(plot_condensed=False, plot_simulator_results=True)
 
 # # Set plot_simulator_results to false so simulator results is not ploted
-uncertainty.UQ(single=True)
+uncertainty.UQ(single=True, plot_simulator_results=True)

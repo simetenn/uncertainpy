@@ -293,33 +293,6 @@ pc_method: "regression"
         else:
             self.plotting.plot(condensed=condensed,
                                sensitivity=sensitivity)
-        
-
-
-#     def plot(self, plot_type="results", output_dir_figures=None):
-#         """
-# results
-# results_no_sensitivity
-# all
-# no_sensitivity
-# simulator_results
-#         """
-#
-#
-#         self.plotting.setData(self.data, output_dir=output_dir_figures)
-#
-#         if plot_type == "results":
-#             self.plotting.plotCondensed()
-#         elif plot_type == "results_no_sensitivity":
-#             self.plotting.plotCondensedNoSensitivity()
-#         elif plot_type == "no_sensitivity":
-#             self.plotting.plotAllDataNoSensitivity()
-#         elif plot_type == "all":
-#             self.plotting.plotAllDataAllSensitivity()
-#         elif plot_type == "simulator_results":
-#             self.plotting.plotSimulatorResults()
-#         else:
-#             raise ValueError("Invalid plot type: {plot_type}".format(plot_type=plot_type))
 
 
 
