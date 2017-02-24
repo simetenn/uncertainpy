@@ -31,6 +31,17 @@ class RunModel:
 
         self.data = Data()
 
+        self.set_model(model)
+
+
+    def set_model(self, model):
+
+        self.model = model
+
+        if model is not None:
+            self.data.xlabel = self.model.xlabel
+            self.data.ylabel = self.model.ylabel
+
 
     def performInterpolation(self, ts, interpolation):
         lengths = []

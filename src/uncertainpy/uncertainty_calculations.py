@@ -62,7 +62,7 @@ class UncertaintyCalculations:
 
     def set_model(self, model):
         self.model = model
-        self.runmodel.model = model
+        self.runmodel.set_model(model)
 
 
     def set_features(self, features):
@@ -295,8 +295,8 @@ class UncertaintyCalculations:
 
 
     def PCAnalysis(self):
-
         np.random.seed(10)
+
         for feature in self.data.feature_list:
             self.data.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.data.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)

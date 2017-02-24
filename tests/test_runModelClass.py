@@ -39,6 +39,14 @@ class TestRunModelClass(unittest.TestCase):
         RunModel(TestingModel1d())
 
 
+    def test_set_model(self):
+        self.runmodel = RunModel(None)
+        self.runmodel.set_model(TestingModel1d())
+
+        self.assertEqual(self.runmodel.data.xlabel, "x")
+        self.assertEqual(self.runmodel.data.ylabel, "y")
+
+
     def test_evaluateNodeFunctionList(self):
         nodes = [[0, 1], [1, 2], [2, 3]]
         self.runmodel.data.uncertain_parameters = ["a", "b"]

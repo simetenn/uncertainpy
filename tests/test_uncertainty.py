@@ -228,6 +228,18 @@ class TestUncertainty(unittest.TestCase):
         self.compare_plot("TestingModel1d_single-parameter-a/feature1d_confidence-interval",
                           compare_folder="")
 
+        self.compare_plot("TestingModel1d_single-parameter-b/directComparison_mean-variance",
+                          compare_folder="")
+        self.compare_plot("TestingModel1d_single-parameter-b/directComparison_confidence-interval",
+                          compare_folder="")
+
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_mean-variance",
+                          compare_folder="")
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_confidence-interval",
+                          compare_folder="")
+
+
+
 
     def test_MCSingle(self):
         parameterlist = [["a", 1, None],
@@ -485,8 +497,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_PCplotSimulatorResults(self):
-        self.uncertainty.plot_simulator_results = True
-        self.uncertainty.PC()
+        self.uncertainty.PC(plot_simulator_results=True)
 
         self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png"))),
                          self.uncertainty.uncertainty_calculations.nr_pc_samples)
@@ -527,7 +538,6 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
         self.assertEqual(self.uncertainty.data["method"], "regression")
         self.assertEqual(self.uncertainty.data["rosenblatt"], False)
-        self.assertEqual(self.uncertainty.data["plot_condensed"], False)
 
 
     def test_UQPCSingleResultRosenblatt(self):
@@ -543,7 +553,6 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
         self.assertEqual(self.uncertainty.data["method"], "regression")
         self.assertEqual(self.uncertainty.data["rosenblatt"], True)
-        self.assertEqual(self.uncertainty.data["plot_condensed"], True)
 
 
     def test_UQMC(self):
@@ -553,7 +562,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(self.uncertainty.data["plot_condensed"], False)
 
 
     def test_UQMCSingle(self):
@@ -563,7 +571,6 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
-        self.assertEqual(self.uncertainty.data["plot_condensed"], False)
 
 
 
@@ -586,7 +593,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def compare_plot(self, name, compare_folder="TestingModel1d"):
+    def compare_plot(self, name, compare_folder=""):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "figures", compare_folder,
                                     name + ".png")

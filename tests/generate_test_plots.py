@@ -42,7 +42,7 @@ def generate_plots_plotUncertainty_single():
     data_file = "TestingModel1d_single-parameter-b.h5"
 
     plot = PlotUncertainty(output_dir=os.path.join(output_test_dir,
-                                                   "TestingModel1d_single-parameter-a"),
+                                                   "TestingModel1d_single-parameter-b"),
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))

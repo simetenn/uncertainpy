@@ -239,7 +239,9 @@ pc_method: "regression"
                                                           filename))
 
 
-    def MCSingle(self, uncertain_parameters=None, plot_condensed=True):
+    def MCSingle(self, uncertain_parameters=None,
+                 plot_condensed=True,
+                 plot_simulator_results=False):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         for uncertain_parameter in uncertain_parameters:
@@ -258,7 +260,7 @@ pc_method: "regression"
             if self.save_figures:
                 self.plot(condensed=plot_condensed, output_dir_figures=filename)
 
-            if self.plot_simulator_results:
+            if plot_simulator_results:
                 self.plot(simulator_results=True,
                           output_dir_figures=os.path.join(self.output_dir_figures,
                                                           filename))
