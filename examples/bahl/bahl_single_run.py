@@ -3,15 +3,14 @@ import chaospy as cp
 
 from NeuronModelBahl import NeuronModelBahl
 
-parameterlist = [["apical Ra", 261, cp.Uniform(150, 300)],
-                 ["decay_kfast", 55.581656, cp.Uniform(4, 660)]]
+parameterlist = [["e_pas", -80, cp.Uniform(-60, -85)],
+                 ["apical Ra", 261, cp.Uniform(150, 300)]]
 
 
 parameters = un.Parameters(parameterlist)
 model = NeuronModelBahl(parameters=parameters)
 
-uncertainty = un.UncertaintyEstimation(model,
-                                       save_figures=True)
+uncertainty = un.UncertaintyEstimation(model, save_figures=True)
 
 uncertainty.UQ(plot_condensed=False, plot_simulator_results=True)
 
