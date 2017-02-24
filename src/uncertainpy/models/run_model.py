@@ -36,7 +36,9 @@ def main():
 
 
     simulation.setParameterValues(parameters)
+    simulation.preprocess()
     simulation.run()
+    simulation.postprocess()
     simulation.save(CPU=args.CPU, save_path=args.save_path)
 
 if __name__ == "__main__":

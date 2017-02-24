@@ -7,13 +7,17 @@ class Model():
     """
 The model must be able to handle these calls
 
+simulation.cmd()
+
 simulation = model() -> __init__ must be able to run with no arguments
 simulation.set_properties(properties set at runtime -> dict)
 simulation.load()
 simulation.setParameterValues(parameters -> dictionary)
+simulation.preprocess()
 simulation.run()
+simulation.preprocess()
 simulation.save(current_process -> int)
-simulation.cmd()
+
 
 If you create your own model it must either be in it's own file
 or the main part of the program must be inside
@@ -52,10 +56,14 @@ Run must store the results from the simulation in self.t and self.U
         self.additional_cmds = []
 
 
-    # TODO create a preprocess and postprocess function
     def load(self):
         pass
 
+    def preprocess(self):
+        pass
+
+    def postprocess(self):
+        pass
 
     def setDistribution(self, parameter_name, distribution_function):
         if self.parameters is None:
