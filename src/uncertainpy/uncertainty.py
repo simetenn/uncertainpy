@@ -17,7 +17,7 @@ class UncertaintyEstimation():
     def __init__(self, model,
                  features=None,
                  uncertainty_calculations=None,
-                 save_figures=False,
+                 save_figures=True,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,

@@ -35,7 +35,7 @@ class NeuronModel(Model):
     ### neuron are inside this class
     def _record(self, ref_data):
         data = self.h.Vector()
-        data._record(getattr(self.h, ref_data))
+        data.record(getattr(self.h, ref_data))
         return data
 
 
@@ -48,7 +48,7 @@ class NeuronModel(Model):
     def _recordV(self):
         for sec in self.h.allsec():
             self.V = self.h.Vector()
-            self.V._record(sec(0.5)._ref_v)
+            self.V.record(sec(0.5)._ref_v)
             break
 
 

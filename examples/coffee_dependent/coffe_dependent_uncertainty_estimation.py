@@ -1,4 +1,4 @@
-import uncertainpy
+import uncertainpy as un
 from CoffeeCupPointModelDependent import CoffeeCupPointModelDependent
 
 parameterlist = [["kappa", -0.1, None],
@@ -6,14 +6,9 @@ parameterlist = [["kappa", -0.1, None],
                  ["u_env", 20, None]]
 
 
-parameters = uncertainpy.Parameters(parameterlist)
-model = CoffeeCupPointModelDependent(parameters)
+model = CoffeeCupPointModelDependent(parameterlist)
+model.setAllDistributions(un.Distribution(0.5).uniform)
 
-model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+uncertainty = un.UncertaintyEstimation(model, save_figures=True)
 
-uncertainty = uncertainpy.UncertaintyEstimation(model,
-                                                features=None,
-                                                save_figures=True,
-                                                rosenblatt=False)
-
-uncertainty.allParameters()
+uncertainty.UQ()

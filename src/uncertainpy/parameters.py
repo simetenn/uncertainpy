@@ -108,6 +108,16 @@ Return a readable string of a parameter
 
         return "{parameter}: {value}{uncertain}".format(parameter=self.name, value=self.value, uncertain=uncertain)
 
+
+
+
+
+
+
+
+
+
+
 # TODO add an iterator
 class Parameters():
     def __init__(self, parameterlist):
