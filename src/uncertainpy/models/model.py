@@ -30,7 +30,7 @@ Run must store the results from the simulation in self.t and self.U
     """
 
 
-    def __init__(self, parameters=None, adaptive_model=False):
+    def __init__(self, parameters=None, adaptive_model=False, xlabel="", ylabel=""):
         """
 
 ----------
@@ -64,8 +64,8 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
 
         self.adaptive_model = adaptive_model
 
-        self.xlabel = ""
-        self.ylabel = ""
+        self.xlabel = xlabel
+        self.ylabel = ylabel
 
         self.additional_cmds = []
 

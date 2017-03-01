@@ -5,14 +5,10 @@ parameterlist = [["kappa", -0.05, None],
                  ["u_env", 20, None]]
 
 
-parameters = uncertainpy.Parameters(parameterlist)
-parameters.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
-
-model = CoffeeCupPointModel(parameters)
+model = CoffeeCupPointModel(parameterlist)
+model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
 
 
-uncertainty = uncertainpy.UncertaintyEstimation(model,
-                                                features=None,
-                                                save_figures=True)
+uncertainty = uncertainpy.UncertaintyEstimation(model, features=None)
 
-uncertainty.PC()
+uncertainty.UQ(plot_condensed=False)

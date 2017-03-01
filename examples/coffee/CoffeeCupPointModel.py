@@ -17,16 +17,13 @@ class CoffeeCupPointModel(Model):
     simulation.cmd()
     """
     def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
+        Model.__init__(self, parameters=parameters, xlabel="time [s]", ylabel="Temperature [C]")
 
         self.kappa = -0.05
         self.u_env = 20
 
         self.u0 = 95
         self.t_points = np.linspace(0, 200, 150)
-
-        self.xlabel = "time [s]"
-        self.ylabel = "Temperature [C]"
 
 
     def f(self, u, t):
@@ -40,5 +37,3 @@ class CoffeeCupPointModel(Model):
         solver.set_initial_condition(self.u0)
 
         self.U, self.t = solver.solve(self.t_points)
-
-        return self.t, self.U
