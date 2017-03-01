@@ -6,9 +6,7 @@ from NeuronModelBahl import NeuronModelBahl
 parameterlist = [["e_pas", -80, cp.Uniform(-60, -85)],
                  ["apical Ra", 261, cp.Uniform(150, 300)]]
 
-
-parameters = un.Parameters(parameterlist)
-model = NeuronModelBahl(parameters=parameters)
+model = NeuronModelBahl(parameters=parameterlist)
 
 uncertainty = un.UncertaintyEstimation(model, save_figures=True)
 

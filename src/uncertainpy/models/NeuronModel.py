@@ -24,8 +24,7 @@ class NeuronModel(Model):
         os.chdir(self.model_path)
 
         import neuron
-        # To work on devices without nrngui
-        #from neuron import gui
+
         self.h = neuron.h
         self.h.load_file(1, self.model_file)
 
@@ -35,34 +34,34 @@ class NeuronModel(Model):
 
     ### Be really careful with these. Need to make sure that all references to
     ### neuron are inside this class
-    def record(self, ref_data):
+    def _record(self, ref_data):
         data = self.h.Vector()
-        data.record(getattr(self.h, ref_data))
+        data._record(getattr(self.h, ref_data))
         return data
 
 
-    def toArray(self, hocObject):
+    def _toArray(self, hocObject):
         array = np.zeros(int(round(hocObject.size())))
         hocObject.to_python(array)
         return array
 
 
-    def recordV(self):
+    def _recordV(self):
         for sec in self.h.allsec():
             self.V = self.h.Vector()
-            self.V.record(sec(0.5)._ref_v)
+            self.V._record(sec(0.5)._ref_v)
             break
 
 
-    def recordT(self):
-        self.t = self.record("_ref_t")
+    def _recordT(self):
+        self.t = self._record("_ref_t")
 
 
     def run(self):
         self.load()
 
-        self.recordT()
-        self.recordV()
+        self._recordT()
+        self._recordV()
 
         self.h.run()
 
@@ -74,11 +73,11 @@ class NeuronModel(Model):
 
 
     def getT(self):
-        return self.toArray(self.t)
+        return self._toArray(self.t)
 
 
     def getV(self):
-        return self.toArray(self.V)
+        return self._toArray(self.V)
 
 
     def setParameterValues(self, parameters):
