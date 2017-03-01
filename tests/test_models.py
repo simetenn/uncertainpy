@@ -37,6 +37,16 @@ class TestModel(unittest.TestCase):
         self.assertIsInstance(model.parameters, Parameters)
 
 
+    def test_initParameterList(self):
+        parameterlist = [["gbar_Na", 120, None],
+                         ["gbar_K", 36, None],
+                         ["gbar_l", 0.3, None]]
+
+        model = Model(parameterlist)
+
+        self.assertIsInstance(model.parameters, Parameters)
+
+
     def test_load(self):
         self.model.load()
 

@@ -2,6 +2,7 @@ import numpy as np
 import os
 import sys
 
+from uncertainpy import Parameters
 
 class Model():
     """
@@ -27,17 +28,53 @@ if __name__ == "__main__":
 
 Run must store the results from the simulation in self.t and self.U
     """
+
+
     def __init__(self, parameters=None, adaptive_model=False):
+        """
+
+----------
+Required arguments
+
+parameters: Parameters object | list of Parameter objects | list [[name, value, distribution],...]
+
+
+    On the form:
+    parameters = Parameters Object
+    or
+    parameters = [[name1, value1, distribution1],
+                  [name2, value2, distribution2],
+                     ...]
+        name: str
+            Name of the parameter
+        value: number
+            Value of the parameter
+        distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
+            The distribution of the parameter.
+            A parameter is considered uncertain if if has a distributiona associated
+            with it.
+
+    or
+    parameters = [ParameterObject1, ParameterObject2,...]
+        """
         self.U = None
         self.t = None
 
-        self.parameters = parameters
+
+
         self.adaptive_model = adaptive_model
 
         self.xlabel = ""
         self.ylabel = ""
 
         self.additional_cmds = []
+
+        if isinstance(parameters, Parameters) or parameters is None:
+            self.parameters = parameters
+        elif isinstance(parameters, list):
+            self.parameters = Parameters(parameters)
+        else:
+            raise ValueError("parameter argument has wrong type")
 
 
     def set_properties(self, cmds):
