@@ -21,17 +21,7 @@ parameters.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
 model = ValderramaHodgkinHuxleyModel(parameters=parameters)
 
-features = uncertainpy.NeuronFeatures(features_to_run="all", thresh="auto")
+features = uncertainpy.NeuronFeatures(thresh="auto")
+exploration = uncertainpy.UncertaintyEstimation(model, features=features)
 
-exploration = uncertainpy.UncertaintyEstimation(model,
-                                                seed=10,
-                                                features=features,
-                                                CPUs=7,
-                                                save_figures=True,
-                                                rosenblatt=False,
-                                                figureformat=".pdf")
-
-
-
-exploration.allParameters()
-exploration.plot.plotSimulatorResults()
+exploration.UQ(plot_condensed=False, plot_simulator_results=True)

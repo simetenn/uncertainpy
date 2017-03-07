@@ -284,7 +284,8 @@ Test if the model returned an adaptive result
         old_feature_list = self.feature_list[:]
         for feature in old_feature_list:
             if np.all(np.isnan(self.U[feature])):
-                raise RuntimeWarning("Feature: {} does not yield results for any parameter combinations".format(feature))
+                self.logger.warning("Feature: {} does not yield results for any parameter combinations".format(feature))
+                # raise RuntimeWarning("Feature: {} does not yield results for any parameter combinations".format(feature))
 
                 self.U[feature] = "Only invalid results for all set of parameters"
                 self.feature_list.remove(feature)
