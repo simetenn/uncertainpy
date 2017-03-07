@@ -30,6 +30,9 @@ class BrunelNetworkModel(Model):
         self.N_rec = 100   # Number of neurons to record from
         self.simtime = 100
 
+        self.xlabel = "time [ms]"
+        self.ylabel = "Coefficient of Variation"
+
 
     def setParameterValues(self, parameters=None):
         Model.setParameterValues(self, parameters=parameters)

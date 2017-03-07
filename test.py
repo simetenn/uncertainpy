@@ -8,7 +8,6 @@ matplotlib.use('Agg')
 from tests import *
 
 
-
 def create_test_suite(test_classes_to_run):
     loader = unittest.TestLoader()
 
