@@ -216,8 +216,10 @@ class TestUncertainty(unittest.TestCase):
                                                  verbose_level="error")
 
 
-        self.uncertainty.PCSingle()
 
+        self.uncertainty.PCSingle()
+        print self.uncertainty.data.E["directComparison"]
+        print self.uncertainty.data.Var["directComparison"]
         self.compare_plot("TestingModel1d_single-parameter-a/directComparison_mean-variance",
                           compare_folder="")
         self.compare_plot("TestingModel1d_single-parameter-a/directComparison_confidence-interval",
@@ -590,7 +592,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertEqual(self.uncertainty.data["function"], "CustomUQ")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
-
+    
 
 
     def compare_plot(self, name, compare_folder=""):

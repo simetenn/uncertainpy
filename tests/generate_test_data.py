@@ -31,7 +31,7 @@ def generate_data_PC():  # pragma: no cover
                                     features=features,
                                     uncertainty_calculations=uncertainty_calculations,
                                     output_dir_data=test_data_dir,
-                                    output_dir_figures=test_data_dir,
+                                    save_figures=False,
                                     verbose_level="error")
 
 
@@ -58,7 +58,7 @@ def generate_data_PCRosenblatt():  # pragma: no cover
                                     features=features,
                                     uncertainty_calculations=uncertainty_calculations,
                                     output_dir_data=test_data_dir,
-                                    output_dir_figures=test_data_dir,
+                                    save_figures=False,
                                     output_data_filename="TestingModel1d_Rosenblatt",
                                     verbose_level="error")
 
@@ -87,7 +87,7 @@ def generate_data_PCSingle():  # pragma: no cover
                                     features=features,
                                     uncertainty_calculations=uncertainty_calculations,
                                     output_dir_data=test_data_dir,
-                                    output_dir_figures=test_data_dir,
+                                    save_figures=False,
                                     verbose_level="error")
 
 
@@ -115,7 +115,7 @@ def generate_data_MC():  # pragma: no cover
                                     features=features,
                                     uncertainty_calculations=uncertainty_calculations,
                                     output_dir_data=test_data_dir,
-                                    output_dir_figures=test_data_dir,
+                                    save_figures=False,
                                     output_data_filename="TestingModel1d_MC",
                                     verbose_level="error")
 
@@ -142,7 +142,7 @@ def generate_data_MCSingle():  # pragma: no cover
                                     features=features,
                                     uncertainty_calculations=uncertainty_calculations,
                                     output_dir_data=test_data_dir,
-                                    output_dir_figures=test_data_dir,
+                                    save_figures=False,
                                     output_data_filename="TestingModel1d_MC",
                                     verbose_level="error")
 
@@ -164,7 +164,7 @@ def generate_data_compareMC():  # pragma: no cover
                                             features=TestingFeatures(),
                                             verbose_level="error",
                                             output_dir_data=test_data_dir,
-                                            output_dir_figures=test_data_dir,
+                                            save_figures=False,
                                             nr_mc_samples=10**1,
                                             seed=seed)
 

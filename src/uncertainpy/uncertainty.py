@@ -100,6 +100,7 @@ class UncertaintyEstimation():
            rosenblatt=False,
            plot_condensed=True,
            plot_simulator_results=False,
+           output_dir_figures=None,
            **custom_kwargs):
         """
 method: pc, mc
@@ -114,22 +115,26 @@ pc_method: "regression"
                               method=pc_method,
                               rosenblatt=rosenblatt,
                               plot_condensed=plot_condensed,
-                              plot_simulator_results=plot_simulator_results)
+                              plot_simulator_results=plot_simulator_results,
+                              output_dir_figures=output_dir_figures)
             else:
                 self.PC(uncertain_parameters=uncertain_parameters,
                         method=pc_method,
                         rosenblatt=rosenblatt,
                         plot_condensed=plot_condensed,
-                        plot_simulator_results=plot_simulator_results)
+                        plot_simulator_results=plot_simulator_results,
+                        output_dir_figures=output_dir_figures)
         elif method.lower() == "mc":
             if single:
                 self.MCSingle(uncertain_parameters=uncertain_parameters,
                               plot_condensed=plot_condensed,
-                              plot_simulator_results=plot_simulator_results)
+                              plot_simulator_results=plot_simulator_results,
+                              output_dir_figures=output_dir_figures)
             else:
                 self.MC(uncertain_parameters=uncertain_parameters,
                         plot_condensed=plot_condensed,
-                        plot_simulator_results=plot_simulator_results)
+                        plot_simulator_results=plot_simulator_results,
+                        output_dir_figures=output_dir_figures)
 
         elif method.lower() == "custom":
             self.CustomUQ(**custom_kwargs)
@@ -154,7 +159,8 @@ pc_method: "regression"
            method="regression",
            rosenblatt=False,
            plot_condensed=True,
-           plot_simulator_results=False):
+           plot_simulator_results=False,
+           output_dir_figures=None):
 
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
@@ -180,7 +186,11 @@ pc_method: "regression"
 
 
 
-    def MC(self, uncertain_parameters=None, plot_condensed=True, plot_simulator_results=False):
+    def MC(self,
+           uncertain_parameters=None,
+           plot_condensed=True,
+           plot_simulator_results=False,
+           output_dir_figures=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         self.data = self.uncertainty_calculations.MC(uncertain_parameters=uncertain_parameters)
@@ -190,10 +200,10 @@ pc_method: "regression"
 
 
         if self.save_figures:
-            self.plot(condensed=plot_condensed, sensitivity=False)
+            self.plot(condensed=plot_condensed, sensitivity=False, output_dir_figures=output_dir_figures)
 
         if plot_simulator_results:
-            self.plot(simulator_results=True)
+            self.plot(simulator_results=True, output_dir_figures=output_dir_figures)
 
 
 
@@ -204,16 +214,18 @@ pc_method: "regression"
                  method="regression",
                  rosenblatt=False,
                  plot_condensed=True,
-                 plot_simulator_results=False):
+                 plot_simulator_results=False,
+                 output_dir_figures=None):
 
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
 
+
         for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running for " + uncertain_parameter)
-
+    
             self.data = self.uncertainty_calculations.PC(
                 uncertain_parameters=uncertain_parameter,
                 method=method,
@@ -229,9 +241,11 @@ pc_method: "regression"
                 self.save(filename)
 
             if self.save_figures:
+                if output_dir_figures is None:
+                    tmp_output_dir_figures = os.path.join(self.output_dir_figures, filename)
+
                 self.plot(condensed=plot_condensed, sensitivity=False,
-                          output_dir_figures=os.path.join(self.output_dir_figures,
-                                                          filename))
+                          output_dir_figures=tmp_output_dir_figures)
 
             if plot_simulator_results:
                 self.plot(simulator_results=True,
@@ -259,7 +273,10 @@ pc_method: "regression"
                 self.save(filename)
 
             if self.save_figures:
-                self.plot(condensed=plot_condensed, output_dir_figures=filename)
+                if output_dir_figures is None:
+                    tmp_output_dir_figures = os.path.join(self.output_dir_figures, filename)
+
+                self.plot(condensed=plot_condensed, output_dir_figures=tmp_output_dir_figures)
 
             if plot_simulator_results:
                 self.plot(simulator_results=True,

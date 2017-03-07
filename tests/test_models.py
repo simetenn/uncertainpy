@@ -869,7 +869,10 @@ class TestNeuronModel(unittest.TestCase):
             cmd += ["--CPU", "1", "--save_path", ""]
 
 
-            simulation = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            simulation = subprocess.Popen(cmd,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE,
+                                          env=os.environ.copy())
             ut, err = simulation.communicate()
 
         if simulation.returncode != 0:

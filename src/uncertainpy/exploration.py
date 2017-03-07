@@ -13,6 +13,9 @@ from uncertainpy.plotting import PlotUncertaintyCompare
 from uncertainpy.utils import create_logger
 
 
+
+# TODO DOES NOT WORK YET!
+
 class UncertaintyEstimations():
     def __init__(self, model,
                  features=None,
