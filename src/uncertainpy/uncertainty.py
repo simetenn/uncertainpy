@@ -241,7 +241,8 @@ pc_method: "regression"
 
     def MCSingle(self, uncertain_parameters=None,
                  plot_condensed=True,
-                 plot_simulator_results=False):
+                 plot_simulator_results=False,
+                 output_dir_figures=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         for uncertain_parameter in uncertain_parameters:
