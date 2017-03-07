@@ -556,7 +556,7 @@ class PlotUncertainty():
 
             i = 0
             legend_bars = []
-            colors = get_current_colormap()
+            colors = get_colormap_tableu20()
 
             for parameter in self.data.uncertain_parameters:
 
