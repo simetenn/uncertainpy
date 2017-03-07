@@ -1,4 +1,4 @@
-import uncertainpy
+import uncertainpy as un
 import chaospy as cp
 
 from lgnSimulator import LgnSimulator
@@ -15,7 +15,7 @@ parameterlist = [["w_ri", 0.5, cp.Uniform(-2, 0)],
 parameterlist_short = [["w_ic", 0.5, cp.Uniform(0, 4)],
                        ["w_rc", 2, cp.Uniform(0, 1.0)]]
 
-parameters = uncertainpy.Parameters(parameterlist)
+parameters = un.Parameters(parameterlist)
 
 
 
@@ -30,10 +30,10 @@ model = LgnSimulator(parameters=parameters,
 
 features = LgnSimulatorFeatures()
 
-uncertainty = uncertainpy.UncertaintyEstimation(model,
-                                                CPUs=1,  # For the current version of the lgnSimulator CPUs must be 1
-                                                save_figures=True,
-                                                features=features,
-                                                rosenblatt=False)
+uncertainty_calculations = un.UncertaintyCalculations(CPUs=1)
 
-uncertainty.allParameters()
+uncertainty = un.UncertaintyEstimation(model,
+                                       features=features,
+                                       uncertainty_calculations=uncertainty_calculations)
+
+uncertainty.UQ()
