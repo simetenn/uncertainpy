@@ -11,4 +11,5 @@ model.setAllDistributions(un.Distribution(0.5).uniform)
 
 uncertainty = un.UncertaintyEstimation(model, save_figures=True)
 
-uncertainty.UQ(rosenblatt=True)
+uncertainty.UQ(rosenblatt=True, output_dir_figures="figures/rosenblatt", filename="rosenblatt")
+uncertainty.UQ()
