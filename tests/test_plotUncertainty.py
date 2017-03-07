@@ -120,6 +120,17 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.assertEqual(plot_count, 5)
 
+    def test_plotSimulatorResults0DError(self):
+        self.plot.data = Data()
+
+        with self.assertRaises(ValueError):
+            self.plot.plotSimulatorResults1D()
+
+    def test_plotSimulatorResults1DError(self):
+        self.plot.data = Data()
+
+        with self.assertRaises(ValueError):
+            self.plot.plotSimulatorResults1D()
 
     def test_plotSimulatorResults0D(self):
         self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
