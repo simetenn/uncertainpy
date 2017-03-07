@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import uncertainpy as un
-from models import TestingModel1d
+from models import TestingModel1d, TestingModel0d
 from testing_modules import TestingFeatures
 
 folder = os.path.dirname(os.path.realpath(__file__))
@@ -23,6 +23,32 @@ def generate_data_PC():  # pragma: no cover
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
                                                 "feature2d"])
+
+    uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
+
+
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    uncertainty_calculations=uncertainty_calculations,
+                                    output_dir_data=test_data_dir,
+                                    save_figures=False,
+                                    verbose_level="error")
+
+
+    test.PC()
+
+
+
+def generate_data_PC0D():  # pragma: no cover
+    parameterlist = [["a", 1, None],
+                     ["b", 2, None]]
+
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
+    model = TestingModel0d(parameters)
+
+    features = TestingFeatures(features_to_run=None)
 
     uncertainty_calculations = un.UncertaintyCalculations(seed=seed, nr_mc_samples=10)
 
@@ -235,6 +261,7 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
 
 if __name__ == "__main__":  # pragma: no cover
     generate_data_PC()
+    generate_data_PC0D()
     generate_data_PCSingle()
 
     generate_data_MC()

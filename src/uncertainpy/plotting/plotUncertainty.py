@@ -98,12 +98,12 @@ class PlotUncertainty():
         elif "directComparison" in self.data.features_1d:
             self.plotSimulatorResults1D(foldername=foldername)
         else:
-            raise NotImplementedError("Plotting simulator results not implemented for simulator results >= 2D")
+            raise NotImplementedError("plotSimulatorResults not implemented for simulator results >= 2D")
 
 
     # TODO does not have a test
     def plotSimulatorResults0D(self, foldername="simulator_results"):
-        if not "directComparison" in self.data.features_0d:
+        if "directComparison" not in self.data.features_0d:
             raise ValueError("directComparison is not a 0D feature")
 
         save_folder = os.path.join(self.output_dir, foldername)
@@ -111,12 +111,15 @@ class PlotUncertainty():
             os.makedirs(save_folder)
 
         prettyPlot(self.data.U["directComparison"],
-                   xlabel="simulator run #number", ylabel=self.data.ylabel, title="simulator results", new_figure=True)
+                   xlabel="simulator run \#number",
+                   ylabel=self.data.ylabel,
+                   title="simulator results",
+                   new_figure=True)
         plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
 
 
     def plotSimulatorResults1D(self, foldername="simulator_results"):
-        if not "directComparison" in self.data.features_1d:
+        if "directComparison" not in self.data.features_1d:
             raise ValueError("directComparison is not a 1D feature")
 
         i = 1

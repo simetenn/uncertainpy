@@ -28,6 +28,7 @@ def generate_plots_plotUncertainty():
     plot.plotAllDataAllSensitivity()
 
 
+
 def generate_plots_plotUncertainty_single():
     data_file = "TestingModel1d_single-parameter-a.h5"
 
@@ -70,6 +71,17 @@ def generate_simulator_plot():
     plt.savefig(os.path.join(output_test_dir, "U.png"))
 
 
+def generate_simulator_plot_0D():
+    data_file = "TestingModel0d.h5"
+
+    plot = PlotUncertainty(output_dir=output_test_dir,
+                           verbose_level="error")
+
+    plot.load(os.path.join(test_data_dir, data_file))
+
+    plot.plotSimulatorResults()
+
+
 def generate_spike_plot():
     t = np.arange(0, 10)
     U = np.arange(0, 10) + 10
@@ -101,6 +113,7 @@ if __name__ == "__main__":
     generate_plots_plotUncertainty()
     # generate_plots_compare()
     generate_simulator_plot()
+    generate_simulator_plot_0D()
     generate_spike_plot()
     generate_spikes_plot()
     generate_plots_plotUncertainty_single()

@@ -78,8 +78,6 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.plot.plotTotalSensitivityAllFeatures(hardcopy=True, sensitivity="sensitivity_1")
 
-        # print self.plot.data
-
         self.compare_plot("directComparison_total-sensitivity_1")
         self.compare_plot("feature0d_total-sensitivity_1")
         self.compare_plot("feature1d_total-sensitivity_1")
@@ -97,7 +95,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature2d_total-sensitivity_t")
 
 
-    def test_plotSimulatorResults(self):
+    def test_plotSimulatorResults1D(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         self.plot.data = Data()
@@ -106,8 +104,8 @@ class TestPlotUncertainpy(unittest.TestCase):
         U = np.load(os.path.join(folder, "data/U_test.npy"))
 
         self.plot.data.U["directComparison"] = [U, U, U, U, U]
-
-        self.plot.plotSimulatorResults()
+        self.plot.data.features_1d = ["directComparison"]
+        self.plot.plotSimulatorResults1D()
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "figures/U.png")
@@ -121,6 +119,20 @@ class TestPlotUncertainpy(unittest.TestCase):
             plot_count += 1
 
         self.assertEqual(plot_count, 5)
+
+
+    def test_plotSimulatorResults0D(self):
+        self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
+
+        self.plot.plotSimulatorResults()
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "figures", "simulator_results", "U" + self.figureformat)
+
+        plot_file = os.path.join(self.output_test_dir, "simulator_results", "U" + self.figureformat)
+
+        result = subprocess.call(["diff", plot_file, compare_file])
+        self.assertEqual(result, 0)
 
 
 
