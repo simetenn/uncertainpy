@@ -537,7 +537,7 @@ class PlotUncertainty():
                   self.data.p_05[feature], self.data.p_95[feature]]
 
 
-        ax = prettyBar(values, index=xticks, xlabels=xlabels, ylabel="Value",
+        ax = prettyBar(values, index=xticks, xlabels=xlabels, ylabel=self.data.ylabel,
                        palette=get_colormap_tableu20())
 
 
