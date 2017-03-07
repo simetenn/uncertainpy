@@ -142,7 +142,7 @@ all_data = (model_cmds,
                 results["directComparison"] = (t, U, interpolation)
 
             else:
-                raise NotImplementedError("No support yet for >= 2d interpolation")
+                raise NotImplementedError("No support yet for >= 2D interpolation")
 
 
         else:

@@ -120,6 +120,8 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         self.assertEqual(plot_count, 5)
 
+
+
     def test_plotSimulatorResults0DError(self):
         self.plot.data = Data()
 
@@ -131,6 +133,60 @@ class TestPlotUncertainpy(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.plot.plotSimulatorResults1D()
+
+    def test_plotSimulatorResultsError(self):
+        self.plot.data = Data()
+
+        with self.assertRaises(NotImplementedError):
+            self.plot.plotSimulatorResults()
+
+
+    def test_plotSimulatorResults_1d_model(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.plot.data = Data()
+
+        self.plot.data.t["directComparison"] = np.load(os.path.join(folder, "data/t_test.npy"))
+        U = np.load(os.path.join(folder, "data/U_test.npy"))
+
+        self.plot.data.U["directComparison"] = [U, U, U, U, U]
+        self.plot.data.features_1d = ["directComparison"]
+        self.plot.plotSimulatorResults()
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "figures/U.png")
+
+        plot_count = 0
+        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+            result = subprocess.call(["diff", plot, compare_file])
+
+            self.assertEqual(result, 0)
+
+            plot_count += 1
+
+        self.assertEqual(plot_count, 5)
+
+
+    def test_plotSimulatorResults_2d(self):
+        self.plot.data = Data()
+
+        with self.assertRaises(NotImplementedError):
+            self.plot.plotSimulatorResults()
+
+
+    def test_plotSimulatorResults_0d_model(self):
+        self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
+
+        self.plot.plotSimulatorResults()
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "figures", "simulator_results", "U" + self.figureformat)
+
+        plot_file = os.path.join(self.output_test_dir, "simulator_results", "U" + self.figureformat)
+
+        result = subprocess.call(["diff", plot_file, compare_file])
+        self.assertEqual(result, 0)
+
 
     def test_plotSimulatorResults0D(self):
         self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
