@@ -17,4 +17,4 @@ uncertainty = uncertainpy.UncertaintyEstimation(model,
                                                 features=features,
                                                 save_figures=True)
 
-uncertainty.allParameters()
+uncertainty.UQ()
