@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:simetenn/prettyplot.git
+	branch = master
+	commit = c65fc3b5c457f728558d8cb90b854b5b7ce48685
+	parent = 8fe655e9b9b950d4c81efaf68391b603a31e5451
+	cmdver = 0.3.1
