@@ -3,18 +3,14 @@ import re
 import shutil
 import glob
 
-path = "figures/"
-outputpath = "figures/parameter_sorted"
-file_extension = ".png"
-current_path = os.getcwd()
 
 
-def sortByParameters(path=path, outputpath=outputpath, hardcopy=False):
+
+
+def sortByParameters(path="figures", outputpath="parameter_sorted", hardcopy=False, file_extension = ".png"):
+    current_path = os.getcwd()
+
     print "Copying files..."
-
-    # if os.path.isdir(outputpath):
-    #     shutil.rmtree(outputpath)
-
     for folder in os.listdir(path):
         if re.search("._\d", folder):
             distribution, interval = folder.split("_")

@@ -148,7 +148,6 @@ Test if the model returned an adaptive result
 
                 if feature in self.t and self.t[feature] is not None:
                     group.create_dataset("t", data=self.t[feature])
-                # IMPROVEMENT do not save U to save space?
                 if feature in self.U:
                     group.create_dataset("U", data=self.U[feature])
                 if feature in self.E:
