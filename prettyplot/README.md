@@ -5,5 +5,5 @@ Pretty plotting in Python
 numpy, matplotlib, seaborn, scipy and pandas
 
 ```
-pip install numpy matplotlib seaborn scipy pandas
+pip install numpy matplotlib seaborn
 ```
