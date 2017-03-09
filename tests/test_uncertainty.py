@@ -21,6 +21,7 @@ class TestUncertainty(unittest.TestCase):
         # self.difference ="1e-8"
         self.output_test_dir = ".tests/"
         self.seed = 10
+        self.difference_treshold = 10e-11
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -120,7 +121,7 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
 
         self.assertEqual(result, 0)
@@ -128,7 +129,7 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -143,7 +144,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(os.path.isfile(filename))
 
         # TODO find out why this is needed for different machines
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -276,7 +277,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -287,7 +288,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -327,7 +328,7 @@ class TestUncertainty(unittest.TestCase):
         filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
         self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -572,7 +573,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
-    
+
 
 
     def test_UQCustom(self):

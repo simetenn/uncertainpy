@@ -792,7 +792,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_plotPlotAllDataAllSensitivity(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.plot(condensed=False, sensitivity=False)
+        self.plot.plot(condensed=False, sensitivity=True)
 
         self.compare_plot("directComparison_mean")
         self.compare_plot("directComparison_variance")
@@ -814,7 +814,6 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
         self.compare_plot("feature1d_sensitivity_1_grid")
-        self.compare_plot("feature0d_total-sensitivity_1")
 
         self.compare_plot("directComparison_total-sensitivity_1")
         self.compare_plot("feature0d_total-sensitivity_1")
