@@ -240,35 +240,34 @@ class TestRunModelClass(unittest.TestCase):
 
         results = self.runmodel.evaluateNodes(nodes)
 
-        with self.assertRaises(RuntimeWarning):
-            self.runmodel.storeResults(results)
+        self.runmodel.storeResults(results)
 
-            self.assertEqual(set(self.runmodel.data.U.keys()),
-                             set(["directComparison", "featureInvalid"]))
+        self.assertEqual(set(self.runmodel.data.U.keys()),
+                         set(["directComparison", "featureInvalid"]))
 
-            self.assertEqual(set(self.runmodel.data.t.keys()),
-                             set(["directComparison", "featureInvalid"]))
+        self.assertEqual(set(self.runmodel.data.t.keys()),
+                         set(["directComparison", "featureInvalid"]))
 
-            self.assertEqual(set(self.runmodel.data.feature_list),
-                             set(["directComparison"]))
-
-
-            self.assertIn("directComparison", self.runmodel.data.U.keys())
-            self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
-                                           np.arange(0, 10)))
-            self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][0],
-                                           np.arange(0, 10) + 1))
-            self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][1],
-                                           np.arange(0, 10) + 3))
-            self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][2],
-                                           np.arange(0, 10) + 5))
+        self.assertEqual(set(self.runmodel.data.feature_list),
+                         set(["directComparison"]))
 
 
-            self.assertEqual(self.data.U["featureInvalid"], "Only invalid results for all set of parameters")
+        self.assertIn("directComparison", self.runmodel.data.U.keys())
+        self.assertTrue(np.array_equal(self.runmodel.data.t["directComparison"],
+                                       np.arange(0, 10)))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][0],
+                                       np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][1],
+                                       np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(self.runmodel.data.U["directComparison"][2],
+                                       np.arange(0, 10) + 5))
 
-            self.assertEqual(self.data.features_2d, [])
-            self.assertEqual(self.data.features_1d, ["directComparison"])
-            self.assertEqual(self.data.features_0d, [])
+
+        self.assertEqual(self.runmodel.data.U["featureInvalid"], "Only invalid results for all set of parameters")
+
+        self.assertEqual(self.runmodel.data.features_2d, [])
+        self.assertEqual(self.runmodel.data.features_1d, ["directComparison"])
+        self.assertEqual(self.runmodel.data.features_0d, [])
 
 
     def test_storeResultsModel1dFeaturesAllAdaptive(self):

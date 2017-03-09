@@ -196,18 +196,16 @@ class TestData(unittest.TestCase):
         self.data.feature_list = ["directComparison", "feature1"]
         self.data.features_1d = ["directComparison", "feature1"]
 
-        with self.assertRaises(RuntimeWarning):
-            self.data.removeOnlyInvalidResults()
+        self.data.removeOnlyInvalidResults()
 
+        self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
+        self.assertEqual(self.data.U["directComparison"], "Only invalid results for all set of parameters")
+        self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
 
-            self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
-            self.assertEqual(self.data.U["directComparison"], "Only invalid results for all set of parameters")
-            self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
-            self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
+        self.assertEqual(self.data.feature_list, ["feature1"])
 
-            self.assertEqual(self.data.feature_list, ["feature1"])
-
-            self.assertEqual(self.data.features_1d, ["feature1"])
+        self.assertEqual(self.data.features_1d, ["feature1"])
 
 
     def test_str(self):
