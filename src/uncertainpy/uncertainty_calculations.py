@@ -326,7 +326,8 @@ class UncertaintyCalculations:
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
 
-    def CustomUQ(self, **kwargs):
+    def CustomUQ(self, uncertain_parameters=None, **kwargs):
+        print "called"
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 

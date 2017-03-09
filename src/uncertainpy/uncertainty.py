@@ -147,8 +147,7 @@ pc_method: "regression"
                         filename=filename)
 
         elif method.lower() == "custom":
-            self.CustomUQ(uncertain_parameters=uncertain_parameters,
-                          plot_condensed=plot_condensed,
+            self.CustomUQ(plot_condensed=plot_condensed,
                           plot_simulator_results=plot_simulator_results,
                           output_dir_figures=output_dir_figures,
                           output_dir_data=output_dir_data,
@@ -165,16 +164,24 @@ pc_method: "regression"
                  filename=None,
                  **custom_kwargs):
 
+
         self.data = self.uncertainty_calculations.CustomUQ(**custom_kwargs)
 
         if self.save_data:
-            self.save(self.output_data_filename, output_dir=output_dir_data)
+            if filename is None:
+                filename = self.output_data_filename
+
+            self.save(filename, output_dir=output_dir_data)
+
 
         if self.save_figures:
-            self.plot(condensed=plot_condensed, output_dir=output_dir_figures)
+            self.plot(condensed=plot_condensed,
+                      sensitivity=False,
+                      output_dir=output_dir_figures)
 
         if plot_simulator_results:
-            self.plot(simulator_results=True)
+            self.plot(simulator_results=True, output_dir=output_dir_figures)
+
 
 
     def PC(self,
