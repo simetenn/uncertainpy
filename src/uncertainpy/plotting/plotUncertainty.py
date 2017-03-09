@@ -576,7 +576,8 @@ class PlotUncertainty():
                              self.listToLatex(self.data.uncertain_parameters),
                              loc='upper center', bbox_to_anchor=location,
                              ncol=legend_size)
-            lgd.get_frame().set_edgecolor(axis_grey)
+
+            # lgd.get_frame().set_edgecolor(axis_grey)
 
             fig = plt.gcf()
             fig.subplots_adjust(top=(0.91 - legend_width*0.053))

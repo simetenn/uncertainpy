@@ -42,13 +42,22 @@ def system(cmds):
 
 
 def generate_docker_images():
-    system("docker build {} -t generate_test_plots".format(os.path.join(folder, "..")))
-    docker_id = system("docker run --name='generate_test_plot_container' --rm=False generate_test_plots python tests/generate_test_plots.py").strip()
+    container_name = "generate_test_plot_container"
+    image_name = "generate_test_plots"
 
-    system("docker cp {}:/home/docker/uncertainpy/tests/figures/. {}/.".format(docker_id, docker_test_dir))
-    system("docker stop generate_test_plot_container".format(docker_id))
-    system("docker rm  generate_test_plot_container".format(docker_id))
-    system("docker rmi generate_test_plots")
+
+    try:
+        system("docker rm {}".format(container_name))
+    except:
+        pass
+
+
+    system("docker build {} -t {}".format(os.path.join(folder, ".."), image_name))
+    system("docker run --name='{}' --rm=False {} python tests/generate_test_plots.py".format(container_name, image_name))
+    system("docker cp {}:uncertainpy/tests/figures/. {}/.".format(container_name, docker_test_dir))
+    system("docker stop {}".format(container_name))
+    system("docker rm  {}".format(container_name))
+    system("docker rmi {}".format(image_name))
 
 
 
