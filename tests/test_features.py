@@ -3,7 +3,7 @@ import unittest
 import os
 
 from uncertainpy.features import GeneralFeatures, GeneralNeuronFeatures, NeuronFeatures
-from testing_modules import TestingFeatures
+from testing_classes import TestingFeatures
 
 
 class TestGeneralFeatures(unittest.TestCase):

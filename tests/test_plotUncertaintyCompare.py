@@ -7,8 +7,8 @@ import scipy
 
 
 from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
-from testing_modules import TestingFeatures
-from models import TestingModel1d
+from testing_classes import TestingFeatures
+from testing_classes import TestingModel1d
 
 class TestPlotUncertainpyCompare(unittest.TestCase):
     def setUp(self):

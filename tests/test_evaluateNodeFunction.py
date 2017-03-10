@@ -5,10 +5,10 @@ import scipy.interpolate
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy.parameters import Parameters
 
-from testing_modules import TestingFeatures
-from models import TestingModel0d, TestingModel1d, TestingModel2d
-from models import TestingModel0dNoTime, TestingModel1dNoTime
-from models import TestingModel2dNoTime, TestingModelNoU
+from testing_classes import TestingFeatures
+from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
+from testing_classes import TestingModel0dNoTime, TestingModel1dNoTime
+from testing_classes import TestingModel2dNoTime, TestingModelNoU
 
 
 class TestEvaluateNodeFunction(unittest.TestCase):

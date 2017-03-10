@@ -11,10 +11,9 @@ from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 from uncertainpy import UncertaintyCalculations
 
-from testing_modules import TestingFeatures
-from models import TestingModel1d
-
-from TestingUncertaintyCalculations import TestingUncertaintyCalculations
+from testing_classes import TestingFeatures
+from testing_classes import TestingModel1d
+from testing_classes import TestingUncertaintyCalculations
 
 class TestUncertainty(unittest.TestCase):
     def setUp(self):

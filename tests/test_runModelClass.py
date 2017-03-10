@@ -7,9 +7,9 @@ import shutil
 
 from uncertainpy import RunModel, GeneralFeatures
 
-from testing_modules import TestingFeatures
-from models import TestingModel0d, TestingModel1d, TestingModel2d
-from models import TestingModel1dAdaptive
+from testing_classes import TestingFeatures
+from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
+from testing_classes import TestingModel1dAdaptive
 
 
 class TestRunModelClass(unittest.TestCase):

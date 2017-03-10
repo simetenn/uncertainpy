@@ -13,9 +13,9 @@ from uncertainpy import Parameters
 from models import HodgkinHuxleyModel
 from models import CoffeeCupPointModel
 from models import IzhikevichModel
-from models import TestingModel0d, TestingModel1d, TestingModel2d
-from models import TestingModel0dNoTime, TestingModel1dNoTime
-from models import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
+from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
+from testing_classes import TestingModel0dNoTime, TestingModel1dNoTime
+from testing_classes import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
 
 
 folder = os.path.dirname(os.path.realpath(__file__))
