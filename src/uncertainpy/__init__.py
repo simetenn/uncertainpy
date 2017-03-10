@@ -1,5 +1,5 @@
 from data import Data
-from distribution import Distribution
+from distribution import Distribution, uniform, normal
 from parameters import Parameter, Parameters
 from evaluateNodeFunction import evaluateNodeFunction
 from uncertainty import UncertaintyEstimation

@@ -12,10 +12,10 @@ sudo: required
 dist: trusty
 services: docker
 before_install:
-    - docker build -t simetenn/uncertainpy -f Dockerfile .
+    - docker build -t uncertainpy -f Dockerfile .
 # before_script:
 #   - "export DISPLAY=:99.0"
 #   - "sh -e /etc/init.d/xvfb start"
 #   - sleep 3 # give xvfb some time to start
 script:
-    - docker run simetenn/uncertainpy python test.py --fast
+    - docker run uncertainpy python test.py --fast

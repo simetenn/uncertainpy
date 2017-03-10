@@ -2,8 +2,8 @@ import os
 
 import numpy as np
 import uncertainpy as un
-from models import TestingModel1d, TestingModel0d
-from testing_modules import TestingFeatures
+from testing_classes import TestingModel1d, TestingModel0d
+from testing_classes import TestingFeatures
 
 folder = os.path.dirname(os.path.realpath(__file__))
 test_data_dir = os.path.join(folder, "data")

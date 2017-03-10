@@ -8,7 +8,6 @@ class Model():
     """
 The model must be able to handle these calls
 
-simulation.cmd()
 
 simulation = model() -> __init__ must be able to run with no arguments
 simulation.set_properties(properties set at runtime -> dict)
@@ -16,8 +15,9 @@ simulation.load()
 simulation.setParameterValues(parameters -> dictionary)
 simulation.preprocess()
 simulation.run()
-simulation.preprocess()
+simulation.postprocess()
 simulation.save(current_process -> int)
+simulation.cmd()
 
 
 If you create your own model it must either be in it's own file

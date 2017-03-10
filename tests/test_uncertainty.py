@@ -17,10 +17,9 @@ from testing_classes import TestingUncertaintyCalculations
 
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
-        # self.difference ="1e-8"
         self.output_test_dir = ".tests/"
         self.seed = 10
-        self.difference_treshold = 10e-11
+        self.difference_treshold = 1e-11
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)

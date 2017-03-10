@@ -8,7 +8,7 @@ from uncertainpy.utils import create_logger
 from uncertainpy import Data
 
 
-from uncertainpy import UncertaintyEstimation, Distribution
+from uncertainpy import UncertaintyEstimation, uniform, normal
 from uncertainpy.plotting import PlotUncertaintyCompare
 from uncertainpy.utils import create_logger
 
@@ -103,8 +103,8 @@ class UncertaintyEstimations():
                 current_output_dir_figures = os.path.join(self.output_dir_figures,
                                                           distribution_function + "_%g" % interval)
 
-                distribution = getattr(Distribution(interval), distribution_function)
-
+                # distribution = getattr(Distribution(interval), distribution_function)
+                distribution = distributions(interval)
                 self.model.setAllDistributions(distribution)
 
                 message = "Running for: " + distribution_function + " " + str(interval)

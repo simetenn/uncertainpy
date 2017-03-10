@@ -26,13 +26,13 @@ class CoffeeCupPointModel(Model):
         self.t_points = np.linspace(0, 200, 150)
 
 
-    def f(self, u, t):
-        return self.kappa*(u - self.u_env)
-
-
     def run(self):
 
-        solver = odespy.RK4(self.f)
+        def f(self, u, t):
+            return self.kappa*(u - self.u_env)
+
+
+        solver = odespy.RK4(f)
 
         solver.set_initial_condition(self.u0)
 

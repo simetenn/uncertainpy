@@ -5,26 +5,24 @@ import chaospy as cp
 import os
 import shutil
 import subprocess
-import scipy.interpolate
 
 
 from uncertainpy import UncertaintyCalculations
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
-from uncertainpy import RunModel
 from uncertainpy import Data
 
 from testing_classes import TestingFeatures
-from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
+from testing_classes import TestingModel1d
 from testing_classes import TestingModel1dAdaptive
 
 
 class TestUncertaintyCalculations(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
-
         self.seed = 10
+        self.difference_treshold = 1e-10
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -558,7 +556,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+                                  filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -572,7 +571,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+                                  filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -598,7 +598,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
-        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+                                  filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -612,7 +613,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         compare_file = os.path.join(folder, "data/UncertaintyCalculations_single-parameter-b.h5")
-        result = subprocess.call(["h5diff", "-d", "1e-10", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+                                  filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -657,7 +659,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+                                  filename, compare_file])
 
         self.assertEqual(result, 0)
 
