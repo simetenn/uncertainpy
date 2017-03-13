@@ -419,6 +419,8 @@ Returns
 ax : matplotlib.axis object
     """
 
+    plt.close()
+
     set_style(style=style, nr_colors=nr_colors, palette=palette, custom=custom_style)
 
     plt.figure()
@@ -434,7 +436,6 @@ def set_legend(labels, ax=None):
         ax = plt.gca()
 
     color = ax.get_facecolor()
-    print color
 
     legend = plt.legend(labels)
 

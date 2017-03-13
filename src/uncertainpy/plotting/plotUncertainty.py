@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from uncertainpy import Data
-from prettyplot import prettyPlot, prettyBar
+from prettyplot import prettyPlot, prettyBar, create_figure
 from prettyplot import spines_color, get_current_colormap
 from prettyplot import get_colormap_tableu20, set_style
 from prettyplot import axis_grey, labelsize, fontsize, titlesize
@@ -327,7 +327,7 @@ class PlotUncertainty():
             prettyPlot(self.data.t[feature], sense[feature][i],
                        title=feature + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(parameter_names[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
-                       color=i, new_figure=True,
+                       color=i,
                        nr_colors=len(self.data.uncertain_parameters), **kwargs)
             # plt.ylim([0, 1.05])
 

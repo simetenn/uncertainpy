@@ -34,7 +34,8 @@ test_features = create_test_suite([TestGeneralFeatures,
                                    TestNeuronFeatures,
                                    TestTestingFeatures])
 
-test_features.addTest(test_spike_sorting)
+# test_features.addTest(test_spike_sorting)
+test_features.addTest(test_spike)
 
 test_logger = create_test_suite([TestLogger])
 
@@ -224,50 +225,51 @@ if args.uncertaintycalculations:
 
 
 if args.all:
-    print "-----------------------------------------"
-    print "Running all tests"
-    print "-----------------------------------------"
-    print "Running testsuite: utils"
-    results["utils"] = test_runner.run(test_utils)
-    print "-----------------------------------------"
-    print "Running testsuite: uncertainpy"
-    results["uncertainpy"] = test_runner.run(test_uncertainty)
-    print "-----------------------------------------"
-    print "Running testsuite: parameters"
-    results["parameters"] = test_runner.run(test_parameters)
-    print "-----------------------------------------"
-    print "Running testsuite: distribution"
-    results["distribution"] = test_runner.run(test_distribution)
-    print "-----------------------------------------"
-    print "Running testsuite: evaluateNodeFunction"
-    results["evaluateNodeFunction"] = test_runner.run(test_evaluateNodeFunction)
-    print "-----------------------------------------"
+
+    # print "-----------------------------------------"
+    # print "Running all tests"
+    # print "-----------------------------------------"
+    # print "Running testsuite: utils"
+    # results["utils"] = test_runner.run(test_utils)
+    # print "-----------------------------------------"
+    # print "Running testsuite: uncertainpy"
+    # results["uncertainpy"] = test_runner.run(test_uncertainty)
+    # print "-----------------------------------------"
+    # print "Running testsuite: parameters"
+    # results["parameters"] = test_runner.run(test_parameters)
+    # print "-----------------------------------------"
+    # print "Running testsuite: distribution"
+    # results["distribution"] = test_runner.run(test_distribution)
+    # print "-----------------------------------------"
+    # print "Running testsuite: evaluateNodeFunction"
+    # results["evaluateNodeFunction"] = test_runner.run(test_evaluateNodeFunction)
+    # print "-----------------------------------------"
     print "Running testsuite: spike"
     results["spike"] = test_runner.run(test_spike)
-    print "-----------------------------------------"
-    print "Running testsuite: spikes"
-    results["spikes"] = test_runner.run(test_spikes)
-    print "-----------------------------------------"
+    # print "-----------------------------------------"
+    # print "Running testsuite: spikes"
+    # results["spikes"] = test_runner.run(test_spikes)
+    # print "-----------------------------------------"
+    # print "Running testsuite: features"
+    # results["features"] = test_runner.run(test_features)
+    # print "-----------------------------------------"
+    # print "Running testsuite: model"
+    # results["model"] = test_runner.run(test_model)
+    # print "-----------------------------------------"
     print "Running testsuite: plotUncertainty"
     results["plotUncertainty"] = test_runner.run(test_plotUncertainty)
     print "-----------------------------------------"
-    print "Running testsuite: features"
-    results["features"] = test_runner.run(test_features)
-    print "-----------------------------------------"
-    print "Running testsuite: model"
-    results["model"] = test_runner.run(test_model)
-    print "-----------------------------------------"
-    print "Running testsuite: runModel"
-    results["runModel"] = test_runner.run(test_runModel)
-    print "-----------------------------------------"
-    print "Running testsuite: logger"
-    results["logger"] = test_runner.run(test_logger)
-    print "-----------------------------------------"
-    print "Running testsuite: data"
-    results["data"] = test_runner.run(test_data)
-    print "-----------------------------------------"
-    print "Running testsuite: uncertaintycalculations"
-    results["uncertaintycalculations"] = test_runner.run(test_uncertaintycalculations)
+    # print "Running testsuite: runModel"
+    # results["runModel"] = test_runner.run(test_runModel)
+    # print "-----------------------------------------"
+    # print "Running testsuite: logger"
+    # results["logger"] = test_runner.run(test_logger)
+    # print "-----------------------------------------"
+    # print "Running testsuite: data"
+    # results["data"] = test_runner.run(test_data)
+    # print "-----------------------------------------"
+    # print "Running testsuite: uncertaintycalculations"
+    # results["uncertaintycalculations"] = test_runner.run(test_uncertaintycalculations)
 
 
 total_run = 0

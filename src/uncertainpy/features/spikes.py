@@ -1,4 +1,4 @@
-from prettyplot import prettyPlot, create_figure
+from prettyplot import prettyPlot, create_figure, reset_style
 
 import pylab as plt
 import numpy as np
@@ -29,7 +29,7 @@ class Spike:
             plt.show()
         else:
             plt.savefig(save_name)
-
+    
 
 
 
@@ -116,6 +116,8 @@ class Spikes:
                 prev_spike_end = spike_end
 
         self.nr_spikes = len(self.spikes)
+
+
 
     def consecutive(self, data):
         result = [data[0]]
