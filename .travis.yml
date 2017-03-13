@@ -18,4 +18,4 @@ before_install:
 #   - "sh -e /etc/init.d/xvfb start"
 #   - sleep 3 # give xvfb some time to start
 script:
-    - docker run uncertainpy python test.py --fast
+    - docker run uncertainpy python test.py --basic
