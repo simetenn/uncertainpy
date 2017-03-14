@@ -19,7 +19,7 @@ class TestUncertainty(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
         self.seed = 10
-        self.difference_treshold = 1e-11
+        self.difference_treshold = 1e-10
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -142,7 +142,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(os.path.isfile(filename))
 
         # TODO find out why this is needed for different machines
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-r", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -218,26 +218,18 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.PCSingle()
 
-        self.plot_exists("TestingModel1d_single-parameter-a/directComparison_mean-variance",
-                          compare_folder="")
-        self.plot_exists("TestingModel1d_single-parameter-a/directComparison_confidence-interval",
-                          compare_folder="")
+        self.plot_exists("TestingModel1d_single-parameter-a/directComparison_mean-variance")
+        self.plot_exists("TestingModel1d_single-parameter-a/directComparison_confidence-interval")
 
-        self.plot_exists("TestingModel1d_single-parameter-a/feature1d_mean-variance",
-                          compare_folder="")
-        self.plot_exists("TestingModel1d_single-parameter-a/feature1d_confidence-interval",
-                          compare_folder="")
+        self.plot_exists("TestingModel1d_single-parameter-a/feature1d_mean-variance")
+        self.plot_exists("TestingModel1d_single-parameter-a/feature1d_confidence-interval")
 
-        # TODO This one tests fails on docker
-        # self.plot_exists("TestingModel1d_single-parameter-b/directComparison_mean-variance",
-        #                   compare_folder="")
-        self.plot_exists("TestingModel1d_single-parameter-b/directComparison_confidence-interval",
-                          compare_folder="")
 
-        self.plot_exists("TestingModel1d_single-parameter-b/feature1d_mean-variance",
-                          compare_folder="")
-        self.plot_exists("TestingModel1d_single-parameter-b/feature1d_confidence-interval",
-                          compare_folder="")
+        self.plot_exists("TestingModel1d_single-parameter-b/directComparison_mean-variance")
+        self.plot_exists("TestingModel1d_single-parameter-b/directComparison_confidence-interval")
+
+        self.plot_exists("TestingModel1d_single-parameter-b/feature1d_mean-variance")
+        self.plot_exists("TestingModel1d_single-parameter-b/feature1d_confidence-interval")
 
 
 
