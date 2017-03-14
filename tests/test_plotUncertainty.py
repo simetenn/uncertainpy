@@ -4,6 +4,10 @@ import os
 import unittest
 import subprocess
 import shutil
+import matplotlib
+
+matplotlib.use('Agg')
+
 
 
 from uncertainpy.plotting.plotUncertainty import PlotUncertainty

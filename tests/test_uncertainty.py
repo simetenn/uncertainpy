@@ -142,7 +142,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(os.path.isfile(filename))
 
         # TODO find out why this is needed for different machines
-        result = subprocess.call(["h5diff", "-r", "-d", str(self.difference_treshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
