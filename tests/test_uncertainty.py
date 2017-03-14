@@ -141,7 +141,6 @@ class TestUncertainty(unittest.TestCase):
         filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
         self.assertTrue(os.path.isfile(filename))
 
-        # TODO find out why this is needed for different machines
         result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
