@@ -6,9 +6,9 @@ os:
 branches:
   only:
     - master
-compiler:
-  - gcc
-sudo: required
+# compiler:
+#   - gcc
+sudo: false
 dist: trusty
 services: docker
 before_install:

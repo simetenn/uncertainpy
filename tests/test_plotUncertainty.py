@@ -12,7 +12,6 @@ from uncertainpy import Data
 
 class TestPlotUncertainpy(unittest.TestCase):
     def setUp(self):
-        np.random.seed(10)
         self.folder = os.path.dirname(os.path.realpath(__file__))
 
         self.test_data_dir = os.path.join(self.folder, "data")
