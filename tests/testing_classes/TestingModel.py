@@ -11,7 +11,10 @@ class TestingModel0d(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.t = 1
         self.U = self.b
 
@@ -26,7 +29,10 @@ class TestingModel1d(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.t = np.arange(0, 10)
         self.U = np.arange(0, 10) + self.a + self.b
 
@@ -41,7 +47,10 @@ class TestingModel1dAdaptive(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.t = np.arange(0, 10 + self.a + self.b)
         self.U = np.arange(0, 10 + self.a + self.b) + self.a + self.b
 
@@ -56,7 +65,10 @@ class TestingModel1dConstant(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.t = np.arange(0, 10)
         self.U = np.arange(0, 10)
 
@@ -72,7 +84,10 @@ class TestingModel2d(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.t = np.arange(0, 10)
         self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
 
@@ -88,7 +103,10 @@ class TestingModel0dNoTime(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.U = self.b
 
 
@@ -102,7 +120,10 @@ class TestingModel1dNoTime(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.U = np.arange(0, 10) + self.a + self.b
 
 
@@ -116,7 +137,10 @@ class TestingModel2dNoTime(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
         self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
 
 
@@ -131,5 +155,5 @@ class TestingModelNoU(Model):
         self.ylabel = "y"
 
 
-    def run(self):
+    def run(self, parameters):
         pass

@@ -19,7 +19,6 @@ def main():
 
     simulation_kwargs = dict(zip(args.simulation_kwargs[::2], args.simulation_kwargs[1::2]))
     simulation = model(**simulation_kwargs)
-    simulation.load()
 
     if args.parameters is None:
         args.parameters = []
@@ -34,11 +33,7 @@ def main():
         msg = "Number of parameters does not match number of parametervalues sent to simulation"
         raise ValueError(msg)
 
-
-    simulation.setParameterValues(parameters)
-    simulation.preprocess()
-    simulation.run()
-    simulation.postprocess()
+    simulation.run(parameters)
     simulation.save(CPU=args.CPU, save_path=args.save_path)
 
 if __name__ == "__main__":

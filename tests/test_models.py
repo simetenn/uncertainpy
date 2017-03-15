@@ -47,10 +47,6 @@ class TestModel(unittest.TestCase):
         self.assertIsInstance(model.parameters, Parameters)
 
 
-    def test_load(self):
-        self.model.load()
-
-
     def test_set_properties(self):
         cmds = {"a": 1, "b": 2}
 
@@ -77,17 +73,9 @@ class TestModel(unittest.TestCase):
             self.model.b
 
 
-    def test_setParametervalues(self):
-        parameters = parameters = {"random1": -1, "random2": -1}
-        self.model.setParameterValues(parameters)
-
-        self.assertEqual(self.model.random1, -1)
-        self.assertEqual(self.model.random2, -1)
-
-
     def test_run(self):
         with self.assertRaises(NotImplementedError):
-            self.model.run()
+            self.model.run({})
 
 
     def test_save(self):
@@ -220,12 +208,9 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
         self.model = HodgkinHuxleyModel()
 
 
-    def test_load(self):
-        self.model.load()
-
-
     def test_run(self):
-        self.model.run()
+        parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
+        self.model.run(parameters)
 
 
     def test_cmd(self):
@@ -238,11 +223,9 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
 
     def test_useCase(self):
         self.model = HodgkinHuxleyModel()
-        self.model.load()
 
         parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        self.model.run(parameters)
         self.model.save()
 
         t = np.load(".tmp_t.npy")
@@ -268,12 +251,9 @@ class TestCoffeeCupPointModel(unittest.TestCase):
         self.model = CoffeeCupPointModel()
 
 
-    def test_load(self):
-        self.model.load()
-
-
     def test_run(self):
-        self.model.run()
+        parameters = {"kappa": -0.05, "u_env": 20}
+        self.model.run(parameters)
 
 
     def test_save(self):
@@ -300,11 +280,9 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
     def test_useCase(self):
         self.model = CoffeeCupPointModel()
-        self.model.load()
 
-        parameters = parameters = {"kappa": -0.05, "u_env": 20}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        parameters = {"kappa": -0.05, "u_env": 20}
+        self.model.run(parameters)
         self.model.save()
 
         t = np.load(".tmp_t.npy")
@@ -329,14 +307,10 @@ class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
         self.model = IzhikevichModel()
 
-
-    def test_load(self):
-        self.model.load()
-
-
     def test_run(self):
-        self.model.run()
-
+        parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
+        self.model.run(parameters)
+        
 
     def test_cmd(self):
         result = self.model.cmd()
@@ -349,11 +323,9 @@ class TestIzhikevichModel(unittest.TestCase):
 
     def test_useCase(self):
         self.model = IzhikevichModel()
-        self.model.load()
 
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        self.model.run(parameters)
         self.model.save()
 
         t = np.load(".tmp_t.npy")
@@ -380,23 +352,16 @@ class TestTestingModel0d(unittest.TestCase):
         self.model = TestingModel0d()
 
 
-    def test_load(self):
-        self.model.load()
-
-
-    def test_setParametervalues(self):
+    def test_run(self):
         parameters = {"a": -1, "b": -1}
-        self.model.setParameterValues(parameters)
+        self.model.run(parameters)
 
         self.assertEqual(self.model.a, -1)
         self.assertEqual(self.model.b, -1)
 
-
-    def test_run(self):
-        self.model.run()
-
         self.assertEqual(self.model.t, 1)
-        self.assertEqual(self.model.U, 2)
+        self.assertEqual(self.model.U, -1)
+
 
 
     def test_cmd(self):
@@ -410,15 +375,16 @@ class TestTestingModel0d(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModel0d()
-        self.model.load()
 
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        parameters = {"a": -1, "b": -1}
+        self.model.run(parameters)
 
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
 
         self.assertEqual(self.model.t, 1)
-        self.assertEqual(self.model.U, 2)
+        self.assertEqual(self.model.U, -1)
+
 
         self.model.save()
 
@@ -445,23 +411,15 @@ class TestTestingModel1d(unittest.TestCase):
         self.model = TestingModel1d()
 
 
-    def test_load(self):
-        self.model.load()
-
-
-    def test_setParametervalues(self):
+    def test_run(self):
         parameters = {"a": -1, "b": -1}
-        self.model.setParameterValues(parameters)
+        self.model.run(parameters)
 
         self.assertEqual(self.model.a, -1)
         self.assertEqual(self.model.b, -1)
 
-
-    def test_run(self):
-        self.model.run()
-
         self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) - 2))
 
 
     def test_cmd(self):
@@ -474,14 +432,15 @@ class TestTestingModel1d(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModel1d()
-        self.model.load()
 
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        parameters = {"a": -1, "b": -1}
+        self.model.run(parameters)
+
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
 
         self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) - 2))
 
         self.model.save()
 
@@ -508,18 +467,18 @@ class TestTestingModel2d(unittest.TestCase):
         self.model = TestingModel2d()
 
 
-    def test_load(self):
-        self.model.load()
-
-
 
     def test_run(self):
-        self.model.run()
+        parameters = {"a": -1, "b": -2}
+        self.model.run(parameters)
+
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -2)
 
         self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(self.model.U,
-                                       np.array([np.arange(0, 10) + 1,
-                                                 np.arange(0, 10) + 2])))
+                                       np.array([np.arange(0, 10) -1,
+                                                 np.arange(0, 10) -2])))
 
     def test_cmd(self):
         result = self.model.cmd()
@@ -531,18 +490,19 @@ class TestTestingModel2d(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModel2d()
-        self.model.load()
+        parameters = {"a": -1, "b": -2}
+        self.model.run(parameters)
 
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
-        self.model.save()
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -2)
 
         self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(self.model.U,
-                                       np.array([np.arange(0, 10) + 1,
-                                                 np.arange(0, 10) + 2])))
+                                       np.array([np.arange(0, 10) -1,
+                                                 np.arange(0, 10) -2])))
 
+
+        self.model.save()
         t = np.load(".tmp_t.npy")
         U = np.load(".tmp_U.npy")
         os.remove(".tmp_U.npy")
@@ -567,23 +527,15 @@ class TestTestingModel0dNoTime(unittest.TestCase):
         self.model = TestingModel0dNoTime()
 
 
-    def test_load(self):
-        self.model.load()
-
-
-    def test_setParametervalues(self):
+    def test_run(self):
         parameters = {"a": -1, "b": -1}
-        self.model.setParameterValues(parameters)
+        self.model.run(parameters)
 
         self.assertEqual(self.model.a, -1)
         self.assertEqual(self.model.b, -1)
 
-
-    def test_run(self):
-        self.model.run()
-
         self.assertIsNone(self.model.t)
-        self.assertEqual(self.model.U, 2)
+        self.assertEqual(self.model.U, -1)
 
 
     def test_cmd(self):
@@ -597,15 +549,14 @@ class TestTestingModel0dNoTime(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModel0dNoTime()
-        self.model.load()
+        parameters = {"a": -1, "b": -1}
+        self.model.run(parameters)
 
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
-
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
 
         self.assertIsNone(self.model.t)
-        self.assertEqual(self.model.U, 2)
+        self.assertEqual(self.model.U, -1)
 
         self.model.save()
 
@@ -632,23 +583,15 @@ class TestTestingModel1dNoTime(unittest.TestCase):
         self.model = TestingModel1dNoTime()
 
 
-    def test_load(self):
-        self.model.load()
-
-
-    def test_setParametervalues(self):
+    def test_run(self):
         parameters = {"a": -1, "b": -1}
-        self.model.setParameterValues(parameters)
+        self.model.run(parameters)
 
         self.assertEqual(self.model.a, -1)
         self.assertEqual(self.model.b, -1)
 
-
-    def test_run(self):
-        self.model.run()
-
         self.assertIsNone(self.model.t)
-        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) - 2))
 
 
     def test_cmd(self):
@@ -661,14 +604,14 @@ class TestTestingModel1dNoTime(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModel1dNoTime()
-        self.model.load()
+        parameters = {"a": -1, "b": -1}
+        self.model.run(parameters)
 
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
 
         self.assertIsNone(self.model.t)
-        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(self.model.U, np.arange(0, 10) - 2))
 
         self.model.save()
 
@@ -696,17 +639,17 @@ class TestTestingModel2dNoTime(unittest.TestCase):
         self.model = TestingModel2dNoTime()
 
 
-    def test_load(self):
-        self.model.load()
-
-
     def test_run(self):
-        self.model.run()
+        parameters = {"a": -1, "b": -2}
+        self.model.run(parameters)
+
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -2)
 
         self.assertIsNone(self.model.t)
         self.assertTrue(np.array_equal(self.model.U,
-                                       np.array([np.arange(0, 10) + 1,
-                                                 np.arange(0, 10) + 2])))
+                                       np.array([np.arange(0, 10) -1,
+                                                 np.arange(0, 10) -2])))
 
     def test_cmd(self):
         result = self.model.cmd()
@@ -718,16 +661,17 @@ class TestTestingModel2dNoTime(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModel2dNoTime()
-        self.model.load()
+        parameters = {"a": -1, "b": -2}
+        self.model.run(parameters)
 
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-        self.model.run()
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -2)
 
         self.assertIsNone(self.model.t)
         self.assertTrue(np.array_equal(self.model.U,
-                                       np.array([np.arange(0, 10) + 1,
-                                                 np.arange(0, 10) + 2])))
+                                       np.array([np.arange(0, 10) -1,
+                                                 np.arange(0, 10) -2])))
+
         self.model.save()
 
         t = np.load(".tmp_t.npy")
@@ -753,12 +697,9 @@ class TestTestingModelNoU(unittest.TestCase):
         self.model = TestingModelNoU()
 
 
-    def test_load(self):
-        self.model.load()
-
-
     def test_run(self):
-        self.model.run()
+        parameters = {"a": -1, "b": -2}
+        self.model.run(parameters)
 
         self.assertIsNone(self.model.t)
         self.assertIsNone(self.model.U)
@@ -774,12 +715,8 @@ class TestTestingModelNoU(unittest.TestCase):
 
     def test_useCase(self):
         self.model = TestingModelNoU()
-        self.model.load()
-
-        parameters = {"a": 1, "b": 2}
-        self.model.setParameterValues(parameters)
-
-        self.model.run()
+        parameters = {"a": -1, "b": -2}
+        self.model.run(parameters)
 
         self.assertIsNone(self.model.t)
         self.assertIsNone(self.model.U)
@@ -791,50 +728,62 @@ class TestTestingModelNoU(unittest.TestCase):
             self.model.save(1)
 
 
-    class TestTestingModel1dAdaptive(unittest.TestCase):
-        def setUp(self):
-            self.model = TestingModel1dAdaptive()
+class TestTestingModel1dAdaptive(unittest.TestCase):
+    def setUp(self):
+        self.model = TestingModel1dAdaptive()
 
 
-        def test_load(self):
-            self.model.load()
+    def test_run(self):
+        parameters = {"a": 1, "b": -2}
+        self.model.run(parameters)
+
+        t = np.arange(0, 13)
+        U = np.arange(0, 13) + 3
+
+        self.assertTrue(np.array_equal(self.model.t, t))
+        self.assertTrue(np.array_equal(self.model.U, U))
 
 
-        def test_run(self):
-            self.model.run()
+    def test_cmd(self):
+        result = self.model.cmd()
 
-            t = np.arange(0, 13)
-            U = np.arange(0, 13) + 3
-
-            self.assertTrue(np.array_equal(self.model.t, t))
-            self.assertTrue(np.array_equal(self.model.U, U))
+        self.assertIn("TestingModel1dAdaptive", result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result[0], sys.executable)
 
 
-        def test_cmd(self):
-            result = self.model.cmd()
+    def test_useCase(self):
+        self.model = TestingModel1dAdaptive()
 
-            self.assertIn("TestingModel1dAdaptive", result)
-            self.assertIsInstance(result, list)
-            self.assertEqual(result[0], sys.executable)
+        parameters = {"a": 1, "b": 2}
+        self.model.run(parameters)
+
+        t_result = np.arange(0, 13)
+        U_result = np.arange(0, 13) + 3
+
+        self.assertTrue(np.array_equal(self.model.t, t_result))
+        self.assertTrue(np.array_equal(self.model.U, U_result))
+
+        self.model.save()
+
+        t = np.load(".tmp_t.npy")
+        U = np.load(".tmp_U.npy")
+        os.remove(".tmp_U.npy")
+        os.remove(".tmp_t.npy")
+
+        self.assertTrue(np.array_equal(t, t_result))
+        self.assertTrue(np.array_equal(U, U_result))
+
+        self.model.save(1)
+        U = np.load(".tmp_U_%s.npy" % 1)
+        t = np.load(".tmp_t_%s.npy" % 1)
+        os.remove(".tmp_U_%s.npy" % 1)
+        os.remove(".tmp_t_%s.npy" % 1)
+
+        self.assertTrue(np.array_equal(t, t_result))
+        self.assertTrue(np.array_equal(U, U_result))
 
 
-        def test_useCase(self):
-            self.model = TestingModelNoU()
-            self.model.load()
-
-            parameters = {"a": 1, "b": 2}
-            self.model.setParameterValues(parameters)
-
-            self.model.run()
-
-            self.assertIsNone(self.model.t)
-            self.assertIsNone(self.model.U)
-
-            with self.assertRaises(ValueError):
-                self.model.save()
-
-            with self.assertRaises(ValueError):
-                self.model.save(1)
 
 class TestNeuronModel(unittest.TestCase):
     def setUp(self):
@@ -846,21 +795,6 @@ class TestNeuronModel(unittest.TestCase):
 
         self.model = NeuronModel(model_file=model_file,
                                  model_path=os.path.join(filedir, model_path))
-
-    def test_load(self):
-        with Xvfb() as xvfb:
-            self.model.load()
-
-
-    def test_setParametervalues(self):
-        parameters = parameters = {"cap": 1.1, "Rm": 22000, "Vrest": -63,
-                                   "Epas": -67, "gna": 0.09, "nash": -52.6,
-                                   "gkdr": 0.37, "kdrsh": -51.2, "gahp": 6.4e-5,
-                                   "gcat": 1.17e-5}
-        with Xvfb() as xvfb:
-            self.model.load()
-            self.model.setParameterValues(parameters)
-
 
 
     def test_run(self):

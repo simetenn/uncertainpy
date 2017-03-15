@@ -11,11 +11,11 @@ The model must be able to handle these calls
 
 simulation = model() -> __init__ must be able to run with no arguments
 simulation.set_properties(properties set at runtime -> dict)
-simulation.load()
+
 simulation.setParameterValues(parameters -> dictionary)
-simulation.preprocess()
+
 simulation.run()
-simulation.postprocess()
+
 simulation.save(current_process -> int)
 simulation.cmd()
 
@@ -93,15 +93,6 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         self.additional_cmds = []
 
 
-    def load(self):
-        pass
-
-    def preprocess(self):
-        pass
-
-    def postprocess(self):
-        pass
-
     def setDistribution(self, parameter_name, distribution_function):
         if self.parameters is None:
             raise AttributeError("Parameters is not in the model")
@@ -115,17 +106,9 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
 
         self.parameters.setAllDistributions(distribution_function)
 
-    # TODO This should raise a NotImplementedError, to make sure that users change it
-    def setParameterValues(self, parameters):
-        """
-        Parameters: dictionary with all parameters
-        """
-        # How the parameters are set
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
 
 
-    def run(self):
+    def run(self, parameters):
         """
         Run must store the results from the simulation in self.t and self.U
         """

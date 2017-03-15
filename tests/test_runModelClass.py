@@ -52,7 +52,6 @@ class TestRunModelClass(unittest.TestCase):
         self.runmodel.data.uncertain_parameters = ["a", "b"]
         result = self.runmodel.evaluateNodeFunctionDict(nodes)
 
-
         self.assertEqual(len(result), 3)
         self.assertTrue(result[0]["supress_model_output"])
         self.assertFalse(result[0]["adaptive_model"])

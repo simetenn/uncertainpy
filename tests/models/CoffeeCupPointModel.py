@@ -31,7 +31,9 @@ class CoffeeCupPointModel(Model):
     def f(self, u, t):
         return self.kappa*(u - self.u_env)
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
 
         solver = odespy.RK4(self.f)
 

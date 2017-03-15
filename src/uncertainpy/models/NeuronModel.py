@@ -18,7 +18,6 @@ class NeuronModel(Model):
 
 
     def load(self):
-
         current_dir = os.getcwd()
         os.chdir(self.model_path)
 
@@ -56,8 +55,10 @@ class NeuronModel(Model):
         self.t = self._record("_ref_t")
 
 
-    def run(self):
+    def run(self, parameters):
         self.load()
+
+        self.setParameterValues(parameters)
 
         self._recordT()
         self._recordV()

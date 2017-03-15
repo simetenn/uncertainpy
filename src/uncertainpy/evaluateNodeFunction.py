@@ -21,26 +21,17 @@ filedir = os.path.dirname(filepath)
 # methods in a class.
 def evaluateNodeFunction(data):
     """
-all_data = (model_cmds,
-            supress_model_output,
-            adaptive_model,
-            node,
-            uncertain_parameters,
-            features_cmds,
-            features_kwargs)
+data = {"model_cmds": model_cmds
+        "supress_model_output": supress_model_output
+        "adaptive_model": adaptive_model
+        "node": node
+        "uncertain_parameters: uncertain_parameters
+        "features_cmds": features_cmds
+        "features_kwargs": features_kwargs}
     """
 
     # Try-except to catch exeptions and print stack trace
     try:
-        # model_cmds = data[0]
-        # supress_model_output = data[1]
-        # adaptive_model = data[2]
-        # node = data[3]
-        # tmp_parameter_names = data[4]
-        # features_cmds = data[5]
-        # features_kwargs = data[6]
-
-
         model_cmds = data["model_cmds"]
         supress_model_output = data["supress_model_output"]
         adaptive_model = data["adaptive_model"]
@@ -73,6 +64,7 @@ all_data = (model_cmds,
         for parameter in parameters:
             model_cmds.append(parameter)
             model_cmds.append("{:.16f}".format(parameters[parameter]))
+
 
 
         simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())

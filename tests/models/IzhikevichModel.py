@@ -35,7 +35,10 @@ class IzhikevichModel(Model):
 
         return np.array([dvdt, dudt])
 
-    def run(self):
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
 
         u = np.zeros((len(self.t), 2))
         u[0, 0] = self.v0
