@@ -30,7 +30,12 @@ Run must store the results from the simulation in self.t and self.U
     """
 
 
-    def __init__(self, parameters=None, adaptive_model=False, xlabel="", ylabel=""):
+    def __init__(self,
+                 parameters=None,
+                 adaptive_model=False,
+                 xlabel="",
+                 ylabel="",
+                 new_process=False):
         """
 
 ----------
@@ -60,12 +65,11 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         self.U = None
         self.t = None
 
-
-
         self.adaptive_model = adaptive_model
 
         self.xlabel = xlabel
         self.ylabel = ylabel
+        self.new_process = new_process
 
         self.additional_cmds = []
 
@@ -147,7 +151,7 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
                 "--model_name", self.__class__.__name__,
                 "--file_dir", filedir,
                 "--file_name", filename,
-                "--simulation_kwargs"]
+                "--model_kwargs"]
 
         for cmd in self.additional_cmds:
             cmds += [cmd, getattr(self, cmd)]

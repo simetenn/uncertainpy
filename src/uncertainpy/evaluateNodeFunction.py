@@ -35,6 +35,7 @@ data = {"model_cmds": model_cmds
         model_cmds = data["model_cmds"]
         supress_model_output = data["supress_model_output"]
         adaptive_model = data["adaptive_model"]
+        new_process = data["new_process"]
         node = data["node"]
         uncertain_parameters = data["uncertain_parameters"]
         features_cmds = data["features_cmds"]
@@ -50,51 +51,62 @@ data = {"model_cmds": model_cmds
             parameters[parameter] = node[j]
             j += 1
 
+        new_process = True
+        if new_process:
+            print model_cmds
+            current_process = mp.current_process().name.split("-")
+            if current_process[0] == "PoolWorker":
+                current_process = str(current_process[-1])
+            else:
+                current_process = "0"
 
-        current_process = mp.current_process().name.split("-")
-        if current_process[0] == "PoolWorker":
-            current_process = str(current_process[-1])
+            model_cmds += ["--CPU", current_process,
+                           "--save_path", filedir,
+                           "--parameters"]
+
+            for parameter in parameters:
+                model_cmds.append(parameter)
+                model_cmds.append("{:.16f}".format(parameters[parameter]))
+
+
+
+            simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
+            ut, err = simulation.communicate()
+
+            if not supress_model_output and len(ut) != 0:
+                print ut
+
+
+            if simulation.returncode != 0:
+                print ut
+                raise RuntimeError(err)
+
+
+            U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+            t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
+
+            os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+            os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
+
         else:
-            current_process = "0"
+            pass
 
-        model_cmds += ["--CPU", current_process,
-                       "--save_path", filedir,
-                       "--parameters"]
-
-        for parameter in parameters:
-            model_cmds.append(parameter)
-            model_cmds.append("{:.16f}".format(parameters[parameter]))
-
-
-
-        simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
-        ut, err = simulation.communicate()
-
-        if not supress_model_output and len(ut) != 0:
-            print ut
-
-
-        if simulation.returncode != 0:
-            print ut
-            raise RuntimeError(err)
-
-
-        U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
-        t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
-
-        os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
-        os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
-
-
+            # filedir =
+            # sys.path.insert(0, file_dir)
+            # module = __import__(file_name.split(".")[0])
+            # model = getattr(module, args.model_name)
+            #
+            # model_kwargs = dict(zip(args.model_kwargs[::2], args.model_kwargs[1::2]))
+            # simulation = model(**model_kwargs)
 
         # Calculate features from the model results
         results = {}
 
         # TODO Should t be stored for all results? Or should none be used for features
 
-        sys.path.insert(0, features_cmds[0])
-        module = __import__(features_cmds[1].split(".")[0])
-        features = getattr(module, features_cmds[2])(t=t, U=U, **features_kwargs)
+        sys.path.insert(0, features_cmds["filedir"])
+        module = __import__(features_cmds["filename"].split(".")[0])
+        features = getattr(module, features_cmds["feature_name"])(t=t, U=U, **features_kwargs)
 
         feature_results = features.calculateFeatures()
 

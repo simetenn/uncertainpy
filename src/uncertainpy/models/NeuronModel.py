@@ -8,9 +8,12 @@ from model import Model
 class NeuronModel(Model):
     def __init__(self, parameters=None, adaptive_model=False,
                  model_file="mosinit.hoc", model_path=None):
-        Model.__init__(self, parameters=parameters,
+        Model.__init__(self,
+                       parameters=parameters,
                        adaptive_model=adaptive_model,
-                       xlabel="time [ms]", ylabel="voltage [mv]")
+                       xlabel="time [ms]",
+                       ylabel="voltage [mv]",
+                       new_process=True)
 
         self.set_properties({"model_file": model_file,
                              "model_path": model_path})

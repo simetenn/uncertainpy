@@ -9,7 +9,7 @@ def main():
     parser.add_argument("--save_path")
     parser.add_argument("--CPU", type=int)
     parser.add_argument("--parameters", nargs="*")
-    parser.add_argument("--simulation_kwargs", nargs="*")
+    parser.add_argument("--model_kwargs", nargs="*")
 
     args = parser.parse_args()
 
@@ -17,8 +17,8 @@ def main():
     module = __import__(args.file_name.split(".")[0])
     model = getattr(module, args.model_name)
 
-    simulation_kwargs = dict(zip(args.simulation_kwargs[::2], args.simulation_kwargs[1::2]))
-    simulation = model(**simulation_kwargs)
+    model_kwargs = dict(zip(args.model_kwargs[::2], args.model_kwargs[1::2]))
+    simulation = model(**model_kwargs)
 
     if args.parameters is None:
         args.parameters = []

@@ -55,7 +55,10 @@ class GeneralFeatures():
 
 
     def cmd(self):
-        return self.filedir, self.filename, self.__class__.__name__
+        return {"filedir": self.filedir,
+                "filename": self.filename,
+                "feature_name": self.__class__.__name__}
+
 
 
     def kwargs(self):

@@ -53,11 +53,12 @@ class TestGeneralFeatures(unittest.TestCase):
 
         self.assertEqual(self.features.kwargs(), {"features_to_run": [], "test1": 1, "test2": 2})
 
+
     def test_cmd(self):
         result = self.features.cmd()
 
-        self.assertEqual('general_features', result[1].split(".")[0])
-        self.assertEqual('GeneralFeatures', result[2])
+        self.assertEqual('general_features', result["filename"].split(".")[0])
+        self.assertEqual('GeneralFeatures', result["feature_name"])
 
 
     def test_calculateFeatureNotImplemented(self):
@@ -87,9 +88,9 @@ class TestGeneralFeatures(unittest.TestCase):
 
 
     def test_set_properties(self):
-        cmds = {"a": 1, "b": 2}
+        properties = {"a": 1, "b": 2}
 
-        self.features.set_properties(cmds)
+        self.features.set_properties(properties)
 
         self.assertEqual(self.features.a, 1)
         self.assertEqual(self.features.b, 2)

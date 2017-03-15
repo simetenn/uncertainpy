@@ -123,6 +123,7 @@ class RunModel:
 
         for node in nodes:
             data_list.append({"model_cmds": self.model.cmd(),
+                              "new_process": self.model.new_process,
                               "supress_model_output": self.supress_model_output,
                               "adaptive_model": self.model.adaptive_model,
                               "node": node,
