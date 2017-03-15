@@ -4,20 +4,6 @@ import scipy.optimize
 from uncertainpy.features import GeneralNeuronFeatures
 
 class NeuronFeatures(GeneralNeuronFeatures):
-    # def __init__(self,
-    #              features_to_run="all",
-    #              t=None,
-    #              U=None,
-    #              thresh=-30,
-    #              extended_spikes=False):
-    #
-    #     GeneralNeuronFeatures.__init__(self,
-    #                                    features_to_run=features_to_run,
-    #                                    t=t, U=U,
-    #                                    thresh=thresh,
-    #                                    extended_spikes=extended_spikes)
-
-
     def nrSpikes(self):
         return self.spikes.nr_spikes
 

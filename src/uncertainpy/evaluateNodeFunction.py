@@ -25,29 +25,38 @@ all_data = (model_cmds,
             supress_model_output,
             adaptive_model,
             node,
-            tmp_parameter_names,
-            feature_cmds,
-            feature_kwargs)
+            uncertain_parameters,
+            features_cmds,
+            features_kwargs)
     """
 
     # Try-except to catch exeptions and print stack trace
     try:
-        model_cmds = data[0]
-        supress_model_output = data[1]
-        adaptive_model = data[2]
-        node = data[3]
-        tmp_parameter_names = data[4]
-        feature_cmds = data[5]
-        feature_kwargs = data[6]
+        # model_cmds = data[0]
+        # supress_model_output = data[1]
+        # adaptive_model = data[2]
+        # node = data[3]
+        # tmp_parameter_names = data[4]
+        # features_cmds = data[5]
+        # features_kwargs = data[6]
+
+
+        model_cmds = data["model_cmds"]
+        supress_model_output = data["supress_model_output"]
+        adaptive_model = data["adaptive_model"]
+        node = data["node"]
+        uncertain_parameters = data["uncertain_parameters"]
+        features_cmds = data["features_cmds"]
+        features_kwargs = data["features_kwargs"]
 
         if isinstance(node, float) or isinstance(node, int):
             node = [node]
 
         # New setparameters
-        tmp_parameters = {}
+        parameters = {}
         j = 0
-        for parameter in tmp_parameter_names:
-            tmp_parameters[parameter] = node[j]
+        for parameter in uncertain_parameters:
+            parameters[parameter] = node[j]
             j += 1
 
 
@@ -61,9 +70,9 @@ all_data = (model_cmds,
                        "--save_path", filedir,
                        "--parameters"]
 
-        for parameter in tmp_parameters:
+        for parameter in parameters:
             model_cmds.append(parameter)
-            model_cmds.append("{:.16f}".format(tmp_parameters[parameter]))
+            model_cmds.append("{:.16f}".format(parameters[parameter]))
 
 
         simulation = subprocess.Popen(model_cmds, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ.copy())
@@ -91,9 +100,9 @@ all_data = (model_cmds,
 
         # TODO Should t be stored for all results? Or should none be used for features
 
-        sys.path.insert(0, feature_cmds[0])
-        module = __import__(feature_cmds[1].split(".")[0])
-        features = getattr(module, feature_cmds[2])(t=t, U=U, **feature_kwargs)
+        sys.path.insert(0, features_cmds[0])
+        module = __import__(features_cmds[1].split(".")[0])
+        features = getattr(module, features_cmds[2])(t=t, U=U, **features_kwargs)
 
         feature_results = features.calculateFeatures()
 

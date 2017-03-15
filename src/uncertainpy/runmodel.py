@@ -117,6 +117,8 @@ class RunModel:
 
         self.data.removeOnlyInvalidResults()
 
+
+
     def evaluateNodeFunctionList(self, nodes):
         data_list = []
 
@@ -132,6 +134,19 @@ class RunModel:
 
 
 
+    def evaluateNodeFunctionDict(self, nodes):
+        data_list = []
+
+        for node in nodes:
+            data_list.append({"model_cmds": self.model.cmd(),
+                              "supress_model_output": self.supress_model_output,
+                              "adaptive_model": self.model.adaptive_model,
+                              "node": node,
+                              "uncertain_parameters": self.data.uncertain_parameters,
+                              "features_cmds": self.features.cmd(),
+                              "features_kwargs": self.features.kwargs()})
+        return data_list
+
     def evaluateNodes(self, nodes):
 
         if self.supress_model_graphics:
@@ -142,7 +157,7 @@ class RunModel:
         pool = mp.Pool(processes=self.CPUs)
 
         for result in tqdm(pool.imap(evaluateNodeFunction,
-                                     self.evaluateNodeFunctionList(nodes.T)),
+                                     self.evaluateNodeFunctionDict(nodes.T)),
                            desc="Running model",
                            total=len(nodes.T)):
 
@@ -156,6 +171,8 @@ class RunModel:
             vdisplay.stop()
 
         return np.array(solves)
+
+
 
     # TODO should this check one specific feature.
     # Return false for all features?
@@ -171,6 +188,7 @@ Test if solves is an adaptive result
                     return True
                 u_prev = u
         return False
+
 
 
     def run(self, nodes, uncertain_parameters):

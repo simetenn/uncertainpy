@@ -56,7 +56,6 @@ class UncertaintyCalculations:
 
 
         if seed is not None:
-            # cp.seed(seed)
             np.random.seed(seed)
 
 

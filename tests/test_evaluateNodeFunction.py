@@ -28,13 +28,14 @@ class TestEvaluateNodeFunction(unittest.TestCase):
 
 
     def setUpData(self):
-        data = (self.model.cmd(),
-                self.supress_model_output,
-                self.adaptive_model,
-                self.node,
-                self.uncertain_parameters,
-                self.features.cmd(),
-                self.features.kwargs())
+
+        data = {"model_cmds": self.model.cmd(),
+                "supress_model_output": self.supress_model_output,
+                "adaptive_model": self.adaptive_model,
+                "node": self.node,
+                "uncertain_parameters": self.uncertain_parameters,
+                "features_cmds": self.features.cmd(),
+                "features_kwargs": self.features.kwargs()}
 
         return data
 
