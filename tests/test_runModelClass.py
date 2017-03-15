@@ -52,17 +52,17 @@ class TestRunModelClass(unittest.TestCase):
         self.runmodel.data.uncertain_parameters = ["a", "b"]
         result = self.runmodel.evaluateNodeFunctionDict(nodes)
 
-        print result
 
         self.assertEqual(len(result), 3)
-        self.assertTrue(result[0][1])
-        self.assertFalse(result[0][2])
-        self.assertTrue(result[0][3], [0, 1])
-        self.assertTrue(result[1][3], [1, 2])
-        self.assertTrue(result[2][3], [2, 3])
-        self.assertEqual(result[0][4], ["a", "b"])
-        self.assertEqual(result[0][6], {"features_to_run": ["feature0d", "feature1d",
-                                                            "feature2d", "featureInvalid"]})
+        self.assertTrue(result[0]["supress_model_output"])
+        self.assertFalse(result[0]["adaptive_model"])
+        self.assertEqual(result[0]["node"], [0, 1])
+        self.assertEqual(result[1]["node"], [1, 2])
+        self.assertEqual(result[2]["node"], [2, 3])
+        self.assertEqual(result[0]["uncertain_parameters"], ["a", "b"])
+        self.assertEqual(result[0]["features_kwargs"],
+                         {"features_to_run": ["feature0d", "feature1d",
+                                              "feature2d", "featureInvalid"]})
 
         nodes = [[0, 1], [0, 1], [0, 1]]
         result = self.runmodel.evaluateNodeFunctionDict(nodes)

@@ -118,22 +118,6 @@ class RunModel:
         self.data.removeOnlyInvalidResults()
 
 
-
-    def evaluateNodeFunctionList(self, nodes):
-        data_list = []
-
-        for node in nodes:
-            data_list.append((self.model.cmd(),
-                              self.supress_model_output,
-                              self.model.adaptive_model,
-                              node,
-                              self.data.uncertain_parameters,
-                              self.features.cmd(),
-                              self.features.kwargs()))
-        return data_list
-
-
-
     def evaluateNodeFunctionDict(self, nodes):
         data_list = []
 
