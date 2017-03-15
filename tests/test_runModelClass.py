@@ -47,10 +47,12 @@ class TestRunModelClass(unittest.TestCase):
         self.assertEqual(self.runmodel.data.ylabel, "y")
 
 
-    def test_evaluateNodeFunctionList(self):
+    def test_evaluateNodeFunctionDict(self):
         nodes = [[0, 1], [1, 2], [2, 3]]
         self.runmodel.data.uncertain_parameters = ["a", "b"]
-        result = self.runmodel.evaluateNodeFunctionList(nodes)
+        result = self.runmodel.evaluateNodeFunctionDict(nodes)
+
+        print result
 
         self.assertEqual(len(result), 3)
         self.assertTrue(result[0][1])
@@ -63,7 +65,7 @@ class TestRunModelClass(unittest.TestCase):
                                                             "feature2d", "featureInvalid"]})
 
         nodes = [[0, 1], [0, 1], [0, 1]]
-        result = self.runmodel.evaluateNodeFunctionList(nodes)
+        result = self.runmodel.evaluateNodeFunctionDict(nodes)
 
         self.assertEqual(result[0], result[1])
         self.assertEqual(result[1], result[2])
