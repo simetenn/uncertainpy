@@ -90,13 +90,12 @@ test_prerequisites = unittest.TestSuite([test_utils,
 
 
 test_basic = unittest.TestSuite([test_prerequisites,
-                                 test_uncertaintycalculations,
-                                 test_plotUncertainty])
+                                 test_uncertaintycalculations])
 
 test_fast = unittest.TestSuite([test_basic, test_uncertainty])
 
 # test_all = unittest.TestSuite([test_fast, test_usecase])
-test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
+# test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
 
 
 
@@ -127,6 +126,7 @@ parser.add_argument("--plotting", help="Plotting tests", action="store_true")
 parser.add_argument("--usecase", help="Usecase tests", action="store_true")
 parser.add_argument("--data", help="Data tests", action="store_true")
 parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests", action="store_true")
+parser.add_argument("--travis", help="Tests to run on travis", action="store_true")
 
 
 args = parser.parse_args()
@@ -225,7 +225,6 @@ if args.uncertaintycalculations:
 
 
 if args.all:
-
     print "-----------------------------------------"
     print "Running all tests"
     print "-----------------------------------------"
@@ -270,6 +269,54 @@ if args.all:
     print "-----------------------------------------"
     print "Running testsuite: uncertaintycalculations"
     results["uncertaintycalculations"] = test_runner.run(test_uncertaintycalculations)
+
+
+
+
+if args.travis:
+    print "-----------------------------------------"
+    print "Running all tests"
+    print "-----------------------------------------"
+    print "Running testsuite: utils"
+    results["utils"] = test_runner.run(test_utils)
+    print "-----------------------------------------"
+    print "Running testsuite: uncertainpy"
+    results["uncertainpy"] = test_runner.run(test_uncertainty)
+    print "-----------------------------------------"
+    print "Running testsuite: parameters"
+    results["parameters"] = test_runner.run(test_parameters)
+    print "-----------------------------------------"
+    print "Running testsuite: distribution"
+    results["distribution"] = test_runner.run(test_distribution)
+    print "-----------------------------------------"
+    print "Running testsuite: evaluateNodeFunction"
+    results["evaluateNodeFunction"] = test_runner.run(test_evaluateNodeFunction)
+    print "-----------------------------------------"
+    print "Running testsuite: spike"
+    results["spike"] = test_runner.run(test_spike)
+    print "-----------------------------------------"
+    print "Running testsuite: spikes"
+    results["spikes"] = test_runner.run(test_spikes)
+    print "-----------------------------------------"
+    print "Running testsuite: features"
+    results["features"] = test_runner.run(test_features)
+    print "-----------------------------------------"
+    print "Running testsuite: model"
+    results["model"] = test_runner.run(test_model)
+    print "-----------------------------------------"
+    print "Running testsuite: runModel"
+    results["runModel"] = test_runner.run(test_runModel)
+    print "-----------------------------------------"
+    print "Running testsuite: logger"
+    results["logger"] = test_runner.run(test_logger)
+    print "-----------------------------------------"
+    print "Running testsuite: data"
+    results["data"] = test_runner.run(test_data)
+    print "-----------------------------------------"
+    print "Running testsuite: uncertaintycalculations"
+    results["uncertaintycalculations"] = test_runner.run(test_uncertaintycalculations)
+
+
 
 
 total_run = 0
