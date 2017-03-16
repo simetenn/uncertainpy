@@ -15,7 +15,7 @@ from uncertainpy import Data
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel1d
-from testing_classes import TestingModel1dAdaptive
+from testing_classes import TestingModelAdaptive
 
 
 class TestUncertaintyCalculations(unittest.TestCase):
@@ -383,7 +383,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        model = TestingModel1dAdaptive(parameters, adaptive_model=False)
+        model = TestingModelAdaptive(parameters, adaptive_model=False)
         model.setAllDistributions(Distribution(1).uniform)
 
         features = TestingFeatures(features_to_run=["feature1d", "feature2d"])

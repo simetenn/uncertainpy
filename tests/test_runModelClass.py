@@ -9,7 +9,11 @@ from uncertainpy import RunModel
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModel1dAdaptive
+from testing_classes import TestingModelNoTime, TestingModelNoTimeU
+from testing_classes import TestingModelAdaptive, TestingModelConstant
+from testing_classes import TestingModelNewProcess
+
+
 
 
 class TestRunModelClass(unittest.TestCase):
@@ -255,7 +259,7 @@ class TestRunModelClass(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.runmodel = RunModel(TestingModel1dAdaptive(adaptive_model=True),
+        self.runmodel = RunModel(TestingModelAdaptive(adaptive_model=True),
                                  features=features,
                                  supress_model_output=True,
                                  supress_model_graphics=True)
@@ -298,7 +302,7 @@ class TestRunModelClass(unittest.TestCase):
 
 
     # def test_storeResultsAdaptiveError(self):
-    #     self.runmodel = RunModel(TestingModel1dAdaptive(adaptive_model=True),
+    #     self.runmodel = RunModel(TestingModelAdaptive(adaptive_model=True),
     #                              features=TestingFeatures(),
     #                              supress_model_output=True,
     #                              supress_model_graphics=True)

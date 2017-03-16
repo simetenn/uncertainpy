@@ -1,5 +1,7 @@
 import argparse
 import sys
+import numpy as np
+import os
 
 def main():
     parser = argparse.ArgumentParser(description="Run a model simulation")
@@ -23,18 +25,33 @@ def main():
     if args.parameters is None:
         args.parameters = []
 
+    if len(args.parameters) % 2 != 0:
+        msg = "Number of parameters does not match number of parametervalues sent to simulation"
+        raise ValueError(msg)
+
     parameters = {}
     i = 0
     while i < len(args.parameters):
         parameters[args.parameters[i]] = float(args.parameters[i+1])
         i += 2
 
-    if len(args.parameters) % 2 != 0:
-        msg = "Number of parameters does not match number of parametervalues sent to simulation"
-        raise ValueError(msg)
 
-    simulation.run(parameters)
-    simulation.save(CPU=args.CPU, save_path=args.save_path)
+    result = simulation.run(parameters)
+
+    if (not isinstance(result, tuple) or not isinstance(result, list)) and len(result) != 2:
+        raise RuntimeError("model.run() must return t and U (return t, U | return None, U)")
+
+    t, U = result
+
+    if U is None:
+        raise ValueError("U has not been calculated")
+
+    if t is None:
+        t = np.nan
+
+    np.save(os.path.join(args.save_path, ".tmp_U_%d" % args.CPU), U)
+    np.save(os.path.join(args.save_path, ".tmp_t_%d" % args.CPU), t)
+
 
 if __name__ == "__main__":
     main()

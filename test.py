@@ -22,7 +22,6 @@ def create_test_suite(test_classes_to_run):
 
 
 test_distribution = create_test_suite([TestDistribution])
-test_evaluateNodeFunction = create_test_suite([TestEvaluateNodeFunction])
 
 test_spike = create_test_suite([TestSpike])
 test_spikes = create_test_suite([TestSpikes])
@@ -51,10 +50,10 @@ test_model = create_test_suite([TestModel,
                                 TestTestingModel0d,
                                 TestTestingModel1d,
                                 TestTestingModel2d,
-                                TestTestingModel0dNoTime,
-                                TestTestingModel1dNoTime,
-                                TestTestingModel2dNoTime,
-                                TestTestingModelNoU,
+                                # TestTestingModel0dNoTime,
+                                # TestTestingModel1dNoTime,
+                                # TestTestingModel2dNoTime,
+                                # TestTestingModelNoU,
                                 TestNeuronModel])
 test_model.addTest(test_runModel)
 
@@ -84,7 +83,6 @@ test_prerequisites = unittest.TestSuite([test_utils,
                                         test_parameters,
                                         test_distribution,
                                         test_features,
-                                        test_evaluateNodeFunction,
                                         test_model,
                                         test_data])
 
@@ -115,7 +113,6 @@ parser.add_argument("--uncertainpy", help="Uncertainpy tests", action="store_tru
 parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test", action="store_true")
 parser.add_argument("--parameters", help="Parameter tests", action="store_true")
 parser.add_argument("--distribution", help="Distribution tests", action="store_true")
-parser.add_argument("--evaluatenodefunction", help="evaluatenodefunction tests", action="store_true")
 parser.add_argument("--spike", help="Spike tests", action="store_true")
 parser.add_argument("--spikes", help="Spikes tests ", action="store_true")
 parser.add_argument("--spike_sorting", help="Test spike sorting", action="store_true")
@@ -169,10 +166,6 @@ if args.distribution:
     print "-----------------------------------------"
     print "Running testsuite: distribution"
     results["distribution"] = test_runner.run(test_distribution)
-if args.evaluatenodefunction:
-    print "-----------------------------------------"
-    print "Running testsuite: evaluateNodeFunction"
-    results["evaluateNodeFunction"] = test_runner.run(test_evaluateNodeFunction)
 if args.spike_sorting:
     print "-----------------------------------------"
     print "Running testsuite: spike_sorting"

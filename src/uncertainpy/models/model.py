@@ -1,4 +1,3 @@
-import numpy as np
 import os
 import sys
 
@@ -16,7 +15,6 @@ simulation.setParameterValues(parameters -> dictionary)
 
 simulation.run()
 
-simulation.save(current_process -> int)
 simulation.cmd()
 
 
@@ -119,20 +117,20 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         raise NotImplementedError("No run() method implemented")
 
 
-    def save(self, CPU=None, save_path=""):
-        if self.U is None:
-            raise ValueError("U has not been calculated")
-
-        if self.t is None:
-            self.t = np.nan
-
-        if CPU is None:
-            np.save(os.path.join(save_path, ".tmp_U"), self.U)
-            np.save(os.path.join(save_path, ".tmp_t"), self.t)
-
-        else:
-            np.save(os.path.join(save_path, ".tmp_U_%d" % CPU), self.U)
-            np.save(os.path.join(save_path, ".tmp_t_%d" % CPU), self.t)
+    # def save(self, CPU=None, save_path=""):
+    #     if self.U is None:
+    #         raise ValueError("U has not been calculated")
+    #
+    #     if self.t is None:
+    #         self.t = np.nan
+    #
+    #     if CPU is None:
+    #         np.save(os.path.join(save_path, ".tmp_U"), self.U)
+    #         np.save(os.path.join(save_path, ".tmp_t"), self.t)
+    #
+    #     else:
+    #         np.save(os.path.join(save_path, ".tmp_U_%d" % CPU), self.U)
+    #         np.save(os.path.join(save_path, ".tmp_t_%d" % CPU), self.t)
 
 
     def cmd(self):
@@ -147,16 +145,6 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
             filedir = os.path.dirname(os.path.abspath(filename))
 
 
-
-        # cmds = {"executable": sys.executable,
-        #         "run_model_file": original_dir + "/run_model.py",
-        #         "model_name": self.__class__.__name__,
-        #         "filedir": filedir,
-        #         "filename": filename}
-        #
-        # for cmd in self.additional_cmds:
-        #     cmds[cmd] =  getattr(self, cmd)
-        
         cmds = [sys.executable, original_dir + "/run_model.py",
                 "--model_name", self.__class__.__name__,
                 "--file_dir", filedir,

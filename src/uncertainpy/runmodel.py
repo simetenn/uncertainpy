@@ -7,10 +7,11 @@ import os
 import subprocess
 import scipy
 import traceback
-import sys
+
 
 from uncertainpy import Data
 from uncertainpy.features import GeneralFeatures
+from uncertainpy.utils import create_logger
 
 class RunModel:
     def __init__(self,
@@ -18,7 +19,9 @@ class RunModel:
                  features=None,
                  CPUs=mp.cpu_count(),
                  supress_model_output=True,
-                 supress_model_graphics=True):
+                 supress_model_graphics=True,
+                 verbose_level="info",
+                 verbose_filename=None):
 
 
         self.model = model
@@ -36,6 +39,10 @@ class RunModel:
         self.data = Data()
 
         self.set_model(model)
+
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
 
 
     def set_model(self, model):
@@ -193,8 +200,8 @@ Test if solves is an adaptive result
                 parameters[parameter] = node[j]
                 j += 1
 
-            new_process = True
-            if new_process:
+            # new_process = True
+            if self.model.new_process:
                 current_process = mp.current_process().name.split("-")
                 if current_process[0] == "PoolWorker":
                     current_process = str(current_process[-1])
@@ -222,11 +229,11 @@ Test if solves is an adaptive result
                 ut, err = simulation.communicate()
 
                 if not self.supress_model_output and len(ut) != 0:
-                    print ut
+                    self.logger.info(ut)
 
 
                 if simulation.returncode != 0:
-                    print ut
+                    self.logger.error(ut)
                     raise RuntimeError(err)
 
 
@@ -237,8 +244,8 @@ Test if solves is an adaptive result
                 os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
             else:
-                t, U = self.model.run()
-                pass
+                t, U = self.model.run(parameters)
+
 
 
 

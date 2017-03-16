@@ -1,6 +1,7 @@
 from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
-from TestingModel import TestingModel0dNoTime, TestingModel1dNoTime
-from TestingModel import TestingModel2dNoTime, TestingModelNoU, TestingModel1dAdaptive
+from TestingModel import TestingModelNoTime, TestingModelNoTimeU
+from TestingModel import TestingModelAdaptive, TestingModelConstant
+from TestingModel import TestingModelNewProcess
 
 from TestingFeatures import TestingFeatures
 from TestingUncertaintyCalculations import TestingUncertaintyCalculations

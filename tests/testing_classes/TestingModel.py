@@ -15,8 +15,10 @@ class TestingModel0d(Model):
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
-        self.t = 1
-        self.U = self.b
+        t = 1
+        U = self.b
+
+        return t, U
 
 
 class TestingModel1d(Model):
@@ -33,45 +35,10 @@ class TestingModel1d(Model):
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
-        self.t = np.arange(0, 10)
-        self.U = np.arange(0, 10) + self.a + self.b
+        t = np.arange(0, 10)
+        U = np.arange(0, 10) + self.a + self.b
 
-
-class TestingModel1dAdaptive(Model):
-    def __init__(self, parameters=None, adaptive_model=True):
-        Model.__init__(self, parameters=parameters, adaptive_model=adaptive_model)
-
-        self.a = 1
-        self.b = 2
-
-        self.xlabel = "x"
-        self.ylabel = "y"
-
-    def run(self, parameters):
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
-
-        self.t = np.arange(0, 10 + self.a + self.b)
-        self.U = np.arange(0, 10 + self.a + self.b) + self.a + self.b
-
-
-class TestingModel1dConstant(Model):
-    def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
-
-        self.a = 1
-        self.b = 2
-
-        self.xlabel = "x"
-        self.ylabel = "y"
-
-    def run(self, parameters):
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
-
-        self.t = np.arange(0, 10)
-        self.U = np.arange(0, 10)
-
+        return t, U
 
 
 class TestingModel2d(Model):
@@ -88,12 +55,73 @@ class TestingModel2d(Model):
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
-        self.t = np.arange(0, 10)
-        self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
+        t = np.arange(0, 10)
+        U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
+
+        return t, U
+
+
+class TestingModelNewProcess(Model):
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters=parameters, new_process=True)
+
+        self.a = 1
+        self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
+
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
+        t = np.arange(0, 10)
+        U = np.arange(0, 10) + self.a + self.b
+
+        return t, U
+
+class TestingModelAdaptive(Model):
+    def __init__(self, parameters=None, adaptive_model=True):
+        Model.__init__(self, parameters=parameters, adaptive_model=adaptive_model)
+
+        self.a = 1
+        self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
+
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
+        t = np.arange(0, 10 + self.a + self.b)
+        U = np.arange(0, 10 + self.a + self.b) + self.a + self.b
+
+        return t, U
+
+class TestingModelConstant(Model):
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters=parameters)
+
+        self.a = 1
+        self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
+
+
+    def run(self, parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
+        t = np.arange(0, 10)
+        U = np.arange(0, 10)
+
+        return t, U
 
 
 
-class TestingModel0dNoTime(Model):
+class TestingModelNoTime(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
 
@@ -107,44 +135,12 @@ class TestingModel0dNoTime(Model):
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
-        self.U = self.b
+        U = np.arange(0, 10) + self.a + self.b
+
+        return U
 
 
-class TestingModel1dNoTime(Model):
-    def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
-
-        self.a = 1
-        self.b = 2
-
-        self.xlabel = "x"
-        self.ylabel = "y"
-
-    def run(self, parameters):
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
-
-        self.U = np.arange(0, 10) + self.a + self.b
-
-
-class TestingModel2dNoTime(Model):
-    def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
-
-        self.a = 1
-        self.b = 2
-
-        self.xlabel = "x"
-        self.ylabel = "y"
-
-    def run(self, parameters):
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
-
-        self.U = np.array([np.arange(0, 10) + self.a, np.arange(0, 10) + self.b])
-
-
-class TestingModelNoU(Model):
+class TestingModelNoTimeU(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)
 
@@ -156,4 +152,18 @@ class TestingModelNoU(Model):
 
 
     def run(self, parameters):
-        pass
+        return
+
+class TestingModelThree(Model):
+    def __init__(self, parameters=None):
+        Model.__init__(self, parameters=parameters)
+
+        self.a = 1
+        self.b = 2
+
+        self.xlabel = "x"
+        self.ylabel = "y"
+
+
+    def run(self, parameters):
+        return 1, 2, 3

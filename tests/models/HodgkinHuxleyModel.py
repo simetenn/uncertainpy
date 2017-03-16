@@ -129,3 +129,5 @@ class HodgkinHuxleyModel(Model):
 
         self.t = t
         self.U = X[:, 0]
+
+        return self.t, self.U
