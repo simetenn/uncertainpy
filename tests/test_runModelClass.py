@@ -5,7 +5,7 @@ import os
 import shutil
 
 
-from uncertainpy import RunModel, GeneralFeatures
+from uncertainpy import RunModel
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
@@ -46,28 +46,6 @@ class TestRunModelClass(unittest.TestCase):
         self.assertEqual(self.runmodel.data.xlabel, "x")
         self.assertEqual(self.runmodel.data.ylabel, "y")
 
-
-    def test_evaluateNodeFunctionDict(self):
-        nodes = [[0, 1], [1, 2], [2, 3]]
-        self.runmodel.data.uncertain_parameters = ["a", "b"]
-        result = self.runmodel.evaluateNodeFunctionDict(nodes)
-
-        self.assertEqual(len(result), 3)
-        self.assertTrue(result[0]["supress_model_output"])
-        self.assertFalse(result[0]["adaptive_model"])
-        self.assertEqual(result[0]["node"], [0, 1])
-        self.assertEqual(result[1]["node"], [1, 2])
-        self.assertEqual(result[2]["node"], [2, 3])
-        self.assertEqual(result[0]["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(result[0]["features_kwargs"],
-                         {"features_to_run": ["feature0d", "feature1d",
-                                              "feature2d", "featureInvalid"]})
-
-        nodes = [[0, 1], [0, 1], [0, 1]]
-        result = self.runmodel.evaluateNodeFunctionDict(nodes)
-
-        self.assertEqual(result[0], result[1])
-        self.assertEqual(result[1], result[2])
 
 
     def test_evaluateNodesSequentialModel0d(self):

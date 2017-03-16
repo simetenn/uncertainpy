@@ -3,8 +3,12 @@ from xvfbwrapper import Xvfb
 
 import numpy as np
 import multiprocess as mp
+import os
+import subprocess
+import scipy
+import traceback
+import sys
 
-from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy import Data
 from uncertainpy.features import GeneralFeatures
 
@@ -118,20 +122,6 @@ class RunModel:
         self.data.removeOnlyInvalidResults()
 
 
-    def evaluateNodeFunctionDict(self, nodes):
-        data_list = []
-
-        for node in nodes:
-            data_list.append({"model_cmds": self.model.cmd(),
-                              "new_process": self.model.new_process,
-                              "supress_model_output": self.supress_model_output,
-                              "adaptive_model": self.model.adaptive_model,
-                              "node": node,
-                              "uncertain_parameters": self.data.uncertain_parameters,
-                              "features_cmds": self.features.cmd(),
-                              "features_kwargs": self.features.kwargs()})
-        return data_list
-
     def evaluateNodes(self, nodes):
 
         if self.supress_model_graphics:
@@ -141,8 +131,7 @@ class RunModel:
         solves = []
         pool = mp.Pool(processes=self.CPUs)
 
-        for result in tqdm(pool.imap(evaluateNodeFunction,
-                                     self.evaluateNodeFunctionDict(nodes.T)),
+        for result in tqdm(pool.imap(self.evaluateNodeFunction, nodes.T),
                            desc="Running model",
                            total=len(nodes.T)):
 
@@ -187,3 +176,142 @@ Test if solves is an adaptive result
         self.storeResults(solves)
 
         return self.data
+
+
+    def evaluateNodeFunction(self, node):
+
+        # Try-except to catch exeptions and print stack trace
+        try:
+
+            if isinstance(node, float) or isinstance(node, int):
+                node = [node]
+
+            # New setparameters
+            parameters = {}
+            j = 0
+            for parameter in self.data.uncertain_parameters:
+                parameters[parameter] = node[j]
+                j += 1
+
+            new_process = True
+            if new_process:
+                current_process = mp.current_process().name.split("-")
+                if current_process[0] == "PoolWorker":
+                    current_process = str(current_process[-1])
+                else:
+                    current_process = "0"
+
+                filepath = os.path.abspath(__file__)
+                filedir = os.path.dirname(filepath)
+
+                model_cmds = self.model.cmd()
+                model_cmds += ["--CPU", current_process,
+                               "--save_path", filedir,
+                               "--parameters"]
+
+                for parameter in parameters:
+                    model_cmds.append(parameter)
+                    model_cmds.append("{:.16f}".format(parameters[parameter]))
+
+
+
+                simulation = subprocess.Popen(model_cmds,
+                                              stdout=subprocess.PIPE,
+                                              stderr=subprocess.PIPE,
+                                              env=os.environ.copy())
+                ut, err = simulation.communicate()
+
+                if not self.supress_model_output and len(ut) != 0:
+                    print ut
+
+
+                if simulation.returncode != 0:
+                    print ut
+                    raise RuntimeError(err)
+
+
+                U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+                t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
+
+                os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+                os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
+
+            else:
+                t, U = self.model.run()
+                pass
+
+
+
+            # Calculate features from the model results
+            results = {}
+
+            # TODO Should t be stored for all results? Or should none be used for features
+
+            self.features.t = t
+            self.features.U = U
+            feature_results = self.features.calculateFeatures()
+
+            for feature in feature_results:
+                tmp_result = feature_results[feature]
+
+                if tmp_result is None:
+                    results[feature] = (None, np.nan, None)
+
+                # elif adaptive_model:
+                #     if len(U.shape) == 0:
+                #         raise AttributeError("Model returns a single value, unable to perform interpolation")
+                #
+                #     if len(tmp_result.shape) == 0:
+                #         # print "Warning: {} returns a single number, no interpolation performed".format(feature)
+                #         results[feature] = (None, tmp_result, None)
+                #
+                #     elif len(tmp_result.shape) == 1:
+                #         if np.all(np.isnan(t)):
+                #             raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+                #
+                #         interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, tmp_result, k=3)
+                #         results[feature] = (t, tmp_result, interpolation)
+                #
+                #     else:
+                #         raise NotImplementedError("Error: No support yet for >= 2d interpolation")
+
+                else:
+                    if np.all(np.isnan(t)):
+                        results[feature] = (None, tmp_result, None)
+                    else:
+                        results[feature] = (t, tmp_result, None)
+                # results[feature] = (t, tmp_result, None)
+
+
+            # Create interpolation
+            if self.model.adaptive_model:
+                if len(U.shape) == 0:
+                    raise RuntimeWarning("Model returns a single value, unable to perform interpolation")
+
+                elif len(U.shape) == 1:
+                    if np.all(np.isnan(t)):
+                        raise AttributeError("Model does not return any t values. Unable to perform interpolation")
+
+                    interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
+                    results["directComparison"] = (t, U, interpolation)
+
+                else:
+                    raise NotImplementedError("No support yet for >= 2D interpolation")
+
+
+            else:
+                if np.all(np.isnan(t)):
+                    results["directComparison"] = (None, U, None)
+                else:
+                    results["directComparison"] = (t, U, None)
+
+            # All results are saved as {feature: (x, U, interpolation)} as appropriate.
+
+            return results
+
+        except Exception as e:
+            print("Caught exception in evaluateNodeFunction:")
+            print("")
+            traceback.print_exc()
+            print("")
+            raise e
