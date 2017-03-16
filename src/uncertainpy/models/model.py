@@ -156,6 +156,7 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         #
         # for cmd in self.additional_cmds:
         #     cmds[cmd] =  getattr(self, cmd)
+        
         cmds = [sys.executable, original_dir + "/run_model.py",
                 "--model_name", self.__class__.__name__,
                 "--file_dir", filedir,
