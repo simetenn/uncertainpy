@@ -147,6 +147,15 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
             filedir = os.path.dirname(os.path.abspath(filename))
 
 
+
+        # cmds = {"executable": sys.executable,
+        #         "run_model_file": original_dir + "/run_model.py",
+        #         "model_name": self.__class__.__name__,
+        #         "filedir": filedir,
+        #         "filename": filename}
+        #
+        # for cmd in self.additional_cmds:
+        #     cmds[cmd] =  getattr(self, cmd)
         cmds = [sys.executable, original_dir + "/run_model.py",
                 "--model_name", self.__class__.__name__,
                 "--file_dir", filedir,

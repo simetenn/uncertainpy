@@ -2,7 +2,7 @@ from tqdm import tqdm
 from xvfbwrapper import Xvfb
 
 import numpy as np
-import multiprocessing as mp
+import multiprocess as mp
 
 from uncertainpy.evaluateNodeFunction import evaluateNodeFunction
 from uncertainpy import Data

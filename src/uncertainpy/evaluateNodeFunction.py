@@ -6,7 +6,7 @@ import traceback
 
 
 import numpy as np
-import multiprocessing as mp
+import multiprocess as mp
 
 # TODO see if neuron models can be run directly from this class
 
@@ -53,7 +53,8 @@ data = {"model_cmds": model_cmds
 
         new_process = True
         if new_process:
-            print model_cmds
+
+
             current_process = mp.current_process().name.split("-")
             if current_process[0] == "PoolWorker":
                 current_process = str(current_process[-1])
