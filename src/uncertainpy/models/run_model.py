@@ -25,9 +25,11 @@ def main():
     if args.parameters is None:
         args.parameters = []
 
+
     if len(args.parameters) % 2 != 0:
         msg = "Number of parameters does not match number of parametervalues sent to simulation"
         raise ValueError(msg)
+
 
     parameters = {}
     i = 0

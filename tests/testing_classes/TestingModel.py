@@ -51,6 +51,7 @@ class TestingModel2d(Model):
         self.xlabel = "x"
         self.ylabel = "y"
 
+
     def run(self, parameters):
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])

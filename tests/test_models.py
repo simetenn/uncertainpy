@@ -260,8 +260,8 @@ class TestTestingModel2d(unittest.TestCase):
         self.assertEqual(self.model.a, -1)
         self.assertEqual(self.model.b, -2)
 
-        self.assertTrue(np.array_equal(self.model.t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(self.model.U,
+        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(U,
                                        np.array([np.arange(0, 10) -1,
                                                  np.arange(0, 10) -2])))
 

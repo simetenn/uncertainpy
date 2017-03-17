@@ -76,12 +76,8 @@ class GeneralFeatures():
 
         # if not callable(getattr(self, feature_name)):
         #     raise NotImplementedError("%s is not a implemented feature" % (feature_name))
-
-        tmp_result = getattr(self, feature_name)()
-        if tmp_result is None:
-            return None  # np.NaN
-        else:
-            return np.array(tmp_result)
+    
+        return getattr(self, feature_name)()
 
 
 

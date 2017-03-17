@@ -96,7 +96,7 @@ class TestRunModelClass(unittest.TestCase):
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
         results = self.runmodel.evaluateNodes(nodes)
-
+        
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "directComparison", "featureInvalid"]))
