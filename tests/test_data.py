@@ -25,48 +25,32 @@ class TestData(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
+    def test_features_0d(self):
+        self.data.features_0d = ["feature0d"]
 
-    # def test_sortFeatures(self):
-    #     test_result = {"directComparison": (None, np.arange(0, 10), None),
-    #                    "feature2d": (None, np.array([np.arange(0, 10),
-    #                                                  np.arange(0, 10)]), None),
-    #                    "feature1d": (None, np.arange(0, 10), None),
-    #                    "feature0d": (None, 1, None),
-    #                    "featureInvalid": (None, np.nan, None)}
-    #
-    #     features_0d, features_1d, features_2d = self.data.sortFeatures(test_result)
-    #
-    #     self.assertIn("directComparison", features_1d)
-    #     self.assertIn("feature2d", features_2d)
-    #     self.assertIn("feature1d", features_1d)
-    #     self.assertIn("feature0d", features_0d)
-    #     self.assertIn("featureInvalid", features_0d)
+        self.assertEqual(self.data.feature_list, ["feature0d"])
+        self.assertEqual(self.data.features_0d, ["feature0d"])
+
+    def test_features_1d(self):
+        self.data.features_1d = ["feature1d"]
+
+        self.assertEqual(self.data.feature_list, ["feature1d"])
+        self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
+    def test_features_2d(self):
+        self.data.features_2d = ["feature2d"]
+
+        self.assertEqual(self.data.feature_list, ["feature2d"])
+        self.assertEqual(self.data.features_2d, ["feature2d"])
 
 
-    # def test_setFeatures(self):
-    #     test_result = {"directComparison": (None, np.arange(0, 10), None),
-    #                    "feature2d": (None, np.array([np.arange(0, 10),
-    #                                                  np.arange(0, 10)]), None),
-    #                    "feature1d": (None, np.arange(0, 10), None),
-    #                    "feature0d": (None, 1, None),
-    #                    "featureInvalid": (None, np.nan, None)}
-    #
-    #     self.data.setFeatures(test_result)
-    #
-    #     self.assertIn("directComparison", self.data.features_1d)
-    #     self.assertIn("feature2d", self.data.features_2d)
-    #     self.assertIn("feature1d", self.data.features_1d)
-    #     self.assertIn("feature0d", self.data.features_0d)
-    #     self.assertIn("featureInvalid", self.data.features_0d)
-    #
-    #
-    #     self.assertEqual(set(self.data.feature_list), set(["directComparison",
-    #                                                        "feature0d",
-    #                                                        "feature1d",
-    #                                                        "feature2d",
-    #                                                        "featureInvalid"]))
+    def test_update_feature_list(self):
+        self.data._features_1d = ["b"]
+        self.data._features_2d = ["a"]
+
+        self.data._update_feature_list()
+        self.assertEqual(self.data.feature_list, ["a", "b"])
 
 
     def test_isAdaptiveFalse(self):
@@ -167,7 +151,7 @@ class TestData(unittest.TestCase):
 
     def test_removeOnlyInvalidResultsNo(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.U = {"feature1": [1., 2.], "directComparison": [3., np.nan]}
+        self.data.U = {"feature1": [1., 2.], "directComparison": [3., None]}
 
         self.data.feature_list = ["directComparison", "feature1"]
         self.data.features_1d = ["directComparison", "feature1"]
@@ -177,7 +161,7 @@ class TestData(unittest.TestCase):
 
         self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
         self.assertEqual(self.data.U["directComparison"][0], 3.)
-        self.assertTrue(np.isnan(self.data.U["directComparison"][1]))
+        self.assertIsNone(self.data.U["directComparison"][1])
         self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
         self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
 
@@ -190,7 +174,7 @@ class TestData(unittest.TestCase):
 
     def test_removeOnlyInvalidResultsError(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.U = {"feature1": [1., 2.], "directComparison": np.array([np.nan, np.nan])}
+        self.data.U = {"feature1": [1., 2.], "directComparison": np.array([None, None])}
 
 
         self.data.feature_list = ["directComparison", "feature1"]

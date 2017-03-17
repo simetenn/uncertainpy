@@ -87,13 +87,13 @@ class RunModel:
 
 
     def storeResults(self, solves):
-
-        self.data.setFeatures()
         features_0d, features_1d, features_2d = self.sortFeatures(solves[0])
 
+        self.data.features_0d = features_0d
+        self.data.features_1d = features_1d
+        self.data.features_2d = features_2d
 
-
-        if self.isSolvesAdaptive(solves) and not self.model.adaptive_model:
+        if self.is_adaptive(solves) and not self.model.adaptive_model:
             # TODO if the model is adaptive perform the complete interpolation here instead.
             raise ValueError("The number of simulation points varies between simulations."
                              + " Try setting adaptive_model=True in model()")
@@ -101,32 +101,43 @@ class RunModel:
 
 
         for feature in self.data.features_2d:
-            if self.model.adaptive_model and feature == "directComparison":
-                raise NotImplementedError("Support for >= 2d interpolation is not yet implemented")
+            if "interpolation" in solves[0][feature]:
+                raise NotImplementedError("Feature: {feature},".format(feature=feature)
+                                          + " no support for >= 2D interpolation")
 
             else:
-                self.data.t[feature] = solves[0][feature][0]
+                if "t" in solves[0][feature]:
+                    self.data.t[feature] = solves[0][feature]["t"]
+                else:
+                    self.data.t[feature] = solves[0]["directComparison"]["t"]
 
                 self.data.U[feature] = []
                 for solved in solves:
-                    self.data.U[feature].append(solved[feature][1])
+                    self.data.U[feature].append(solved[feature]["U"])
 
-                # self.U[feature] = np.array(self.U[feature])
 
         for feature in self.data.features_1d:
-            if self.model.adaptive_model and feature == "directComparison":
+            if "interpolation" in solves[0][feature]:
                 ts = []
-                interpolation = []
+                interpolations = []
                 for solved in solves:
-                    ts.append(solved[feature][0])
-                    interpolation.append(solved[feature][2])
+                    if "t" in solved[feature]:
+                        ts.append(solved[feature]["t"])
+                    else:
+                        ts.append(solved["directComparison"]["t"])
 
-                self.data.t[feature], self.data.U[feature] = self.performInterpolation(ts, interpolation)
+                    interpolations.append(solved[feature]["interpolation"])
+
+                self.data.t[feature], self.data.U[feature] = self.performInterpolation(ts, interpolations)
             else:
-                self.data.t[feature] = solves[0][feature][0]
+                if "t" in solves[0][feature]:
+                    self.data.t[feature] = solves[0][feature]["t"]
+                else:
+                    self.data.t[feature] = solves[0]["directComparison"]["t"]
+
                 self.data.U[feature] = []
                 for solved in solves:
-                    self.data.U[feature].append(solved[feature][1])
+                    self.data.U[feature].append(solved[feature]["U"])
 
                 # self.data.U[feature] = np.array(self.U[feature])
 
@@ -135,13 +146,14 @@ class RunModel:
             self.data.U[feature] = []
             self.data.t[feature] = None
             for solved in solves:
-                self.data.U[feature].append(solved[feature][1])
+                self.data.U[feature].append(solved[feature]["U"])
 
             # self.U[feature] = np.array(self.U[feature])
 
         # self.t[feature] = np.array(self.t[feature])
         self.data.U[feature] = np.array(self.data.U[feature])
 
+        print self.data
         self.data.removeOnlyInvalidResults()
 
 
@@ -173,14 +185,14 @@ class RunModel:
 
     # TODO should this check one specific feature.
     # Return false for all features?
-    def isSolvesAdaptive(self, solves):
+    def is_adaptive(self, solves):
         """
 Test if solves is an adaptive result
         """
         for feature in self.data.features_1d + self.data.features_2d:
-            u_prev = solves[0][feature][1]
+            u_prev = solves[0][feature]["U"]
             for solve in solves[1:]:
-                u = solve[feature][1]
+                u = solve[feature]["U"]
                 if u_prev.shape != u.shape:
                     return True
                 u_prev = u
@@ -245,30 +257,16 @@ Test if solves is an adaptive result
         return t, U
 
 
-    def calculateFeatures(self, t, U):
-        """
-        Calculate features from the model results
-        """
-        results = {}
-
-        self.features.t = t
-        self.features.U = U
-        feature_results = self.features.calculateFeatures()
-
-        for feature in feature_results:
-            results[feature] = {"U": feature_results[feature]}
-
-        return results
-
 
     def sortFeatures(self, results):
 
         """
-        results = {'directComparison': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                   'feature2d': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]],
-                   'feature1d': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                   'feature0d': 1}
+        result = {'feature1d': {'U': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                  'feature2d': {'U': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
+                  'directComparison': {'U': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
+                                       't': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                  'feature0d': {'U': 1}}
         """
 
         features_2d = []
@@ -294,26 +292,26 @@ Test if solves is an adaptive result
         features_0d, features_1d, features_2d = self.sortFeatures(results)
 
         t = results["directComparison"]["t"]
-        if np.all(np.isnan(t)):
+        if t is None:
             raise AttributeError("Model does not return any t values."
                                  + " Unable to perform interpolation")
 
 
         for feature in features_0d:
-            self.logger.warning("Feature: {feature} is 0D, unable to perform "
-                                + "interpolation".format(feature=feature))
+            self.logger.warning("Feature: {feature} is 0D,".format(feature=feature)
+                                + " unable to perform interpolation")
             continue
 
         for feature in features_1d:
             interpolation = scpi.InterpolatedUnivariateSpline(t,
                                                               results["directComparison"]["U"],
                                                               k=3)
-            results[feature] = {"interpolation": interpolation}
+            results[feature]["interpolation"] = interpolation
 
 
         for feature in features_2d:
-            self.logger.warning("No support for >= 2D interpolation "
-                                + "for feature: {feature}".format(feature=feature))
+            self.logger.warning("Feature: {feature},".format(feature=feature)
+                                + " no support for >= 2D interpolation")
             continue
 
         return results

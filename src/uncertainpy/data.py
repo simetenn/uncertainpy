@@ -7,7 +7,7 @@ from uncertainpy.utils import create_logger
 
 
 
-class Data:
+class Data(object):
     def __init__(self,
                  filename=None,
                  verbose_level="info",
@@ -109,10 +109,44 @@ feature_list
         self.total_sensitivity_1 = {}
         self.sensitivity_t = {}
         self.total_sensitivity_t = {}
-
+        self._temperature = 0
 
         self.xlabel = ""
         self.ylabel = ""
+
+
+    @property
+    def features_0d(self):
+        return self._features_0d
+
+    @features_0d.setter
+    def features_0d(self, new_features_0d):
+        self._features_0d = new_features_0d
+        self._update_feature_list()
+
+    @property
+    def features_1d(self):
+        return self._features_1d
+
+    @features_1d.setter
+    def features_1d(self, new_features_1d):
+        self._features_1d = new_features_1d
+        self._update_feature_list()
+
+    @property
+    def features_2d(self):
+        return self._features_2d
+
+    @features_2d.setter
+    def features_2d(self, new_features_2d):
+        self._features_2d = new_features_2d
+        self._update_feature_list()
+
+
+    def _update_feature_list(self):
+        self.feature_list = self._features_0d + self._features_1d + self._features_2d
+        self.feature_list.sort()
+
 
 
     def isAdaptive(self):
@@ -190,10 +224,11 @@ Test if the model returned an adaptive result
             self.xlabel = f.attrs["xlabel"]
             self.ylabel = f.attrs["ylabel"]
 
-            self.feature_list = f.attrs["features"]
-            self.features_0d = f.attrs["features_0d"]
-            self.features_1d = f.attrs["features_1d"]
-            self.features_2d = f.attrs["features_2d"]
+
+            # self.feature_list = listf.attrs["features"]
+            self.features_0d = list(f.attrs["features_0d"])
+            self.features_1d = list(f.attrs["features_1d"])
+            self.features_2d = list(f.attrs["features_2d"])
 
 
             for feature in f.keys():
@@ -232,39 +267,6 @@ Test if the model returned an adaptive result
                 else:
                     self.t[feature] = None
 
-    @property
-    def features_0d(self):
-        return self._features_0d
-
-    @features_0d.setter
-    def features_0d(self, new_features_0d):
-        self._features_0d = new_features_0d
-        self._update_feature_list()
-
-
-    @property
-    def features_1d(self):
-        return self._features_1d
-
-    @features_1d.setter
-    def features_1d(self, new_features_1d):
-        self._features_1d = new_features_1d
-        self._update_feature_list()
-
-    @property
-    def features_2d(self):
-        return self._features_2d
-
-    @features_2d.setter
-    def features_1d(self, new_features_2d):
-        self._features_2d = new_features_2d
-        self._update_feature_list()
-
-
-
-    def _update_feature_list(self):
-        self.feature_list = self._features_0d + self._features_1d + self._features_2d
-        self.feature_list.sort()
 
 
     # def setFeatures(self, results):
@@ -314,8 +316,15 @@ Test if the model returned an adaptive result
     def removeOnlyInvalidResults(self):
         old_feature_list = self.feature_list[:]
         for feature in old_feature_list:
-            if np.all(np.isnan(self.U[feature])):
-                self.logger.warning("Feature: {} does not yield results for any parameter combinations".format(feature))
+
+            all_none = True
+            for U in self.U[feature]:
+                if U is not None:
+                    all_none = False
+                    
+            if all_none:
+                self.logger.warning("Feature: {} does".format(feature)
+                                    + " not yield results for any parameter combinations")
                 # raise RuntimeWarning("Feature: {} does not yield results for any parameter combinations".format(feature))
 
                 self.U[feature] = "Only invalid results for all set of parameters"

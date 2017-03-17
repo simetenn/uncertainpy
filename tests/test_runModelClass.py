@@ -96,7 +96,7 @@ class TestRunModelClass(unittest.TestCase):
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
         results = self.runmodel.evaluateNodes(nodes)
-        
+
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "directComparison", "featureInvalid"]))
@@ -295,6 +295,7 @@ class TestRunModelClass(unittest.TestCase):
         self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][2],
                                     np.arange(0, 15) + 5))
 
+
         self.assertFeature0d(self.runmodel.data)
         self.assertFeature1d(self.runmodel.data)
         self.assertFeature2d(self.runmodel.data)
@@ -386,61 +387,57 @@ class TestRunModelClass(unittest.TestCase):
         self.assertTrue(np.isnan(data.U["featureInvalid"][2]))
 
 
-    def test_isSolvesAdaptiveFalse(self):
-        test_solves = [{"directComparison": (None, np.arange(0, 10), None),
-                        "feature2d": (None, np.array([np.arange(0, 10),
-                                                      np.arange(0, 10)]), None),
-                        "feature1d": (None, np.arange(0, 10), None),
-                        "feature0d": (None, 1, None),
-                        "featureInvalid": (None, np.nan, None)},
-                       {"directComparison": (None, np.arange(0, 10), None),
-                        "feature2d": (None, np.array([np.arange(0, 10),
-                                                      np.arange(0, 10)]), None),
-                        "feature1d": (None, np.arange(0, 10), None),
-                        "feature0d": (None, 1, None),
-                        "featureInvalid": (None, np.nan, None)},
-                       {"directComparison": (None, np.arange(0, 10), None),
-                        "feature2d": (None, np.array([np.arange(0, 10),
-                                                      np.arange(0, 10)]), None),
-                        "feature1d": (None, np.arange(0, 10), None),
-                        "feature0d": (None, 1, None),
-                        "featureInvalid": (None, np.nan, None)}]
+    def test_is_adaptive_false(self):
+        test_solves = [{"directComparison": {"U": np.arange(0, 10)},
+                        "feature2d": {"U": np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)])},
+                        "feature1d": {"U": np.arange(0, 10)},
+                        "feature0d": {"U": 1},
+                        "featureInvalid": {"U": None}},
+                       {"directComparison": {"U": np.arange(0, 10)},
+                        "feature2d": {"U": np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)])},
+                        "feature1d": {"U": np.arange(0, 10)},
+                        "feature0d": {"U": 1},
+                        "featureInvalid": {"U": None}},
+                       {"directComparison": {"U": np.arange(0, 10)},
+                        "feature2d": {"U": np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)])},
+                        "feature1d": {"U": np.arange(0, 10)},
+                        "feature0d": {"U": 1},
+                        "featureInvalid": {"U": None}}]
 
         self.runmodel.data.features_1d = ["directComparison", "feature1d"]
         self.runmodel.data.features_2d = ["feature2d"]
 
-
-        self.assertFalse(self.runmodel.isSolvesAdaptive(test_solves))
-
+        self.assertFalse(self.runmodel.is_adaptive(test_solves))
 
 
-    def test_isSolvesAdaptiveTrue(self):
 
-
-        test_solves = [{"directComparison": (None, np.arange(0, 10), None),
-                        "feature2d": (None, np.array([np.arange(0, 10),
-                                                      np.arange(0, 10)]), None),
-                        "feature1d": (None, np.arange(0, 10), None),
-                        "feature0d": (None, 1, None),
-                        "featureInvalid": (None, np.nan, None)},
-                       {"directComparison": (None, np.arange(0, 10), None),
-                        "feature2d": (None, np.array([np.arange(0, 10),
-                                                      np.arange(0, 10)]), None),
-                        "feature1d": (None, np.arange(0, 10), None),
-                        "feature0d": (None, 1, None),
-                        "featureInvalid": (None, np.nan, None)},
-                       {"directComparison": (None, np.arange(0, 10), None),
-                        "feature2d": (None, np.array([np.arange(0, 10),
-                                                      np.arange(0, 10)]), None),
-                        "feature1d": (None, np.arange(0, 15), None),
-                        "feature0d": (None, 1, None),
-                        "featureInvalid": (None, np.nan, None)}]
+    def test_is_adaptive_true(self):
+        test_solves = [{"directComparison": {"U": np.arange(0, 10)},
+                        "feature2d": {"U": np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)])},
+                        "feature1d": {"U": np.arange(0, 10)},
+                        "feature0d": {"U": 1},
+                        "featureInvalid": {"U": None}},
+                       {"directComparison": {"U": np.arange(0, 10)},
+                        "feature2d": {"U": np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)])},
+                        "feature1d": {"U": np.arange(0, 10)},
+                        "feature0d": {"U": 1},
+                        "featureInvalid": {"U": None}},
+                       {"directComparison": {"U": np.arange(0, 10)},
+                        "feature2d": {"U": np.array([np.arange(0, 10),
+                                                     np.arange(0, 10)])},
+                        "feature1d": {"U": np.arange(0, 15)},
+                        "feature0d": {"U": 1},
+                        "featureInvalid": {"U": None}}]
 
         self.runmodel.data.features_1d = ["directComparison", "feature1d"]
         self.runmodel.data.features_2d = ["feature2d"]
 
-
-        self.assertTrue(self.runmodel.isSolvesAdaptive(test_solves))
+        self.assertTrue(self.runmodel.is_adaptive(test_solves))
 
 
     def test_performInterpolation(self):
@@ -454,8 +451,8 @@ class TestRunModelClass(unittest.TestCase):
         interpolation = []
 
         for solved in results:
-            ts.append(solved["directComparison"][0])
-            interpolation.append(solved["directComparison"][2])
+            ts.append(solved["directComparison"]["t"])
+            interpolation.append(solved["directComparison"]["interpolation"])
 
         self.assertTrue(np.array_equal(ts[0], ts[1]))
         self.assertTrue(np.array_equal(ts[1], ts[2]))

@@ -218,7 +218,7 @@ def generate_data_data():  # pragma: no cover
     data.xlabel = "xlabel"
     data.ylabel = "ylabel"
 
-    data.features_0d = ["directComparison", "features1"]
+    data.features_0d = ["directComparison", "feature1"]
     data.features_1d = []
     data.features_2d = []
 
