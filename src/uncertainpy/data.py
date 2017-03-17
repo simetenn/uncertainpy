@@ -93,9 +93,9 @@ feature_list
     def resetValues(self):
         self.uncertain_parameters = None
 
-        self.features_0d = []
-        self.features_1d = []
-        self.features_2d = []
+        self._features_0d = []
+        self._features_1d = []
+        self._features_2d = []
         self.feature_list = []
 
 
@@ -232,50 +232,82 @@ Test if the model returned an adaptive result
                 else:
                     self.t[feature] = None
 
+    @property
+    def features_0d(self):
+        return self._features_0d
+
+    @features_0d.setter
+    def features_0d(self, new_features_0d):
+        self._features_0d = new_features_0d
+        self._update_feature_list()
+
+
+    @property
+    def features_1d(self):
+        return self._features_1d
+
+    @features_1d.setter
+    def features_1d(self, new_features_1d):
+        self._features_1d = new_features_1d
+        self._update_feature_list()
+
+    @property
+    def features_2d(self):
+        return self._features_2d
+
+    @features_2d.setter
+    def features_1d(self, new_features_2d):
+        self._features_2d = new_features_2d
+        self._update_feature_list()
 
 
 
-    def setFeatures(self, results):
-        self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
-        self.feature_list = self.features_0d + self.features_1d + self.features_2d
+    def _update_feature_list(self):
+        self.feature_list = self._features_0d + self._features_1d + self._features_2d
         self.feature_list.sort()
 
 
-    def sortFeatures(self, results):
+    # def setFeatures(self, results):
+    #     self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
+    #     self.feature_list = self.features_0d + self.features_1d + self.features_2d
+    #     self.feature_list.sort()
 
-        """
-        results = {'directComparison': (None,
-                                        array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        None),
-                   'feature2d': (None,
-                                 array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                 None),
-                   'feature1d': (None,
-                                 array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                 None),
-                   'feature0d': (None,
-                                 1,
-                                 None)}
-        """
 
-        features_2d = []
-        features_1d = []
-        features_0d = []
-
-        for feature in results:
-            if hasattr(results[feature][1], "__iter__"):
-
-                if len(results[feature][1].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature][1].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    features_2d.append(feature)
-            else:
-                features_0d.append(feature)
-
-        return features_0d, features_1d, features_2d
+    # def sortFeatures(self, results):
+    #
+    #     """
+    #     results = {'directComparison': (None,
+    #                                     array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    #                                     None),
+    #                'feature2d': (None,
+    #                              array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    #                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+    #                              None),
+    #                'feature1d': (None,
+    #                              array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    #                              None),
+    #                'feature0d': (None,
+    #                              1,
+    #                              None)}
+    #     """
+    #
+    #     features_2d = []
+    #     features_1d = []
+    #     features_0d = []
+    #
+    #     for feature in results:
+    #         if hasattr(results[feature][1], "__iter__"):
+    #
+    #             if len(results[feature][1].shape) == 0:
+    #                 features_0d.append(feature)
+    #             elif len(results[feature][1].shape) == 1:
+    #                 features_1d.append(feature)
+    #             else:
+    #                 features_2d.append(feature)
+    #         else:
+    #             features_0d.append(feature)
+    #
+    #     return features_0d, features_1d, features_2d
 
 
 

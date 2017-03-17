@@ -88,13 +88,15 @@ class RunModel:
 
     def storeResults(self, solves):
 
-        self.data.setFeatures(solves[0])
+        self.data.setFeatures()
+        features_0d, features_1d, features_2d = self.sortFeatures(solves[0])
+
 
 
         if self.isSolvesAdaptive(solves) and not self.model.adaptive_model:
             # TODO if the model is adaptive perform the complete interpolation here instead.
-            raise ValueError("The number of simulation points varies between simulations." +
-                             " Try setting adaptive_model=True in model()")
+            raise ValueError("The number of simulation points varies between simulations."
+                             + " Try setting adaptive_model=True in model()")
 
 
 
@@ -293,13 +295,13 @@ Test if solves is an adaptive result
 
         t = results["directComparison"]["t"]
         if np.all(np.isnan(t)):
-            raise AttributeError("Model does not return any t values." +
-                                 " Unable to perform interpolation")
+            raise AttributeError("Model does not return any t values."
+                                 + " Unable to perform interpolation")
 
 
         for feature in features_0d:
-            self.logger.warning("Feature: {feature} is 0D, unable to perform " +
-                                "interpolation".format(feature=feature))
+            self.logger.warning("Feature: {feature} is 0D, unable to perform "
+                                + "interpolation".format(feature=feature))
             continue
 
         for feature in features_1d:
@@ -310,8 +312,8 @@ Test if solves is an adaptive result
 
 
         for feature in features_2d:
-            self.logger.warning("No support for >= 2D interpolation " +
-                                "for feature: {feature}".format(feature=feature))
+            self.logger.warning("No support for >= 2D interpolation "
+                                + "for feature: {feature}".format(feature=feature))
             continue
 
         return results
