@@ -5,47 +5,47 @@ from uncertainpy.features import GeneralNeuronFeatures
 
 class NeuronFeatures(GeneralNeuronFeatures):
     def nrSpikes(self):
-        return self.spikes.nr_spikes
+        return None, self.spikes.nr_spikes
 
 
     def timeBeforeFirstSpike(self):
         if self.spikes.nr_spikes <= 0:
-            return None
+            return None, None
 
-        return self.spikes.spikes[0].t_spike
+        return None, self.spikes.spikes[0].t_spike
 
 
     def spikeRate(self):
         if self.spikes.nr_spikes < 0:
-            return None
+            return None, None
 
-        return self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
+        return None, self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
 
 
     def averageAPOvershoot(self):
         if self.spikes.nr_spikes <= 0:
-            return None
+            return None, None
 
         sum_AP_overshoot = 0
         for spike in self.spikes:
             sum_AP_overshoot += spike.U_spike
-        return sum_AP_overshoot/float(self.spikes.nr_spikes)
+        return None, sum_AP_overshoot/float(self.spikes.nr_spikes)
 
 
     def averageAHPDepth(self):
         if self.spikes.nr_spikes <= 0:
-            return None
+            return None, None
 
         sum_AHP_depth = 0
         for i in xrange(self.spikes.nr_spikes-1):
             sum_AHP_depth += min(self.U[self.spikes[i].global_index:self.spikes[i+1].global_index])
 
-        return sum_AHP_depth/float(self.spikes.nr_spikes)
+        return None, sum_AHP_depth/float(self.spikes.nr_spikes)
 
 
     def averageAPWidth(self):
         if self.spikes.nr_spikes <= 0:
-            return None
+            return None, None
 
         sum_AP_width = 0
         for spike in self.spikes:
@@ -61,13 +61,13 @@ class NeuronFeatures(GeneralNeuronFeatures):
 
             sum_AP_width += abs(root2 - root1)
 
-        return sum_AP_width/float(self.spikes.nr_spikes)
+        return None, sum_AP_width/float(self.spikes.nr_spikes)
 
 
     def accomondationIndex(self):
         N = self.spikes.nr_spikes
         if N <= 1:
-            return None
+            return None, None
 
         k = min(4, int(round(N-1)/5.))
 
@@ -78,4 +78,4 @@ class NeuronFeatures(GeneralNeuronFeatures):
         A = 0
         for i in xrange(k+1, N-1):
             A += (ISIs[i] - ISIs[i-1])/(ISIs[i] + ISIs[i-1])
-        return A/(N - k - 1)
+        return None, A/(N - k - 1)

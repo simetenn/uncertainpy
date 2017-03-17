@@ -3,19 +3,17 @@ from uncertainpy.features import GeneralFeatures
 
 
 class GeneralNeuronFeatures(GeneralFeatures):
-    def __init__(self, features_to_run="all", t=None, U=None, thresh=-30, extended_spikes=False):
+    def __init__(self, features_to_run="all", thresh=-30, extended_spikes=False):
         new_utility_methods = ["calculateSpikes"]
 
         GeneralFeatures.__init__(self,
                                  features_to_run=features_to_run,
-                                 t=t,
-                                 U=U,
                                  new_utility_methods=new_utility_methods)
 
         self.spikes = None
 
-        self.set_properties({"thresh": thresh,
-                             "extended_spikes": extended_spikes})
+        self.thresh = thresh
+        self.extended_spikes = extended_spikes
 
         if self.t is not None and self.U is not None:
             self.calculateSpikes(thresh=thresh, extended_spikes=extended_spikes)
