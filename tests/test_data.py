@@ -26,47 +26,47 @@ class TestData(unittest.TestCase):
 
 
 
-    def test_sortFeatures(self):
-        test_result = {"directComparison": (None, np.arange(0, 10), None),
-                       "feature2d": (None, np.array([np.arange(0, 10),
-                                                     np.arange(0, 10)]), None),
-                       "feature1d": (None, np.arange(0, 10), None),
-                       "feature0d": (None, 1, None),
-                       "featureInvalid": (None, np.nan, None)}
-
-        features_0d, features_1d, features_2d = self.data.sortFeatures(test_result)
-
-        self.assertIn("directComparison", features_1d)
-        self.assertIn("feature2d", features_2d)
-        self.assertIn("feature1d", features_1d)
-        self.assertIn("feature0d", features_0d)
-        self.assertIn("featureInvalid", features_0d)
-
-
+    # def test_sortFeatures(self):
+    #     test_result = {"directComparison": (None, np.arange(0, 10), None),
+    #                    "feature2d": (None, np.array([np.arange(0, 10),
+    #                                                  np.arange(0, 10)]), None),
+    #                    "feature1d": (None, np.arange(0, 10), None),
+    #                    "feature0d": (None, 1, None),
+    #                    "featureInvalid": (None, np.nan, None)}
+    #
+    #     features_0d, features_1d, features_2d = self.data.sortFeatures(test_result)
+    #
+    #     self.assertIn("directComparison", features_1d)
+    #     self.assertIn("feature2d", features_2d)
+    #     self.assertIn("feature1d", features_1d)
+    #     self.assertIn("feature0d", features_0d)
+    #     self.assertIn("featureInvalid", features_0d)
 
 
-    def test_setFeatures(self):
-        test_result = {"directComparison": (None, np.arange(0, 10), None),
-                       "feature2d": (None, np.array([np.arange(0, 10),
-                                                     np.arange(0, 10)]), None),
-                       "feature1d": (None, np.arange(0, 10), None),
-                       "feature0d": (None, 1, None),
-                       "featureInvalid": (None, np.nan, None)}
-
-        self.data.setFeatures(test_result)
-
-        self.assertIn("directComparison", self.data.features_1d)
-        self.assertIn("feature2d", self.data.features_2d)
-        self.assertIn("feature1d", self.data.features_1d)
-        self.assertIn("feature0d", self.data.features_0d)
-        self.assertIn("featureInvalid", self.data.features_0d)
 
 
-        self.assertEqual(set(self.data.feature_list), set(["directComparison",
-                                                           "feature0d",
-                                                           "feature1d",
-                                                           "feature2d",
-                                                           "featureInvalid"]))
+    # def test_setFeatures(self):
+    #     test_result = {"directComparison": (None, np.arange(0, 10), None),
+    #                    "feature2d": (None, np.array([np.arange(0, 10),
+    #                                                  np.arange(0, 10)]), None),
+    #                    "feature1d": (None, np.arange(0, 10), None),
+    #                    "feature0d": (None, 1, None),
+    #                    "featureInvalid": (None, np.nan, None)}
+    #
+    #     self.data.setFeatures(test_result)
+    #
+    #     self.assertIn("directComparison", self.data.features_1d)
+    #     self.assertIn("feature2d", self.data.features_2d)
+    #     self.assertIn("feature1d", self.data.features_1d)
+    #     self.assertIn("feature0d", self.data.features_0d)
+    #     self.assertIn("featureInvalid", self.data.features_0d)
+    #
+    #
+    #     self.assertEqual(set(self.data.feature_list), set(["directComparison",
+    #                                                        "feature0d",
+    #                                                        "feature1d",
+    #                                                        "feature2d",
+    #                                                        "featureInvalid"]))
 
 
     def test_isAdaptiveFalse(self):
@@ -222,9 +222,9 @@ class TestData(unittest.TestCase):
     def test_resetValues(self):
         self.uncertain_parameters = None
 
-        self.data.features_0d = -1
-        self.data.features_1d = -1
-        self.data.features_2d = -1
+        self.data._features_0d = -1
+        self.data._features_1d = -1
+        self.data._features_2d = -1
         self.data.feature_list = -1
 
         self.data.U = -1
