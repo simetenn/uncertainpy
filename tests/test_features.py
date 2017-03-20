@@ -20,29 +20,30 @@ class TestGeneralFeatures(unittest.TestCase):
 
         self.assertIsInstance(features, GeneralFeatures)
 
-    def test_initUt(self):
+    def test_t(self):
         t = np.arange(0, 10)
-        U = np.arange(0, 10) + 1
 
-        features = GeneralFeatures(t=t, U=U)
-
-        self.assertIsInstance(features, GeneralFeatures)
+        features = GeneralFeatures()
+        features.t = t
 
         self.assertTrue(np.array_equal(features.t, np.arange(0, 10)))
+
+
+    def test_U(self):
+        U = np.arange(0, 10) + 1
+
+        features = GeneralFeatures()
+        features.U = U
+
         self.assertTrue(np.array_equal(features.U, np.arange(0, 10) + 1))
 
 
 
     def test_initUtility(self):
-        t = np.arange(0, 10)
-        U = np.arange(0, 10) + 1
-
         new_utility_methods = ["new"]
 
-        features = GeneralFeatures(t=t, U=U, new_utility_methods=new_utility_methods)
+        features = GeneralFeatures(new_utility_methods=new_utility_methods)
 
-        self.assertTrue(np.array_equal(features.t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(features.U, np.arange(0, 10) + 1))
         self.assertIn("new", features.utility_methods)
 
     #
@@ -69,7 +70,7 @@ class TestGeneralFeatures(unittest.TestCase):
 
     def test_calculateFeatureUtilityMethod(self):
         with self.assertRaises(TypeError):
-            self.features.calculateFeature("cmd")
+            self.features.calculateFeature("setup")
 
 
     def test_implementedFeatures(self):
@@ -78,6 +79,8 @@ class TestGeneralFeatures(unittest.TestCase):
 
     def test_calculateAllFeatures(self):
         self.assertEqual(self.features.calculateAllFeatures(), {})
+
+
 
     def test_intitFeatureList(self):
         features = GeneralFeatures(features_to_run=None)
@@ -128,6 +131,19 @@ class TestGeneralNeuronFeatures(unittest.TestCase):
         self.assertEqual(self.features.spikes.nr_spikes, 12)
 
 
+    def test_setup(self):
+        self.features = GeneralNeuronFeatures()
+
+        self.features.t = self.t
+        self.features.U = self.U
+
+        self.features.setup()
+
+        self.features.calculateSpikes()
+
+        self.assertEqual(self.features.spikes.nr_spikes, 12)
+
+
     def test_calculateSpikesTNone(self):
         self.features = GeneralNeuronFeatures()
 
@@ -142,15 +158,6 @@ class TestGeneralNeuronFeatures(unittest.TestCase):
         self.features.t = self.t
         with self.assertRaises(AttributeError):
             self.features.calculateSpikes()
-
-
-    def test_init(self):
-        self.features = GeneralNeuronFeatures()
-
-        self.assertIsInstance(self.features, GeneralNeuronFeatures)
-        self.assertIsNotNone(self.features.spikes)
-        self.assertEqual(self.features.spikes.nr_spikes, 12)
-
 
 
 
@@ -170,6 +177,7 @@ class TestNeuronFeatures(unittest.TestCase):
         self.features = NeuronFeatures()
         self.features.t = self.t
         self.features.U = self.U
+        self.features.setup()
 
 
 
@@ -191,63 +199,63 @@ class TestNeuronFeatures(unittest.TestCase):
 
 
     def test_nrSpikes(self):
-        self.assertEqual(self.features.nrSpikes(), 12)
+        self.assertEqual(self.features.nrSpikes(), (None, 12))
 
 
     def test_timeBeforeFirstSpike(self):
-        self.assertGreater(self.features.timeBeforeFirstSpike(), 10)
+        self.assertGreater(self.features.timeBeforeFirstSpike()[1], 10)
 
 
     def test_timeBeforeFirstSpikeNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertIsNone(self.features.timeBeforeFirstSpike())
+        self.assertEqual(self.features.timeBeforeFirstSpike(), (None, None), (None, None))
 
 
     def test_spikeRate(self):
-        self.assertEqual(self.features.spikeRate(), 0.12)
+        self.assertEqual(self.features.spikeRate(), (None, 0.12))
 
 
     def test_spikeRateNone(self):
         self.features.spikes.nr_spikes = -1
-        self.assertIsNone(self.features.spikeRate())
+        self.assertEqual(self.features.spikeRate(), (None, None))
 
 
     def test_averageAPOvershoot(self):
-        self.assertEqual(self.features.averageAPOvershoot(), 30)
+        self.assertEqual(self.features.averageAPOvershoot(), (None, 30))
 
 
     def test_averageAPOvershootNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertIsNone(self.features.averageAPOvershoot())
+        self.assertEqual(self.features.averageAPOvershoot(), (None, None))
 
 
     # TODO Find correct test, this is a rough bound only
     def test_averageAHPDepth(self):
-        self.assertLess(self.features.averageAHPDepth(), 0)
+        self.assertLess(self.features.averageAHPDepth()[1], 0)
 
 
     def test_averageAHPDepthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertIsNone(self.features.averageAHPDepth())
+        self.assertEqual(self.features.averageAHPDepth(), (None, None))
 
     # TODO Find correct test, this is a rough bound only
     def test_averageAPWidth(self):
-        self.assertLess(self.features.averageAPWidth(), 5)
+        self.assertLess(self.features.averageAPWidth()[1], 5)
 
 
     def test_averageAPWidthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertIsNone(self.features.averageAPWidth())
+        self.assertEqual(self.features.averageAPWidth(), (None, None))
 
 
     # TODO Find correct test, this is a rough bound only
     def test_accomondationIndex(self):
-        self.assertIsNotNone(self.features.accomondationIndex())
+        self.assertIsNotNone(self.features.accomondationIndex()[1])
 
 
     def test_accomondationIndexNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertIsNone(self.features.accomondationIndex())
+        self.assertEqual(self.features.accomondationIndex(), (None, None))
 
 
     def test_calculateAllFeatures(self):
@@ -268,20 +276,20 @@ class TestTestingFeatures(unittest.TestCase):
 
 
     def test_feature0d(self):
-        self.assertEqual(self.features.feature0d(), 1)
+        self.assertEqual(self.features.feature0d(), (None, 1))
 
 
     def test_feature1d(self):
-        self.assertTrue((self.features.feature1d(), np.arange(0, 10)))
+        self.assertTrue((self.features.feature1d(), (np.arange(0, 10), np.arange(0, 10))))
 
 
     def test_feature2d(self):
         self.assertTrue((self.features.feature2d(),
-                         np.array([np.arange(0, 10), np.arange(0, 10)])))
+                         (np.arange(0, 10), np.array([np.arange(0, 10), np.arange(0, 10)]))))
 
 
     def test_featureInvalid(self):
-        self.assertIsNone(self.features.featureInvalid())
+        self.assertEqual(self.features.featureInvalid(), (None, None))
 
 
     def test_calculateAllFeatures(self):

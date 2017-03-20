@@ -5,17 +5,15 @@ import sys
 class GeneralFeatures():
     def __init__(self, features_to_run="all",
                  new_utility_methods=None,
-                 adaptive=None):
+                 adaptive=False):
 
         # self.implemented_features = []
         self.utility_methods = ["calculateFeature",
                                 "calculateFeatures",
                                 "calculateAllFeatures",
                                 "__init__",
-                                "implementedFeatures"]#,
-                                # "cmd",
-                                # "kwargs",
-                                # "set_properties"]
+                                "implementedFeatures",
+                                "setup"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -43,6 +41,10 @@ class GeneralFeatures():
             self.features_to_run = features_to_run
 
         self.additional_kwargs = []
+
+
+    def setup(self):
+        pass
 
 
     # def set_properties(self, kwargs):

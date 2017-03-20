@@ -16,11 +16,12 @@ from uncertainpy.utils import create_logger
 
 
 """
-results = {'directComparison': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-           'feature2d': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]],
-           'feature1d': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-           'feature0d': 1}
+result = {'feature1d': {'U': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          'feature2d': {'U': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
+          'directComparison': {'U': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
+                               't': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          'feature0d': {'U': 1}}
 
 solves = [results1, results2, ..., resultsN]
 """
@@ -362,6 +363,7 @@ Test if solves is an adaptive result
 
             for feature in feature_results:
                 results[feature] = {"U": feature_results[feature]}
+                # if
 
             results["directComparison"] = {"t": t, "U": U}
 
