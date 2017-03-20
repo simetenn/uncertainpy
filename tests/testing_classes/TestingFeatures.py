@@ -16,5 +16,5 @@ class TestingFeatures(GeneralFeatures):
     def featureInvalid(self):
         return None, None
 
-    # def featureAdaptive(self):
-    #     return self.t, self.U
+    def feature_adaptive(self):
+        return self.t, self.U

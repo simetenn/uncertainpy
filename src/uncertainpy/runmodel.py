@@ -82,6 +82,8 @@ class RunModel:
 
         interpolated_solves = np.array(interpolated_solves)
 
+        print t
+        print interpolated_solves
         return t, interpolated_solves
 
 
@@ -116,7 +118,9 @@ class RunModel:
                 for solved in solves:
                     self.data.U[feature].append(solved[feature]["U"])
 
-
+        print ""
+        print solves
+        print ""
         for feature in self.data.features_1d:
             if "interpolation" in solves[0][feature]:
                 ts = []
@@ -144,15 +148,13 @@ class RunModel:
 
 
         for feature in self.data.features_0d:
+            self.data.t[feature] = solved[feature]["t"]
             self.data.U[feature] = []
-            self.data.t[feature] = None
             for solved in solves:
                 self.data.U[feature].append(solved[feature]["U"])
 
             # self.U[feature] = np.array(self.U[feature])
 
-        # self.t[feature] = np.array(self.t[feature])
-        self.data.U[feature] = np.array(self.data.U[feature])
 
         self.data.removeOnlyInvalidResults()
 
@@ -293,7 +295,8 @@ Test if solves is an adaptive result
 
 
         for feature in features_0d:
-            if feature in self.features.adaptive_features:
+            if feature in self.features.adaptive_features or \
+                    (feature == "directComparison" and self.model.adaptive_model):
                 self.logger.warning("Feature: {} is 0D,".format(feature)
                                     + " unable to perform interpolation")
 
@@ -311,7 +314,8 @@ Test if solves is an adaptive result
 
 
         for feature in features_2d:
-            if feature in self.features.adaptive_features:
+            if feature in self.features.adaptive_features or \
+                    (feature == "directComparison" and self.model.adaptive_model):
                 self.logger.warning("Feature: {feature},".format(feature=feature)
                                     + " no support for >= 2D interpolation")
 

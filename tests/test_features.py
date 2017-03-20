@@ -196,7 +196,7 @@ class TestNeuronFeatures(unittest.TestCase):
     def test_adaptive_features_all(self):
         features = NeuronFeatures(adaptive_features="all")
         self.assertEqual(set(features.adaptive_features), set(self.implemented_features))
-        
+
 
     def test_implementedFeatures(self):
         self.assertEqual(set(self.features.implementedFeatures()), set(self.implemented_features))
@@ -273,7 +273,8 @@ class TestTestingFeatures(unittest.TestCase):
         self.features = TestingFeatures()
 
         self.implemented_features = ["feature0d", "feature1d",
-                                     "feature2d", "featureInvalid"]
+                                     "feature2d", "featureInvalid",
+                                     "feature_adaptive"]
 
     def test_init(self):
         self.features = TestingFeatures()
