@@ -4,11 +4,6 @@ from xvfbwrapper import Xvfb
 import numpy as np
 import multiprocess as mp
 
-import os
-import subprocess
-import scipy.interpolate as scpi
-import traceback
-
 
 from uncertainpy import Data
 from uncertainpy.features import GeneralFeatures
@@ -82,8 +77,6 @@ class RunModel:
 
         interpolated_solves = np.array(interpolated_solves)
 
-        print t
-        print interpolated_solves
         return t, interpolated_solves
 
 
@@ -118,9 +111,7 @@ class RunModel:
                 for solved in solves:
                     self.data.U[feature].append(solved[feature]["U"])
 
-        print ""
-        print solves
-        print ""
+
         for feature in self.data.features_1d:
             if "interpolation" in solves[0][feature]:
                 ts = []
@@ -133,7 +124,8 @@ class RunModel:
 
                     interpolations.append(solved[feature]["interpolation"])
 
-                self.data.t[feature], self.data.U[feature] = self.performInterpolation(ts, interpolations)
+                self.data.t[feature], self.data.U[feature] = \
+                    self.performInterpolation(ts, interpolations)
             else:
                 if "t" in solves[0][feature]:
                     self.data.t[feature] = solves[0][feature]["t"]
@@ -148,7 +140,7 @@ class RunModel:
 
 
         for feature in self.data.features_0d:
-            self.data.t[feature] = solved[feature]["t"]
+            self.data.t[feature] = solves[0][feature]["t"]
             self.data.U[feature] = []
             for solved in solves:
                 self.data.U[feature].append(solved[feature]["U"])
@@ -213,175 +205,3 @@ Test if solves is an adaptive result
         self.storeResults(solves)
 
         return self.data
-
-
-    def run_subprocess(self, parameters):
-        current_process = mp.current_process().name.split("-")
-        if current_process[0] == "PoolWorker":
-            current_process = str(current_process[-1])
-        else:
-            current_process = "0"
-
-        filepath = os.path.abspath(__file__)
-        filedir = os.path.dirname(filepath)
-
-        model_cmds = self.model.cmd()
-        model_cmds += ["--CPU", current_process,
-                       "--save_path", filedir,
-                       "--parameters"]
-
-        for parameter in parameters:
-            model_cmds.append(parameter)
-            model_cmds.append("{:.16f}".format(parameters[parameter]))
-
-
-
-        simulation = subprocess.Popen(model_cmds,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
-                                      env=os.environ.copy())
-        ut, err = simulation.communicate()
-
-        if not self.supress_model_output and len(ut) != 0:
-            self.logger.info(ut)
-
-        if simulation.returncode != 0:
-            self.logger.error(ut)
-            raise RuntimeError(err)
-
-
-        U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
-        t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
-
-        os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
-        os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
-
-        return t, U
-
-
-
-    def sortFeatures(self, results):
-
-        """
-        result = {'feature1d': {'U': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                  'feature2d': {'U': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
-                  'directComparison': {'U': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
-                                       't': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                  'feature0d': {'U': 1}}
-        """
-
-        features_2d = []
-        features_1d = []
-        features_0d = []
-
-        for feature in results:
-            if hasattr(results[feature]["U"], "__iter__"):
-                if len(results[feature]["U"].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature]["U"].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    features_2d.append(feature)
-            else:
-                features_0d.append(feature)
-
-        return features_0d, features_1d, features_2d
-
-
-
-    def createInterpolations(self, results):
-        features_0d, features_1d, features_2d = self.sortFeatures(results)
-
-
-        for feature in features_0d:
-            if feature in self.features.adaptive_features or \
-                    (feature == "directComparison" and self.model.adaptive_model):
-                self.logger.warning("Feature: {} is 0D,".format(feature)
-                                    + " unable to perform interpolation")
-
-        for feature in features_1d:
-            if feature in self.features.adaptive_features or \
-                    (feature == "directComparison" and self.model.adaptive_model):
-                if results[feature]["t"] is None:
-                    raise AttributeError("{} does not return any t values.".format(feature)
-                                         + " Unable to perform interpolation")
-
-                interpolation = scpi.InterpolatedUnivariateSpline(results[feature]["t"],
-                                                                  results[feature]["U"],
-                                                                  k=3)
-                results[feature]["interpolation"] = interpolation
-
-
-        for feature in features_2d:
-            if feature in self.features.adaptive_features or \
-                    (feature == "directComparison" and self.model.adaptive_model):
-                self.logger.warning("Feature: {feature},".format(feature=feature)
-                                    + " no support for >= 2D interpolation")
-
-        return results
-
-
-
-    def evaluateNodeFunction(self, node):
-
-        # Try-except to catch exeptions and print stack trace
-        try:
-            if isinstance(node, float) or isinstance(node, int):
-                node = [node]
-
-            # New setparameters
-            parameters = {}
-            j = 0
-            for parameter in self.data.uncertain_parameters:
-                parameters[parameter] = node[j]
-                j += 1
-
-            # new_process = True
-            if self.model.new_process:
-                t, U = self.run_subprocess(parameters)
-
-            else:
-                model_result = self.model.run(parameters)
-
-                if (not isinstance(model_result, tuple) or not isinstance(model_result, list)) and len(model_result) != 2:
-                    raise RuntimeError("model.run() must return t and U (return t, U | return None, U)")
-
-                t, U = model_result
-
-                if U is None:
-                    raise ValueError("U has not been calculated")
-
-                if np.all(np.isnan(t)):
-                    t = None
-
-
-
-
-            results = {}
-            results["directComparison"] = {"t": t, "U": U}
-
-            # Calculate features from the model results
-            self.features.t = t
-            self.features.U = U
-            feature_results = self.features.calculateFeatures()
-
-            for feature in feature_results:
-                feature_t = feature_results[feature]["t"]
-                if feature_t is not None and np.all(np.isnan(feature_t)):
-                    feature_t = None
-
-                results[feature] = {"U": feature_results[feature]["U"],
-                                    "t": feature_t}
-
-            # Create interpolation
-            results = self.createInterpolations(results)
-
-            return results
-
-        except Exception as e:
-            print("Caught exception in evaluateNodeFunction:")
-            print("")
-            traceback.print_exc()
-            print("")
-            raise e

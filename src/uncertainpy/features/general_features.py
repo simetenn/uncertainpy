@@ -1,6 +1,3 @@
-import os
-import sys
-
 
 class GeneralFeatures():
     def __init__(self, features_to_run="all",
@@ -22,13 +19,6 @@ class GeneralFeatures():
         self._U = None
 
         self.utility_methods += new_utility_methods
-
-        # self.filepath = sys.modules[self.__class__.__module__].__file__
-        # self.filedir = os.path.dirname(self.filepath)
-        # self.filename = os.path.basename(self.filepath)
-        #
-        # if self.__class__.__module__ == "__main__":
-        #     self.filedir = os.path.dirname(os.path.abspath(self.filename))
 
 
         if features_to_run == "all":

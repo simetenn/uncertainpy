@@ -8,6 +8,7 @@ FROM continuumio/anaconda
 
 RUN conda install -c undy odespy
 
+RUN conda install -c bioconda multiprocess
 
 
 # Uncertainpy dependencies
