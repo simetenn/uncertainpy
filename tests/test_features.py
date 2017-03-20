@@ -81,7 +81,21 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(features.features_to_run,
                          ["feature1", "feature2"])
 
+        features = GeneralFeatures(features_to_run="all")
+        self.assertEqual(features.features_to_run, [])
 
+
+    def test_intitAdaptiveList(self):
+        features = GeneralFeatures(adaptive_features=None)
+        self.assertEqual(features.adaptive_features, [])
+
+        features = GeneralFeatures(adaptive_features=["feature1", "feature2"])
+        self.assertEqual(features.adaptive_features,
+                         ["feature1", "feature2"])
+
+
+        features = GeneralFeatures(adaptive_features="all")
+        self.assertEqual(features.adaptive_features, [])
 
 
 class TestGeneralNeuronFeatures(unittest.TestCase):
@@ -173,6 +187,16 @@ class TestNeuronFeatures(unittest.TestCase):
         self.assertIsNotNone(self.features.spikes)
         self.assertEqual(self.features.spikes.nr_spikes, 12)
 
+
+    def test_features_to_run_all(self):
+        features = NeuronFeatures(features_to_run="all")
+        self.assertEqual(set(features.features_to_run), set(self.implemented_features))
+
+
+    def test_adaptive_features_all(self):
+        features = NeuronFeatures(adaptive_features="all")
+        self.assertEqual(set(features.adaptive_features), set(self.implemented_features))
+        
 
     def test_implementedFeatures(self):
         self.assertEqual(set(self.features.implementedFeatures()), set(self.implemented_features))

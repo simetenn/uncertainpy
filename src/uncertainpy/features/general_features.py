@@ -5,7 +5,7 @@ import sys
 class GeneralFeatures():
     def __init__(self, features_to_run="all",
                  new_utility_methods=None,
-                 adaptive=False):
+                 adaptive_features=None):
 
         # self.implemented_features = []
         self.utility_methods = ["calculateFeature",
@@ -40,7 +40,16 @@ class GeneralFeatures():
         else:
             self.features_to_run = features_to_run
 
-        self.additional_kwargs = []
+
+        if adaptive_features == "all":
+            self.adaptive_features = self.implementedFeatures()
+        elif adaptive_features is None:
+            self.adaptive_features = []
+        elif isinstance(adaptive_features, str):
+            self.adaptive_features = [adaptive_features]
+        else:
+            self.adaptive_features = adaptive_features
+
 
 
     def setup(self):

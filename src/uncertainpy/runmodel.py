@@ -154,7 +154,6 @@ class RunModel:
         # self.t[feature] = np.array(self.t[feature])
         self.data.U[feature] = np.array(self.data.U[feature])
 
-        print self.data
         self.data.removeOnlyInvalidResults()
 
 
@@ -292,28 +291,28 @@ Test if solves is an adaptive result
     def createInterpolations(self, results):
         features_0d, features_1d, features_2d = self.sortFeatures(results)
 
-        t = results["directComparison"]["t"]
-        if t is None:
-            raise AttributeError("Model does not return any t values."
-                                 + " Unable to perform interpolation")
-
 
         for feature in features_0d:
-            self.logger.warning("Feature: {feature} is 0D,".format(feature=feature)
-                                + " unable to perform interpolation")
-            continue
+            if feature in self.features.adaptive_features:
+                self.logger.warning("Feature: {} is 0D,".format(feature)
+                                    + " unable to perform interpolation")
 
         for feature in features_1d:
-            interpolation = scpi.InterpolatedUnivariateSpline(t,
-                                                              results["directComparison"]["U"],
-                                                              k=3)
-            results[feature]["interpolation"] = interpolation
+            if feature in self.features.adaptive_features:
+                if results[feature]["t"] is None:
+                    raise AttributeError("{} does not return any t values.".format(feature)
+                                         + " Unable to perform interpolation")
+
+                interpolation = scpi.InterpolatedUnivariateSpline(results[feature]["t"],
+                                                                  results[feature]["U"],
+                                                                  k=3)
+                results[feature]["interpolation"] = interpolation
 
 
         for feature in features_2d:
-            self.logger.warning("Feature: {feature},".format(feature=feature)
-                                + " no support for >= 2D interpolation")
-            continue
+            if feature in self.features.adaptive_features:        
+                self.logger.warning("Feature: {feature},".format(feature=feature)
+                                    + " no support for >= 2D interpolation")
 
         return results
 
@@ -364,7 +363,7 @@ Test if solves is an adaptive result
 
             for feature in feature_results:
                 feature_t = feature_results[feature]["t"]
-                if np.all(np.isnan(feature_t)):
+                if feature_t is not None and np.all(np.isnan(feature_t)):
                     feature_t = None
 
                 results[feature] = {"U": feature_results[feature]["U"],

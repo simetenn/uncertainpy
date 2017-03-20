@@ -295,9 +295,17 @@ class TestRunModelClass(unittest.TestCase):
         self.assertTrue(np.allclose(self.runmodel.data.U["directComparison"][2],
                                     np.arange(0, 15) + 5))
 
+    # To take into account that feature 1d is interpolated
+        self.assertIn("feature1d", self.runmodel.data.U.keys())
+        self.assertTrue(np.allclose(self.runmodel.data.U["feature1d"][0],
+                                    np.arange(0, 10)))
+        self.assertTrue(np.allclose(self.runmodel.data.U["feature1d"][1],
+                                    np.arange(0, 10)))
+        self.assertTrue(np.allclose(self.runmodel.data.U["feature1d"][2],
+                                    np.arange(0, 10)))
+
 
         self.assertFeature0d(self.runmodel.data)
-        self.assertFeature1d(self.runmodel.data)
         self.assertFeature2d(self.runmodel.data)
 
 
@@ -356,6 +364,7 @@ class TestRunModelClass(unittest.TestCase):
         self.assertIn("feature1d", data.U.keys())
         # self.assertTrue(np.array_equal(data.t["feature1d"],
         #                                np.arange(0, 10)))
+
         self.assertTrue(np.array_equal(data.U["feature1d"][0],
                                        np.arange(0, 10)))
         self.assertTrue(np.array_equal(data.U["feature1d"][1],
