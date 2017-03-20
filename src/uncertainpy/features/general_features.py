@@ -47,30 +47,6 @@ class GeneralFeatures():
         pass
 
 
-    # def set_properties(self, kwargs):
-    #     self.additional_kwargs = kwargs.keys()
-    #     for cmd in self.additional_kwargs:
-    #         if hasattr(self, cmd):
-    #             raise RuntimeWarning("{} already have attribute {}".format(self.__class__.__name__, cmd))
-    #
-    #         setattr(self, cmd, kwargs[cmd])
-
-
-    # def cmd(self):
-    #     return {"filedir": self.filedir,
-    #             "filename": self.filename,
-    #             "feature_name": self.__class__.__name__}
-    #
-    #
-    #
-    # def kwargs(self):
-    #     kwargs = {"features_to_run": self.features_to_run}
-    #
-    #     for kwarg in self.additional_kwargs:
-    #         kwargs[kwarg] = getattr(self, kwarg)
-    #
-    #     return kwargs
-
     @property
     def t(self):
         return self._t

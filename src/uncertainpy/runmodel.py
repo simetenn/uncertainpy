@@ -353,20 +353,22 @@ Test if solves is an adaptive result
 
 
 
-            # Calculate features from the model results
 
             results = {}
+            results["directComparison"] = {"t": t, "U": U}
 
+            # Calculate features from the model results
             self.features.t = t
             self.features.U = U
             feature_results = self.features.calculateFeatures()
 
             for feature in feature_results:
-                results[feature] = {"U": feature_results[feature]}
-                # if
+                feature_t = feature_results[feature]["t"]
+                if np.all(np.isnan(feature_t)):
+                    feature_t = None
 
-            results["directComparison"] = {"t": t, "U": U}
-
+                results[feature] = {"U": feature_results[feature]["U"],
+                                    "t": feature_t}
 
             # Create interpolation
             if self.model.adaptive_model:
