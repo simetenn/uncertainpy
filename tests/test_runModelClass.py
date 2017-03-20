@@ -459,6 +459,8 @@ class TestRunModelClass(unittest.TestCase):
         ts = []
         interpolation = []
 
+        print results
+
         for solved in results:
             ts.append(solved["directComparison"]["t"])
             interpolation.append(solved["directComparison"]["interpolation"])

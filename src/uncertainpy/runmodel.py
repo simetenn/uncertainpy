@@ -298,7 +298,8 @@ Test if solves is an adaptive result
                                     + " unable to perform interpolation")
 
         for feature in features_1d:
-            if feature in self.features.adaptive_features:
+            if feature in self.features.adaptive_features or \
+                    (feature == "directComparison" and self.model.adaptive_model):
                 if results[feature]["t"] is None:
                     raise AttributeError("{} does not return any t values.".format(feature)
                                          + " Unable to perform interpolation")
@@ -310,7 +311,7 @@ Test if solves is an adaptive result
 
 
         for feature in features_2d:
-            if feature in self.features.adaptive_features:        
+            if feature in self.features.adaptive_features:
                 self.logger.warning("Feature: {feature},".format(feature=feature)
                                     + " no support for >= 2D interpolation")
 
@@ -370,8 +371,7 @@ Test if solves is an adaptive result
                                     "t": feature_t}
 
             # Create interpolation
-            if self.model.adaptive_model:
-                results = self.createInterpolations(results)
+            results = self.createInterpolations(results)
 
             return results
 
