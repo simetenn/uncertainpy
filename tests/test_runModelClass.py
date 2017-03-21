@@ -43,14 +43,30 @@ class TestRunModelClass(unittest.TestCase):
         RunModel(TestingModel1d())
 
 
+    def test_feature(self):
+        self.runmodel.features = 1
+        self.assertEqual(self.runmodel._features, 1)
+        self.assertEqual(self.runmodel.parallel.features, 1)
+
     def test_set_model(self):
         self.runmodel = RunModel(None)
-        self.runmodel.set_model(TestingModel1d())
+        self.runmodel.model = TestingModel1d()
+
+        self.assertIsInstance(self.runmodel._model, TestingModel1d)
+        self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
 
         self.assertEqual(self.runmodel.data.xlabel, "x")
         self.assertEqual(self.runmodel.data.ylabel, "y")
 
 
+
+    def test_create_model_parameters(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        uncertain_parameters = ["a", "b"]
+
+        result = self.runmodel.create_model_parameters(nodes, uncertain_parameters)
+
+        self.assertEqual(result, [{"a": 0, "b": 1}, {"a": 1, "b": 2}, {"a": 2, "b": 3}])
 
     def test_evaluateNodesSequentialModel0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -219,7 +235,6 @@ class TestRunModelClass(unittest.TestCase):
 
 
         self.runmodel.data.uncertain_parameters = ["a", "b"]
-
 
         results = self.runmodel.evaluateNodes(nodes)
 

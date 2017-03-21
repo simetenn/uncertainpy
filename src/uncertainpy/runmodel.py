@@ -5,10 +5,10 @@ import numpy as np
 import multiprocess as mp
 
 
-from uncertainpy import Data
+from data import Data
 from uncertainpy.features import GeneralFeatures
 from uncertainpy.utils import create_logger
-
+from parallel import Parallel
 
 """
 result = {'feature1d': {'U': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
@@ -22,7 +22,7 @@ solves = [results1, results2, ..., resultsN]
 """
 
 
-class RunModel:
+class RunModel(object):
     def __init__(self,
                  model,
                  features=None,
@@ -32,35 +32,55 @@ class RunModel:
                  verbose_level="info",
                  verbose_filename=None):
 
+        self._model = None
+        self._features = None
 
-        self.model = model
+
+        self.data = Data()
+        self.parallel = Parallel(model=model, features=features)
 
         if features is None:
             self.features = GeneralFeatures(features_to_run=None)
         else:
             self.features = features
 
+        self.model = model
+
         self.CPUs = CPUs
 
         self.supress_model_graphics = supress_model_graphics
         self.supress_model_output = supress_model_output
 
-        self.data = Data()
 
-        self.set_model(model)
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
 
 
-    def set_model(self, model):
+    @property
+    def features(self):
+        return self._features
 
-        self.model = model
+    @features.setter
+    def features(self, new_features):
+        self._features = new_features
+        self.parallel.features = new_features
 
-        if model is not None:
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, new_model):
+        self._model = new_model
+        self.parallel.model = new_model
+
+        if new_model is not None:
             self.data.xlabel = self.model.xlabel
             self.data.ylabel = self.model.ylabel
+
 
 
     def performInterpolation(self, ts, interpolation):
@@ -83,7 +103,7 @@ class RunModel:
 
 
     def storeResults(self, solves):
-        features_0d, features_1d, features_2d = self.sortFeatures(solves[0])
+        features_0d, features_1d, features_2d = self.parallel.sortFeatures(solves[0])
 
         self.data.features_0d = features_0d
         self.data.features_1d = features_1d
@@ -151,6 +171,25 @@ class RunModel:
         self.data.removeOnlyInvalidResults()
 
 
+
+
+    def create_model_parameters(self, nodes, uncertain_parameters):
+
+        model_parameters = []
+        for node in nodes.T:
+            if isinstance(node, float) or isinstance(node, int):
+                node = [node]
+
+            # New setparameters
+            parameters = {}
+            for j, parameter in enumerate(uncertain_parameters):
+                parameters[parameter] = node[j]
+
+            model_parameters.append(parameters)
+
+        return model_parameters
+
+
     def evaluateNodes(self, nodes):
 
         if self.supress_model_graphics:
@@ -160,13 +199,13 @@ class RunModel:
         solves = []
         pool = mp.Pool(processes=self.CPUs)
 
-        for result in tqdm(pool.imap(self.evaluateNodeFunction, nodes.T),
+        model_parameters = self.create_model_parameters(nodes, self.data.uncertain_parameters)
+        for result in tqdm(pool.imap(self.parallel.run, model_parameters),
                            desc="Running model",
                            total=len(nodes.T)):
 
 
             solves.append(result)
-
 
         pool.close()
 

@@ -58,12 +58,12 @@ class UncertaintyCalculations:
         if seed is not None:
             np.random.seed(seed)
 
-
+    # TODO update this to use a property
     def set_model(self, model):
         self.model = model
-        self.runmodel.set_model(model)
+        self.runmodel.model = model
 
-
+    # TODO update this to use a property
     def set_features(self, features):
         self.features = features
         self.runmodel.features = features
@@ -326,7 +326,6 @@ class UncertaintyCalculations:
 
 
     def CustomUQ(self, uncertain_parameters=None, **kwargs):
-        print "called"
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 
