@@ -306,7 +306,7 @@ class TestTestingFeatures(unittest.TestCase):
     def test_feature_no_time(self):
         features = TestingFeatures(features_to_run="feature_no_time")
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             features.calculateFeatures()
 
 

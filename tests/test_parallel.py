@@ -195,7 +195,7 @@ class TestParallel(unittest.TestCase):
 
     def test_run_model_no_time(self):
         parallel = Parallel(model=TestingModelNoTime())
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             parallel.run(self.model_parameters)
 
 
@@ -203,5 +203,5 @@ class TestParallel(unittest.TestCase):
         parallel = Parallel(model=TestingModel1d(),
                             features=TestingFeatures(features_to_run="feature_no_time"))
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             parallel.run(self.model_parameters)

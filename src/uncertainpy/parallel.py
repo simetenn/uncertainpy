@@ -186,10 +186,11 @@ class Parallel:
             else:
                 model_result = self.model.run(model_parameters)
 
-                if (not isinstance(model_result, tuple) or not isinstance(model_result, list)) and len(model_result) != 2:
-                    raise RuntimeError("model.run() must return t and U (return t, U | return None, U)")
+                try:
+                    t, U = model_result
+                except ValueError:
+                    raise ValueError("model.run() must return t and U (return t, U | return None, U)")
 
-                t, U = model_result
 
                 if U is None:
                     raise ValueError("U has not been calculated")
