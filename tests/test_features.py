@@ -263,7 +263,8 @@ class TestNeuronFeatures(unittest.TestCase):
 
 
     def test_calculateAllFeatures(self):
-        self.assertEqual(set(self.features.calculateAllFeatures().keys()),
+        result = self.features.calculateAllFeatures()
+        self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 
 
