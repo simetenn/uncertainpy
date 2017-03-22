@@ -71,8 +71,10 @@ class GeneralFeatures():
             feature_result = self.calculateFeature(feature)
             try:
                 t, U = feature_result
+            # TODO is this bad?
             except ValueError:
-                raise ValueError("Feature must return both t and U (return t, U | return None, U)")
+                raise ValueError("Feature: {feature} must".format(feature=feature)
+                                 + " return both t and U (return t, U | return None, U)")
 
             results[feature] = {"t": t, "U": U}
 
@@ -85,8 +87,10 @@ class GeneralFeatures():
             feature_result = self.calculateFeature(feature)
             try:
                 t, U = feature_result
+            # TODO is this bad?
             except ValueError:
-                raise ValueError("Feature must return both t and U (return t, U | return None, U)")
+                raise ValueError("Feature: {feature} must".format(feature=feature)
+                                 + " return both t and U (return t, U | return None, U)")
 
             results[feature] = {"t": t, "U": U}
 
