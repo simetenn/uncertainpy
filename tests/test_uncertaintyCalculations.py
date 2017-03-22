@@ -389,8 +389,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 features=features,
-                                                                verbose_level="debug",
-                                                                supress_model_output=False)
+                                                                verbose_level="debug")
 
         with self.assertRaises(ValueError):
             self.uncertainty_calculations.PCERegression()

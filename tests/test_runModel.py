@@ -185,7 +185,7 @@ class TestRunModel(unittest.TestCase):
             cmd.append(parameter)
             cmd.append("{:.16f}".format(tmp_parameters[parameter]))
 
-    
+
         simulation = subprocess.Popen(cmd[:-1],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE,
