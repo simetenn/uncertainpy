@@ -6,19 +6,28 @@ import multiprocess as mp
 
 
 from data import Data
-from uncertainpy.features import GeneralFeatures
-from uncertainpy.utils import create_logger
+from features import GeneralFeatures
+from utils import create_logger
 from parallel import Parallel
 
-"""
-result = {'feature1d': {'U': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          'feature2d': {'U': array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
-          'directComparison': {'U': array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
-                               't': array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          'feature0d': {'U': 1}}
 
-solves = [results1, results2, ..., resultsN]
+"""
+result = {"directComparison": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature0d": {"U": 1,
+                        "t": None},
+          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
+          "featureInvalid": {"U": None,
+                             "t": None}}
+
+solves = [results 1, results 2, ..., results N]
 """
 
 
@@ -27,7 +36,6 @@ class RunModel(object):
                  model,
                  features=None,
                  CPUs=mp.cpu_count(),
-                 supress_model_output=True,
                  supress_model_graphics=True,
                  verbose_level="info",
                  verbose_filename=None):
@@ -35,9 +43,8 @@ class RunModel(object):
         self._model = None
         self._features = None
 
-
         self.data = Data()
-        self.parallel = Parallel(model=model, features=features)
+        self.parallel = Parallel(model)
 
         if features is None:
             self.features = GeneralFeatures(features_to_run=None)
@@ -46,10 +53,13 @@ class RunModel(object):
 
         self.model = model
 
+
+
+
+
         self.CPUs = CPUs
 
         self.supress_model_graphics = supress_model_graphics
-        self.supress_model_output = supress_model_output
 
 
 
@@ -203,7 +213,6 @@ class RunModel(object):
         for result in tqdm(pool.imap(self.parallel.run, model_parameters),
                            desc="Running model",
                            total=len(nodes.T)):
-
 
             solves.append(result)
 

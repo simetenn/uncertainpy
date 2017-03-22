@@ -270,11 +270,12 @@ class TestNeuronFeatures(unittest.TestCase):
 
 class TestTestingFeatures(unittest.TestCase):
     def setUp(self):
-        self.features = TestingFeatures()
 
         self.implemented_features = ["feature0d", "feature1d",
                                      "feature2d", "featureInvalid",
                                      "feature_adaptive"]
+
+        self.features = TestingFeatures(features_to_run=self.implemented_features)
 
     def test_init(self):
         self.features = TestingFeatures()
@@ -297,9 +298,17 @@ class TestTestingFeatures(unittest.TestCase):
         self.assertEqual(self.features.featureInvalid(), (None, None))
 
 
-    def test_calculateAllFeatures(self):
-        self.assertEqual(set(self.features.calculateAllFeatures().keys()),
+    def test_calculate_features(self):
+        self.assertEqual(set(self.features.calculateFeatures().keys()),
                          set(self.implemented_features))
+
+
+    def test_feature_no_time(self):
+        features = TestingFeatures(features_to_run="feature_no_time")
+
+        with self.assertRaises(RuntimeError):
+            features.calculateFeatures()
+
 
     def test_intitFeatureList(self):
         features = TestingFeatures(features_to_run=None)
@@ -310,7 +319,7 @@ class TestTestingFeatures(unittest.TestCase):
                          ["feature1d", "feature2d"])
 
         features = TestingFeatures(features_to_run="all")
-        self.assertEqual(features.features_to_run, self.implemented_features)
+        self.assertEqual(features.features_to_run, self.implemented_features + ["feature_no_time"])
 
     # def test_kwargs(self):
     #     self.assertEqual(self.features.kwargs(), {"features_to_run": self.implemented_features})

@@ -34,7 +34,7 @@ def main():
     parameters = {}
     i = 0
     while i < len(args.parameters):
-        parameters[args.parameters[i]] = float(args.parameters[i+1])
+        parameters[args.parameters[i]] = float(args.parameters[i + 1])
         i += 2
 
 

@@ -12,7 +12,6 @@ class UncertaintyCalculations:
                  model=None,
                  features=None,
                  CPUs=mp.cpu_count(),
-                 supress_model_output=True,
                  supress_model_graphics=True,
                  M=3,
                  nr_pc_samples=None,
@@ -44,7 +43,6 @@ class UncertaintyCalculations:
         self.runmodel = RunModel(self.model,
                                  features=self.features,
                                  CPUs=CPUs,
-                                 supress_model_output=supress_model_output,
                                  supress_model_graphics=supress_model_graphics)
 
         self.logger = create_logger(verbose_level,

@@ -7,7 +7,6 @@ matplotlib.use('Agg')
 
 from tests import *
 
-
 def create_test_suite(test_classes_to_run):
     loader = unittest.TestLoader()
 
@@ -41,7 +40,7 @@ test_logger = create_test_suite([TestLogger])
 test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
 
 
-test_runModel = create_test_suite([TestRunModel, TestRunModelClass])
+test_runModel = create_test_suite([TestRunModel, TestRunModelClass, TestParallel])
 
 test_model = create_test_suite([TestModel,
                                 TestHodgkinHuxleyModel,

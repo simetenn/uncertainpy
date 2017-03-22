@@ -4,6 +4,11 @@ import numpy as np
 
 
 class TestingFeatures(GeneralFeatures):
+    def __init__(self, features_to_run="all",
+                 adaptive_features=["feature_adaptive"]):
+        GeneralFeatures.__init__(self,
+                                 features_to_run=features_to_run,
+                                 adaptive_features=adaptive_features)
     def feature0d(self):
         return None, 1
 
@@ -18,3 +23,6 @@ class TestingFeatures(GeneralFeatures):
 
     def feature_adaptive(self):
         return self.t, self.U
+
+    def feature_no_time(self):
+        return np.arange(0, 10)

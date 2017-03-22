@@ -2,6 +2,7 @@ __all__ = ["TestDistribution",
            "TestExploration",
            "TestGeneralFeatures",
            "TestRunModelClass",
+           "TestParallel",
            "TestGeneralNeuronFeatures",
            "TestNeuronFeatures",
            "TestTestingFeatures",
@@ -50,3 +51,4 @@ from test_usecase import TestUseCases
 from test_data import TestData
 from test_runModelClass import TestRunModelClass
 from test_uncertaintyCalculations import TestUncertaintyCalculations
+from test_parallel import TestParallel

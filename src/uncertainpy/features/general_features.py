@@ -68,8 +68,12 @@ class GeneralFeatures():
     def calculateFeatures(self):
         results = {}
         for feature in self.features_to_run:
-            t, U = self.calculateFeature(feature)
-            results[feature] = {"t": t, "U": U}
+            feature_result = self.calculateFeature(feature)
+            if (not isinstance(feature_result, tuple) or not isinstance(feature_result, list)) and len(feature_result) != 2:
+                raise RuntimeError("feature must return both t and U (return t, U | return None, U)")
+
+            results[feature] = {"t": feature_result[0],
+                                "U": feature_result[1]}
 
         return results
 
@@ -77,8 +81,12 @@ class GeneralFeatures():
     def calculateAllFeatures(self):
         results = {}
         for feature in self.implementedFeatures():
-            t, U = self.calculateFeature(feature)
-            results[feature] = {"t": t, "U": U}
+            feature_result = self.calculateFeature(feature)
+            if (not isinstance(feature_result, tuple) or not isinstance(feature_result, list)) and len(feature_result) != 2:
+                raise RuntimeError("feature must return both t and U (return t, U | return None, U)")
+
+            results[feature] = {"t": feature_result[0],
+                                "U": feature_result[1]}
 
         return results
 

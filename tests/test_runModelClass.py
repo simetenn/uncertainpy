@@ -19,17 +19,18 @@ from testing_classes import TestingModelNewProcess
 class TestRunModelClass(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
-        self.seed = 10
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-
-
+        self.features = TestingFeatures(features_to_run=["feature0d",
+                                                         "feature1d",
+                                                         "feature2d",
+                                                         "featureInvalid",
+                                                         "feature_adaptive"])
         self.runmodel = RunModel(TestingModel1d(),
-                                 features=TestingFeatures(),
-                                 supress_model_output=True,
+                                 features=self.features,
                                  supress_model_graphics=True)
 
 
@@ -70,7 +71,15 @@ class TestRunModelClass(unittest.TestCase):
 
     def test_evaluateNodesSequentialModel0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel = RunModel(TestingModel0d(), features=TestingFeatures(), CPUs=1)
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "featureInvalid"])
+
+        self.runmodel = RunModel(TestingModel0d(),
+                                 features=features,
+                                 CPUs=1)
 
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
@@ -79,19 +88,29 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid", "feature_adaptive"]))
+                              "directComparison", "featureInvalid"]))
 
 
     def test_evaluateNodesParallelModel0D(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel = RunModel(TestingModel0d(), features=TestingFeatures(), CPUs=3)
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "featureInvalid"])
+
+        self.runmodel = RunModel(TestingModel0d(),
+                                 features=features,
+                                 CPUs=3)
         self.runmodel.data.uncertain_parameters = ["a", "b"]
+
+
 
         results = self.runmodel.evaluateNodes(nodes)
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid", "feature_adaptive"]))
+                              "directComparison", "featureInvalid"]))
 
 
     def test_evaluateNodesSequentialModel1d(self):
@@ -119,7 +138,15 @@ class TestRunModelClass(unittest.TestCase):
 
     def test_evaluateNodesSequentialModel2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel = RunModel(TestingModel2d(), features=TestingFeatures(), CPUs=1)
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "featureInvalid"])
+
+        self.runmodel = RunModel(TestingModel2d(),
+                                 features=features,
+                                 CPUs=1)
 
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
@@ -127,12 +154,20 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid", "feature_adaptive"]))
+                              "directComparison", "featureInvalid"]))
 
 
     def test_evaluateNodesParallelModel2D(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel = RunModel(TestingModel2d(), features=TestingFeatures(), CPUs=3)
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "featureInvalid"])
+
+        self.runmodel = RunModel(TestingModel2d(),
+                                 features=features,
+                                 CPUs=3)
 
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
@@ -140,22 +175,7 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "directComparison", "featureInvalid", "feature_adaptive"]))
-
-
-    def test_evaluateNodesNotSupressOutput(self):
-        nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel.data.uncertain_parameters = ["a", "b"]
-        self.runmodel.supress_model_output = False
-        self.runmodel.evaluateNodes(nodes)
-
-
-    def test_evaluateNodesSupressOutput(self):
-        nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel.data.uncertain_parameters = ["a", "b"]
-        self.runmodel.supress_model_output = True
-        self.runmodel.evaluateNodes(nodes)
-
+                              "directComparison", "featureInvalid"]))
 
     def test_evaluateNodesNotSupressGraphics(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -182,7 +202,6 @@ class TestRunModelClass(unittest.TestCase):
 
         self.runmodel = RunModel(TestingModel1d(),
                                  features=features,
-                                 supress_model_output=True,
                                  supress_model_graphics=True)
 
 
@@ -230,7 +249,6 @@ class TestRunModelClass(unittest.TestCase):
 
         self.runmodel = RunModel(TestingModel1d(),
                                  features=features,
-                                 supress_model_output=True,
                                  supress_model_graphics=True)
 
 
@@ -279,7 +297,6 @@ class TestRunModelClass(unittest.TestCase):
 
         self.runmodel = RunModel(TestingModelAdaptive(adaptive_model=True),
                                  features=features,
-                                 supress_model_output=True,
                                  supress_model_graphics=True)
 
 
