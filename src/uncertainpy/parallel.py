@@ -188,9 +188,12 @@ class Parallel:
 
                 try:
                     t, U = model_result
-                except ValueError:
-                    raise ValueError("model.run() must return t and U (return t, U | return None, U)")
-
+                except ValueError as error:
+                    msg = "model.run() must return t and U (return t, U | return None, U)"
+                    if not error.args:
+                        error.args = ("",)
+                    error.args = error.args + (msg,)
+                    raise
 
                 if U is None:
                     raise ValueError("U has not been calculated")
