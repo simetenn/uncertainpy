@@ -115,6 +115,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
+        print self.uncertainty_calculations.data
         masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "directComparison")
 
         self.assertEqual(len(masked_U), 3)
