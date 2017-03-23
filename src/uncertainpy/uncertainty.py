@@ -31,7 +31,6 @@ class UncertaintyEstimation(object):
         self._model = None
         self._features = None
 
-
         self.save_figures = save_figures
         self.save_data = save_data
         self.output_dir_data = output_dir_data
@@ -75,6 +74,7 @@ class UncertaintyEstimation(object):
     def features(self):
         return self._features
 
+
     @features.setter
     def features(self, new_features):
         self._features = new_features
@@ -85,14 +85,17 @@ class UncertaintyEstimation(object):
     def model(self):
         return self._model
 
+
     @model.setter
     def model(self, new_model):
         self._model = new_model
         self.uncertainty_calculations.model = new_model
 
+
     @property
     def uncertainty_calculations(self):
         return self._uncertainty_calculations
+
 
     @uncertainty_calculations.setter
     def uncertainty_calculations(self, new_uncertainty_calculations):

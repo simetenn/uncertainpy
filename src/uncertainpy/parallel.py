@@ -208,6 +208,7 @@ class Parallel:
             # Calculate features from the model results
             self.features.t = t
             self.features.U = U
+            self.features.setup()
             feature_results = self.features.calculateFeatures()
 
 
@@ -219,10 +220,11 @@ class Parallel:
                 results[feature] = {"U": feature_results[feature]["U"],
                                     "t": feature_t}
 
-            # Create interpolation
+            # Create interpolations
             results = self.createInterpolations(results)
 
             return results
+
 
         except Exception as e:
             print("Caught exception in parallel run of model:")

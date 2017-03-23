@@ -18,6 +18,8 @@ class NeuronModel(Model):
         self.set_properties({"model_file": model_file,
                              "model_path": model_path})
 
+        self.new_process = False
+
 
 
     def load(self):

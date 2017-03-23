@@ -4,16 +4,14 @@ import scipy.interpolate
 import os
 import shutil
 
-
+from xvfbwrapper import Xvfb
 from uncertainpy import Parallel
+from uncertainpy.models import NeuronModel
 
 from testing_classes import TestingFeatures
-from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModelNoTime, TestingModelNoTimeU
-from testing_classes import TestingModelAdaptive, TestingModelConstant
-from testing_classes import TestingModelNewProcess
-
-
+from testing_classes import TestingModel1d
+from testing_classes import TestingModelNoTime
+from testing_classes import TestingModelAdaptive
 
 
 class TestParallel(unittest.TestCase):
@@ -179,6 +177,7 @@ class TestParallel(unittest.TestCase):
     def test_run(self):
         results = self.parallel.run(self.model_parameters)
 
+        self.assertTrue(self.parallel.features.is_setup_run)
 
         self.assertTrue(np.array_equal(results["directComparison"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["directComparison"]["U"], np.arange(0, 10) + 1))
@@ -225,3 +224,16 @@ class TestParallel(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             parallel.run(self.model_parameters)
+
+
+    def test_run_neuron_model(self):
+        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models/dLGN_modelDB/")
+        model = NeuronModel(model_path=model_path,
+                            adaptive_model=True)
+
+        parallel = Parallel(model=model)
+        model_parameters = {"cap": 1.1, "Rm": 22000}
+
+
+        with Xvfb() as xvfb:
+            results = parallel.run(model_parameters)

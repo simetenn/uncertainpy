@@ -53,12 +53,7 @@ class RunModel(object):
 
         self.model = model
 
-
-
-
-
         self.CPUs = CPUs
-
         self.supress_model_graphics = supress_model_graphics
 
 
@@ -84,6 +79,9 @@ class RunModel(object):
 
     @model.setter
     def model(self, new_model):
+        if callable(new_model):
+            print "new_model is callable"
+
         self._model = new_model
         self.parallel.model = new_model
 

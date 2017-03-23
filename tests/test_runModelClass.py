@@ -6,12 +6,11 @@ import shutil
 
 
 from uncertainpy import RunModel
+from uncertainpy.models import NeuronModel
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModelNoTime, TestingModelNoTimeU
-from testing_classes import TestingModelAdaptive, TestingModelConstant
-from testing_classes import TestingModelNewProcess
+from testing_classes import TestingModelAdaptive
 
 
 
@@ -49,6 +48,7 @@ class TestRunModelClass(unittest.TestCase):
         self.assertEqual(self.runmodel._features, 1)
         self.assertEqual(self.runmodel.parallel.features, 1)
 
+
     def test_set_model(self):
         self.runmodel = RunModel(None)
         self.runmodel.model = TestingModel1d()
@@ -58,6 +58,18 @@ class TestRunModelClass(unittest.TestCase):
 
         self.assertEqual(self.runmodel.data.xlabel, "x")
         self.assertEqual(self.runmodel.data.ylabel, "y")
+
+
+    def test_set_model_function(self):
+        self.runmodel = RunModel(None)
+        self.runmodel.model = TestingModel1d()
+
+        self.assertIsInstance(self.runmodel._model, TestingModel1d)
+        self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
+
+        self.assertEqual(self.runmodel.data.xlabel, "x")
+        self.assertEqual(self.runmodel.data.ylabel, "y")
+
 
 
 
@@ -599,3 +611,15 @@ class TestRunModelClass(unittest.TestCase):
                                        np.arange(0, 10) + 3))
         self.assertTrue(np.array_equal(data.U["directComparison"][2],
                                        np.arange(0, 10) + 4))
+
+
+    def test_run_neuron_model(self):
+        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models/dLGN_modelDB/")
+        model = NeuronModel(model_path=model_path,
+                            adaptive_model=True)
+
+        self.runmodel = RunModel(model, CPUs=1)
+        uncertain_parameters = ["cap", "Rm"]
+        nodes = np.array([[1.0, 1.1, 1.2], [21900, 22000, 22100]])
+
+        data = self.runmodel.run(nodes, uncertain_parameters)

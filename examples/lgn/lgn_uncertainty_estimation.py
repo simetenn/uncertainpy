@@ -1,4 +1,4 @@
-import uncertainpy
+import uncertainpy as un
 
 model_path = "dLGN_modelDB/"
 
@@ -15,15 +15,15 @@ parameterlist = [["cap", 1.1, None],
                  ["gcat", 1.17e-5, None]]
 
 
-parameters = uncertainpy.Parameters(parameterlist)
-model = uncertainpy.NeuronModel(parameters=parameters,
-                                model_path=model_path,
-                                adaptive_model=True)
+parameters = un.Parameters(parameterlist)
+model = un.NeuronModel(parameters=parameters,
+                       model_path=model_path,
+                       adaptive_model=True)
 
-model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
+model.setAllDistributions(un.Distribution(0.05).uniform)
 
-features = uncertainpy.NeuronFeatures(features_to_run="all")
+features = un.NeuronFeatures(features_to_run="all")
 
-exploration = uncertainpy.UncertaintyEstimation(model, features=features)
+exploration = un.UncertaintyEstimation(model, features=features)
 
 exploration.UQ()

@@ -3,8 +3,8 @@ import numpy as np
 import multiprocessing as mp
 
 from runmodel import RunModel
-from uncertainpy.utils import create_logger
-from uncertainpy.features import GeneralFeatures
+from utils import create_logger
+from features import GeneralFeatures
 
 # Model is now potentially set two places, is that a problem?
 class UncertaintyCalculations(object):

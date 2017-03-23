@@ -19,6 +19,7 @@ class GeneralNeuronFeatures(GeneralFeatures):
 
 
     def setup(self):
+        print "setup"
         self.calculateSpikes(thresh=self.thresh, extended_spikes=self.extended_spikes)
 
 

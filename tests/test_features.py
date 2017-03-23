@@ -322,9 +322,7 @@ class TestTestingFeatures(unittest.TestCase):
         features = TestingFeatures(features_to_run="all")
         self.assertEqual(features.features_to_run, self.implemented_features + ["feature_no_time"])
 
-    # def test_kwargs(self):
-    #     self.assertEqual(self.features.kwargs(), {"features_to_run": self.implemented_features})
-
+    
 
 if __name__ == "__main__":
     unittest.main()
