@@ -181,25 +181,25 @@ Test if the model returned an adaptive result
                 group = f.create_group(feature)
 
                 if feature in self.t and self.t[feature] is not None:
-                    group.create_dataset("t", data=self.t[feature])
+                    group.create_dataset("t", data=self.none_to_nan(self.t[feature]))
                 if feature in self.U:
-                    group.create_dataset("U", data=self.U[feature])
+                    group.create_dataset("U", data=self.none_to_nan(self.U[feature]))
                 if feature in self.E:
-                    group.create_dataset("E", data=self.E[feature])
+                    group.create_dataset("E", data=self.none_to_nan(self.E[feature]))
                 if feature in self.Var:
-                    group.create_dataset("Var", data=self.Var[feature])
+                    group.create_dataset("Var", data=self.none_to_nan(self.Var[feature]))
                 if feature in self.p_05:
-                    group.create_dataset("p_05", data=self.p_05[feature])
+                    group.create_dataset("p_05", data=self.none_to_nan(self.p_05[feature]))
                 if feature in self.p_95:
-                    group.create_dataset("p_95", data=self.p_95[feature])
+                    group.create_dataset("p_95", data=self.none_to_nan(self.p_95[feature]))
                 if feature in self.sensitivity_1 and self.sensitivity_1[feature] is not None:
-                    group.create_dataset("sensitivity_1", data=self.sensitivity_1[feature])
+                    group.create_dataset("sensitivity_1", data=self.none_to_nan(self.sensitivity_1[feature]))
                 if feature in self.total_sensitivity_1 and self.total_sensitivity_1[feature] is not None:
-                    group.create_dataset("total_sensitivity_1", data=self.total_sensitivity_1[feature])
+                    group.create_dataset("total_sensitivity_1", data=self.none_to_nan(self.total_sensitivity_1[feature]))
                 if feature in self.sensitivity_t and self.sensitivity_t[feature] is not None:
-                    group.create_dataset("sensitivity_t", data=self.sensitivity_t[feature])
+                    group.create_dataset("sensitivity_t", data=self.none_to_nan(self.sensitivity_t[feature]))
                 if feature in self.total_sensitivity_t and self.total_sensitivity_t[feature] is not None:
-                    group.create_dataset("total_sensitivity_t", data=self.total_sensitivity_t[feature])
+                    group.create_dataset("total_sensitivity_t", data=self.none_to_nan(self.total_sensitivity_t[feature]))
 
 
     def load(self, filename):
@@ -232,32 +232,32 @@ Test if the model returned an adaptive result
 
 
             for feature in f.keys():
-                self.U[feature] = f[feature]["U"][()]
-                self.E[feature] = f[feature]["E"][()]
-                self.Var[feature] = f[feature]["Var"][()]
-                self.p_05[feature] = f[feature]["p_05"][()]
-                self.p_95[feature] = f[feature]["p_95"][()]
+                self.U[feature] = self.nan_to_none(f[feature]["U"][()])
+                self.E[feature] = self.nan_to_none(f[feature]["E"][()])
+                self.Var[feature] = self.nan_to_none(f[feature]["Var"][()])
+                self.p_05[feature] = self.nan_to_none(f[feature]["p_05"][()])
+                self.p_95[feature] = self.nan_to_none(f[feature]["p_95"][()])
 
 
                 if "sensitivity_1" in f[feature].keys():
-                    self.sensitivity_1[feature] = f[feature]["sensitivity_1"][()]
+                    self.sensitivity_1[feature] = self.nan_to_none(f[feature]["sensitivity_1"][()])
                 else:
                     self.sensitivity_1[feature] = None
 
                 if "total_sensitivity_1" in f[feature].keys():
-                    self.total_sensitivity_1[feature] = f[feature]["total_sensitivity_1"][()]
+                    self.total_sensitivity_1[feature] = self.nan_to_none(f[feature]["total_sensitivity_1"][()])
                 else:
                     self.total_sensitivity_1[feature] = None
 
 
 
                 if "sensitivity_t" in f[feature].keys():
-                    self.sensitivity_t[feature] = f[feature]["sensitivity_t"][()]
+                    self.sensitivity_t[feature] = self.nan_to_none(f[feature]["sensitivity_t"][()])
                 else:
                     self.sensitivity_t[feature] = None
 
                 if "total_sensitivity_t" in f[feature].keys():
-                    self.total_sensitivity_t[feature] = f[feature]["total_sensitivity_t"][()]
+                    self.total_sensitivity_t[feature] = self.nan_to_none(f[feature]["total_sensitivity_t"][()])
                 else:
                     self.total_sensitivity_t[feature] = None
 
@@ -268,10 +268,14 @@ Test if the model returned an adaptive result
                     self.t[feature] = None
 
     def nan_to_none(self, array):
-        tmp_array = array.astype(object)
-        tmp_array[np.isnan(array)] = None
+        try:
+            tmp_array = array.astype(object)
+            tmp_array[np.isnan(array)] = None
 
-        return tmp_array
+            return tmp_array
+
+        except TypeError:
+            return array
 
     def none_to_nan(self, array):
         tmp_array = np.array(array, dtype=float)
