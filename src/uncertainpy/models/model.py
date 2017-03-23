@@ -67,7 +67,6 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
 
         self.xlabel = xlabel
         self.ylabel = ylabel
-        self.new_process = new_process
 
         self.additional_cmds = []
 
@@ -115,9 +114,6 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         Run must return t, U
         """
         raise NotImplementedError("No run() method implemented")
-
-
-
 
 
 

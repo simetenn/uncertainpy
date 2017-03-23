@@ -4,12 +4,10 @@
 import os
 
 
-
-# Imported from uncertainpy
 from uncertainty_calculations import UncertaintyCalculations
-from uncertainpy.features import GeneralFeatures
-from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from uncertainpy.utils import create_logger
+from features import GeneralFeatures
+from plotting.plotUncertainty import PlotUncertainty
+from utils import create_logger
 from uncertainpy import Data
 
 

@@ -180,26 +180,22 @@ class Parallel:
 
         # Try-except to catch exeptions and print stack trace
         try:
-            if self.model.new_process:
-                t, U = self.run_subprocess(model_parameters)
+            model_result = self.model.run(model_parameters)
 
-            else:
-                model_result = self.model.run(model_parameters)
+            try:
+                t, U = model_result
+            except ValueError as error:
+                msg = "model.run() must return t and U (return t, U | return None, U)"
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
 
-                try:
-                    t, U = model_result
-                except ValueError as error:
-                    msg = "model.run() must return t and U (return t, U | return None, U)"
-                    if not error.args:
-                        error.args = ("",)
-                    error.args = error.args + (msg,)
-                    raise
+            if U is None:
+                raise ValueError("U has not been calculated")
 
-                if U is None:
-                    raise ValueError("U has not been calculated")
-
-                if np.all(np.isnan(t)):
-                    t = None
+            if np.all(np.isnan(t)):
+                t = None
 
 
             results = {}

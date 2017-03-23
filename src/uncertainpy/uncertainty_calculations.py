@@ -1,6 +1,7 @@
 import chaospy as cp
 import numpy as np
 import multiprocessing as mp
+from tqdm import tqdm
 
 from runmodel import RunModel
 from utils import create_logger
@@ -101,11 +102,11 @@ class UncertaintyCalculations(object):
 
         i = 0
         masked_U = []
-        masked_nodes = []
         mask = np.ones(len(self.data.U[feature]), dtype=bool)
 
         for result in self.data.U[feature]:
-            if not isinstance(result, np.ndarray) and np.isnan(result):
+            # if not isinstance(result, np.ndarray) and np.isnan(result):
+            if result is None:
                 mask[i] = False
             else:
                 masked_U.append(result)
@@ -168,7 +169,9 @@ class UncertaintyCalculations(object):
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
-        for feature in self.data.feature_list:
+        for feature in tqdm(self.data.feature_list,
+                            desc="Calculating PC for each feature",
+                            total=len(self.data.feature_list)):
             masked_nodes, masked_U, masked_weights = self.createMask(nodes, feature, weights)
 
             self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
@@ -198,7 +201,9 @@ class UncertaintyCalculations(object):
 
 
         # Calculate PC for each feature
-        for feature in self.data.feature_list:
+        for feature in tqdm(self.data.feature_list,
+                            desc="Calculating PC for each feature",
+                            total=len(self.data.feature_list)):
             masked_nodes, masked_U = self.createMask(nodes, feature)
 
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
@@ -245,7 +250,9 @@ class UncertaintyCalculations(object):
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
-        for feature in self.data.feature_list:
+        for feature in tqdm(self.data.feature_list,
+                            desc="Calculating PC for each feature",
+                            total=len(self.data.feature_list)):
             masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal, feature, weights)
 
             self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
@@ -286,7 +293,9 @@ class UncertaintyCalculations(object):
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
-        for feature in self.data.feature_list:
+        for feature in tqdm(self.data.feature_list,
+                            desc="Calculating PC for each feature",
+                            total=len(self.data.feature_list)):
             masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
 
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,

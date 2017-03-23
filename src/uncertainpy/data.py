@@ -267,50 +267,16 @@ Test if the model returned an adaptive result
                 else:
                     self.t[feature] = None
 
+    def nan_to_none(self, array):
+        tmp_array = array.astype(object)
+        tmp_array[np.isnan(array)] = None
 
+        return tmp_array
 
-    # def setFeatures(self, results):
-    #     self.features_0d, self.features_1d, self.features_2d = self.sortFeatures(results)
-    #     self.feature_list = self.features_0d + self.features_1d + self.features_2d
-    #     self.feature_list.sort()
+    def none_to_nan(self, array):
+        tmp_array = np.array(array, dtype=float)
 
-
-    # def sortFeatures(self, results):
-    #
-    #     """
-    #     results = {'directComparison': (None,
-    #                                     array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    #                                     None),
-    #                'feature2d': (None,
-    #                              array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    #                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-    #                              None),
-    #                'feature1d': (None,
-    #                              array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    #                              None),
-    #                'feature0d': (None,
-    #                              1,
-    #                              None)}
-    #     """
-    #
-    #     features_2d = []
-    #     features_1d = []
-    #     features_0d = []
-    #
-    #     for feature in results:
-    #         if hasattr(results[feature][1], "__iter__"):
-    #
-    #             if len(results[feature][1].shape) == 0:
-    #                 features_0d.append(feature)
-    #             elif len(results[feature][1].shape) == 1:
-    #                 features_1d.append(feature)
-    #             else:
-    #                 features_2d.append(feature)
-    #         else:
-    #             features_0d.append(feature)
-    #
-    #     return features_0d, features_1d, features_2d
-
+        return tmp_array
 
 
     def removeOnlyInvalidResults(self):
@@ -321,7 +287,7 @@ Test if the model returned an adaptive result
             for U in self.U[feature]:
                 if U is not None:
                     all_none = False
-                    
+
             if all_none:
                 self.logger.warning("Feature: {} does".format(feature)
                                     + " not yield results for any parameter combinations")
