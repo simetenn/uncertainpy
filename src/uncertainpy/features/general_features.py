@@ -87,7 +87,6 @@ class GeneralFeatures():
         results = {}
         for feature in self.implementedFeatures():
             feature_result = self.calculateFeature(feature)
-            print feature_result
             try:
                 t, U = feature_result
             except ValueError as error:
@@ -96,7 +95,7 @@ class GeneralFeatures():
                     error.args = ("",)
                 error.args = error.args + (msg,)
                 raise
-                
+
             results[feature] = {"t": t, "U": U}
 
         return results
