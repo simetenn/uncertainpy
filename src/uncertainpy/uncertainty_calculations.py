@@ -7,7 +7,7 @@ from uncertainpy.utils import create_logger
 from uncertainpy.features import GeneralFeatures
 
 # Model is now potentially set two places, is that a problem?
-class UncertaintyCalculations:
+class UncertaintyCalculations(object):
     def __init__(self,
                  model=None,
                  features=None,
@@ -22,8 +22,8 @@ class UncertaintyCalculations:
                  verbose_filename=None):
 
 
-        self.model = model
-        self.features = features
+        self._model = None
+        self._features = None
 
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
@@ -35,19 +35,21 @@ class UncertaintyCalculations:
         self.U_hat = {}
         self.U_mc = {}
 
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
-
-        self.runmodel = RunModel(self.model,
-                                 features=self.features,
+        self.runmodel = RunModel(model,
+                                 features=features,
                                  CPUs=CPUs,
                                  supress_model_graphics=supress_model_graphics)
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
+
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
+
+        self.model = model
 
 
         self.nr_pc_samples = nr_pc_samples
@@ -56,20 +58,25 @@ class UncertaintyCalculations:
         if seed is not None:
             np.random.seed(seed)
 
-    # TODO update this to use a property
-    def set_model(self, model):
-        self.model = model
-        self.runmodel.model = model
+    @property
+    def features(self):
+        return self._features
 
-    # TODO update this to use a property
-    def set_features(self, features):
-        self.features = features
-        self.runmodel.features = features
+    @features.setter
+    def features(self, new_features):
+        self._features = new_features
+        self.runmodel.features = new_features
 
 
-    def reset(self, model):
-        self.model = model
-        self.runmodel.model = model
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, new_model):
+        self._model = new_model
+        self.runmodel.model = new_model
+
 
     def createDistribution(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)

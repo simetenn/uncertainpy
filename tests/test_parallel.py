@@ -165,6 +165,7 @@ class TestParallel(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.parallel.createInterpolations(results)
 
+
     def test_createInterpolations_model_2d(self):
         self.parallel.model.adaptive_model = True
         results = {"directComparison": {"U": np.array([np.arange(0, 10),

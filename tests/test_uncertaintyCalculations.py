@@ -58,8 +58,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-
-
     def test_intitFeatures(self):
         uncertainty_calculations = UncertaintyCalculations(TestingModel1d(),
                                                            verbose_level="error")
@@ -72,43 +70,21 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_set_model(self):
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
-        model = TestingModel1d(parameters)
-
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
-
-        self.uncertainty_calculations = UncertaintyCalculations(features=features,
-                                                                verbose_level="error",
+        self.uncertainty_calculations = UncertaintyCalculations(verbose_level="error",
                                                                 seed=self.seed)
 
-        self.uncertainty_calculations.set_model(model)
+        self.uncertainty_calculations.model = TestingModel1d()
 
         self.assertIsInstance(self.uncertainty_calculations.model, TestingModel1d)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.model, TestingModel1d)
 
 
     def test_set_features(self):
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
-
-        parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
-        model = TestingModel1d(parameters)
-
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
 
         self.uncertainty_calculations = UncertaintyCalculations(verbose_level="error",
                                                                 seed=self.seed)
-
-        self.uncertainty_calculations.set_features(features)
+        self.uncertainty_calculations.features = TestingFeatures()
 
         self.assertIsInstance(self.uncertainty_calculations.features, TestingFeatures)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.features, TestingFeatures)

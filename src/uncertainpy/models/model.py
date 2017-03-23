@@ -112,25 +112,13 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
 
     def run(self, parameters):
         """
-        Run must store the results from the simulation in self.t and self.U
+        Run must return t, U
         """
         raise NotImplementedError("No run() method implemented")
 
 
-    # def save(self, CPU=None, save_path=""):
-    #     if self.U is None:
-    #         raise ValueError("U has not been calculated")
-    #
-    #     if self.t is None:
-    #         self.t = np.nan
-    #
-    #     if CPU is None:
-    #         np.save(os.path.join(save_path, ".tmp_U"), self.U)
-    #         np.save(os.path.join(save_path, ".tmp_t"), self.t)
-    #
-    #     else:
-    #         np.save(os.path.join(save_path, ".tmp_U_%d" % CPU), self.U)
-    #         np.save(os.path.join(save_path, ".tmp_t_%d" % CPU), self.t)
+
+
 
 
     def cmd(self):

@@ -13,7 +13,7 @@ from uncertainpy.utils import create_logger
 from uncertainpy import Data
 
 
-class UncertaintyEstimation():
+class UncertaintyEstimation(object):
     def __init__(self, model,
                  features=None,
                  uncertainty_calculations=None,
@@ -28,10 +28,9 @@ class UncertaintyEstimation():
 
         self.data = None
 
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
+        self._model = None
+        self._features = None
+
 
         self.save_figures = save_figures
         self.save_data = save_data
@@ -42,26 +41,13 @@ class UncertaintyEstimation():
                                     verbose_filename,
                                     self.__class__.__name__)
 
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
-
-
-        self.model = model
-
         if uncertainty_calculations is None:
             self.uncertainty_calculations = UncertaintyCalculations(
-                model=self.model,
-                features=self.features,
                 verbose_level=verbose_level,
                 verbose_filename=verbose_filename
             )
         else:
             self.uncertainty_calculations = uncertainty_calculations
-            self.uncertainty_calculations.set_model(model)
-            self.uncertainty_calculations.set_features(self.features)
-
 
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
@@ -70,12 +56,50 @@ class UncertaintyEstimation():
                                         verbose_filename=verbose_filename)
 
 
+        if features is None:
+            self.features = GeneralFeatures(features_to_run=None)
+        else:
+            self.features = features
+
+
+        self.model = model
+
+
         if output_data_filename is None:
             self.output_data_filename = self.model.__class__.__name__
         else:
             self.output_data_filename = output_data_filename
 
 
+    @property
+    def features(self):
+        return self._features
+
+    @features.setter
+    def features(self, new_features):
+        self._features = new_features
+        self.uncertainty_calculations.features = new_features
+
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, new_model):
+        self._model = new_model
+        self.uncertainty_calculations.model = new_model
+
+    @property
+    def uncertainty_calculations(self):
+        return self._uncertainty_calculations
+
+    @uncertainty_calculations.setter
+    def uncertainty_calculations(self, new_uncertainty_calculations):
+        self._uncertainty_calculations = new_uncertainty_calculations
+
+        self.uncertainty_calculations.features = self.features
+        self.uncertainty_calculations.model = self.model
 
 
     # def __del__(self):
