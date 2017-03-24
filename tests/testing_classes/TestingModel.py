@@ -1,6 +1,7 @@
 from uncertainpy import Model
 import numpy as np
 
+
 class TestingModel0d(Model):
     def __init__(self, parameters=None):
         Model.__init__(self, parameters=parameters)

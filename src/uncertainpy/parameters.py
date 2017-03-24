@@ -174,6 +174,18 @@ Parameter object
         return self.parameters[name]
 
 
+    def __str__(self):
+        """
+Return a readable string
+        """
+        result = ""
+        for name in self.parameters.keys():
+            result += str(self.parameters[name]) + "\n"
+
+        return result.strip()
+
+    def __iter__(self):
+        return self.parameters.itervalues()
 
 
     def setDistribution(self, parameter, distribution):
@@ -294,14 +306,3 @@ filename: str
         """
         for parameter in self.parameters:
             self.parameters[parameter].setParameterValue(filename, self.parameters[parameter].value)
-
-
-    def __str__(self):
-        """
-Return a readable string
-        """
-        result = ""
-        for name in self.parameters.keys():
-            result += str(self.parameters[name]) + "\n"
-
-        return result.strip()

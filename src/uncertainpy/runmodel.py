@@ -182,7 +182,6 @@ class RunModel(object):
 
 
     def create_model_parameters(self, nodes, uncertain_parameters):
-
         model_parameters = []
         for node in nodes.T:
             if isinstance(node, float) or isinstance(node, int):
@@ -196,6 +195,21 @@ class RunModel(object):
             model_parameters.append(parameters)
 
         return model_parameters
+
+
+        # model_parameters = []
+        # for node in nodes.T:
+        #     if isinstance(node, float) or isinstance(node, int):
+        #         node = [node]
+        #
+        #     # New setparameters
+        #     parameters = {}
+        #     for j, parameter in enumerate(uncertain_parameters):
+        #         parameters[parameter] = node[j]
+        #
+        #     model_parameters.append(parameters)
+        #
+        # return model_parameters
 
 
     def evaluateNodes(self, nodes):

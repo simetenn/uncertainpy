@@ -226,6 +226,22 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(self.parameters["gbar_Na"], Parameter)
 
 
+    def test_iter(self):
+        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+                         ["gbar_K", 36, cp.Normal(36, 1)],
+                         ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
+
+        parameters = Parameters(parameterlist)
+
+        result = [parameter for parameter in parameters]
+
+        self.assertEqual(len(result), 3)
+
+        self.assertIsInstance(result[0], Parameter)
+        self.assertIsInstance(result[1], Parameter)
+        self.assertIsInstance(result[2], Parameter)
+
+
     def test_setDistribution(self):
         parameterlist = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
