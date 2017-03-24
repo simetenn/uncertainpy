@@ -19,7 +19,11 @@ folder = os.path.dirname(os.path.realpath(__file__))
 
 class TestModel(unittest.TestCase):
     def setUp(self):
-        self.model = Model()
+        parameterlist = [["gbar_Na", 120, None],
+                         ["gbar_K", 36, None],
+                         ["gbar_l", 0.3, None]]
+
+        self.model = Model(parameterlist)
 
 
     def test_init(self):
@@ -58,6 +62,7 @@ class TestModel(unittest.TestCase):
         parameters = Parameters(parameterlist)
         self.model = Model(parameters)
 
+
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
 
@@ -70,8 +75,8 @@ class TestModel(unittest.TestCase):
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
 
-        with self.assertRaises(AttributeError):
-            self.model.setDistribution("gbar_Na", distribution_function)
+        with self.assertRaises(KeyError):
+            self.model.setDistribution("not a parameter", distribution_function)
 
 
 
@@ -93,14 +98,6 @@ class TestModel(unittest.TestCase):
         self.assertIsInstance(self.model.parameters["gbar_l"].distribution, cp.Dist)
 
 
-    def test_setAllDistributionsNone(self):
-        def distribution_function(x):
-            return cp.Uniform(x - 10, x + 10)
-
-        with self.assertRaises(AttributeError):
-            self.model.setAllDistributions(distribution_function)
-
-
     def test_model_function(self):
         self.model.run = model_function
 
@@ -113,7 +110,8 @@ class TestModel(unittest.TestCase):
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
     def setUp(self):
-        self.model = HodgkinHuxleyModel()
+        self.parameterlist = [["a", 1, None], ["b", 2, None]]
+        self.model = HodgkinHuxleyModel(self.parameterlist)
 
 
     def test_run(self):
@@ -124,7 +122,8 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
 
 class TestCoffeeCupPointModel(unittest.TestCase):
     def setUp(self):
-        self.model = CoffeeCupPointModel()
+        self.parameterlist = [["a", 1, None], ["b", 2, None]]
+        self.model = CoffeeCupPointModel(self.parameterlist)
 
 
     def test_run(self):
@@ -135,7 +134,8 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
 class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
-        self.model = IzhikevichModel()
+        self.parameterlist = [["a", 1, None], ["b", 2, None]]
+        self.model = IzhikevichModel(self.parameterlist)
 
     def test_run(self):
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
@@ -147,7 +147,8 @@ class TestIzhikevichModel(unittest.TestCase):
 
 class TestTestingModel0d(unittest.TestCase):
     def setUp(self):
-        self.model = TestingModel0d()
+        self.parameterlist = [["a", 1, None], ["b", 2, None]]
+        self.model = TestingModel0d(self.parameterlist)
 
 
     def test_run(self):
@@ -163,7 +164,8 @@ class TestTestingModel0d(unittest.TestCase):
 
 class TestTestingModel1d(unittest.TestCase):
     def setUp(self):
-        self.model = TestingModel1d()
+        self.parameterlist = [["a", 1, None], ["b", 2, None]]
+        self.model = TestingModel1d(self.parameterlist)
 
 
     def test_run(self):
@@ -178,7 +180,8 @@ class TestTestingModel1d(unittest.TestCase):
 
 class TestTestingModel2d(unittest.TestCase):
     def setUp(self):
-        self.model = TestingModel2d()
+        self.parameterlist = [["a", 1, None], ["b", 2, None]]
+        self.model = TestingModel2d(self.parameterlist)
 
 
 

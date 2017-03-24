@@ -2,23 +2,13 @@ from uncertainpy import Parameters
 
 class Model():
     """
-The model must be able to handle these calls
-
 simulation.run()
-
-
-If you create your own model it must either be in it's own file
-or the main part of the program must be inside
-
-if __name__ == "__main__":
-    # Main part of the program here
-
-Run must store the results from the simulation in self.t and self.U
+must return t and U
     """
 
 
     def __init__(self,
-                 parameters=None,
+                 parameters,
                  adaptive_model=False,
                  xlabel="",
                  ylabel=""):
@@ -54,12 +44,12 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         self.xlabel = xlabel
         self.ylabel = ylabel
 
-        if isinstance(parameters, Parameters) or parameters is None:
+        if isinstance(parameters, Parameters):
             self.parameters = parameters
         elif isinstance(parameters, list):
             self.parameters = Parameters(parameters)
         else:
-            raise ValueError("parameter argument has wrong type")
+            raise TypeError("parameter argument has wrong type")
 
 
 

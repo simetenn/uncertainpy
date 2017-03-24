@@ -10,7 +10,7 @@ from features import GeneralFeatures
 # Model is now potentially set two places, is that a problem?
 class UncertaintyCalculations(object):
     def __init__(self,
-                 model=None,
+                 model,
                  features=None,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,

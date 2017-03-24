@@ -43,7 +43,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_init(self):
-        RunModel(TestingModel1d())
+        RunModel(TestingModel1d(self.parameterlist))
 
 
     def test_feature(self):
@@ -54,7 +54,7 @@ class TestRunModel(unittest.TestCase):
 
     def test_set_model(self):
         self.runmodel = RunModel(None)
-        self.runmodel.model = TestingModel1d()
+        self.runmodel.model = TestingModel1d(self.parameterlist)
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
         self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
@@ -65,7 +65,7 @@ class TestRunModel(unittest.TestCase):
 
     def test_set_model_function(self):
         self.runmodel = RunModel(None)
-        self.runmodel.model = TestingModel1d()
+        self.runmodel.model = TestingModel1d(self.parameterlist)
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
         self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
