@@ -57,7 +57,7 @@ class NeuronModel(Model):
         self.t = self._record("_ref_t")
 
 
-    def run(self, parameters):
+    def run(self, **parameters):
         self.load()
 
         self.setParameterValues(parameters)

@@ -48,7 +48,7 @@ class TestModel(unittest.TestCase):
 
     def test_run(self):
         with self.assertRaises(NotImplementedError):
-            self.model.run({})
+            self.model.run(a="parameter input")
 
 
 
@@ -144,10 +144,7 @@ class TestTestingModel0d(unittest.TestCase):
 
     def test_run(self):
         parameters = {"a": -1, "b": -1}
-        t, U = self.model.run(parameters)
-
-        self.assertEqual(self.model.a, -1)
-        self.assertEqual(self.model.b, -1)
+        t, U = self.model.run(**parameters)
 
         self.assertEqual(t, 1)
         self.assertEqual(U, -1)
@@ -163,10 +160,8 @@ class TestTestingModel1d(unittest.TestCase):
 
     def test_run(self):
         parameters = {"a": -1, "b": -1}
-        t, U = self.model.run(parameters)
+        t, U = self.model.run(**parameters)
 
-        self.assertEqual(self.model.a, -1)
-        self.assertEqual(self.model.b, -1)
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
@@ -181,10 +176,8 @@ class TestTestingModel2d(unittest.TestCase):
 
     def test_run(self):
         parameters = {"a": -1, "b": -2}
-        t, U = self.model.run(parameters)
+        t, U = self.model.run(**parameters)
 
-        self.assertEqual(self.model.a, -1)
-        self.assertEqual(self.model.b, -2)
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U,
@@ -201,7 +194,7 @@ class TestTestingModelAdaptive(unittest.TestCase):
 
     def test_run(self):
         parameters = {"a": 1, "b": 2}
-        t, U = self.model.run(parameters)
+        t, U = self.model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(np.arange(0, 13), t))

@@ -3,7 +3,6 @@
 
 import os
 
-
 from uncertainty_calculations import UncertaintyCalculations
 from features import GeneralFeatures
 from plotting.plotUncertainty import PlotUncertainty
@@ -222,7 +221,8 @@ pc_method: "regression"
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
-            raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
+            raise RuntimeWarning("The number of uncertain parameters is high."
+                                 + "A Monte-Carlo method _might_ be faster.")
 
 
         self.data = self.uncertainty_calculations.PC(
@@ -290,7 +290,8 @@ pc_method: "regression"
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
-            raise RuntimeWarning("The number of uncertain parameters is high. A Monte-Carlo method _might_ be faster.")
+            raise RuntimeWarning("The number of uncertain parameters is high. "
+                                 + "A Monte-Carlo method _might_ be faster.")
 
 
         if filename is None:

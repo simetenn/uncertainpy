@@ -77,8 +77,7 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         self.parameters.setAllDistributions(distribution_function)
 
 
-
-    def run(self, parameters):
+    def run(self, **parameters):
         """
         Run must return t, U
         """

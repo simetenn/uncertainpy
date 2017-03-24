@@ -135,7 +135,7 @@ class Parallel:
 
         # Try-except to catch exeptions and print stack trace
         try:
-            model_result = self.model.run(model_parameters)
+            model_result = self.model.run(**model_parameters)
 
             try:
                 t, U = model_result

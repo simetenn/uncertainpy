@@ -128,8 +128,8 @@ class UncertaintyCalculations(object):
 
 
         if not np.all(mask):
-            # raise RuntimeWarning("Feature: {} does not yield results for all parameter combinations".format(feature))
-            self.logger.warning("Feature: {} does not yield results for all parameter combinations".format(feature))
+            self.logger.warning("Feature: {} does not yield".format(feature)
+                                + " results for all parameter combinations")
 
 
         if weights is None:
@@ -178,7 +178,9 @@ class UncertaintyCalculations(object):
                                                     masked_weights, masked_U)
 
         # TODO perform for directComparison outside, since masking is not needed.?
-        # self.U_hat["directComparison"] = cp.fit_quadrature(self.P, nodes, masked_weights, self.data.U[feature])
+        # self.U_hat["directComparison"] = cp.fit_quadrature(self.P, nodes,
+        #                                                    masked_weights,
+        #                                                    self.data.U[feature])
 
 
 
@@ -213,7 +215,8 @@ class UncertaintyCalculations(object):
 
         # TODO perform for directComparison outside, since masking is not needed.?
         # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
-        #                                                    self.data.U["directComparison"], rule="T")
+        #                                                    self.data.U["directComparison"],
+        #                                                    rule="T")
 
 
 
@@ -246,14 +249,15 @@ class UncertaintyCalculations(object):
         self.distribution = dist_MvNormal
 
         # Running the model
-
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
         # Calculate PC for each feature
         for feature in tqdm(self.data.feature_list,
                             desc="Calculating PC for each feature",
                             total=len(self.data.feature_list)):
-            masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal, feature, weights)
+            masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal,
+                                                                     feature,
+                                                                     weights)
 
             self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
 
@@ -261,7 +265,8 @@ class UncertaintyCalculations(object):
         # # perform for directComparison outside, since masking is not needed.
         # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
         # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
-        #                                                    self.data.U["directComparison"], rule="T")
+        #                                                    self.data.U["directComparison"],
+        #                                                    rule="T")
 
 
 
@@ -303,7 +308,8 @@ class UncertaintyCalculations(object):
 
         # TODO perform for directComparison outside, since masking is not needed.
         # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes_MvNormal,
-        #                                                    self.data.U["directComparison"], rule="T")
+        #                                                    self.data.U["directComparison"],
+        #                                                    rule="T")
 
 
 
