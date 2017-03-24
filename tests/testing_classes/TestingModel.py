@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-def model_function(**parameters):
+def model_function(a=1, b=2):
     t = np.arange(0, 10)
     U = np.arange(0, 10) + a + b
 

@@ -3,8 +3,6 @@ import os
 import unittest
 import chaospy as cp
 
-from xvfbwrapper import Xvfb
-
 from uncertainpy.models import Model, NeuronModel
 from uncertainpy import Parameters
 
@@ -13,7 +11,7 @@ from models import CoffeeCupPointModel
 from models import IzhikevichModel
 
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModelAdaptive
+from testing_classes import TestingModelAdaptive, model_function
 
 
 folder = os.path.dirname(os.path.realpath(__file__))

@@ -110,10 +110,7 @@ class HodgkinHuxleyModel(Model):
         return [dVdt, dhdt, dmdt, dndt]
 
 
-    def run(self, parameters):
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
-
+    def run(self, gbar_Na=120, gbar_K=36, gbar_l=0.3):
 
         self.h0 = self.h_inf(self.V_rest)
         self.m0 = self.m_inf(self.V_rest)
