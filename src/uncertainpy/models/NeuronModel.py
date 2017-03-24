@@ -12,12 +12,10 @@ class NeuronModel(Model):
                        parameters=parameters,
                        adaptive_model=adaptive_model,
                        xlabel="time [ms]",
-                       ylabel="voltage [mv]",
-                       new_process=True)
+                       ylabel="voltage [mv]")
 
-        self.set_properties({"model_file": model_file,
-                             "model_path": model_path})
-
+        self.model_file = model_file
+        self.model_path = model_path
 
 
 

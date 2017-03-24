@@ -1,7 +1,7 @@
 __all__ = ["TestDistribution",
            "TestExploration",
            "TestGeneralFeatures",
-           "TestRunModelClass",
+           "TestRunModel",
            "TestParallel",
            "TestGeneralNeuronFeatures",
            "TestNeuronFeatures",
@@ -23,7 +23,6 @@ __all__ = ["TestDistribution",
            "TestParameters",
            "TestPlotUncertainpy",
            "TestPlotUncertainpyCompare",
-           "TestRunModel",
            "TestSpike",
            "TestSpikes",
            "TestUncertainty",
@@ -43,12 +42,11 @@ from test_models import TestTestingModel2d, TestNeuronModel
 from test_parameters import TestParameter, TestParameters
 from test_plotUncertainty import TestPlotUncertainpy
 from test_plotUncertaintyCompare import TestPlotUncertainpyCompare
-from test_runModel import TestRunModel
 from test_spike import TestSpike
 from test_spikes import TestSpikes
 from test_uncertainty import TestUncertainty
 from test_usecase import TestUseCases
 from test_data import TestData
-from test_runModelClass import TestRunModelClass
+from test_RunModel import TestRunModel
 from test_uncertaintyCalculations import TestUncertaintyCalculations
 from test_parallel import TestParallel

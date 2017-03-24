@@ -277,11 +277,31 @@ Test if the model returned an adaptive result
         except TypeError:
             return array
 
+
     def none_to_nan(self, array):
         tmp_array = np.array(array, dtype=float)
 
         return tmp_array
 
+    #
+    # def all_to_none(self):
+    #     for data_name in self.data_names:
+    #         data = getattr(self, data_name)
+    #         if data is not None:
+    #             for feature in data:
+    #                 print data[feature]
+    #                 data[feature] = self.nan_to_none(data[feature])
+    #
+    #         data = self.nan_to_none(data)
+    #
+    # def all_to_nan(self):
+    #     for data_name in self.data_names:
+    #         data = getattr(self, data_name)
+    #         if data is not None:
+    #             for feature in data:
+    #                 data[feature] = self.none_to_nan(data[feature])
+    #
+    #         data = self.nan_to_none(data)
 
     def removeOnlyInvalidResults(self):
         old_feature_list = self.feature_list[:]

@@ -40,7 +40,7 @@ test_logger = create_test_suite([TestLogger])
 test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
 
 
-test_runModel = create_test_suite([TestRunModel, TestRunModelClass, TestParallel])
+test_runModel = create_test_suite([TestRunModel, TestParallel])
 
 test_model = create_test_suite([TestModel,
                                 TestHodgkinHuxleyModel,

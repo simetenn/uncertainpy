@@ -1,9 +1,6 @@
-import os
-import subprocess
 import traceback
 
 import numpy as np
-import multiprocess as mp
 import scipy.interpolate as scpi
 
 from utils import create_logger
@@ -22,7 +19,9 @@ result = {"directComparison": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
+                               "interpolation": <scipy.interpolate.fitpack2.\
+                                                InterpolatedUnivariateSpline\
+                                                object at 0x7f1c78f0d4d0>},
           "featureInvalid": {"U": None,
                              "t": None}}
 """
@@ -67,50 +66,6 @@ class Parallel:
     @model.setter
     def model(self, new_model):
         self._model = new_model
-
-
-    def run_subprocess(self, parameters):
-        current_process = mp.current_process().name.split("-")
-        if current_process[0] == "PoolWorker":
-            current_process = str(current_process[-1])
-        else:
-            current_process = "0"
-
-        filepath = os.path.abspath(__file__)
-        filedir = os.path.dirname(filepath)
-
-        model_cmds = self.model.cmd()
-        model_cmds += ["--CPU", current_process,
-                       "--save_path", filedir,
-                       "--parameters"]
-
-        for parameter in parameters:
-            model_cmds.append(parameter)
-            model_cmds.append("{:.16f}".format(parameters[parameter]))
-
-
-
-        simulation = subprocess.Popen(model_cmds,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
-                                      env=os.environ.copy())
-        ut, err = simulation.communicate()
-
-        if len(ut) != 0:
-            self.logger.info(ut)
-
-        if simulation.returncode != 0:
-            self.logger.error(ut)
-            raise RuntimeError(err)
-
-
-        U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
-        t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
-
-        os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
-        os.remove(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
-
-        return t, U
 
 
 
@@ -194,8 +149,8 @@ class Parallel:
             if U is None:
                 raise ValueError("U has not been calculated")
 
-            if np.all(np.isnan(t)):
-                t = None
+            # if np.all(np.isnan(t)):
+            #     t = None
 
 
             results = {}

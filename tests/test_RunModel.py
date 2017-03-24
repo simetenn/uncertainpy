@@ -15,7 +15,7 @@ from testing_classes import TestingModelAdaptive
 
 
 
-class TestRunModelClass(unittest.TestCase):
+class TestRunModel(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
 

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from uncertainpy import Data
-from prettyplot import prettyPlot, prettyBar, create_figure
+from prettyplot import prettyPlot, prettyBar
 from prettyplot import spines_color, get_current_colormap
 from prettyplot import get_colormap_tableu20, set_style
 from prettyplot import axis_grey, labelsize, fontsize, titlesize
@@ -64,7 +64,6 @@ class PlotUncertainty():
 
 
 
-
     def setData(self, data, output_dir=None):
         if output_dir is not None:
             self.output_dir = output_dir
@@ -98,7 +97,8 @@ class PlotUncertainty():
         elif "directComparison" in self.data.features_1d:
             self.plotSimulatorResults1D(foldername=foldername)
         else:
-            raise NotImplementedError("plotSimulatorResults not implemented for simulator results >= 2D")
+            raise NotImplementedError("plotSimulatorResults not "
+                                      + "implemented for simulator results >= 2D")
 
 
     # TODO does not have a test
@@ -205,8 +205,11 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if self.data.t[feature] is None or self.data.E[feature] is None or self.data.Var[feature] is None:
-            self.logger.warning("Mean and/or variance of {feature} is None. Unable to plot mean and variance".format(feature=feature))
+        if self.data.t[feature] is None \
+            or self.data.E[feature] is None \
+                or self.data.Var[feature] is None:
+            self.logger.warning("Mean and/or variance of {feature} is None.".format(feature=feature)
+                                + "Unable to plot mean and variance")
             return
 
         title = feature + ", mean and variance"
@@ -263,7 +266,9 @@ class PlotUncertainty():
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if self.data.t[feature] is None or self.data.p_05[feature] is None or self.data.p_95[feature] is None:
+        if self.data.t[feature] is None \
+            or self.data.p_05[feature] is None \
+                or self.data.p_95[feature] is None:
             msg = "p_05  and/or p_95 of {feature} is None. Unable to plot confidence interval"
             self.logger.warning(msg.format(feature=feature))
             return
@@ -276,7 +281,9 @@ class PlotUncertainty():
                    **kwargs)
 
         colors = get_current_colormap()
-        plt.fill_between(self.data.t[feature], self.data.p_05[feature], self.data.p_95[feature],
+        plt.fill_between(self.data.t[feature],
+                         self.data.p_05[feature].astype(float),
+                         self.data.p_95[feature].astype(float),
                          alpha=0.5, color=colors[0])
 
 
@@ -325,7 +332,8 @@ class PlotUncertainty():
 
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=feature + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(parameter_names[i]),
+                       title=feature + ", " + sensitivity.split("_")[0] + " "
+                       + sensitivity.split("_")[1] + ", " + self.toLatex(parameter_names[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters), **kwargs)
@@ -333,7 +341,8 @@ class PlotUncertainty():
 
             if hardcopy:
                 plt.savefig(os.path.join(self.output_dir,
-                                         feature + "_" + sensitivity + "_" + parameter_names[i] + self.figureformat),
+                                         feature + "_" + sensitivity + "_"
+                                         + parameter_names[i] + self.figureformat),
                             bbox_inches="tight")
                 if not show:
                     plt.close()
@@ -450,10 +459,13 @@ class PlotUncertainty():
 
 
         for i in range(len(sense[feature])):
-            prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=self.toLatex(feature) + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1],
+            prettyPlot(self.data.t[feature],
+                       sense[feature][i],
+                       title=self.toLatex(feature) + ", " + sensitivity.split("_")[0]
+                       + " " + sensitivity.split("_")[1],
                        xlabel=self.data.xlabel, ylabel="sensitivity",
-                       new_figure=False, color=i,
+                       new_figure=False,
+                       color=i,
                        nr_colors=len(self.data.uncertain_parameters),
                        **kwargs)
 
@@ -537,7 +549,10 @@ class PlotUncertainty():
                   self.data.p_05[feature], self.data.p_95[feature]]
 
 
-        ax = prettyBar(values, index=xticks, xlabels=xlabels, ylabel=self.data.ylabel,
+        ax = prettyBar(values,
+                       index=xticks,
+                       xlabels=xlabels,
+                       ylabel=self.data.ylabel,
                        palette=get_colormap_tableu20())
 
 
@@ -572,10 +587,11 @@ class PlotUncertainty():
             xlabels.append(sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
 
             location = (0.5, 1.01 + legend_width*0.095)
-            lgd = plt.legend(legend_bars,
-                             self.listToLatex(self.data.uncertain_parameters),
-                             loc='upper center', bbox_to_anchor=location,
-                             ncol=legend_size)
+            plt.legend(legend_bars,
+                       self.listToLatex(self.data.uncertain_parameters),
+                       loc='upper center',
+                       bbox_to_anchor=location,
+                       ncol=legend_size)
 
             # lgd.get_frame().set_edgecolor(axis_grey)
 
@@ -628,7 +644,8 @@ class PlotUncertainty():
 
 
         prettyBar(total_sense[feature],
-                  title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1] + ", " + self.toLatex(feature),
+                  title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
+                  + ", " + self.toLatex(feature),
                   xlabels=self.listToLatex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
                   nr_colors=len(self.data.uncertain_parameters),
@@ -657,7 +674,10 @@ class PlotUncertainty():
             raise ValueError("Datafile must be loaded")
 
         for feature in self.data.feature_list:
-            self.plotTotalSensitivity(feature=feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
+            self.plotTotalSensitivity(feature=feature,
+                                      sensitivity=sensitivity,
+                                      hardcopy=hardcopy,
+                                      show=show)
 
 
     def plot0dFeatures(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
@@ -779,7 +799,11 @@ class PlotUncertainty():
 
 
 
-    def plotTotalSensitivityGrid(self, sensitivity="sensitivity_1", hardcopy=True, show=False, **kwargs):
+    def plotTotalSensitivityGrid(self,
+                                 sensitivity="sensitivity_1",
+                                 hardcopy=True,
+                                 show=False,
+                                 **kwargs):
         if not self.loaded_flag:
             raise ValueError("Datafile must be loaded")
 
@@ -834,7 +858,8 @@ class PlotUncertainty():
             if i < nr_plots:
                 if total_sense[self.data.feature_list[i]] is None:
                     msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}_grid"
-                    self.logger.warning(msg.format(sensitivity=sensitivity, feature=self.data.feature_list[i]))
+                    self.logger.warning(msg.format(sensitivity=sensitivity,
+                                                   feature=self.data.feature_list[i]))
                     ax.axis("off")
                     continue
 

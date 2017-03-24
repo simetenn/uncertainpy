@@ -1,8 +1,6 @@
 import numpy as np
 import os
 import unittest
-import sys
-import subprocess
 import chaospy as cp
 
 from xvfbwrapper import Xvfb
@@ -15,9 +13,7 @@ from models import CoffeeCupPointModel
 from models import IzhikevichModel
 
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModelNoTime, TestingModelNoTimeU
-from testing_classes import TestingModelAdaptive, TestingModelConstant
-from testing_classes import TestingModelNewProcess
+from testing_classes import TestingModelAdaptive
 
 
 folder = os.path.dirname(os.path.realpath(__file__))
@@ -49,43 +45,11 @@ class TestModel(unittest.TestCase):
         self.assertIsInstance(model.parameters, Parameters)
 
 
-    def test_set_properties(self):
-        cmds = {"a": 1, "b": 2}
-
-        self.model.set_properties(cmds)
-
-        self.assertEqual(self.model.a, 1)
-        self.assertEqual(self.model.b, 2)
-
-        self.assertIn("a", self.model.additional_cmds)
-        self.assertIn("b", self.model.additional_cmds)
-
-
-    def test_reset_properties(self):
-        cmds = {"a": 1, "b": 2}
-
-        self.model.set_properties(cmds)
-        self.model.reset_properties()
-        self.assertEqual(self.model.additional_cmds, [])
-
-        with self.assertRaises(AttributeError):
-            self.model.a
-
-        with self.assertRaises(AttributeError):
-            self.model.b
-
 
     def test_run(self):
         with self.assertRaises(NotImplementedError):
             self.model.run({})
 
-
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("Model", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
 
 
     def test_setDistribution(self):
@@ -149,14 +113,6 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
         self.model.run(parameters)
 
 
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("HodgkinHuxleyModel", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
-
-
 
 class TestCoffeeCupPointModel(unittest.TestCase):
     def setUp(self):
@@ -169,15 +125,6 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
 
 
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("CoffeeCupPointModel", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
-
-
-
 class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
         self.model = IzhikevichModel()
@@ -186,13 +133,6 @@ class TestIzhikevichModel(unittest.TestCase):
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
         self.model.run(parameters)
 
-
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("IzhikevichModel", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
 
 
 
@@ -214,13 +154,6 @@ class TestTestingModel0d(unittest.TestCase):
 
 
 
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("TestingModel0d", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
-
 
 
 class TestTestingModel1d(unittest.TestCase):
@@ -238,13 +171,6 @@ class TestTestingModel1d(unittest.TestCase):
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
 
-
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("TestingModel1d", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
 
 
 class TestTestingModel2d(unittest.TestCase):
@@ -265,12 +191,7 @@ class TestTestingModel2d(unittest.TestCase):
                                        np.array([np.arange(0, 10) -1,
                                                  np.arange(0, 10) -2])))
 
-    def test_cmd(self):
-        result = self.model.cmd()
 
-        self.assertIn("TestingModel2d", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
 
 
 class TestTestingModelAdaptive(unittest.TestCase):
@@ -287,13 +208,6 @@ class TestTestingModelAdaptive(unittest.TestCase):
         self.assertTrue(np.array_equal(np.arange(0, 13) + 3, U))
 
 
-    def test_cmd(self):
-        result = self.model.cmd()
-
-        self.assertIn("TestingModel1dAdaptive", result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result[0], sys.executable)
-
 
 
 class TestNeuronModel(unittest.TestCase):
@@ -308,26 +222,12 @@ class TestNeuronModel(unittest.TestCase):
                                  model_path=os.path.join(filedir, model_path))
 
 
-    def test_run(self):
-        with Xvfb() as xvfb:
-            cmd = self.model.cmd()
-            cmd += ["--CPU", "1", "--save_path", ""]
-
-
-            simulation = subprocess.Popen(cmd,
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE,
-                                          env=os.environ.copy())
-            ut, err = simulation.communicate()
-
-        if simulation.returncode != 0:
-            print ut
-            raise RuntimeError(err)
-
-
-    def test_cmd(self):
-        self.model.cmd()
-
+    # def test_run(self):
+    #     model_parameters = {"cap": 1.1, "Rm": 22000}
+    #
+    #     with Xvfb() as xvfb:
+    #         self.model.run(model_parameters)
+    #
 
 
 

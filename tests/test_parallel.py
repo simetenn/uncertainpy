@@ -57,16 +57,6 @@ class TestParallel(unittest.TestCase):
         self.assertEqual(self.parallel.model, 1)
 
 
-    def test_run_subprocess(self):
-        t, U = self.parallel.run_subprocess(self.model_parameters)
-
-        self.assertTrue(np.array_equal(self.t, t))
-        self.assertTrue(np.array_equal(self.U, U))
-
-
-
-
-
 
     def test_sort_features(self):
         results = {"directComparison": {"U": np.arange(0, 10) + 1,
@@ -227,7 +217,8 @@ class TestParallel(unittest.TestCase):
 
 
     def test_run_neuron_model(self):
-        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models/dLGN_modelDB/")
+        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                  "models/dLGN_modelDB/")
         model = NeuronModel(model_path=model_path,
                             adaptive_model=True)
 
@@ -236,4 +227,4 @@ class TestParallel(unittest.TestCase):
 
 
         with Xvfb() as xvfb:
-            results = parallel.run(model_parameters)
+            parallel.run(model_parameters)

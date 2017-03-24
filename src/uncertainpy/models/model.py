@@ -1,21 +1,10 @@
-import os
-import sys
-
 from uncertainpy import Parameters
 
 class Model():
     """
 The model must be able to handle these calls
 
-
-simulation = model() -> __init__ must be able to run with no arguments
-simulation.set_properties(properties set at runtime -> dict)
-
-simulation.setParameterValues(parameters -> dictionary)
-
 simulation.run()
-
-simulation.cmd()
 
 
 If you create your own model it must either be in it's own file
@@ -32,8 +21,7 @@ Run must store the results from the simulation in self.t and self.U
                  parameters=None,
                  adaptive_model=False,
                  xlabel="",
-                 ylabel="",
-                 new_process=False):
+                 ylabel=""):
         """
 
 ----------
@@ -60,15 +48,11 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
     or
     parameters = [ParameterObject1, ParameterObject2,...]
         """
-        self.U = None
-        self.t = None
 
         self.adaptive_model = adaptive_model
 
         self.xlabel = xlabel
         self.ylabel = ylabel
-
-        self.additional_cmds = []
 
         if isinstance(parameters, Parameters) or parameters is None:
             self.parameters = parameters
@@ -77,21 +61,6 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         else:
             raise ValueError("parameter argument has wrong type")
 
-
-    def set_properties(self, cmds):
-        self.additional_cmds = cmds.keys()
-        for cmd in self.additional_cmds:
-            if hasattr(self, cmd):
-                raise RuntimeWarning("{} already have attribute {}".format(self.__class__.__name__, cmd))
-
-            setattr(self, cmd, cmds[cmd])
-
-
-    def reset_properties(self):
-        for cmd in self.additional_cmds:
-            delattr(self, cmd)
-
-        self.additional_cmds = []
 
 
     def setDistribution(self, parameter_name, distribution_function):
@@ -114,28 +83,3 @@ parameters: Parameters object | list of Parameter objects | list [[name, value, 
         Run must return t, U
         """
         raise NotImplementedError("No run() method implemented")
-
-
-
-    def cmd(self):
-        original_path = os.path.abspath(__file__)
-        original_dir = os.path.dirname(original_path)
-
-        filepath = sys.modules[self.__class__.__module__].__file__
-        filedir = os.path.dirname(filepath)
-        filename = os.path.basename(filepath)
-
-        if self.__class__.__module__ == "__main__":
-            filedir = os.path.dirname(os.path.abspath(filename))
-
-
-        cmds = [sys.executable, original_dir + "/run_model.py",
-                "--model_name", self.__class__.__name__,
-                "--file_dir", filedir,
-                "--file_name", filename,
-                "--model_kwargs"]
-
-        for cmd in self.additional_cmds:
-            cmds += [cmd, getattr(self, cmd)]
-
-        return cmds
