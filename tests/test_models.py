@@ -101,6 +101,16 @@ class TestModel(unittest.TestCase):
             self.model.setAllDistributions(distribution_function)
 
 
+    def test_model_function(self):
+        self.model.run = model_function
+
+        parameters = {"a": -1, "b": -1}
+        t, U = self.model.run(**parameters)
+
+        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
+
+
 class TestHodgkinHuxleyModel(unittest.TestCase):
     def setUp(self):
         self.model = HodgkinHuxleyModel()

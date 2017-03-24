@@ -22,8 +22,6 @@ class IzhikevichModel(Model):
         else:
             return 0
 
-
-
     def run(self, a=0.02, b=0.2, c=-50, d=2):
 
         def f(u_in, t):
