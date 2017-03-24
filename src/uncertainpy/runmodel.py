@@ -192,6 +192,10 @@ class RunModel(object):
             for j, parameter in enumerate(uncertain_parameters):
                 parameters[parameter] = node[j]
 
+            for parameter in self.model.parameters:
+                if parameter.name not in parameters:
+                    parameters[parameter.name] = parameter.value
+
             model_parameters.append(parameters)
 
         return model_parameters

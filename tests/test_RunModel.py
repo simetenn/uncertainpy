@@ -28,7 +28,10 @@ class TestRunModel(unittest.TestCase):
                                                          "feature2d",
                                                          "featureInvalid",
                                                          "feature_adaptive"])
-        self.runmodel = RunModel(TestingModel1d(),
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
+
+        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
                                  features=self.features,
                                  supress_model_graphics=True)
 
@@ -81,6 +84,17 @@ class TestRunModel(unittest.TestCase):
 
         self.assertEqual(result, [{"a": 0, "b": 1}, {"a": 1, "b": 2}, {"a": 2, "b": 3}])
 
+
+    def test_create_model_parameters_one(self):
+        nodes = np.array([0, 1, 2])
+        uncertain_parameters = ["a"]
+
+        result = self.runmodel.create_model_parameters(nodes, uncertain_parameters)
+
+        self.assertEqual(result, [{"a": 0, "b": 2}, {"a": 1, "b": 2}, {"a": 2, "b": 2}])
+
+
+
     def test_evaluateNodesSequentialModel0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
 
@@ -89,7 +103,7 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel0d(),
+        self.runmodel = RunModel(TestingModel0d(self.parameterlist),
                                  features=features,
                                  CPUs=1)
 
@@ -111,7 +125,7 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel0d(),
+        self.runmodel = RunModel(TestingModel0d(self.parameterlist),
                                  features=features,
                                  CPUs=3)
         self.runmodel.data.uncertain_parameters = ["a", "b"]
@@ -156,9 +170,10 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel2d(),
+        self.runmodel = RunModel(TestingModel2d(self.parameterlist),
                                  features=features,
                                  CPUs=1)
+
 
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
@@ -177,7 +192,7 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel2d(),
+        self.runmodel = RunModel(TestingModel2d(self.parameterlist),
                                  features=features,
                                  CPUs=3)
 
@@ -212,13 +227,12 @@ class TestRunModel(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.runmodel = RunModel(TestingModel1d(),
+        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
                                  features=features,
                                  supress_model_graphics=True)
 
 
         self.runmodel.data.uncertain_parameters = ["a", "b"]
-
 
         results = self.runmodel.evaluateNodes(nodes)
 
@@ -259,7 +273,7 @@ class TestRunModel(unittest.TestCase):
 
         features = TestingFeatures(features_to_run=["featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel1d(),
+        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
                                  features=features,
                                  supress_model_graphics=True)
 
@@ -291,7 +305,8 @@ class TestRunModel(unittest.TestCase):
                                        np.arange(0, 10) + 5))
 
 
-        self.assertEqual(self.runmodel.data.U["featureInvalid"], "Only invalid results for all set of parameters")
+        self.assertEqual(self.runmodel.data.U["featureInvalid"],
+                         "Only invalid results for all set of parameters")
 
         self.assertEqual(self.runmodel.data.features_2d, [])
         self.assertEqual(self.runmodel.data.features_1d, ["directComparison"])
@@ -307,7 +322,8 @@ class TestRunModel(unittest.TestCase):
                                                     "feature_adaptive"],
                                    adaptive_features="feature_adaptive")
 
-        self.runmodel = RunModel(TestingModelAdaptive(adaptive_model=True),
+        self.runmodel = RunModel(TestingModelAdaptive(self.parameterlist,
+                                                      adaptive_model=True),
                                  features=features,
                                  supress_model_graphics=True)
 
@@ -561,7 +577,7 @@ class TestRunModel(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.runmodel = RunModel(TestingModel1d(), features=features, CPUs=1)
+        self.runmodel = RunModel(TestingModel1d(self.parameterlist), features=features, CPUs=1)
         uncertain_parameters = ["a", "b"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -593,7 +609,9 @@ class TestRunModel(unittest.TestCase):
 
     def test_runOneUncertainParameters(self):
         nodes = np.array([0, 1, 2])
-        self.runmodel = RunModel(TestingModel1d(), features=None, CPUs=1)
+        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
+                                 features=None,
+                                 CPUs=1)
         uncertain_parameters = ["a"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -614,12 +632,17 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_run_neuron_model(self):
-        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "models/dLGN_modelDB/")
-        model = NeuronModel(model_path=model_path,
+        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                  "models/dLGN_modelDB/")
+
+        parameterlist = [["cap", 1.1, None],
+                         ["Rm", 22000, None]]
+        model = NeuronModel(parameterlist,
+                            model_path=model_path,
                             adaptive_model=True)
 
         self.runmodel = RunModel(model, CPUs=1)
         uncertain_parameters = ["cap", "Rm"]
         nodes = np.array([[1.0, 1.1, 1.2], [21900, 22000, 22100]])
 
-        data = self.runmodel.run(nodes, uncertain_parameters)
+        self.runmodel.run(nodes, uncertain_parameters)
