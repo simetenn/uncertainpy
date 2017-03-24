@@ -108,7 +108,7 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
 
     def test_run(self):
         parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
-        self.model.run(parameters)
+        self.model.run(**parameters)
 
 
 
@@ -119,7 +119,7 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
     def test_run(self):
         parameters = {"kappa": -0.05, "u_env": 20}
-        self.model.run(parameters)
+        self.model.run(**parameters)
 
 
 
@@ -129,7 +129,7 @@ class TestIzhikevichModel(unittest.TestCase):
 
     def test_run(self):
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
-        self.model.run(parameters)
+        self.model.run(**parameters)
 
 
 

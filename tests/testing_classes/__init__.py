@@ -1,6 +1,7 @@
 from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
 from TestingModel import TestingModelNoTime, TestingModelNoTimeU
 from TestingModel import TestingModelAdaptive, TestingModelConstant
+from TestingModel import model_function
 
 from TestingFeatures import TestingFeatures
 from TestingUncertaintyCalculations import TestingUncertaintyCalculations
