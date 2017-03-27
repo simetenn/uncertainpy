@@ -31,23 +31,21 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        model = TestingModel1d(parameters)
+        self.model = TestingModel1d(parameters)
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
 
-
-        uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10)
-
-        self.uncertainty = UncertaintyEstimation(model,
+        self.uncertainty = UncertaintyEstimation(self.model,
                                                  features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_dir_data=self.output_test_dir,
                                                  output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 seed=self.seed,
+                                                 nr_mc_samples=10)
 
 
 
@@ -57,22 +55,22 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_init(self):
-        UncertaintyEstimation(TestingModel1d())
+        UncertaintyEstimation(self.model)
 
 
     def test_intitFeatures(self):
-        uncertainty = UncertaintyEstimation(TestingModel1d(),
+        uncertainty = UncertaintyEstimation(self.model,
                                             verbose_level="error")
         self.assertIsInstance(uncertainty.features, GeneralFeatures)
 
-        uncertainty = UncertaintyEstimation(TestingModel1d(),
+        uncertainty = UncertaintyEstimation(self.model,
                                             features=TestingFeatures(),
                                             verbose_level="error")
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
     def test_initModel(self):
-        uncertainty = UncertaintyEstimation(TestingModel1d(),
+        uncertainty = UncertaintyEstimation(self.model,
                                             verbose_level="error")
         self.assertIsInstance(uncertainty.model, TestingModel1d)
 
@@ -84,8 +82,8 @@ class TestUncertainty(unittest.TestCase):
                 "custom PCE method"
 
         uncertainty = UncertaintyEstimation(
-            TestingModel1d(),
-            uncertainty_calculations=TestingUncertaintyCalculations(TestingModel1d()),
+            self.model,
+            uncertainty_calculations=TestingUncertaintyCalculations,
             verbose_level="error"
         )
 
@@ -161,15 +159,14 @@ class TestUncertainty(unittest.TestCase):
                                                     "feature2d"])
 
 
-        uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10)
-
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
                                                  save_data=False,
                                                  save_figures=True,
                                                  output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 seed=self.seed,
+                                                 nr_mc_samples=10)
 
 
         self.uncertainty.PC()
@@ -202,16 +199,14 @@ class TestUncertainty(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-
-        uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10)
-
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
                                                  save_data=False,
                                                  save_figures=True,
                                                  output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 seed=self.seed,
+                                                 nr_mc_samples=10)
 
 
 
@@ -246,16 +241,16 @@ class TestUncertainty(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10)
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_data_filename="TestingModel1d_MC",
                                                  output_dir_data=self.output_test_dir,
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 seed=self.seed,
+                                                 nr_mc_samples=10)
 
 
         self.uncertainty.MCSingle()
@@ -298,16 +293,15 @@ class TestUncertainty(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        uncertainty_calculations = UncertaintyCalculations(seed=self.seed, nr_mc_samples=10**1)
-
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_data_filename="TestingModel1d_MC",
                                                  output_dir_data=self.output_test_dir,
-                                                 verbose_level="error")
+                                                 verbose_level="error",
+                                                 seed=self.seed,
+                                                 nr_mc_samples=10**1)
 
 
         self.uncertainty.MC()
@@ -507,11 +501,10 @@ class TestUncertainty(unittest.TestCase):
         features = TestingFeatures(features_to_run=None)
 
 
-        uncertainty_calculations = TestingUncertaintyCalculations()
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
-                                                 uncertainty_calculations=uncertainty_calculations,
+                                                 uncertainty_calculations=TestingUncertaintyCalculations,
                                                  save_data=False,
                                                  save_figures=False,
                                                  output_dir_data=self.output_test_dir,

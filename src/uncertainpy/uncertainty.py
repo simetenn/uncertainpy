@@ -2,6 +2,7 @@
 #  output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
 
 import os
+import multiprocess as mp
 
 from uncertainty_calculations import UncertaintyCalculations
 from features import GeneralFeatures
@@ -11,9 +12,9 @@ from uncertainpy import Data
 
 
 class UncertaintyEstimation(object):
-    def __init__(self, model,
+    def __init__(self,
+                 model,
                  features=None,
-                 uncertainty_calculations=None,
                  save_figures=True,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -21,7 +22,15 @@ class UncertaintyEstimation(object):
                  output_dir_data="data/",
                  output_data_filename=None,
                  verbose_level="info",
-                 verbose_filename=None):
+                 verbose_filename=None,
+                 uncertainty_calculations=None,
+                 CPUs=mp.cpu_count(),
+                 supress_model_graphics=True,
+                 M=3,
+                 nr_pc_samples=None,
+                 nr_mc_samples=10*3,
+                 nr_pc_mc_samples=10*5,
+                 seed=None):
 
         self.data = None
 
@@ -38,13 +47,21 @@ class UncertaintyEstimation(object):
                                     self.__class__.__name__)
 
         if uncertainty_calculations is None:
-            self.uncertainty_calculations = UncertaintyCalculations(
-                verbose_level=verbose_level,
-                verbose_filename=verbose_filename
-            )
-        else:
-            self.uncertainty_calculations = uncertainty_calculations
+            uncertainty_calculations = UncertaintyCalculations
 
+        self.uncertainty_calculations = uncertainty_calculations(
+            model,
+            features=features,
+            CPUs=CPUs,
+            supress_model_graphics=supress_model_graphics,
+            M=M,
+            nr_pc_samples=nr_pc_samples,
+            nr_mc_samples=nr_mc_samples,
+            nr_pc_mc_samples=nr_pc_mc_samples,
+            seed=seed,
+            verbose_level=verbose_level,
+            verbose_filename=verbose_filename
+        )
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
@@ -81,7 +98,6 @@ class UncertaintyEstimation(object):
     @property
     def model(self):
         return self._model
-
 
     @model.setter
     def model(self, new_model):

@@ -1,6 +1,5 @@
 import numpy as np
 import unittest
-import scipy.interpolate
 import chaospy as cp
 import os
 import shutil
@@ -33,13 +32,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
-        model = TestingModel1d(parameters)
+        self.model = TestingModel1d(parameters)
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty_calculations = UncertaintyCalculations(model,
+        self.uncertainty_calculations = UncertaintyCalculations(self.model,
                                                                 features=features,
                                                                 verbose_level="error",
                                                                 seed=self.seed)
@@ -51,7 +50,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_init(self):
-        uncertainty = UncertaintyCalculations(TestingModel1d())
+        uncertainty = UncertaintyCalculations(self.model)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.features, GeneralFeatures)
@@ -59,11 +58,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_intitFeatures(self):
-        uncertainty_calculations = UncertaintyCalculations(TestingModel1d(),
+        uncertainty_calculations = UncertaintyCalculations(self.model,
                                                            verbose_level="error")
         self.assertIsInstance(uncertainty_calculations.features, GeneralFeatures)
 
-        uncertainty_calculations = UncertaintyCalculations(TestingModel1d(),
+        uncertainty_calculations = UncertaintyCalculations(self.model,
                                                            features=TestingFeatures(),
                                                            verbose_level="error")
         self.assertIsInstance(uncertainty_calculations.features, TestingFeatures)
@@ -71,10 +70,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_set_model(self):
 
-        self.uncertainty_calculations = UncertaintyCalculations(verbose_level="error",
+        self.uncertainty_calculations = UncertaintyCalculations(model=None,
+                                                                verbose_level="error",
                                                                 seed=self.seed)
 
-        self.uncertainty_calculations.model = TestingModel1d()
+        self.uncertainty_calculations.model = self.model
 
         self.assertIsInstance(self.uncertainty_calculations.model, TestingModel1d)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.model, TestingModel1d)
@@ -82,7 +82,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_set_features(self):
 
-        self.uncertainty_calculations = UncertaintyCalculations(verbose_level="error",
+        self.uncertainty_calculations = UncertaintyCalculations(model=None,
+                                                                verbose_level="error",
                                                                 seed=self.seed)
         self.uncertainty_calculations.features = TestingFeatures()
 
