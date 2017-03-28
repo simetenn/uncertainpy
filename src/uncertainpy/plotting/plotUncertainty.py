@@ -281,9 +281,9 @@ class PlotUncertainty():
                    **kwargs)
 
         colors = get_current_colormap()
-        plt.fill_between(self.data.t[feature],
-                         self.data.p_05[feature].astype(float),
-                         self.data.p_95[feature].astype(float),
+        plt.fill_between(self.data.none_to_nan(self.data.t[feature]),
+                         self.data.none_to_nan(self.data.p_05[feature]),
+                         self.data.none_to_nan(self.data.p_95[feature]),
                          alpha=0.5, color=colors[0])
 
 
@@ -819,7 +819,7 @@ class PlotUncertainty():
 
         if no_sensitivity:
             msg = "All total_{sensitivity}s are None. Unable to plot total_{sensitivity}_grid"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            self.logger.warning(msg.format(sensitivity=sensitivity))
             return
 
         # get size of the grid in x and y directions

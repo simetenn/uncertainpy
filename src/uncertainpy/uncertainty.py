@@ -247,7 +247,6 @@ pc_method: "regression"
             raise RuntimeWarning("The number of uncertain parameters is high."
                                  + "A Monte-Carlo method _might_ be faster.")
 
-
         self.data = self.uncertainty_calculations.PC(
             uncertain_parameters=uncertain_parameters,
             method=method,
