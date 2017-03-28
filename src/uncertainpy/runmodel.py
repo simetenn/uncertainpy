@@ -7,6 +7,7 @@ import multiprocess as mp
 
 from data import Data
 from features import GeneralFeatures
+from models import Model
 from utils import create_logger
 from parallel import Parallel
 
@@ -83,13 +84,18 @@ class RunModel(object):
 
     @model.setter
     def model(self, new_model):
-        # if callable(new_model):
-        #     print "new_model is callable"
+        if isinstance(new_model, Model) or new_model is None:
+            tmp_model = new_model
+        elif callable(new_model):
+            tmp_model = Model()
+            tmp_model.run = new_model
+        else:
+            raise TypeError("model must be a Model instance, callable or None")
 
-        self._model = new_model
-        self.parallel.model = new_model
+        self._model = tmp_model
+        self.parallel.model = tmp_model
 
-        if new_model is not None:
+        if tmp_model is not None:
             self.data.xlabel = self.model.xlabel
             self.data.ylabel = self.model.ylabel
 

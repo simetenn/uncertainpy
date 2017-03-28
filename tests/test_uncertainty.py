@@ -13,7 +13,7 @@ from uncertainpy import UncertaintyCalculations
 from uncertainpy import Data
 
 from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d
+from testing_classes import TestingModel1d, model_function
 from testing_classes import TestingUncertaintyCalculations
 
 
@@ -133,6 +133,13 @@ class TestUncertainty(unittest.TestCase):
                               TestingModel1d)
 
 
+    def test_set_model_function(self):
+        uncertainty = UncertaintyEstimation(model=model_function,
+                                            parameters=None,
+                                            verbose_level="error",
+                                            seed=self.seed)
+
+
     def test_PCECustom(self):
 
         def PCECustom(self, uncertain_parameters=None):
@@ -190,6 +197,21 @@ class TestUncertainty(unittest.TestCase):
 
         self.assertEqual(result, 0)
 
+
+    # TODO working here, next step is to set model name when a function is given
+    def test_PC_model_function(self):
+        self.uncertainty
+        self.uncertainty.model = model_function
+        self.uncertainty.PC()
+        #
+        # folder = os.path.dirname(os.path.realpath(__file__))
+        # compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+        # filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
+        # self.assertTrue(os.path.isfile(filename))
+        #
+        # result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+        #
+        # self.assertEqual(result, 0)
 
 
     def test_PC(self):

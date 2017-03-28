@@ -6,10 +6,10 @@ import shutil
 
 
 from uncertainpy import RunModel, Parameters
-from uncertainpy.models import NeuronModel
+from uncertainpy.models import NeuronModel, Model
 
 
-from testing_classes import TestingFeatures
+from testing_classes import TestingFeatures, model_function
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
 from testing_classes import TestingModelAdaptive
 
@@ -57,7 +57,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_model(self):
-        self.runmodel = RunModel(None, None)
+        self.runmodel = RunModel(TestingModel2d(), None)
         self.runmodel.model = TestingModel1d()
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
@@ -66,18 +66,34 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(self.runmodel.data.xlabel, "x")
         self.assertEqual(self.runmodel.data.ylabel, "y")
 
+    def test_set_model_none(self):
+        self.runmodel = RunModel(TestingModel2d(), None)
+        self.runmodel.model = None
+
+        self.assertIsNone(self.runmodel._model)
+        self.assertIsNone(self.runmodel.parallel.model)
 
 
-    #
-    # def test_set_model_function(self):
-    #     self.runmodel = RunModel(None, None)
-    #     self.runmodel.model = TestingModel1d()
-    #
-    #     self.assertIsInstance(self.runmodel._model, TestingModel1d)
-    #     self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
-    #
-    #     self.assertEqual(self.runmodel.data.xlabel, "x")
-    #     self.assertEqual(self.runmodel.data.ylabel, "y")
+
+    def test_set_model_function(self):
+        self.runmodel = RunModel(TestingModel2d(), None)
+        self.runmodel.model = model_function
+
+        self.assertIsInstance(self.runmodel.model, Model)
+        self.assertIsInstance(self.runmodel.parallel.model, Model)
+
+        self.assertEqual(self.runmodel.data.xlabel, "")
+        self.assertEqual(self.runmodel.data.ylabel, "")
+
+
+    def test_init_model_function(self):
+        self.runmodel = RunModel(model_function, None)
+
+        self.assertIsInstance(self.runmodel.model, Model)
+        self.assertIsInstance(self.runmodel.parallel.model, Model)
+
+        self.assertEqual(self.runmodel.data.xlabel, "")
+        self.assertEqual(self.runmodel.data.ylabel, "")
 
 
 

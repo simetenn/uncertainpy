@@ -11,9 +11,11 @@ from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 from uncertainpy import Data
+from uncertainpy.models import Model
+
 
 from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d
+from testing_classes import TestingModel1d, model_function
 from testing_classes import TestingModelAdaptive
 
 
@@ -73,11 +75,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_set_model(self):
-
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
                                                                 verbose_level="error",
                                                                 seed=self.seed)
+
 
         self.uncertainty_calculations.model = self.model
 
@@ -86,7 +88,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_set_features(self):
-
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
                                                                 verbose_level="error",
@@ -107,6 +108,23 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertIsInstance(self.uncertainty_calculations.parameters, Parameters)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.parameters, Parameters)
+
+
+    def test_set_model_function(self):
+        self.uncertainty_calculations = UncertaintyCalculations(model=None,
+                                                                parameters=None,
+                                                                verbose_level="error",
+                                                                seed=self.seed)
+
+        self.uncertainty_calculations.model = model_function
+
+        self.assertIsInstance(self.uncertainty_calculations.model, Model)
+        self.assertIsInstance(self.uncertainty_calculations.runmodel.model, Model)
+
+        self.assertEqual(self.uncertainty_calculations.runmodel.data.xlabel, "")
+        self.assertEqual(self.uncertainty_calculations.runmodel.data.ylabel, "")
+
+
 
 
     def test_createDistributionNone(self):

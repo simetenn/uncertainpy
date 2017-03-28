@@ -4,6 +4,7 @@ import multiprocessing as mp
 from tqdm import tqdm
 
 from runmodel import RunModel
+from models import Model
 from utils import create_logger
 from features import GeneralFeatures
 
@@ -46,7 +47,6 @@ class UncertaintyCalculations(object):
                                  supress_model_graphics=supress_model_graphics)
 
 
-
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
@@ -84,8 +84,16 @@ class UncertaintyCalculations(object):
 
     @model.setter
     def model(self, new_model):
-        self._model = new_model
-        self.runmodel.model = new_model
+        if isinstance(new_model, Model) or new_model is None:
+            tmp_model = new_model
+        elif callable(new_model):
+            tmp_model = Model()
+            tmp_model.run = new_model
+        else:
+            raise TypeError("model must be a Model instance, callable or None")
+
+        self._model = tmp_model
+        self.runmodel.model = tmp_model
 
 
     @property
