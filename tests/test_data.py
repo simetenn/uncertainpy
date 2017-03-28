@@ -126,6 +126,19 @@ class TestData(unittest.TestCase):
     #     with self.assertRaises(FileNotFoundError):
     #         self.data.load(compare_file)
 
+    def test_save_empty(self):
+        data = Data()
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_empty")
+        filename = os.path.join(self.output_test_dir, "test_save_empty")
+
+        data.save(filename)
+
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
 
     def test_load(self):
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -165,6 +178,26 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.feature_list[0], "directComparison")
         self.assertEqual(self.data.feature_list[1], "feature1")
+
+
+    def test_load_empty(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_empty")
+
+
+        self.data.load(compare_file)
+
+        for data_name in self.data.data_names:
+            data = getattr(self.data, data_name)
+            self.assertEqual(data, {})
+
+        self.assertEqual(self.data.features_0d, [])
+        self.assertEqual(self.data.features_1d, [])
+        self.assertEqual(self.data.features_2d, [])
+        self.assertEqual(self.data.feature_list, [])
+        self.assertEqual(self.data.uncertain_parameters, [])
+        self.assertEqual(self.data.xlabel, "")
+        self.assertEqual(self.data.ylabel, "")
 
 
     def test_removeOnlyInvalidResultsNo(self):

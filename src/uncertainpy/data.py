@@ -34,13 +34,16 @@ features_2d
 feature_list
         """
 
+        # TODO consider storing all data belonging to one specific feature in a dict for that feature
+
         self.data_names = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
                            "sensitivity_t", "total_sensitivity_t"]
 
 
         self.data_information = ["xlabel", "ylabel", "features_0d",
-                                 "features_1d", "features_2d", "feature_list"]
+                                 "features_1d", "features_2d", "feature_list",
+                                 "uncertain_parameters"]
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -91,7 +94,7 @@ feature_list
 
 
     def resetValues(self):
-        self.uncertain_parameters = None
+        self.uncertain_parameters = []
 
         self._features_0d = []
         self._features_1d = []
@@ -163,7 +166,7 @@ Test if the model returned an adaptive result
 
 
     def save(self, filename):
-        ### TODO expand the save funcition to also save parameters and model information
+        ### TODO expand the save function to also save parameters and model information
 
         with h5py.File(os.path.join(filename), 'w') as f:
 
@@ -180,26 +183,11 @@ Test if the model returned an adaptive result
             for feature in self.feature_list:
                 group = f.create_group(feature)
 
-                if feature in self.t and self.t[feature] is not None:
-                    group.create_dataset("t", data=self.none_to_nan(self.t[feature]))
-                if feature in self.U:
-                    group.create_dataset("U", data=self.none_to_nan(self.U[feature]))
-                if feature in self.E:
-                    group.create_dataset("E", data=self.none_to_nan(self.E[feature]))
-                if feature in self.Var:
-                    group.create_dataset("Var", data=self.none_to_nan(self.Var[feature]))
-                if feature in self.p_05:
-                    group.create_dataset("p_05", data=self.none_to_nan(self.p_05[feature]))
-                if feature in self.p_95:
-                    group.create_dataset("p_95", data=self.none_to_nan(self.p_95[feature]))
-                if feature in self.sensitivity_1 and self.sensitivity_1[feature] is not None:
-                    group.create_dataset("sensitivity_1", data=self.none_to_nan(self.sensitivity_1[feature]))
-                if feature in self.total_sensitivity_1 and self.total_sensitivity_1[feature] is not None:
-                    group.create_dataset("total_sensitivity_1", data=self.none_to_nan(self.total_sensitivity_1[feature]))
-                if feature in self.sensitivity_t and self.sensitivity_t[feature] is not None:
-                    group.create_dataset("sensitivity_t", data=self.none_to_nan(self.sensitivity_t[feature]))
-                if feature in self.total_sensitivity_t and self.total_sensitivity_t[feature] is not None:
-                    group.create_dataset("total_sensitivity_t", data=self.none_to_nan(self.total_sensitivity_t[feature]))
+                for data_name in self.data_names:
+                    data = getattr(self, data_name)
+
+                    if feature in data and data[feature] is not None:
+                        group.create_dataset(data_name, data=self.none_to_nan(data[feature]))
 
 
     def load(self, filename):
@@ -219,7 +207,7 @@ Test if the model returned an adaptive result
             self.sensitivity_1 = {}
 
 
-            self.uncertain_parameters = f.attrs["uncertain parameters"]
+            self.uncertain_parameters = list(f.attrs["uncertain parameters"])
 
             self.xlabel = f.attrs["xlabel"]
             self.ylabel = f.attrs["ylabel"]
@@ -232,40 +220,15 @@ Test if the model returned an adaptive result
 
 
             for feature in f.keys():
-                self.U[feature] = self.nan_to_none(f[feature]["U"][()])
-                self.E[feature] = self.nan_to_none(f[feature]["E"][()])
-                self.Var[feature] = self.nan_to_none(f[feature]["Var"][()])
-                self.p_05[feature] = self.nan_to_none(f[feature]["p_05"][()])
-                self.p_95[feature] = self.nan_to_none(f[feature]["p_95"][()])
+                for data_name in self.data_names:
+                    data = getattr(self, data_name)
+
+                    if data_name in f[feature].keys():
+                        data[feature] = self.nan_to_none(f[feature][data_name][()])
+                    else:
+                        data[feature] = None
 
 
-                if "sensitivity_1" in f[feature].keys():
-                    self.sensitivity_1[feature] = self.nan_to_none(f[feature]["sensitivity_1"][()])
-                else:
-                    self.sensitivity_1[feature] = None
-
-                if "total_sensitivity_1" in f[feature].keys():
-                    self.total_sensitivity_1[feature] = self.nan_to_none(f[feature]["total_sensitivity_1"][()])
-                else:
-                    self.total_sensitivity_1[feature] = None
-
-
-
-                if "sensitivity_t" in f[feature].keys():
-                    self.sensitivity_t[feature] = self.nan_to_none(f[feature]["sensitivity_t"][()])
-                else:
-                    self.sensitivity_t[feature] = None
-
-                if "total_sensitivity_t" in f[feature].keys():
-                    self.total_sensitivity_t[feature] = self.nan_to_none(f[feature]["total_sensitivity_t"][()])
-                else:
-                    self.total_sensitivity_t[feature] = None
-
-
-                if "t" in f[feature].keys():
-                    self.t[feature] = f[feature]["t"][()]
-                else:
-                    self.t[feature] = None
 
     def nan_to_none(self, array):
         try:

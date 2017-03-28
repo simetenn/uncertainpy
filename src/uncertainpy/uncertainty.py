@@ -3,6 +3,7 @@
 
 import os
 import multiprocess as mp
+import types
 
 from uncertainty_calculations import UncertaintyCalculations
 from features import GeneralFeatures
@@ -24,6 +25,7 @@ class UncertaintyEstimation(object):
                  verbose_level="info",
                  verbose_filename=None,
                  uncertainty_calculations=None,
+                 PCECustom=None,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
                  M=3,
@@ -47,27 +49,31 @@ class UncertaintyEstimation(object):
                                     self.__class__.__name__)
 
         if uncertainty_calculations is None:
-            uncertainty_calculations = UncertaintyCalculations
+            self.uncertainty_calculations = UncertaintyCalculations(
+                model,
+                features=features,
+                CPUs=CPUs,
+                supress_model_graphics=supress_model_graphics,
+                M=M,
+                nr_pc_samples=nr_pc_samples,
+                nr_mc_samples=nr_mc_samples,
+                nr_pc_mc_samples=nr_pc_mc_samples,
+                seed=seed,
+                verbose_level=verbose_level,
+                verbose_filename=verbose_filename
+            )
+        else:
+            self.uncertainty_calculations = uncertainty_calculations
 
-        self.uncertainty_calculations = uncertainty_calculations(
-            model,
-            features=features,
-            CPUs=CPUs,
-            supress_model_graphics=supress_model_graphics,
-            M=M,
-            nr_pc_samples=nr_pc_samples,
-            nr_mc_samples=nr_mc_samples,
-            nr_pc_mc_samples=nr_pc_mc_samples,
-            seed=seed,
-            verbose_level=verbose_level,
-            verbose_filename=verbose_filename
-        )
+        if PCECustom is not None:
+            self.uncertainty_calculations.PCECustom = types.MethodType(PCECustom,
+                                                                       self.uncertainty_calculations)
+
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
                                         verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
-
 
         if features is None:
             self.features = GeneralFeatures(features_to_run=None)
@@ -82,6 +88,7 @@ class UncertaintyEstimation(object):
             self.output_data_filename = self.model.__class__.__name__
         else:
             self.output_data_filename = output_data_filename
+
 
 
     @property
@@ -246,7 +253,6 @@ pc_method: "regression"
             method=method,
             rosenblatt=rosenblatt
         )
-
 
         if self.save_data:
             if filename is None:

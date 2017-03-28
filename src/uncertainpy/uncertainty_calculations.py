@@ -50,6 +50,7 @@ class UncertaintyCalculations(object):
         else:
             self.features = features
 
+
         self.model = model
 
 
@@ -314,8 +315,6 @@ class UncertaintyCalculations(object):
 
 
     def PCAnalysis(self):
-        np.random.seed(10)
-
         for feature in self.data.feature_list:
             self.data.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.data.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
@@ -345,7 +344,7 @@ class UncertaintyCalculations(object):
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
 
-    def CustomUQ(self, uncertain_parameters=None, **kwargs):
+    def CustomUQ(self, **kwargs):
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 
