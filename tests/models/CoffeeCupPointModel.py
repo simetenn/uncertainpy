@@ -7,11 +7,11 @@ import odespy
 class CoffeeCupPointModel(Model):
     """
     """
-    def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
+    def __init__(self):
+        Model.__init__(self,
+                       xlabel="time [s]",
+                       ylabel="Temperature [C]")
 
-        self.xlabel = "time [s]"
-        self.ylabel = "Temperature [C]"
 
 
     def run(self, kappa=-0.05, u_env=20):

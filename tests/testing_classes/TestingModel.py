@@ -12,11 +12,8 @@ def model_function(a=1, b=2):
 
 
 class TestingModel0d(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
-
-        self.xlabel = "x"
-        self.ylabel = "y"
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
 
     def run(self, a=1, b=2):
@@ -28,13 +25,8 @@ class TestingModel0d(Model):
 
 
 class TestingModel1d(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
-
-
-        self.xlabel = "x"
-        self.ylabel = "y"
-
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
     def run(self, a=1, b=2):
 
@@ -46,11 +38,8 @@ class TestingModel1d(Model):
 
 
 class TestingModel2d(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
-
-        self.xlabel = "x"
-        self.ylabel = "y"
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
 
     def run(self, a=1, b=2):
@@ -62,11 +51,8 @@ class TestingModel2d(Model):
 
 
 class TestingModelAdaptive(Model):
-    def __init__(self, parameters, adaptive_model=True):
-        Model.__init__(self, parameters=parameters, adaptive_model=adaptive_model)
-
-        self.xlabel = "x"
-        self.ylabel = "y"
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y", adaptive_model=True)
 
 
     def run(self, a=1, b=2):
@@ -79,11 +65,8 @@ class TestingModelAdaptive(Model):
 
 
 class TestingModelConstant(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
-
-        self.xlabel = "x"
-        self.ylabel = "y"
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
 
     def run(self, a=1, b=2):
@@ -96,11 +79,8 @@ class TestingModelConstant(Model):
 
 
 class TestingModelNoTime(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
-
-        self.xlabel = "x"
-        self.ylabel = "y"
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
 
     def run(self, a=1, b=2):
@@ -110,12 +90,10 @@ class TestingModelNoTime(Model):
         return U
 
 
-class TestingModelNoTimeU(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
 
-        self.xlabel = "x"
-        self.ylabel = "y"
+class TestingModelNoTimeU(Model):
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
 
     def run(self, a=1, b=2):
@@ -124,12 +102,8 @@ class TestingModelNoTimeU(Model):
 
 
 class TestingModelThree(Model):
-    def __init__(self, parameters):
-        Model.__init__(self, parameters=parameters)
-
-
-        self.xlabel = "x"
-        self.ylabel = "y"
+    def __init__(self):
+        Model.__init__(self, xlabel="x", ylabel="y")
 
 
     def run(self, a=1, b=2):

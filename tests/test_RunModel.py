@@ -5,8 +5,9 @@ import os
 import shutil
 
 
-from uncertainpy import RunModel
+from uncertainpy import RunModel, Parameters
 from uncertainpy.models import NeuronModel
+
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
@@ -28,10 +29,13 @@ class TestRunModel(unittest.TestCase):
                                                          "feature2d",
                                                          "featureInvalid",
                                                          "feature_adaptive"])
-        self.parameterlist = [["a", 1, None],
-                              ["b", 2, None]]
 
-        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+        self.parameters = Parameters(parameterlist)
+
+        self.runmodel = RunModel(model=TestingModel1d(),
+                                 parameters=self.parameters,
                                  features=self.features,
                                  supress_model_graphics=True)
 
@@ -43,7 +47,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_init(self):
-        RunModel(TestingModel1d(self.parameterlist))
+        RunModel(model=TestingModel1d(), parameters=self.parameters)
 
 
     def test_feature(self):
@@ -53,8 +57,8 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_model(self):
-        self.runmodel = RunModel(None)
-        self.runmodel.model = TestingModel1d(self.parameterlist)
+        self.runmodel = RunModel(None, None)
+        self.runmodel.model = TestingModel1d()
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
         self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
@@ -63,15 +67,17 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(self.runmodel.data.ylabel, "y")
 
 
-    def test_set_model_function(self):
-        self.runmodel = RunModel(None)
-        self.runmodel.model = TestingModel1d(self.parameterlist)
 
-        self.assertIsInstance(self.runmodel._model, TestingModel1d)
-        self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
-
-        self.assertEqual(self.runmodel.data.xlabel, "x")
-        self.assertEqual(self.runmodel.data.ylabel, "y")
+    #
+    # def test_set_model_function(self):
+    #     self.runmodel = RunModel(None, None)
+    #     self.runmodel.model = TestingModel1d()
+    #
+    #     self.assertIsInstance(self.runmodel._model, TestingModel1d)
+    #     self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
+    #
+    #     self.assertEqual(self.runmodel.data.xlabel, "x")
+    #     self.assertEqual(self.runmodel.data.ylabel, "y")
 
 
 
@@ -103,7 +109,8 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel0d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel0d(),
+                                 parameters=self.parameters,
                                  features=features,
                                  CPUs=1)
 
@@ -125,9 +132,11 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel0d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel0d(),
+                                 parameters=self.parameters,
                                  features=features,
                                  CPUs=3)
+
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
 
@@ -170,7 +179,8 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel2d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel2d(),
+                                 parameters=self.parameters,
                                  features=features,
                                  CPUs=1)
 
@@ -192,7 +202,8 @@ class TestRunModel(unittest.TestCase):
                                                     "feature2d",
                                                     "featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel2d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel2d(),
+                                 parameters=self.parameters,
                                  features=features,
                                  CPUs=3)
 
@@ -227,7 +238,8 @@ class TestRunModel(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel1d(),
+                                 parameters=self.parameters,
                                  features=features,
                                  supress_model_graphics=True)
 
@@ -273,7 +285,8 @@ class TestRunModel(unittest.TestCase):
 
         features = TestingFeatures(features_to_run=["featureInvalid"])
 
-        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel1d(),
+                                 parameters=self.parameters,
                                  features=features,
                                  supress_model_graphics=True)
 
@@ -322,8 +335,8 @@ class TestRunModel(unittest.TestCase):
                                                     "feature_adaptive"],
                                    adaptive_features="feature_adaptive")
 
-        self.runmodel = RunModel(TestingModelAdaptive(self.parameterlist,
-                                                      adaptive_model=True),
+        self.runmodel = RunModel(model=TestingModelAdaptive(),
+                                 parameters=self.parameters,
                                  features=features,
                                  supress_model_graphics=True)
 
@@ -577,7 +590,10 @@ class TestRunModel(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.runmodel = RunModel(TestingModel1d(self.parameterlist), features=features, CPUs=1)
+        self.runmodel = RunModel(model=TestingModel1d(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 CPUs=1)
         uncertain_parameters = ["a", "b"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -609,7 +625,8 @@ class TestRunModel(unittest.TestCase):
 
     def test_runOneUncertainParameters(self):
         nodes = np.array([0, 1, 2])
-        self.runmodel = RunModel(TestingModel1d(self.parameterlist),
+        self.runmodel = RunModel(model=TestingModel1d(),
+                                 parameters=self.parameters,
                                  features=None,
                                  CPUs=1)
         uncertain_parameters = ["a"]
@@ -635,13 +652,10 @@ class TestRunModel(unittest.TestCase):
         model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                   "models/dLGN_modelDB/")
 
-        parameterlist = [["cap", 1.1, None],
-                         ["Rm", 22000, None]]
-        model = NeuronModel(parameterlist,
-                            model_path=model_path,
+        model = NeuronModel(model_path=model_path,
                             adaptive_model=True)
 
-        self.runmodel = RunModel(model, CPUs=1)
+        self.runmodel = RunModel(model=model, parameters=self.parameters, CPUs=1)
         uncertain_parameters = ["cap", "Rm"]
         nodes = np.array([[1.0, 1.1, 1.2], [21900, 22000, 22100]])
 

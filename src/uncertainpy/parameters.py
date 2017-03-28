@@ -120,7 +120,7 @@ Return a readable string of a parameter
 
 # TODO add an iterator
 class Parameters():
-    def __init__(self, parameterlist):
+    def __init__(self, parameterlist=[]):
         """
 A collection of parameters.
 

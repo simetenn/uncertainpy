@@ -28,9 +28,7 @@ class TestParallel(unittest.TestCase):
                                                          "featureInvalid",
                                                          "feature_adaptive"])
 
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-
-        self.parallel = Parallel(model=TestingModel1d(self.parameterlist),
+        self.parallel = Parallel(model=TestingModel1d(),
                                  features=self.features)
 
         self.model_parameters = {"a": 0, "b": 1}
@@ -47,7 +45,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_init(self):
-        Parallel(TestingModel1d(self.parameterlist))
+        Parallel(TestingModel1d())
 
 
     def test_feature(self):
@@ -190,7 +188,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_run_adaptive_model(self):
-        parallel = Parallel(model=TestingModelAdaptive(self.parameterlist),
+        parallel = Parallel(model=TestingModelAdaptive(),
                             features=TestingFeatures(features_to_run="feature_adaptive"))
         results = parallel.run(self.model_parameters)
 
@@ -206,13 +204,13 @@ class TestParallel(unittest.TestCase):
 
 
     def test_run_model_no_time(self):
-        parallel = Parallel(model=TestingModelNoTime(self.parameterlist))
+        parallel = Parallel(model=TestingModelNoTime())
         with self.assertRaises(ValueError):
             parallel.run(self.model_parameters)
 
 
     def test_run_feature_no_time(self):
-        parallel = Parallel(model=TestingModel1d(self.parameterlist),
+        parallel = Parallel(model=TestingModel1d(),
                             features=TestingFeatures(features_to_run="feature_no_time"))
 
         with self.assertRaises(ValueError):
@@ -222,10 +220,8 @@ class TestParallel(unittest.TestCase):
     def test_run_neuron_model(self):
         model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                   "models/dLGN_modelDB/")
-        parameterlist = [["cap", 1, None],
-                         ["Rm", 22000, None]]
-        model = NeuronModel(parameterlist,
-                            model_path=model_path,
+
+        model = NeuronModel(model_path=model_path,
                             adaptive_model=True)
 
         parallel = Parallel(model=model)

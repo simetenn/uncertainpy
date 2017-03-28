@@ -9,12 +9,14 @@ from uncertainty_calculations import UncertaintyCalculations
 from features import GeneralFeatures
 from plotting.plotUncertainty import PlotUncertainty
 from utils import create_logger
+from models import Model
 from uncertainpy import Data
 
 
 class UncertaintyEstimation(object):
     def __init__(self,
                  model,
+                 parameters,
                  features=None,
                  save_figures=True,
                  output_dir_figures="figures/",
@@ -38,6 +40,7 @@ class UncertaintyEstimation(object):
 
         self._model = None
         self._features = None
+        self._parameters = None
 
         self.save_figures = save_figures
         self.save_data = save_data
@@ -80,7 +83,7 @@ class UncertaintyEstimation(object):
         else:
             self.features = features
 
-
+        self.parameters = parameters
         self.model = model
 
 
@@ -103,13 +106,32 @@ class UncertaintyEstimation(object):
 
 
     @property
+    def parameters(self):
+        return self._parameters
+
+
+    @parameters.setter
+    def parameters(self, new_parameters):
+        self._parameters = new_parameters
+        self.uncertainty_calculations.parameters = new_parameters
+
+
+    @property
     def model(self):
         return self._model
 
     @model.setter
     def model(self, new_model):
-        self._model = new_model
-        self.uncertainty_calculations.model = new_model
+        if isinstance(new_model, Model):
+            tmp_model = new_model
+        elif callable(new_model):
+            tmp_model = Model()
+            tmp_model.run = new_model
+        else:
+            raise TypeError("model must be a Model instance or callable")
+
+        self._model = tmp_model
+        self.uncertainty_calculations.model = tmp_model
 
 
     @property
@@ -436,7 +458,7 @@ pc_method: "regression"
 
     def convertUncertainParameters(self, uncertain_parameters):
         if uncertain_parameters is None:
-            uncertain_parameters = self.model.parameters.getUncertain("name")
+            uncertain_parameters = self.parameters.getUncertain("name")
 
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]

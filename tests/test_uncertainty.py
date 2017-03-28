@@ -16,6 +16,7 @@ from testing_classes import TestingFeatures
 from testing_classes import TestingModel1d
 from testing_classes import TestingUncertaintyCalculations
 
+
 class TestUncertainty(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
@@ -29,16 +30,17 @@ class TestUncertainty(unittest.TestCase):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        self.parameters = Parameters(parameterlist)
+        self.parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        self.model = TestingModel1d(parameters)
+        self.model = TestingModel1d()
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
 
         self.uncertainty = UncertaintyEstimation(self.model,
+                                                 parameters=self.parameters,
                                                  features=features,
                                                  save_data=True,
                                                  save_figures=False,
@@ -56,24 +58,25 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_init(self):
-        UncertaintyEstimation(self.model)
+        uncertainty= UncertaintyEstimation(self.model, self.parameters)
+
+        self.assertIsInstance(uncertainty.model, TestingModel1d)
+        self.assertIsInstance(uncertainty.parameters, Parameters)
 
 
     def test_intitFeatures(self):
         uncertainty = UncertaintyEstimation(self.model,
+                                            self.parameters,
                                             verbose_level="error")
         self.assertIsInstance(uncertainty.features, GeneralFeatures)
 
         uncertainty = UncertaintyEstimation(self.model,
+                                            self.parameters,
                                             features=TestingFeatures(),
                                             verbose_level="error")
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
-    def test_initModel(self):
-        uncertainty = UncertaintyEstimation(self.model,
-                                            verbose_level="error")
-        self.assertIsInstance(uncertainty.model, TestingModel1d)
 
 
     def test_initUncertaintyCalculations(self):
@@ -84,11 +87,51 @@ class TestUncertainty(unittest.TestCase):
 
         uncertainty = UncertaintyEstimation(
             self.model,
+            self.parameters,
             uncertainty_calculations=TempUncertaintyCalculations(self.model),
             verbose_level="error"
         )
 
         self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
+
+
+    def test_set_parameters(self):
+        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+                                            parameters=None,
+                                            verbose_level="error",
+                                            seed=self.seed)
+        uncertainty.parameters = Parameters()
+
+        self.assertIsInstance(uncertainty.parameters, Parameters)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
+                              Parameters)
+
+
+    def test_set_features(self):
+        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+                                            parameters=None,
+                                            verbose_level="error",
+                                            seed=self.seed)
+        uncertainty.features = TestingFeatures()
+
+        self.assertIsInstance(uncertainty.features, TestingFeatures)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.features, TestingFeatures)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.features,
+                              TestingFeatures)
+
+    def test_set_model(self):
+        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+                                            parameters=None,
+                                            verbose_level="error",
+                                            seed=self.seed)
+        uncertainty.model = TestingModel1d()
+
+        self.assertIsInstance(uncertainty.model, TestingModel1d)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.model, TestingModel1d)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.model,
+                              TestingModel1d)
+
 
     def test_PCECustom(self):
 
@@ -98,6 +141,7 @@ class TestUncertainty(unittest.TestCase):
 
         uncertainty = UncertaintyEstimation(
             self.model,
+            self.parameters,
             PCECustom=PCECustom,
             verbose_level="error"
         )
@@ -169,7 +213,7 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        model = TestingModel1d(parameters)
+        model = TestingModel1d()
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
@@ -178,6 +222,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
+                                                 parameters=parameters,
                                                  save_data=False,
                                                  save_figures=True,
                                                  output_dir_figures=self.output_test_dir,
@@ -210,7 +255,7 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        model = TestingModel1d(parameters)
+        model = TestingModel1d()
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
@@ -218,6 +263,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
+                                                 parameters=parameters,
                                                  save_data=False,
                                                  save_figures=True,
                                                  output_dir_figures=self.output_test_dir,
@@ -252,7 +298,7 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        model = TestingModel1d(parameters)
+        model = TestingModel1d()
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
@@ -261,6 +307,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
+                                                 parameters=parameters,
                                                  save_data=True,
                                                  save_figures=False,
                                                  output_data_filename="TestingModel1d_MC",
@@ -304,13 +351,14 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        model = TestingModel1d(parameters)
+        model = TestingModel1d()
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
 
         self.uncertainty = UncertaintyEstimation(model,
+                                                 parameters=parameters,
                                                  features=features,
                                                  save_data=True,
                                                  save_figures=False,
@@ -513,13 +561,12 @@ class TestUncertainty(unittest.TestCase):
         parameters = Parameters(parameterlist)
         parameters.setAllDistributions(Distribution(0.5).uniform)
 
-        model = TestingModel1d(parameters)
+        model = TestingModel1d()
 
         features = TestingFeatures(features_to_run=None)
 
-
-
         self.uncertainty = UncertaintyEstimation(model,
+                                                 parameters=parameters,
                                                  features=features,
                                                  uncertainty_calculations=TestingUncertaintyCalculations(model),
                                                  save_data=False,

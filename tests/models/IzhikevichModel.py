@@ -3,11 +3,11 @@ from uncertainpy import Model
 import numpy as np
 
 class IzhikevichModel(Model):
-    def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
+    def __init__(self):
+        Model.__init__(self,
+                       xlabel="time [ms]",
+                       ylabel="voltage [mv]")
 
-        self.xlabel = "time [ms]"
-        self.ylabel = "voltage [mv]"
 
         t_end = 100
         self.dt = 0.25

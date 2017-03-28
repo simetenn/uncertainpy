@@ -19,83 +19,12 @@ folder = os.path.dirname(os.path.realpath(__file__))
 
 class TestModel(unittest.TestCase):
     def setUp(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-        self.model = Model(parameterlist)
-
-
-    def test_init(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-        parameters = Parameters(parameterlist)
-        model = Model(parameters)
-
-        self.assertIsInstance(model.parameters, Parameters)
-
-
-    def test_initParameterList(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-        model = Model(parameterlist)
-
-        self.assertIsInstance(model.parameters, Parameters)
-
+        self.model = Model()
 
 
     def test_run(self):
         with self.assertRaises(NotImplementedError):
             self.model.run(a="parameter input")
-
-
-
-    def test_setDistribution(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-        parameters = Parameters(parameterlist)
-        self.model = Model(parameters)
-
-
-        def distribution_function(x):
-            return cp.Uniform(x - 10, x + 10)
-
-        self.model.setDistribution("gbar_Na", distribution_function)
-
-        self.assertIsInstance(self.model.parameters["gbar_Na"].distribution, cp.Dist)
-
-
-    def test_setDistributionNone(self):
-        def distribution_function(x):
-            return cp.Uniform(x - 10, x + 10)
-
-        with self.assertRaises(KeyError):
-            self.model.setDistribution("not a parameter", distribution_function)
-
-
-
-    def test_setAllDistributions(self):
-        parameterlist = [["gbar_Na", 120, None],
-                         ["gbar_K", 36, None],
-                         ["gbar_l", 0.3, None]]
-
-        parameters = Parameters(parameterlist)
-        self.model = Model(parameters)
-
-        def distribution_function(x):
-            return cp.Uniform(x - 10, x + 10)
-
-        self.model.setAllDistributions(distribution_function)
-
-        self.assertIsInstance(self.model.parameters["gbar_Na"].distribution, cp.Dist)
-        self.assertIsInstance(self.model.parameters["gbar_K"].distribution, cp.Dist)
-        self.assertIsInstance(self.model.parameters["gbar_l"].distribution, cp.Dist)
 
 
     def test_model_function(self):
@@ -110,8 +39,7 @@ class TestModel(unittest.TestCase):
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
     def setUp(self):
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-        self.model = HodgkinHuxleyModel(self.parameterlist)
+        self.model = HodgkinHuxleyModel()
 
 
     def test_run(self):
@@ -122,8 +50,7 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
 
 class TestCoffeeCupPointModel(unittest.TestCase):
     def setUp(self):
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-        self.model = CoffeeCupPointModel(self.parameterlist)
+        self.model = CoffeeCupPointModel()
 
 
     def test_run(self):
@@ -134,8 +61,7 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
 class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-        self.model = IzhikevichModel(self.parameterlist)
+        self.model = IzhikevichModel()
 
     def test_run(self):
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
@@ -147,8 +73,7 @@ class TestIzhikevichModel(unittest.TestCase):
 
 class TestTestingModel0d(unittest.TestCase):
     def setUp(self):
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-        self.model = TestingModel0d(self.parameterlist)
+            self.model = TestingModel0d()
 
 
     def test_run(self):
@@ -164,8 +89,7 @@ class TestTestingModel0d(unittest.TestCase):
 
 class TestTestingModel1d(unittest.TestCase):
     def setUp(self):
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-        self.model = TestingModel1d(self.parameterlist)
+        self.model = TestingModel1d()
 
 
     def test_run(self):
@@ -180,8 +104,7 @@ class TestTestingModel1d(unittest.TestCase):
 
 class TestTestingModel2d(unittest.TestCase):
     def setUp(self):
-        self.parameterlist = [["a", 1, None], ["b", 2, None]]
-        self.model = TestingModel2d(self.parameterlist)
+        self.model = TestingModel2d()
 
 
 

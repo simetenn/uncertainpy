@@ -34,6 +34,7 @@ solves = [results 1, results 2, ..., results N]
 class RunModel(object):
     def __init__(self,
                  model,
+                 parameters,
                  features=None,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
@@ -42,6 +43,8 @@ class RunModel(object):
 
         self._model = None
         self._features = None
+
+        self.parameters = parameters
 
         self.data = Data()
         self.parallel = Parallel(model)
@@ -77,10 +80,11 @@ class RunModel(object):
     def model(self):
         return self._model
 
+
     @model.setter
     def model(self, new_model):
-        if callable(new_model):
-            print "new_model is callable"
+        # if callable(new_model):
+        #     print "new_model is callable"
 
         self._model = new_model
         self.parallel.model = new_model
@@ -181,41 +185,6 @@ class RunModel(object):
 
 
 
-    def create_model_parameters(self, nodes, uncertain_parameters):
-        model_parameters = []
-        for node in nodes.T:
-            if isinstance(node, float) or isinstance(node, int):
-                node = [node]
-
-            # New setparameters
-            parameters = {}
-            for j, parameter in enumerate(uncertain_parameters):
-                parameters[parameter] = node[j]
-
-            for parameter in self.model.parameters:
-                if parameter.name not in parameters:
-                    parameters[parameter.name] = parameter.value
-
-            model_parameters.append(parameters)
-
-        return model_parameters
-
-
-        # model_parameters = []
-        # for node in nodes.T:
-        #     if isinstance(node, float) or isinstance(node, int):
-        #         node = [node]
-        #
-        #     # New setparameters
-        #     parameters = {}
-        #     for j, parameter in enumerate(uncertain_parameters):
-        #         parameters[parameter] = node[j]
-        #
-        #     model_parameters.append(parameters)
-        #
-        # return model_parameters
-
-
     def evaluateNodes(self, nodes):
 
         if self.supress_model_graphics:
@@ -239,6 +208,25 @@ class RunModel(object):
 
         return np.array(solves)
 
+
+    def create_model_parameters(self, nodes, uncertain_parameters):
+        model_parameters = []
+        for node in nodes.T:
+            if isinstance(node, float) or isinstance(node, int):
+                node = [node]
+
+            # New setparameters
+            parameters = {}
+            for j, parameter in enumerate(uncertain_parameters):
+                parameters[parameter] = node[j]
+
+            for parameter in self.parameters:
+                if parameter.name not in parameters:
+                    parameters[parameter.name] = parameter.value
+
+            model_parameters.append(parameters)
+
+        return model_parameters
 
 
     # TODO should this check one specific feature.

@@ -6,10 +6,11 @@ from model import Model
 
 
 class NeuronModel(Model):
-    def __init__(self, parameters, adaptive_model=False,
-                 model_file="mosinit.hoc", model_path=None):
+    def __init__(self,
+                 adaptive_model=False,
+                 model_file="mosinit.hoc",
+                 model_path=None):
         Model.__init__(self,
-                       parameters=parameters,
                        adaptive_model=adaptive_model,
                        xlabel="time [ms]",
                        ylabel="voltage [mv]")

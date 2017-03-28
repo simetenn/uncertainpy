@@ -8,20 +8,9 @@ class HodgkinHuxleyModel(Model):
     """
     The model must be able to handle these calls
 
-    simulation = model()
-    simulation.load()
-    simulation.setParameters(parameters -> dictionary)
     simulation.run()
-    simulation.save(current_process -> int)
-
-    simulation.cmd()
     """
-    def __init__(self, parameters=None):
-        """
-        Init must be able to be called with 0 arguments
-        """
-        Model.__init__(self, parameters=parameters)
-
+    def __init__(self):
 
         ## HH Parameters
         self.V_rest = -65   # mV
@@ -41,15 +30,12 @@ class HodgkinHuxleyModel(Model):
         self.t = np.arange(0, T + dt, dt)
 
 
+        self.adaptive_model = False
         self.xlabel = "time [ms]"
         self.ylabel = "voltage [mv]"
 
 
     def I(self, t):
-        # if t >= 5 and t <= 30:
-        #     return self.I_value
-        # else:
-        #     return 0
         return self.I_value
 
     # K channel

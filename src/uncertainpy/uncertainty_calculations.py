@@ -10,7 +10,8 @@ from features import GeneralFeatures
 # Model is now potentially set two places, is that a problem?
 class UncertaintyCalculations(object):
     def __init__(self,
-                 model,
+                 model=None,
+                 parameters=None,
                  features=None,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
@@ -25,6 +26,7 @@ class UncertaintyCalculations(object):
 
         self._model = None
         self._features = None
+        self._parameters = None
 
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
@@ -36,10 +38,14 @@ class UncertaintyCalculations(object):
         self.U_hat = {}
         self.U_mc = {}
 
+
         self.runmodel = RunModel(model,
+                                 parameters,
                                  features=features,
                                  CPUs=CPUs,
                                  supress_model_graphics=supress_model_graphics)
+
+
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -50,9 +56,8 @@ class UncertaintyCalculations(object):
         else:
             self.features = features
 
-
         self.model = model
-
+        self.parameters = parameters
 
         self.nr_pc_samples = nr_pc_samples
 
@@ -60,9 +65,11 @@ class UncertaintyCalculations(object):
         if seed is not None:
             np.random.seed(seed)
 
+
     @property
     def features(self):
         return self._features
+
 
     @features.setter
     def features(self, new_features):
@@ -74,16 +81,28 @@ class UncertaintyCalculations(object):
     def model(self):
         return self._model
 
+
     @model.setter
     def model(self, new_model):
         self._model = new_model
         self.runmodel.model = new_model
 
 
+    @property
+    def parameters(self):
+        return self._parameters
+
+
+    @parameters.setter
+    def parameters(self, new_parameters):
+        self._parameters = new_parameters
+        self.runmodel.parameters = new_parameters
+
+
     def createDistribution(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
+        parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
 
         self.distribution = cp.J(*parameter_distributions)
 
@@ -91,7 +110,7 @@ class UncertaintyCalculations(object):
     def createDistributionRosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-        parameter_distributions = self.model.parameters.get("distribution", uncertain_parameters)
+        parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
 
         self.distribution = cp.J(*parameter_distributions)
 
@@ -144,7 +163,7 @@ class UncertaintyCalculations(object):
             raise RuntimeError("No model is set")
 
         if uncertain_parameters is None:
-            uncertain_parameters = self.model.parameters.getUncertain("name")
+            uncertain_parameters = self.parameters.getUncertain("name")
 
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
