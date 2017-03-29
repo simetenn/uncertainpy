@@ -1,5 +1,5 @@
 
-class GeneralFeatures():
+class GeneralFeatures(object):
     def __init__(self, features_to_run="all",
                  new_utility_methods=None,
                  adaptive_features=None):
