@@ -200,7 +200,6 @@ class TestUncertainty(unittest.TestCase):
 
     # TODO working here, next step is to set model name when a function is given
     def test_PC_model_function(self):
-        self.uncertainty
         self.uncertainty.model = model_function
         self.uncertainty.PC()
         #
@@ -332,14 +331,13 @@ class TestUncertainty(unittest.TestCase):
                                                  parameters=parameters,
                                                  save_data=True,
                                                  save_figures=False,
-                                                 output_data_filename="TestingModel1d_MC",
                                                  output_dir_data=self.output_test_dir,
                                                  verbose_level="error",
                                                  seed=self.seed,
                                                  nr_mc_samples=10)
 
 
-        self.uncertainty.MCSingle()
+        self.uncertainty.MCSingle(filename="TestingModel1d_MC")
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -384,14 +382,13 @@ class TestUncertainty(unittest.TestCase):
                                                  features=features,
                                                  save_data=True,
                                                  save_figures=False,
-                                                 output_data_filename="TestingModel1d_MC",
                                                  output_dir_data=self.output_test_dir,
                                                  verbose_level="error",
                                                  seed=self.seed,
                                                  nr_mc_samples=10**1)
 
 
-        self.uncertainty.MC()
+        self.uncertainty.MC(filename="TestingModel1d_MC")
 
 
         folder = os.path.dirname(os.path.realpath(__file__))

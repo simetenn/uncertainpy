@@ -6,10 +6,10 @@ import shutil
 
 from xvfbwrapper import Xvfb
 from uncertainpy import Parallel
-from uncertainpy.models import NeuronModel
+from uncertainpy.models import NeuronModel, Model
 
 from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d
+from testing_classes import TestingModel1d, model_function
 from testing_classes import TestingModelNoTime
 from testing_classes import TestingModelAdaptive
 
@@ -54,8 +54,10 @@ class TestParallel(unittest.TestCase):
 
 
     def test_model(self):
-        self.parallel.model = 1
-        self.assertEqual(self.parallel.model, 1)
+        self.parallel.model = model_function
+        self.assertIsInstance(self.parallel.model, Model)
+        self.assertEqual(self.parallel.model.name, "model_function")
+
 
 
 

@@ -89,6 +89,7 @@ class RunModel(object):
         elif callable(new_model):
             tmp_model = Model()
             tmp_model.run = new_model
+            tmp_model.name = new_model.__name__
         else:
             raise TypeError("model must be a Model instance, callable or None")
 

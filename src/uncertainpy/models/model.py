@@ -16,6 +16,7 @@ must return t and U
         self.xlabel = xlabel
         self.ylabel = ylabel
 
+        self.name = self.__class__.__name__
 
     def __call__(self, **parameters):
         """

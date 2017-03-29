@@ -5,6 +5,7 @@ import scipy.interpolate as scpi
 
 from utils import create_logger
 from features import GeneralFeatures
+from models import Model
 
 
 """
@@ -27,7 +28,7 @@ result = {"directComparison": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 """
 
 
-class Parallel:
+class Parallel(object):
     def __init__(self,
                  model,
                  features=None,
@@ -61,12 +62,22 @@ class Parallel:
 
     @property
     def model(self):
+        # if self._model is None:
+        #     raise AttributeError("model is None. A model must be set")
         return self._model
 
     @model.setter
     def model(self, new_model):
-        self._model = new_model
+        if isinstance(new_model, Model) or new_model is None:
+            tmp_model = new_model
+        elif callable(new_model):
+            tmp_model = Model()
+            tmp_model.run = new_model
+            tmp_model.name = new_model.__name__
+        else:
+            raise TypeError("model must be a Model instance, callable or None")
 
+        self._model = tmp_model
 
 
     def sortFeatures(self, results):

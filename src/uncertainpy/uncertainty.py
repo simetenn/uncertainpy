@@ -23,7 +23,6 @@ class UncertaintyEstimation(object):
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
-                 output_data_filename=None,
                  verbose_level="info",
                  verbose_filename=None,
                  uncertainty_calculations=None,
@@ -86,11 +85,11 @@ class UncertaintyEstimation(object):
         self.parameters = parameters
         self.model = model
 
-
-        if output_data_filename is None:
-            self.output_data_filename = self.model.__class__.__name__
-        else:
-            self.output_data_filename = output_data_filename
+        #
+        # if output_data_filename is None:
+        #     self.output_data_filename = self.model.__class__.__name__
+        # else:
+        #     self.output_data_filename = output_data_filename
 
 
 
@@ -127,6 +126,7 @@ class UncertaintyEstimation(object):
         elif callable(new_model):
             tmp_model = Model()
             tmp_model.run = new_model
+            tmp_model.name = new_model.__name__
         else:
             raise TypeError("model must be a Model instance or callable")
 
@@ -238,7 +238,7 @@ pc_method: "regression"
 
         if self.save_data:
             if filename is None:
-                filename = self.output_data_filename
+                filename = self.model.name
 
             self.save(filename, output_dir=output_dir_data)
 
@@ -277,7 +277,7 @@ pc_method: "regression"
 
         if self.save_data:
             if filename is None:
-                filename = self.output_data_filename
+                filename = self.model.name
 
             self.save(filename, output_dir=output_dir_data)
 
@@ -303,7 +303,7 @@ pc_method: "regression"
 
         if self.save_data:
             if filename is None:
-                filename = self.output_data_filename
+                filename = self.model.name
 
             self.save(filename, output_dir=output_dir_data)
 
@@ -338,7 +338,7 @@ pc_method: "regression"
 
 
         if filename is None:
-            filename = self.output_data_filename
+            filename = self.model.name
 
 
         for uncertain_parameter in uncertain_parameters:
@@ -385,7 +385,7 @@ pc_method: "regression"
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         if filename is None:
-            filename = self.output_data_filename
+            filename = self.model.name
 
 
         for uncertain_parameter in uncertain_parameters:
