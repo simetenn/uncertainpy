@@ -62,8 +62,6 @@ class Parallel(object):
 
     @property
     def model(self):
-        # if self._model is None:
-        #     raise AttributeError("model is None. A model must be set")
         return self._model
 
     @model.setter
