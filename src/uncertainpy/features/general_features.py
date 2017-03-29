@@ -1,5 +1,5 @@
 
-class GeneralFeatures(object):
+class GeneralFeatures():
     def __init__(self, features_to_run="all",
                  new_utility_methods=None,
                  adaptive_features=None):
@@ -15,8 +15,8 @@ class GeneralFeatures(object):
         if new_utility_methods is None:
             new_utility_methods = []
 
-        self._t = None
-        self._U = None
+        self.t = None
+        self.U = None
 
         self.utility_methods += new_utility_methods
 
@@ -46,13 +46,13 @@ class GeneralFeatures(object):
         pass
 
 
-    @property
-    def t(self):
-        return self._t
-
-    @property
-    def U(self):
-        return self._U
+    # @property
+    # def t(self):
+    #     return self._t
+    #
+    # @property
+    # def U(self):
+    #     return self._U
 
     def calculateFeature(self, feature_name):
         if feature_name in self.utility_methods:
@@ -69,16 +69,11 @@ class GeneralFeatures(object):
         results = {}
         for feature in self.features_to_run:
             feature_result = self.calculateFeature(feature)
-            try:
-                t, U = feature_result
-            except ValueError as error:
-                msg = "Feature: {feature} must return both t and U (return t, U | return None, U)".format(feature=feature)
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            if (not isinstance(feature_result, tuple) or not isinstance(feature_result, list)) and len(feature_result) != 2:
+                raise RuntimeError("feature must return both t and U (return t, U | return None, U)")
 
-            results[feature] = {"t": t, "U": U}
+            results[feature] = {"t": feature_result[0],
+                                "U": feature_result[1]}
 
         return results
 
@@ -87,16 +82,11 @@ class GeneralFeatures(object):
         results = {}
         for feature in self.implementedFeatures():
             feature_result = self.calculateFeature(feature)
-            try:
-                t, U = feature_result
-            except ValueError as error:
-                msg = "Feature: {feature} must return both t and U (return t, U | return None, U)".format(feature=feature)
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            if (not isinstance(feature_result, tuple) or not isinstance(feature_result, list)) and len(feature_result) != 2:
+                raise RuntimeError("feature must return both t and U (return t, U | return None, U)")
 
-            results[feature] = {"t": t, "U": U}
+            results[feature] = {"t": feature_result[0],
+                                "U": feature_result[1]}
 
         return results
 
