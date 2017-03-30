@@ -3,7 +3,11 @@ from uncertainpy.features import GeneralFeatures
 
 
 class GeneralNeuronFeatures(GeneralFeatures):
-    def __init__(self, features_to_run="all", adaptive_features=None, thresh=-30, extended_spikes=False):
+    def __init__(self,
+                 features_to_run="all",
+                 adaptive_features=None,
+                 thresh=-30,
+                 extended_spikes=False):
         new_utility_methods = ["calculateSpikes"]
 
         GeneralFeatures.__init__(self,

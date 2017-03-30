@@ -12,23 +12,23 @@ class TestingFeatures(GeneralFeatures):
 
         self.is_setup_run = False
 
-    def feature0d(self):
+    def feature0d(self, t, U):
         return None, 1
 
-    def feature1d(self):
+    def feature1d(self, t, U):
         return np.arange(0, 10), np.arange(0, 10)
 
-    def feature2d(self):
+    def feature2d(self, t, U):
         return np.arange(0, 10), np.array([np.arange(0, 10), np.arange(0, 10)])
 
-    def featureInvalid(self):
+    def featureInvalid(self, t, U):
         return None, None
 
-    def feature_adaptive(self):
-        return self.t, self.U
+    def feature_adaptive(self, t, U):
+        return t, U
 
-    def feature_no_time(self):
+    def feature_no_time(self, t, U):
         return np.arange(0, 10)
 
-    def setup(self):
+    def setup(self, t, U):
         self.is_setup_run = True

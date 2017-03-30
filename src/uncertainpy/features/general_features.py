@@ -27,6 +27,7 @@ class GeneralFeatures(object):
         self.features_to_run = features_to_run
         self.adaptive_features = adaptive_features
 
+
     def setup(self):
         pass
 
@@ -55,8 +56,6 @@ class GeneralFeatures(object):
             self._features_to_run = new_features_to_run
 
 
-
-
     @property
     def adaptive_features(self):
         return self._adaptive_features
@@ -82,7 +81,7 @@ class GeneralFeatures(object):
         # if not callable(getattr(self, feature_name)):
         #     raise NotImplementedError("%s is not a implemented feature" % (feature_name))
 
-        return getattr(self, feature_name)()
+        return getattr(self, feature_name)(self.t, self.U)
 
 
 

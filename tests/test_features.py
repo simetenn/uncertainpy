@@ -203,63 +203,63 @@ class TestNeuronFeatures(unittest.TestCase):
 
 
     def test_nrSpikes(self):
-        self.assertEqual(self.features.nrSpikes(), (None, 12))
+        self.assertEqual(self.features.nrSpikes(None, None), (None, 12))
 
 
     def test_timeBeforeFirstSpike(self):
-        self.assertGreater(self.features.timeBeforeFirstSpike()[1], 10)
+        self.assertGreater(self.features.timeBeforeFirstSpike(None, None)[1], 10)
 
 
     def test_timeBeforeFirstSpikeNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.timeBeforeFirstSpike(), (None, None), (None, None))
+        self.assertEqual(self.features.timeBeforeFirstSpike(None, None), (None, None), (None, None))
 
 
     def test_spikeRate(self):
-        self.assertEqual(self.features.spikeRate(), (None, 0.12))
+        self.assertEqual(self.features.spikeRate(None, None), (None, 0.12))
 
 
     def test_spikeRateNone(self):
         self.features.spikes.nr_spikes = -1
-        self.assertEqual(self.features.spikeRate(), (None, None))
+        self.assertEqual(self.features.spikeRate(None, None), (None, None))
 
 
     def test_averageAPOvershoot(self):
-        self.assertEqual(self.features.averageAPOvershoot(), (None, 30))
+        self.assertEqual(self.features.averageAPOvershoot(None, None), (None, 30))
 
 
     def test_averageAPOvershootNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.averageAPOvershoot(), (None, None))
+        self.assertEqual(self.features.averageAPOvershoot(None, None), (None, None))
 
 
     # TODO Find correct test, this is a rough bound only
     def test_averageAHPDepth(self):
-        self.assertLess(self.features.averageAHPDepth()[1], 0)
+        self.assertLess(self.features.averageAHPDepth(None, None)[1], 0)
 
 
     def test_averageAHPDepthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.averageAHPDepth(), (None, None))
+        self.assertEqual(self.features.averageAHPDepth(None, None), (None, None))
 
     # TODO Find correct test, this is a rough bound only
     def test_averageAPWidth(self):
-        self.assertLess(self.features.averageAPWidth()[1], 5)
+        self.assertLess(self.features.averageAPWidth(None, None)[1], 5)
 
 
     def test_averageAPWidthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.averageAPWidth(), (None, None))
+        self.assertEqual(self.features.averageAPWidth(None, None), (None, None))
 
 
     # TODO Find correct test, this is a rough bound only
     def test_accomondationIndex(self):
-        self.assertIsNotNone(self.features.accomondationIndex()[1])
+        self.assertIsNotNone(self.features.accomondationIndex(None, None)[1])
 
 
     def test_accomondationIndexNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.accomondationIndex(), (None, None))
+        self.assertEqual(self.features.accomondationIndex(None, None), (None, None))
 
 
     def test_calculateAllFeatures(self):
@@ -283,20 +283,20 @@ class TestTestingFeatures(unittest.TestCase):
 
 
     def test_feature0d(self):
-        self.assertEqual(self.features.feature0d(), (None, 1))
+        self.assertEqual(self.features.feature0d(None, None), (None, 1))
 
 
     def test_feature1d(self):
-        self.assertTrue((self.features.feature1d(), (np.arange(0, 10), np.arange(0, 10))))
+        self.assertTrue((self.features.feature1d(None, None), (np.arange(0, 10), np.arange(0, 10))))
 
 
     def test_feature2d(self):
-        self.assertTrue((self.features.feature2d(),
+        self.assertTrue((self.features.feature2d(None, None),
                          (np.arange(0, 10), np.array([np.arange(0, 10), np.arange(0, 10)]))))
 
 
     def test_featureInvalid(self):
-        self.assertEqual(self.features.featureInvalid(), (None, None))
+        self.assertEqual(self.features.featureInvalid(None, None), (None, None))
 
 
     def test_calculate_features(self):
