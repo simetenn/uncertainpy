@@ -62,7 +62,7 @@ class Parallel(object):
         elif callable(new_features):
             tmp_features = GeneralFeatures(features_to_run=None)
         else:
-            raise TypeError("model must be a Model instance, callable or None")
+            raise TypeError("model must be a GeneralFeatures instance, callable or None")
 
 
         self._features = tmp_features
@@ -155,7 +155,7 @@ class Parallel(object):
 
             try:
                 t, U = model_result
-            except RuntimeError as error:
+            except ValueError as error:
                 msg = "model.run() must return t and U (return t, U | return None, U)"
                 if not error.args:
                     error.args = ("",)

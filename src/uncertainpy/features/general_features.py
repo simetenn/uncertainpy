@@ -69,11 +69,17 @@ class GeneralFeatures(object):
         results = {}
         for feature in self.features_to_run:
             feature_result = self.calculateFeature(feature)
-            if (not isinstance(feature_result, tuple) or not isinstance(feature_result, list)) and len(feature_result) != 2:
-                raise ValueError("feature must return both t and U (return t, U | return None, U)")
-
-            results[feature] = {"t": feature_result[0],
-                                "U": feature_result[1]}
+            try:
+                results[feature] = {"t": feature_result[0],
+                                    "U": feature_result[1]}
+                if len(feature_result) != 2:
+                    raise ValueError
+            except ValueError as error:
+                msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
 
         return results
 
@@ -82,11 +88,18 @@ class GeneralFeatures(object):
         results = {}
         for feature in self.implementedFeatures():
             feature_result = self.calculateFeature(feature)
-            if (not isinstance(feature_result, tuple) or not isinstance(feature_result, list)) and len(feature_result) != 2:
-                raise ValueError("feature must return both t and U (return t, U | return None, U)")
+            try:
+                results[feature] = {"t": feature_result[0],
+                                    "U": feature_result[1]}
+                if len(feature_result) != 2:
+                    raise ValueError
+            except ValueError as error:
+                msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
 
-            results[feature] = {"t": feature_result[0],
-                                "U": feature_result[1]}
 
         return results
 
