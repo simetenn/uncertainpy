@@ -1,6 +1,7 @@
 
 class GeneralFeatures(object):
-    def __init__(self, features_to_run="all",
+    def __init__(self,
+                 features_to_run="all",
                  new_utility_methods=None,
                  adaptive_features=None):
 
@@ -18,29 +19,13 @@ class GeneralFeatures(object):
         self.t = None
         self.U = None
 
+        self._features_to_run = None
+        self._adaptive_features = None
+
         self.utility_methods += new_utility_methods
 
-
-        if features_to_run == "all":
-            self.features_to_run = self.implementedFeatures()
-        elif features_to_run is None:
-            self.features_to_run = []
-        elif isinstance(features_to_run, str):
-            self.features_to_run = [features_to_run]
-        else:
-            self.features_to_run = features_to_run
-
-
-        if adaptive_features == "all":
-            self.adaptive_features = self.implementedFeatures()
-        elif adaptive_features is None:
-            self.adaptive_features = []
-        elif isinstance(adaptive_features, str):
-            self.adaptive_features = [adaptive_features]
-        else:
-            self.adaptive_features = adaptive_features
-
-
+        self.features_to_run = features_to_run
+        self.adaptive_features = adaptive_features
 
     def setup(self):
         pass
@@ -53,6 +38,42 @@ class GeneralFeatures(object):
     # @property
     # def U(self):
     #     return self._U
+
+    @property
+    def features_to_run(self):
+        return self._features_to_run
+
+    @features_to_run.setter
+    def features_to_run(self, new_features_to_run):
+        if new_features_to_run == "all":
+            self._features_to_run = self.implementedFeatures()
+        elif new_features_to_run is None:
+            self._features_to_run = []
+        elif isinstance(new_features_to_run, str):
+            self._features_to_run = [new_features_to_run]
+        else:
+            self._features_to_run = new_features_to_run
+
+
+
+
+    @property
+    def adaptive_features(self):
+        return self._adaptive_features
+
+
+    @adaptive_features.setter
+    def adaptive_features(self, new_adaptive_features):
+        if new_adaptive_features == "all":
+            self._adaptive_features = self.implementedFeatures()
+        elif new_adaptive_features is None:
+            self._adaptive_features = []
+        elif isinstance(new_adaptive_features, str):
+            self._adaptive_features = [new_adaptive_features]
+        else:
+            self._adaptive_features = new_adaptive_features
+
+
 
     def calculateFeature(self, feature_name):
         if feature_name in self.utility_methods:
@@ -69,11 +90,14 @@ class GeneralFeatures(object):
         results = {}
         for feature in self.features_to_run:
             feature_result = self.calculateFeature(feature)
+
             try:
                 results[feature] = {"t": feature_result[0],
                                     "U": feature_result[1]}
+
                 if len(feature_result) != 2:
                     raise ValueError
+
             except ValueError as error:
                 msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
@@ -88,18 +112,20 @@ class GeneralFeatures(object):
         results = {}
         for feature in self.implementedFeatures():
             feature_result = self.calculateFeature(feature)
+
             try:
                 results[feature] = {"t": feature_result[0],
                                     "U": feature_result[1]}
+
                 if len(feature_result) != 2:
                     raise ValueError
+
             except ValueError as error:
                 msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)
                 raise
-
 
         return results
 
@@ -108,4 +134,4 @@ class GeneralFeatures(object):
         """
         Return a list of all callable methods in feature
         """
-        return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods]
+        return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods and method not in dir(object)]

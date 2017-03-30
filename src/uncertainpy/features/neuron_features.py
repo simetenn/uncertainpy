@@ -37,7 +37,7 @@ class NeuronFeatures(GeneralNeuronFeatures):
             return None, None
 
         sum_AHP_depth = 0
-        for i in xrange(self.spikes.nr_spikes-1):
+        for i in range(self.spikes.nr_spikes - 1):
             sum_AHP_depth += min(self.U[self.spikes[i].global_index:self.spikes[i+1].global_index])
 
         return None, sum_AHP_depth/float(self.spikes.nr_spikes)
@@ -72,10 +72,10 @@ class NeuronFeatures(GeneralNeuronFeatures):
         k = min(4, int(round(N-1)/5.))
 
         ISIs = []
-        for i in xrange(N-1):
+        for i in range(N-1):
             ISIs.append(self.spikes[i+1].t_spike - self.spikes[i].t_spike)
 
         A = 0
-        for i in xrange(k+1, N-1):
+        for i in range(k+1, N-1):
             A += (ISIs[i] - ISIs[i-1])/(ISIs[i] + ISIs[i-1])
         return None, A/(N - k - 1)
