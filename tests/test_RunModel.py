@@ -7,6 +7,7 @@ import shutil
 
 from uncertainpy import RunModel, Parameters
 from uncertainpy.models import NeuronModel, Model
+from uncertainpy.features import GeneralFeatures
 
 
 from testing_classes import TestingFeatures, model_function
@@ -51,9 +52,9 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_feature(self):
-        self.runmodel.features = 1
-        self.assertEqual(self.runmodel._features, 1)
-        self.assertEqual(self.runmodel.parallel.features, 1)
+        self.runmodel.features = GeneralFeatures()
+        self.assertIsInstance(self.runmodel._features, GeneralFeatures)
+        self.assertIsInstance(self.runmodel.parallel.features, GeneralFeatures)
 
 
     def test_set_model(self):

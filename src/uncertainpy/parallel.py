@@ -41,10 +41,6 @@ class Parallel(object):
         self.features = features
         self.model = model
 
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -58,7 +54,18 @@ class Parallel(object):
 
     @features.setter
     def features(self, new_features):
-        self._features = new_features
+
+        if new_features is None:
+            tmp_features = GeneralFeatures(features_to_run=None)
+        elif isinstance(new_features, GeneralFeatures):
+            tmp_features = new_features
+        elif callable(new_features):
+            tmp_features = GeneralFeatures(features_to_run=None)
+        else:
+            raise TypeError("model must be a Model instance, callable or None")
+
+
+        self._features = tmp_features
 
     @property
     def model(self):
@@ -148,7 +155,7 @@ class Parallel(object):
 
             try:
                 t, U = model_result
-            except ValueError as error:
+            except RuntimeError as error:
                 msg = "model.run() must return t and U (return t, U | return None, U)"
                 if not error.args:
                     error.args = ("",)
