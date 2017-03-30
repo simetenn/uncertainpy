@@ -155,7 +155,7 @@ class Parallel(object):
 
             try:
                 t, U = model_result
-            except ValueError as error:
+            except RuntimeError as error:
                 msg = "model.run() must return t and U (return t, U | return None, U)"
                 if not error.args:
                     error.args = ("",)
