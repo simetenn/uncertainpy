@@ -184,6 +184,7 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(parameters["gbar_K"].distribution, None)
         self.assertEqual(parameters["gbar_l"].distribution, None)
 
+
     def test_initListChaospy(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
@@ -215,6 +216,19 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(parameters["gbar_l"], Parameter)
 
 
+
+    def test_init_list_to_long(self):
+        parameterlist = [["gbar_Na", 120, None, 1]]
+
+        with self.assertRaises(TypeError):
+            Parameters(parameterlist)
+
+
+    def test_init_no_list(self):
+        parameterlist = 1
+
+        with self.assertRaises(TypeError):
+            Parameters(parameterlist)
 
     def test_getitem(self):
         parameterlist = [["gbar_Na", 120, None],

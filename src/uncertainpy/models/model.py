@@ -18,6 +18,7 @@ must return t and U
 
         self.name = self.__class__.__name__
 
+
     @property
     def run(self):
         return self._run

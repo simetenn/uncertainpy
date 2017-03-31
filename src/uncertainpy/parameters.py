@@ -58,7 +58,7 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
             if not isinstance(self.distribution, cp.Dist):
                 raise TypeError("Function does not return a Chaospy distribution")
         else:
-            raise TypeError("Argument is neither a function nor a Chaospy distribution")
+            raise TypeError("distribution is neither a function nor a Chaospy distribution")
 
 
 
@@ -116,9 +116,6 @@ Return a readable string of a parameter
 
 
 
-
-
-# TODO add an iterator
 class Parameters():
     def __init__(self, parameterlist=[]):
         """
@@ -149,11 +146,18 @@ parameterlist: list of Parameter objects | list [[name, value, distribution],...
         """
         self.parameters = {}
 
-        for i in parameterlist:
-            if isinstance(i, Parameter):
-                self.parameters[i.name] = i
-            else:
-                self.parameters[i[0]] = Parameter(i[0], i[1], i[2])
+        try:
+            for i in parameterlist:
+                if isinstance(i, Parameter):
+                    self.parameters[i.name] = i
+                else:
+                    self.parameters[i[0]] = Parameter(*i)
+        except TypeError as error:
+            msg = "parameters must be either list of Parameter objects or list [[name, value, distribution], ...]"
+            if not error.args:
+                error.args = ("",)
+            error.args = error.args + (msg,)
+            raise
 
 
     def __getitem__(self, name):

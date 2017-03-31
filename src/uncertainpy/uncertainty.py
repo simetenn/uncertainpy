@@ -11,6 +11,7 @@ from plotting.plotUncertainty import PlotUncertainty
 from utils import create_logger
 from models import Model
 from uncertainpy import Data
+from parameters import Parameters
 
 
 class UncertaintyEstimation(object):
@@ -118,7 +119,11 @@ class UncertaintyEstimation(object):
 
     @parameters.setter
     def parameters(self, new_parameters):
-        self._parameters = new_parameters
+        if isinstance(new_parameters, Parameters) or new_parameters is None:
+            self._parameters = new_parameters
+        else:
+            self._parameters = Parameters(new_parameters)
+
         self.uncertainty_calculations.parameters = new_parameters
 
 

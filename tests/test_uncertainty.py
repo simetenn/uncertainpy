@@ -27,10 +27,10 @@ class TestUncertainty(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(self.parameterlist)
         self.parameters.setAllDistributions(Distribution(0.5).uniform)
 
         self.model = TestingModel1d()
@@ -58,10 +58,22 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_init(self):
-        uncertainty= UncertaintyEstimation(self.model, self.parameters)
+        uncertainty = UncertaintyEstimation(self.model, self.parameters)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.parameters, Parameters)
+
+
+    def test_init_parameterlist(self):
+        uncertainty = UncertaintyEstimation(self.model, self.parameterlist)
+
+        self.assertIsInstance(uncertainty.model, TestingModel1d)
+        self.assertIsInstance(uncertainty.parameters, Parameters)
+
+    def test_init_parameter_error(self):
+
+        with self.assertRaises(TypeError):
+            uncertainty = UncertaintyEstimation(self.model, 2)
 
 
     def test_intitFeatures(self):
@@ -106,6 +118,28 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
         self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
                               Parameters)
+
+
+    def test_set_parameter_list(self):
+        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+                                            parameters=None,
+                                            verbose_level="error",
+                                            seed=self.seed)
+        uncertainty.parameters = self.parameterlist
+
+        self.assertIsInstance(uncertainty.parameters, Parameters)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
+                              Parameters)
+
+
+    def test_set_parameter_error(self):
+        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+                                            parameters=None,
+                                            verbose_level="error",
+                                            seed=self.seed)
+        with self.assertRaises(TypeError):
+            uncertainty.parameters = 2
 
 
     def test_set_features(self):

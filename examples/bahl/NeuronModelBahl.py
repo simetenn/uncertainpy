@@ -1,22 +1,18 @@
 from uncertainpy import NeuronModel
 
 class NeuronModelBahl(NeuronModel):
-    def __init__(self, parameters=None, adaptive_model=False):
-        NeuronModel.__init__(self, parameters=parameters,
-                             adaptive_model=adaptive_model)
-
-        self.reset_properties()
-
-        self.adaptive_model = True
-
-        self.model_path = "bahl_neuron_model"
-        self.model_file = "mosinit.hoc"
+    def __init__(self):
+        NeuronModel.__init__(self,
+                             adaptive_model=True,
+                             model_file="mosinit.hoc",
+                             model_path="bahl_neuron_model")
 
 
-
-    def setParameterValues(self, parameters):
+    def set_parameters(self, parameters):
         for parameter in parameters:
             self.h(parameter + " = " + str(parameters[parameter]))
 
+        # These commands must be added for this specific
+        # model to set the parameters
         self.h("recalculate_passive_properties()")
         self.h("recalculate_channel_densities()")

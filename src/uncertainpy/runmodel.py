@@ -10,6 +10,7 @@ from features import GeneralFeatures
 from models import Model
 from utils import create_logger
 from parallel import Parallel
+from parameters import Parameters
 
 
 """
@@ -44,18 +45,14 @@ class RunModel(object):
 
         self._model = None
         self._features = None
-
-        self.parameters = parameters
+        self._parameters = None
 
         self.data = Data()
         self.parallel = Parallel(model)
 
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
-
+        self.features = features
         self.model = model
+        self.parameters = parameters
 
         self.CPUs = CPUs
         self.supress_model_graphics = supress_model_graphics
@@ -104,6 +101,20 @@ class RunModel(object):
         if self._model is not None:
             self.data.xlabel = self.model.xlabel
             self.data.ylabel = self.model.ylabel
+
+
+    @property
+    def parameters(self):
+        return self._parameters
+
+
+    @parameters.setter
+    def parameters(self, new_parameters):
+        if isinstance(new_parameters, Parameters) or new_parameters is None:
+            self._parameters = new_parameters
+        else:
+            self._parameters = Parameters(new_parameters)
+
 
 
 

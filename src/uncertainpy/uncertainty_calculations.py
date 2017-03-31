@@ -7,6 +7,7 @@ from runmodel import RunModel
 from models import Model
 from utils import create_logger
 from features import GeneralFeatures
+from parameters import Parameters
 
 # Model is now potentially set two places, is that a problem?
 class UncertaintyCalculations(object):
@@ -109,7 +110,11 @@ class UncertaintyCalculations(object):
 
     @parameters.setter
     def parameters(self, new_parameters):
-        self._parameters = new_parameters
+        if isinstance(new_parameters, Parameters) or new_parameters is None:
+            self._parameters = new_parameters
+        else:
+            self._parameters = Parameters(new_parameters)
+
         self.runmodel.parameters = new_parameters
 
 

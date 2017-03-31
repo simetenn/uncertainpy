@@ -31,9 +31,9 @@ class TestRunModel(unittest.TestCase):
                                                          "featureInvalid",
                                                          "feature_adaptive"])
 
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
-        self.parameters = Parameters(parameterlist)
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
+        self.parameters = Parameters(self.parameterlist)
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
@@ -67,6 +67,7 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(self.runmodel.data.xlabel, "x")
         self.assertEqual(self.runmodel.data.ylabel, "y")
 
+
     def test_set_model_none(self):
         self.runmodel = RunModel(TestingModel2d(), None)
         self.runmodel.model = None
@@ -74,6 +75,20 @@ class TestRunModel(unittest.TestCase):
         self.assertIsNone(self.runmodel._model)
         self.assertIsNone(self.runmodel.parallel.model)
 
+
+    def test_set_parameter_list(self):
+        runmodel = RunModel(TestingModel2d(), None)
+
+        runmodel.parameters = self.parameterlist
+
+        self.assertIsInstance(runmodel.parameters, Parameters)
+
+
+    def test_set_parameter_error(self):
+        runmodel = RunModel(TestingModel2d(), None)
+
+        with self.assertRaises(TypeError):
+                runmodel.parameters = 2
 
 
     def test_set_model_function(self):

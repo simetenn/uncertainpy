@@ -29,10 +29,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-        parameterlist = [["a", 1, None],
-                         ["b", 2, None]]
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(self.parameterlist)
         self.parameters.setAllDistributions(Distribution(0.5).uniform)
 
         self.model = TestingModel1d()
@@ -145,6 +145,28 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.parameters, Parameters)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.parameters, Parameters)
 
+
+    def test_set_parameter_list(self):
+        uncertainty_calculations = UncertaintyCalculations(model=None,
+                                                           parameters=None,
+                                                           verbose_level="error",
+                                                           seed=self.seed)
+
+        uncertainty_calculations.parameters = self.parameterlist
+
+        self.assertIsInstance(uncertainty_calculations.parameters, Parameters)
+        self.assertIsInstance(uncertainty_calculations.runmodel.parameters,
+                              Parameters)
+
+
+    def test_set_parameter_error(self):
+        uncertainty_calculations = UncertaintyCalculations(model=None,
+                                                           parameters=None,
+                                                           verbose_level="error",
+                                                           seed=self.seed)
+
+        with self.assertRaises(TypeError):
+                uncertainty_calculations.parameters = 2
 
     def test_set_model_function(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,

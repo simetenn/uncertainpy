@@ -20,7 +20,7 @@ class NeuronModel(Model):
 
 
 
-    def load(self):
+    def load_neuron(self):
         current_dir = os.getcwd()
         os.chdir(self.model_path)
 
@@ -59,30 +59,22 @@ class NeuronModel(Model):
 
 
     def run(self, **parameters):
-        self.load()
+        self.load_neuron()
 
-        self.setParameterValues(parameters)
+        self.set_parameters(parameters)
 
         self._recordT()
         self._recordV()
 
         self.h.run()
 
-        self.U = self.getV()
-        self.t = self.getT()
+        U = self._toArray(self.V)
+        t = self._toArray(self.t)
 
-        return self.t, self.U
-
-
-
-    def getT(self):
-        return self._toArray(self.t)
+        return t, U
 
 
-    def getV(self):
-        return self._toArray(self.V)
 
-
-    def setParameterValues(self, parameters):
+    def set_parameters(self, parameters):
         for parameter in parameters:
             self.h(parameter + " = " + str(parameters[parameter]))
