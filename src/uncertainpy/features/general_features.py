@@ -11,7 +11,9 @@ class GeneralFeatures(object):
                                 "calculateAllFeatures",
                                 "__init__",
                                 "implementedFeatures",
-                                "setup"]
+                                "setup",
+                                "add_feature",
+                                "add_features"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -74,12 +76,27 @@ class GeneralFeatures(object):
 
 
 
+    def add_features(self, new_features):
+        if callable(new_features):
+            setattr(self, new_features.__name__, new_features)
+        else:
+            try:
+                for feature in new_features:
+                    if callable(feature):
+                        setattr(self, feature.__name__, feature)
+                    else:
+                        raise TypeError("feature in iterable is not callable")
+            except TypeError as error:
+                msg = "features must be a GeneralFeatures instance, callable, list of callables or None"
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
+
+
     def calculateFeature(self, feature_name):
         if feature_name in self.utility_methods:
             raise TypeError("%s is a utility method")
-
-        # if not callable(getattr(self, feature_name)):
-        #     raise NotImplementedError("%s is not a implemented feature" % (feature_name))
 
         return getattr(self, feature_name)(self.t, self.U)
 

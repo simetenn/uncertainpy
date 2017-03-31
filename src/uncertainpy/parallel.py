@@ -54,18 +54,14 @@ class Parallel(object):
 
     @features.setter
     def features(self, new_features):
-
         if new_features is None:
-            tmp_features = GeneralFeatures(features_to_run=None)
+            self._features = GeneralFeatures(features_to_run=None)
         elif isinstance(new_features, GeneralFeatures):
-            tmp_features = new_features
-        elif callable(new_features):
-            tmp_features = GeneralFeatures(features_to_run=None)
+            self._features = new_features
         else:
-            raise TypeError("model must be a GeneralFeatures instance, callable or None")
+            self._features = GeneralFeatures(features_to_run=None)
+            self._features.add_features(new_features)
 
-
-        self._features = tmp_features
 
     @property
     def model(self):
@@ -74,15 +70,14 @@ class Parallel(object):
     @model.setter
     def model(self, new_model):
         if isinstance(new_model, Model) or new_model is None:
-            tmp_model = new_model
+            self._model = new_model
         elif callable(new_model):
-            tmp_model = Model()
-            tmp_model.run = new_model
-            tmp_model.name = new_model.__name__
+            self._model = Model()
+            self._model.run = new_model
+            self._model.name = new_model.__name__
         else:
             raise TypeError("model must be a Model instance, callable or None")
 
-        self._model = tmp_model
 
 
     def sortFeatures(self, results):

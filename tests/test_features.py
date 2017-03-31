@@ -98,6 +98,41 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(features.adaptive_features, [])
 
 
+    def test_add_feature(self):
+        def feature_function(t, U):
+                return "t", "U"
+
+        features = GeneralFeatures()
+
+        features.add_features(feature_function)
+
+        t, U = features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+
+
+    def test_add_features(self):
+        def feature_function(t, U):
+                return "t", "U"
+
+
+        def feature_function2(t, U):
+                return "t2", "U2"
+
+        features = GeneralFeatures()
+
+        features.add_features([feature_function, feature_function2])
+
+        t, U = features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
+
+
 class TestGeneralNeuronFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))

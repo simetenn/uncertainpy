@@ -710,12 +710,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.MC()
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature0d"],
-                                       features.feature0d()[1]))
+                                       features.feature0d(None, None)[1]))
         self.assertEqual(self.uncertainty_calculations.data.Var["feature0d"], 0)
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature0d"],
-                                       features.feature0d()[1]))
+                                       features.feature0d(None, None)[1]))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature0d"],
-                                       features.feature0d()[1]))
+                                       features.feature0d(None, None)[1]))
 
 
     def test_MC_feature1d(self):
@@ -739,13 +739,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.MC()
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature1d"],
-                                       features.feature1d()[1]))
+                                       features.feature1d(None, None)[1]))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.Var["feature1d"],
                                        np.zeros(10)))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature1d"],
-                                       features.feature1d()[1]))
+                                       features.feature1d(None, None)[1]))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature1d"],
-                                       features.feature1d()[1]))
+                                       features.feature1d(None, None)[1]))
 
 
 
@@ -769,10 +769,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.MC()
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature2d"],
-                                       features.feature2d()[1]))
+                                       features.feature2d(None, None)[1]))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.Var["feature2d"],
                                        np.zeros((2, 10))))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature2d"],
-                                       features.feature2d()[1]))
+                                       features.feature2d(None, None)[1]))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature2d"],
-                                       features.feature2d()[1]))
+                                       features.feature2d(None, None)[1]))

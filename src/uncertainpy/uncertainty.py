@@ -37,9 +37,9 @@ class UncertaintyEstimation(object):
 
         self.data = None
 
-        self._model = None
-        self._features = None
-        self._parameters = None
+        # self._model = None
+        # self._features = None
+        # self._parameters = None
 
         self.save_figures = save_figures
         self.save_data = save_data

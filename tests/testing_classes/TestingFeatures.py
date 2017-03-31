@@ -30,5 +30,5 @@ class TestingFeatures(GeneralFeatures):
     def feature_no_time(self, t, U):
         return np.arange(0, 10)
 
-    def setup(self, t, U):
+    def setup(self):
         self.is_setup_run = True
