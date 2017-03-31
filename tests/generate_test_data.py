@@ -3,7 +3,7 @@ import os
 import numpy as np
 import uncertainpy as un
 from testing_classes import TestingModel1d, TestingModel0d
-from testing_classes import TestingFeatures
+from testing_classes import TestingFeatures, model_function
 
 folder = os.path.dirname(os.path.realpath(__file__))
 test_data_dir = os.path.join(folder, "data")
@@ -18,7 +18,7 @@ def generate_data_PC():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel1d(parameters)
+    model = TestingModel1d()
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
@@ -27,6 +27,33 @@ def generate_data_PC():  # pragma: no cover
 
     test = un.UncertaintyEstimation(model,
                                     features=features,
+                                    parameters=parameters,
+                                    output_dir_data=test_data_dir,
+                                    save_figures=False,
+                                    verbose_level="error",
+                                    seed=seed,
+                                    nr_mc_samples=10)
+
+
+    test.PC()
+
+
+def generate_data_PC_model_function():  # pragma: no cover
+    parameterlist = [["a", 1, None],
+                     ["b", 2, None]]
+
+    parameters = un.Parameters(parameterlist)
+    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+
+    test = un.UncertaintyEstimation(model_function,
+                                    features=features,
+                                    parameters=parameters,
                                     output_dir_data=test_data_dir,
                                     save_figures=False,
                                     verbose_level="error",
@@ -45,13 +72,14 @@ def generate_data_PC0D():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel0d(parameters)
+    model = TestingModel0d()
 
     features = TestingFeatures(features_to_run=None)
 
 
     test = un.UncertaintyEstimation(model,
                                     features=features,
+                                    parameters=parameters,
                                     output_dir_data=test_data_dir,
                                     save_figures=False,
                                     verbose_level="error",
@@ -69,7 +97,7 @@ def generate_data_PCRosenblatt():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel1d(parameters)
+    model = TestingModel1d()
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
@@ -78,15 +106,15 @@ def generate_data_PCRosenblatt():  # pragma: no cover
 
     test = un.UncertaintyEstimation(model,
                                     features=features,
+                                    parameters=parameters,
                                     output_dir_data=test_data_dir,
                                     save_figures=False,
-                                    output_data_filename="TestingModel1d_Rosenblatt",
                                     verbose_level="error",
                                     seed=seed,
                                     nr_mc_samples=10)
 
 
-    test.PC(rosenblatt=True)
+    test.PC(rosenblatt=True, filename="TestingModel1d_Rosenblatt",)
 
 
 
@@ -97,7 +125,7 @@ def generate_data_PCSingle():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel1d(parameters)
+    model = TestingModel1d()
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
@@ -105,6 +133,7 @@ def generate_data_PCSingle():  # pragma: no cover
 
     test = un.UncertaintyEstimation(model,
                                     features=features,
+                                    parameters=parameters,
                                     output_dir_data=test_data_dir,
                                     save_figures=False,
                                     verbose_level="error",
@@ -123,7 +152,7 @@ def generate_data_MC():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel1d(parameters)
+    model = TestingModel1d()
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
@@ -131,14 +160,14 @@ def generate_data_MC():  # pragma: no cover
 
     test = un.UncertaintyEstimation(model,
                                     features=features,
+                                    parameters=parameters,
                                     output_dir_data=test_data_dir,
                                     save_figures=False,
-                                    output_data_filename="TestingModel1d_MC",
                                     verbose_level="error",
                                     seed=seed,
                                     nr_mc_samples=10)
 
-    test.MC()
+    test.MC(filename="TestingModel1d_MC",)
 
 
 def generate_data_MCSingle():  # pragma: no cover
@@ -148,7 +177,7 @@ def generate_data_MCSingle():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel1d(parameters)
+    model = TestingModel1d()
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
@@ -157,15 +186,15 @@ def generate_data_MCSingle():  # pragma: no cover
 
     test = un.UncertaintyEstimation(model,
                                     features=features,
+                                    parameters=parameters,
                                     output_dir_data=test_data_dir,
                                     save_figures=False,
-                                    output_data_filename="TestingModel1d_MC",
                                     verbose_level="error",
                                     seed=seed,
                                     nr_mc_samples=10)
 
 
-    test.MCSingle()
+    test.MCSingle(filename="TestingModel1d_MC")
 
 
 
@@ -233,15 +262,17 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
     parameters = un.Parameters(parameterlist)
     parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-    model = TestingModel1d(parameters)
+    model = TestingModel1d()
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
                                                 "feature2d"])
 
 
-    uncertainty_calculations = un.UncertaintyCalculations(model,
-                                                          features,
+    print parameters
+    uncertainty_calculations = un.UncertaintyCalculations(model=model,
+                                                          features=features,
+                                                          parameters=parameters,
                                                           seed=seed,
                                                           nr_mc_samples=10)
 
@@ -258,6 +289,7 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
 
 if __name__ == "__main__":  # pragma: no cover
     generate_data_PC()
+    generate_data_PC_model_function()
     generate_data_PC0D()
     generate_data_PCSingle()
 
