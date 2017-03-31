@@ -73,7 +73,14 @@ class RunModel(object):
 
     @features.setter
     def features(self, new_features):
-        self._features = new_features
+        if new_features is None:
+            self._features = GeneralFeatures(features_to_run=None)
+        elif isinstance(new_features, GeneralFeatures):
+            self._features = new_features
+        else:
+            self._features = GeneralFeatures()
+            self._features.add_features(new_features)
+
         self.parallel.features = new_features
 
 
@@ -85,18 +92,16 @@ class RunModel(object):
     @model.setter
     def model(self, new_model):
         if isinstance(new_model, Model) or new_model is None:
-            tmp_model = new_model
+            self._model = new_model
         elif callable(new_model):
-            tmp_model = Model()
-            tmp_model.run = new_model
-            tmp_model.name = new_model.__name__
+            self._model = Model()
+            self._model.run = new_model
         else:
             raise TypeError("model must be a Model instance, callable or None")
 
-        self._model = tmp_model
-        self.parallel.model = tmp_model
+        self.parallel.model = new_model
 
-        if tmp_model is not None:
+        if self._model is not None:
             self.data.xlabel = self.model.xlabel
             self.data.ylabel = self.model.ylabel
 

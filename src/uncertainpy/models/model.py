@@ -1,4 +1,4 @@
-class Model():
+class Model(object):
     """
 simulation.run()
 must return t and U
@@ -18,15 +18,15 @@ must return t and U
 
         self.name = self.__class__.__name__
 
-        # @property
-        # def run(self):
-        #     return self._run
-        #
-        #
-        # @run.setter
-        # def run(self, new_run):
-        #     self._run = new_run
-        #     self._run.name = new_run.__name__
+    @property
+    def run(self):
+        return self._run
+
+
+    @run.setter
+    def run(self, new_run):
+        self._run = new_run
+        self.name = new_run.__name__
 
 
     def __call__(self, **parameters):
@@ -36,7 +36,7 @@ must return t and U
         raise NotImplementedError("No __call__() method implemented")
 
 
-    def run(self, **parameters):
+    def _run(self, **parameters):
         """
         Run must return t, U
         """

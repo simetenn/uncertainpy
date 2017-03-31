@@ -37,9 +37,9 @@ class UncertaintyEstimation(object):
 
         self.data = None
 
-        # self._model = None
-        # self._features = None
-        # self._parameters = None
+        self._model = None
+        self._features = None
+        self._parameters = None
 
         self.save_figures = save_figures
         self.save_data = save_data
@@ -100,7 +100,14 @@ class UncertaintyEstimation(object):
 
     @features.setter
     def features(self, new_features):
-        self._features = new_features
+        if new_features is None:
+            self._features = GeneralFeatures(features_to_run=None)
+        elif isinstance(new_features, GeneralFeatures):
+            self._features = new_features
+        else:
+            self._features = GeneralFeatures()
+            self._features.add_features(new_features)
+
         self.uncertainty_calculations.features = new_features
 
 
@@ -122,16 +129,14 @@ class UncertaintyEstimation(object):
     @model.setter
     def model(self, new_model):
         if isinstance(new_model, Model):
-            tmp_model = new_model
+            self._model = new_model
         elif callable(new_model):
-            tmp_model = Model()
-            tmp_model.run = new_model
-            tmp_model.name = new_model.__name__
+            self._model = Model()
+            self._model.run = new_model
         else:
             raise TypeError("model must be a Model instance or callable")
 
-        self._model = tmp_model
-        self.uncertainty_calculations.model = tmp_model
+        self.uncertainty_calculations.model = new_model
 
 
     @property

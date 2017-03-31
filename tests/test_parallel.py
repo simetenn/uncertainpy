@@ -67,8 +67,6 @@ class TestParallel(unittest.TestCase):
         self.assertEqual(U, "U")
 
 
-
-
     def test_feature_functions(self):
         def feature_function(t, U):
                 return "t", "U"

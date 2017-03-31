@@ -59,7 +59,7 @@ class Parallel(object):
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(features_to_run=None)
+            self._features = GeneralFeatures()
             self._features.add_features(new_features)
 
 
@@ -74,7 +74,6 @@ class Parallel(object):
         elif callable(new_model):
             self._model = Model()
             self._model.run = new_model
-            self._model.name = new_model.__name__
         else:
             raise TypeError("model must be a Model instance, callable or None")
 

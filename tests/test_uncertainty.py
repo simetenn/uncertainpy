@@ -120,6 +120,44 @@ class TestUncertainty(unittest.TestCase):
         self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.features,
                               TestingFeatures)
 
+
+    def test_feature_function(self):
+        def feature_function(t, U):
+            return "t", "U"
+
+        self.uncertainty.features = feature_function
+        self.assertIsInstance(self.uncertainty.features, GeneralFeatures)
+
+        t, U = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+
+    def test_feature_functions(self):
+        def feature_function(t, U):
+            return "t", "U"
+
+        def feature_function2(t, U):
+            return "t2", "U2"
+
+
+        self.uncertainty.features = [feature_function, feature_function2]
+        self.assertIsInstance(self.uncertainty.features, GeneralFeatures)
+
+        t, U = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+
+        t, U = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.uncertainty.features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
+
+
     def test_set_model(self):
         uncertainty = UncertaintyEstimation(model=TestingModel1d(),
                                             parameters=None,

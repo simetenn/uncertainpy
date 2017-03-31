@@ -96,6 +96,50 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(self.runmodel.data.xlabel, "")
         self.assertEqual(self.runmodel.data.ylabel, "")
 
+    def test_feature_function(self):
+        def feature_function(t, U):
+                return "t", "U"
+
+        self.runmodel.features = feature_function
+        self.assertIsInstance(self.runmodel.features, GeneralFeatures)
+
+        t, U = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+
+    def test_feature_functions(self):
+        def feature_function(t, U):
+                return "t", "U"
+
+        def feature_function2(t, U):
+                return "t2", "U2"
+
+
+        self.runmodel.features = [feature_function, feature_function2]
+        self.assertIsInstance(self.runmodel.features, GeneralFeatures)
+
+        t, U = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+
+        t, U = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.runmodel.features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
+
+
+        t, U = self.runmodel.parallel.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.runmodel.parallel.features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
 
 
 

@@ -35,6 +35,8 @@ class TestModel(unittest.TestCase):
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
+        self.assertEqual(self.model.name, "model_function")
+
 
 
 class TestHodgkinHuxleyModel(unittest.TestCase):

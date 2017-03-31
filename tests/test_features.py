@@ -111,7 +111,6 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(U, "U")
 
 
-
     def test_add_features(self):
         def feature_function(t, U):
                 return "t", "U"
