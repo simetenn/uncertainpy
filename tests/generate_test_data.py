@@ -268,8 +268,6 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
                                                 "feature1d",
                                                 "feature2d"])
 
-
-    print parameters
     uncertainty_calculations = un.UncertaintyCalculations(model=model,
                                                           features=features,
                                                           parameters=parameters,
