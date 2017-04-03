@@ -1,7 +1,7 @@
 import uncertainpy as un
 import chaospy as cp
 
-from HodgkinHuxleyModel import HodgkinHuxleyModel
+from hodgkin-huxley import HodgkinHuxley
 
 
 parameterlist = [["V_rest", -65, None],
