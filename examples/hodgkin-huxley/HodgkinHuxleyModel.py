@@ -3,25 +3,18 @@ from uncertainpy import Model
 import numpy as np
 import odespy
 
-# The class name and file name must be the same
+
 class HodgkinHuxleyModel(Model):
     """
     The model must be able to handle these calls
 
-    simulation = model()
-    simulation.load()
-    simulation.setParameters(parameters -> dictionary)
     simulation.run()
-    simulation.save(current_process -> int)
-
-    simulation.cmd()
     """
-    def __init__(self, parameters=None):
-        """
-        Init must be able to be called with 0 arguments
-        """
-        Model.__init__(self, parameters=parameters)
-
+    def __init__(self):
+        Model.__init__(self,
+                       adaptive_model=False,
+                       xlabel="time [ms]",
+                       ylabel="voltage [mv]")
 
         ## HH Parameters
         self.V_rest = -65   # mV
@@ -41,15 +34,8 @@ class HodgkinHuxleyModel(Model):
         self.t = np.arange(0, T + dt, dt)
 
 
-        self.xlabel = "time [ms]"
-        self.ylabel = "voltage [mv]"
-
 
     def I(self, t):
-        # if t >= 5 and t <= 30:
-        #     return self.I_value
-        # else:
-        #     return 0
         return self.I_value
 
     # K channel
@@ -110,7 +96,8 @@ class HodgkinHuxleyModel(Model):
         return [dVdt, dhdt, dmdt, dndt]
 
 
-    def run(self):
+    def run(self, **parameters):
+        self.set_parameters(**parameters)
 
         self.h0 = self.h_inf(self.V_rest)
         self.m0 = self.m_inf(self.V_rest)
@@ -126,3 +113,5 @@ class HodgkinHuxleyModel(Model):
 
         self.t = t
         self.U = X[:, 0]
+
+        return self.t, self.U

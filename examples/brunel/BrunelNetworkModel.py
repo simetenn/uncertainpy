@@ -108,7 +108,7 @@ class BrunelNetworkModel(Model):
 
 
     def run(self, **parameters):
-        Model.set_parameters(self, parameters)
+        self.set_parameters(**parameters)
 
         self.reset()
 

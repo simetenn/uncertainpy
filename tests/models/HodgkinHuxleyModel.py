@@ -11,6 +11,10 @@ class HodgkinHuxleyModel(Model):
     simulation.run()
     """
     def __init__(self):
+        Model.__init__(self,
+                       adaptive_model=False,
+                       xlabel="time [ms]",
+                       ylabel="voltage [mv]")
 
         ## HH Parameters
         self.V_rest = -65   # mV
@@ -29,10 +33,6 @@ class HodgkinHuxleyModel(Model):
         dt = 0.025  # ms
         self.t = np.arange(0, T + dt, dt)
 
-
-        self.adaptive_model = False
-        self.xlabel = "time [ms]"
-        self.ylabel = "voltage [mv]"
 
 
     def I(self, t):
@@ -97,6 +97,10 @@ class HodgkinHuxleyModel(Model):
 
 
     def run(self, gbar_Na=120, gbar_K=36, gbar_l=0.3):
+
+        self.gbar_K = gbar_K
+        self.gbar_l = gbar_l
+        self.gbar_Na = gbar_Na
 
         self.h0 = self.h_inf(self.V_rest)
         self.m0 = self.m_inf(self.V_rest)
