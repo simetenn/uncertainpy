@@ -286,7 +286,11 @@ class TestUncertainty(unittest.TestCase):
         filename = os.path.join(self.output_test_dir, "model_function.h5")
         self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), "-r", filename, compare_file])
+        print
+        print "================================================================================="
+        print
+        # result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), "-r", filename, compare_file])
+        result = subprocess.call(["h5diff", "-r", filename, compare_file])
 
         self.assertEqual(result, 0)
 
