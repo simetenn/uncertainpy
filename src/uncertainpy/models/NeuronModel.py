@@ -23,6 +23,7 @@ class NeuronModel(Model):
     def load_neuron(self):
         current_dir = os.getcwd()
         os.chdir(self.model_path)
+        print os.getcwd()
 
         import neuron
 
