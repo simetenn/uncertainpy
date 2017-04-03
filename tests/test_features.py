@@ -110,14 +110,16 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
+        self.assertEqual(features.features_to_run,
+                         ["feature_function"])
 
     def test_add_features(self):
         def feature_function(t, U):
-                return "t", "U"
+            return "t", "U"
 
 
         def feature_function2(t, U):
-                return "t2", "U2"
+            return "t2", "U2"
 
         features = GeneralFeatures()
 
@@ -131,6 +133,11 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 
+        self.assertEqual(features.implementedFeatures(),
+                         ["feature_function", "feature_function2"])
+
+        self.assertEqual(features.features_to_run,
+                         ["feature_function", "feature_function2"])
 
 class TestGeneralNeuronFeatures(unittest.TestCase):
     def setUp(self):

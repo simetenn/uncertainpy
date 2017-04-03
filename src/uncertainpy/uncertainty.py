@@ -106,8 +106,9 @@ class UncertaintyEstimation(object):
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures()
+            self._features = GeneralFeatures(features_to_run="all")
             self._features.add_features(new_features)
+            self._features.features_to_run = "all"
 
         self.uncertainty_calculations.features = new_features
 
@@ -170,7 +171,7 @@ class UncertaintyEstimation(object):
     # def __setstate__(self, state):
     #     self.__dict__.update(state)
 
-
+    # TODO add features_to_run as argument to this function
     def UQ(self,
            uncertain_parameters=None,
            method="pc",
@@ -278,6 +279,7 @@ pc_method: "regression"
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high."
                                  + "A Monte-Carlo method _might_ be faster.")
+
 
         self.data = self.uncertainty_calculations.PC(
             uncertain_parameters=uncertain_parameters,

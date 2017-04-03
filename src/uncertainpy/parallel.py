@@ -47,10 +47,10 @@ class Parallel(object):
                                     self.__class__.__name__)
 
 
-
     @property
     def features(self):
         return self._features
+
 
     @features.setter
     def features(self, new_features):
@@ -59,13 +59,15 @@ class Parallel(object):
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures()
-            self._features.add_features(new_features)
+            self._features = GeneralFeatures(features_to_run="all")
+            self.features.add_features(new_features)
+            self._features.features_to_run = "all"
 
 
     @property
     def model(self):
         return self._model
+
 
     @model.setter
     def model(self, new_model):

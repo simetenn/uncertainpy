@@ -12,7 +12,6 @@ class GeneralFeatures(object):
                                 "__init__",
                                 "implementedFeatures",
                                 "setup",
-                                "add_feature",
                                 "add_features"]
 
         if new_utility_methods is None:
@@ -75,15 +74,17 @@ class GeneralFeatures(object):
             self._adaptive_features = new_adaptive_features
 
 
-
+    # TODO is it correct that adding a new feature adds it to features_to_run
     def add_features(self, new_features):
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
+            self._features_to_run.append(new_features.__name__)
         else:
             try:
                 for feature in new_features:
                     if callable(feature):
                         setattr(self, feature.__name__, feature)
+                        self._features_to_run.append(feature.__name__)
                     else:
                         raise TypeError("feature in iterable is not callable")
             except TypeError as error:

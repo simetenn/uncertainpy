@@ -109,6 +109,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
+        self.assertEqual(self.uncertainty_calculations.features.features_to_run,
+                         ["feature_function"])
+
 
     def test_feature_functions(self):
         def feature_function(t, U):
@@ -133,6 +136,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         t, U = self.uncertainty_calculations.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
+
+        self.assertEqual(self.uncertainty_calculations.features.features_to_run,
+                         ["feature_function", "feature_function2"])
 
 
     def test_set_parameters(self):

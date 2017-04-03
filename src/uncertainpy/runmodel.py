@@ -75,8 +75,9 @@ class RunModel(object):
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures()
+            self._features = GeneralFeatures(features_to_run="all")
             self._features.add_features(new_features)
+            self._features.features_to_run = "all"
 
         self.parallel.features = new_features
 

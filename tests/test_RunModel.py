@@ -122,6 +122,9 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
+        self.assertEqual(self.runmodel.features.features_to_run,
+                         ["feature_function"])
+
 
     def test_feature_functions(self):
         def feature_function(t, U):
@@ -155,6 +158,9 @@ class TestRunModel(unittest.TestCase):
         t, U = self.runmodel.parallel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
+
+        self.assertEqual(self.runmodel.features.features_to_run,
+                         ["feature_function", "feature_function2"])
 
 
 
