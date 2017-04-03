@@ -4,23 +4,14 @@ import numpy as np
 import odespy
 
 # The class name and file name must be the same
-class ValderramaHodgkinHuxleyModel(Model):
+class Valderrama(Model):
     """
-    The model must be able to handle these calls
 
-    simulation = model()
-    simulation.load()
-    simulation.setParameters(parameters -> dictionary)
-    simulation.run()
-    simulation.save(current_process -> int)
-
-    simulation.cmd()
     """
-    def __init__(self, parameters=None):
-        """
-        Init must be able to be called with 0 arguments
-        """
-        Model.__init__(self, parameters=parameters)
+    def __init__(self):
+        Model.__init__(self,
+                       xlabel="time [ms]",
+                       ylabel="voltage [mv]")
 
 
         ## HH Parameters
@@ -42,10 +33,6 @@ class ValderramaHodgkinHuxleyModel(Model):
         T = 15                 # ms
         dt = 0.025             # ms
         self.t = np.arange(0, T + dt, dt)
-
-
-        self.xlabel = "time [ms]"
-        self.ylabel = "voltage [mv]"
 
 
     def I(self, t):
@@ -113,12 +100,12 @@ class ValderramaHodgkinHuxleyModel(Model):
         return [dVdt, dhdt, dmdt, dndt]
 
 
-    def run(self):
+    def run(self, **parameters):
+        self.set_parameters(**parameters)
 
         # self.h0 = self.h_inf(self.V_rest)
         # self.m0 = self.m_inf(self.V_rest)
         # self.n0 = self.n_inf(self.V_rest)
-        #
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
@@ -127,10 +114,11 @@ class ValderramaHodgkinHuxleyModel(Model):
         solver.set_initial_condition(initial_conditions)
         X, t = solver.solve(self.t)
 
-        self.t = t[t > 5]
-        self.U = X[:, 0][t > 5]
+        t = t[t > 5]
+        U = X[:, 0][t > 5]
 
+        return t, U
 
 if __name__ == "__main__":
-    model = ValderramaHodgkinHuxleyModel()
+    model = Valderrama()
     model.run()

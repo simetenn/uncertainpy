@@ -1,7 +1,8 @@
-import uncertainpy
+import uncertainpy as un
 import chaospy as cp
 
-from ValderramaHodgkinHuxleyModel import ValderramaHodgkinHuxleyModel
+from valderrama import Valderrama
+
 
 parameters = [["V_rest", -10, None],
               ["Cm", 1, cp.Uniform(0.8, 1.5)],
@@ -16,12 +17,14 @@ parameters = [["V_rest", -10, None],
               ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
 
-parameters = uncertainpy.Parameters(parameters)
-parameters.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
+parameters = un.Parameters(parameters)
+parameters.setAllDistributions(un.Distribution(0.2).uniform)
 
-model = ValderramaHodgkinHuxleyModel(parameters=parameters)
+model = Valderrama()
 
-features = uncertainpy.NeuronFeatures(thresh="auto")
-exploration = uncertainpy.UncertaintyEstimation(model, features=features)
+features = un.NeuronFeatures(thresh="auto")
+exploration = un.UncertaintyEstimation(model,
+                                       parameters=parameters,
+                                       features=features)
 
 exploration.UQ(plot_condensed=False, plot_simulator_results=True)
