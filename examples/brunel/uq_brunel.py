@@ -1,7 +1,7 @@
 import uncertainpy as un
 
-from BrunelNetworkModel import BrunelNetworkModel
-from brunel_network import brunel_network
+from brunel_network_class import BrunelNetwork
+from brunel_network_function import brunel_network
 
 parameterlist = [["J_E", 4, None],
                  ["g", 4, None]]
@@ -9,7 +9,7 @@ parameterlist = [["J_E", 4, None],
 parameters = un.Parameters(parameterlist)
 parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
-# model = BrunelNetworkModel()
+# model = BrunelNetwork()
 model = brunel_network
 
 uncertainty = un.UncertaintyEstimation(model,
