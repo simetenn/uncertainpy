@@ -16,14 +16,15 @@ parameterlist = [["cap", 1.1, None],
 
 
 parameters = un.Parameters(parameterlist)
-model = un.NeuronModel(parameters=parameters,
-                       model_path=model_path,
-                       adaptive_model=True)
+parameters.setAllDistributions(un.Distribution(0.05).uniform)
 
-model.setAllDistributions(un.Distribution(0.05).uniform)
+model = un.NeuronModel(model_path=model_path,
+                       adaptive_model=True)
 
 features = un.NeuronFeatures(features_to_run="all")
 
-exploration = un.UncertaintyEstimation(model, features=features)
+uncertainty = un.UncertaintyEstimation(model,
+                                       parameters=parameters,
+                                       features=features)
 
-exploration.UQ()
+uncertainty.UQ()
