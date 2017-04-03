@@ -190,7 +190,6 @@ pc_method: "regression"
         """
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
-
         if method.lower() == "pc":
             if single:
                 self.PCSingle(uncertain_parameters=uncertain_parameters,
@@ -275,7 +274,7 @@ pc_method: "regression"
            filename=None):
 
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
-
+    
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high."
                                  + "A Monte-Carlo method _might_ be faster.")

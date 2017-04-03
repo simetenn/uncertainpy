@@ -123,7 +123,7 @@ class UncertaintyCalculations(object):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
-
+        
         self.distribution = cp.J(*parameter_distributions)
 
 
@@ -234,7 +234,6 @@ class UncertaintyCalculations(object):
 
         if self.nr_pc_samples is None:
             self.nr_pc_samples = 2*len(self.P) + 2
-
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
 
@@ -354,6 +353,9 @@ class UncertaintyCalculations(object):
 
 
     def PCAnalysis(self):
+        if len(self.data.uncertain_parameters) == 1:
+            self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
+
         for feature in self.data.feature_list:
             self.data.E[feature] = cp.E(self.U_hat[feature], self.distribution)
             self.data.Var[feature] = cp.Var(self.U_hat[feature], self.distribution)
