@@ -1,6 +1,6 @@
 class Model(object):
     """
-run() must return t and U
+run(**parameters) must return t and U
     """
     def __init__(self,
                  adaptive_model=False,
@@ -31,7 +31,7 @@ run() must return t and U
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
 
-            
+
 
     def __call__(self, **parameters):
         """
