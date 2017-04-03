@@ -1,2 +1,2 @@
-load_file("./init_models_with_ca/init_model3.hoc")
+load_file("./init_models_with_ca/init_model2.hoc")
 load_file("ca_spike2.ses")

@@ -14,5 +14,5 @@ class NeuronModelBahl(NeuronModel):
 
         # These commands must be added for this specific
         # model to set the parameters
-        self.h("recalculate_passive_properties()")
-        self.h("recalculate_channel_densities()")
+        # self.h("recalculate_passive_properties()")
+        # self.h("recalculate_channel_densities()")
