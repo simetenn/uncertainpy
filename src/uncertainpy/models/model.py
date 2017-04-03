@@ -1,10 +1,7 @@
 class Model(object):
     """
-simulation.run()
-must return t and U
+run() must return t and U
     """
-
-
     def __init__(self,
                  adaptive_model=False,
                  xlabel="",
@@ -29,6 +26,12 @@ must return t and U
         self._run = new_run
         self.name = new_run.__name__
 
+
+    def set_parameters(self, **parameters):
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])
+
+            
 
     def __call__(self, **parameters):
         """

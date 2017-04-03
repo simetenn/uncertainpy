@@ -8,8 +8,8 @@ import nest.raster_plot
 import matplotlib.pyplot as plt
 
 class BrunelNetworkModel(Model):
-    def __init__(self, parameters=None):
-        Model.__init__(self, parameters=parameters)
+    def __init__(self):
+        Model.__init__(self)
 
         # Network parameters. These are given in Brunel (2000) J.Comp.Neuro.
         self.g = 5.0  # Ratio of IPSP to EPSP amplitude: J_I/J_E
@@ -34,14 +34,7 @@ class BrunelNetworkModel(Model):
         self.ylabel = "Coefficient of Variation"
 
 
-    def setParameterValues(self, parameters=None):
-        Model.setParameterValues(self, parameters=parameters)
-        self.reset()
-
-
     def reset(self):
-        import nest
-
         nest.ResetKernel()
 
         N_E = int(self.N_neurons * self.P_E)
@@ -113,8 +106,11 @@ class BrunelNetworkModel(Model):
         else:
             return np.nan
 
-    def run(self):
-        import nest
+
+    def run(self, **parameters):
+        Model.set_parameters(self, parameters)
+
+        self.reset()
 
         nest.Simulate(self.simtime)
         events_E = pd.DataFrame(nest.GetStatus(self.spike_detec_E, 'events')[0])
