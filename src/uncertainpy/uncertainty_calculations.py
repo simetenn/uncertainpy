@@ -15,6 +15,7 @@ class UncertaintyCalculations(object):
                  model=None,
                  parameters=None,
                  features=None,
+                 base_features=GeneralFeatures,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
                  M=3,
@@ -29,6 +30,8 @@ class UncertaintyCalculations(object):
         self._model = None
         self._features = None
         self._parameters = None
+
+        self.base_features = base_features
 
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
@@ -75,15 +78,15 @@ class UncertaintyCalculations(object):
     @features.setter
     def features(self, new_features):
         if new_features is None:
-            self._features = GeneralFeatures(features_to_run=None)
+            self._features = self.base_features(features_to_run=None)
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(features_to_run="all")
+            self._features = self.base_features(features_to_run="all")
             self._features.add_features(new_features)
             self._features.features_to_run = "all"
 
-        self.runmodel.features = new_features
+        self.runmodel.features = self.features
 
 
     @property
@@ -123,7 +126,7 @@ class UncertaintyCalculations(object):
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
 
         parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
-        
+
         self.distribution = cp.J(*parameter_distributions)
 
 

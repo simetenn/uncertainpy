@@ -12,6 +12,7 @@ from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 from uncertainpy import Data
 from uncertainpy.models import Model
+from uncertainpy import NeuronFeatures
 
 
 from testing_classes import TestingFeatures
@@ -139,6 +140,38 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertEqual(self.uncertainty_calculations.features.features_to_run,
                          ["feature_function", "feature_function2"])
+
+
+    def test_feature_functions_base(self):
+        def feature_function(t, U):
+            return "t", "U"
+
+        def feature_function2(t, U):
+            return "t2", "U2"
+
+        implemented_features = ["nrSpikes", "timeBeforeFirstSpike",
+                                "spikeRate", "averageAPOvershoot",
+                                "averageAHPDepth", "averageAPWidth",
+                                "accomondationIndex"]
+
+        self.uncertainty_calculations.base_features = NeuronFeatures
+        self.uncertainty_calculations.features = [feature_function, feature_function2]
+        self.assertIsInstance(self.uncertainty_calculations.features, NeuronFeatures)
+
+        t, U = self.uncertainty_calculations.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.uncertainty_calculations.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.uncertainty_calculations.features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
+
+        self.assertEqual(set(self.uncertainty_calculations.features.features_to_run),
+                      set(["feature_function", "feature_function2"] + implemented_features))
 
 
     def test_set_parameters(self):

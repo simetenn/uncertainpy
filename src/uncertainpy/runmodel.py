@@ -38,6 +38,7 @@ class RunModel(object):
                  model,
                  parameters,
                  features=None,
+                 base_features=GeneralFeatures,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
                  verbose_level="info",
@@ -46,6 +47,8 @@ class RunModel(object):
         self._model = None
         self._features = None
         self._parameters = None
+
+        self.base_features = base_features
 
         self.data = Data()
         self.parallel = Parallel(model)
@@ -71,15 +74,15 @@ class RunModel(object):
     @features.setter
     def features(self, new_features):
         if new_features is None:
-            self._features = GeneralFeatures(features_to_run=None)
+            self._features = self.base_features(features_to_run=None)
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(features_to_run="all")
+            self._features = self.base_features(features_to_run="all")
             self._features.add_features(new_features)
             self._features.features_to_run = "all"
 
-        self.parallel.features = new_features
+        self.parallel.features = self.features
 
 
     @property

@@ -19,11 +19,14 @@ class UncertaintyEstimation(object):
                  model,
                  parameters,
                  features=None,
+                 base_features=GeneralFeatures,
                  save_figures=True,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
+                 xlabel=None,
+                 ylabel=None,
                  verbose_level="info",
                  verbose_filename=None,
                  uncertainty_calculations=None,
@@ -41,6 +44,8 @@ class UncertaintyEstimation(object):
         self._model = None
         self._features = None
         self._parameters = None
+
+        self.base_features = base_features
 
         self.save_figures = save_figures
         self.save_data = save_data
@@ -73,24 +78,24 @@ class UncertaintyEstimation(object):
                                                                        self.uncertainty_calculations)
 
 
+
+        self.features = features
+        self.parameters = parameters
+        self.model = model
+
+
+        if xlabel is not None:
+            self.model.xlabel = xlabel
+
+        if ylabel is not None:
+            self.model.ylabel = ylabel
+
+
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
                                         verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
 
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
-
-        self.parameters = parameters
-        self.model = model
-
-        #
-        # if output_data_filename is None:
-        #     self.output_data_filename = self.model.__class__.__name__
-        # else:
-        #     self.output_data_filename = output_data_filename
 
 
 
@@ -102,15 +107,15 @@ class UncertaintyEstimation(object):
     @features.setter
     def features(self, new_features):
         if new_features is None:
-            self._features = GeneralFeatures(features_to_run=None)
+            self._features = self.base_features(features_to_run=None)
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(features_to_run="all")
+            self._features = self.base_features(features_to_run="all")
             self._features.add_features(new_features)
             self._features.features_to_run = "all"
 
-        self.uncertainty_calculations.features = new_features
+        self.uncertainty_calculations.features = self.features
 
 
     @property
@@ -157,19 +162,6 @@ class UncertaintyEstimation(object):
         self.uncertainty_calculations.features = self.features
         self.uncertainty_calculations.model = self.model
 
-
-    # def __del__(self):
-    #     pass
-
-
-    # def __getstate__(self):
-    #     self_dict = self.__dict__.copy()
-    #     del self_dict['pool']
-    #     return self_dict
-    #
-    #
-    # def __setstate__(self, state):
-    #     self.__dict__.update(state)
 
     # TODO add features_to_run as argument to this function
     def UQ(self,
@@ -274,7 +266,7 @@ pc_method: "regression"
            filename=None):
 
         uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
-    
+
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high."
                                  + "A Monte-Carlo method _might_ be faster.")

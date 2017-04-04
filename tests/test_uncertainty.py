@@ -11,6 +11,9 @@ from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 from uncertainpy import UncertaintyCalculations
 from uncertainpy import Data
+from uncertainpy import Model
+from uncertainpy import NeuronFeatures
+
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel1d, model_function
@@ -198,6 +201,39 @@ class TestUncertainty(unittest.TestCase):
                          ["feature_function", "feature_function2"])
 
 
+
+    def test_feature_functions_base(self):
+        def feature_function(t, U):
+            return "t", "U"
+
+        def feature_function2(t, U):
+            return "t2", "U2"
+
+        implemented_features = ["nrSpikes", "timeBeforeFirstSpike",
+                                "spikeRate", "averageAPOvershoot",
+                                "averageAHPDepth", "averageAPWidth",
+                                "accomondationIndex"]
+
+        self.uncertainty.base_features = NeuronFeatures
+        self.uncertainty.features = [feature_function, feature_function2]
+        self.assertIsInstance(self.uncertainty.features, NeuronFeatures)
+
+        t, U = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = self.uncertainty.features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
+
+        self.assertEqual(set(self.uncertainty.features.features_to_run),
+                         set(["feature_function", "feature_function2"] + implemented_features))
+
+
     def test_set_model(self):
         uncertainty = UncertaintyEstimation(model=TestingModel1d(),
                                             parameters=None,
@@ -217,6 +253,23 @@ class TestUncertainty(unittest.TestCase):
                                             verbose_level="error",
                                             seed=self.seed)
 
+        self.assertIsInstance(uncertainty.model, Model)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.model, Model)
+        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.model,
+                              Model)
+
+
+
+    def test_label(self):
+        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+                                            parameters=None,
+                                            verbose_level="error",
+                                            xlabel="xlabel",
+                                            ylabel="ylabel",
+                                            seed=self.seed)
+
+        self.assertEqual(uncertainty.model.xlabel, "xlabel")
+        self.assertEqual(uncertainty.model.ylabel, "ylabel")
 
     def test_PCECustom(self):
 

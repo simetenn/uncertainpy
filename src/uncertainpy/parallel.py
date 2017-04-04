@@ -32,12 +32,15 @@ class Parallel(object):
     def __init__(self,
                  model,
                  features=None,
+                 base_features=GeneralFeatures,
                  verbose_level="info",
                  verbose_filename=None):
 
         self._features = None
         self._model = None
 
+
+        self.base_features = base_features
         self.features = features
         self.model = model
 
@@ -55,12 +58,12 @@ class Parallel(object):
     @features.setter
     def features(self, new_features):
         if new_features is None:
-            self._features = GeneralFeatures(features_to_run=None)
+            self._features = self.base_features(features_to_run=None)
         elif isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(features_to_run="all")
-            self.features.add_features(new_features)
+            self._features = self.base_features(features_to_run="all")
+            self._features.add_features(new_features)
             self._features.features_to_run = "all"
 
 
