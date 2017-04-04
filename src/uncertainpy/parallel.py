@@ -39,11 +39,9 @@ class Parallel(object):
         self._features = None
         self._model = None
 
-
         self.base_features = base_features
         self.features = features
         self.model = model
-
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -153,6 +151,8 @@ class Parallel(object):
             model_result = self.model.run(**model_parameters)
 
             try:
+                # TODO allow for more parameters to be returned, but only the two first are used?
+                # t, U = model_result[:2]
                 t, U = model_result
             except ValueError as error:
                 msg = "model.run() must return t and U (return t, U | return None, U)"

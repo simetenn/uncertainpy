@@ -113,13 +113,4 @@ def brunel_network(J_E=0.5, g=5.0):
     U = np.nanmean(np.array(cv))
     t = None
 
-    return t, U, spike_detec_E
-
-
-
-if __name__ == "__main__":
-    parameters = {"J_E": 4, "g": 4}
-
-    t, U, spike_detec_E = brunel_network(**parameters)
-    nest.raster_plot.from_device(spike_detec_E)
-    plt.savefig("nest_E.png")
+    return t, U

@@ -91,10 +91,11 @@ test_basic = unittest.TestSuite([test_prerequisites,
 
 test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
 
+test_examples = create_test_suite([TestExamples])
 
 test_travis = unittest.TestSuite([test_basic, test_uncertainty])
 
-test_all = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
+test_all = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty, test_examples])
 # test_all = unittest.TestSuite([test_fast, test_usecase])
 # test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
 
@@ -126,6 +127,7 @@ parser.add_argument("--usecase", help="Usecase tests", action="store_true")
 parser.add_argument("--data", help="Data tests", action="store_true")
 parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests", action="store_true")
 parser.add_argument("--travis", help="Tests to run on travis", action="store_true")
+parser.add_argument("--examples", help="Test all examples", action="store_true")
 
 
 args = parser.parse_args()
@@ -225,8 +227,11 @@ if args.all:
     print "-----------------------------------------"
     print "Running testsuite: all"
     results["all"] = test_runner.run(test_all)
-
-
+if args.examples:
+    print "-----------------------------------------"
+    print "Running testsuite: examples"
+    results["examples"] = test_runner.run(test_examples)
+    
 
 total_run = 0
 total_errors = 0

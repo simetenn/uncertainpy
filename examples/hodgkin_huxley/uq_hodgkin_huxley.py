@@ -1,7 +1,7 @@
 import uncertainpy as un
 import chaospy as cp
 
-from hodgkin-huxley import HodgkinHuxley
+from hodgkin_huxley import HodgkinHuxley
 
 
 parameterlist = [["V_rest", -65, None],
@@ -18,7 +18,7 @@ parameters = un.Parameters(parameterlist)
 parameters.setAllDistributions(un.Distribution(0.5).uniform)
 
 
-model = HodgkinHuxleyModel()
+model = HodgkinHuxley()
 features = un.NeuronFeatures(features_to_run="all")
 
 uncertainty = un.UncertaintyEstimation(model=model,

@@ -7,7 +7,7 @@ import nest.raster_plot
 
 import matplotlib.pyplot as plt
 
-class BrunelNetworkModel(Model):
+class BrunelNetwork(Model):
     def __init__(self):
         Model.__init__(self)
 

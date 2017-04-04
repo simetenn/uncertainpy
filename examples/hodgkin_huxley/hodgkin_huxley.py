@@ -4,7 +4,7 @@ import numpy as np
 import odespy
 
 
-class HodgkinHuxleyModel(Model):
+class HodgkinHuxley(Model):
     """
     The model must be able to handle these calls
 
@@ -111,7 +111,7 @@ class HodgkinHuxleyModel(Model):
         solver.set_initial_condition(initial_conditions)
         X, t = solver.solve(self.t)
 
-        self.t = t
-        self.U = X[:, 0]
 
-        return self.t, self.U
+        U = X[:, 0]
+
+        return t, U
