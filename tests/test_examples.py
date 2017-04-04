@@ -11,17 +11,13 @@ class TestExamples(unittest.TestCase):
         self.current_dir = os.getcwd()
 
 
-    def tearDown(self):
-        os.chdir(self.current_dir)
+    def test_bahl(self):
+        folder = os.path.join(self.example_folder, "bahl")
+        os.chdir(folder)
 
-    #
-    # def test_bahl(self):
-    #     folder = os.path.join(self.example_folder, "bahl")
-    #     os.chdir(folder)
-    #
-    #     result = subprocess.call(["python", "uq_bahl.py"])
-    #     self.assertEqual(result, 0)
-    #
+        result = subprocess.call(["python", "uq_bahl.py"])
+        self.assertEqual(result, 0)
+
 
     def test_brunel(self):
         folder = os.path.join(self.example_folder, "brunel")

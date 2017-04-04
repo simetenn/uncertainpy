@@ -93,7 +93,7 @@ test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertain
 
 test_examples = create_test_suite([TestExamples])
 
-test_travis = unittest.TestSuite([test_basic, test_uncertainty])
+test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_examples])
 
 test_all = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty, test_examples])
 # test_all = unittest.TestSuite([test_fast, test_usecase])
@@ -231,7 +231,7 @@ if args.examples:
     print "-----------------------------------------"
     print "Running testsuite: examples"
     results["examples"] = test_runner.run(test_examples)
-    
+
 
 total_run = 0
 total_errors = 0
