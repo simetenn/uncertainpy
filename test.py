@@ -95,7 +95,8 @@ test_examples = create_test_suite([TestExamples])
 
 test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_examples])
 
-test_all = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty, test_examples])
+test_all = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
+
 # test_all = unittest.TestSuite([test_fast, test_usecase])
 # test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
 

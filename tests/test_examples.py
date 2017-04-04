@@ -2,6 +2,7 @@ import os
 import unittest
 import subprocess
 
+
 class TestExamples(unittest.TestCase):
     def setUp(self):
         self.folder = os.path.dirname(os.path.realpath(__file__))
