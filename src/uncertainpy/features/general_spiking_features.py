@@ -2,13 +2,13 @@ from uncertainpy.features.spikes import Spikes
 from uncertainpy.features import GeneralFeatures
 
 
-class GeneralNeuronFeatures(GeneralFeatures):
+class GeneralSpikingFeatures(GeneralFeatures):
     def __init__(self,
                  features_to_run="all",
                  adaptive_features=None,
                  thresh=-30,
                  extended_spikes=False):
-        new_utility_methods = ["calculateSpikes"]
+        new_utility_methods = ["calculate_spikes"]
 
         GeneralFeatures.__init__(self,
                                  features_to_run=features_to_run,
@@ -23,11 +23,11 @@ class GeneralNeuronFeatures(GeneralFeatures):
 
 
     def setup(self):
-        self.calculateSpikes(thresh=self.thresh, extended_spikes=self.extended_spikes)
+        self.calculate_spikes(thresh=self.thresh, extended_spikes=self.extended_spikes)
 
 
 
-    def calculateSpikes(self, thresh=-30, extended_spikes=False):
+    def calculate_spikes(self, thresh=-30, extended_spikes=False):
         if self.t is None:
             raise AttributeError("t is not assigned")
         if self.U is None:

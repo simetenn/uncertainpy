@@ -1,28 +1,28 @@
 import scipy.interpolate
 import scipy.optimize
 
-from uncertainpy.features import GeneralNeuronFeatures
+from uncertainpy.features import GeneralSpikingFeatures
 
-class NeuronFeatures(GeneralNeuronFeatures):
+class SpikingFeatures(GeneralSpikingFeatures):
     def nrSpikes(self, t, U):
         return None, self.spikes.nr_spikes
 
 
-    def timeBeforeFirstSpike(self, t, U):
+    def time_before_first_spike(self, t, U):
         if self.spikes.nr_spikes <= 0:
             return None, None
 
         return None, self.spikes.spikes[0].t_spike
 
 
-    def spikeRate(self, t, U):
+    def spike_rate(self, t, U):
         if self.spikes.nr_spikes < 0:
             return None, None
 
         return None, self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
 
 
-    def averageAPOvershoot(self, t, U):
+    def average_AP_overshoot(self, t, U):
         if self.spikes.nr_spikes <= 0:
             return None, None
 
@@ -32,7 +32,7 @@ class NeuronFeatures(GeneralNeuronFeatures):
         return None, sum_AP_overshoot/float(self.spikes.nr_spikes)
 
 
-    def averageAHPDepth(self, t, U):
+    def average_AHP_depth(self, t, U):
         if self.spikes.nr_spikes <= 0:
             return None, None
 
@@ -43,7 +43,7 @@ class NeuronFeatures(GeneralNeuronFeatures):
         return None, sum_AHP_depth/float(self.spikes.nr_spikes)
 
 
-    def averageAPWidth(self, t, U):
+    def average_AP_width(self, t, U):
         if self.spikes.nr_spikes <= 0:
             return None, None
 
@@ -64,7 +64,7 @@ class NeuronFeatures(GeneralNeuronFeatures):
         return None, sum_AP_width/float(self.spikes.nr_spikes)
 
 
-    def accomondationIndex(self, t, U):
+    def accomondation_index(self, t, U):
         N = self.spikes.nr_spikes
         if N <= 1:
             return None, None

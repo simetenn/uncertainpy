@@ -109,7 +109,7 @@ data = {"model_cmds": model_cmds
         module = __import__(features_cmds["filename"].split(".")[0])
         features = getattr(module, features_cmds["feature_name"])(t=t, U=U, **features_kwargs)
 
-        feature_results = features.calculateFeatures()
+        feature_results = features.calculate_features()
 
         for feature in feature_results:
             tmp_result = feature_results[feature]

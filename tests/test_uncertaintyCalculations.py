@@ -12,7 +12,7 @@ from uncertainpy.features import GeneralFeatures
 from uncertainpy import Distribution
 from uncertainpy import Data
 from uncertainpy.models import Model
-from uncertainpy import NeuronFeatures
+from uncertainpy import SpikingFeatures
 
 
 from testing_classes import TestingFeatures
@@ -149,14 +149,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
         def feature_function2(t, U):
             return "t2", "U2"
 
-        implemented_features = ["nrSpikes", "timeBeforeFirstSpike",
-                                "spikeRate", "averageAPOvershoot",
-                                "averageAHPDepth", "averageAPWidth",
-                                "accomondationIndex"]
+        implemented_features = ["nrSpikes", "time_before_first_spike",
+                                "spike_rate", "average_AP_overshoot",
+                                "average_AHP_depth", "average_AP_width",
+                                "accomondation_index"]
 
-        self.uncertainty_calculations.base_features = NeuronFeatures
+        self.uncertainty_calculations.base_features = SpikingFeatures
         self.uncertainty_calculations.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.uncertainty_calculations.features, NeuronFeatures)
+        self.assertIsInstance(self.uncertainty_calculations.features, SpikingFeatures)
 
         t, U = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")

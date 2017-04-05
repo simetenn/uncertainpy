@@ -175,7 +175,7 @@ class Parallel(object):
             self.features.t = t
             self.features.U = U
             self.features.setup()
-            feature_results = self.features.calculateFeatures()
+            feature_results = self.features.calculate_features()
 
 
             for feature in feature_results:

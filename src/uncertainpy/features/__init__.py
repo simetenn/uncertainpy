@@ -1,10 +1,10 @@
 __all__ = ["GeneralFeatures",
-           "GeneralNeuronFeatures",
-           "NeuronFeatures",
+           "GeneralSpikingFeatures",
+           "SpikingFeatures",
            "Spike",
            "Spikes"]
 
 from general_features import GeneralFeatures
-from general_neuron_features import GeneralNeuronFeatures
-from neuron_features import NeuronFeatures
+from general_spiking_features import GeneralSpikingFeatures
+from spiking_features import SpikingFeatures
 from spikes import Spike, Spikes

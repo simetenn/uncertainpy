@@ -7,7 +7,7 @@ import shutil
 from xvfbwrapper import Xvfb
 from uncertainpy import Parallel
 from uncertainpy.models import NeuronModel, Model
-from uncertainpy.features import GeneralFeatures, NeuronFeatures
+from uncertainpy.features import GeneralFeatures, SpikingFeatures
 
 from testing_classes import TestingFeatures
 from testing_classes import TestingModel1d, model_function
@@ -105,14 +105,14 @@ class TestParallel(unittest.TestCase):
         def feature_function2(t, U):
             return "t2", "U2"
 
-        implemented_features = ["nrSpikes", "timeBeforeFirstSpike",
-                                "spikeRate", "averageAPOvershoot",
-                                "averageAHPDepth", "averageAPWidth",
-                                "accomondationIndex"]
+        implemented_features = ["nrSpikes", "time_before_first_spike",
+                                "spike_rate", "average_AP_overshoot",
+                                "average_AHP_depth", "average_AP_width",
+                                "accomondation_index"]
 
-        self.parallel.base_features = NeuronFeatures
+        self.parallel.base_features = SpikingFeatures
         self.parallel.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.parallel.features, NeuronFeatures)
+        self.assertIsInstance(self.parallel.features, SpikingFeatures)
 
         t, U = self.parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")

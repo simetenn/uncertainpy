@@ -6,11 +6,12 @@ class GeneralFeatures(object):
                  adaptive_features=None):
 
         # self.implemented_features = []
-        self.utility_methods = ["calculateFeature",
-                                "calculateFeatures",
-                                "calculateAllFeatures",
+        self.utility_methods = ["calculate_feature",
+                                "calculate_features",
+                                "calculate_all_features",
+                                "calculate",
                                 "__init__",
-                                "implementedFeatures",
+                                "implemented_features",
                                 "setup",
                                 "add_features"]
 
@@ -33,14 +34,6 @@ class GeneralFeatures(object):
         pass
 
 
-    # @property
-    # def t(self):
-    #     return self._t
-    #
-    # @property
-    # def U(self):
-    #     return self._U
-
     @property
     def features_to_run(self):
         return self._features_to_run
@@ -48,7 +41,7 @@ class GeneralFeatures(object):
     @features_to_run.setter
     def features_to_run(self, new_features_to_run):
         if new_features_to_run == "all":
-            self._features_to_run = self.implementedFeatures()
+            self._features_to_run = self.implemented_features()
         elif new_features_to_run is None:
             self._features_to_run = []
         elif isinstance(new_features_to_run, str):
@@ -65,7 +58,7 @@ class GeneralFeatures(object):
     @adaptive_features.setter
     def adaptive_features(self, new_adaptive_features):
         if new_adaptive_features == "all":
-            self._adaptive_features = self.implementedFeatures()
+            self._adaptive_features = self.implemented_features()
         elif new_adaptive_features is None:
             self._adaptive_features = []
         elif isinstance(new_adaptive_features, str):
@@ -95,7 +88,27 @@ class GeneralFeatures(object):
                 raise
 
 
-    def calculateFeature(self, feature_name):
+    def calculate(self, feature_name=None):
+        if feature_name is None:
+            return self.calculate_features()
+        elif feature_name == "all":
+            return self.calculate_all_features()
+        else:
+            feature_result = self.calculate_feature(feature_name)
+            try:
+                t, U = feature_result
+            except ValueError as error:
+                msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature_name)
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
+
+            return {feature_name: {"t": t, "U": U}}
+
+
+
+    def calculate_feature(self, feature_name):
         if feature_name in self.utility_methods:
             raise TypeError("%s is a utility method")
 
@@ -103,18 +116,13 @@ class GeneralFeatures(object):
 
 
 
-    def calculateFeatures(self):
+    def calculate_features(self):
         results = {}
         for feature in self.features_to_run:
-            feature_result = self.calculateFeature(feature)
+            feature_result = self.calculate_feature(feature)
 
             try:
-                results[feature] = {"t": feature_result[0],
-                                    "U": feature_result[1]}
-
-                if len(feature_result) != 2:
-                    raise ValueError
-
+                t, U = feature_result
             except ValueError as error:
                 msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
@@ -122,21 +130,18 @@ class GeneralFeatures(object):
                 error.args = error.args + (msg,)
                 raise
 
+            results[feature] = {"t": t, "U": U}
+
         return results
 
 
-    def calculateAllFeatures(self):
+    def calculate_all_features(self):
         results = {}
-        for feature in self.implementedFeatures():
-            feature_result = self.calculateFeature(feature)
+        for feature in self.implemented_features():
+            feature_result = self.calculate_feature(feature)
 
             try:
-                results[feature] = {"t": feature_result[0],
-                                    "U": feature_result[1]}
-
-                if len(feature_result) != 2:
-                    raise ValueError
-
+                t, U = feature_result
             except ValueError as error:
                 msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
@@ -144,10 +149,13 @@ class GeneralFeatures(object):
                 error.args = error.args + (msg,)
                 raise
 
+            results[feature] = {"t": t, "U": U}
+
+
         return results
 
 
-    def implementedFeatures(self):
+    def implemented_features(self):
         """
         Return a list of all callable methods in feature
         """

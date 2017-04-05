@@ -18,7 +18,7 @@ parameters = uncertainpy.Parameters(orignal_parameters)
 model = HodgkinHuxleyModel(parameters)
 model.setAllDistributions(uncertainpy.Distribution(0.2).uniform)
 
-features = uncertainpy.NeuronFeatures(features_to_run="all")
+features = uncertainpy.SpikingFeatures(features_to_run="all")
 
 exploration = uncertainpy.UncertaintyEstimations(model,
                                                  supress_model_output=False,

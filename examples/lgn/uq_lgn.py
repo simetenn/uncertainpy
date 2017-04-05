@@ -21,7 +21,7 @@ parameters.setAllDistributions(un.Distribution(0.05).uniform)
 model = un.NeuronModel(model_path=model_path,
                        adaptive_model=True)
 
-features = un.NeuronFeatures(features_to_run="all")
+features = un.SpikingFeatures(features_to_run="all")
 
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,

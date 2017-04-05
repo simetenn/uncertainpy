@@ -3,8 +3,8 @@ __all__ = ["TestDistribution",
            "TestGeneralFeatures",
            "TestRunModel",
            "TestParallel",
-           "TestGeneralNeuronFeatures",
-           "TestNeuronFeatures",
+           "TestGeneralSpikingFeatures",
+           "TestSpikingFeatures",
            "TestTestingFeatures",
            "TestLogger",
            "TestModel",
@@ -33,7 +33,7 @@ __all__ = ["TestDistribution",
 
 from test_distribution import TestDistribution
 from test_exploration import TestExploration
-from test_features import TestGeneralFeatures, TestGeneralNeuronFeatures, TestNeuronFeatures, TestTestingFeatures
+from test_features import TestGeneralFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures, TestTestingFeatures
 from test_logger import TestLogger
 
 from test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupPointModel

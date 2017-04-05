@@ -7,7 +7,7 @@ import shutil
 
 from uncertainpy import RunModel, Parameters
 from uncertainpy.models import NeuronModel, Model
-from uncertainpy.features import GeneralFeatures, NeuronFeatures
+from uncertainpy.features import GeneralFeatures, SpikingFeatures
 
 
 from testing_classes import TestingFeatures, model_function
@@ -170,14 +170,14 @@ class TestRunModel(unittest.TestCase):
         def feature_function2(t, U):
             return "t2", "U2"
 
-        implemented_features = ["nrSpikes", "timeBeforeFirstSpike",
-                                "spikeRate", "averageAPOvershoot",
-                                "averageAHPDepth", "averageAPWidth",
-                                "accomondationIndex"]
+        implemented_features = ["nrSpikes", "time_before_first_spike",
+                                "spike_rate", "average_AP_overshoot",
+                                "average_AHP_depth", "average_AP_width",
+                                "accomondation_index"]
 
-        self.runmodel.base_features = NeuronFeatures
+        self.runmodel.base_features = SpikingFeatures
         self.runmodel.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.runmodel.features, NeuronFeatures)
+        self.assertIsInstance(self.runmodel.features, SpikingFeatures)
 
         t, U = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")

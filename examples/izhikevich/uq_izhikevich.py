@@ -14,7 +14,7 @@ parameters.setAllDistributions(un.Distribution(0.5).uniform)
 # model = Izhikevich()
 model = izhikevich
 
-features = un.NeuronFeatures(features_to_run="all")
+features = un.SpikingFeatures(features_to_run="all")
 
 uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameters,

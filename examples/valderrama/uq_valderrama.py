@@ -16,15 +16,15 @@ parameters = [["V_rest", -10, None],
               ["E_K", -12, cp.Uniform(-74, -79)],
               ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
-
 parameters = un.Parameters(parameters)
 parameters.setAllDistributions(un.Distribution(0.2).uniform)
 
 model = Valderrama()
 
-features = un.NeuronFeatures(thresh="auto")
+features = un.SpikingFeatures(thresh="auto")
 exploration = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features)
 
-exploration.UQ(plot_condensed=False, plot_simulator_results=True)
+exploration.UQ(plot_condensed=True,
+               plot_simulator_results=False)

@@ -28,8 +28,8 @@ test_spikes = create_test_suite([TestSpikes])
 test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
 
 test_features = create_test_suite([TestGeneralFeatures,
-                                   TestGeneralNeuronFeatures,
-                                   TestNeuronFeatures,
+                                   TestGeneralSpikingFeatures,
+                                   TestSpikingFeatures,
                                    TestTestingFeatures])
 
 # test_features.addTest(test_spike_sorting)
@@ -106,20 +106,26 @@ test_runner = unittest.TextTestRunner()
 
 parser = argparse.ArgumentParser(description="Run tests for Uncertainpy")
 parser.add_argument("-u", "--utils", help="Utility tests", action="store_true")
-parser.add_argument("-p", "--prerequisites", help="Prerequisites tests", action="store_true")
+parser.add_argument("-p", "--prerequisites",
+                    help="Prerequisites tests",
+                    action="store_true")
 parser.add_argument("-a", "--all", help="All tests", action="store_true")
-parser.add_argument("-b", "--basic", help="Basic tests (all test up to Uncertainpy)", action="store_true")
+parser.add_argument("-b", "--basic",
+                    help="Basic tests (all test up to Uncertainpy)",
+                    action="store_true")
 parser.add_argument("-f", "--fast", help="Run all tests except usecase test", action="store_true")
 
 parser.add_argument("--uncertainpy", help="Uncertainpy tests", action="store_true")
-parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test", action="store_true")
+parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test",
+                    action="store_true")
 parser.add_argument("--parameters", help="Parameter tests", action="store_true")
 parser.add_argument("--distribution", help="Distribution tests", action="store_true")
 parser.add_argument("--spike", help="Spike tests", action="store_true")
 parser.add_argument("--spikes", help="Spikes tests ", action="store_true")
 parser.add_argument("--spike_sorting", help="Test spike sorting", action="store_true")
 parser.add_argument("--plotuncertainty", help="PlotUncertainty tests", action="store_true")
-parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests", action="store_true")
+parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests",
+                    action="store_true")
 parser.add_argument("--features", help="Features tests", action="store_true")
 parser.add_argument("--model", help="Model tests", action="store_true")
 parser.add_argument("--runmodel", help="RunModel tests", action="store_true")
@@ -127,7 +133,8 @@ parser.add_argument("--logger", help="Logger tests", action="store_true")
 parser.add_argument("--plotting", help="Plotting tests", action="store_true")
 parser.add_argument("--usecase", help="Usecase tests", action="store_true")
 parser.add_argument("--data", help="Data tests", action="store_true")
-parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests", action="store_true")
+parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests",
+                    action="store_true")
 parser.add_argument("--travis", help="Tests to run on travis", action="store_true")
 parser.add_argument("--examples", help="Test all examples", action="store_true")
 

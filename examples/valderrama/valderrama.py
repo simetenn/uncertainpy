@@ -114,8 +114,13 @@ class Valderrama(Model):
         solver.set_initial_condition(initial_conditions)
         X, t = solver.solve(self.t)
 
-        t = t[t > 5]
-        U = X[:, 0][t > 5]
+
+        # t = t[t > 5]
+        # U = X[:, 0][t > 5]
+
+
+        t = t
+        U = X[:, 0]
 
         return t, U
 
