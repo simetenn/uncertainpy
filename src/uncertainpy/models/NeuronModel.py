@@ -41,20 +41,20 @@ class NeuronModel(Model):
         return data
 
 
-    def _toArray(self, hocObject):
+    def _to_array(self, hocObject):
         array = np.zeros(int(round(hocObject.size())))
         hocObject.to_python(array)
         return array
 
 
-    def _recordV(self):
+    def _record_v(self):
         for sec in self.h.allsec():
             self.V = self.h.Vector()
             self.V.record(sec(0.5)._ref_v)
             break
 
 
-    def _recordT(self):
+    def _record_t(self):
         self.t = self._record("_ref_t")
 
 
@@ -63,13 +63,13 @@ class NeuronModel(Model):
 
         self.set_parameters(parameters)
 
-        self._recordT()
-        self._recordV()
+        self._record_t()
+        self._record_v()
 
         self.h.run()
 
-        U = self._toArray(self.V)
-        t = self._toArray(self.t)
+        U = self._to_array(self.V)
+        t = self._to_array(self.t)
 
         return t, U
 
