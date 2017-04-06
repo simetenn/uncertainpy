@@ -66,12 +66,12 @@ class PlotUncertainty(object):
     @output_dir.setter
     def output_dir(self, new_output_dir):
         self._output_dir = new_output_dir
-        
+
         if not os.path.isdir(new_output_dir):
             os.makedirs(new_output_dir)
 
 
-    def toLatex(self, text):
+    def str_to_latex(self, text):
         if "_" in text:
             txt = text.split("_")
             return "$" + txt[0] + "_{" + "-".join(txt[1:]) + "}$"
@@ -79,10 +79,10 @@ class PlotUncertainty(object):
             return text
 
 
-    def listToLatex(self, texts):
+    def liststr_to_latex(self, texts):
         tmp = []
         for txt in texts:
-            tmp.append(self.toLatex(txt))
+            tmp.append(self.str_to_latex(txt))
 
         return tmp
 
@@ -159,7 +159,7 @@ class PlotUncertainty(object):
 
         title = feature + ", " + attribute_name
         prettyPlot(self.data.t[feature], value[feature],
-                   self.toLatex(title), self.data.xlabel, self.data.ylabel, **kwargs)
+                   self.str_to_latex(title), self.data.xlabel, self.data.ylabel, **kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -210,7 +210,7 @@ class PlotUncertainty(object):
 
         title = feature + ", mean and variance"
         ax = prettyPlot(self.data.t[feature], self.data.E[feature],
-                        self.toLatex(title), self.data.xlabel, self.data.ylabel + ", mean",
+                        self.str_to_latex(title), self.data.xlabel, self.data.ylabel + ", mean",
                         style=style, **kwargs)
 
         colors = get_current_colormap()
@@ -272,7 +272,7 @@ class PlotUncertainty(object):
 
 
         title = feature + ", 90\\% confidence interval"
-        prettyPlot(self.data.t[feature], self.data.E[feature], title=self.toLatex(title),
+        prettyPlot(self.data.t[feature], self.data.E[feature], title=self.str_to_latex(title),
                    xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
                    **kwargs)
 
@@ -329,7 +329,7 @@ class PlotUncertainty(object):
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
                        title=feature + ", " + sensitivity.split("_")[0] + " "
-                       + sensitivity.split("_")[1] + ", " + self.toLatex(parameter_names[i]),
+                       + sensitivity.split("_")[1] + ", " + self.str_to_latex(parameter_names[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters), **kwargs)
@@ -400,7 +400,7 @@ class PlotUncertainty(object):
 
             if i < nr_plots:
                 prettyPlot(self.data.t[feature], sense[feature][i],
-                           title=self.toLatex(parameter_names[i]), color=i,
+                           title=self.str_to_latex(parameter_names[i]), color=i,
                            nr_colors=nr_plots, ax=ax,
                            **kwargs)
 
@@ -457,7 +457,7 @@ class PlotUncertainty(object):
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature],
                        sense[feature][i],
-                       title=self.toLatex(feature) + ", " + sensitivity.split("_")[0]
+                       title=self.str_to_latex(feature) + ", " + sensitivity.split("_")[0]
                        + " " + sensitivity.split("_")[1],
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        new_figure=False,
@@ -469,7 +469,7 @@ class PlotUncertainty(object):
         if len(sense[feature]) > 4:
             plt.xlim([self.data.t[feature][0], 1.3*self.data.t[feature][-1]])
 
-        plt.legend(self.listToLatex(self.data.uncertain_parameters))
+        plt.legend(self.liststr_to_latex(self.data.uncertain_parameters))
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir,
@@ -584,7 +584,7 @@ class PlotUncertainty(object):
 
             location = (0.5, 1.01 + legend_width*0.095)
             plt.legend(legend_bars,
-                       self.listToLatex(self.data.uncertain_parameters),
+                       self.liststr_to_latex(self.data.uncertain_parameters),
                        loc='upper center',
                        bbox_to_anchor=location,
                        ncol=legend_size)
@@ -599,7 +599,7 @@ class PlotUncertainty(object):
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
 
-        plt.suptitle(self.toLatex(feature), fontsize=titlesize)
+        plt.suptitle(self.str_to_latex(feature), fontsize=titlesize)
 
         save_name = feature + "_" + sensitivity + self.figureformat
 
@@ -641,8 +641,8 @@ class PlotUncertainty(object):
 
         prettyBar(total_sense[feature],
                   title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
-                  + ", " + self.toLatex(feature),
-                  xlabels=self.listToLatex(self.data.uncertain_parameters),
+                  + ", " + self.str_to_latex(feature),
+                  xlabels=self.liststr_to_latex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
                   nr_colors=len(self.data.uncertain_parameters),
                   index=index)
@@ -860,8 +860,8 @@ class PlotUncertainty(object):
                     continue
 
                 prettyBar(total_sense[self.data.feature_list[i]],
-                          title=self.toLatex(self.data.feature_list[i]),
-                          xlabels=self.listToLatex(self.data.uncertain_parameters),
+                          title=self.str_to_latex(self.data.feature_list[i]),
+                          xlabels=self.liststr_to_latex(self.data.uncertain_parameters),
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
                           ax=ax,
