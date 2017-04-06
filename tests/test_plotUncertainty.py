@@ -29,10 +29,10 @@ class TestPlotUncertainpy(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-
         self.plot = PlotUncertainty(output_dir=self.output_test_dir,
                                     verbose_level="warning",
                                     figureformat=self.figureformat)
+
 
 
 
@@ -220,14 +220,20 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertData()
 
 
-    def test_setData(self):
+    def test_set_data(self):
         data = Data()
 
         data.load(os.path.join(self.test_data_dir, "test_save_mock"))
 
-        self.plot.setData(data)
+        self.plot.data = data
 
         self.assertData()
+
+    def test_set_output_dir(self):
+        test_dir = os.path.join(self.output_test_dir, "testing")
+        self.plot.output_dir = test_dir
+
+        self.assertTrue(os.path.isdir)
 
 
     def assertData(self):

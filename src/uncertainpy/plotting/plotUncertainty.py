@@ -26,7 +26,7 @@ from uncertainpy.utils import create_logger
 
 # TODO Make it so plots are not created if the data is None
 
-class PlotUncertainty():
+class PlotUncertainty(object):
     def __init__(self,
                  filename=None,
                  output_dir="figures/",
@@ -34,17 +34,17 @@ class PlotUncertainty():
                  verbose_level="info",
                  verbose_filename=None):
 
+        self._output_dir = None
+
         self.output_dir = output_dir
         self.figureformat = figureformat
 
-        self.current_dir = os.path.dirname(os.path.realpath(__file__))
         self.features_in_combined_plot = 3
 
-        self.loaded_flag = False
 
-        if filename is None:
-            self.data = None
-        else:
+        self.data = None
+
+        if filename is not None:
             self.load(filename)
 
 
@@ -53,26 +53,22 @@ class PlotUncertainty():
                                     self.__class__.__name__)
 
 
-        if not os.path.isdir(self.output_dir):
-            os.makedirs(self.output_dir)
-
 
     def load(self, filename):
         self.data = Data(filename)
 
-        self.loaded_flag = True
+
+    @property
+    def output_dir(self):
+        return self._output_dir
 
 
-
-    def setData(self, data, output_dir=None):
-        if output_dir is not None:
-            self.output_dir = output_dir
-
-        if not os.path.isdir(self.output_dir):
-            os.makedirs(self.output_dir)
-
-        self.data = data
-        self.loaded_flag = True
+    @output_dir.setter
+    def output_dir(self, new_output_dir):
+        self._output_dir = new_output_dir
+        
+        if not os.path.isdir(new_output_dir):
+            os.makedirs(new_output_dir)
 
 
     def toLatex(self, text):
@@ -142,7 +138,7 @@ class PlotUncertainty():
                                attribute="E", attribute_name="mean",
                                hardcopy=True, show=False,
                                **kwargs):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -198,7 +194,7 @@ class PlotUncertainty():
     def plotMeanAndVariance(self, feature="directComparison", new_figure=True,
                             hardcopy=True, show=False, color=0, style="seaborn-dark",
                             **kwargs):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -260,7 +256,7 @@ class PlotUncertainty():
 
     def plotConfidenceInterval(self, feature="directComparison", hardcopy=True,
                                show=False, **kwargs):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         if feature not in self.data.features_1d:
@@ -309,7 +305,7 @@ class PlotUncertainty():
                         show=False,
                         **kwargs):
 
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         if feature not in self.data.features_1d:
@@ -353,7 +349,7 @@ class PlotUncertainty():
 
     def plotSensitivityGrid(self, feature="directComparison", sensitivity="sensitivity_1",
                             hardcopy=True, show=False, **kwargs):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         if feature not in self.data.features_1d:
@@ -437,7 +433,7 @@ class PlotUncertainty():
 
     def plotSensitivityCombined(self, feature="directComparison", sensitivity="sensitivity_1",
                                 hardcopy=True, show=False, **kwargs):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -503,7 +499,7 @@ class PlotUncertainty():
     # TODO not finhised, missing correct label placement
     def plot0dFeature(self, feature, max_legend_size=5, sensitivity="sensitivity_1",
                       hardcopy=True, show=False):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -619,7 +615,7 @@ class PlotUncertainty():
 
 
     def plotTotalSensitivity(self, feature, sensitivity="sensitivity_1", hardcopy=True, show=False):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         if feature not in self.data.feature_list:
@@ -670,7 +666,7 @@ class PlotUncertainty():
                                         sensitivity="sensitivity_1",
                                         hardcopy=True,
                                         show=False):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         for feature in self.data.feature_list:
@@ -681,7 +677,7 @@ class PlotUncertainty():
 
 
     def plot0dFeatures(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -702,7 +698,7 @@ class PlotUncertainty():
 
 
     def plotAllDataNoSensitivity(self, sensitivity="sensitivity_1"):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -711,7 +707,7 @@ class PlotUncertainty():
 
 
     def plotAllData(self, sensitivity="sensitivity_1"):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -725,7 +721,7 @@ class PlotUncertainty():
 
     # TODO find a more descriptive name
     def plotAllDataAllSensitivity(self):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
@@ -804,7 +800,7 @@ class PlotUncertainty():
                                  hardcopy=True,
                                  show=False,
                                  **kwargs):
-        if not self.loaded_flag:
+        if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 

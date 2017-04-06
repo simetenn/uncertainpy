@@ -447,7 +447,9 @@ pc_method: "regression"
         if output_dir is None:
             output_dir = self.output_dir_figures
 
-        self.plotting.setData(self.data, output_dir=output_dir)
+
+        self.plotting.data = self.data
+        self.plotting.output_dir = output_dir
 
         self.logger.info("Plotting in {}".format(output_dir))
 
