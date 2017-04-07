@@ -154,7 +154,7 @@ class TestParallel(unittest.TestCase):
                    "featureInvalid": {"U": None,
                                       "t": None}}
 
-        features_0d, features_1d, features_2d = self.parallel.sortFeatures(results)
+        features_0d, features_1d, features_2d = self.parallel.sort_features(results)
 
         self.assertEqual(features_0d, ["feature0d", "featureInvalid"])
         self.assertEqual(set(features_1d),
@@ -164,7 +164,7 @@ class TestParallel(unittest.TestCase):
 
 
 
-    def test_createInterpolations(self):
+    def test_create_interpolations(self):
         results = {"directComparison": {"U": np.arange(0, 10) + 1,
                                         "t": np.arange(0, 10)},
                    "feature1d": {"U": np.arange(0, 10),
@@ -179,7 +179,7 @@ class TestParallel(unittest.TestCase):
                    "featureInvalid": {"U": None,
                                       "t": None}}
 
-        results = self.parallel.createInterpolations(results)
+        results = self.parallel.create_interpolations(results)
 
         self.assertTrue(np.array_equal(results["directComparison"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["directComparison"]["U"], np.arange(0, 10) + 1))
@@ -199,49 +199,49 @@ class TestParallel(unittest.TestCase):
 
 
 
-    def test_createInterpolations_feature_1d_no_t(self):
+    def test_create_interpolations_feature_1d_no_t(self):
         results = {"feature_adaptive": {"U": np.arange(0, 10),
                                         "t": None}}
 
         with self.assertRaises(AttributeError):
-            self.parallel.createInterpolations(results)
+            self.parallel.create_interpolations(results)
 
 
-    def test_createInterpolations_feature_0d(self):
+    def test_create_interpolations_feature_0d(self):
         results = {"feature_adaptive": {"U": 1,
                                         "t": np.arange(0, 10)}}
 
         with self.assertRaises(AttributeError):
-            self.parallel.createInterpolations(results)
+            self.parallel.create_interpolations(results)
 
 
-    def test_createInterpolations_feature_2d(self):
+    def test_create_interpolations_feature_2d(self):
         results = {"feature_adaptive": {"U": np.array([np.arange(0, 10),
                                                        np.arange(0, 10)]),
                                         "t": np.arange(0, 10)}}
 
         with self.assertRaises(NotImplementedError):
-            self.parallel.createInterpolations(results)
+            self.parallel.create_interpolations(results)
 
 
 
-    def test_createInterpolations_model_0d(self):
+    def test_create_interpolations_model_0d(self):
         self.parallel.model.adaptive_model = True
         results = {"directComparison": {"U": 1,
                                         "t": np.arange(0, 10)}}
 
         with self.assertRaises(AttributeError):
-            self.parallel.createInterpolations(results)
+            self.parallel.create_interpolations(results)
 
 
-    def test_createInterpolations_model_2d(self):
+    def test_create_interpolations_model_2d(self):
         self.parallel.model.adaptive_model = True
         results = {"directComparison": {"U": np.array([np.arange(0, 10),
                                                        np.arange(0, 10)]),
                                         "t": np.arange(0, 10)}}
 
         with self.assertRaises(NotImplementedError):
-            self.parallel.createInterpolations(results)
+            self.parallel.create_interpolations(results)
 
 
     def test_run(self):

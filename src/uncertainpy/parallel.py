@@ -82,7 +82,7 @@ class Parallel(object):
 
 
 
-    def sortFeatures(self, results):
+    def sort_features(self, results):
 
         """
         result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
@@ -112,8 +112,8 @@ class Parallel(object):
 
 
 
-    def createInterpolations(self, results):
-        features_0d, features_1d, features_2d = self.sortFeatures(results)
+    def create_interpolations(self, results):
+        features_0d, features_1d, features_2d = self.sort_features(results)
 
         for feature in features_0d:
             if feature in self.features.adaptive_features or \
@@ -187,7 +187,7 @@ class Parallel(object):
                                     "t": feature_t}
 
             # Create interpolations
-            results = self.createInterpolations(results)
+            results = self.create_interpolations(results)
 
             return results
 

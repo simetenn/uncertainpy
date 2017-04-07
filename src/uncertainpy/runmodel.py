@@ -142,7 +142,7 @@ class RunModel(object):
 
 
     def storeResults(self, solves):
-        features_0d, features_1d, features_2d = self.parallel.sortFeatures(solves[0])
+        features_0d, features_1d, features_2d = self.parallel.sort_features(solves[0])
 
         self.data.features_0d = features_0d
         self.data.features_1d = features_1d

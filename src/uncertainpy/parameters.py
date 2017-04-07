@@ -8,7 +8,7 @@ __version__ = "0.9"
 
 
 
-class Parameter():
+class Parameter(object):
     def __init__(self, name, value, distribution=None):
         """
 Parameter object
@@ -116,7 +116,7 @@ Return a readable string of a parameter
 
 
 
-class Parameters():
+class Parameters(object):
     def __init__(self, parameterlist=[]):
         """
 A collection of parameters.
