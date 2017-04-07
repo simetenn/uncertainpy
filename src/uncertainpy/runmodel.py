@@ -207,7 +207,7 @@ class RunModel(object):
             # self.U[feature] = np.array(self.U[feature])
 
 
-        self.data.removeOnlyInvalidResults()
+        self.data.remove_only_invalid_results()
 
 
 

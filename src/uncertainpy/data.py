@@ -34,7 +34,8 @@ features_2d
 feature_list
         """
 
-        # TODO consider storing all data belonging to one specific feature in a dict for that feature
+        # TODO consider storing all data belonging to one
+        # specific feature in a dict for that feature
 
         self.data_names = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
@@ -52,7 +53,7 @@ feature_list
                                     self.__class__.__name__)
 
 
-        self.resetValues()
+        self.clear()
 
         if filename is not None:
             self.load(filename)
@@ -93,7 +94,7 @@ feature_list
 
 
 
-    def resetValues(self):
+    def clear(self):
         self.uncertain_parameters = []
 
         self._features_0d = []
@@ -152,7 +153,7 @@ feature_list
 
 
 
-    def isAdaptive(self):
+    def is_adaptive(self):
         """
 Test if the model returned an adaptive result
         """
@@ -266,7 +267,7 @@ Test if the model returned an adaptive result
     #
     #         data = self.nan_to_none(data)
 
-    def removeOnlyInvalidResults(self):
+    def remove_only_invalid_results(self):
         old_feature_list = self.feature_list[:]
         for feature in old_feature_list:
 
@@ -278,7 +279,8 @@ Test if the model returned an adaptive result
             if all_none:
                 self.logger.warning("Feature: {} does".format(feature)
                                     + " not yield results for any parameter combinations")
-                # raise RuntimeWarning("Feature: {} does not yield results for any parameter combinations".format(feature))
+                # raise RuntimeWarning("Feature: {} does not yield
+                # results for any parameter combinations".format(feature))
 
                 self.U[feature] = "Only invalid results for all set of parameters"
                 self.feature_list.remove(feature)

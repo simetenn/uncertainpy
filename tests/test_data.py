@@ -71,22 +71,22 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.feature_list, ["a", "b"])
 
 
-    def test_isAdaptiveFalse(self):
+    def test_is_adaptiveFalse(self):
         self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
                        "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
         self.data.features_1d = ["feature1", "directComparison"]
 
-        self.assertFalse(self.data.isAdaptive())
+        self.assertFalse(self.data.is_adaptive())
 
 
-    def test_isAdaptiveTrue(self):
+    def test_is_adaptiveTrue(self):
         self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
                        "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
         self.data.features_1d = ["feature1", "directComparison"]
 
-        self.assertTrue(self.data.isAdaptive())
+        self.assertTrue(self.data.is_adaptive())
 
     def test_save(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
@@ -200,14 +200,14 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.ylabel, "")
 
 
-    def test_removeOnlyInvalidResultsNo(self):
+    def test_remove_only_invalid_resultsNo(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.data.U = {"feature1": [1., 2.], "directComparison": [3., None]}
 
         self.data.feature_list = ["directComparison", "feature1"]
         self.data.features_1d = ["directComparison", "feature1"]
 
-        self.data.removeOnlyInvalidResults()
+        self.data.remove_only_invalid_results()
 
 
         self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
@@ -223,7 +223,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.features_1d[1], "feature1")
 
 
-    def test_removeOnlyInvalidResultsError(self):
+    def test_remove_only_invalid_resultsError(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.data.U = {"feature1": [1., 2.], "directComparison": np.array([None, None])}
 
@@ -231,7 +231,7 @@ class TestData(unittest.TestCase):
         self.data.feature_list = ["directComparison", "feature1"]
         self.data.features_1d = ["directComparison", "feature1"]
 
-        self.data.removeOnlyInvalidResults()
+        self.data.remove_only_invalid_results()
 
         self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
         self.assertEqual(self.data.U["directComparison"], "Only invalid results for all set of parameters")
@@ -254,7 +254,7 @@ class TestData(unittest.TestCase):
 
 
 
-    def test_resetValues(self):
+    def test_clear(self):
         self.uncertain_parameters = None
 
         self.data._features_0d = -1
@@ -277,7 +277,7 @@ class TestData(unittest.TestCase):
         self.data.xlabel = -1
         self.data.ylabel = -1
 
-        self.data.resetValues()
+        self.data.clear()
 
 
         self.assertEqual(self.data.features_0d, [])
