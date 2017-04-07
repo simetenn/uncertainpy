@@ -123,7 +123,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         current_data = self.getData(data, feature)
 
         interpolations = self.createInterpolation(current_data, current_t)
-        t, interpolated = self.performInterpolation(current_t, interpolations)
+        t, interpolated = self.perform_interpolation(current_t, interpolations)
 
         self.setData(data, interpolated, feature)
 
@@ -170,7 +170,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
 
 
-    def performInterpolation(self, t, interpolations):
+    def perform_interpolation(self, t, interpolations):
         lengths = []
 
         for folder in self.compare_folders:

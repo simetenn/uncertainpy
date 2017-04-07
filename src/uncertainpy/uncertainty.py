@@ -30,7 +30,7 @@ class UncertaintyEstimation(object):
                  verbose_level="info",
                  verbose_filename=None,
                  uncertainty_calculations=None,
-                 PCECustom=None,
+                 create_PCE_custom=None,
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
                  M=3,
@@ -73,8 +73,8 @@ class UncertaintyEstimation(object):
         else:
             self.uncertainty_calculations = uncertainty_calculations
 
-        if PCECustom is not None:
-            self.uncertainty_calculations.PCECustom = types.MethodType(PCECustom,
+        if create_PCE_custom is not None:
+            self.uncertainty_calculations.create_PCE_custom = types.MethodType(create_PCE_custom,
                                                                        self.uncertainty_calculations)
 
 
@@ -180,7 +180,7 @@ class UncertaintyEstimation(object):
 method: pc, mc
 pc_method: "regression"
         """
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if method.lower() == "pc":
             if single:
@@ -218,7 +218,7 @@ pc_method: "regression"
                         filename=filename)
 
         elif method.lower() == "custom":
-            self.CustomUQ(plot_condensed=plot_condensed,
+            self.custom_uncertainty_quantification(plot_condensed=plot_condensed,
                           plot_simulator_results=plot_simulator_results,
                           output_dir_figures=output_dir_figures,
                           output_dir_data=output_dir_data,
@@ -227,7 +227,7 @@ pc_method: "regression"
 
 
 
-    def CustomUQ(self,
+    def custom_uncertainty_quantification(self,
                  plot_condensed=True,
                  plot_simulator_results=False,
                  output_dir_figures=None,
@@ -236,7 +236,7 @@ pc_method: "regression"
                  **custom_kwargs):
 
 
-        self.data = self.uncertainty_calculations.CustomUQ(**custom_kwargs)
+        self.data = self.uncertainty_calculations.custom_uncertainty_quantification(**custom_kwargs)
 
         if self.save_data:
             if filename is None:
@@ -265,7 +265,7 @@ pc_method: "regression"
            output_dir_data=None,
            filename=None):
 
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high."
@@ -300,7 +300,7 @@ pc_method: "regression"
            output_dir_data=None,
            filename=None):
 
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.data = self.uncertainty_calculations.MC(uncertain_parameters=uncertain_parameters)
 
@@ -333,7 +333,7 @@ pc_method: "regression"
                  output_dir_figures=None,
                  filename=None):
 
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. "
@@ -385,7 +385,7 @@ pc_method: "regression"
                  output_dir_data=None,
                  output_dir_figures=None,
                  filename=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
             filename = self.model.name
@@ -461,7 +461,7 @@ pc_method: "regression"
 
 
 
-    def convertUncertainParameters(self, uncertain_parameters):
+    def convert_uncertain_parameters(self, uncertain_parameters):
         if uncertain_parameters is None:
             uncertain_parameters = self.parameters.get_from_uncertain("name")
 

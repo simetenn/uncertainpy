@@ -97,7 +97,7 @@ class TestUncertainty(unittest.TestCase):
     def test_initUncertaintyCalculations(self):
 
         class TempUncertaintyCalculations(UncertaintyCalculations):
-            def PCECustom(self):
+            def create_PCE_custom(self):
                 "custom PCE method"
 
         uncertainty = UncertaintyEstimation(
@@ -271,16 +271,16 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(uncertainty.model.xlabel, "xlabel")
         self.assertEqual(uncertainty.model.ylabel, "ylabel")
 
-    def test_PCECustom(self):
+    def test_create_PCE_custom(self):
 
-        def PCECustom(self, uncertain_parameters=None):
+        def create_PCE_custom(self, uncertain_parameters=None):
             self.data = Data()
             self.test_value = "custom PCE method"
 
         uncertainty = UncertaintyEstimation(
             self.model,
             self.parameters,
-            PCECustom=PCECustom,
+            create_PCE_custom=create_PCE_custom,
             verbose_level="error"
         )
 
@@ -289,19 +289,19 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(uncertainty.uncertainty_calculations.test_value,
                         "custom PCE method")
 
-    def test_convertUncertainParametersList(self):
-        result = self.uncertainty.convertUncertainParameters(["a", "b"])
+    def test_convert_uncertain_parametersList(self):
+        result = self.uncertainty.convert_uncertain_parameters(["a", "b"])
 
         self.assertEqual(result, ["a", "b"])
 
-    def test_convertUncertainParametersString(self):
-        result = self.uncertainty.convertUncertainParameters("a")
+    def test_convert_uncertain_parametersString(self):
+        result = self.uncertainty.convert_uncertain_parameters("a")
 
         self.assertEqual(result, ["a"])
 
 
-    def test_convertUncertainParametersNone(self):
-        result = self.uncertainty.convertUncertainParameters(None)
+    def test_convert_uncertain_parametersNone(self):
+        result = self.uncertainty.convert_uncertain_parameters(None)
 
         self.assertEqual(result, ["a", "b"])
 
@@ -779,16 +779,16 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.UQ(method="custom", custom_keyword="value")
 
-        self.assertEqual(self.uncertainty.data["function"], "CustomUQ")
+        self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
 
 
-    def test_CustomUQ(self):
+    def test_custom_uncertainty_quantification(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.CustomUQ(custom_keyword="value")
+        self.uncertainty.custom_uncertainty_quantification(custom_keyword="value")
 
-        self.assertEqual(self.uncertainty.data["function"], "CustomUQ")
+        self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
 
 

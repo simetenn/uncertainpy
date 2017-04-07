@@ -224,33 +224,33 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_createDistributionNone(self):
+    def test_create_distributionNone(self):
 
-        self.uncertainty_calculations.createDistribution()
-
-        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
-
-    def test_createDistributionString(self):
-
-        self.uncertainty_calculations.createDistribution("a")
+        self.uncertainty_calculations.create_distribution()
 
         self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
 
-    def test_createDistributionList(self):
+    def test_create_distributionString(self):
 
-        self.uncertainty_calculations.createDistribution(["a"])
+        self.uncertainty_calculations.create_distribution("a")
+
+        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
+
+    def test_create_distributionList(self):
+
+        self.uncertainty_calculations.create_distribution(["a"])
 
         self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
 
 
-    def test_createMaskDirectComparison(self):
+    def test_create_maskDirectComparison(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "directComparison")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "directComparison")
 
         self.assertEqual(len(masked_U), 3)
         self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
@@ -259,7 +259,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(nodes, masked_nodes))
 
 
-    def test_createMaskDirectComparisonNone(self):
+    def test_create_maskDirectComparisonNone(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -268,7 +268,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.data.U["directComparison"][1] = None
 
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "directComparison")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "directComparison")
 
 
         self.assertEqual(len(masked_U), 2)
@@ -277,7 +277,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
 
 
-    def test_createMaskWarning(self):
+    def test_create_maskWarning(self):
         logfile = os.path.join(self.output_test_dir, "test.log")
 
         parameterlist = [["a", 1, None],
@@ -308,20 +308,20 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.data.U["directComparison"][1] = None
 
-        self.uncertainty_calculations.createMask(nodes, "directComparison")
+        self.uncertainty_calculations.create_mask(nodes, "directComparison")
 
         message = "WARNING - uncertainty_calculations - Feature: directComparison does not yield results for all parameter combinations"
         self.assertTrue(message in open(logfile).read())
 
 
-    def test_createMaskFeature0d(self):
+    def test_create_maskFeature0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature0d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature0d")
 
         self.assertEqual(masked_U[0], 1)
         self.assertEqual(masked_U[1], 1)
@@ -329,7 +329,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(nodes, masked_nodes))
 
 
-    def test_createMaskFeature0dNone(self):
+    def test_create_maskFeature0dNone(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -337,14 +337,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
         self.uncertainty_calculations.data.U["feature0d"] = np.array([1, None, 1])
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature0d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature0d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
 
 
 
-    def test_createMaskFeature1d(self):
+    def test_create_maskFeature1d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -352,7 +352,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
         # feature1d
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature1d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature1d")
         self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10)))
         self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10)))
         self.assertTrue(np.array_equal(masked_U[2], np.arange(0, 10)))
@@ -360,7 +360,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # feature2d
 
-    def test_createMaskFeature1dNone(self):
+    def test_create_maskFeature1dNone(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -369,14 +369,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
         self.uncertainty_calculations.data.U["feature1d"] = np.array([np.arange(0, 10), None, np.arange(0, 10)])
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature1d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature1d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
 
 
 
-    def test_createMaskFeature2d(self):
+    def test_create_maskFeature2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -384,7 +384,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
 
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature2d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
         self.assertTrue(np.array_equal(masked_U[0],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
@@ -398,7 +398,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_createMaskFeature2dNone(self):
+    def test_create_maskFeature2dNone(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -406,7 +406,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
         self.uncertainty_calculations.data.U["feature2d"][1] = None
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature2d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
 
@@ -420,7 +420,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                  np.arange(0, 10)])))
 
 
-    def test_createMaskFeature2dnodes1DNone(self):
+    def test_create_maskFeature2dnodes1DNone(self):
         nodes = np.array([0, 1, 2])
         uncertain_parameters = ["a"]
 
@@ -429,7 +429,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
         self.uncertainty_calculations.data.U["feature2d"][1] = None
-        masked_nodes, masked_U = self.uncertainty_calculations.createMask(nodes, "feature2d")
+        masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([0, 2])))
 
@@ -443,34 +443,34 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_convertUncertainParametersList(self):
-        result = self.uncertainty_calculations.convertUncertainParameters(["a", "b"])
+    def test_convert_uncertain_parametersList(self):
+        result = self.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
 
         self.assertEqual(result, ["a", "b"])
 
-    def test_convertUncertainParametersString(self):
-        result = self.uncertainty_calculations.convertUncertainParameters("a")
+    def test_convert_uncertain_parametersString(self):
+        result = self.uncertainty_calculations.convert_uncertain_parameters("a")
 
         self.assertEqual(result, ["a"])
 
-    def test_convertUncertainParametersNone(self):
-            result = self.uncertainty_calculations.convertUncertainParameters(None)
+    def test_convert_uncertain_parametersNone(self):
+            result = self.uncertainty_calculations.convert_uncertain_parameters(None)
 
             self.assertEqual(result, ["a", "b"])
 
 
-    def test_PCECustom(self):
+    def test_create_PCE_custom(self):
         with self.assertRaises(NotImplementedError):
-            self.uncertainty_calculations.PCECustom()
+            self.uncertainty_calculations.create_PCE_custom()
 
 
-    def test_CustomUQ(self):
+    def test_custom_uncertainty_quantification(self):
         with self.assertRaises(NotImplementedError):
-            self.uncertainty_calculations.CustomUQ()
+            self.uncertainty_calculations.custom_uncertainty_quantification()
 
-    def test_PCERegressionAll(self):
+    def test_create_PCE_regressionAll(self):
 
-        self.uncertainty_calculations.PCERegression()
+        self.uncertainty_calculations.create_PCE_regression()
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -479,9 +479,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["directComparison"], cp.Poly)
 
 
-    def test_PCERegressionOne(self):
+    def test_create_PCE_regressionOne(self):
 
-        self.uncertainty_calculations.PCERegression("a")
+        self.uncertainty_calculations.create_PCE_regression("a")
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -491,7 +491,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     #
 
-    def test_PCERegressionAdaptiveError(self):
+    def test_create_PCE_regressionAdaptiveError(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -508,13 +508,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 verbose_level="debug")
 
         with self.assertRaises(ValueError):
-            self.uncertainty_calculations.PCERegression()
+            self.uncertainty_calculations.create_PCE_regression()
 
 
 
-    def test_PCERegressionRosenblattAll(self):
+    def test_create_PCE_regression_rosenblattAll(self):
 
-        self.uncertainty_calculations.PCERegressionRosenblatt()
+        self.uncertainty_calculations.create_PCE_regression_rosenblatt()
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -526,9 +526,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_PCERegressionRosenblattOne(self):
+    def test_create_PCE_regression_rosenblattOne(self):
 
-        self.uncertainty_calculations.PCERegressionRosenblatt("a")
+        self.uncertainty_calculations.create_PCE_regression_rosenblatt("a")
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -538,7 +538,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     # def test_PCERquadrature(self):
     #
-    #     self.uncertainty_calculations.PCEQuadrature()
+    #     self.uncertainty_calculations.create_PCE_quadrature()
     #
     #     print self.uncertainty_calculations.U_hat
     #     self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
@@ -577,7 +577,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["testNone"], None)
 
 
-    def test_PCAnalysis(self):
+    def test_analyse_PCE(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -612,7 +612,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
         self.uncertainty_calculations.U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
 
-        self.uncertainty_calculations.PCAnalysis()
+        self.uncertainty_calculations.analyse_PCE()
 
 
         # Test if all calculated properties actually exists

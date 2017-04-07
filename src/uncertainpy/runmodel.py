@@ -122,7 +122,7 @@ class RunModel(object):
 
 
 
-    def performInterpolation(self, ts, interpolation):
+    def perform_interpolation(self, ts, interpolation):
         lengths = []
         for s in ts:
             lengths.append(len(s))
@@ -141,7 +141,7 @@ class RunModel(object):
 
 
 
-    def storeResults(self, solves):
+    def store_results(self, solves):
         features_0d, features_1d, features_2d = self.parallel.sort_features(solves[0])
 
         self.data.features_0d = features_0d
@@ -184,7 +184,7 @@ class RunModel(object):
                     interpolations.append(solved[feature]["interpolation"])
 
                 self.data.t[feature], self.data.U[feature] = \
-                    self.performInterpolation(ts, interpolations)
+                    self.perform_interpolation(ts, interpolations)
             else:
                 if "t" in solves[0][feature]:
                     self.data.t[feature] = solves[0][feature]["t"]
@@ -212,7 +212,7 @@ class RunModel(object):
 
 
 
-    def evaluateNodes(self, nodes):
+    def evaluate_nodes(self, nodes):
 
         if self.supress_model_graphics:
             vdisplay = Xvfb()
@@ -280,7 +280,7 @@ Test if solves is an adaptive result
 
         self.data.uncertain_parameters = uncertain_parameters
 
-        solves = self.evaluateNodes(nodes)
-        self.storeResults(solves)
+        solves = self.evaluate_nodes(nodes)
+        self.store_results(solves)
 
         return self.data

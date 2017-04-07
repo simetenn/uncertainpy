@@ -124,7 +124,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
 
 
-    def test_performInterpolation(self):
+    def test_perform_interpolation(self):
         self.plot.compare_folders = ["pc", "mc_10", "mc_100"]
 
         data = {"pc": np.zeros(10), "mc_10": np.zeros(100), "mc_100": np.zeros(10)}
@@ -132,7 +132,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         interpolations = self.plot.createInterpolation(data, t)
 
-        t, results = self.plot.performInterpolation(t, interpolations)
+        t, results = self.plot.perform_interpolation(t, interpolations)
 
         self.assertTrue(np.array_equal(t["pc"], np.arange(100)))
         self.assertTrue(np.array_equal(t["mc_10"], np.arange(100)))

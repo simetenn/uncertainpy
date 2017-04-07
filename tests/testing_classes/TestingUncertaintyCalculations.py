@@ -25,10 +25,10 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
 
 
 
-    def CustomUQ(self, custom_keyword="custom_value"):
+    def custom_uncertainty_quantification(self, custom_keyword="custom_value"):
         arguments = {}
 
-        arguments["function"] = "CustomUQ"
+        arguments["function"] = "custom_uncertainty_quantification"
         arguments["custom_keyword"] = custom_keyword
 
         return arguments

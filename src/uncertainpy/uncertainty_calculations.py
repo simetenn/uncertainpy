@@ -122,24 +122,15 @@ class UncertaintyCalculations(object):
         self.runmodel.parameters = new_parameters
 
 
-    def createDistribution(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+    def create_distribution(self, uncertain_parameters=None):
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
 
         self.distribution = cp.J(*parameter_distributions)
 
 
-    def createDistributionRosenblatt(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
-
-        parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
-
-        self.distribution = cp.J(*parameter_distributions)
-
-
-
-    def createMask(self, nodes, feature, weights=None):
+    def create_mask(self, nodes, feature, weights=None):
         if feature not in self.data.feature_list:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
@@ -181,7 +172,7 @@ class UncertaintyCalculations(object):
             return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights)
 
 
-    def convertUncertainParameters(self, uncertain_parameters):
+    def convert_uncertain_parameters(self, uncertain_parameters):
         if self.model is None:
             raise RuntimeError("No model is set")
 
@@ -195,10 +186,10 @@ class UncertaintyCalculations(object):
 
 
     # TODO not tested
-    def PCEQuadrature(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+    def create_PCE_quadrature(self, uncertain_parameters=None):
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.createDistribution(uncertain_parameters=uncertain_parameters)
+        self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -215,7 +206,7 @@ class UncertaintyCalculations(object):
         for feature in tqdm(self.data.feature_list,
                             desc="Calculating PC for each feature",
                             total=len(self.data.feature_list)):
-            masked_nodes, masked_U, masked_weights = self.createMask(nodes, feature, weights)
+            masked_nodes, masked_U, masked_weights = self.create_mask(nodes, feature, weights)
 
             self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                     masked_weights, masked_U)
@@ -228,10 +219,10 @@ class UncertaintyCalculations(object):
 
 
 
-    def PCERegression(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+    def create_PCE_regression(self, uncertain_parameters=None):
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.createDistribution(uncertain_parameters=uncertain_parameters)
+        self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -248,7 +239,7 @@ class UncertaintyCalculations(object):
         for feature in tqdm(self.data.feature_list,
                             desc="Calculating PC for each feature",
                             total=len(self.data.feature_list)):
-            masked_nodes, masked_U = self.createMask(nodes, feature)
+            masked_nodes, masked_U = self.create_mask(nodes, feature)
 
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
@@ -263,10 +254,10 @@ class UncertaintyCalculations(object):
 
 
     # TODO not tested
-    def PCEQuadratureRosenblatt(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+    def create_create_PCE_quadrature_rosenblatt(self, uncertain_parameters=None):
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.createDistribution(uncertain_parameters=uncertain_parameters)
+        self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
@@ -297,9 +288,9 @@ class UncertaintyCalculations(object):
         for feature in tqdm(self.data.feature_list,
                             desc="Calculating PC for each feature",
                             total=len(self.data.feature_list)):
-            masked_nodes, masked_U, masked_weights = self.createMask(nodes_MvNormal,
-                                                                     feature,
-                                                                     weights)
+            masked_nodes, masked_U, masked_weights = self.create_mask(nodes_MvNormal,
+                                                                      feature,
+                                                                      weights)
 
             self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
 
@@ -312,10 +303,10 @@ class UncertaintyCalculations(object):
 
 
 
-    def PCERegressionRosenblatt(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+    def create_PCE_regression_rosenblatt(self, uncertain_parameters=None):
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.createDistribution(uncertain_parameters=uncertain_parameters)
+        self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
@@ -343,7 +334,7 @@ class UncertaintyCalculations(object):
         for feature in tqdm(self.data.feature_list,
                             desc="Calculating PC for each feature",
                             total=len(self.data.feature_list)):
-            masked_nodes, masked_U = self.createMask(nodes_MvNormal, feature)
+            masked_nodes, masked_U = self.create_mask(nodes_MvNormal, feature)
 
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
@@ -355,7 +346,7 @@ class UncertaintyCalculations(object):
 
 
 
-    def PCAnalysis(self):
+    def analyse_PCE(self):
         if len(self.data.uncertain_parameters) == 1:
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
 
@@ -384,24 +375,24 @@ class UncertaintyCalculations(object):
 
 
 
-    def PCECustom(self, uncertain_parameters=None):
+    def create_PCE_custom(self, uncertain_parameters=None):
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
 
-    def CustomUQ(self, **kwargs):
+    def custom_uncertainty_quantification(self, **kwargs):
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 
     def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if method == "regression":
             if rosenblatt:
-                self.PCERegressionRosenblatt(uncertain_parameters)
+                self.create_PCE_regression_rosenblatt(uncertain_parameters)
             else:
-                self.PCERegression(uncertain_parameters)
+                self.create_PCE_regression(uncertain_parameters)
         elif method == "custom":
-            self.PCECustom(uncertain_parameters)
+            self.create_PCE_custom(uncertain_parameters)
 
         # TODO add support for more methods here by using
         # try:
@@ -415,15 +406,15 @@ class UncertaintyCalculations(object):
             raise ValueError("No method with name {}".format(method))
 
 
-        self.PCAnalysis()
+        self.analyse_PCE()
 
         return self.data
 
 
     def MC(self, uncertain_parameters=None):
-        uncertain_parameters = self.convertUncertainParameters(uncertain_parameters)
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.createDistribution(uncertain_parameters=uncertain_parameters)
+        self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 
