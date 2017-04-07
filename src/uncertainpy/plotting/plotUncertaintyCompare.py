@@ -219,7 +219,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             self.data.t = self.t_compare[compare]
             self.data.E = self.E_compare[compare]
 
-            self.plotMean(feature=feature, hardcopy=False, show=False,
+            self.mean(feature=feature, hardcopy=False, show=False,
                           new_figure=new_figure, nr_hues=len(self.compare_folders),
                           **kwargs)
 
@@ -269,7 +269,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             self.data.t = self.t_compare[compare]
             self.data.Var = self.Var_compare[compare]
 
-            self.plotVariance(feature=feature, hardcopy=False, show=False,
+            self.variance(feature=feature, hardcopy=False, show=False,
                               new_figure=new_figure,
                               nr_hues=len(self.compare_folders), **kwargs)
 

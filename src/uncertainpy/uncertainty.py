@@ -247,7 +247,7 @@ pc_method: "regression"
 
         if self.save_figures:
             self.plot(condensed=plot_condensed,
-                      sensitivity=False,
+                      sensitivity=None,
                       output_dir=output_dir_figures)
 
         if plot_simulator_results:
@@ -313,7 +313,7 @@ pc_method: "regression"
 
         if self.save_figures:
             self.plot(condensed=plot_condensed,
-                      sensitivity=False,
+                      sensitivity=None,
                       output_dir=output_dir_figures)
 
         if plot_simulator_results:
@@ -370,7 +370,7 @@ pc_method: "regression"
 
             if self.save_figures:
                 self.plot(condensed=plot_condensed,
-                          sensitivity=False,
+                          sensitivity=None,
                           output_dir=tmp_output_dir_figures)
 
             if plot_simulator_results:
@@ -440,7 +440,7 @@ pc_method: "regression"
 
     def plot(self,
              condensed=True,
-             sensitivity=True,
+             sensitivity="sensitivity_1",
              simulator_results=False,
              output_dir=None):
 
@@ -454,7 +454,7 @@ pc_method: "regression"
         self.logger.info("Plotting in {}".format(output_dir))
 
         if simulator_results:
-            self.plotting.plotSimulatorResults()
+            self.plotting.simulator_results()
         else:
             self.plotting.plot(condensed=condensed,
                                sensitivity=sensitivity)

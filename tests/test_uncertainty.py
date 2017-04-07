@@ -76,7 +76,7 @@ class TestUncertainty(unittest.TestCase):
     def test_init_parameter_error(self):
 
         with self.assertRaises(TypeError):
-            uncertainty = UncertaintyEstimation(self.model, 2)
+            UncertaintyEstimation(self.model, 2)
 
 
     def test_intitFeatures(self):
@@ -594,9 +594,9 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_plotAll(self):
+    def test_plot_all(self):
         self.uncertainty.PC()
-        self.uncertainty.plot(condensed=False, sensitivity=True)
+        self.uncertainty.plot(condensed=False, sensitivity="sensitivity_1")
 
 
         self.plot_exists("directComparison_mean")
@@ -652,7 +652,7 @@ class TestUncertainty(unittest.TestCase):
         self.plot_exists("total-sensitivity_1_grid")
 
 
-    def test_plotCondensed(self):
+    def test_plot_condensed(self):
         self.uncertainty.PC()
         self.uncertainty.plot()
 
@@ -672,7 +672,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_plotNoSensitivity(self):
         self.uncertainty.PC()
-        self.uncertainty.plot(condensed=False, sensitivity=False)
+        self.uncertainty.plot(condensed=False, sensitivity=None)
 
         self.plot_exists("directComparison_mean")
         self.plot_exists("directComparison_variance")
@@ -687,7 +687,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_plotSimulatorResults(self):
+    def test_simulator_results(self):
         self.uncertainty.PC()
         self.uncertainty.plot(simulator_results=True)
 
@@ -698,7 +698,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_PCplotSimulatorResults(self):
+    def test_PCsimulator_results(self):
         self.uncertainty.PC(plot_simulator_results=True)
 
         self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png"))),

@@ -139,7 +139,7 @@ class UncertaintyEstimations():
                 self.uncertainty_estimations.allParameters()
 
                 if self.plot_simulator_results:
-                    self.uncertainty_estimations.plotSimulatorResults()
+                    self.uncertainty_estimations.simulator_results()
 
                 del self.uncertainty_estimations
 
@@ -178,7 +178,7 @@ class UncertaintyEstimations():
         self.uncertainty_estimations.allParameters()
 
         if self.plot_simulator_results:
-            self.uncertainty_estimations.plotSimulatorResults()
+            self.uncertainty_estimations.simulator_results()
 
 
         del self.uncertainty_estimations
@@ -221,7 +221,7 @@ class UncertaintyEstimations():
 
             self.uncertainty_estimations.allParametersMC()
             if self.plot_simulator_results:
-                self.uncertainty_estimations.plotSimulatorResults()
+                self.uncertainty_estimations.simulator_results()
 
             # self.mc_var[nr_mc_sample] = self.uncertainty_estimations.Var
 

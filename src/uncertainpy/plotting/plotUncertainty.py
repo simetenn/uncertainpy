@@ -15,7 +15,6 @@ from uncertainpy.utils import create_logger
 
 # TODO find a good way to find the directory where the data files are
 
-
 # TODO compare plots in a grid of all plots,
 # such as plotting all features in a grid plot
 
@@ -23,8 +22,6 @@ from uncertainpy.utils import create_logger
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 
 
-
-# TODO Make it so plots are not created if the data is None
 
 class PlotUncertainty(object):
     def __init__(self,
@@ -79,7 +76,7 @@ class PlotUncertainty(object):
             return text
 
 
-    def liststr_to_latex(self, texts):
+    def list_to_latex(self, texts):
         tmp = []
         for txt in texts:
             tmp.append(self.str_to_latex(txt))
@@ -87,18 +84,18 @@ class PlotUncertainty(object):
         return tmp
 
 
-    def plotSimulatorResults(self, foldername="simulator_results"):
+    def simulator_results(self, foldername="simulator_results"):
         if "directComparison" in self.data.features_0d:
-            self.plotSimulatorResults0D(foldername=foldername)
+            self.simulator_results_0d(foldername=foldername)
         elif "directComparison" in self.data.features_1d:
-            self.plotSimulatorResults1D(foldername=foldername)
+            self.simulator_results_1d(foldername=foldername)
         else:
-            raise NotImplementedError("plotSimulatorResults not "
+            raise NotImplementedError("simulator_results not "
                                       + "implemented for simulator results >= 2D")
 
 
     # TODO does not have a test
-    def plotSimulatorResults0D(self, foldername="simulator_results"):
+    def simulator_results_0d(self, foldername="simulator_results"):
         if "directComparison" not in self.data.features_0d:
             raise ValueError("directComparison is not a 0D feature")
 
@@ -114,7 +111,7 @@ class PlotUncertainty(object):
         plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
 
 
-    def plotSimulatorResults1D(self, foldername="simulator_results"):
+    def simulator_results_1d(self, foldername="simulator_results"):
         if "directComparison" not in self.data.features_1d:
             raise ValueError("directComparison is not a 1D feature")
 
@@ -134,10 +131,13 @@ class PlotUncertainty(object):
 
 
 
-    def plotAttributeFeature1d(self, feature="directComparison",
-                               attribute="E", attribute_name="mean",
-                               hardcopy=True, show=False,
-                               **kwargs):
+    def attribute_feature_1d(self,
+                             feature="directComparison",
+                             attribute="E",
+                             attribute_name="mean",
+                             hardcopy=True,
+                             show=False,
+                             **kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -174,26 +174,33 @@ class PlotUncertainty(object):
         if show:
             plt.show()
 
-    def plotMean(self, feature, hardcopy=True,
-                 show=False, **kwargs):
-        self.plotAttributeFeature1d(feature, attribute="E",
-                                    attribute_name="mean",
-                                    hardcopy=hardcopy,
-                                    show=show, **kwargs)
+    def mean(self, feature, hardcopy=True, show=False, **kwargs):
+        self.attribute_feature_1d(feature,
+                                  attribute="E",
+                                  attribute_name="mean",
+                                  hardcopy=hardcopy,
+                                  show=show,
+                                  **kwargs)
 
 
-    def plotVariance(self, feature, hardcopy=True,
-                     show=False, **kwargs):
-        self.plotAttributeFeature1d(feature, attribute="Var",
-                                    attribute_name="variance",
-                                    hardcopy=hardcopy,
-                                    show=show, **kwargs)
+    def variance(self, feature, hardcopy=True, show=False, **kwargs):
+        self.attribute_feature_1d(feature,
+                                  attribute="Var",
+                                  attribute_name="variance",
+                                  hardcopy=hardcopy,
+                                  show=show,
+                                  **kwargs)
 
 
 
-    def plotMeanAndVariance(self, feature="directComparison", new_figure=True,
-                            hardcopy=True, show=False, color=0, style="seaborn-dark",
-                            **kwargs):
+    def mean_variance(self,
+                      feature="directComparison",
+                      new_figure=True,
+                      hardcopy=True,
+                      show=False,
+                      color=0,
+                      style="seaborn-dark",
+                      **kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -254,8 +261,11 @@ class PlotUncertainty(object):
 
 
 
-    def plotConfidenceInterval(self, feature="directComparison", hardcopy=True,
-                               show=False, **kwargs):
+    def confidence_interval(self,
+                            feature="directComparison",
+                            hardcopy=True,
+                            show=False,
+                            **kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -298,12 +308,12 @@ class PlotUncertainty(object):
             plt.show()
 
 
-    def plotSensitivity(self,
-                        feature="directComparison",
-                        sensitivity="sensitivity_1",
-                        hardcopy=True,
-                        show=False,
-                        **kwargs):
+    def sensitivity(self,
+                    feature="directComparison",
+                    sensitivity="sensitivity_1",
+                    hardcopy=True,
+                    show=False,
+                    **kwargs):
 
         if self.data is None:
             raise ValueError("Datafile must be loaded")
@@ -347,17 +357,19 @@ class PlotUncertainty(object):
                 plt.show()
 
 
-    def plotSensitivityGrid(self, feature="directComparison", sensitivity="sensitivity_1",
-                            hardcopy=True, show=False, **kwargs):
+    def sensitivity_grid(self,
+                         feature="directComparison",
+                         sensitivity="sensitivity_1",
+                         hardcopy=True,
+                         show=False,
+                         **kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-
         sense = getattr(self.data, sensitivity)
-
 
         if feature not in sense:
             msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity} grid"
@@ -431,8 +443,12 @@ class PlotUncertainty(object):
 
 
 
-    def plotSensitivityCombined(self, feature="directComparison", sensitivity="sensitivity_1",
-                                hardcopy=True, show=False, **kwargs):
+    def sensitivity_combined(self,
+                             feature="directComparison",
+                             sensitivity="sensitivity_1",
+                             hardcopy=True,
+                             show=False,
+                             **kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -459,7 +475,8 @@ class PlotUncertainty(object):
                        sense[feature][i],
                        title=self.str_to_latex(feature) + ", " + sensitivity.split("_")[0]
                        + " " + sensitivity.split("_")[1],
-                       xlabel=self.data.xlabel, ylabel="sensitivity",
+                       xlabel=self.data.xlabel,
+                       ylabel="sensitivity",
                        new_figure=False,
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters),
@@ -469,7 +486,7 @@ class PlotUncertainty(object):
         if len(sense[feature]) > 4:
             plt.xlim([self.data.t[feature][0], 1.3*self.data.t[feature][-1]])
 
-        plt.legend(self.liststr_to_latex(self.data.uncertain_parameters))
+        plt.legend(self.list_to_latex(self.data.uncertain_parameters))
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir,
@@ -482,31 +499,39 @@ class PlotUncertainty(object):
             plt.show()
 
 
-    def plot1dFeatures(self, sensitivity="sensitivity_1"):
+    def features_1d(self, sensitivity="sensitivity_1"):
         for feature in self.data.features_1d:
-            self.plotMean(feature=feature)
-            self.plotVariance(feature=feature)
-            self.plotMeanAndVariance(feature=feature)
-            self.plotConfidenceInterval(feature=feature)
+            self.mean(feature=feature)
+            self.variance(feature=feature)
+            self.mean_variance(feature=feature)
+            self.confidence_interval(feature=feature)
 
-            self.plotSensitivity(feature=feature, sensitivity=sensitivity)
-            self.plotSensitivityCombined(feature=feature, sensitivity=sensitivity)
-            self.plotSensitivityGrid(feature=feature, sensitivity=sensitivity)
+            if sensitivity is not None:
+                self.sensitivity(feature=feature, sensitivity=sensitivity)
+                self.sensitivity_combined(feature=feature, sensitivity=sensitivity)
+                self.sensitivity_grid(feature=feature, sensitivity=sensitivity)
 
 
 
 
-    # TODO not finhised, missing correct label placement
-    def plot0dFeature(self, feature, max_legend_size=5, sensitivity="sensitivity_1",
-                      hardcopy=True, show=False):
+    # TODO not finished, missing correct label placement
+    # TODO test that plotting with no sensitivity works
+    def feature_0d(self,
+                   feature,
+                   max_legend_size=5,
+                   sensitivity="sensitivity_1",
+                   hardcopy=True,
+                   show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
-
 
         if feature not in self.data.features_0d:
             raise ValueError("%s is not a 0D feature" % (feature))
 
-        sense = getattr(self.data, sensitivity)
+        if sensitivity is None:
+            sense = None
+        else:
+            sense = getattr(self.data, sensitivity)
 
         if self.data.E[feature] is None:
             msg = "Missing E for {feature}. Unable to plot"
@@ -552,7 +577,7 @@ class PlotUncertainty(object):
                        palette=get_colormap_tableu20())
 
 
-        if sense[feature] is not None:
+        if sense is not None and sense[feature] is not None:
             pos = 2*distance + 2*width
 
             ax2 = ax.twinx()
@@ -584,7 +609,7 @@ class PlotUncertainty(object):
 
             location = (0.5, 1.01 + legend_width*0.095)
             plt.legend(legend_bars,
-                       self.liststr_to_latex(self.data.uncertain_parameters),
+                       self.list_to_latex(self.data.uncertain_parameters),
                        loc='upper center',
                        bbox_to_anchor=location,
                        ncol=legend_size)
@@ -601,7 +626,10 @@ class PlotUncertainty(object):
 
         plt.suptitle(self.str_to_latex(feature), fontsize=titlesize)
 
-        save_name = feature + "_" + sensitivity + self.figureformat
+        if sensitivity is None:
+            save_name = feature + self.figureformat
+        else:
+            save_name = feature + "_" + sensitivity + self.figureformat
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir, save_name))
@@ -614,7 +642,11 @@ class PlotUncertainty(object):
         return ax
 
 
-    def plotTotalSensitivity(self, feature, sensitivity="sensitivity_1", hardcopy=True, show=False):
+    def total_sensitivity(self,
+                          feature,
+                          sensitivity="sensitivity_1",
+                          hardcopy=True,
+                          show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -642,7 +674,7 @@ class PlotUncertainty(object):
         prettyBar(total_sense[feature],
                   title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
                   + ", " + self.str_to_latex(feature),
-                  xlabels=self.liststr_to_latex(self.data.uncertain_parameters),
+                  xlabels=self.list_to_latex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
                   nr_colors=len(self.data.uncertain_parameters),
                   index=index)
@@ -662,116 +694,109 @@ class PlotUncertainty(object):
             plt.show()
 
 
-    def plotTotalSensitivityAllFeatures(self,
-                                        sensitivity="sensitivity_1",
-                                        hardcopy=True,
-                                        show=False):
+    def total_sensitivity_all(self,
+                              sensitivity="sensitivity_1",
+                              hardcopy=True,
+                              show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
         for feature in self.data.feature_list:
-            self.plotTotalSensitivity(feature=feature,
-                                      sensitivity=sensitivity,
-                                      hardcopy=hardcopy,
-                                      show=show)
+            self.total_sensitivity(feature=feature,
+                                   sensitivity=sensitivity,
+                                   hardcopy=hardcopy,
+                                   show=show)
 
 
-    def plot0dFeatures(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
+    def features_0d(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
         for feature in self.data.features_0d:
-            self.plot0dFeature(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
+            self.feature_0d(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
 
 
 
     # TODO Not Tested
-    def plotAllDataInFolder(self, data_dir):
+    def plot_folder(self, data_dir):
         self.logger.info("Plotting all data in folder")
 
         for f in glob.glob(os.path.join(data_dir, "*")):
             self.load(f.split(os.path.sep)[-1])
 
-            self.plotAllData()
+            self.plot_all()
 
 
 
-    def plotAllDataNoSensitivity(self, sensitivity="sensitivity_1"):
+    # def plot_allNoSensitivity(self, sensitivity="sensitivity_1"):
+    #     if self.data is None:
+    #         raise ValueError("Datafile must be loaded")
+    #
+    #
+    #     self.features_1d(sensitivity=sensitivity)
+    #     self.features_0d(sensitivity=sensitivity)
+
+
+    def plot_all(self, sensitivity="sensitivity_1"):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
-        self.plot1dFeatures(sensitivity=sensitivity)
-        self.plot0dFeatures(sensitivity=sensitivity)
+        self.features_1d(sensitivity=sensitivity)
+        self.features_0d(sensitivity=sensitivity)
 
-
-    def plotAllData(self, sensitivity="sensitivity_1"):
-        if self.data is None:
-            raise ValueError("Datafile must be loaded")
-
-
-        self.plot1dFeatures(sensitivity=sensitivity)
-        self.plot0dFeatures(sensitivity=sensitivity)
-
-        self.plotTotalSensitivityAllFeatures(sensitivity=sensitivity)
-        self.plotTotalSensitivityGrid(sensitivity=sensitivity)
+        if sensitivity is not None:
+            self.total_sensitivity_all(sensitivity=sensitivity)
+            self.total_sensitivity_grid(sensitivity=sensitivity)
 
 
 
     # TODO find a more descriptive name
-    def plotAllDataAllSensitivity(self):
+    def plot_all_sensitivities(self):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
 
-        self.plotAllData(sensitivity="sensitivity_1")
+        self.plot_all(sensitivity="sensitivity_1")
 
         for feature in self.data.features_1d:
-            self.plotSensitivity(feature=feature, sensitivity="sensitivity_t")
-            self.plotSensitivityCombined(feature=feature, sensitivity="sensitivity_t")
-            self.plotSensitivityGrid(feature=feature, sensitivity="sensitivity_t")
+            self.sensitivity(feature=feature, sensitivity="sensitivity_t")
+            self.sensitivity_combined(feature=feature, sensitivity="sensitivity_t")
+            self.sensitivity_grid(feature=feature, sensitivity="sensitivity_t")
 
-        self.plot0dFeatures(sensitivity="sensitivity_t")
+        self.features_0d(sensitivity="sensitivity_t")
 
-        self.plotTotalSensitivityAllFeatures(sensitivity="sensitivity_t")
-        self.plotTotalSensitivityGrid(sensitivity="sensitivity_t")
+        self.total_sensitivity_all(sensitivity="sensitivity_t")
+        self.total_sensitivity_grid(sensitivity="sensitivity_t")
 
 
-    def plotCondensed(self, sensitivity="sensitivity_1"):
+    def plot_condensed(self, sensitivity="sensitivity_1"):
         for feature in self.data.features_1d:
-            self.plotMeanAndVariance(feature=feature)
-            self.plotConfidenceInterval(feature=feature)
+            self.mean_variance(feature=feature)
+            self.confidence_interval(feature=feature)
 
-            self.plotSensitivityGrid(feature=feature, sensitivity=sensitivity)
+            if sensitivity is not None:
+                self.sensitivity_grid(feature=feature, sensitivity=sensitivity)
 
-        self.plot0dFeatures(sensitivity=sensitivity)
-        self.plotTotalSensitivityGrid(sensitivity=sensitivity)
+        self.features_0d(sensitivity=sensitivity)
 
-
-    def plotCondensedNoSensitivity(self):
-        for feature in self.data.features_1d:
-            self.plotMeanAndVariance(feature=feature)
-            self.plotConfidenceInterval(feature=feature)
-
-        self.plot0dFeatures()
+        if sensitivity is not None:
+            self.total_sensitivity_grid(sensitivity=sensitivity)
 
 
-    def plot(self, condensed=True, sensitivity=True):
 
+
+    def plot(self, condensed=True, sensitivity="sensitivity_1"):
         if condensed:
-            if sensitivity:
-                self.plotCondensed()
-            else:
-                self.plotCondensedNoSensitivity()
+            self.plot_condensed(sensitivity=sensitivity)
         else:
-            if sensitivity:
-                self.plotAllDataAllSensitivity()
-
+            if sensitivity is None:
+                self.plot_all(sensitivity)
             else:
-                self.plotAllDataNoSensitivity()
+                self.plot_all_sensitivities()
 
-    # def plotAllDataFromExploration(self, exploration_folder):
+    # def plot_allFromExploration(self, exploration_folder):
     #     self.logger.info("Plotting all data")
     #
     #     original_data_dir = self.data_dir
@@ -786,7 +811,7 @@ class PlotUncertainty(object):
     #
     #             self.loadData(filename.split("/")[-1])
     #
-    #         self.plotAllData()
+    #         self.plot_all()
     #
     #     self.data_dir = original_data_dir
     #     self.output_dir = original_output_dir
@@ -795,15 +820,13 @@ class PlotUncertainty(object):
 
 
 
-    def plotTotalSensitivityGrid(self,
-                                 sensitivity="sensitivity_1",
-                                 hardcopy=True,
-                                 show=False,
-                                 **kwargs):
+    def total_sensitivity_grid(self,
+                               sensitivity="sensitivity_1",
+                               hardcopy=True,
+                               show=False,
+                               **kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
-
-
 
         total_sense = getattr(self.data, "total_" + sensitivity)
 
@@ -861,7 +884,7 @@ class PlotUncertainty(object):
 
                 prettyBar(total_sense[self.data.feature_list[i]],
                           title=self.str_to_latex(self.data.feature_list[i]),
-                          xlabels=self.liststr_to_latex(self.data.uncertain_parameters),
+                          xlabels=self.list_to_latex(self.data.uncertain_parameters),
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
                           ax=ax,
@@ -911,7 +934,7 @@ if __name__ == "__main__":
     #                        output_dir=args.output_dir,
     #                        figureformat=figureformat)
     #
-    # # plot.plotAllData()
-    # plot.plotAllDataFromExploration()
+    # # plot.plot_all()
+    # plot.plot_allFromExploration()
 
     # sortByParameters(path=output_dir, outputpath=output_dir)
