@@ -11,7 +11,7 @@ test_data_dir = os.path.join(folder, "data")
 seed = 10
 
 
-def generate_data_PC():  # pragma: no cover
+def generate_data_polynomial_chaos():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -35,7 +35,7 @@ def generate_data_PC():  # pragma: no cover
                                     nr_mc_samples=10)
 
 
-    test.PC()
+    test.polynomial_chaos()
 
 
 def generate_data_PC_model_function():  # pragma: no cover
@@ -61,7 +61,7 @@ def generate_data_PC_model_function():  # pragma: no cover
                                     nr_mc_samples=10)
 
 
-    test.PC()
+    test.polynomial_chaos()
 
 
 
@@ -87,7 +87,7 @@ def generate_data_PC0D():  # pragma: no cover
                                     nr_mc_samples=10)
 
 
-    test.PC()
+    test.polynomial_chaos()
 
 
 def generate_data_PCRosenblatt():  # pragma: no cover
@@ -114,11 +114,11 @@ def generate_data_PCRosenblatt():  # pragma: no cover
                                     nr_mc_samples=10)
 
 
-    test.PC(rosenblatt=True, filename="TestingModel1d_Rosenblatt",)
+    test.polynomial_chaos(rosenblatt=True, filename="TestingModel1d_Rosenblatt",)
 
 
 
-def generate_data_PCSingle():  # pragma: no cover
+def generate_data_polynomial_chaos_single():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -142,10 +142,10 @@ def generate_data_PCSingle():  # pragma: no cover
 
 
 
-    test.PCSingle()
+    test.polynomial_chaos_single()
 
 
-def generate_data_MC():  # pragma: no cover
+def generate_data_monte_carlo():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -167,10 +167,10 @@ def generate_data_MC():  # pragma: no cover
                                     seed=seed,
                                     nr_mc_samples=10)
 
-    test.MC(filename="TestingModel1d_MC",)
+    test.monte_carlo(filename="TestingModel1d_MC",)
 
 
-def generate_data_MCSingle():  # pragma: no cover
+def generate_data_monte_carlo_single():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -194,11 +194,11 @@ def generate_data_MCSingle():  # pragma: no cover
                                     nr_mc_samples=10)
 
 
-    test.MCSingle(filename="TestingModel1d_MC")
+    test.monte_carlo_single(filename="TestingModel1d_MC")
 
 
 
-# def generate_data_compareMC():  # pragma: no cover
+# def generate_data_comparemonte_carlo():  # pragma: no cover
 #     parameterlist = [["a", 1, None],
 #                      ["b", 2, None]]
 #
@@ -217,7 +217,7 @@ def generate_data_MCSingle():  # pragma: no cover
 #
 #
 #     mc_samples = [10, 100]
-#     uncertainty.compareMC(mc_samples)
+#     uncertainty.comparemonte_carlo(mc_samples)
 
 
 
@@ -275,25 +275,25 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
                                                           nr_mc_samples=10)
 
 
-    data = uncertainty_calculations.PC("a")
+    data = uncertainty_calculations.polynomial_chaos("a")
     data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-a.h5"))
 
     np.random.seed(seed)
 
-    data = uncertainty_calculations.PC("b")
+    data = uncertainty_calculations.polynomial_chaos("b")
     data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-b.h5"))
 
 
 
 if __name__ == "__main__":  # pragma: no cover
-    generate_data_PC()
+    generate_data_polynomial_chaos()
     generate_data_PC_model_function()
     generate_data_PC0D()
-    generate_data_PCSingle()
+    generate_data_polynomial_chaos_single()
 
-    generate_data_MC()
-    generate_data_MCSingle()
-    # generate_data_compareMC()
+    generate_data_monte_carlo()
+    generate_data_monte_carlo_single()
+    # generate_data_comparemonte_carlo()
     generate_data_PCRosenblatt()
     generate_data_UncertaintyCalculations()
     generate_data_data()

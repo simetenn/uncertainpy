@@ -26,5 +26,5 @@ exploration = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features)
 
-exploration.UQ(plot_condensed=True,
-               plot_simulator_results=False)
+exploration.uncertainty_quantification(plot_condensed=True,
+                                       plot_simulator_results=False)

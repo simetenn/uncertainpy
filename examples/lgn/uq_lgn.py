@@ -27,4 +27,4 @@ uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features)
 
-uncertainty.UQ()
+uncertainty.uncertainty_quantification()

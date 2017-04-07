@@ -285,7 +285,7 @@ class TestUncertainty(unittest.TestCase):
         )
 
 
-        uncertainty.PC(method="custom")
+        uncertainty.polynomial_chaos(method="custom")
         self.assertTrue(uncertainty.uncertainty_calculations.test_value,
                         "custom PCE method")
 
@@ -308,10 +308,10 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_PCSingle(self):
+    def test_polynomial_chaos_single(self):
 
 
-        self.uncertainty.PCSingle()
+        self.uncertainty.polynomial_chaos_single()
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
@@ -332,7 +332,7 @@ class TestUncertainty(unittest.TestCase):
 
     def test_PC_model_function(self):
         self.uncertainty.model = model_function
-        self.uncertainty.PC()
+        self.uncertainty.polynomial_chaos()
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/model_function.h5")
@@ -346,8 +346,8 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-    def test_PC(self):
-        self.uncertainty.PC()
+    def test_polynomial_chaos(self):
+        self.uncertainty.polynomial_chaos()
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
@@ -385,7 +385,7 @@ class TestUncertainty(unittest.TestCase):
                                                  nr_mc_samples=10)
 
 
-        self.uncertainty.PC()
+        self.uncertainty.polynomial_chaos()
 
         self.plot_exists("directComparison_mean-variance")
         self.plot_exists("directComparison_confidence-interval")
@@ -402,7 +402,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_PCSinglePlot(self):
+    def test_polynomial_chaos_singlePlot(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -427,7 +427,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-        self.uncertainty.PCSingle()
+        self.uncertainty.polynomial_chaos_single()
 
         self.plot_exists("TestingModel1d_single-parameter-a/directComparison_mean-variance")
         self.plot_exists("TestingModel1d_single-parameter-a/directComparison_confidence-interval")
@@ -445,7 +445,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_MCSingle(self):
+    def test_monte_carlo_single(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -470,7 +470,7 @@ class TestUncertainty(unittest.TestCase):
                                                  nr_mc_samples=10)
 
 
-        self.uncertainty.MCSingle(filename="TestingModel1d_MC")
+        self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC")
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -496,7 +496,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_MC(self):
+    def test_monte_carlo(self):
 
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
@@ -521,7 +521,7 @@ class TestUncertainty(unittest.TestCase):
                                                  nr_mc_samples=10**1)
 
 
-        self.uncertainty.MC(filename="TestingModel1d_MC")
+        self.uncertainty.monte_carlo(filename="TestingModel1d_MC")
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -595,7 +595,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_plot_all(self):
-        self.uncertainty.PC()
+        self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(condensed=False, sensitivity="sensitivity_1")
 
 
@@ -653,7 +653,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_plot_condensed(self):
-        self.uncertainty.PC()
+        self.uncertainty.polynomial_chaos()
         self.uncertainty.plot()
 
         self.plot_exists("directComparison_mean-variance")
@@ -671,7 +671,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_plotNoSensitivity(self):
-        self.uncertainty.PC()
+        self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(condensed=False, sensitivity=None)
 
         self.plot_exists("directComparison_mean")
@@ -688,7 +688,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_simulator_results(self):
-        self.uncertainty.PC()
+        self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(simulator_results=True)
 
 
@@ -699,7 +699,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_PCsimulator_results(self):
-        self.uncertainty.PC(plot_simulator_results=True)
+        self.uncertainty.polynomial_chaos(plot_simulator_results=True)
 
         self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png"))),
                          self.uncertainty.uncertainty_calculations.nr_pc_samples)
@@ -729,10 +729,10 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_UQPCAll(self):
+    def test_uncertainty_quantificationPCAll(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="pc", plot_condensed=False)
+        self.uncertainty.uncertainty_quantification(method="pc", plot_condensed=False)
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
@@ -740,10 +740,10 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["rosenblatt"], False)
 
 
-    def test_UQPCSingleResultRosenblatt(self):
+    def test_uncertainty_quantificationpolynomial_chaos_singleResultRosenblatt(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="pc",
+        self.uncertainty.uncertainty_quantification(method="pc",
                             pc_method="regression",
                             plot_condensed=True,
                             single=True,
@@ -755,29 +755,29 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["rosenblatt"], True)
 
 
-    def test_UQMC(self):
+    def test_uncertainty_quantificationmonte_carlo(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="mc", plot_condensed=False)
+        self.uncertainty.uncertainty_quantification(method="mc", plot_condensed=False)
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
 
 
-    def test_UQMCSingle(self):
+    def test_uncertainty_quantificationmonte_carlo_single(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="mc", plot_condensed=False, single=True)
+        self.uncertainty.uncertainty_quantification(method="mc", plot_condensed=False, single=True)
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
 
 
 
-    def test_UQCustom(self):
+    def test_uncertainty_quantificationCustom(self):
         self.setUpTestCalculations()
 
-        self.uncertainty.UQ(method="custom", custom_keyword="value")
+        self.uncertainty.uncertainty_quantification(method="custom", custom_keyword="value")
 
         self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")

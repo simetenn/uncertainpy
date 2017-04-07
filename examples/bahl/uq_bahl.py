@@ -12,7 +12,7 @@ uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameterlist,
                                        save_figures=True)
 
-uncertainty.UQ(plot_condensed=False,
-               plot_simulator_results=True)
-uncertainty.UQ(single=True,
-               plot_simulator_results=True)
+uncertainty.uncertainty_quantification(plot_condensed=False,
+                                       plot_simulator_results=True)
+uncertainty.uncertainty_quantification(single=True,
+                                       plot_simulator_results=True)

@@ -370,8 +370,8 @@ class UncertaintyCalculations(object):
             self.data.p_05[feature] = np.percentile(self.U_mc[feature], 5, -1)
             self.data.p_95[feature] = np.percentile(self.U_mc[feature], 95, -1)
 
-        self.totalSensitivity(sensitivity="sensitivity_1")
-        self.totalSensitivity(sensitivity="sensitivity_t")
+        self.calculate_total_sensitivity(sensitivity="sensitivity_1")
+        self.calculate_total_sensitivity(sensitivity="sensitivity_t")
 
 
 
@@ -383,7 +383,7 @@ class UncertaintyCalculations(object):
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 
-    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+    def polynomial_chaos(self, uncertain_parameters=None, method="regression", rosenblatt=False):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if method == "regression":
@@ -411,7 +411,7 @@ class UncertaintyCalculations(object):
         return self.data
 
 
-    def MC(self, uncertain_parameters=None):
+    def monte_carlo(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -436,7 +436,7 @@ class UncertaintyCalculations(object):
         return self.data
 
 
-    def totalSensitivity(self, sensitivity="sensitivity_1"):
+    def calculate_total_sensitivity(self, sensitivity="sensitivity_1"):
 
         sense = getattr(self.data, sensitivity)
         total_sense = {}

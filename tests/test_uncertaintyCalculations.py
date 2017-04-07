@@ -549,12 +549,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_totalSensitivity1(self):
+    def test_calculate_total_sensitivity1(self):
         self.uncertainty_calculations.data = Data()
         self.uncertainty_calculations.data.sensitivity_1 = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2], "testNone": None}
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
-        self.uncertainty_calculations.totalSensitivity(sensitivity="sensitivity_1")
+        self.uncertainty_calculations.calculate_total_sensitivity(sensitivity="sensitivity_1")
 
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test2D"][0], 1/3.)
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test2D"][1], 2/3.)
@@ -563,12 +563,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["testNone"], None)
 
 
-    def test_totalSensitivityT(self):
+    def test_calculate_total_sensitivityT(self):
         self.uncertainty_calculations.data = Data()
         self.uncertainty_calculations.data.sensitivity_t = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2], "testNone": None}
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
-        self.uncertainty_calculations.totalSensitivity(sensitivity="sensitivity_t")
+        self.uncertainty_calculations.calculate_total_sensitivity(sensitivity="sensitivity_t")
 
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test2D"][0], 1/3.)
         self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test2D"][1], 2/3.)
@@ -665,8 +665,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature2d"], np.ndarray)
 
 
-    def test_PC(self):
-        data = self.uncertainty_calculations.PC()
+    def test_polynomial_chaos(self):
+        data = self.uncertainty_calculations.polynomial_chaos()
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
         data.save(filename)
@@ -681,7 +681,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PCRosenblatt(self):
-        data = self.uncertainty_calculations.PC(rosenblatt=True)
+        data = self.uncertainty_calculations.polynomial_chaos(rosenblatt=True)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d_Rosenblatt.h5")
         data.save(filename)
@@ -697,17 +697,17 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_PCCustom(self):
         with self.assertRaises(NotImplementedError):
-            self.uncertainty_calculations.PC(method="custom")
+            self.uncertainty_calculations.polynomial_chaos(method="custom")
 
 
 
     def test_PCError(self):
         with self.assertRaises(ValueError):
-            self.uncertainty_calculations.PC(method="not implemented")
+            self.uncertainty_calculations.polynomial_chaos(method="not implemented")
 
 
     def test_PCParameterA(self):
-        data = self.uncertainty_calculations.PC("a")
+        data = self.uncertainty_calculations.polynomial_chaos("a")
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
         data.save(filename)
@@ -722,7 +722,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PCParameterB(self):
-        data = self.uncertainty_calculations.PC("b")
+        data = self.uncertainty_calculations.polynomial_chaos("b")
 
         filename = os.path.join(self.output_test_dir, "UncertaintyCalculations_single-parameter-b.h5")
         data.save(filename)
@@ -737,7 +737,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_MC(self):
+    def test_monte_carlo(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -758,7 +758,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        data = self.uncertainty_calculations.MC()
+        data = self.uncertainty_calculations.monte_carlo()
 
         # Rough tests
         self.assertTrue(np.allclose(self.uncertainty_calculations.data.E["directComparison"],
@@ -804,7 +804,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        self.uncertainty_calculations.MC()
+        self.uncertainty_calculations.monte_carlo()
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature0d"],
                                        features.feature0d(None, None)[1]))
@@ -833,7 +833,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        self.uncertainty_calculations.MC()
+        self.uncertainty_calculations.monte_carlo()
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature1d"],
                                        features.feature1d(None, None)[1]))
@@ -863,7 +863,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 verbose_level="error")
 
 
-        self.uncertainty_calculations.MC()
+        self.uncertainty_calculations.monte_carlo()
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature2d"],
                                        features.feature2d(None, None)[1]))

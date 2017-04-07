@@ -85,10 +85,10 @@ class TestExploration(unittest.TestCase):
                                                     "TestingModel1d_single-parameter-b.h5")))
 
 
-    def test_compareMC(self):
+    def test_comparemonte_carlo(self):
         mc_samples = [10, 100]
 
-        self.uncertainty.compareMC(mc_samples)
+        self.uncertainty.comparemonte_carlo(mc_samples)
 
         compare_file = os.path.join(self.folder, "data/pc",
                                     "TestingModel1d.h5")

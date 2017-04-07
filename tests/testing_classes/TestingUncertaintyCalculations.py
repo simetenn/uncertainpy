@@ -1,7 +1,7 @@
 from uncertainpy import UncertaintyCalculations
 
 class TestingUncertaintyCalculations(UncertaintyCalculations):
-    def PC(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True):
+    def polynomial_chaos(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True):
         arguments = {}
 
         arguments["function"] = "PC"
@@ -13,7 +13,7 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
         return arguments
 
 
-    def MC(self, uncertain_parameters=None, plot_condensed=True):
+    def monte_carlo(self, uncertain_parameters=None, plot_condensed=True):
         arguments = {}
 
         arguments["function"] = "MC"

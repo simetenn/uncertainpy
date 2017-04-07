@@ -22,4 +22,4 @@ uncertainty = un.UncertaintyEstimation(model,
                                        features=features,
                                        CPUs=1)
 
-uncertainty.UQ(uncertain_parameters=["w_rc", "w_ri"])
+uncertainty.uncertainty_quantification(uncertain_parameters=["w_rc", "w_ri"])

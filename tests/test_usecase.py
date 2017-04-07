@@ -73,7 +73,7 @@ class TestUseCases(unittest.TestCase):
 
 
 
-    def test_CoffeeCupPointModelCompareMC(self):
+    def test_CoffeeCupPointModelComparemonte_carlo(self):
         parameterlist = [["kappa", -0.05, None],
                          ["u_env", 20, None]]
 
@@ -93,7 +93,7 @@ class TestUseCases(unittest.TestCase):
 
 
         mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
+        exploration.comparemonte_carlo(mc_samples)
 
         result = self.list_files()
 
@@ -145,7 +145,7 @@ class TestUseCases(unittest.TestCase):
         self.assertEqual(files, result)
 
 
-    def test_HodkinHuxleyModelCompareMC(self):
+    def test_HodkinHuxleyModelComparemonte_carlo(self):
         parameterlist = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
@@ -166,7 +166,7 @@ class TestUseCases(unittest.TestCase):
 
 
         mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
+        exploration.comparemonte_carlo(mc_samples)
 
 
         result = self.list_files()
@@ -222,7 +222,7 @@ class TestUseCases(unittest.TestCase):
         self.assertEqual(files, result)
 
 
-    def test_IzhikevichModelCompareMC(self):
+    def test_IzhikevichModelComparemonte_carlo(self):
         parameterlist = [["a", 0.02, None],
                          ["b", 0.2, None],
                          ["c", -65, None],
@@ -244,7 +244,7 @@ class TestUseCases(unittest.TestCase):
 
 
         mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
+        exploration.comparemonte_carlo(mc_samples)
 
 
         result = self.list_files()
@@ -298,7 +298,7 @@ class TestUseCases(unittest.TestCase):
 
 
 
-    def test_LgnModelCompareMC(self):
+    def test_LgnModelComparemonte_carlo(self):
         model_file = "INmodel.hoc"
         model_path = "../models/neuron_models/dLGN_modelDB/"
 
@@ -337,7 +337,7 @@ class TestUseCases(unittest.TestCase):
 
 
         mc_samples = [10, 100]
-        exploration.compareMC(mc_samples)
+        exploration.comparemonte_carlo(mc_samples)
 
 
 

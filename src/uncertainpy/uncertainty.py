@@ -75,8 +75,7 @@ class UncertaintyEstimation(object):
 
         if create_PCE_custom is not None:
             self.uncertainty_calculations.create_PCE_custom = types.MethodType(create_PCE_custom,
-                                                                       self.uncertainty_calculations)
-
+                                                                               self.uncertainty_calculations)
 
 
         self.features = features
@@ -164,18 +163,18 @@ class UncertaintyEstimation(object):
 
 
     # TODO add features_to_run as argument to this function
-    def UQ(self,
-           uncertain_parameters=None,
-           method="pc",
-           single=False,
-           pc_method="regression",
-           rosenblatt=False,
-           plot_condensed=True,
-           plot_simulator_results=False,
-           output_dir_figures=None,
-           output_dir_data=None,
-           filename=None,
-           **custom_kwargs):
+    def uncertainty_quantification(self,
+                                   uncertain_parameters=None,
+                                   method="pc",
+                                   single=False,
+                                   pc_method="regression",
+                                   rosenblatt=False,
+                                   plot_condensed=True,
+                                   plot_simulator_results=False,
+                                   output_dir_figures=None,
+                                   output_dir_data=None,
+                                   filename=None,
+                                   **custom_kwargs):
         """
 method: pc, mc
 pc_method: "regression"
@@ -184,56 +183,56 @@ pc_method: "regression"
 
         if method.lower() == "pc":
             if single:
-                self.PCSingle(uncertain_parameters=uncertain_parameters,
-                              method=pc_method,
-                              rosenblatt=rosenblatt,
-                              plot_condensed=plot_condensed,
-                              plot_simulator_results=plot_simulator_results,
-                              output_dir_figures=output_dir_figures,
-                              output_dir_data=output_dir_data,
-                              filename=filename)
+                self.polynomial_chaos_single(uncertain_parameters=uncertain_parameters,
+                                             method=pc_method,
+                                             rosenblatt=rosenblatt,
+                                             plot_condensed=plot_condensed,
+                                             plot_simulator_results=plot_simulator_results,
+                                             output_dir_figures=output_dir_figures,
+                                             output_dir_data=output_dir_data,
+                                             filename=filename)
             else:
-                self.PC(uncertain_parameters=uncertain_parameters,
-                        method=pc_method,
-                        rosenblatt=rosenblatt,
-                        plot_condensed=plot_condensed,
-                        plot_simulator_results=plot_simulator_results,
-                        output_dir_figures=output_dir_figures,
-                        output_dir_data=output_dir_data,
-                        filename=filename)
+                self.polynomial_chaos(uncertain_parameters=uncertain_parameters,
+                                      method=pc_method,
+                                      rosenblatt=rosenblatt,
+                                      plot_condensed=plot_condensed,
+                                      plot_simulator_results=plot_simulator_results,
+                                      output_dir_figures=output_dir_figures,
+                                      output_dir_data=output_dir_data,
+                                      filename=filename)
         elif method.lower() == "mc":
             if single:
-                self.MCSingle(uncertain_parameters=uncertain_parameters,
-                              plot_condensed=plot_condensed,
-                              plot_simulator_results=plot_simulator_results,
-                              output_dir_figures=output_dir_figures,
-                              output_dir_data=output_dir_data,
-                              filename=filename)
+                self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
+                                        plot_condensed=plot_condensed,
+                                        plot_simulator_results=plot_simulator_results,
+                                        output_dir_figures=output_dir_figures,
+                                        output_dir_data=output_dir_data,
+                                        filename=filename)
             else:
-                self.MC(uncertain_parameters=uncertain_parameters,
-                        plot_condensed=plot_condensed,
-                        plot_simulator_results=plot_simulator_results,
-                        output_dir_figures=output_dir_figures,
-                        output_dir_data=output_dir_data,
-                        filename=filename)
+                self.monte_carlo(uncertain_parameters=uncertain_parameters,
+                                 plot_condensed=plot_condensed,
+                                 plot_simulator_results=plot_simulator_results,
+                                 output_dir_figures=output_dir_figures,
+                                 output_dir_data=output_dir_data,
+                                 filename=filename)
 
         elif method.lower() == "custom":
             self.custom_uncertainty_quantification(plot_condensed=plot_condensed,
-                          plot_simulator_results=plot_simulator_results,
-                          output_dir_figures=output_dir_figures,
-                          output_dir_data=output_dir_data,
-                          filename=filename,
-                          **custom_kwargs)
+                                                   plot_simulator_results=plot_simulator_results,
+                                                   output_dir_figures=output_dir_figures,
+                                                   output_dir_data=output_dir_data,
+                                                   filename=filename,
+                                                   **custom_kwargs)
 
 
 
     def custom_uncertainty_quantification(self,
-                 plot_condensed=True,
-                 plot_simulator_results=False,
-                 output_dir_figures=None,
-                 output_dir_data=None,
-                 filename=None,
-                 **custom_kwargs):
+                                          plot_condensed=True,
+                                          plot_simulator_results=False,
+                                          output_dir_figures=None,
+                                          output_dir_data=None,
+                                          filename=None,
+                                          **custom_kwargs):
 
 
         self.data = self.uncertainty_calculations.custom_uncertainty_quantification(**custom_kwargs)
@@ -255,15 +254,15 @@ pc_method: "regression"
 
 
 
-    def PC(self,
-           uncertain_parameters=None,
-           method="regression",
-           rosenblatt=False,
-           plot_condensed=True,
-           plot_simulator_results=False,
-           output_dir_figures=None,
-           output_dir_data=None,
-           filename=None):
+    def polynomial_chaos(self,
+                         uncertain_parameters=None,
+                         method="regression",
+                         rosenblatt=False,
+                         plot_condensed=True,
+                         plot_simulator_results=False,
+                         output_dir_figures=None,
+                         output_dir_data=None,
+                         filename=None):
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -272,7 +271,7 @@ pc_method: "regression"
                                  + "A Monte-Carlo method _might_ be faster.")
 
 
-        self.data = self.uncertainty_calculations.PC(
+        self.data = self.uncertainty_calculations.polynomial_chaos(
             uncertain_parameters=uncertain_parameters,
             method=method,
             rosenblatt=rosenblatt
@@ -292,17 +291,17 @@ pc_method: "regression"
 
 
 
-    def MC(self,
-           uncertain_parameters=None,
-           plot_condensed=True,
-           plot_simulator_results=False,
-           output_dir_figures=None,
-           output_dir_data=None,
-           filename=None):
+    def monte_carlo(self,
+                    uncertain_parameters=None,
+                    plot_condensed=True,
+                    plot_simulator_results=False,
+                    output_dir_figures=None,
+                    output_dir_data=None,
+                    filename=None):
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.data = self.uncertainty_calculations.MC(uncertain_parameters=uncertain_parameters)
+        self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameters)
 
         if self.save_data:
             if filename is None:
@@ -323,15 +322,15 @@ pc_method: "regression"
 
 
 
-    def PCSingle(self,
-                 uncertain_parameters=None,
-                 method="regression",
-                 rosenblatt=False,
-                 plot_condensed=True,
-                 plot_simulator_results=False,
-                 output_dir_data=None,
-                 output_dir_figures=None,
-                 filename=None):
+    def polynomial_chaos_single(self,
+                                uncertain_parameters=None,
+                                method="regression",
+                                rosenblatt=False,
+                                plot_condensed=True,
+                                plot_simulator_results=False,
+                                output_dir_data=None,
+                                output_dir_figures=None,
+                                filename=None):
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -347,7 +346,7 @@ pc_method: "regression"
         for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running for " + uncertain_parameter)
 
-            self.data = self.uncertainty_calculations.PC(
+            self.data = self.uncertainty_calculations.polynomial_chaos(
                 uncertain_parameters=uncertain_parameter,
                 method=method,
                 rosenblatt=rosenblatt
@@ -378,13 +377,13 @@ pc_method: "regression"
                           output_dir=tmp_output_dir_figures)
 
 
-    def MCSingle(self,
-                 uncertain_parameters=None,
-                 plot_condensed=True,
-                 plot_simulator_results=False,
-                 output_dir_data=None,
-                 output_dir_figures=None,
-                 filename=None):
+    def monte_carlo_single(self,
+                           uncertain_parameters=None,
+                           plot_condensed=True,
+                           plot_simulator_results=False,
+                           output_dir_data=None,
+                           output_dir_figures=None,
+                           filename=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
@@ -394,7 +393,7 @@ pc_method: "regression"
         for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running MC for " + uncertain_parameter)
 
-            self.data = self.uncertainty_calculations.MC(uncertain_parameter)
+            self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameter)
 
             tmp_filename = "{}_single-parameter-{}".format(
                 filename,

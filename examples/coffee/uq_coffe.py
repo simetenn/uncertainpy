@@ -17,4 +17,4 @@ uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameters,
                                        features=None)
 
-uncertainty.UQ(plot_condensed=False)
+uncertainty.uncertainty_quantification(plot_condensed=False)

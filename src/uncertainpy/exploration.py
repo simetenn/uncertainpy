@@ -145,7 +145,7 @@ class UncertaintyEstimations():
 
 
 
-    def compareMC(self, nr_mc_samples):
+    def comparemonte_carlo(self, nr_mc_samples):
         run_times = []
 
         name = "pc"
@@ -219,7 +219,7 @@ class UncertaintyEstimations():
 
             time_1 = time.time()
 
-            self.uncertainty_estimations.allParametersMC()
+            self.uncertainty_estimations.allParametersmonte_carlo()
             if self.plot_simulator_results:
                 self.uncertainty_estimations.simulator_results()
 
