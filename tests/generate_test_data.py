@@ -16,7 +16,7 @@ def generate_data_PC():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel1d()
 
@@ -43,7 +43,7 @@ def generate_data_PC_model_function():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
 
     features = TestingFeatures(features_to_run=["feature0d",
@@ -70,7 +70,7 @@ def generate_data_PC0D():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel0d()
 
@@ -95,7 +95,7 @@ def generate_data_PCRosenblatt():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel1d()
 
@@ -123,7 +123,7 @@ def generate_data_PCSingle():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel1d()
 
@@ -150,7 +150,7 @@ def generate_data_MC():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel1d()
 
@@ -175,7 +175,7 @@ def generate_data_MCSingle():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel1d()
 
@@ -204,7 +204,7 @@ def generate_data_MCSingle():  # pragma: no cover
 #
 #     parameters = un.Parameters(parameterlist)
 #     model = TestingModel1d(parameters)
-#     model.setAllDistributions(un.Distribution(0.5).uniform)
+#     model.set_all_distributions(un.Distribution(0.5).uniform)
 #
 #
 #     uncertainty = un.UncertaintyEstimations(model,
@@ -260,7 +260,7 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.setAllDistributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
     model = TestingModel1d()
 

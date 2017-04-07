@@ -16,7 +16,7 @@ parameterlist = [["cap", 1.1, None],
 
 
 parameters = un.Parameters(parameterlist)
-parameters.setAllDistributions(un.Distribution(0.05).uniform)
+parameters.set_all_distributions(un.Distribution(0.05).uniform)
 
 model = un.NeuronModel(model_path=model_path,
                        adaptive_model=True)

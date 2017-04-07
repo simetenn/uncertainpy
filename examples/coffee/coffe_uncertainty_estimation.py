@@ -11,7 +11,7 @@ parameters = uncertainpy.Parameters(parameterlist)
 model = uncertainpy.CoffeeCupPointModel(parameters)
 # This sets all distributions to the same, not necessary for exploreParameters,
 # but necessary for compareMC
-model.setAllDistributions(uncertainpy.Distribution(0.1).uniform)
+model.set_all_distributions(uncertainpy.Distribution(0.1).uniform)
 
 
 exploration = uncertainpy.UncertaintyEstimations(model,

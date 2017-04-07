@@ -47,51 +47,51 @@ class TestSpikes(unittest.TestCase):
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
-    def test_detectSpikesDefault(self):
+    def test_find_spikesDefault(self):
         self.spikes = Spikes()
 
-        self.spikes.detectSpikes(self.t, self.U)
+        self.spikes.find_spikes(self.t, self.U)
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
-    def test_detectSpikesAuto(self):
+    def test_find_spikesAuto(self):
         self.spikes = Spikes()
 
-        self.spikes.detectSpikes(self.t, self.U, thresh="auto")
+        self.spikes.find_spikes(self.t, self.U, thresh="auto")
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
-    def test_detectSpikesExtended(self):
+    def test_find_spikesExtended(self):
         self.spikes = Spikes()
 
-        self.spikes.detectSpikes(self.t, self.U, extended_spikes=True)
+        self.spikes.find_spikes(self.t, self.U, extended_spikes=True)
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
-    def test_detectSpikesDefaultAutoExtended(self):
+    def test_find_spikesDefaultAutoExtended(self):
         self.spikes = Spikes()
 
-        self.spikes.detectSpikes(self.t, self.U, thresh="auto", extended_spikes=True)
+        self.spikes.find_spikes(self.t, self.U, thresh="auto", extended_spikes=True)
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
     def test_iter(self):
         self.spikes = Spikes()
-        self.spikes.detectSpikes(self.t, self.U)
+        self.spikes.find_spikes(self.t, self.U)
 
         for spike in self.spikes:
             self.assertIsInstance(spike, Spike)
 
     def test_len(self):
         self.spikes = Spikes()
-        self.spikes.detectSpikes(self.t, self.U)
+        self.spikes.find_spikes(self.t, self.U)
 
         self.assertEqual(len(self.spikes), 12)
 
 
     def test_getitem(self):
         self.spikes = Spikes()
-        self.spikes.detectSpikes(self.t, self.U)
+        self.spikes.find_spikes(self.t, self.U)
 
         result = self.spikes[0]
         self.assertIsInstance(result, Spike)

@@ -31,38 +31,32 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
         """
         self.name = name
         self.value = value
-        self.setDistribution(distribution)
+
+        self._distribution = None
+
+        self.distribution = distribution
 
 
+    @property
+    def distribution(self):
+        return self._distribution
 
-    def setDistribution(self, distribution):
-        """
-Set the distribution of a parameter.
-
-Parameters
-----------
-Required arguments
-
-distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
-    The distribution of the parameter.
-    A parameter is considered uncertain if if has a distribution associated
-    with it.
-        """
-
-        if distribution is None:
-            self.distribution = None
-        elif isinstance(distribution, cp.Dist):
-            self.distribution = distribution
-        elif hasattr(distribution, '__call__'):
-            self.distribution = distribution(self.value)
-            if not isinstance(self.distribution, cp.Dist):
-                raise TypeError("Function does not return a Chaospy distribution")
+    @distribution.setter
+    def distribution(self, new_distribution):
+        if new_distribution is None:
+            self._distribution = None
+        elif isinstance(new_distribution, cp.Dist):
+            self._distribution = new_distribution
+        elif hasattr(new_distribution, '__call__'):
+            self._distribution = new_distribution(self.value)
+            if not isinstance(self._distribution, cp.Dist):
+                raise TypeError("Function new_distribution does not return a Chaospy distribution")
         else:
-            raise TypeError("distribution is neither a function nor a Chaospy distribution")
+            raise TypeError("new_distribution is neither a function nor a Chaospy distribution")
 
 
 
-    def setParameterValue(self, filename, value):
+    def set_parameter_file(self, filename, value):
         """
 Set the parameter to given value in a parameter file.
 Searches filename for occurences of 'name = #number' and replace the '#number' with value
@@ -83,7 +77,7 @@ value: number
             sys.stdout.write(pattern.sub(r"\g<1>\g<2>\g<3>" + str(value), line))
 
 
-    def resetParameterValue(self, filename):
+    def reset_parameter_file(self, filename):
         """
 Set the parameter to the original value in the parameter file, filename.
 
@@ -94,7 +88,7 @@ Required arguments
 filename: str
     name of file
     """
-        self.setParameterValue(filename, self.value)
+        self.set_parameter_file(filename, self.value)
 
 
     def __str__(self):
@@ -192,7 +186,7 @@ Return a readable string
         return self.parameters.itervalues()
 
 
-    def setDistribution(self, parameter, distribution):
+    def set_distribution(self, parameter, distribution):
         """
 Set the distribution of a parameter.
 
@@ -207,10 +201,10 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
     A parameter is considered uncertain if if has a distributiona associated
     with it.
         """
-        self.parameters[parameter].setDistribution(distribution)
+        self.parameters[parameter].distribution = distribution
 
 
-    def setAllDistributions(self, distribution):
+    def set_all_distributions(self, distribution):
         """
 Set the distribution of all parameters.
 
@@ -224,49 +218,49 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
     with it.
         """
         for parameter in self.parameters:
-            self.parameters[parameter].setDistribution(distribution)
+            self.parameters[parameter].distribution = distribution
 
 
-    def getUncertain(self, prop="name"):
+    def get_from_uncertain(self, attribute="name"):
         """
-Get a property of all uncertain parameters(parameters that have a distribution=
+Get an attribute from all uncertain parameters(parameters that have a distribution)
 
 Parameters
 ----------
 Required arguments
 
-prop: "name" | "value" | "distribution"
-    The name of the property to be returned
+attribute: "name" | "value" | "distribution"
+    The name of the attribute to be returned
 
 Returns
 -------
-List of the property of all uncertain parameters
+List of the attribute of all uncertain parameters
         """
 
         items = []
         for parameter in self.parameters.values():
             if parameter.distribution is not None:
-                items.append(getattr(parameter, prop))
+                items.append(getattr(parameter, attribute))
         return items
 
 
-    def get(self, prop="name", parameter_names=None):
+    def get(self, attribute="name", parameter_names=None):
         """
-Get the property of all parameters in parameter_names
+Get the attribute of all parameters in parameter_names
 
 Parameters
 ----------
 Required arguments
 
-prop: "name" | "value" | "distribution"
-    The name of the property to be returned
+attribute: "name" | "value" | "distribution"
+    The name of the attribute to be returned
 parameter_names: None | list | str
-    A list of all parameters of which property should be returned.
-    If None, the property all parameters are returned.
+    A list of all parameters of which attribute should be returned.
+    If None, the attribute all parameters are returned.
     Default is None.
 Returns
 -------
-List of the property of all uncertain parameters
+List of the attribute of all uncertain parameters
         """
 
         if parameter_names is None:
@@ -279,10 +273,10 @@ List of the property of all uncertain parameters
         for parameter_name in parameter_names:
             return_parameters.append(self.parameters[parameter_name])
 
-        return [getattr(parameter, prop) for parameter in return_parameters]
+        return [getattr(parameter, attribute) for parameter in return_parameters]
 
 
-    def setParameterValues(self, filename, parameters):
+    def set_parameters_file(self, filename, parameters):
         """
 Set all parameter to the original value in the parameter file, filename.
 
@@ -294,10 +288,10 @@ filename: str
     name of file
         """
         for parameter in parameters:
-            self.parameters[parameter].setParameterValue(filename, parameters[parameter])
+            self.parameters[parameter].set_parameter_file(filename, parameters[parameter])
 
 
-    def resetParameterValues(self, filename):
+    def reset_parameter_file(self, filename):
         """
 Set the parameter to the original value in the parameter file, filename.
 
@@ -309,4 +303,4 @@ filename: str
     name of file
         """
         for parameter in self.parameters:
-            self.parameters[parameter].setParameterValue(filename, self.parameters[parameter].value)
+            self.parameters[parameter].set_parameter_file(filename, self.parameters[parameter].value)

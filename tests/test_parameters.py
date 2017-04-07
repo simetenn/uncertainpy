@@ -57,45 +57,45 @@ class TestParameter(unittest.TestCase):
         self.assertIsInstance(parameter.distribution, cp.Dist)
 
 
-    def test_setDistributionNone(self):
+    def test_set_distributionNone(self):
         distribution = None
-        self.parameter.setDistribution(distribution)
+        self.parameter.distribution = distribution
 
         self.assertIsNone(self.parameter.distribution)
 
 
-    def test_setDistributionFunction(self):
+    def test_set_distributionFunction(self):
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
 
-        self.parameter.setDistribution(distribution_function)
+        self.parameter.distribution = distribution_function
 
         # self.assertEqual(self.parameter.distribution, cp.Uniform(110, 130))
         self.assertIsInstance(self.parameter.distribution, cp.Dist)
 
-        def test_setDistributionFunctionNotDistReturn(self):
+        def test_set_distributionFunctionNotDistReturn(self):
             def distribution_function(x):
                 return x
 
             with self.assertRaises(TypeError):
-                self.parameter.setDistribution(distribution_function)
+                self.parameter.distribution = distribution_function
 
 
-    def test_setDistributionInt(self):
+    def test_set_distributionInt(self):
         distribution = 1
         with self.assertRaises(TypeError):
-            self.parameter.setDistribution(distribution)
+            self.parameter.distribution = distribution
 
 
-    def test_setDistributionChaospy(self):
+    def test_set_distributionChaospy(self):
         distribution = cp.Uniform(110, 130)
-        self.parameter.setDistribution(distribution)
+        self.parameter.distribution = distribution
 
         # self.assertEqual(self.parameter.distribution, cp.Uniform(110, 130))
         self.assertIsInstance(self.parameter.distribution, cp.Dist)
 
 
-    def test_setParameterValues(self):
+    def test_set_parameters_file(self):
         parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
 
         shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
@@ -103,7 +103,7 @@ class TestParameter(unittest.TestCase):
 
         self.parameter = Parameter("test", 120)
 
-        self.parameter.setParameterValue(parameter_file, 12)
+        self.parameter.set_parameter_file(parameter_file, 12)
 
 
         compare_file = os.path.join(self.test_data_dir, "example_hoc_control.hoc")
@@ -113,7 +113,7 @@ class TestParameter(unittest.TestCase):
 
 
 
-    def test_resetParameterValues(self):
+    def test_reset_parameter_file(self):
         parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
 
         shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
@@ -121,7 +121,7 @@ class TestParameter(unittest.TestCase):
 
         self.parameter = Parameter("test", 12)
 
-        self.parameter.resetParameterValue(parameter_file)
+        self.parameter.reset_parameter_file(parameter_file)
 
         compare_file = os.path.join(self.test_data_dir, "example_hoc_control.hoc")
 
@@ -256,7 +256,7 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(result[2], Parameter)
 
 
-    def test_setDistribution(self):
+    def test_set_distribution(self):
         parameterlist = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
@@ -266,12 +266,12 @@ class TestParameters(unittest.TestCase):
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
 
-        self.parameters.setDistribution("gbar_Na", distribution_function)
+        self.parameters.set_distribution("gbar_Na", distribution_function)
 
         self.assertIsInstance(self.parameters["gbar_Na"].distribution, cp.Dist)
 
 
-    def setAllDistributions(self):
+    def set_all_distributions(self):
         parameterlist = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
@@ -282,33 +282,33 @@ class TestParameters(unittest.TestCase):
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
 
-        self.parameters.setAllDistributions(distribution_function)
+        self.parameters.set_all_distributions(distribution_function)
 
         self.assertIsInstance(self.parameters["gbar_Na"].distribution, cp.Dist)
         self.assertIsInstance(self.parameters["gbar_K"].distribution, cp.Dist)
         self.assertIsInstance(self.parameters["gbar_l"].distribution, cp.Dist)
 
 
-    def test_getUncertainName(self):
+    def test_get_from_uncertainName(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
 
         self.parameters = Parameters(parameterlist)
-        result = self.parameters.getUncertain()
+        result = self.parameters.get_from_uncertain()
 
         self.assertIn("gbar_Na", result)
         self.assertIn("gbar_K", result)
         self.assertNotIn("gbar_l", result)
 
 
-    def test_getUncertainValue(self):
+    def test_get_from_uncertainValue(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
 
         self.parameters = Parameters(parameterlist)
-        result = self.parameters.getUncertain("value")
+        result = self.parameters.get_from_uncertain("value")
 
 
         self.assertIn(120, result)
@@ -316,13 +316,13 @@ class TestParameters(unittest.TestCase):
         self.assertNotIn(0.3, result)
 
 
-    def test_getUncertainDistribution(self):
+    def test_get_from_uncertainDistribution(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
 
         self.parameters = Parameters(parameterlist)
-        result = self.parameters.getUncertain("distribution")
+        result = self.parameters.get_from_uncertain("distribution")
 
         self.assertEqual(len(result), 2)
         self.assertIsInstance(result[0], cp.Dist)
@@ -396,7 +396,7 @@ class TestParameters(unittest.TestCase):
 
 
 
-    def test_setParameterValues(self):
+    def test_set_parameters_file(self):
         parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
 
         shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
@@ -410,7 +410,7 @@ class TestParameters(unittest.TestCase):
 
         self.parameters = Parameters(parameterlist)
 
-        self.parameters.setParameterValues(parameter_file, parameter_change)
+        self.parameters.set_parameters_file(parameter_file, parameter_change)
 
 
         compare_file = os.path.join(self.test_data_dir, "example_hoc_control_parameters.hoc")
@@ -418,7 +418,7 @@ class TestParameters(unittest.TestCase):
         result = subprocess.call(["diff", parameter_file, compare_file])
         self.assertEqual(result, 0)
 
-    def test_resetParameterValues(self):
+    def test_reset_parameter_file(self):
         parameter_file = os.path.join(self.output_test_dir, self.parameter_filename)
 
         shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
@@ -430,7 +430,7 @@ class TestParameters(unittest.TestCase):
 
         self.parameters = Parameters(parameterlist)
 
-        self.parameters.resetParameterValues(parameter_file)
+        self.parameters.reset_parameter_file(parameter_file)
 
         compare_file = os.path.join(self.test_data_dir, "example_hoc_control_parameters.hoc")
 

@@ -34,4 +34,4 @@ class GeneralSpikingFeatures(GeneralFeatures):
             raise AttributeError("U is not assigned")
 
         self.spikes = Spikes()
-        self.spikes.detectSpikes(self.t, self.U, thresh=thresh, extended_spikes=extended_spikes)
+        self.spikes.find_spikes(self.t, self.U, thresh=thresh, extended_spikes=extended_spikes)

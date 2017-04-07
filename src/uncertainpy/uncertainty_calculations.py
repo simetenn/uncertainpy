@@ -186,7 +186,7 @@ class UncertaintyCalculations(object):
             raise RuntimeError("No model is set")
 
         if uncertain_parameters is None:
-            uncertain_parameters = self.parameters.getUncertain("name")
+            uncertain_parameters = self.parameters.get_from_uncertain("name")
 
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]

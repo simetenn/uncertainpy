@@ -128,7 +128,7 @@ if __name__ == "__main__":
     parameters = {"J_E": 4, "g": 4}
 
     nest_network = BrunelNetworkModel()
-    nest_network.setParameterValues(parameters=parameters)
+    nest_network.set_parameters_file(parameters=parameters)
     nest_network.reset()
     nest_network.run()
     nest.raster_plot.from_device(nest_network.spike_detec_E)

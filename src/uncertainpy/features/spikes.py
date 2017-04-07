@@ -42,7 +42,7 @@ class Spikes:
         self.ylabel = ylabel
 
         if t is not None and U is not None:
-            self.detectSpikes(t, U, thresh=thresh, extended_spikes=extended_spikes)
+            self.find_spikes(t, U, thresh=thresh, extended_spikes=extended_spikes)
 
 
     def __iter__(self):
@@ -58,7 +58,7 @@ class Spikes:
         return self.spikes[i]
 
 
-    def detectSpikes(self, t, U, thresh=-30, extended_spikes=False):
+    def find_spikes(self, t, U, thresh=-30, extended_spikes=False):
 
         min_dist_from_peak = 1
         derivative_cutoff = 0.5

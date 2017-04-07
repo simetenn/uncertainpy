@@ -31,7 +31,7 @@ class TestExploration(unittest.TestCase):
 
         parameters = Parameters(parameterlist)
         model = TestingModel1d(parameters)
-        model.setAllDistributions(Distribution(0.5).uniform)
+        model.set_all_distributions(Distribution(0.5).uniform)
 
         self.uncertainty = UncertaintyEstimations(model,
                                                   features=TestingFeatures(),

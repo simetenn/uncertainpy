@@ -34,7 +34,7 @@ class TestUncertainty(unittest.TestCase):
                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameterlist)
-        self.parameters.setAllDistributions(Distribution(0.5).uniform)
+        self.parameters.set_all_distributions(Distribution(0.5).uniform)
 
         self.model = TestingModel1d()
 
@@ -365,7 +365,7 @@ class TestUncertainty(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -407,7 +407,7 @@ class TestUncertainty(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -450,7 +450,7 @@ class TestUncertainty(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -502,7 +502,7 @@ class TestUncertainty(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -711,7 +711,7 @@ class TestUncertainty(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 

@@ -26,7 +26,7 @@ parameterlist1 = {"gbar_Na": scale1*120,
                   "gbar_K": scale1*36,
                   "gbar_l": 0.5}
 
-model.setParameterValues(parameterlist1)
+model.set_parameters_file(parameterlist1)
 model.run()
 prettyPlot(model.t, model.U, new_figure=False, nr_hues=3, sns_style="white", linewidth=linewidth)
 
@@ -36,7 +36,7 @@ parameterlist2 = {"gbar_Na": scale2*120,
                   "gbar_K": scale2*36,
                   "gbar_l": scale2*0.3}
 
-model.setParameterValues(parameterlist2)
+model.set_parameters_file(parameterlist2)
 model.run()
 prettyPlot(model.t, model.U, new_figure=False, nr_hues=3, sns_style="white", linewidth=linewidth)
 

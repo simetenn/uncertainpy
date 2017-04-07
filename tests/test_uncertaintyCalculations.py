@@ -34,7 +34,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameterlist)
-        self.parameters.setAllDistributions(Distribution(0.5).uniform)
+        self.parameters.set_all_distributions(Distribution(0.5).uniform)
 
         self.model = TestingModel1d()
 
@@ -284,7 +284,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -496,7 +496,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(1).uniform)
+        parameters.set_all_distributions(Distribution(1).uniform)
 
         model = TestingModelAdaptive()
         model.adaptive_model=False
@@ -582,7 +582,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -601,7 +601,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                            "feature2d", "directComparison"]
 
         q0, q1 = cp.variable(2)
-        parameter_space = parameters.getUncertain("distribution")
+        parameter_space = parameters.get_from_uncertain("distribution")
         self.uncertainty_calculations.distribution = cp.J(*parameter_space)
 
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
@@ -742,7 +742,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
 
@@ -791,7 +791,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
         features = TestingFeatures(features_to_run=["feature0d"])
@@ -820,7 +820,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
         features = TestingFeatures(features_to_run=["feature1d"])
@@ -851,7 +851,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.setAllDistributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(Distribution(0.5).uniform)
 
         model = TestingModel1d()
         features = TestingFeatures(features_to_run=["feature2d"])

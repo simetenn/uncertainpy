@@ -9,7 +9,7 @@ parameterlist = [["a", 0.02, None],
 
 parameters = uncertainpy.Parameters(parameterlist)
 model = IzhikevichModel(parameters)
-model.setAllDistributions(uncertainpy.Distribution(1).uniform)
+model.set_all_distributions(uncertainpy.Distribution(1).uniform)
 
 features = uncertainpy.SpikingFeatures(features_to_run="all")
 

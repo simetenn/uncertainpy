@@ -105,7 +105,7 @@ class UncertaintyEstimations():
 
                 # distribution = getattr(Distribution(interval), distribution_function)
                 distribution = distributions(interval)
-                self.model.setAllDistributions(distribution)
+                self.model.set_all_distributions(distribution)
 
                 message = "Running for: " + distribution_function + " " + str(interval)
                 self.logger.info(message)

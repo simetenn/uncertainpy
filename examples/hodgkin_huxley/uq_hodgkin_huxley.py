@@ -15,7 +15,7 @@ parameterlist = [["V_rest", -65, None],
 
 
 parameters = un.Parameters(parameterlist)
-parameters.setAllDistributions(un.Distribution(0.5).uniform)
+parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
 
 model = HodgkinHuxley()

@@ -80,7 +80,7 @@ class TestUseCases(unittest.TestCase):
 
         parameters = uncertainpy.Parameters(parameterlist)
         model = uncertainpy.CoffeeCupPointModel(parameters)
-        model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+        model.set_all_distributions(uncertainpy.Distribution(0.5).uniform)
 
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -153,7 +153,7 @@ class TestUseCases(unittest.TestCase):
 
         parameters = uncertainpy.Parameters(parameterlist)
         model = uncertainpy.HodkinHuxleyModel(parameters)
-        model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+        model.set_all_distributions(uncertainpy.Distribution(0.5).uniform)
 
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -231,7 +231,7 @@ class TestUseCases(unittest.TestCase):
 
         parameters = uncertainpy.Parameters(parameterlist)
         model = uncertainpy.IzhikevichModel(parameters)
-        model.setAllDistributions(uncertainpy.Distribution(0.5).uniform)
+        model.set_all_distributions(uncertainpy.Distribution(0.5).uniform)
 
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -281,7 +281,7 @@ class TestUseCases(unittest.TestCase):
                                         model_file=model_file,
                                         model_path=full_model_path,
                                         adaptive_model=True)
-        model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
+        model.set_all_distributions(uncertainpy.Distribution(0.05).uniform)
 
         exploration = uncertainpy.UncertaintyEstimations(model,
                                                          feature_list="all",
@@ -325,7 +325,7 @@ class TestUseCases(unittest.TestCase):
                                         model_path=full_model_path,
                                         adaptive_model=True)
 
-        model.setAllDistributions(uncertainpy.Distribution(0.05).uniform)
+        model.set_all_distributions(uncertainpy.Distribution(0.05).uniform)
 
         exploration = uncertainpy.UncertaintyEstimations(model,
                                                          feature_list="all",
