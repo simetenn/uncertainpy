@@ -65,7 +65,7 @@ def generate_data_PC_model_function():  # pragma: no cover
 
 
 
-def generate_data_PC0D():  # pragma: no cover
+def generate_data_PC_0D():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -90,7 +90,7 @@ def generate_data_PC0D():  # pragma: no cover
     test.polynomial_chaos()
 
 
-def generate_data_PCRosenblatt():  # pragma: no cover
+def generate_data_PC_rosenblatt():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
 
@@ -253,7 +253,7 @@ def generate_data_empty():  # pragma: no cover
     data.save(os.path.join(test_data_dir, "test_save_empty"))
 
 
-def generate_data_UncertaintyCalculations():  # pragma: no cover
+def generate_data_uncertainty_calculations():  # pragma: no cover
     np.random.seed(seed)
 
     parameterlist = [["a", 1, None],
@@ -288,13 +288,13 @@ def generate_data_UncertaintyCalculations():  # pragma: no cover
 if __name__ == "__main__":  # pragma: no cover
     generate_data_polynomial_chaos()
     generate_data_PC_model_function()
-    generate_data_PC0D()
+    generate_data_PC_0D()
     generate_data_polynomial_chaos_single()
 
     generate_data_monte_carlo()
     generate_data_monte_carlo_single()
     # generate_data_comparemonte_carlo()
-    generate_data_PCRosenblatt()
-    generate_data_UncertaintyCalculations()
+    generate_data_PC_rosenblatt()
+    generate_data_uncertainty_calculations()
     generate_data_data()
     generate_data_empty()

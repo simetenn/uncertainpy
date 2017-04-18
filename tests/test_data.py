@@ -71,7 +71,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.feature_list, ["a", "b"])
 
 
-    def test_is_adaptiveFalse(self):
+    def test_is_adaptive_false(self):
         self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
                        "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
@@ -80,7 +80,7 @@ class TestData(unittest.TestCase):
         self.assertFalse(self.data.is_adaptive())
 
 
-    def test_is_adaptiveTrue(self):
+    def test_is_adaptive_true(self):
         self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
                        "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
@@ -200,7 +200,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.ylabel, "")
 
 
-    def test_remove_only_invalid_resultsNo(self):
+    def test_remove_only_invalid_results(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.data.U = {"feature1": [1., 2.], "directComparison": [3., None]}
 
@@ -223,7 +223,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.features_1d[1], "feature1")
 
 
-    def test_remove_only_invalid_resultsError(self):
+    def test_remove_only_invalid_results_error(self):
         self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
         self.data.U = {"feature1": [1., 2.], "directComparison": np.array([None, None])}
 
@@ -234,7 +234,8 @@ class TestData(unittest.TestCase):
         self.data.remove_only_invalid_results()
 
         self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
-        self.assertEqual(self.data.U["directComparison"], "Only invalid results for all set of parameters")
+        self.assertEqual(self.data.U["directComparison"],
+                         "Only invalid results for all set of parameters")
         self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
         self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
 

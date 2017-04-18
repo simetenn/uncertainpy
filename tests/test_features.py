@@ -318,7 +318,7 @@ class TestTestingFeatures(unittest.TestCase):
     def setUp(self):
 
         self.implemented_features = ["feature0d", "feature1d",
-                                     "feature2d", "featureInvalid",
+                                     "feature2d", "feature_invalid",
                                      "feature_adaptive"]
 
         self.features = TestingFeatures(features_to_run=self.implemented_features)
@@ -340,8 +340,8 @@ class TestTestingFeatures(unittest.TestCase):
                          (np.arange(0, 10), np.array([np.arange(0, 10), np.arange(0, 10)]))))
 
 
-    def test_featureInvalid(self):
-        self.assertEqual(self.features.featureInvalid(None, None), (None, None))
+    def test_feature_invalid(self):
+        self.assertEqual(self.features.feature_invalid(None, None), (None, None))
 
 
     def test_calculate_features(self):
@@ -378,7 +378,7 @@ class TestTestingFeatures(unittest.TestCase):
                          ["feature1d", "feature2d"])
 
         features = TestingFeatures(features_to_run="all")
-        self.assertEqual(features.features_to_run, self.implemented_features + ["feature_no_time"])
+        self.assertEqual(features.features_to_run.sort(), (self.implemented_features + ["feature_no_time"]).sort())
 
 
 

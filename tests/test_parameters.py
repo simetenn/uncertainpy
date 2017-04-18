@@ -31,14 +31,14 @@ class TestParameter(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
-    def test_initNone(self):
+    def test_init_none(self):
         parameter = Parameter("gbar_Na", 120)
 
         self.assertEqual(parameter.name, "gbar_Na")
         self.assertEqual(parameter.value, 120)
 
 
-    def test_initFunction(self):
+    def test_init_function(self):
         def distribution(x):
             return cp.Uniform(x - 10, x + 10)
 
@@ -49,7 +49,7 @@ class TestParameter(unittest.TestCase):
         self.assertIsInstance(parameter.distribution, cp.Dist)
 
 
-    def test_initChaospy(self):
+    def test_init_chaospy(self):
         parameter = Parameter("gbar_Na", 120, cp.Uniform(110, 130))
 
         self.assertTrue(parameter.name, "gbar_Na")
@@ -57,14 +57,14 @@ class TestParameter(unittest.TestCase):
         self.assertIsInstance(parameter.distribution, cp.Dist)
 
 
-    def test_set_distributionNone(self):
+    def test_set_distribution_none(self):
         distribution = None
         self.parameter.distribution = distribution
 
         self.assertIsNone(self.parameter.distribution)
 
 
-    def test_set_distributionFunction(self):
+    def test_set_distribution_function(self):
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
 
@@ -73,21 +73,21 @@ class TestParameter(unittest.TestCase):
         # self.assertEqual(self.parameter.distribution, cp.Uniform(110, 130))
         self.assertIsInstance(self.parameter.distribution, cp.Dist)
 
-        def test_set_distributionFunctionNotDistReturn(self):
-            def distribution_function(x):
-                return x
+    def test_set_distribution_function_not_return_dist(self):
+        def distribution_function(x):
+            return x
 
-            with self.assertRaises(TypeError):
-                self.parameter.distribution = distribution_function
+        with self.assertRaises(TypeError):
+            self.parameter.distribution = distribution_function
 
 
-    def test_set_distributionInt(self):
+    def test_set_distribution_int(self):
         distribution = 1
         with self.assertRaises(TypeError):
             self.parameter.distribution = distribution
 
 
-    def test_set_distributionChaospy(self):
+    def test_set_distribution_chaospy(self):
         distribution = cp.Uniform(110, 130)
         self.parameter.distribution = distribution
 
@@ -135,7 +135,7 @@ class TestParameter(unittest.TestCase):
         self.assertEqual(result, "gbar_Na: 120")
 
 
-    def test_strUncertain(self):
+    def test_str_uncertain(self):
 
         self.parameter = Parameter("gbar_Na", 120, cp.Uniform(110, 130))
 
@@ -168,7 +168,7 @@ class TestParameters(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
-    def test_initListNone(self):
+    def test_init_list_none(self):
         parameterlist = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
@@ -185,7 +185,7 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(parameters["gbar_l"].distribution, None)
 
 
-    def test_initListChaospy(self):
+    def test_init_list_chaospy(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
@@ -203,7 +203,7 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(parameters["gbar_l"].distribution, cp.Dist)
 
 
-    def test_initObject(self):
+    def test_init_object(self):
         parameterlist = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
                          Parameter("gbar_K", 36),
                          Parameter("gbar_l", 10.3)]
@@ -289,7 +289,7 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(self.parameters["gbar_l"].distribution, cp.Dist)
 
 
-    def test_get_from_uncertainName(self):
+    def test_get_from_uncertain_name(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
@@ -302,7 +302,7 @@ class TestParameters(unittest.TestCase):
         self.assertNotIn("gbar_l", result)
 
 
-    def test_get_from_uncertainValue(self):
+    def test_get_from_uncertain_value(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
@@ -316,7 +316,7 @@ class TestParameters(unittest.TestCase):
         self.assertNotIn(0.3, result)
 
 
-    def test_get_from_uncertainDistribution(self):
+    def test_get_from_uncertain_distribution(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
@@ -329,7 +329,7 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(result[1], cp.Dist)
 
 
-    def test_getName(self):
+    def test_get_name(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
@@ -343,7 +343,7 @@ class TestParameters(unittest.TestCase):
         self.assertIn("gbar_l", result)
 
 
-    def test_getValue(self):
+    def test_get_value(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
@@ -357,7 +357,7 @@ class TestParameters(unittest.TestCase):
         self.assertIn(0.3, result)
 
 
-    def test_getValueList(self):
+    def test_get_value_list(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
@@ -370,7 +370,7 @@ class TestParameters(unittest.TestCase):
         self.assertIn(36, result)
 
 
-    def test_getError(self):
+    def test_get_error(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
@@ -381,7 +381,7 @@ class TestParameters(unittest.TestCase):
             self.parameters.get("not_a_parameter")
 
 
-    def test_getDistribution(self):
+    def test_get_distribution(self):
         parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]

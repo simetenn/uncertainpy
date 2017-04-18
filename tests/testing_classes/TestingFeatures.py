@@ -21,7 +21,7 @@ class TestingFeatures(GeneralFeatures):
     def feature2d(self, t, U):
         return np.arange(0, 10), np.array([np.arange(0, 10), np.arange(0, 10)])
 
-    def featureInvalid(self, t, U):
+    def feature_invalid(self, t, U):
         return None, None
 
     def feature_adaptive(self, t, U):

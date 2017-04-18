@@ -79,7 +79,7 @@ class TestUncertainty(unittest.TestCase):
             UncertaintyEstimation(self.model, 2)
 
 
-    def test_intitFeatures(self):
+    def test_intit_features(self):
         uncertainty = UncertaintyEstimation(self.model,
                                             self.parameters,
                                             verbose_level="error")
@@ -94,7 +94,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_initUncertaintyCalculations(self):
+    def test_init_uncertainty_calculations(self):
 
         class TempUncertaintyCalculations(UncertaintyCalculations):
             def create_PCE_custom(self):
@@ -289,18 +289,18 @@ class TestUncertainty(unittest.TestCase):
         self.assertTrue(uncertainty.uncertainty_calculations.test_value,
                         "custom PCE method")
 
-    def test_convert_uncertain_parametersList(self):
+    def test_convert_uncertain_parameters_list(self):
         result = self.uncertainty.convert_uncertain_parameters(["a", "b"])
 
         self.assertEqual(result, ["a", "b"])
 
-    def test_convert_uncertain_parametersString(self):
+    def test_convert_uncertain_parameters_string(self):
         result = self.uncertainty.convert_uncertain_parameters("a")
 
         self.assertEqual(result, ["a"])
 
 
-    def test_convert_uncertain_parametersNone(self):
+    def test_convert_uncertain_parameters_none(self):
         result = self.uncertainty.convert_uncertain_parameters(None)
 
         self.assertEqual(result, ["a", "b"])
@@ -360,7 +360,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_PCPlot(self):
+    def test_PC_plot(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -402,7 +402,7 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_polynomial_chaos_singlePlot(self):
+    def test_polynomial_chaos_single_plot(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -593,7 +593,6 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data.feature_list[1], "feature1")
 
 
-
     def test_plot_all(self):
         self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(condensed=False, sensitivity="sensitivity_1")
@@ -686,7 +685,6 @@ class TestUncertainty(unittest.TestCase):
         self.plot_exists("feature1d_confidence-interval")
 
 
-
     def test_simulator_results(self):
         self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(simulator_results=True)
@@ -697,7 +695,6 @@ class TestUncertainty(unittest.TestCase):
                          self.uncertainty.uncertainty_calculations.nr_pc_samples)
 
 
-
     def test_PCsimulator_results(self):
         self.uncertainty.polynomial_chaos(plot_simulator_results=True)
 
@@ -705,8 +702,7 @@ class TestUncertainty(unittest.TestCase):
                          self.uncertainty.uncertainty_calculations.nr_pc_samples)
 
 
-
-    def setUpTestCalculations(self):
+    def set_up_test_calculations(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -730,7 +726,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_uncertainty_quantificationPCAll(self):
-        self.setUpTestCalculations()
+        self.set_up_test_calculations()
 
         self.uncertainty.uncertainty_quantification(method="pc", plot_condensed=False)
 
@@ -740,14 +736,14 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["rosenblatt"], False)
 
 
-    def test_uncertainty_quantificationpolynomial_chaos_singleResultRosenblatt(self):
-        self.setUpTestCalculations()
+    def test_uncertainty_quantification_PC_single_rosenblatt(self):
+        self.set_up_test_calculations()
 
         self.uncertainty.uncertainty_quantification(method="pc",
-                            pc_method="regression",
-                            plot_condensed=True,
-                            single=True,
-                            rosenblatt=True)
+                                                    pc_method="regression",
+                                                    plot_condensed=True,
+                                                    single=True,
+                                                    rosenblatt=True)
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
@@ -755,8 +751,8 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["rosenblatt"], True)
 
 
-    def test_uncertainty_quantificationmonte_carlo(self):
-        self.setUpTestCalculations()
+    def test_uncertainty_quantification_monte_carlo(self):
+        self.set_up_test_calculations()
 
         self.uncertainty.uncertainty_quantification(method="mc", plot_condensed=False)
 
@@ -764,8 +760,8 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
 
 
-    def test_uncertainty_quantificationmonte_carlo_single(self):
-        self.setUpTestCalculations()
+    def test_uncertainty_quantification_monte_carlo_single(self):
+        self.set_up_test_calculations()
 
         self.uncertainty.uncertainty_quantification(method="mc", plot_condensed=False, single=True)
 
@@ -774,8 +770,8 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_uncertainty_quantificationCustom(self):
-        self.setUpTestCalculations()
+    def test_uncertainty_quantification_custom(self):
+        self.set_up_test_calculations()
 
         self.uncertainty.uncertainty_quantification(method="custom", custom_keyword="value")
 
@@ -784,7 +780,7 @@ class TestUncertainty(unittest.TestCase):
 
 
     def test_custom_uncertainty_quantification(self):
-        self.setUpTestCalculations()
+        self.set_up_test_calculations()
 
         self.uncertainty.custom_uncertainty_quantification(custom_keyword="value")
 

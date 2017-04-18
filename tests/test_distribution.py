@@ -9,12 +9,12 @@ class TestDistribution(unittest.TestCase):
 
         self.distribution = Distribution(0.1, distribution)
 
-    def test_intit(self):
+    def test_init(self):
         distribution = Distribution(0.1)
 
         self.assertEqual(distribution.interval, 0.1)
 
-    def test_intitFunction(self):
+    def test_intit_function(self):
         def distribution(parameter, interval):
             return cp.Uniform(parameter - interval, parameter + interval)
 

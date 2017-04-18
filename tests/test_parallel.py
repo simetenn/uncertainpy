@@ -26,7 +26,7 @@ class TestParallel(unittest.TestCase):
         self.features = TestingFeatures(features_to_run=["feature0d",
                                                          "feature1d",
                                                          "feature2d",
-                                                         "featureInvalid",
+                                                         "feature_invalid",
                                                          "feature_adaptive"])
 
         self.parallel = Parallel(model=TestingModel1d(),
@@ -151,12 +151,12 @@ class TestParallel(unittest.TestCase):
                    "feature_adaptive": {"U": np.arange(0, 10) + 1,
                                         "t": np.arange(0, 10),
                                         "interpolation": "interpolation object"},
-                   "featureInvalid": {"U": None,
+                   "feature_invalid": {"U": None,
                                       "t": None}}
 
         features_0d, features_1d, features_2d = self.parallel.sort_features(results)
 
-        self.assertEqual(features_0d, ["feature0d", "featureInvalid"])
+        self.assertEqual(features_0d, ["feature0d", "feature_invalid"])
         self.assertEqual(set(features_1d),
                          set(["feature1d", "directComparison", "feature_adaptive"]))
         self.assertEqual(features_2d, ["feature2d"])
@@ -176,7 +176,7 @@ class TestParallel(unittest.TestCase):
                                  "t": np.arange(0, 10)},
                    "feature_adaptive": {"U": np.arange(0, 10) + 1,
                                         "t": np.arange(0, 10)},
-                   "featureInvalid": {"U": None,
+                   "feature_invalid": {"U": None,
                                       "t": None}}
 
         results = self.parallel.create_interpolations(results)
@@ -190,8 +190,8 @@ class TestParallel(unittest.TestCase):
         self.assertTrue(np.array_equal(results["feature2d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature2d"]["U"], np.array([np.arange(0, 10),
                                                                             np.arange(0, 10)])))
-        self.assertIsNone(results["featureInvalid"]["t"])
-        self.assertIsNone(results["featureInvalid"]["U"])
+        self.assertIsNone(results["feature_invalid"]["t"])
+        self.assertIsNone(results["feature_invalid"]["U"])
         self.assertTrue(np.array_equal(results["feature_adaptive"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["U"], np.arange(0, 10) + 1))
         self.assertIsInstance(results["feature_adaptive"]["interpolation"],
@@ -258,8 +258,8 @@ class TestParallel(unittest.TestCase):
         self.assertTrue(np.array_equal(results["feature2d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature2d"]["U"], np.array([np.arange(0, 10),
                                                                             np.arange(0, 10)])))
-        self.assertIsNone(results["featureInvalid"]["t"])
-        self.assertIsNone(results["featureInvalid"]["U"])
+        self.assertIsNone(results["feature_invalid"]["t"])
+        self.assertIsNone(results["feature_invalid"]["U"])
         self.assertTrue(np.array_equal(results["feature_adaptive"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["U"], np.arange(0, 10) + 1))
         self.assertIsInstance(results["feature_adaptive"]["interpolation"],
