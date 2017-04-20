@@ -380,9 +380,9 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.polynomial_chaos()
 
-        self.plot_exists("directComparison_mean-variance")
-        self.plot_exists("directComparison_confidence-interval")
-        self.plot_exists("directComparison_sensitivity_1_grid")
+        self.plot_exists("TestingModel1d_mean-variance")
+        self.plot_exists("TestingModel1d_confidence-interval")
+        self.plot_exists("TestingModel1d_sensitivity_1_grid")
 
         self.plot_exists("feature1d_mean-variance")
         self.plot_exists("feature1d_confidence-interval")
@@ -418,14 +418,14 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.polynomial_chaos_single()
 
-        self.plot_exists("TestingModel1d_single-parameter-a/directComparison_mean-variance")
-        self.plot_exists("TestingModel1d_single-parameter-a/directComparison_confidence-interval")
+        self.plot_exists("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
+        self.plot_exists("TestingModel1d_single-parameter-a/TestingModel1d_confidence-interval")
 
         self.plot_exists("TestingModel1d_single-parameter-a/feature1d_mean-variance")
         self.plot_exists("TestingModel1d_single-parameter-a/feature1d_confidence-interval")
 
-        self.plot_exists("TestingModel1d_single-parameter-b/directComparison_mean-variance")
-        self.plot_exists("TestingModel1d_single-parameter-b/directComparison_confidence-interval")
+        self.plot_exists("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
+        self.plot_exists("TestingModel1d_single-parameter-b/TestingModel1d_confidence-interval")
 
         self.plot_exists("TestingModel1d_single-parameter-b/feature1d_mean-variance")
         self.plot_exists("TestingModel1d_single-parameter-b/feature1d_confidence-interval")
@@ -579,15 +579,15 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.plot(condensed=False, sensitivity="sensitivity_1")
 
 
-        self.plot_exists("directComparison_mean")
-        self.plot_exists("directComparison_variance")
-        self.plot_exists("directComparison_mean-variance")
-        self.plot_exists("directComparison_confidence-interval")
+        self.plot_exists("TestingModel1d_mean")
+        self.plot_exists("TestingModel1d_variance")
+        self.plot_exists("TestingModel1d_mean-variance")
+        self.plot_exists("TestingModel1d_confidence-interval")
 
-        self.plot_exists("directComparison_sensitivity_1_a")
-        self.plot_exists("directComparison_sensitivity_1_b")
-        self.plot_exists("directComparison_sensitivity_1")
-        self.plot_exists("directComparison_sensitivity_1_grid")
+        self.plot_exists("TestingModel1d_sensitivity_1_a")
+        self.plot_exists("TestingModel1d_sensitivity_1_b")
+        self.plot_exists("TestingModel1d_sensitivity_1")
+        self.plot_exists("TestingModel1d_sensitivity_1_grid")
 
 
         self.plot_exists("feature1d_mean")
@@ -601,7 +601,7 @@ class TestUncertainty(unittest.TestCase):
         self.plot_exists("feature1d_sensitivity_1_grid")
         self.plot_exists("feature0d_total-sensitivity_1")
 
-        self.plot_exists("directComparison_total-sensitivity_1")
+        self.plot_exists("TestingModel1d_total-sensitivity_1")
         self.plot_exists("feature0d_total-sensitivity_1")
         self.plot_exists("feature1d_total-sensitivity_1")
         self.plot_exists("feature2d_total-sensitivity_1")
@@ -613,15 +613,15 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-        self.plot_exists("directComparison_sensitivity_t_a")
-        self.plot_exists("directComparison_sensitivity_t_b")
-        self.plot_exists("directComparison_sensitivity_t")
-        self.plot_exists("directComparison_sensitivity_t_grid")
+        self.plot_exists("TestingModel1d_sensitivity_t_a")
+        self.plot_exists("TestingModel1d_sensitivity_t_b")
+        self.plot_exists("TestingModel1d_sensitivity_t")
+        self.plot_exists("TestingModel1d_sensitivity_t_grid")
 
         self.plot_exists("feature0d_total-sensitivity_t")
 
 
-        self.plot_exists("directComparison_total-sensitivity_t")
+        self.plot_exists("TestingModel1d_total-sensitivity_t")
         self.plot_exists("feature0d_total-sensitivity_t")
         self.plot_exists("feature1d_total-sensitivity_t")
         self.plot_exists("feature2d_total-sensitivity_t")
@@ -636,9 +636,9 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.polynomial_chaos()
         self.uncertainty.plot()
 
-        self.plot_exists("directComparison_mean-variance")
-        self.plot_exists("directComparison_confidence-interval")
-        self.plot_exists("directComparison_sensitivity_1_grid")
+        self.plot_exists("TestingModel1d_mean-variance")
+        self.plot_exists("TestingModel1d_confidence-interval")
+        self.plot_exists("TestingModel1d_sensitivity_1_grid")
 
         self.plot_exists("feature1d_mean-variance")
         self.plot_exists("feature1d_confidence-interval")
@@ -654,10 +654,10 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(condensed=False, sensitivity=None)
 
-        self.plot_exists("directComparison_mean")
-        self.plot_exists("directComparison_variance")
-        self.plot_exists("directComparison_mean-variance")
-        self.plot_exists("directComparison_confidence-interval")
+        self.plot_exists("TestingModel1d_mean")
+        self.plot_exists("TestingModel1d_variance")
+        self.plot_exists("TestingModel1d_mean-variance")
+        self.plot_exists("TestingModel1d_confidence-interval")
 
 
         self.plot_exists("feature1d_mean")

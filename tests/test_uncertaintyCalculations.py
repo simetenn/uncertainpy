@@ -243,7 +243,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
 
 
-    def test_create_mask_direct_comparison(self):
+    def test_create_mask_model(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -259,7 +259,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(nodes, masked_nodes))
 
 
-    def test_create_mask_direct_comparison_none(self):
+    def test_create_mask_model_none(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 

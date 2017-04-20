@@ -116,7 +116,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         compare_file = os.path.join(folder, "figures/U.png")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results_1d/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
             result = subprocess.call(["diff", plot, compare_file])
 
             self.assertEqual(result, 0)
@@ -126,18 +126,19 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertEqual(plot_count, 5)
 
 
-
     def test_simulator_results_0d_error(self):
         self.plot.data = Data()
 
         with self.assertRaises(ValueError):
             self.plot.simulator_results_1d()
 
+
     def test_simulator_results_1d_error(self):
         self.plot.data = Data()
 
         with self.assertRaises(ValueError):
             self.plot.simulator_results_1d()
+
 
     def test_simulator_results_error(self):
         self.plot.data = Data()
