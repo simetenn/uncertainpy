@@ -12,6 +12,9 @@ RUN conda install -c bioconda multiprocess
 
 
 # Uncertainpy dependencies
+RUN  apt-get update --fix-missing
+
+RUN apt-get -y install texlive-latex-base
 RUN apt-get -y install texlive-latex-base
 RUN apt-get -y install texlive-latex-extra
 RUN apt-get -y install texlive-fonts-recommended
