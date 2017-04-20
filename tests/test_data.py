@@ -72,40 +72,41 @@ class TestData(unittest.TestCase):
 
 
     def test_is_adaptive_false(self):
-        self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
-                       "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
+        self.data.U = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
+                       "TestingModel1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
-        self.data.features_1d = ["feature1", "directComparison"]
+        self.data.features_1d = ["feature1d", "TestingModel1d"]
 
         self.assertFalse(self.data.is_adaptive())
 
 
     def test_is_adaptive_true(self):
-        self.data.U = {"feature1": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
-                       "directComparison": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
+        self.data.U = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
+                       "TestingModel1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
-        self.data.features_1d = ["feature1", "directComparison"]
+        self.data.features_1d = ["feature1d", "TestingModel1d"]
 
         self.assertTrue(self.data.is_adaptive())
 
     def test_save(self):
-        self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
-        self.data.total_sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.data.t = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.U = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.E = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.Var = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.p_05 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.p_95 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
+        self.data.total_sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
 
-        self.data.sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
-        self.data.total_sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
+        self.data.sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
+        self.data.total_sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
 
 
         self.data.uncertain_parameters = ["a", "b"]
         self.data.xlabel = "xlabel"
         self.data.ylabel = "ylabel"
-        self.data.feature_list = ["directComparison", "feature1"]
+        self.data.model_name = "TestingModel1d"
+        self.data.feature_list = ["TestingModel1d", "feature1d"]
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -147,27 +148,27 @@ class TestData(unittest.TestCase):
 
         self.data.load(compare_file)
 
-        self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.U["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.E["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.E["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.Var["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.Var["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.p_05["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.p_05["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.p_95["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.p_95["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.sensitivity_1["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.sensitivity_1["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.total_sensitivity_1["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.total_sensitivity_1["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.U["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.U["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.E["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.E["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.t["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.t["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.Var["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.Var["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.p_05["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.p_05["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.p_95["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.p_95["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_1["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_1["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_1["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_1["TestingModel1d"], [3., 4.]))
 
-        self.assertTrue(np.array_equal(self.data.sensitivity_t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.sensitivity_t["directComparison"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_t["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.sensitivity_t["TestingModel1d"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.total_sensitivity_t["TestingModel1d"], [3., 4.]))
 
 
         self.assertEqual(self.data.uncertain_parameters[0], "a")
@@ -176,8 +177,8 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.xlabel, "xlabel")
         self.assertEqual(self.data.ylabel, "ylabel")
 
-        self.assertEqual(self.data.feature_list[0], "directComparison")
-        self.assertEqual(self.data.feature_list[1], "feature1")
+        self.assertEqual(self.data.feature_list[0], "TestingModel1d")
+        self.assertEqual(self.data.feature_list[1], "feature1d")
 
 
     def test_load_empty(self):
@@ -201,47 +202,47 @@ class TestData(unittest.TestCase):
 
 
     def test_remove_only_invalid_results(self):
-        self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.U = {"feature1": [1., 2.], "directComparison": [3., None]}
+        self.data.t = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.U = {"feature1d": [1., 2.], "TestingModel1d": [3., None]}
 
-        self.data.feature_list = ["directComparison", "feature1"]
-        self.data.features_1d = ["directComparison", "feature1"]
+        self.data.feature_list = ["TestingModel1d", "feature1d"]
+        self.data.features_1d = ["TestingModel1d", "feature1d"]
 
         self.data.remove_only_invalid_results()
 
 
-        self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
-        self.assertEqual(self.data.U["directComparison"][0], 3.)
-        self.assertIsNone(self.data.U["directComparison"][1])
-        self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.U["feature1d"], [1., 2.]))
+        self.assertEqual(self.data.U["TestingModel1d"][0], 3.)
+        self.assertIsNone(self.data.U["TestingModel1d"][1])
+        self.assertTrue(np.array_equal(self.data.t["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.t["TestingModel1d"], [3., 4.]))
 
-        self.assertEqual(self.data.feature_list[0], "directComparison")
-        self.assertEqual(self.data.feature_list[1], "feature1")
+        self.assertEqual(self.data.feature_list[0], "TestingModel1d")
+        self.assertEqual(self.data.feature_list[1], "feature1d")
 
-        self.assertEqual(self.data.features_1d[0], "directComparison")
-        self.assertEqual(self.data.features_1d[1], "feature1")
+        self.assertEqual(self.data.features_1d[0], "TestingModel1d")
+        self.assertEqual(self.data.features_1d[1], "feature1d")
 
 
     def test_remove_only_invalid_results_error(self):
-        self.data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-        self.data.U = {"feature1": [1., 2.], "directComparison": np.array([None, None])}
+        self.data.t = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+        self.data.U = {"feature1d": [1., 2.], "TestingModel1d": np.array([None, None])}
 
 
-        self.data.feature_list = ["directComparison", "feature1"]
-        self.data.features_1d = ["directComparison", "feature1"]
+        self.data.feature_list = ["TestingModel1d", "feature1d"]
+        self.data.features_1d = ["TestingModel1d", "feature1d"]
 
         self.data.remove_only_invalid_results()
 
-        self.assertTrue(np.array_equal(self.data.U["feature1"], [1., 2.]))
-        self.assertEqual(self.data.U["directComparison"],
+        self.assertTrue(np.array_equal(self.data.U["feature1d"], [1., 2.]))
+        self.assertEqual(self.data.U["TestingModel1d"],
                          "Only invalid results for all set of parameters")
-        self.assertTrue(np.array_equal(self.data.t["feature1"], [1., 2.]))
-        self.assertTrue(np.array_equal(self.data.t["directComparison"], [3., 4.]))
+        self.assertTrue(np.array_equal(self.data.t["feature1d"], [1., 2.]))
+        self.assertTrue(np.array_equal(self.data.t["TestingModel1d"], [3., 4.]))
 
-        self.assertEqual(self.data.feature_list, ["feature1"])
+        self.assertEqual(self.data.feature_list, ["feature1d"])
 
-        self.assertEqual(self.data.features_1d, ["feature1"])
+        self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
     def test_str(self):

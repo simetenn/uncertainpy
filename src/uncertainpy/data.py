@@ -44,7 +44,7 @@ feature_list
 
         self.data_information = ["xlabel", "ylabel", "features_0d",
                                  "features_1d", "features_2d", "feature_list",
-                                 "uncertain_parameters"]
+                                 "uncertain_parameters", "model_name"]
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -117,6 +117,7 @@ feature_list
 
         self.xlabel = ""
         self.ylabel = ""
+        self.model_name = ""
 
 
     @property
@@ -179,6 +180,7 @@ Test if the model returned an adaptive result
             f.attrs["features_0d"] = self.features_0d
             f.attrs["features_1d"] = self.features_1d
             f.attrs["features_2d"] = self.features_2d
+            f.attrs["model name"] = self.model_name
 
 
             for feature in self.feature_list:
@@ -212,6 +214,7 @@ Test if the model returned an adaptive result
 
             self.xlabel = f.attrs["xlabel"]
             self.ylabel = f.attrs["ylabel"]
+            self.model_name = f.attrs["model name"]
 
 
             # self.feature_list = listf.attrs["features"]

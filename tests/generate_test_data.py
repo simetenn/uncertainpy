@@ -225,21 +225,22 @@ def generate_data_data():  # pragma: no cover
     data = un.Data()
 
     data.uncertain_parameters = ["a", "b"]
-    data.feature_list = ["directComparison", "feature1"]
-    data.t = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    data.U = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    data.E = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    data.Var = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    data.p_05 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    data.p_95 = {"feature1": [1., 2.], "directComparison": [3., 4.]}
-    data.sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
-    data.total_sensitivity_1 = {"feature1": [1, 2], "directComparison": [3., 4.]}
-    data.sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
-    data.total_sensitivity_t = {"feature1": [1, 2], "directComparison": [3., 4.]}
+    data.feature_list = ["TestingModel1d", "feature1d"]
+    data.t = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+    data.U = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+    data.E = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+    data.Var = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+    data.p_05 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+    data.p_95 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
+    data.sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
+    data.total_sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
+    data.sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
+    data.total_sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
     data.xlabel = "xlabel"
     data.ylabel = "ylabel"
+    data.model_name = "TestingModel1d"
 
-    data.features_0d = ["directComparison", "feature1"]
+    data.features_0d = ["TestingModel1d", "feature1d"]
     data.features_1d = []
     data.features_2d = []
 

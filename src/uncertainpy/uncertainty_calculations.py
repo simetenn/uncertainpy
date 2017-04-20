@@ -212,7 +212,7 @@ class UncertaintyCalculations(object):
                                                     masked_weights, masked_U)
 
         # TODO perform for directComparison outside, since masking is not needed.?
-        # self.U_hat["directComparison"] = cp.fit_quadrature(self.P, nodes,
+        # self.U_hat[self.model.name] = cp.fit_quadrature(self.P, nodes,
         #                                                    masked_weights,
         #                                                    self.data.U[feature])
 
@@ -247,8 +247,8 @@ class UncertaintyCalculations(object):
 
 
         # TODO perform for directComparison outside, since masking is not needed.?
-        # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
-        #                                                    self.data.U["directComparison"],
+        # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes,
+        #                                                    self.data.U[self.model.name],
         #                                                    rule="T")
 
 
@@ -297,8 +297,8 @@ class UncertaintyCalculations(object):
 
         # # perform for directComparison outside, since masking is not needed.
         # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes,
-        #                                                    self.data.U["directComparison"],
+        # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes,
+        #                                                    self.data.U[self.model.name],
         #                                                    rule="T")
 
 
@@ -340,8 +340,8 @@ class UncertaintyCalculations(object):
                                                     masked_U, rule="T")
 
         # TODO perform for directComparison outside, since masking is not needed.
-        # self.U_hat["directComparison"] = cp.fit_regression(self.P, nodes_MvNormal,
-        #                                                    self.data.U["directComparison"],
+        # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes_MvNormal,
+        #                                                    self.data.U[self.model.name],
         #                                                    rule="T")
 
 

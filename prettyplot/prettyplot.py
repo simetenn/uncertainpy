@@ -557,9 +557,7 @@ Returns
 ----------
 ax : matplotlib.axis object
     """
-
     set_style(style, nr_colors=nr_colors, palette=palette, custom=custom_style)
-
 
     if ax is None:
         if new_figure:
@@ -591,8 +589,6 @@ ax : matplotlib.axis object
         if isinstance(color, int):
             colors = sns.color_palette()
             color = colors[color]
-
-
 
     p = ax.plot(x, y, color=color, zorder=zorder, **kwargs)
 

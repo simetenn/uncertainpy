@@ -306,11 +306,7 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(result, ["a", "b"])
 
 
-
-
     def test_polynomial_chaos_single(self):
-
-
         self.uncertainty.polynomial_chaos_single()
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -327,7 +323,6 @@ class TestUncertainty(unittest.TestCase):
         result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
-
 
 
     def test_PC_model_function(self):
@@ -359,7 +354,6 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-
     def test_PC_plot(self):
         parameterlist = [["a", 1, None],
                          ["b", 2, None]]
@@ -372,7 +366,6 @@ class TestUncertainty(unittest.TestCase):
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
-
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
@@ -397,9 +390,7 @@ class TestUncertainty(unittest.TestCase):
 
         self.plot_exists("feature0d_sensitivity_1")
 
-
         self.plot_exists("total-sensitivity_1_grid")
-
 
 
     def test_polynomial_chaos_single_plot(self):
@@ -425,8 +416,6 @@ class TestUncertainty(unittest.TestCase):
                                                  seed=self.seed,
                                                  nr_mc_samples=10)
 
-
-
         self.uncertainty.polynomial_chaos_single()
 
         self.plot_exists("TestingModel1d_single-parameter-a/directComparison_mean-variance")
@@ -435,14 +424,11 @@ class TestUncertainty(unittest.TestCase):
         self.plot_exists("TestingModel1d_single-parameter-a/feature1d_mean-variance")
         self.plot_exists("TestingModel1d_single-parameter-a/feature1d_confidence-interval")
 
-
         self.plot_exists("TestingModel1d_single-parameter-b/directComparison_mean-variance")
         self.plot_exists("TestingModel1d_single-parameter-b/directComparison_confidence-interval")
 
         self.plot_exists("TestingModel1d_single-parameter-b/feature1d_mean-variance")
         self.plot_exists("TestingModel1d_single-parameter-b/feature1d_confidence-interval")
-
-
 
 
     def test_monte_carlo_single(self):
@@ -457,7 +443,6 @@ class TestUncertainty(unittest.TestCase):
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
-
 
         self.uncertainty = UncertaintyEstimation(model,
                                                  features=features,
@@ -484,7 +469,6 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-
         compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b.h5")
 
@@ -493,7 +477,6 @@ class TestUncertainty(unittest.TestCase):
         result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
-
 
 
     def test_monte_carlo(self):
@@ -534,52 +517,50 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-
-
     def test_load(self):
         folder = os.path.dirname(os.path.realpath(__file__))
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.U["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.U["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.E["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.E["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.t["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.t["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.t["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.Var["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.Var["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.Var["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.Var["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["TestingModel1d"],
                                        [3., 4.]))
 
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["TestingModel1d"],
                                        [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["feature1"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["feature1d"],
                                        [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["directComparison"],
+        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["TestingModel1d"],
                                        [3., 4.]))
 
 
@@ -589,8 +570,8 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data.xlabel, "xlabel")
         self.assertEqual(self.uncertainty.data.ylabel, "ylabel")
 
-        self.assertEqual(self.uncertainty.data.feature_list[0], "directComparison")
-        self.assertEqual(self.uncertainty.data.feature_list[1], "feature1")
+        self.assertEqual(self.uncertainty.data.feature_list[0], "TestingModel1d")
+        self.assertEqual(self.uncertainty.data.feature_list[1], "feature1d")
 
 
     def test_plot_all(self):

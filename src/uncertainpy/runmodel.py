@@ -14,7 +14,7 @@ from parameters import Parameters
 
 
 """
-result = {"directComparison": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
@@ -105,7 +105,7 @@ class RunModel(object):
         if self._model is not None:
             self.data.xlabel = self.model.xlabel
             self.data.ylabel = self.model.ylabel
-
+            self.data.model_name = self.model.name
 
     @property
     def parameters(self):
@@ -164,7 +164,7 @@ class RunModel(object):
                 if "t" in solves[0][feature]:
                     self.data.t[feature] = solves[0][feature]["t"]
                 else:
-                    self.data.t[feature] = solves[0]["directComparison"]["t"]
+                    self.data.t[feature] = solves[0][self.model.name]["t"]
 
                 self.data.U[feature] = []
                 for solved in solves:
@@ -179,7 +179,7 @@ class RunModel(object):
                     if "t" in solved[feature]:
                         ts.append(solved[feature]["t"])
                     else:
-                        ts.append(solved["directComparison"]["t"])
+                        ts.append(solved[self.model.name]["t"])
 
                     interpolations.append(solved[feature]["interpolation"])
 
@@ -189,7 +189,7 @@ class RunModel(object):
                 if "t" in solves[0][feature]:
                     self.data.t[feature] = solves[0][feature]["t"]
                 else:
-                    self.data.t[feature] = solves[0]["directComparison"]["t"]
+                    self.data.t[feature] = solves[0][self.model.name]["t"]
 
                 self.data.U[feature] = []
                 for solved in solves:

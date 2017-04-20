@@ -9,7 +9,7 @@ from models import Model
 
 
 """
-result = {"directComparison": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
@@ -88,7 +88,7 @@ class Parallel(object):
         result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                   "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
-                  "directComparison": {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
+                  self.model.name: {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                   "feature0d": {"U": 1}}
         """
@@ -117,13 +117,13 @@ class Parallel(object):
 
         for feature in features_0d:
             if feature in self.features.adaptive_features or \
-                    (feature == "directComparison" and self.model.adaptive_model):
+                    (feature == self.model.name and self.model.adaptive_model):
                 raise AttributeError("{} is 0D,".format(feature)
                                      + " unable to perform interpolation")
 
         for feature in features_1d:
             if feature in self.features.adaptive_features or \
-                    (feature == "directComparison" and self.model.adaptive_model):
+                    (feature == self.model.name and self.model.adaptive_model):
                 if results[feature]["t"] is None:
                     raise AttributeError("{} does not return any t values.".format(feature)
                                          + " Unable to perform interpolation")
@@ -136,7 +136,7 @@ class Parallel(object):
 
         for feature in features_2d:
             if feature in self.features.adaptive_features or \
-                    (feature == "directComparison" and self.model.adaptive_model):
+                    (feature == self.model.name and self.model.adaptive_model):
                 raise NotImplementedError("{feature},".format(feature=feature)
                                           + " no support for >= 2D interpolation")
 
@@ -169,7 +169,7 @@ class Parallel(object):
 
 
             results = {}
-            results["directComparison"] = {"t": t, "U": U}
+            results[self.model.name] = {"t": t, "U": U}
 
             # Calculate features from the model results
             self.features.t = t

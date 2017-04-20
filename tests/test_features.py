@@ -53,7 +53,6 @@ class TestGeneralFeatures(unittest.TestCase):
         features.setup()
 
 
-
     def test_calculate_featureNotImplemented(self):
         with self.assertRaises(AttributeError):
             self.features.calculate_feature("not_in_class")
@@ -76,14 +75,13 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(self.features.calculate(), {})
 
 
-
     def test_intitFeatureList(self):
         features = GeneralFeatures(features_to_run=None)
         self.assertEqual(features.features_to_run, [])
 
-        features = GeneralFeatures(features_to_run=["feature1", "feature2"])
+        features = GeneralFeatures(features_to_run=["feature1d", "feature2"])
         self.assertEqual(features.features_to_run,
-                         ["feature1", "feature2"])
+                         ["feature1d", "feature2"])
 
         features = GeneralFeatures(features_to_run="all")
         self.assertEqual(features.features_to_run, [])
@@ -93,9 +91,9 @@ class TestGeneralFeatures(unittest.TestCase):
         features = GeneralFeatures(adaptive_features=None)
         self.assertEqual(features.adaptive_features, [])
 
-        features = GeneralFeatures(adaptive_features=["feature1", "feature2"])
+        features = GeneralFeatures(adaptive_features=["feature1d", "feature2"])
         self.assertEqual(features.adaptive_features,
-                         ["feature1", "feature2"])
+                         ["feature1d", "feature2"])
 
 
         features = GeneralFeatures(adaptive_features="all")
@@ -116,6 +114,7 @@ class TestGeneralFeatures(unittest.TestCase):
 
         self.assertEqual(features.features_to_run,
                          ["feature_function"])
+
 
     def test_add_features(self):
         def feature_function(t, U):
@@ -142,6 +141,8 @@ class TestGeneralFeatures(unittest.TestCase):
 
         self.assertEqual(features.features_to_run,
                          ["feature_function", "feature_function2"])
+
+
 
 class TestGeneralSpikingFeatures(unittest.TestCase):
     def setUp(self):
@@ -200,7 +201,6 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
 
 
 
-
 class TestSpikingFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -217,7 +217,6 @@ class TestSpikingFeatures(unittest.TestCase):
         self.features.t = self.t
         self.features.U = self.U
         self.features.setup()
-
 
 
     def test_initNone(self):

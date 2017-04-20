@@ -22,9 +22,9 @@ run(**parameters) must return t and U
 
 
     @run.setter
-    def run(self, new_run):
-        self._run = new_run
-        self.name = new_run.__name__
+    def run(self, new_run_function):
+        self._run = new_run_function
+        self.name = new_run_function.__name__
 
 
     def set_parameters(self, **parameters):
