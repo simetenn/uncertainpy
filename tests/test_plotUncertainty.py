@@ -116,7 +116,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         compare_file = os.path.join(folder, "figures/U.png")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results_1d/*.png")):
             result = subprocess.call(["diff", plot, compare_file])
 
             self.assertEqual(result, 0)
