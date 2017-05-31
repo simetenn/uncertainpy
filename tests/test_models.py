@@ -6,9 +6,9 @@ import chaospy as cp
 from uncertainpy.models import Model, NeuronModel
 from uncertainpy import Parameters
 
-from models import HodgkinHuxleyModel
-from models import CoffeeCupPointModel
-from models import IzhikevichModel
+from models import HodgkinHuxley
+from models import CoffeeCup
+from models import izhikevich
 
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
 from testing_classes import TestingModelAdaptive, model_function
@@ -41,7 +41,7 @@ class TestModel(unittest.TestCase):
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
     def setUp(self):
-        self.model = HodgkinHuxleyModel()
+        self.model = HodgkinHuxley()
 
 
     def test_run(self):
@@ -50,9 +50,9 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
 
 
 
-class TestCoffeeCupPointModel(unittest.TestCase):
+class TestCoffeeCupModel(unittest.TestCase):
     def setUp(self):
-        self.model = CoffeeCupPointModel()
+        self.model = CoffeeCup()
 
 
     def test_run(self):
@@ -63,11 +63,11 @@ class TestCoffeeCupPointModel(unittest.TestCase):
 
 class TestIzhikevichModel(unittest.TestCase):
     def setUp(self):
-        self.model = IzhikevichModel()
+        self.model = izhikevich
 
     def test_run(self):
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
-        self.model.run(**parameters)
+        self.model(**parameters)
 
 
 

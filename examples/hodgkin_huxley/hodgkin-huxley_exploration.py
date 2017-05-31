@@ -1,5 +1,5 @@
 import uncertainpy
-from HodgkinHuxleyModel import HodgkinHuxleyModel
+from HodgkinHuxley import HodgkinHuxley
 
 orignal_parameters = [["V_rest", -65, None],
                       ["Cm", 1, None],
@@ -15,7 +15,7 @@ orignal_parameters = [["V_rest", -65, None],
 
 parameters = uncertainpy.Parameters(orignal_parameters)
 
-model = HodgkinHuxleyModel(parameters)
+model = HodgkinHuxley(parameters)
 model.set_all_distributions(uncertainpy.Distribution(0.2).uniform)
 
 features = uncertainpy.SpikingFeatures(features_to_run="all")

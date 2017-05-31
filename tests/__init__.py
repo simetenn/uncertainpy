@@ -9,7 +9,7 @@ __all__ = ["TestDistribution",
            "TestLogger",
            "TestModel",
            "TestHodgkinHuxleyModel",
-           "TestCoffeeCupPointModel",
+           "TestCoffeeCupModel",
            "TestIzhikevichModel",
            "TestTestingModel0d",
            "TestTestingModel1d",
@@ -36,7 +36,7 @@ from test_exploration import TestExploration
 from test_features import TestGeneralFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures, TestTestingFeatures
 from test_logger import TestLogger
 
-from test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupPointModel
+from test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel
 from test_models import TestIzhikevichModel, TestTestingModel0d, TestTestingModel1d
 from test_models import TestTestingModel2d, TestNeuronModel
 
@@ -48,7 +48,7 @@ from test_spikes import TestSpikes
 from test_uncertainty import TestUncertainty
 from test_usecase import TestUseCases
 from test_data import TestData
-from test_RunModel import TestRunModel
+from test_runModel import TestRunModel
 from test_uncertaintyCalculations import TestUncertaintyCalculations
 from test_parallel import TestParallel
 from test_examples import TestExamples

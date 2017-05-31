@@ -1,5 +1,5 @@
 import uncertainpy
-from IzhikevichModel import IzhikevichModel
+from izhikevich import izhikevich
 
 
 parameterlist = [["a", 0.02, None],
@@ -8,7 +8,7 @@ parameterlist = [["a", 0.02, None],
                  ["d", 8, None]]
 
 parameters = uncertainpy.Parameters(parameterlist)
-model = IzhikevichModel(parameters)
+model = izhikevich(parameters)
 model.set_all_distributions(uncertainpy.Distribution(1).uniform)
 
 features = uncertainpy.SpikingFeatures(features_to_run="all")

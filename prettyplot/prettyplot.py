@@ -75,7 +75,7 @@ Set line style options
               "lines.markersize": markersize,
               "lines.markeredgewidth": markeredgewidth,
               "lines.antialiased": True
-              }
+             }
 
     plt.rcParams.update(params)
 

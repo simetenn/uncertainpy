@@ -44,7 +44,7 @@ test_runModel = create_test_suite([TestRunModel, TestParallel])
 
 test_model = create_test_suite([TestModel,
                                 TestHodgkinHuxleyModel,
-                                TestCoffeeCupPointModel,
+                                TestCoffeeCupModel,
                                 TestIzhikevichModel,
                                 TestTestingModel0d,
                                 TestTestingModel1d,

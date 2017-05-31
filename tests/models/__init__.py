@@ -1,3 +1,3 @@
-from HodgkinHuxleyModel import HodgkinHuxleyModel
-from CoffeeCupPointModel import CoffeeCupPointModel
-from IzhikevichModel import IzhikevichModel
+from hodgkin_huxley import HodgkinHuxley
+from coffee_cup_class import CoffeeCup
+from izhikevich_function import izhikevich
