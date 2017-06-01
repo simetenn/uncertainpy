@@ -9,8 +9,8 @@ parameterlist = [["J_E", 4, None],
 parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
-# model = BrunelNetwork()
-model = brunel_network
+model = BrunelNetwork()
+# model = brunel_network
 
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,

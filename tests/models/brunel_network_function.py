@@ -103,14 +103,14 @@ def brunel_network(J_E=0.5, g=5.0):
 
     # Run the simulation
     nest.Simulate(simtime)
-    events = nest.GetStatus(spike_detect_E, 'events')[0]
+    events_E = pd.DataFrame(nest.GetStatus(spike_detec_E, 'events')[0])
 
-    cv_list = []
-    for sender in set(events["senders"]):
-        spiketrain = events["times"][events["senders"] == sender]
-        cv_list.append(calc_CV(spiketrain))
+    cv = []
+    for idx, sender in enumerate(events_E.senders):
+        spikes = events_E[events_E.senders == sender].times
+        cv.append(calc_CV(spikes))
 
-    U = np.nanmean(np.array(cv_list))
+    U = np.nanmean(np.array(cv))
     t = None
 
     return t, U

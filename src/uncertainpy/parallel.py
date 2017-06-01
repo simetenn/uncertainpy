@@ -152,10 +152,11 @@ class Parallel(object):
 
             try:
                 # TODO allow for more parameters to be returned, but only the two first are used?
+                # use a dictionary for more values?
                 # t, U = model_result[:2]
                 t, U = model_result
             except ValueError as error:
-                msg = "model.run() must return t and U (return t, U | return None, U)"
+                msg = "model.run() or model function must return t and U (return t, U | return None, U)"
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)

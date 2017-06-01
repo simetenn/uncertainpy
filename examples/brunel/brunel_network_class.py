@@ -113,16 +113,17 @@ class BrunelNetwork(Model):
         self.reset()
 
         nest.Simulate(self.simtime)
-        events_E = pd.DataFrame(nest.GetStatus(self.spike_detec_E, 'events')[0])
+        events = nest.GetStatus(spike_detect_E, 'events')[0]
 
-        cv = []
-        for idx, sender in enumerate(events_E.senders):
-            spikes = events_E[events_E.senders == sender].times
-            cv.append(self.calc_CV(spikes))
+        cv_list = []
+        for sender in set(events["senders"]):
+            spiketrain = events["times"][events["senders"] == sender]
+            cv_list.append(calc_CV(spiketrain))
 
-        self.U = np.nanmean(np.array(cv))
-        self.t = 1
+        U = np.nanmean(np.array(cv_list))
+        t = None
 
+        return None, np.nanmean(np.array(cv_list))
 
 if __name__ == "__main__":
     parameters = {"J_E": 4, "g": 4}
