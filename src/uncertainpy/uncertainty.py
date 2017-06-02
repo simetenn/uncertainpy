@@ -7,7 +7,7 @@ import types
 
 from uncertainty_calculations import UncertaintyCalculations
 from features import GeneralFeatures
-from plotting.plotUncertainty import PlotUncertainty
+from plotting.plot_uncertainty import PlotUncertainty
 from utils import create_logger
 from models import Model
 from uncertainpy import Data

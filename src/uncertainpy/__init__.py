@@ -1,10 +1,10 @@
 from data import Data
 from distribution import Distribution, uniform, normal
 from parameters import Parameter, Parameters
-from evaluateNodeFunction import evaluateNodeFunction
+# from evaluate_node_function import evaluateNodeFunction
 from uncertainty import UncertaintyEstimation
-from exploration import UncertaintyEstimations
-from runmodel import RunModel
+# from exploration import UncertaintyEstimations
+from run_model import RunModel
 from uncertainty_calculations import UncertaintyCalculations
 from parallel import Parallel
 

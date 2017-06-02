@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 
 
 
-from uncertainpy.plotting.plotUncertainty import PlotUncertainty
+from uncertainpy.plotting.plot_uncertainty import PlotUncertainty
 from uncertainpy import Data
 
 

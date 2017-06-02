@@ -63,12 +63,12 @@ test_data = create_test_suite([TestData])
 
 test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
 
-test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
+# test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
 
 
 test_uncertainty = create_test_suite([TestUncertainty])
 
-test_exploration = create_test_suite([TestExploration])
+# test_exploration = create_test_suite([TestExploration])
 
 test_usecase = create_test_suite([TestUseCases])
 
@@ -76,14 +76,15 @@ test_utils = unittest.TestSuite([test_logger])
 
 
 
-test_plotting = unittest.TestSuite([test_plotUncertainty, test_plotUncertaintyCompare])
+# test_plotting = unittest.TestSuite([test_plotUncertainty, test_plotUncertaintyCompare])
+test_plotting = unittest.TestSuite([test_plotUncertainty])
 
 test_prerequisites = unittest.TestSuite([test_utils,
-                                        test_parameters,
-                                        test_distribution,
-                                        test_features,
-                                        test_model,
-                                        test_data])
+                                         test_parameters,
+                                         test_distribution,
+                                         test_features,
+                                         test_model,
+                                         test_data])
 
 
 test_basic = unittest.TestSuite([test_prerequisites,
@@ -164,10 +165,10 @@ if args.uncertainpy:
     print "-----------------------------------------"
     print "Running testsuite: uncertainpy"
     results["uncertainpy"] = test_runner.run(test_uncertainty)
-if args.exploration:
-    print "-----------------------------------------"
-    print "Running testsuite: exploration"
-    results["exploration"] = test_runner.run(test_exploration)
+# if args.exploration:
+#     print "-----------------------------------------"
+#     print "Running testsuite: exploration"
+#     results["exploration"] = test_runner.run(test_exploration)
 if args.parameters:
     print "-----------------------------------------"
     print "Running testsuite: parameters"
@@ -192,10 +193,10 @@ if args.plotuncertainty:
     print "-----------------------------------------"
     print "Running testsuite: plotUncertainty"
     results["plotUncertainty"] = test_runner.run(test_plotUncertainty)
-if args.plotuncertaintycompare:
-    print "-----------------------------------------"
-    print "Running testsuite: plotUncertaintyCompare"
-    results["plotUncertaintyCompare"] = test_runner.run(test_plotUncertaintyCompare)
+# if args.plotuncertaintycompare:
+#     print "-----------------------------------------"
+#     print "Running testsuite: plotUncertaintyCompare"
+#     results["plotUncertaintyCompare"] = test_runner.run(test_plotUncertaintyCompare)
 if args.features:
     print "-----------------------------------------"
     print "Running testsuite: features"
