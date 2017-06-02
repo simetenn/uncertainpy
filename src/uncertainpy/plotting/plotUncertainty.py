@@ -495,7 +495,7 @@ class PlotUncertainty(object):
                        new_figure=False,
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters),
-                       label=self.data.uncertain_parameters[i],
+                       label=self.str_to_latex(self.data.uncertain_parameters[i]),
                        **plot_kwargs)
 
         plt.ylim([0, 1.05])

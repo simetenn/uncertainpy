@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import nest
 import nest.raster_plot
+from elephant.statistics import isi, cv
 
 import matplotlib.pyplot as plt
 
@@ -31,11 +32,11 @@ def brunel_network(J_E=0.5, g=5.0):
     E_L = -60.
     V_reset = -60.
 
-    N_neurons = 1000
+    N_neurons = 100
     P_E = .8           # P_I = 1 - P_E
 
-    N_rec = 100        # Number of neurons to record from
-    simtime = 100
+    N_rec = 10        # Number of neurons to record from
+    simtime = 10
 
 
     nest.ResetKernel()
@@ -92,13 +93,13 @@ def brunel_network(J_E=0.5, g=5.0):
     spikes = nest.Create("spike_detector", 2,
                          params=[{"label": "Exc", "to_file": False},
                                  {"label": "Inh", "to_file": False}])
-    spike_detec_E = spikes[:1]
-    spike_detec_I = spikes[1:]
+    spike_detect_E = spikes[:1]
+    spike_detect_I = spikes[1:]
 
     # connect using all_to_all: all recorded excitatory neurons to one
     # detector
-    nest.Connect(nodes_E[:N_rec], spike_detec_E)
-    nest.Connect(nodes_I[:N_rec], spike_detec_I)
+    nest.Connect(nodes_E[:N_rec], spike_detect_E)
+    nest.Connect(nodes_I[:N_rec], spike_detect_I)
 
 
     # Run the simulation
@@ -110,7 +111,36 @@ def brunel_network(J_E=0.5, g=5.0):
         spiketrain = events["times"][events["senders"] == sender]
         cv_list.append(calc_CV(spiketrain))
 
-    U = np.nanmean(np.array(cv_list))
-    t = None
+    spiketrains = []
+    cv_list = []
+    for sender in set(events["senders"]):
+        spiketrain = events["times"][events["senders"] == sender]
+        cv_list.append(cv(isi(spiketrain)))
+        spiketrains.append(spiketrain)
+
+    # U = np.nanmean(np.array(cv_list))
+    # t = None
+
+    # U = events["senders"][0]
+    # t = spiketrain
+
+
+
+
+
+    dt = nest.GetKernelStatus()["resolution"]
+    T = nest.GetKernelStatus()["time"]
+    t = np.arange(0, T+dt, dt)
+
+
+    expanded_spiketrains = []
+    for spiketrain in spiketrains:
+        binary_spike = np.zeros(len(t))
+        binary_spike[np.in1d(t, spiketrain)] = 1
+
+        expanded_spiketrains.append(binary_spike)
+
+    U = np.array(expanded_spiketrains)
+
 
     return t, U

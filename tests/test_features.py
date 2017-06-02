@@ -48,9 +48,9 @@ class TestGeneralFeatures(unittest.TestCase):
 
 
 
-    def test_setup(self):
+    def test_preprocess(self):
         features = GeneralFeatures()
-        features.setup()
+        features.preprocess()
 
 
     def test_calculate_featureNotImplemented(self):
@@ -60,7 +60,7 @@ class TestGeneralFeatures(unittest.TestCase):
 
     def test_calculate_featureUtilityMethod(self):
         with self.assertRaises(TypeError):
-            self.features.calculate_feature("setup")
+            self.features.calculate_feature("preprocess")
 
 
     def test_implemented_features(self):
@@ -171,13 +171,13 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
         self.assertEqual(self.features.spikes.nr_spikes, 12)
 
 
-    def test_setup(self):
+    def test_preprocess(self):
         self.features = GeneralSpikingFeatures()
 
         self.features.t = self.t
         self.features.U = self.U
 
-        self.features.setup()
+        self.features.preprocess()
 
         self.features.calculate_spikes()
 
@@ -216,7 +216,7 @@ class TestSpikingFeatures(unittest.TestCase):
         self.features = SpikingFeatures()
         self.features.t = self.t
         self.features.U = self.U
-        self.features.setup()
+        self.features.preprocess()
 
 
     def test_initNone(self):

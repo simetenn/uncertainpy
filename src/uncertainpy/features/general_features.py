@@ -12,7 +12,7 @@ class GeneralFeatures(object):
                                 "calculate",
                                 "__init__",
                                 "implemented_features",
-                                "setup",
+                                "preprocess",
                                 "add_features"]
 
         if new_utility_methods is None:
@@ -30,7 +30,7 @@ class GeneralFeatures(object):
         self.adaptive_features = adaptive_features
 
 
-    def setup(self):
+    def preprocess(self):
         pass
 
 

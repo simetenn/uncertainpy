@@ -175,7 +175,7 @@ class Parallel(object):
             # Calculate features from the model results
             self.features.t = t
             self.features.U = U
-            self.features.setup()
+            self.features.preprocess()
             feature_results = self.features.calculate_features()
 
 

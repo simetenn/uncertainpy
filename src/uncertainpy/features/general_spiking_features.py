@@ -22,7 +22,7 @@ class GeneralSpikingFeatures(GeneralFeatures):
 
 
 
-    def setup(self):
+    def preprocess(self):
         self.calculate_spikes(thresh=self.thresh, extended_spikes=self.extended_spikes)
 
 

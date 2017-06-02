@@ -6,6 +6,7 @@ import numpy as np
 from uncertainpy.utils import create_logger
 
 
+# TODO instead of a data object, could just a  h5py file have been used ?
 
 class Data(object):
     def __init__(self,
@@ -234,6 +235,7 @@ Test if the model returned an adaptive result
 
 
 
+    # TODO rewrite so this is using np.nan. Currently this makes it so when loading a data file it is loaded as an object
     def nan_to_none(self, array):
         try:
             tmp_array = array.astype(object)

@@ -10,7 +10,7 @@ class TestingFeatures(GeneralFeatures):
                                  features_to_run=features_to_run,
                                  adaptive_features=adaptive_features)
 
-        self.is_setup_run = False
+        self.is_preprocess_run = False
 
     def feature0d(self, t, U):
         return None, 1
@@ -30,5 +30,5 @@ class TestingFeatures(GeneralFeatures):
     def feature_no_time(self, t, U):
         return np.arange(0, 10)
 
-    def setup(self):
-        self.is_setup_run = True
+    def preprocess(self):
+        self.is_preprocess_run = True

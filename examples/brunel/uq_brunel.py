@@ -9,12 +9,18 @@ parameterlist = [["J_E", 4, None],
 parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
-model = BrunelNetwork()
-# model = brunel_network
+# model = BrunelNetwork()
+model = un.Model(brunel_network,
+                 adaptive_model=False)
+
+
+uncertainty_calculation = un.UncertaintyCalculations(CPUs=1)
 
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
-                                       features=None)
+                                       features=None,
+                                       uncertainty_calculations=uncertainty_calculation)
+
 
 uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_simulator_results=True)
+                                       plot_simulator_results=False)

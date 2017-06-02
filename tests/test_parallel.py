@@ -247,7 +247,7 @@ class TestParallel(unittest.TestCase):
     def test_run(self):
         results = self.parallel.run(self.model_parameters)
 
-        self.assertTrue(self.parallel.features.is_setup_run)
+        self.assertTrue(self.parallel.features.is_preprocess_run)
 
         self.assertTrue(np.array_equal(results["TestingModel1d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["TestingModel1d"]["U"], np.arange(0, 10) + 1))
