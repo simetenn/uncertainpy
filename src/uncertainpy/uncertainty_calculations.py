@@ -3,7 +3,7 @@ import numpy as np
 import multiprocessing as mp
 from tqdm import tqdm
 
-from runmodel import RunModel
+from run_model import RunModel
 from models import Model
 from utils import create_logger
 from features import GeneralFeatures
@@ -13,6 +13,7 @@ from parameters import Parameters
 class UncertaintyCalculations(object):
     def __init__(self,
                  model=None,
+                 base_model=Model,
                  parameters=None,
                  features=None,
                  base_features=GeneralFeatures,
@@ -32,6 +33,7 @@ class UncertaintyCalculations(object):
         self._parameters = None
 
         self.base_features = base_features
+        self.base_model = base_model
 
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
@@ -99,7 +101,7 @@ class UncertaintyCalculations(object):
         if isinstance(new_model, Model) or new_model is None:
             self._model = new_model
         elif callable(new_model):
-            self._model = Model()
+            self._model = self.base_model()
             self._model.run = new_model
         else:
             raise TypeError("model must be a Model instance, callable or None")

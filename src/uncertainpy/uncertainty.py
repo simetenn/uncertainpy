@@ -18,6 +18,7 @@ class UncertaintyEstimation(object):
     def __init__(self,
                  model,
                  parameters,
+                 base_model=Model,
                  features=None,
                  base_features=GeneralFeatures,
                  save_figures=True,
@@ -46,20 +47,14 @@ class UncertaintyEstimation(object):
         self._parameters = None
 
         self.base_features = base_features
-
-        self.save_figures = save_figures
-        self.save_data = save_data
-        self.output_dir_data = output_dir_data
-        self.output_dir_figures = output_dir_figures
-
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
+        self.base_model = base_model
 
         if uncertainty_calculations is None:
-            self.uncertainty_calculations = UncertaintyCalculations(
+            self._uncertainty_calculations = UncertaintyCalculations(
                 model,
+                base_model=base_model,
                 features=features,
+                base_features=base_features,
                 CPUs=CPUs,
                 supress_model_graphics=supress_model_graphics,
                 M=M,
@@ -71,17 +66,25 @@ class UncertaintyEstimation(object):
                 verbose_filename=verbose_filename
             )
         else:
-            self.uncertainty_calculations = uncertainty_calculations
+            self._uncertainty_calculations = uncertainty_calculations
+
+
+        self.save_figures = save_figures
+        self.save_data = save_data
+        self.output_dir_data = output_dir_data
+        self.output_dir_figures = output_dir_figures
+
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
 
         if create_PCE_custom is not None:
             self.uncertainty_calculations.create_PCE_custom = types.MethodType(create_PCE_custom,
                                                                                self.uncertainty_calculations)
 
-
         self.features = features
         self.parameters = parameters
         self.model = model
-
 
         if xlabel is not None:
             self.model.xlabel = xlabel
@@ -141,7 +144,7 @@ class UncertaintyEstimation(object):
         if isinstance(new_model, Model):
             self._model = new_model
         elif callable(new_model):
-            self._model = Model()
+            self._model = self.base_model()
             self._model.run = new_model
         else:
             raise TypeError("model must be a Model instance or callable")

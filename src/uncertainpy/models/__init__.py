@@ -1,5 +1,7 @@
 __all__ = ["Model",
-           "NeuronModel"]
+           "NeuronModel",
+           "NestModel"]
 
 from model import Model
 from neuron_model import NeuronModel
+from nest_model import NestModel

@@ -37,7 +37,7 @@ run(**parameters) must return t and U
             setattr(self, parameter, parameters[parameter])
 
 
-
+    # TODO figure out which of these two shoudl be used
     def __call__(self, **parameters):
         """
         Run must return t, U
@@ -50,3 +50,7 @@ run(**parameters) must return t and U
         Run must return t, U
         """
         raise NotImplementedError("No run() method implemented")
+
+
+    def postprocess(self, t, U):
+        return t, U

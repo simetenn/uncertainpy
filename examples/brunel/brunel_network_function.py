@@ -106,10 +106,10 @@ def brunel_network(J_E=0.5, g=5.0):
     nest.Simulate(simtime)
     events = nest.GetStatus(spike_detect_E, 'events')[0]
 
-    cv_list = []
-    for sender in set(events["senders"]):
-        spiketrain = events["times"][events["senders"] == sender]
-        cv_list.append(calc_CV(spiketrain))
+    # cv_list = []
+    # for sender in set(events["senders"]):
+    #     spiketrain = events["times"][events["senders"] == sender]
+    #     cv_list.append(calc_CV(spiketrain))
 
     spiketrains = []
     cv_list = []
@@ -141,6 +141,5 @@ def brunel_network(J_E=0.5, g=5.0):
         expanded_spiketrains.append(binary_spike)
 
     U = np.array(expanded_spiketrains)
-
 
     return t, U
