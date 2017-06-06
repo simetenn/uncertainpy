@@ -41,7 +41,6 @@ class Base(object):
         else:
             self._features = self.base_features(features_to_run="all")
             self._features.add_features(new_features)
-            # self._features.features_to_run = "all"
 
 
     @property
@@ -53,8 +52,8 @@ class Base(object):
         if isinstance(new_model, Model) or new_model is None:
             self._model = new_model
         elif callable(new_model):
-            self._model = self.base_model()
-            self._model.run = new_model
+            self._model = self.base_model(new_model)
+            # self._model.run = new_model
         else:
             raise TypeError("model must be a Model instance, callable or None")
 

@@ -17,8 +17,8 @@ run(**parameters) must return t and U
         # TODO must either remove this or implement a permanent solution for setting adaptive_model = true when having a function as a model
         if run_function is not None:
             self.run = run_function
-
-        self.name = self.__class__.__name__
+        else:
+            self.name = self.__class__.__name__
 
 
     @property
@@ -29,7 +29,7 @@ run(**parameters) must return t and U
     @run.setter
     def run(self, new_run_function):
         if not callable(new_run_function):
-            raise ValueError("run functionmust be calable")
+            raise TypeError("run function must be callable")
 
         self._run = new_run_function
         self.name = new_run_function.__name__

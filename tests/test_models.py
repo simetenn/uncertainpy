@@ -3,7 +3,9 @@ import os
 import unittest
 import chaospy as cp
 
-from uncertainpy.models import Model, NeuronModel
+from xvfbwrapper import Xvfb
+
+from uncertainpy.models import Model, NeuronModel, NestModel
 from uncertainpy import Parameters
 
 from models import HodgkinHuxley
@@ -22,23 +24,34 @@ class TestModel(unittest.TestCase):
         self.model = Model()
 
 
-    def test_run(self):
+    def test_run_error(self):
         with self.assertRaises(NotImplementedError):
             self.model.run(a="parameter input")
 
 
     def test_run(self):
-        self.model.run = model_function
+        model = Model(run_function=model_function)
 
         parameters = {"a": -1, "b": -1}
-        t, U = self.model.run(**parameters)
+        t, U = model.run(**parameters)
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
-        self.assertEqual(self.model.name, "model_function")
+        self.assertEqual(model.name, "model_function")
 
-        with self.assertRaises(ValueError):
-            self.model.run = 2
+        model = Model()
+        model.run = run_function=model_function
+
+        parameters = {"a": -1, "b": -1}
+        t, U = model.run(**parameters)
+
+        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
+        self.assertEqual(model.name, "model_function")
+
+        with self.assertRaises(TypeError):
+            model.run = ""
+            Model(run_function=2)
 
 
     def test_set_parameters(self):
@@ -67,47 +80,40 @@ class TestModel(unittest.TestCase):
 
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
-    def setUp(self):
-        self.model = HodgkinHuxley()
-
-
     def test_run(self):
+        model = HodgkinHuxley()
+
         parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
-        self.model.run(**parameters)
+        model.run(**parameters)
 
 
 
 class TestCoffeeCupModel(unittest.TestCase):
-    def setUp(self):
-        self.model = CoffeeCup()
-
-
     def test_run(self):
+        model = CoffeeCup()
+
         parameters = {"kappa": -0.05, "u_env": 20}
-        self.model.run(**parameters)
+        model.run(**parameters)
 
 
 
 class TestIzhikevichModel(unittest.TestCase):
-    def setUp(self):
-        self.model = izhikevich
-
     def test_run(self):
+        model = izhikevich
+
         parameters = parameters = {"a": 0.02, "b": 0.2, "c": -50, "d": 2}
-        self.model(**parameters)
+        model(**parameters)
 
 
 
 
 
 class TestTestingModel0d(unittest.TestCase):
-    def setUp(self):
-            self.model = TestingModel0d()
-
-
     def test_run(self):
+        model = TestingModel0d()
+
         parameters = {"a": -1, "b": -1}
-        t, U = self.model.run(**parameters)
+        t, U = model.run(**parameters)
 
         self.assertEqual(t, 1)
         self.assertEqual(U, -1)
@@ -117,13 +123,11 @@ class TestTestingModel0d(unittest.TestCase):
 
 
 class TestTestingModel1d(unittest.TestCase):
-    def setUp(self):
-        self.model = TestingModel1d()
-
-
     def test_run(self):
+        model = TestingModel1d()
+
         parameters = {"a": -1, "b": -1}
-        t, U = self.model.run(**parameters)
+        t, U = model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
@@ -132,14 +136,11 @@ class TestTestingModel1d(unittest.TestCase):
 
 
 class TestTestingModel2d(unittest.TestCase):
-    def setUp(self):
-        self.model = TestingModel2d()
-
-
-
     def test_run(self):
+        model = TestingModel2d()
+
         parameters = {"a": -1, "b": -2}
-        t, U = self.model.run(**parameters)
+        t, U = model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
@@ -151,13 +152,11 @@ class TestTestingModel2d(unittest.TestCase):
 
 
 class TestTestingModelAdaptive(unittest.TestCase):
-    def setUp(self):
-        self.model = TestingModelAdaptive()
+     def test_run(self):
+        model = TestingModelAdaptive()
 
-
-    def test_run(self):
         parameters = {"a": 1, "b": 2}
-        t, U = self.model.run(**parameters)
+        t, U = model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(np.arange(0, 13), t))
@@ -167,23 +166,37 @@ class TestTestingModelAdaptive(unittest.TestCase):
 
 
 class TestNeuronModel(unittest.TestCase):
-    def setUp(self):
+    def test_init(self):
         model_file = "mosinit.hoc"
         model_path = "models/dLGN_modelDB/"
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)
 
-        self.model = NeuronModel(model_file=model_file,
-                                 model_path=os.path.join(filedir, model_path))
+        model = NeuronModel(model_file=model_file,
+                            model_path=os.path.join(filedir, model_path))
 
 
-    # def test_run(self):
-    #     model_parameters = {"cap": 1.1, "Rm": 22000}
-    #
-    #     with Xvfb() as xvfb:
-    #         self.model.run(model_parameters)
-    #
+    def test_run(self):
+        model_file = "mosinit.hoc"
+        model_path = "models/dLGN_modelDB/"
+
+        filepath = os.path.abspath(__file__)
+        filedir = os.path.dirname(filepath)
+
+        model = NeuronModel(model_file=model_file,
+                            model_path=os.path.join(filedir, model_path))
+
+        model_parameters = {"cap": 1.1, "Rm": 22000}
+
+        with Xvfb() as xvfb:
+            model.run(**model_parameters)
+
+
+
+class TestNestModel(unittest.TestCase):
+    def test_init(self):
+        self.model = NestModel()
 
 
 

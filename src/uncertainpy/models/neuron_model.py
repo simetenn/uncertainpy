@@ -7,13 +7,15 @@ from model import Model
 
 class NeuronModel(Model):
     def __init__(self,
-                 adaptive_model=False,
                  model_file="mosinit.hoc",
-                 model_path=None):
-        Model.__init__(self,
-                       adaptive_model=adaptive_model,
-                       xlabel="time [ms]",
-                       ylabel="voltage [mv]")
+                 model_path=None,
+                 adaptive_model=False,
+                 xlabel="time [ms]",
+                 ylabel="voltage [mv]"):
+
+        super(NeuronModel, self).__init__(adaptive_model=adaptive_model,
+                                          xlabel=xlabel,
+                                          ylabel=ylabel)
 
         self.model_file = model_file
         self.model_path = model_path
