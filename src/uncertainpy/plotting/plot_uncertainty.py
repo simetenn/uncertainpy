@@ -160,7 +160,7 @@ class PlotUncertainty(object):
 
         title = feature + ", " + attribute_name
         prettyPlot(self.data.t[feature], value[feature],
-                   title.replace("_", "\_"), self.data.xlabel, self.data.ylabel, **plot_kwargs)
+                   title.replace("_", " "), self.data.xlabel, self.data.ylabel, **plot_kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -221,7 +221,7 @@ class PlotUncertainty(object):
 
         title = feature + ", mean and variance"
         ax = prettyPlot(self.data.t[feature], self.data.E[feature],
-                        title.replace("_", "\_"), self.data.xlabel, self.data.ylabel + ", mean",
+                        title.replace("_", " "), self.data.xlabel, self.data.ylabel + ", mean",
                         style=style, **plot_kwargs)
 
         colors = get_current_colormap()
@@ -288,7 +288,7 @@ class PlotUncertainty(object):
 
 
 
-        title = feature.replace("_", "\_") + ", 90\\% confidence interval"
+        title = feature.replace("_", " ") + ", 90\\% confidence interval"
         prettyPlot(self.data.t[feature], self.data.E[feature], title=title,
                    xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
                    **plot_kwargs)
@@ -438,7 +438,7 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = feature.replace("_", "\_") + ", " + sensitivity.replace("_", " ")
+        title = feature.replace("_", " ") + ", " + sensitivity.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
@@ -638,7 +638,7 @@ class PlotUncertainty(object):
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
 
-        plt.suptitle(feature.replace("_", "\_"), fontsize=titlesize)
+        plt.suptitle(feature.replace("_", " "), fontsize=titlesize)
 
         if sensitivity is None:
             save_name = feature + self.figureformat
@@ -898,7 +898,7 @@ class PlotUncertainty(object):
                     continue
 
                 prettyBar(total_sense[self.data.feature_list[i]],
-                          title=self.str_to_latex(self.data.feature_list[i]),
+                          title=self.data.feature_list[i].replace("_", " "),
                           xlabels=self.list_to_latex(self.data.uncertain_parameters),
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
