@@ -13,7 +13,7 @@ parameters.set_all_distributions(un.Distribution(0.5).uniform)
 # model = un.Model(brunel_network,
 #                  adaptive_model=False)
 model = brunel_network
-print model
+
 uncertainty_calculation = un.UncertaintyCalculations(CPUs=1)
 
 uncertainty = un.UncertaintyEstimation(model,

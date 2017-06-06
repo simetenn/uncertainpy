@@ -7,10 +7,11 @@ from utils import create_logger
 from features import GeneralFeatures
 from models import Model
 
+from base import Base
 
 """
 result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                       "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature0d": {"U": 1,
@@ -24,61 +25,61 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                 InterpolatedUnivariateSpline\
                                                 object at 0x7f1c78f0d4d0>},
           "feature_invalid": {"U": None,
-                             "t": None}}
+                              "t": None}}
 """
 
 
-class Parallel(object):
-    def __init__(self,
-                 model,
-                 features=None,
-                 base_features=GeneralFeatures,
-                 verbose_level="info",
-                 verbose_filename=None):
+class Parallel(Base):
+    # def __init__(self,
+    #              model,
+    #              features=None,
+    #              base_features=GeneralFeatures,
+    #              verbose_level="info",
+    #              verbose_filename=None):
 
-        self._features = None
-        self._model = None
+    #     self._features = None
+    #     self._model = None
 
-        self.base_features = base_features
-        self.features = features
-        self.model = model
+    #     self.base_features = base_features
+    #     self.features = features
+    #     self.model = model
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
-
-
-    @property
-    def features(self):
-        return self._features
+    #     self.logger = create_logger(verbose_level,
+    #                                 verbose_filename,
+    #                                 self.__class__.__name__)
 
 
-    @features.setter
-    def features(self, new_features):
-        if new_features is None:
-            self._features = self.base_features(features_to_run=None)
-        elif isinstance(new_features, GeneralFeatures):
-            self._features = new_features
-        else:
-            self._features = self.base_features(features_to_run="all")
-            self._features.add_features(new_features)
-            self._features.features_to_run = "all"
+    # @property
+    # def features(self):
+    #     return self._features
 
 
-    @property
-    def model(self):
-        return self._model
+    # @features.setter
+    # def features(self, new_features):
+    #     if new_features is None:
+    #         self._features = self.base_features(features_to_run=None)
+    #     elif isinstance(new_features, GeneralFeatures):
+    #         self._features = new_features
+    #     else:
+    #         self._features = self.base_features(features_to_run="all")
+    #         self._features.add_features(new_features)
+    #         self._features.features_to_run = "all"
 
 
-    @model.setter
-    def model(self, new_model):
-        if isinstance(new_model, Model) or new_model is None:
-            self._model = new_model
-        elif callable(new_model):
-            self._model = Model()
-            self._model.run = new_model
-        else:
-            raise TypeError("model must be a Model instance, callable or None")
+    # @property
+    # def model(self):
+    #     return self._model
+
+
+    # @model.setter
+    # def model(self, new_model):
+    #     if isinstance(new_model, Model) or new_model is None:
+    #         self._model = new_model
+    #     elif callable(new_model):
+    #         self._model = Model()
+    #         self._model.run = new_model
+    #     else:
+    #         raise TypeError("model must be a Model instance, callable or None")
 
 
 

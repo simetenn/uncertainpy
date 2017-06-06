@@ -12,6 +12,8 @@ from utils import create_logger
 from parallel import Parallel
 from parameters import Parameters
 
+from base import Base
+
 
 """
 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
@@ -33,79 +35,97 @@ results = [result 1, result 2, ..., result N]
 """
 
 
-class RunModel(object):
+class RunModel(Base):
     def __init__(self,
                  model,
                  parameters,
+                 base_model=Model,
                  features=None,
                  base_features=GeneralFeatures,
-                 CPUs=mp.cpu_count(),
-                 supress_model_graphics=True,
                  verbose_level="info",
-                 verbose_filename=None):
-
-        self._model = None
-        self._features = None
-        self._parameters = None
-
-        self.base_features = base_features
+                 verbose_filename=None,
+                 CPUs=mp.cpu_count(),
+                 supress_model_graphics=True,):
 
         self.data = Data()
         self.parallel = Parallel(model)
 
-        self.features = features
-        self.model = model
         self.parameters = parameters
 
         self.CPUs = CPUs
         self.supress_model_graphics = supress_model_graphics
 
 
+        super(RunModel, self).__init__(model=model,
+                                       base_model=base_model,
+                                       features=features,
+                                       base_features=base_features,
+                                       verbose_level=verbose_level,
+                                       verbose_filename=verbose_filename)
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
 
 
-    @property
-    def features(self):
-        return self._features
-
-    @features.setter
+    @Base.features.setter
     def features(self, new_features):
-        if new_features is None:
-            self._features = self.base_features(features_to_run=None)
-        elif isinstance(new_features, GeneralFeatures):
-            self._features = new_features
-        else:
-            self._features = self.base_features(features_to_run="all")
-            self._features.add_features(new_features)
-            self._features.features_to_run = "all"
+        # super(RunModel, self).features.fset(self, new_features)
+        # super(RunModel, self).features.fset(self, new_features)
+        Base.features.fset(self, new_features)
+
 
         self.parallel.features = self.features
 
 
-    @property
-    def model(self):
-        return self._model
 
-
-    @model.setter
+    @Base.model.setter
     def model(self, new_model):
-        if isinstance(new_model, Model) or new_model is None:
-            self._model = new_model
-        elif callable(new_model):
-            self._model = Model()
-            self._model.run = new_model
-        else:
-            raise TypeError("model must be a Model instance, callable or None")
+        Base.model.fset(self, new_model)
 
-        self.parallel.model = new_model
+        self.parallel.model = self.model
 
-        if self._model is not None:
-            self.data.xlabel = self.model.xlabel
-            self.data.ylabel = self.model.ylabel
-            self.data.model_name = self.model.name
+    #     self.logger = create_logger(verbose_level,
+    #                                 verbose_filename,
+    #                                 self.__class__.__name__)
+
+
+    # @property
+    # def features(self):
+    #     return self._features
+
+    # @features.setter
+    # def features(self, new_features):
+    #     if new_features is None:
+    #         self._features = self.base_features(features_to_run=None)
+    #     elif isinstance(new_features, GeneralFeatures):
+    #         self._features = new_features
+    #     else:
+    #         self._features = self.base_features(features_to_run="all")
+    #         self._features.add_features(new_features)
+    #         self._features.features_to_run = "all"
+
+    #     self.parallel.features = self.features
+
+
+    # @property
+    # def model(self):
+    #     return self._model
+
+
+    # @model.setter
+    # def model(self, new_model):
+    #     if isinstance(new_model, Model) or new_model is None:
+    #         self._model = new_model
+    #     elif callable(new_model):
+    #         self._model = Model()
+    #         self._model.run = new_model
+    #     else:
+    #         raise TypeError("model must be a Model instance, callable or None")
+
+    #     self.parallel.model = new_model
+
+    #     if self._model is not None:
+    #         self.data.xlabel = self.model.xlabel
+    #         self.data.ylabel = self.model.ylabel
+    #         self.data.model_name = self.model.name
 
     @property
     def parameters(self):
