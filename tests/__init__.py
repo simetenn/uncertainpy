@@ -29,7 +29,9 @@ __all__ = ["TestDistribution",
            "TestUseCases",
            "TestData",
            "TestUncertaintyCalculations",
-           "TestExamples"]
+           "TestExamples",
+           "TestBase",
+           "TestParameterBase"]
 
 from test_distribution import TestDistribution
 # from test_exploration import TestExploration
@@ -52,3 +54,4 @@ from test_run_model import TestRunModel
 from test_uncertainty_calculations import TestUncertaintyCalculations
 from test_parallel import TestParallel
 from test_examples import TestExamples
+from test_base import TestBase, TestParameterBase

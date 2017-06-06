@@ -41,7 +41,7 @@ class Base(object):
         else:
             self._features = self.base_features(features_to_run="all")
             self._features.add_features(new_features)
-            self._features.features_to_run = "all"
+            # self._features.features_to_run = "all"
 
 
     @property

@@ -120,58 +120,6 @@ class UncertaintyEstimation(ParameterBase):
         self.uncertainty_calculations.parameters = self.parameters
 
 
-    # @property
-    # def features(self):
-    #     return self._features
-
-
-    # @features.setter
-    # def features(self, new_features):
-    #     if new_features is None:
-    #         self._features = self.base_features(features_to_run=None)
-    #     elif isinstance(new_features, GeneralFeatures):
-    #         self._features = new_features
-    #     else:
-    #         self._features = self.base_features(features_to_run="all")
-    #         self._features.add_features(new_features)
-    #         self._features.features_to_run = "all"
-
-    #     self.uncertainty_calculations.features = self.features
-
-
-    # @property
-    # def parameters(self):
-    #     return self._parameters
-
-
-    # @parameters.setter
-    # def parameters(self, new_parameters):
-    #     if isinstance(new_parameters, Parameters) or new_parameters is None:
-    #         self._parameters = new_parameters
-    #     else:
-    #         self._parameters = Parameters(new_parameters)
-
-    #     self.uncertainty_calculations.parameters = new_parameters
-
-
-
-    # @property
-    # def model(self):
-    #     return self._model
-
-    # @model.setter
-    # def model(self, new_model):
-    #     if isinstance(new_model, Model):
-    #         self._model = new_model
-    #     elif callable(new_model):
-    #         self._model = self.base_model()
-    #         self._model.run = new_model
-    #     else:
-    #         raise TypeError("model must be a Model instance or callable")
-
-    #     self.uncertainty_calculations.model = new_model
-
-
     @property
     def uncertainty_calculations(self):
         return self._uncertainty_calculations

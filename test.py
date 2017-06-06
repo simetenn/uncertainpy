@@ -39,6 +39,8 @@ test_logger = create_test_suite([TestLogger])
 
 test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
 
+test_base = create_test_suite([TestBase, TestParameterBase])
+
 
 test_runModel = create_test_suite([TestRunModel, TestParallel])
 
@@ -84,7 +86,8 @@ test_prerequisites = unittest.TestSuite([test_utils,
                                          test_distribution,
                                          test_features,
                                          test_model,
-                                         test_data])
+                                         test_data,
+                                         test_base])
 
 
 test_basic = unittest.TestSuite([test_prerequisites,

@@ -27,7 +27,7 @@ class TestModel(unittest.TestCase):
             self.model.run(a="parameter input")
 
 
-    def test_model_function(self):
+    def test_run(self):
         self.model.run = model_function
 
         parameters = {"a": -1, "b": -1}
@@ -36,6 +36,33 @@ class TestModel(unittest.TestCase):
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
         self.assertEqual(self.model.name, "model_function")
+
+        with self.assertRaises(ValueError):
+            self.model.run = 2
+
+
+    def test_set_parameters(self):
+        parameters = {"a": -1, "b": -1}
+
+        self.model.set_parameters(**parameters)
+
+        self.assertEqual(self.model.a, -1)
+        self.assertEqual(self.model.b, -1)
+
+
+    def test_init(self):
+        def f(x):
+            return x
+
+        model = Model(run_function=f,
+                      adaptive_model=True,
+                      xlabel="x",
+                      ylabel="y")
+
+        self.assertEqual(model.run, f)
+        self.assertEqual(model.xlabel, "x")
+        self.assertEqual(model.ylabel, "y")
+        self.assertTrue(model.adaptive_model)
 
 
 

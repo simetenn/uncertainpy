@@ -28,6 +28,9 @@ run(**parameters) must return t and U
 
     @run.setter
     def run(self, new_run_function):
+        if not callable(new_run_function):
+            raise ValueError("run functionmust be calable")
+
         self._run = new_run_function
         self.name = new_run_function.__name__
 
@@ -35,14 +38,6 @@ run(**parameters) must return t and U
     def set_parameters(self, **parameters):
         for parameter in parameters:
             setattr(self, parameter, parameters[parameter])
-
-
-    # TODO figure out which of these two shoudl be used
-    def __call__(self, **parameters):
-        """
-        Run must return t, U
-        """
-        raise NotImplementedError("No __call__() method implemented")
 
 
     def _run(self, **parameters):

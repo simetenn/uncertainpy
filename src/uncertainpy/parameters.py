@@ -244,6 +244,7 @@ List of the attribute of all uncertain parameters
         return items
 
 
+    # TODO implement __getitem__
     def get(self, attribute="name", parameter_names=None):
         """
 Get the attribute of all parameters in parameter_names
