@@ -121,25 +121,25 @@ def brunel_network(J_E=0.5, g=5.0):
     # U = np.nanmean(np.array(cv_list))
     # t = None
 
-    # U = events["senders"][0]
-    # t = spiketrain
+    U = spiketrains[0]
+    t = None
 
 
 
 
 
-    dt = nest.GetKernelStatus()["resolution"]
-    T = nest.GetKernelStatus()["time"]
-    t = np.arange(0, T+dt, dt)
+    # dt = nest.GetKernelStatus()["resolution"]
+    # T = nest.GetKernelStatus()["time"]
+    # t = np.arange(0, T+dt, dt)
 
 
-    expanded_spiketrains = []
-    for spiketrain in spiketrains:
-        binary_spike = np.zeros(len(t))
-        binary_spike[np.in1d(t, spiketrain)] = 1
+    # expanded_spiketrains = []
+    # for spiketrain in spiketrains:
+    #     binary_spike = np.zeros(len(t))
+    #     binary_spike[np.in1d(t, spiketrain)] = 1
 
-        expanded_spiketrains.append(binary_spike)
+    #     expanded_spiketrains.append(binary_spike)
 
-    U = np.array(expanded_spiketrains)
+    # U = np.array(expanded_spiketrains)
 
     return t, U

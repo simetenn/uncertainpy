@@ -9,8 +9,10 @@ from utils import create_logger
 from features import GeneralFeatures
 from parameters import Parameters
 
+from base import ParameterBase
+
 # Model is now potentially set two places, is that a problem?
-class UncertaintyCalculations(object):
+class UncertaintyCalculations(ParameterBase):
     def __init__(self,
                  model=None,
                  base_model=Model,
@@ -28,13 +30,28 @@ class UncertaintyCalculations(object):
                  verbose_filename=None):
 
 
-        self._model = None
-        self._features = None
-        self._parameters = None
 
-        self.base_features = base_features
-        self.base_model = base_model
+        self.runmodel = RunModel(model=model,
+                                 parameters=parameters,
+                                 base_model=base_model,
+                                 features=features,
+                                 base_features=base_features,
+                                 verbose_level=verbose_level,
+                                 verbose_filename=verbose_filename,
+                                 CPUs=CPUs,
+                                 supress_model_graphics=supress_model_graphics)
 
+
+        super(UncertaintyCalculations, self).__init__(parameters=parameters,
+                                                      model=model,
+                                                      base_model=base_model,
+                                                      features=features,
+                                                      base_features=base_features,
+                                                      verbose_level=verbose_level,
+                                                      verbose_filename=verbose_filename)
+
+
+        self.nr_pc_samples = nr_pc_samples
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
         self.M = M
@@ -45,83 +62,29 @@ class UncertaintyCalculations(object):
         self.U_hat = {}
         self.U_mc = {}
 
-
-        self.runmodel = RunModel(model,
-                                 parameters,
-                                 features=features,
-                                 CPUs=CPUs,
-                                 supress_model_graphics=supress_model_graphics)
-
-
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
-
-        if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
-        else:
-            self.features = features
-
-        self.model = model
-        self.parameters = parameters
-
-        self.nr_pc_samples = nr_pc_samples
-
-
         if seed is not None:
             np.random.seed(seed)
 
 
-    @property
-    def features(self):
-        return self._features
-
-
-    @features.setter
+    @ParameterBase.features.setter
     def features(self, new_features):
-        if new_features is None:
-            self._features = self.base_features(features_to_run=None)
-        elif isinstance(new_features, GeneralFeatures):
-            self._features = new_features
-        else:
-            self._features = self.base_features(features_to_run="all")
-            self._features.add_features(new_features)
-            self._features.features_to_run = "all"
+        ParameterBase.features.fset(self, new_features)
 
         self.runmodel.features = self.features
 
 
-    @property
-    def model(self):
-        return self._model
-
-
-    @model.setter
+    @ParameterBase.model.setter
     def model(self, new_model):
-        if isinstance(new_model, Model) or new_model is None:
-            self._model = new_model
-        elif callable(new_model):
-            self._model = self.base_model()
-            self._model.run = new_model
-        else:
-            raise TypeError("model must be a Model instance, callable or None")
+        ParameterBase.model.fset(self, new_model)
 
-        self.runmodel.model = new_model
+        self.runmodel.model = self.model
 
 
-    @property
-    def parameters(self):
-        return self._parameters
-
-
-    @parameters.setter
+    @ParameterBase.parameters.setter
     def parameters(self, new_parameters):
-        if isinstance(new_parameters, Parameters) or new_parameters is None:
-            self._parameters = new_parameters
-        else:
-            self._parameters = Parameters(new_parameters)
+        ParameterBase.parameters.fset(self, new_parameters)
 
-        self.runmodel.parameters = new_parameters
+        self.runmodel.parameters = self.parameters
 
 
     def create_distribution(self, uncertain_parameters=None):

@@ -160,7 +160,7 @@ class PlotUncertainty(object):
 
         title = feature + ", " + attribute_name
         prettyPlot(self.data.t[feature], value[feature],
-                   self.str_to_latex(title), self.data.xlabel, self.data.ylabel, **plot_kwargs)
+                   title.replace("_", "\_"), self.data.xlabel, self.data.ylabel, **plot_kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -221,7 +221,7 @@ class PlotUncertainty(object):
 
         title = feature + ", mean and variance"
         ax = prettyPlot(self.data.t[feature], self.data.E[feature],
-                        self.str_to_latex(title), self.data.xlabel, self.data.ylabel + ", mean",
+                        title.replace("_", "\_"), self.data.xlabel, self.data.ylabel + ", mean",
                         style=style, **plot_kwargs)
 
         colors = get_current_colormap()
@@ -288,8 +288,8 @@ class PlotUncertainty(object):
 
 
 
-        title = feature + ", 90\\% confidence interval"
-        prettyPlot(self.data.t[feature], self.data.E[feature], title=self.str_to_latex(title),
+        title = feature.replace("_", "\_") + ", 90\\% confidence interval"
+        prettyPlot(self.data.t[feature], self.data.E[feature], title=title,
                    xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
                    **plot_kwargs)
 
@@ -346,7 +346,7 @@ class PlotUncertainty(object):
 
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=feature + ", " + sensitivity.split("_")[0] + " "
+                       title=self.str_to_latex(feature) + ", " + sensitivity.split("_")[0] + " "
                        + sensitivity.split("_")[1] + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i,
@@ -439,7 +439,7 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = feature + ", " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
+        title = feature.replace("_", "\_") + ", " + sensitivity.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
@@ -488,8 +488,7 @@ class PlotUncertainty(object):
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature],
                        sense[feature][i],
-                       title=self.str_to_latex(feature) + ", " + sensitivity.split("_")[0]
-                       + " " + sensitivity.split("_")[1],
+                       title=self.str_to_latex(feature) + ", " + sensitivity.replace("_", " "),
                        xlabel=self.data.xlabel,
                        ylabel="sensitivity",
                        new_figure=False,
@@ -640,7 +639,7 @@ class PlotUncertainty(object):
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
 
-        plt.suptitle(self.str_to_latex(feature), fontsize=titlesize)
+        plt.suptitle(feature.replace("_", "\_"), fontsize=titlesize)
 
         if sensitivity is None:
             save_name = feature + self.figureformat
@@ -689,7 +688,7 @@ class PlotUncertainty(object):
 
 
         prettyBar(total_sense[feature],
-                  title="total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
+                  title="total " + sensitivity.replace("_", " ")
                   + ", " + self.str_to_latex(feature),
                   xlabels=self.list_to_latex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
@@ -917,7 +916,7 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = "total " + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1]
+        title = "total " + sensitivity.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
