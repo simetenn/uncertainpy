@@ -115,6 +115,8 @@ class RunModel(ParameterBase):
         self.data.features_1d = features_1d
         self.data.features_2d = features_2d
 
+
+
         if self.is_adaptive(results) and not self.model.adaptive_model:
             # TODO if the model is adaptive perform the complete interpolation here instead.
             raise ValueError("The number of simulation points varies between simulations."
@@ -178,7 +180,6 @@ class RunModel(ParameterBase):
 
 
     def evaluate_nodes(self, nodes):
-
         if self.supress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()

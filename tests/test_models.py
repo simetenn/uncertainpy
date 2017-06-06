@@ -11,6 +11,8 @@ from uncertainpy import Parameters
 from models import HodgkinHuxley
 from models import CoffeeCup
 from models import izhikevich
+from models import brunel_network
+
 
 from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
 from testing_classes import TestingModelAdaptive, model_function
@@ -196,8 +198,35 @@ class TestNeuronModel(unittest.TestCase):
 
 class TestNestModel(unittest.TestCase):
     def test_init(self):
-        self.model = NestModel()
+        model = NestModel(brunel_network)
 
+
+    def test_run(self):
+        model = NestModel(brunel_network)
+
+        t, U = model.run()
+
+        correct_U = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
+                     47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
+
+        self.assertIsNone(t)
+        self.assertEqual(U[0], correct_U)
+
+
+    def test_postprocess(self):
+        model = NestModel(brunel_network)
+
+        t, U = model.run()
+        correct_U = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
+                     47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
+
+        t, U = model.postprocess(t, correct_U)
+
+        binary_spike = np.zeros(len(t))
+        binary_spike[np.in1d(t, correct_U)] = 1
+
+        self.assertTrue(np.array_equal(t, np.arange(0, 100.1, 0.1)))
+        self.assertTrue(np.array_equal(U, binary_spike))
 
 
 if __name__ == "__main__":

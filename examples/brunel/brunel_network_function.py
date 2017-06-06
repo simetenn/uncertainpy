@@ -106,40 +106,15 @@ def brunel_network(J_E=0.5, g=5.0):
     nest.Simulate(simtime)
     events = nest.GetStatus(spike_detect_E, 'events')[0]
 
-    # cv_list = []
-    # for sender in set(events["senders"]):
-    #     spiketrain = events["times"][events["senders"] == sender]
-    #     cv_list.append(calc_CV(spiketrain))
 
     spiketrains = []
-    cv_list = []
     for sender in set(events["senders"]):
         spiketrain = events["times"][events["senders"] == sender]
-        cv_list.append(cv(isi(spiketrain)))
         spiketrains.append(spiketrain)
 
-    # U = np.nanmean(np.array(cv_list))
-    # t = None
-
-    U = spiketrains[0]
+    # U must be a list/array if spiketrains
+    # U = [spiketrains[0]]
+    U = spiketrains
     t = None
-
-
-
-
-
-    # dt = nest.GetKernelStatus()["resolution"]
-    # T = nest.GetKernelStatus()["time"]
-    # t = np.arange(0, T+dt, dt)
-
-
-    # expanded_spiketrains = []
-    # for spiketrain in spiketrains:
-    #     binary_spike = np.zeros(len(t))
-    #     binary_spike[np.in1d(t, spiketrain)] = 1
-
-    #     expanded_spiketrains.append(binary_spike)
-
-    # U = np.array(expanded_spiketrains)
 
     return t, U
