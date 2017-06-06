@@ -346,8 +346,7 @@ class PlotUncertainty(object):
 
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=self.str_to_latex(feature) + ", " + sensitivity.split("_")[0] + " "
-                       + sensitivity.split("_")[1] + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
+                       title=feature.replace("_", " ") + ", " + sensitivity.F + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
@@ -488,7 +487,7 @@ class PlotUncertainty(object):
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature],
                        sense[feature][i],
-                       title=self.str_to_latex(feature) + ", " + sensitivity.replace("_", " "),
+                       title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " "),
                        xlabel=self.data.xlabel,
                        ylabel="sensitivity",
                        new_figure=False,
@@ -689,7 +688,7 @@ class PlotUncertainty(object):
 
         prettyBar(total_sense[feature],
                   title="total " + sensitivity.replace("_", " ")
-                  + ", " + self.str_to_latex(feature),
+                  + ", " + feature.replace("_", " "),
                   xlabels=self.list_to_latex(self.data.uncertain_parameters),
                   ylabel="\% total sensitivity",
                   nr_colors=len(self.data.uncertain_parameters),
