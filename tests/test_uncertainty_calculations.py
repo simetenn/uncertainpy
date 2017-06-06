@@ -42,8 +42,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty_calculations = UncertaintyCalculations(self.model,
-                                                                self.parameters,
+        self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                                parameters=self.parameters,
                                                                 features=features,
                                                                 verbose_level="error",
                                                                 seed=self.seed)
@@ -55,8 +55,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_init(self):
-        uncertainty = UncertaintyCalculations(self.model,
-                                              self.parameters)
+        uncertainty = UncertaintyCalculations(model=self.model,
+                                              parameters=self.parameters)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.features, GeneralFeatures)
@@ -64,11 +64,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_intit_features(self):
-        uncertainty_calculations = UncertaintyCalculations(self.model,
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                            verbose_level="error")
         self.assertIsInstance(uncertainty_calculations.features, GeneralFeatures)
 
-        uncertainty_calculations = UncertaintyCalculations(self.model,
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                            parameters=None,
                                                            features=TestingFeatures(),
                                                            verbose_level="error")

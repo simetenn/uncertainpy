@@ -33,6 +33,7 @@ class TestRunModel(unittest.TestCase):
 
         self.parameterlist = [["a", 1, None],
                               ["b", 2, None]]
+
         self.parameters = Parameters(self.parameterlist)
 
         self.runmodel = RunModel(model=TestingModel1d(),

@@ -83,6 +83,10 @@ class RunModel(ParameterBase):
 
         self.parallel.model = self.model
 
+        if self._model is not None:
+            self.data.xlabel = self.model.xlabel
+            self.data.ylabel = self.model.ylabel
+            self.data.model_name = self.model.name
 
 
     def perform_interpolation(self, ts, interpolation):
