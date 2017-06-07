@@ -193,7 +193,8 @@ Test if the model returned an adaptive result
                     data = getattr(self, data_name)
 
                     if feature in data and data[feature] is not None:
-                        group.create_dataset(data_name, data=self.none_to_nan(data[feature]))
+                        # group.create_dataset(data_name, data=self.none_to_nan(data[feature]))
+                        group.create_dataset(data_name, data=data[feature])
 
 
     def load(self, filename):
@@ -232,7 +233,8 @@ Test if the model returned an adaptive result
                     data = getattr(self, data_name)
 
                     if data_name in f[feature].keys():
-                        data[feature] = self.nan_to_none(f[feature][data_name][()])
+                        # data[feature] = self.nan_to_none(f[feature][data_name][()])
+                        data[feature] = f[feature][data_name][()]
                     else:
                         data[feature] = None
 
