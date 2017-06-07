@@ -331,16 +331,16 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.mean(feature="feature0d")
+            self.plot.mean_1d(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.mean(feature="feature2d")
+            self.plot.mean_1d(feature="feature2d")
 
 
     def test_mean_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.mean(feature="TestingModel1d")
+        self.plot.mean_1d(feature="TestingModel1d")
 
         self.compare_plot("TestingModel1d_mean")
 
@@ -348,7 +348,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_mean_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.mean(feature="feature1d")
+        self.plot.mean_1d(feature="feature1d")
 
         self.compare_plot("feature1d_mean")
 
@@ -357,16 +357,16 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.variance(feature="feature0d")
+            self.plot.variance_1d(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.variance(feature="feature2d")
+            self.plot.variance_1d(feature="feature2d")
 
 
     def test_variance_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.variance(feature="TestingModel1d")
+        self.plot.variance_1d(feature="TestingModel1d")
 
         self.compare_plot("TestingModel1d_variance")
 
@@ -374,7 +374,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_variance_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.variance(feature="feature1d")
+        self.plot.variance_1d(feature="feature1d")
 
         self.compare_plot("feature1d_variance")
 
@@ -384,16 +384,16 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.mean_variance(feature="feature0d")
+            self.plot.mean_variance_1d(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.mean_variance(feature="feature2d")
+            self.plot.mean_variance_1d(feature="feature2d")
 
 
     def test_mean_variance_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.mean_variance(feature="TestingModel1d")
+        self.plot.mean_variance_1d(feature="TestingModel1d")
 
         self.compare_plot("TestingModel1d_mean-variance")
 
@@ -401,7 +401,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_mean_variance_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.mean_variance(feature="feature1d")
+        self.plot.mean_variance_1d(feature="feature1d")
 
         self.compare_plot("feature1d_mean-variance")
 
@@ -410,7 +410,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_confidence_interval_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.confidence_interval(feature="TestingModel1d")
+        self.plot.confidence_interval_1d(feature="TestingModel1d")
 
         self.compare_plot("TestingModel1d_confidence-interval")
 
@@ -418,7 +418,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_confidence_interval_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.confidence_interval(feature="feature1d")
+        self.plot.confidence_interval_1d(feature="feature1d")
 
         self.compare_plot("feature1d_confidence-interval")
 
@@ -427,16 +427,16 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.confidence_interval(feature="feature0d")
+            self.plot.confidence_interval_1d(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.confidence_interval(feature="feature2d")
+            self.plot.confidence_interval_1d(feature="feature2d")
 
 
     def test_sensitivity_1_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity(feature="TestingModel1d", sensitivity="sensitivity_1")
+        self.plot.sensitivity_1d(feature="TestingModel1d", sensitivity="sensitivity_1")
 
         self.compare_plot("TestingModel1d_sensitivity_1_a")
         self.compare_plot("TestingModel1d_sensitivity_1_b")
@@ -445,7 +445,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_sensitivity_model_result_t(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity(feature="TestingModel1d", sensitivity="sensitivity_t")
+        self.plot.sensitivity_1d(feature="TestingModel1d", sensitivity="sensitivity_t")
 
         self.compare_plot("TestingModel1d_sensitivity_t_a")
         self.compare_plot("TestingModel1d_sensitivity_t_b")
@@ -454,7 +454,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_sensitivity_1_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity(feature="feature1d", sensitivity="sensitivity_1")
+        self.plot.sensitivity_1d(feature="feature1d", sensitivity="sensitivity_1")
 
 
         self.compare_plot("feature1d_sensitivity_1_a")
@@ -464,7 +464,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_sensitivity_t_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity(feature="feature1d", sensitivity="sensitivity_t")
+        self.plot.sensitivity_1d(feature="feature1d", sensitivity="sensitivity_t")
 
 
         self.compare_plot("feature1d_sensitivity_t_a")
@@ -475,17 +475,17 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.sensitivity(feature="feature0d")
+            self.plot.sensitivity_1d(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.sensitivity(feature="feature2d")
+            self.plot.sensitivity_1d(feature="feature2d")
 
 
 
     def test_sensitivity_1_combined_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_combined(feature="TestingModel1d", sensitivity="sensitivity_1")
+        self.plot.sensitivity_1d_combined(feature="TestingModel1d", sensitivity="sensitivity_1")
 
         self.compare_plot("TestingModel1d_sensitivity_1")
 
@@ -493,7 +493,7 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_sensitivity_t_combined_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_combined(feature="TestingModel1d", sensitivity="sensitivity_t")
+        self.plot.sensitivity_1d_combined(feature="TestingModel1d", sensitivity="sensitivity_t")
 
         self.compare_plot("TestingModel1d_sensitivity_t")
 
@@ -501,14 +501,14 @@ class TestPlotUncertainpy(unittest.TestCase):
     def test_sensitivity_1_combined_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_combined(feature="feature1d", sensitivity="sensitivity_1")
+        self.plot.sensitivity_1d_combined(feature="feature1d", sensitivity="sensitivity_1")
 
         self.compare_plot("feature1d_sensitivity_1")
 
     def test_sensitivity_t_combined_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_combined(feature="feature1d", sensitivity="sensitivity_t")
+        self.plot.sensitivity_1d_combined(feature="feature1d", sensitivity="sensitivity_t")
 
         self.compare_plot("feature1d_sensitivity_t")
 
@@ -517,10 +517,10 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.sensitivity_combined(feature="feature0d")
+            self.plot.sensitivity_1d_combined(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.sensitivity_combined(feature="feature2d")
+            self.plot.sensitivity_1d_combined(feature="feature2d")
 
 
 

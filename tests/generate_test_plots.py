@@ -6,8 +6,8 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 
-from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
+from uncertainpy.plotting import PlotUncertainty
+# from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
 from prettyplot import prettyPlot
 from uncertainpy.features.spikes import Spikes
 

@@ -90,12 +90,11 @@ class PlotUncertainty(object):
         elif self.data.model_name in self.data.features_1d:
             self.simulator_results_1d(foldername=foldername)
         else:
-            raise NotImplementedError("simulator_results not "
-                                      + "implemented for simulator results >= 2D")
+            self.simulator_results_2d(foldername=foldername)
 
 
     # TODO does not have a test
-    def simulator_results_0d(self, foldername="simulator_results"):
+    def simulator_results_0d(self, foldername="simulator_results", **plot_kwargs):
         if self.data.model_name not in self.data.features_0d:
             raise ValueError("{} is not a 0D feature".format(self.data.model_name))
 
@@ -107,11 +106,12 @@ class PlotUncertainty(object):
                    xlabel="simulator run \#number",
                    ylabel=self.data.ylabel,
                    title="simulator results",
-                   new_figure=True)
+                   new_figure=True,
+                   **plot_kwargs)
         plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
 
 
-    def simulator_results_1d(self, foldername="simulator_results"):
+    def simulator_results_1d(self, foldername="simulator_results", **plot_kwargs):
         if self.data.model_name not in self.data.features_1d:
             raise ValueError("{} is not a 1D feature".format(self.data.model_name))
 
@@ -123,12 +123,44 @@ class PlotUncertainty(object):
         padding = len(str(len(self.data.U[self.data.model_name]) + 1))
         for U in self.data.U[self.data.model_name]:
             prettyPlot(self.data.t[self.data.model_name], U,
-                       xlabel=self.data.xlabel, ylabel=self.data.ylabel, new_figure=True)
+                       xlabel=self.data.xlabel, ylabel=self.data.ylabel,
+                       title="{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.clf()
             i += 1
 
+
+
+    def simulator_results_2d(self, foldername="simulator_results", **plot_kwargs):
+        if self.data.model_name not in self.data.features_2d:
+            raise ValueError("{} is not a 2D feature".format(self.data.model_name))
+
+        i = 1
+        save_folder = os.path.join(self.output_dir, foldername)
+        if not os.path.isdir(save_folder):
+            os.makedirs(save_folder)
+
+        padding = len(str(len(self.data.U[self.data.model_name]) + 1))
+        for U in self.data.U[self.data.model_name]:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            ax.set_title("{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i))
+
+            iax = ax.imshow(U, cmap="viridis", aspect="auto",
+                            extent=[self.data.t[self.data.model_name][0],
+                                    self.data.t[self.data.model_name][-1],
+                                    0, U.shape[0]],
+                            **plot_kwargs)
+
+            cbar = fig.colorbar(iax)
+            cbar.ax.set_title(self.data.ylabel)
+            ax.set_xlabel(self.data.xlabel)
+            ax.set_ylabel(self.data.zlabel)
+            plt.savefig(os.path.join(save_folder,
+                                     "U_{0:0{1}d}".format(i, padding) + self.figureformat))
+            plt.close()
+            i += 1
 
 
     def attribute_feature_1d(self,
@@ -176,7 +208,65 @@ class PlotUncertainty(object):
             plt.close()
 
 
-    def mean(self, feature, hardcopy=True, show=False, **plot_kwargs):
+    def attribute_feature_2d(self,
+                             feature=None,
+                             attribute="E",
+                             attribute_name="mean",
+                             hardcopy=True,
+                             show=False,
+                             **plot_kwargs):
+
+        if self.data is None:
+            raise ValueError("Datafile must be loaded")
+
+        if feature is None:
+            feature = self.data.model_name
+
+        if feature not in self.data.features_2d:
+            raise ValueError("%s is not a 2D feature" % (feature))
+
+        if attribute not in ["E", "Var"]:
+            raise ValueError("{} is not a supported attribute".format(attribute))
+
+
+        value = getattr(self.data, attribute)
+
+        if self.data.t[feature] is None or value[feature] is None:
+            msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
+            self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
+            return
+
+        title = feature + ", " + attribute_name
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_title(title.replace("_", " "))
+
+        iax = ax.imshow(value[feature], cmap="viridis", aspect="auto",
+                        extent=[self.data.t[feature][0], self.data.t[feature][-1],
+                                0, value[feature].shape[0]],
+                        **plot_kwargs)
+
+        cbar = fig.colorbar(iax)
+        cbar.ax.set_title(self.data.ylabel)
+        ax.set_xlabel(self.data.xlabel)
+        ax.set_ylabel(self.data.zlabel)
+
+        save_name = feature + "_" + attribute_name
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.output_dir,
+                                     save_name + self.figureformat),
+                        bbox_inches="tight")
+
+        if show:
+            plt.show()
+        else:
+            plt.close()
+
+
+
+    def mean_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_1d(feature,
                                   attribute="E",
                                   attribute_name="mean",
@@ -185,7 +275,7 @@ class PlotUncertainty(object):
                                   **plot_kwargs)
 
 
-    def variance(self, feature, hardcopy=True, show=False, **plot_kwargs):
+    def variance_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_1d(feature,
                                   attribute="Var",
                                   attribute_name="variance",
@@ -193,16 +283,32 @@ class PlotUncertainty(object):
                                   show=show,
                                   **plot_kwargs)
 
+    def mean_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+        self.attribute_feature_2d(feature,
+                                  attribute="E",
+                                  attribute_name="mean",
+                                  hardcopy=hardcopy,
+                                  show=show,
+                                  **plot_kwargs)
 
 
-    def mean_variance(self,
-                      feature=None,
-                      new_figure=True,
-                      hardcopy=True,
-                      show=False,
-                      color=0,
-                      style="seaborn-dark",
-                      **plot_kwargs):
+    def variance_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+        self.attribute_feature_2d(feature,
+                                  attribute="Var",
+                                  attribute_name="variance",
+                                  hardcopy=hardcopy,
+                                  show=show,
+                                  **plot_kwargs)
+
+
+    def mean_variance_1d(self,
+                         feature=None,
+                         new_figure=True,
+                         hardcopy=True,
+                         show=False,
+                         color=0,
+                         style="seaborn-dark",
+                         **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -265,11 +371,11 @@ class PlotUncertainty(object):
 
 
 
-    def confidence_interval(self,
-                            feature=None,
-                            hardcopy=True,
-                            show=False,
-                            **plot_kwargs):
+    def confidence_interval_1d(self,
+                               feature=None,
+                               hardcopy=True,
+                               show=False,
+                               **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -315,12 +421,12 @@ class PlotUncertainty(object):
             plt.close()
 
 
-    def sensitivity(self,
-                    feature=None,
-                    sensitivity="sensitivity_1",
-                    hardcopy=True,
-                    show=False,
-                    **plot_kwargs):
+    def sensitivity_1d(self,
+                       feature=None,
+                       sensitivity="sensitivity_1",
+                       hardcopy=True,
+                       show=False,
+                       **plot_kwargs):
 
         if self.data is None:
             raise ValueError("Datafile must be loaded")
@@ -346,7 +452,7 @@ class PlotUncertainty(object):
 
         for i in range(len(sense[feature])):
             prettyPlot(self.data.t[feature], sense[feature][i],
-                       title=feature.replace("_", " ") + ", " + sensitivity.F + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
+                       title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
@@ -367,12 +473,12 @@ class PlotUncertainty(object):
 
 
 
-    def sensitivity_grid(self,
-                         feature=None,
-                         sensitivity="sensitivity_1",
-                         hardcopy=True,
-                         show=False,
-                         **plot_kwargs):
+    def sensitivity_1d_grid(self,
+                            feature=None,
+                            sensitivity="sensitivity_1",
+                            hardcopy=True,
+                            show=False,
+                            **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -457,12 +563,12 @@ class PlotUncertainty(object):
 
 
 
-    def sensitivity_combined(self,
-                             feature=None,
-                             sensitivity="sensitivity_1",
-                             hardcopy=True,
-                             show=False,
-                             **plot_kwargs):
+    def sensitivity_1d_combined(self,
+                                feature=None,
+                                sensitivity="sensitivity_1",
+                                hardcopy=True,
+                                show=False,
+                                **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
@@ -515,17 +621,21 @@ class PlotUncertainty(object):
 
     def features_1d(self, sensitivity="sensitivity_1"):
         for feature in self.data.features_1d:
-            self.mean(feature=feature)
-            self.variance(feature=feature)
-            self.mean_variance(feature=feature)
-            self.confidence_interval(feature=feature)
+            self.mean_1d(feature=feature)
+            self.variance_1d(feature=feature)
+            self.mean_variance_1d(feature=feature)
+            self.confidence_interval_1d(feature=feature)
 
             if sensitivity is not None:
-                self.sensitivity(feature=feature, sensitivity=sensitivity)
-                self.sensitivity_combined(feature=feature, sensitivity=sensitivity)
-                self.sensitivity_grid(feature=feature, sensitivity=sensitivity)
+                self.sensitivity_1d(feature=feature, sensitivity=sensitivity)
+                self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity)
+                self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
 
 
+    def features_2d(self):
+        for feature in self.data.features_2d:
+            self.mean_2d(feature=feature)
+            self.variance_2d(feature=feature)
 
 
     # TODO not finished, missing correct label placement
@@ -757,7 +867,7 @@ class PlotUncertainty(object):
         if self.data is None:
             raise ValueError("Datafile must be loaded")
 
-
+        self.features_2d()
         self.features_1d(sensitivity=sensitivity)
         self.features_0d(sensitivity=sensitivity)
 
@@ -776,9 +886,9 @@ class PlotUncertainty(object):
         self.plot_all(sensitivity="sensitivity_1")
 
         for feature in self.data.features_1d:
-            self.sensitivity(feature=feature, sensitivity="sensitivity_t")
-            self.sensitivity_combined(feature=feature, sensitivity="sensitivity_t")
-            self.sensitivity_grid(feature=feature, sensitivity="sensitivity_t")
+            self.sensitivity_1d(feature=feature, sensitivity="sensitivity_t")
+            self.sensitivity_1d_combined(feature=feature, sensitivity="sensitivity_t")
+            self.sensitivity_1d_grid(feature=feature, sensitivity="sensitivity_t")
 
         self.features_0d(sensitivity="sensitivity_t")
 
@@ -788,11 +898,12 @@ class PlotUncertainty(object):
 
     def plot_condensed(self, sensitivity="sensitivity_1"):
         for feature in self.data.features_1d:
-            self.mean_variance(feature=feature)
-            self.confidence_interval(feature=feature)
+            self.features_2d()
+            self.mean_variance_1d(feature=feature)
+            self.confidence_interval_1d(feature=feature)
 
             if sensitivity is not None:
-                self.sensitivity_grid(feature=feature, sensitivity=sensitivity)
+                self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
 
         self.features_0d(sensitivity=sensitivity)
 

@@ -118,6 +118,7 @@ feature_list
 
         self.xlabel = ""
         self.ylabel = ""
+        self.zlabel = ""
         self.model_name = ""
 
 
@@ -178,6 +179,7 @@ Test if the model returned an adaptive result
             f.attrs["features"] = self.feature_list
             f.attrs["xlabel"] = self.xlabel
             f.attrs["ylabel"] = self.ylabel
+            f.attrs["zlabel"] = self.zlabel
             f.attrs["features_0d"] = self.features_0d
             f.attrs["features_1d"] = self.features_1d
             f.attrs["features_2d"] = self.features_2d
@@ -215,6 +217,7 @@ Test if the model returned an adaptive result
 
             self.xlabel = f.attrs["xlabel"]
             self.ylabel = f.attrs["ylabel"]
+            self.zlabel = f.attrs["zlabel"]
             self.model_name = f.attrs["model name"]
 
 

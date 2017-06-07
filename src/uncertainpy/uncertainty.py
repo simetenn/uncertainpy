@@ -29,6 +29,7 @@ class UncertaintyEstimation(ParameterBase):
                  output_dir_data="data/",
                  xlabel=None,
                  ylabel=None,
+                 zlabel=None,
                  verbose_level="info",
                  verbose_filename=None,
                  uncertainty_calculations=None,
@@ -92,6 +93,8 @@ class UncertaintyEstimation(ParameterBase):
         if ylabel is not None:
             self.model.ylabel = ylabel
 
+        if zlabel is not None:
+            self.model.zlabel = zlabel
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,

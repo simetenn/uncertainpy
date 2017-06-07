@@ -238,6 +238,7 @@ def generate_data_data():  # pragma: no cover
     data.total_sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
     data.xlabel = "xlabel"
     data.ylabel = "ylabel"
+    data.zlabel = "zlabel"
     data.model_name = "TestingModel1d"
 
     data.features_0d = ["TestingModel1d", "feature1d"]
