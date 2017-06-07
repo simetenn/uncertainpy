@@ -103,9 +103,10 @@ class UncertaintyCalculations(ParameterBase):
         masked_U = []
         mask = np.ones(len(self.data.U[feature]), dtype=bool)
 
+        # TODO used numpy masked array
         for result in self.data.U[feature]:
-            # if not isinstance(result, np.ndarray) and np.isnan(result):
-            if result is None:
+            if not isinstance(result, np.ndarray) and np.all(np.isnan(result)):
+            # if result is None:
                 mask[i] = False
             else:
                 masked_U.append(result)

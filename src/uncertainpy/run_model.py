@@ -29,7 +29,7 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
           "feature_invalid": {"U": None,
-                             "t": None}}
+                              "t": None}}
 
 results = [result 1, result 2, ..., result N]
 """
@@ -116,8 +116,6 @@ class RunModel(ParameterBase):
         self.data.features_1d = features_1d
         self.data.features_2d = features_2d
 
-
-
         if self.is_adaptive(results) and not self.model.adaptive_model:
             # TODO if the model is adaptive perform the complete interpolation here instead.
             raise ValueError("The number of simulation points varies between simulations."
@@ -163,7 +161,7 @@ class RunModel(ParameterBase):
                 for solved in results:
                     self.data.U[feature].append(solved[feature]["U"])
 
-                # self.data.U[feature] = np.array(self.U[feature])
+                # self.data.U[feature] = np.array(self.data.U[feature])
 
 
         for feature in self.data.features_0d:
@@ -172,7 +170,9 @@ class RunModel(ParameterBase):
             for solved in results:
                 self.data.U[feature].append(solved[feature]["U"])
 
-            # self.U[feature] = np.array(self.U[feature])
+        # TODO is this necessary to ensure all results are arrays?
+        for feature in self.data.feature_list:
+            self.data.U[feature] = np.array(self.data.U[feature])
 
 
         self.data.remove_only_invalid_results()

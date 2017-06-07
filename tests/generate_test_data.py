@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import uncertainpy as un
-from testing_classes import TestingModel1d, TestingModel0d
+from testing_classes import TestingModel1d, TestingModel0d, TestingModel2d
 from testing_classes import TestingFeatures, model_function
 
 folder = os.path.dirname(os.path.realpath(__file__))
@@ -90,6 +90,31 @@ def generate_data_PC_0D():  # pragma: no cover
     test.polynomial_chaos()
 
 
+def generate_data_PC_2D():  # pragma: no cover
+    parameterlist = [["a", 1, None],
+                     ["b", 2, None]]
+
+    parameters = un.Parameters(parameterlist)
+    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+
+    model = TestingModel2d()
+
+    features = TestingFeatures(features_to_run=None)
+
+
+    test = un.UncertaintyEstimation(model,
+                                    features=features,
+                                    parameters=parameters,
+                                    output_dir_data=test_data_dir,
+                                    save_figures=False,
+                                    verbose_level="error",
+                                    seed=seed,
+                                    nr_mc_samples=10)
+
+
+    test.polynomial_chaos()
+
+
 def generate_data_PC_rosenblatt():  # pragma: no cover
     parameterlist = [["a", 1, None],
                      ["b", 2, None]]
@@ -114,7 +139,9 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
                                     nr_mc_samples=10)
 
 
-    test.polynomial_chaos(rosenblatt=True, filename="TestingModel1d_Rosenblatt",)
+    test.polynomial_chaos(rosenblatt=True, filename="TestingModel1d_Rosenblatt")
+
+
 
 
 
@@ -291,6 +318,7 @@ if __name__ == "__main__":  # pragma: no cover
     generate_data_polynomial_chaos()
     generate_data_PC_model_function()
     generate_data_PC_0D()
+    generate_data_PC_2D()
     generate_data_polynomial_chaos_single()
 
     generate_data_monte_carlo()

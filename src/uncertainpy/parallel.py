@@ -114,10 +114,8 @@ class Parallel(Base):
             if U is None:
                 raise ValueError("U has not been calculated")
 
-            # if np.all(np.isnan(t)):
-            #     t = None
-
             t, U = self.model.postprocess(t, U)
+
 
             results = {}
             results[self.model.name] = {"t": t, "U": U}
@@ -130,12 +128,19 @@ class Parallel(Base):
 
 
             for feature in feature_results:
-                feature_t = feature_results[feature]["t"]
-                if feature_t is not None and np.all(np.isnan(feature_t)):
-                    feature_t = None
+                t_feature = feature_results[feature]["t"]
+                U_feature = feature_results[feature]["U"]
 
-                results[feature] = {"U": feature_results[feature]["U"],
-                                    "t": feature_t}
+
+
+                if t_feature is None:
+                    t_feature = np.nan
+
+                if U_feature is None:
+                    U_feature = np.nan
+
+                results[feature] = {"U": np.array(U_feature),
+                                    "t": np.array(t_feature)}
 
             # Create interpolations
             results = self.create_interpolations(results)

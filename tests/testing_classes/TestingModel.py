@@ -39,7 +39,7 @@ class TestingModel1d(Model):
 
 class TestingModel2d(Model):
     def __init__(self):
-        Model.__init__(self, xlabel="x", ylabel="y")
+        Model.__init__(self, xlabel="x", ylabel="y", zlabel="z")
 
 
     def run(self, a=1, b=2):

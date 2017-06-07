@@ -105,7 +105,7 @@ class PlotUncertainty(object):
         prettyPlot(self.data.U[self.data.model_name],
                    xlabel="simulator run \#number",
                    ylabel=self.data.ylabel,
-                   title="simulator results",
+                   title="{}, simulator result".format(self.data.model_name.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
         plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
