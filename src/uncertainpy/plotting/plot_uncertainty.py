@@ -693,7 +693,7 @@ class PlotUncertainty(object):
             return
 
         if self.data.Var[feature] is None:
-            msg = "Missing var for {feature}. Unable to plot"
+            msg = "Missing Var for {feature}. Unable to plot"
             self.logger.warning(msg.format(feature=feature))
             return
 
@@ -729,7 +729,6 @@ class PlotUncertainty(object):
                        xlabels=xlabels,
                        ylabel=self.data.ylabel,
                        palette=get_colormap_tableu20())
-
 
         if sense is not None and sense[feature] is not None:
             pos = 2*distance + 2*width
@@ -776,6 +775,9 @@ class PlotUncertainty(object):
 
         ax.set_xticks(xticks)
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
+
+        for tick in ax.get_xticklabels()[:2]:
+            tick.set_rotation(-25)
 
 
         plt.suptitle(feature.replace("_", " "), fontsize=titlesize)

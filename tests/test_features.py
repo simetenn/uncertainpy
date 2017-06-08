@@ -2,7 +2,7 @@ import numpy as np
 import unittest
 import os
 
-from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures, SpikingFeatures
+from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures, SpikingFeatures, NetworkFeatures
 from uncertainpy import Spikes
 from testing_classes import TestingFeatures
 
@@ -274,6 +274,35 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 
+
+
+class TestSpikingFeatures(unittest.TestCase):
+     def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.t_original = np.arange(0, 10)
+        spiketrain = np.array([1, 3, 5, 6])
+        self.U = [spiketrain, spiketrain, spiketrain]
+
+        self.implemented_features = ["cv", "mean_cv"]
+
+        self.features = NetworkFeatures()
+
+        self.t, self.spiketrains = self.features.preprocess(self.t_original, self.U)
+
+
+     def test_init(self):
+        self.features = NetworkFeatures()
+
+        self.assertIsInstance(self.features, NetworkFeatures)
+
+
+     def test_preprocess(self):
+        self.features = NetworkFeatures()
+
+        t, spiketrains = self.features.preprocess(self.t_original, self.U)
+
+        # TODO implement this test once preprocess is finished
 
 
 class TestTestingFeatures(unittest.TestCase):

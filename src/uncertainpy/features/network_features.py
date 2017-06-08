@@ -7,10 +7,15 @@ class NetworkFeatures(GeneralFeatures):
         return t, spiketrains
 
     def cv(self, t, spiketrains):
-        print spiketrains
         cv = []
         for spiketrain in spiketrains:
             cv.append(stat.cv(spiketrain))
 
-        print cv
         return None, np.array(cv)
+
+    def mean_cv(self, t, spiketrains):
+        cv = []
+        for spiketrain in spiketrains:
+            cv.append(stat.cv(spiketrain))
+
+        return None, np.mean(cv)
