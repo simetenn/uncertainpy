@@ -120,16 +120,16 @@ parser.add_argument("-b", "--basic",
 parser.add_argument("-f", "--fast", help="Run all tests except usecase test", action="store_true")
 
 parser.add_argument("--uncertainpy", help="Uncertainpy tests", action="store_true")
-parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test",
-                    action="store_true")
+# parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test",
+#                     action="store_true")
 parser.add_argument("--parameters", help="Parameter tests", action="store_true")
 parser.add_argument("--distribution", help="Distribution tests", action="store_true")
 parser.add_argument("--spike", help="Spike tests", action="store_true")
 parser.add_argument("--spikes", help="Spikes tests ", action="store_true")
 parser.add_argument("--spike_sorting", help="Test spike sorting", action="store_true")
 parser.add_argument("--plotuncertainty", help="PlotUncertainty tests", action="store_true")
-parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests",
-                    action="store_true")
+# parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests",
+#                     action="store_true")
 parser.add_argument("--features", help="Features tests", action="store_true")
 parser.add_argument("--model", help="Model tests", action="store_true")
 parser.add_argument("--runmodel", help="RunModel tests", action="store_true")

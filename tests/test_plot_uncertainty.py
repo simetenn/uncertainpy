@@ -542,6 +542,21 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.compare_plot("feature1d_sensitivity_1")
 
 
+    def test_features_1d_no_t(self):
+        self.plot.load(self.data_file_path)
+        self.plot.data.t["feature1d"] = np.nan
+
+        self.plot.features_1d(sensitivity="sensitivity_1")
+
+        self.plot_exists("feature1d_mean")
+        self.plot_exists("feature1d_variance")
+        self.plot_exists("feature1d_mean-variance")
+        self.plot_exists("feature1d_confidence-interval")
+        self.plot_exists("feature1d_sensitivity_1_a")
+        self.plot_exists("feature1d_sensitivity_1_b")
+        self.plot_exists("feature1d_sensitivity_1")
+
+
 
     def test_feature_0d(self):
         self.plot.load(self.data_file_path)
