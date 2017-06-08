@@ -133,7 +133,7 @@ def generate_spikes_plot():
 if __name__ == "__main__":
     generate_plot_uncertainty()
     # generate_plots_compare()
-    generate_simulator_plot()
+    # generate_simulator_plot()
     generate_simulator_plot_0d()
     generate_spike_plot()
     generate_spikes_plot()

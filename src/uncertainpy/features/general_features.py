@@ -124,7 +124,7 @@ class GeneralFeatures(object):
             try:
                 t, U = feature_result
             except ValueError as error:
-                msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
+                msg = "feature {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)
@@ -143,7 +143,7 @@ class GeneralFeatures(object):
             try:
                 t, U = feature_result
             except ValueError as error:
-                msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature)
+                msg = "feature {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)

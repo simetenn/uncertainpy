@@ -338,7 +338,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(nodes, masked_nodes))
 
 
-    def test_create_mask_feature0d_none(self):
+    def test_create_mask_feature0d_nan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -369,7 +369,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # feature2d
 
-    def test_create_mask_feature1d_none(self):
+    def test_create_mask_feature1d_nan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
@@ -433,7 +433,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                  np.arange(0, 10)])))
 
 
-    def test_create_mask_feature2d_nodes_1D_none(self):
+    def test_create_mask_feature2d_nodes_1D_nan(self):
         nodes = np.array([0, 1, 2])
         uncertain_parameters = ["a"]
 
