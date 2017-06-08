@@ -13,13 +13,14 @@ parameters.set_all_distributions(un.Distribution(0.5).uniform)
 # model = un.Model(brunel_network,
 #                  adaptive_model=False)
 model = brunel_network
+features = un.NetworkFeatures(features_to_run="all")
 
 # uncertainty_calculation = un.UncertaintyCalculations(CPUs=1)
 
 uncertainty = un.UncertaintyEstimation(model,
                                        base_model=un.NestModel,
                                        parameters=parameters,
-                                       features=None,
+                                       features=features,
                                        CPUs=1)
 
 

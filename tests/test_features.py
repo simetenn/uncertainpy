@@ -19,24 +19,6 @@ class TestGeneralFeatures(unittest.TestCase):
 
         self.assertIsInstance(features, GeneralFeatures)
 
-    # def test_t(self):
-    #     t = np.arange(0, 10)
-
-    #     features = GeneralFeatures()
-    #     features.t = t
-
-    #     self.assertTrue(np.array_equal(features.t, np.arange(0, 10)))
-
-
-    # def test_U(self):
-    #     U = np.arange(0, 10) + 1
-
-    #     features = GeneralFeatures()
-    #     features.U = U
-
-    #     self.assertTrue(np.array_equal(features.U, np.arange(0, 10) + 1))
-
-
 
     def test_initUtility(self):
         new_utility_methods = ["new"]
@@ -180,21 +162,6 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(self.t, t))
 
 
-    # def test_calculate_spikesTNone(self):
-    #     self.features = GeneralSpikingFeatures()
-
-    #     self.features.U = self.U
-    #     with self.assertRaises(AttributeError):
-    #         self.features.calculate_spikes()
-
-
-    # def test_calculate_spikesUNone(self):
-    #     self.features = GeneralSpikingFeatures()
-
-    #     self.features.t = self.t
-    #     with self.assertRaises(AttributeError):
-    #         self.features.calculate_spikes()
-
 
 
 class TestSpikingFeatures(unittest.TestCase):
@@ -221,10 +188,10 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertIsNone(self.features.spikes)
 
 
-    # def test_init(self):
-    #     self.assertIsInstance(self.features, SpikingFeatures)
-    #     self.assertIsNotNone(self.features.spikes)
-    #     self.assertEqual(self.features.spikes.nr_spikes, 12)
+    def test_init(self):
+        self.assertIsInstance(self.features, SpikingFeatures)
+        self.assertIsNotNone(self.features.spikes)
+        self.assertEqual(self.features.spikes.nr_spikes, 12)
 
 
     def test_features_to_run_all(self):

@@ -152,11 +152,11 @@ class RunModel(ParameterBase):
 
                 self.data.t[feature], self.data.U[feature] = self.perform_interpolation(ts, interpolations)
             else:
-                if "t" in results[0][feature]:
-                    self.data.t[feature] = results[0][feature]["t"]
-                else:
-                    self.data.t[feature] = results[0][self.model.name]["t"]
-
+                # if "t" in results[0][feature]:
+                #     self.data.t[feature] = results[0][feature]["t"]
+                # else:
+                #     self.data.t[feature] = results[0][self.model.name]["t"]
+                self.data.t[feature] = results[0][feature]["t"]
                 self.data.U[feature] = []
                 for solved in results:
                     self.data.U[feature].append(solved[feature]["U"])

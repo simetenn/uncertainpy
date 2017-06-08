@@ -183,15 +183,20 @@ class PlotUncertainty(object):
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
-        value = getattr(self.data, attribute)
+        value = getattr(self.data, attribute)[feature]
+        t = self.data.t[feature]
 
-        if self.data.t[feature] is None or value[feature] is None:
-            msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
+        if np.all(np.isnan(value)):
+            msg = "{attribute_name} of {feature} is NaN. Unable to plot {attribute_name}"
             self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
             return
 
+
+        if np.all(np.isnan(t)):
+            t = np.arange(0, len(value))
+
         title = feature + ", " + attribute_name
-        prettyPlot(self.data.t[feature], value[feature],
+        prettyPlot(t, value,
                    title.replace("_", " "), self.data.xlabel, self.data.ylabel, **plot_kwargs)
 
 
@@ -318,15 +323,19 @@ class PlotUncertainty(object):
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if self.data.t[feature] is None \
-            or self.data.E[feature] is None \
-                or self.data.Var[feature] is None:
-            self.logger.warning("Mean and/or variance of {feature} is None.".format(feature=feature)
+        if np.all(np.isnan(self.data.E[feature])) or np.all(np.isnan(self.data.Var[feature])):
+            self.logger.warning("Mean and/or variance of {feature} is NaN.".format(feature=feature)
                                 + "Unable to plot mean and variance")
             return
 
+        t = self.data.t[feature]
+
+        if np.all(np.isnan(t)):
+            t = np.arange(0, len(self.data.E[feature]))
+
+
         title = feature + ", mean and variance"
-        ax = prettyPlot(self.data.t[feature], self.data.E[feature],
+        ax = prettyPlot(t, self.data.E[feature],
                         title.replace("_", " "), self.data.xlabel, self.data.ylabel + ", mean",
                         style=style, **plot_kwargs)
 
@@ -343,7 +352,7 @@ class PlotUncertainty(object):
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
         # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
 
-        ax2.plot(self.data.t[feature], self.data.Var[feature],
+        ax2.plot(t, self.data.Var[feature],
                  color=colors[color+1], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -385,24 +394,28 @@ class PlotUncertainty(object):
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if self.data.t[feature] is None \
-            or self.data.p_05[feature] is None \
-                or self.data.p_95[feature] is None:
-            msg = "p_05  and/or p_95 of {feature} is None. Unable to plot confidence interval"
+        if np.all(np.isnan(self.data.E[feature])) \
+            or  np.all(np.isnan(self.data.p_05[feature])) \
+                or  np.all(np.isnan(self.data.p_95[feature])):
+            msg = "Mean, p_05  and/or p_95 of {feature} is NaN. Unable to plot confidence interval"
             self.logger.warning(msg.format(feature=feature))
             return
 
+        t = self.data.t[feature]
+
+        if np.all(np.isnan(t)):
+            t = np.arange(0, len(self.data.E[feature]))
 
 
         title = feature.replace("_", " ") + ", 90\\% confidence interval"
-        prettyPlot(self.data.t[feature], self.data.E[feature], title=title,
+        prettyPlot(t, self.data.E[feature], title=title,
                    xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
                    **plot_kwargs)
 
         colors = get_current_colormap()
-        plt.fill_between(self.data.none_to_nan(self.data.t[feature]),
-                         self.data.none_to_nan(self.data.p_05[feature]),
-                         self.data.none_to_nan(self.data.p_95[feature]),
+        plt.fill_between(t,
+                         self.data.p_05[feature],
+                         self.data.p_95[feature],
                          alpha=0.5, color=colors[0])
 
 
@@ -444,14 +457,20 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data.t[feature] is None or sense[feature] is None:
-            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
+        if np.all(np.isnan(sense[feature])):
+            msg = "{sensitivity} of {feature} is NaN. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
 
+        t = self.data.t[feature]
+
+        if np.all(np.isnan(t)):
+            t = np.arange(0, len(sense[feature][0]))
+
+
         for i in range(len(sense[feature])):
-            prettyPlot(self.data.t[feature], sense[feature][i],
+            prettyPlot(t, sense[feature][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=self.data.xlabel, ylabel="sensitivity",
                        color=i,
@@ -491,15 +510,20 @@ class PlotUncertainty(object):
         sense = getattr(self.data, sensitivity)
 
         if feature not in sense:
-            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity} grid"
+            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data.t[feature] is None or sense[feature] is None:
-            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity} grid"
+        if np.all(np.isnan(sense[feature])):
+            msg = "{sensitivity} of {feature} is NaN. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
+
+        t = self.data.t[feature]
+
+        if np.all(np.isnan(t)):
+            t = np.arange(0, len(sense[feature][0]))
 
 
         parameter_names = self.data.uncertain_parameters
@@ -530,7 +554,7 @@ class PlotUncertainty(object):
             ax = axes[ny][nx]
 
             if i < nr_plots:
-                prettyPlot(self.data.t[feature], sense[feature][i],
+                prettyPlot(t, sense[feature][i],
                            title=self.str_to_latex(parameter_names[i]), color=i,
                            nr_colors=nr_plots, ax=ax,
                            **plot_kwargs)
@@ -585,13 +609,19 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data.t[feature] is None or sense[feature] is None:
-            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity} combined"
+        if np.all(np.isnan(sense[feature])):
+            msg = "{sensitivity} of {feature} is NaN. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
+
+        t = self.data.t[feature]
+
+        if np.all(np.isnan(t)):
+            t = np.arange(0, len(sense[feature][0]))
+
         for i in range(len(sense[feature])):
-            prettyPlot(self.data.t[feature],
+            prettyPlot(t,
                        sense[feature][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " "),
                        xlabel=self.data.xlabel,
