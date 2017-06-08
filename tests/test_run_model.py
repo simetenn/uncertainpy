@@ -756,9 +756,11 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
+        print data.t
 
         self.assertEqual(data.U.keys(), ["TestingModel1d"])
         self.assertEqual(data.t.keys(), ["TestingModel1d"])
+
 
         self.assertIn("TestingModel1d", data.U.keys())
         self.assertTrue(np.array_equal(data.t["TestingModel1d"],

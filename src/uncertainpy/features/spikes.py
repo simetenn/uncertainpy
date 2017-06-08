@@ -29,7 +29,7 @@ class Spike:
             plt.show()
         else:
             plt.savefig(save_name)
-    
+
 
 
 

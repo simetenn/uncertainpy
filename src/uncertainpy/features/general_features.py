@@ -30,8 +30,8 @@ class GeneralFeatures(object):
         self.adaptive_features = adaptive_features
 
 
-    def preprocess(self):
-        pass
+    def preprocess(self, t, U):
+        return t, U
 
 
     @property
@@ -81,22 +81,22 @@ class GeneralFeatures(object):
                     else:
                         raise TypeError("feature in iterable is not callable")
             except TypeError as error:
-                msg = "features must be a GeneralFeatures instance, callable, list of callables or None"
+                msg = "Added features must be a GeneralFeatures instance, callable or list of callables"
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)
                 raise
 
 
-    def calculate(self, feature_name=None):
+    def calculate(self, t, U, feature_name=None):
         if feature_name is None:
-            return self.calculate_features()
+            return self.calculate_features(t, U)
         elif feature_name == "all":
-            return self.calculate_all_features()
+            return self.calculate_all_features(t, U)
         else:
-            feature_result = self.calculate_feature(feature_name)
+            feature_result = self.calculate_feature(t, U, feature_name)
             try:
-                t, U = feature_result
+                feature_t, feature_U = feature_result
             except ValueError as error:
                 msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature_name)
                 if not error.args:
@@ -104,25 +104,25 @@ class GeneralFeatures(object):
                 error.args = error.args + (msg,)
                 raise
 
-            return {feature_name: {"t": t, "U": U}}
+            return {feature_name: {"t": feature_t, "U": feature_U}}
 
 
 
-    def calculate_feature(self, feature_name):
+    def calculate_feature(self, t, U, feature_name):
         if feature_name in self.utility_methods:
             raise TypeError("%s is a utility method")
 
-        return getattr(self, feature_name)(self.t, self.U)
+        return getattr(self, feature_name)(t, U)
 
 
 
-    def calculate_features(self):
+    def calculate_features(self, t, U):
         results = {}
         for feature in self.features_to_run:
-            feature_result = self.calculate_feature(feature)
+            feature_result = self.calculate_feature(t, U, feature)
 
             try:
-                t, U = feature_result
+                feature_t, feature_U = feature_result
             except ValueError as error:
                 msg = "feature {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
@@ -130,18 +130,18 @@ class GeneralFeatures(object):
                 error.args = error.args + (msg,)
                 raise
 
-            results[feature] = {"t": t, "U": U}
+            results[feature] = {"t": feature_t, "U": feature_U}
 
         return results
 
 
-    def calculate_all_features(self):
+    def calculate_all_features(self, t, U):
         results = {}
         for feature in self.implemented_features():
-            feature_result = self.calculate_feature(feature)
+            feature_result = self.calculate_feature(t, U, feature)
 
             try:
-                t, U = feature_result
+                feature_t, feature_U = feature_result
             except ValueError as error:
                 msg = "feature {} must return t and U (return t, U | return None, U)".format(feature)
                 if not error.args:
@@ -149,7 +149,7 @@ class GeneralFeatures(object):
                 error.args = error.args + (msg,)
                 raise
 
-            results[feature] = {"t": t, "U": U}
+            results[feature] = {"t": feature_t, "U": feature_U}
 
 
         return results

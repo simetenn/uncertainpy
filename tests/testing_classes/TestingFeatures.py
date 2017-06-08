@@ -30,5 +30,6 @@ class TestingFeatures(GeneralFeatures):
     def feature_no_time(self, t, U):
         return np.arange(0, 10)
 
-    def preprocess(self):
+    def preprocess(self, t, U):
         self.is_preprocess_run = True
+        return t, U

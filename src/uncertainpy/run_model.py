@@ -248,6 +248,7 @@ Test if results is an adaptive result
         self.data.uncertain_parameters = uncertain_parameters
 
         results = self.evaluate_nodes(nodes)
+
         self.store_results(results)
 
         return self.data

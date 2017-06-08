@@ -114,27 +114,21 @@ class Parallel(Base):
             # if U is None:
             #     raise ValueError("U has not been calculated")
 
-            t, U = self.model.postprocess(t, U)
+            t_postprocess, U_postprocess = self.model.postprocess(t, U)
 
-            t_tmp = t
-            U_tmp = U
+            if t_postprocess is None:
+                t_postprocess = np.nan
 
-            if t_tmp is None:
-                t_tmp = np.nan
-
-            if U_tmp is None:
-                U_tmp = np.nan
-
+            if U_postprocess is None:
+                U_postprocess = np.nan
 
             results = {}
-            results[self.model.name] = {"t": t_tmp, "U": U_tmp}
+            results[self.model.name] = {"t": t_postprocess, "U": U_postprocess}
+
 
             # Calculate features from the model results
-            self.features.t = t
-            self.features.U = U
-            self.features.preprocess()
-            feature_results = self.features.calculate_features()
-
+            t_preprocess, U_preprocess = self.features.preprocess(t, U)
+            feature_results = self.features.calculate_features(t_preprocess, U_preprocess)
 
             for feature in feature_results:
                 t_feature = feature_results[feature]["t"]
@@ -156,8 +150,8 @@ class Parallel(Base):
 
 
         except Exception as e:
-            print("Caught exception in parallel run of model:")
-            print("")
+            print "Caught exception in parallel run of model:"
+            print ""
             traceback.print_exc()
-            print("")
+            print ""
             raise e

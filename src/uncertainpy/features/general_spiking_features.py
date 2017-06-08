@@ -10,10 +10,9 @@ class GeneralSpikingFeatures(GeneralFeatures):
                  extended_spikes=False):
         new_utility_methods = ["calculate_spikes"]
 
-        GeneralFeatures.__init__(self,
-                                 features_to_run=features_to_run,
-                                 adaptive_features=adaptive_features,
-                                 new_utility_methods=new_utility_methods)
+        super(GeneralSpikingFeatures, self).__init__(features_to_run=features_to_run,
+                                                     adaptive_features=adaptive_features,
+                                                     new_utility_methods=new_utility_methods)
 
         self.spikes = None
 
@@ -22,16 +21,14 @@ class GeneralSpikingFeatures(GeneralFeatures):
 
 
 
-    def preprocess(self):
-        self.calculate_spikes(thresh=self.thresh, extended_spikes=self.extended_spikes)
+    def preprocess(self, t, U):
+        self.U = U
+
+        self.calculate_spikes(t, U, thresh=self.thresh, extended_spikes=self.extended_spikes)
+
+        return t, self.spikes
 
 
-
-    def calculate_spikes(self, thresh=-30, extended_spikes=False):
-        if self.t is None:
-            raise AttributeError("t is not assigned")
-        if self.U is None:
-            raise AttributeError("U is not assigned")
-
+    def calculate_spikes(self, t, U, thresh=-30, extended_spikes=False):
         self.spikes = Spikes()
-        self.spikes.find_spikes(self.t, self.U, thresh=thresh, extended_spikes=extended_spikes)
+        self.spikes.find_spikes(t, U, thresh=thresh, extended_spikes=extended_spikes)

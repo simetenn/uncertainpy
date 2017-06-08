@@ -4,51 +4,51 @@ import scipy.optimize
 from uncertainpy.features import GeneralSpikingFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
-    def nrSpikes(self, t, U):
-        return None, self.spikes.nr_spikes
+    def nrSpikes(self, t, spikes):
+        return None, spikes.nr_spikes
 
 
-    def time_before_first_spike(self, t, U):
-        if self.spikes.nr_spikes <= 0:
+    def time_before_first_spike(self, t, spikes):
+        if spikes.nr_spikes <= 0:
             return None, None
 
-        return None, self.spikes.spikes[0].t_spike
+        return None, spikes.spikes[0].t_spike
 
 
-    def spike_rate(self, t, U):
-        if self.spikes.nr_spikes < 0:
+    def spike_rate(self, t, spikes):
+        if spikes.nr_spikes < 0:
             return None, None
 
-        return None, self.spikes.nr_spikes/float(self.t[-1] - self.t[0])
+        return None, spikes.nr_spikes/float(t[-1] - t[0])
 
 
-    def average_AP_overshoot(self, t, U):
-        if self.spikes.nr_spikes <= 0:
+    def average_AP_overshoot(self, t, spikes):
+        if spikes.nr_spikes <= 0:
             return None, None
 
         sum_AP_overshoot = 0
-        for spike in self.spikes:
+        for spike in spikes:
             sum_AP_overshoot += spike.U_spike
-        return None, sum_AP_overshoot/float(self.spikes.nr_spikes)
+        return None, sum_AP_overshoot/float(spikes.nr_spikes)
 
 
-    def average_AHP_depth(self, t, U):
-        if self.spikes.nr_spikes <= 0:
+    def average_AHP_depth(self, t, spikes):
+        if spikes.nr_spikes <= 0:
             return None, None
 
         sum_AHP_depth = 0
-        for i in range(self.spikes.nr_spikes - 1):
-            sum_AHP_depth += min(self.U[self.spikes[i].global_index:self.spikes[i+1].global_index])
+        for i in range(spikes.nr_spikes - 1):
+            sum_AHP_depth += min(self.U[spikes[i].global_index:spikes[i+1].global_index])
 
-        return None, sum_AHP_depth/float(self.spikes.nr_spikes)
+        return None, sum_AHP_depth/float(spikes.nr_spikes)
 
 
-    def average_AP_width(self, t, U):
-        if self.spikes.nr_spikes <= 0:
+    def average_AP_width(self, t, spikes):
+        if spikes.nr_spikes <= 0:
             return None, None
 
         sum_AP_width = 0
-        for spike in self.spikes:
+        for spike in spikes:
             U_width = (spike.U_spike + spike.U[0])/2.
 
             U_interpolation = scipy.interpolate.interp1d(spike.t, spike.U - U_width)
@@ -61,11 +61,11 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
             sum_AP_width += abs(root2 - root1)
 
-        return None, sum_AP_width/float(self.spikes.nr_spikes)
+        return None, sum_AP_width/float(spikes.nr_spikes)
 
 
-    def accomondation_index(self, t, U):
-        N = self.spikes.nr_spikes
+    def accomondation_index(self, t, spikes):
+        N = spikes.nr_spikes
         if N <= 1:
             return None, None
 
@@ -73,7 +73,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         ISIs = []
         for i in range(N-1):
-            ISIs.append(self.spikes[i+1].t_spike - self.spikes[i].t_spike)
+            ISIs.append(spikes[i+1].t_spike - spikes[i].t_spike)
 
         A = 0
         for i in range(k+1, N-1):
