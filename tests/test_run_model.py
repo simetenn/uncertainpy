@@ -552,7 +552,7 @@ class TestRunModel(unittest.TestCase):
 
     def assert_feature_0d(self, data):
         self.assertIn("feature0d", self.runmodel.data.U.keys())
-        self.assertIsNone(data.t["feature0d"])
+        self.assertTrue(np.isnan(data.t["feature0d"]))
         self.assertEqual(data.U["feature0d"][0], 1)
         self.assertEqual(data.U["feature0d"][1], 1)
         self.assertEqual(data.U["feature0d"][2], 1)
@@ -588,7 +588,7 @@ class TestRunModel(unittest.TestCase):
 
     def assert_feature_invalid(self, data):
         self.assertIn("feature_invalid", data.U.keys())
-        self.assertIsNone(data.t["feature_invalid"])
+        self.assertTrue(np.isnan(data.t["feature_invalid"]))
         self.assertTrue(np.isnan(data.U["feature_invalid"][0]))
         self.assertTrue(np.isnan(data.U["feature_invalid"][1]))
         self.assertTrue(np.isnan(data.U["feature_invalid"][2]))

@@ -281,12 +281,12 @@ Test if the model returned an adaptive result
         old_feature_list = self.feature_list[:]
         for feature in old_feature_list:
 
-            all_none = True
+            all_nan = True
             for U in self.U[feature]:
-                if U is not None:
-                    all_none = False
+                if not np.all(np.isnan(U)):
+                    all_nan = False
 
-            if all_none:
+            if all_nan:
                 self.logger.warning("Feature: {} does".format(feature)
                                     + " not yield results for any parameter combinations")
                 # raise RuntimeWarning("Feature: {} does not yield

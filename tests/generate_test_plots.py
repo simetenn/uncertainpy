@@ -83,13 +83,13 @@ def generate_plots_compare():
     plot.plotCompareAll(data_file, compare_folders)
 
 
-def generate_simulator_plot():
-    U = np.load(os.path.join(test_data_dir, "U_test.npy"))
-    t = np.load(os.path.join(test_data_dir, "t_test.npy"))
+# def generate_simulator_plot():
+#     U = np.load(os.path.join(test_data_dir, "U_test.npy"))
+#     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
-    prettyPlot(t, U, xlabel="", ylabel="")
+#     prettyPlot(t, U, ,title=,  xlabel="", ylabel="")
 
-    plt.savefig(os.path.join(output_test_dir, "U.png"))
+#     plt.savefig(os.path.join(output_test_dir, "U.png"))
 
 
 def generate_simulator_plot_0d():

@@ -73,7 +73,7 @@ class Parallel(Base):
         for feature in features_1d:
             if feature in self.features.adaptive_features or \
                     (feature == self.model.name and self.model.adaptive_model):
-                if results[feature]["t"] is None:
+                if np.any(np.isnan(results[feature]["t"])):
                     raise AttributeError("{} does not return any t values.".format(feature)
                                          + " Unable to perform interpolation")
 
@@ -111,14 +111,23 @@ class Parallel(Base):
                 error.args = error.args + (msg,)
                 raise
 
-            if U is None:
-                raise ValueError("U has not been calculated")
+            # if U is None:
+            #     raise ValueError("U has not been calculated")
 
             t, U = self.model.postprocess(t, U)
 
+            t_tmp = t
+            U_tmp = U
+
+            if t_tmp is None:
+                t_tmp = np.nan
+
+            if U_tmp is None:
+                U_tmp = np.nan
+
 
             results = {}
-            results[self.model.name] = {"t": t, "U": U}
+            results[self.model.name] = {"t": t_tmp, "U": U_tmp}
 
             # Calculate features from the model results
             self.features.t = t
@@ -130,8 +139,6 @@ class Parallel(Base):
             for feature in feature_results:
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
-
-
 
                 if t_feature is None:
                     t_feature = np.nan

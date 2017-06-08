@@ -21,15 +21,15 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature0d": {"U": 1,
-                        "t": None},
+                        "t": np.nan},
           "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
-          "feature_invalid": {"U": None,
-                              "t": None}}
+          "feature_invalid": {"U": np.nan,
+                              "t": np.nan}}
 
 results = [result 1, result 2, ..., result N]
 """

@@ -259,14 +259,18 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(nodes, masked_nodes))
 
 
-    def test_create_mask_model_none(self):
+    def test_create_mask_model_nan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        self.uncertainty_calculations.data.U["TestingModel1d"][1] = None
+
+        U_0 = self.uncertainty_calculations.data.U["TestingModel1d"][0]
+        U_2 = self.uncertainty_calculations.data.U["TestingModel1d"][2]
+
+        self.uncertainty_calculations.data.U["TestingModel1d"] = np.array([U_0, np.nan, U_2])
 
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
@@ -306,10 +310,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        self.uncertainty_calculations.data.U["TestingModel1d"][1] = None
+
+        U_0 = self.uncertainty_calculations.data.U["TestingModel1d"][0]
+        U_2 = self.uncertainty_calculations.data.U["TestingModel1d"][2]
+
+        self.uncertainty_calculations.data.U["TestingModel1d"] = np.array([U_0, np.nan, U_2])
 
         self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
+        print open(logfile).read()
         message = "WARNING - uncertainty_calculations - Feature: TestingModel1d does not yield results for all parameter combinations"
         self.assertTrue(message in open(logfile).read())
 
@@ -336,7 +345,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        self.uncertainty_calculations.data.U["feature0d"] = np.array([1, None, 1])
+        self.uncertainty_calculations.data.U["feature0d"] = np.array([1, np.nan, 1])
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature0d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
@@ -368,7 +377,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
 
-        self.uncertainty_calculations.data.U["feature1d"] = np.array([np.arange(0, 10), None, np.arange(0, 10)])
+        self.uncertainty_calculations.data.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature1d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
@@ -398,14 +407,18 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_create_mask_feature2d_none(self):
+    def test_create_mask_feature2d_nan(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        self.uncertainty_calculations.data.U["feature2d"][1] = None
+        U_0 = self.uncertainty_calculations.data.U["feature2d"][0]
+        U_2 = self.uncertainty_calculations.data.U["feature2d"][2]
+
+        self.uncertainty_calculations.data.U["feature2d"] = np.array([U_0, np.nan, U_2])
+
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
@@ -427,8 +440,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
+        U_0 = self.uncertainty_calculations.data.U["feature2d"][0]
+        U_2 = self.uncertainty_calculations.data.U["feature2d"][1]
 
-        self.uncertainty_calculations.data.U["feature2d"][1] = None
+        self.uncertainty_calculations.data.U["feature2d"] = np.array([U_0, np.nan, U_2])
+
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([0, 2])))
@@ -454,9 +470,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(result, ["a"])
 
     def test_convert_uncertain_parameters_none(self):
-            result = self.uncertainty_calculations.convert_uncertain_parameters(None)
+        result = self.uncertainty_calculations.convert_uncertain_parameters(None)
 
-            self.assertEqual(result, ["a", "b"])
+        self.assertEqual(result, ["a", "b"])
 
 
     def test_create_PCE_custom(self):
