@@ -200,6 +200,25 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.labels, {})
 
 
+    def test_get_labels(self):
+        self.data.features_1d = ["model_name", "feature", "feature2"]
+        self.data.labels = {"model_name": ["x", "y"],
+                            "feature": ["x", "y"]}
+        self.data.model_name = "model_name"
+
+        self.assertEqual(self.data.get_labels("feature"), ["x", "y"])
+        self.assertEqual(self.data.get_labels("feature2"), ["x", "y"])
+
+        self.data.features_1d = ["model_name", "feature"]
+        self.data.features_2d = ["feature2"]
+        self.assertEqual(self.data.get_labels("feature2"), ["", "", ""])
+
+        self.data.labels = {"feature": ["x"]}
+
+        self.assertEqual(self.data.get_labels("feature2"), ["", "", ""])
+
+
+
     def test_remove_only_invalid_results(self):
         self.data.t = {"feature1d": np.array([1, 2]), "TestingModel1d": np.array([3, 4])}
         self.data.U = {"feature1d": np.array([[1, 2], [2, 3]]),

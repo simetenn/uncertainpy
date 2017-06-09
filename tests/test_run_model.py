@@ -93,12 +93,14 @@ class TestRunModel(unittest.TestCase):
 
     def test_set_model_function(self):
         self.runmodel = RunModel(TestingModel2d(), None)
+        self.runmodel.data.labels = {"feature": ["x"]}
+
         self.runmodel.model = model_function
 
         self.assertIsInstance(self.runmodel.model, Model)
         self.assertIsInstance(self.runmodel.parallel.model, Model)
 
-        self.assertEqual(self.runmodel.data.labels, {})
+        self.assertEqual(self.runmodel.data.labels, {"feature": ["x"]})
 
 
     def test_init_model_function(self):
@@ -192,6 +194,15 @@ class TestRunModel(unittest.TestCase):
 
         self.assertEqual(set(self.runmodel.features.features_to_run),
                          set(["feature_function", "feature_function2"] + implemented_features))
+
+        implemented_labels = {"nr_spikes": ["number of spikes"],
+                              "spike_rate": ["spike rate [1/ms]"],
+                              "time_before_first_spike": ["time [ms]"],
+                              "accomondation_index": ["accomondation index"],
+                              "TestingModel1d": ["x", "y"]
+                              }
+
+        self.assertEqual(self.runmodel.data.labels, implemented_labels)
 
 
     def test_create_model_parameters(self):

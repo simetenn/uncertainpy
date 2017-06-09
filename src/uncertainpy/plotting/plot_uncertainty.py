@@ -104,7 +104,7 @@ class PlotUncertainty(object):
 
         prettyPlot(self.data.U[self.data.model_name],
                    xlabel="simulator run \#number",
-                   ylabel=self.data.ylabel,
+                   ylabel=self.data.get_labels(self.data.model_name)[0],
                    title="{}, simulator result".format(self.data.model_name.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
@@ -120,10 +120,13 @@ class PlotUncertainty(object):
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
+        labels = self.data.get_labels(self.data.model_name)
+        xlabel, ylabel = labels
+
         padding = len(str(len(self.data.U[self.data.model_name]) + 1))
         for U in self.data.U[self.data.model_name]:
             prettyPlot(self.data.t[self.data.model_name], U,
-                       xlabel=self.data.xlabel, ylabel=self.data.ylabel,
+                       xlabel=xlabel, ylabel=ylabel,
                        title="{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
@@ -131,7 +134,7 @@ class PlotUncertainty(object):
             i += 1
 
 
-
+    # TODO double check ylabel ans zlabel
     def simulator_results_2d(self, foldername="simulator_results", **plot_kwargs):
         if self.data.model_name not in self.data.features_2d:
             raise ValueError("{} is not a 2D feature".format(self.data.model_name))
@@ -140,6 +143,10 @@ class PlotUncertainty(object):
         save_folder = os.path.join(self.output_dir, foldername)
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
+
+        labels = self.data.get_labels(self.data.model_name)
+        xlabel, ylabel, zlabel = labels
+
 
         padding = len(str(len(self.data.U[self.data.model_name]) + 1))
         for U in self.data.U[self.data.model_name]:
@@ -154,9 +161,9 @@ class PlotUncertainty(object):
                             **plot_kwargs)
 
             cbar = fig.colorbar(iax)
-            cbar.ax.set_title(self.data.ylabel)
-            ax.set_xlabel(self.data.xlabel)
-            ax.set_ylabel(self.data.zlabel)
+            cbar.ax.set_title(ylabel)
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(zlabel)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
@@ -195,9 +202,12 @@ class PlotUncertainty(object):
         if np.all(np.isnan(t)):
             t = np.arange(0, len(value))
 
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
+
         title = feature + ", " + attribute_name
         prettyPlot(t, value,
-                   title.replace("_", " "), self.data.xlabel, self.data.ylabel, **plot_kwargs)
+                   title.replace("_", " "), xlabel, ylabel, **plot_kwargs)
 
 
         save_name = feature + "_" + attribute_name
@@ -242,6 +252,8 @@ class PlotUncertainty(object):
             return
 
         title = feature + ", " + attribute_name
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel, zlabel = labels
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -253,9 +265,9 @@ class PlotUncertainty(object):
                         **plot_kwargs)
 
         cbar = fig.colorbar(iax)
-        cbar.ax.set_title(self.data.ylabel)
-        ax.set_xlabel(self.data.xlabel)
-        ax.set_ylabel(self.data.zlabel)
+        cbar.ax.set_title(ylabel)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(zlabel)
 
         save_name = feature + "_" + attribute_name
 
@@ -333,10 +345,12 @@ class PlotUncertainty(object):
         if np.all(np.isnan(t)):
             t = np.arange(0, len(self.data.E[feature]))
 
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
 
         title = feature + ", mean and variance"
         ax = prettyPlot(t, self.data.E[feature],
-                        title.replace("_", " "), self.data.xlabel, self.data.ylabel + ", mean",
+                        title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style, **plot_kwargs)
 
         colors = get_current_colormap()
@@ -347,7 +361,7 @@ class PlotUncertainty(object):
                                  "right": colors[color+1], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
-        ax2.set_ylabel(self.data.ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
+        ax2.set_ylabel(ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
 
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
         # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
@@ -362,7 +376,7 @@ class PlotUncertainty(object):
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
 
-        ax.set_ylabel(self.data.ylabel + ', mean', color=colors[color], fontsize=16)
+        ax.set_ylabel(ylabel + ', mean', color=colors[color], fontsize=16)
 
 
         if hardcopy:
@@ -406,10 +420,12 @@ class PlotUncertainty(object):
         if np.all(np.isnan(t)):
             t = np.arange(0, len(self.data.E[feature]))
 
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
 
         title = feature.replace("_", " ") + ", 90\\% confidence interval"
         prettyPlot(t, self.data.E[feature], title=title,
-                   xlabel=self.data.xlabel, ylabel=self.data.ylabel, color=0,
+                   xlabel=xlabel, ylabel=ylabel, color=0,
                    **plot_kwargs)
 
         colors = get_current_colormap()
@@ -468,11 +484,13 @@ class PlotUncertainty(object):
         if np.all(np.isnan(t)):
             t = np.arange(0, len(sense[feature][0]))
 
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
 
         for i in range(len(sense[feature])):
             prettyPlot(t, sense[feature][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
-                       xlabel=self.data.xlabel, ylabel="sensitivity",
+                       xlabel=xlabel, ylabel="sensitivity",
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
@@ -537,6 +555,8 @@ class PlotUncertainty(object):
         set_style("seaborn-darkgrid")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
 
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
 
         # Add a larger subplot to use to set a common xlabel and ylabel
         set_style("seaborn-white")
@@ -544,7 +564,7 @@ class PlotUncertainty(object):
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
-        ax.set_xlabel(self.data.xlabel)
+        ax.set_xlabel(xlabel)
         ax.set_ylabel('sensitivity')
 
         for i in range(0, grid_x_size*grid_y_size):
@@ -614,6 +634,8 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
 
         t = self.data.t[feature]
 
@@ -624,7 +646,7 @@ class PlotUncertainty(object):
             prettyPlot(t,
                        sense[feature][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " "),
-                       xlabel=self.data.xlabel,
+                       xlabel=xlabel,
                        ylabel="sensitivity",
                        new_figure=False,
                        color=i,
@@ -723,11 +745,11 @@ class PlotUncertainty(object):
         values = [self.data.E[feature], self.data.Var[feature],
                   self.data.p_05[feature], self.data.p_95[feature]]
 
-
+        ylabel = self.data.get_labels(feature)[0]
         ax = prettyBar(values,
                        index=xticks,
                        xlabels=xlabels,
-                       ylabel=self.data.ylabel,
+                       ylabel=ylabel,
                        palette=get_colormap_tableu20())
 
         if sense is not None and sense[feature] is not None:

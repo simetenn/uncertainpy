@@ -151,6 +151,7 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.plot.data.U["TestingModel1d"] = [U, U, U, U, U]
         self.plot.data.features_1d = ["TestingModel1d"]
         self.plot.data.model_name = "TestingModel1d"
+        self.plot.data.labels = {"TestingModel1d": ["x", "y"]}
         self.plot.simulator_results()
 
         plot_count = 0
@@ -289,8 +290,8 @@ class TestPlotUncertainpy(unittest.TestCase):
         self.assertEqual(self.plot.data.uncertain_parameters[0], "a")
         self.assertEqual(self.plot.data.uncertain_parameters[1], "b")
 
-        self.assertEqual(self.plot.data.xlabel, "xlabel")
-        self.assertEqual(self.plot.data.ylabel, "ylabel")
+        self.assertEqual(self.plot.data.labels["TestingModel1d"], ["xlabel", "ylabel"])
+        self.assertEqual(self.plot.data.labels["feature1d"], ["xlabel", "ylabel"])
 
         self.assertEqual(self.plot.data.feature_list[0], "TestingModel1d")
         self.assertEqual(self.plot.data.feature_list[1], "feature1d")

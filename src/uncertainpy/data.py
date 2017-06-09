@@ -148,10 +148,37 @@ feature_list
         self._features_2d = new_features_2d
         self._update_feature_list()
 
-
     def _update_feature_list(self):
         self.feature_list = self._features_0d + self._features_1d + self._features_2d
         self.feature_list.sort()
+
+
+    def get_labels(self, feature):
+        if feature in self.labels:
+            return self.labels[feature]
+
+        elif feature in self.features_2d:
+            if self.model_name in self.features_2d and self.model_name in self.labels:
+                return self.labels[self.model_name]
+            else:
+                return ["", "", ""]
+        elif feature in self.features_1d:
+            if self.model_name in self.features_1d and self.model_name in self.labels:
+                return self.labels[self.model_name]
+            else:
+                return ["", ""]
+        elif feature in self.features_0d:
+            if self.model_name in self.features_0d and self.model_name in self.labels:
+                return self.labels[self.model_name]
+            else:
+                return [""]
+
+        # elif (self.model_name in self.features_2d and )\
+        #     or (self.model_name in self.features_1d and )\
+        #         or (self.model_name in self.features_0d and feature in self.features_0d):
+        #            return self.labels[self.model_name]
+        # else:
+        #     return ["", "", ""]
 
 
 

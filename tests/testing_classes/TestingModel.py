@@ -13,7 +13,7 @@ def model_function(a=1, b=2):
 
 class TestingModel0d(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        Model.__init__(self, labels=["x"])
 
 
     def run(self, a=1, b=2):

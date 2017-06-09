@@ -218,8 +218,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.model, Model)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.model, Model)
 
-        self.assertEqual(self.uncertainty_calculations.runmodel.data.xlabel, "")
-        self.assertEqual(self.uncertainty_calculations.runmodel.data.ylabel, "")
+        self.assertEqual(self.uncertainty_calculations.runmodel.data.labels, {})
 
 
 

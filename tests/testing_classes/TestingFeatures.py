@@ -10,6 +10,15 @@ class TestingFeatures(GeneralFeatures):
                                  features_to_run=features_to_run,
                                  adaptive_features=adaptive_features)
 
+        implemented_labels = {"feature0d": ["feature0d"],
+                              "feature1d": ["feature1d x", "feature1d y"],
+                              "feature2d": ["feature2d x", "feature2d y", "feature2d z"]
+                              }
+
+        super(TestingFeatures, self).__init__(features_to_run=features_to_run,
+                                              adaptive_features=adaptive_features,
+                                              labels=implemented_labels)
+
         self.is_preprocess_run = False
 
     def feature0d(self, t, U):

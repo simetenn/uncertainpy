@@ -104,7 +104,9 @@ class TestUncertainty(unittest.TestCase):
             self.model,
             self.parameters,
             uncertainty_calculations=TempUncertaintyCalculations(self.model),
-            verbose_level="error"
+            verbose_level="error",
+            output_dir_data=self.output_test_dir,
+            output_dir_figures=self.output_test_dir
         )
 
         self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
@@ -281,7 +283,9 @@ class TestUncertainty(unittest.TestCase):
             self.model,
             self.parameters,
             create_PCE_custom=create_PCE_custom,
-            verbose_level="error"
+            verbose_level="error",
+            output_dir_data=self.output_test_dir,
+            output_dir_figures=self.output_test_dir
         )
 
 
@@ -372,6 +376,7 @@ class TestUncertainty(unittest.TestCase):
                                                  parameters=parameters,
                                                  save_data=False,
                                                  save_figures=True,
+                                                 output_dir_data=self.output_test_dir,
                                                  output_dir_figures=self.output_test_dir,
                                                  verbose_level="error",
                                                  seed=self.seed,
@@ -411,6 +416,7 @@ class TestUncertainty(unittest.TestCase):
                                                  parameters=parameters,
                                                  save_data=False,
                                                  save_figures=True,
+                                                 output_dir_data=self.output_test_dir,
                                                  output_dir_figures=self.output_test_dir,
                                                  verbose_level="error",
                                                  seed=self.seed,
@@ -567,8 +573,8 @@ class TestUncertainty(unittest.TestCase):
         self.assertEqual(self.uncertainty.data.uncertain_parameters[0], "a")
         self.assertEqual(self.uncertainty.data.uncertain_parameters[1], "b")
 
-        self.assertEqual(self.uncertainty.data.xlabel, "xlabel")
-        self.assertEqual(self.uncertainty.data.ylabel, "ylabel")
+        self.assertEqual(self.uncertainty.data.labels, {"feature1d": ["xlabel", "ylabel"],
+                                                        "TestingModel1d": ["xlabel", "ylabel"]})
 
         self.assertEqual(self.uncertainty.data.feature_list[0], "TestingModel1d")
         self.assertEqual(self.uncertainty.data.feature_list[1], "feature1d")
