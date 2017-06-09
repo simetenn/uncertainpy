@@ -110,7 +110,7 @@ class UncertaintyEstimation(ParameterBase):
     def features(self, new_features):
         ParameterBase.features.fset(self, new_features)
 
-        self.features.labels.update(self.features_labels)
+        self.features.labels = self.features_labels
         self.uncertainty_calculations.features = self.features
 
 
