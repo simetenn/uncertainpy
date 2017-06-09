@@ -14,7 +14,10 @@ class SpikingFeatures(GeneralSpikingFeatures):
         implemented_labels = {"nr_spikes": ["number of spikes"],
                               "spike_rate": ["spike rate [1/ms]"],
                               "time_before_first_spike": ["time [ms]"],
-                              "accomondation_index": ["accomondation index"]
+                              "accomondation_index": ["accomondation index"],
+                              "average_AP_overshoot": ["voltage [mV]"],
+                              "average_AHP_depth": ["voltage [mV]"],
+                              "average_AP_width": ["voltage [mV]"]
                               }
 
         super(SpikingFeatures, self).__init__(features_to_run=features_to_run,

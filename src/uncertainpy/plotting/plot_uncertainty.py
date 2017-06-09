@@ -194,7 +194,7 @@ class PlotUncertainty(object):
         t = self.data.t[feature]
 
         if value is None:
-            msg = "{attribute_name} of {feature} is NaN. Unable to plot {attribute_name}"
+            msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
             self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
             return
 
@@ -798,8 +798,9 @@ class PlotUncertainty(object):
         ax.set_xticks(xticks)
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
 
-        for tick in ax.get_xticklabels()[:2]:
-            tick.set_rotation(-25)
+        if len(self.data.uncertain_parameters) > 3:
+            for tick in ax.get_xticklabels()[:2]:
+                tick.set_rotation(-25)
 
 
         plt.suptitle(feature.replace("_", " "), fontsize=titlesize)

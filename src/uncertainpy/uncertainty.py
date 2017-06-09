@@ -20,6 +20,8 @@ class UncertaintyEstimation(ParameterBase):
                  model,
                  parameters,
                  base_model=Model,
+                 model_labels=[],
+                 adaptive_model=None,
                  features=None,
                  base_features=GeneralFeatures,
                  features_labels={},
@@ -65,6 +67,7 @@ class UncertaintyEstimation(ParameterBase):
 
         # TODO Make it so features_labels can be set from all classes
         self.features_labels = features_labels
+        self.model_labels = model_labels
 
         super(UncertaintyEstimation, self).__init__(parameters=parameters,
                                                     model=model,
@@ -91,14 +94,8 @@ class UncertaintyEstimation(ParameterBase):
             self.uncertainty_calculations.create_PCE_custom = types.MethodType(create_PCE_custom,
                                                                                self.uncertainty_calculations)
 
-        if xlabel is not None:
-            self.model.xlabel = xlabel
 
-        if ylabel is not None:
-            self.model.ylabel = ylabel
 
-        if zlabel is not None:
-            self.model.zlabel = zlabel
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
@@ -117,6 +114,11 @@ class UncertaintyEstimation(ParameterBase):
     @ParameterBase.model.setter
     def model(self, new_model):
         ParameterBase.model.fset(self, new_model)
+
+        self.model.labels = self.model_labels
+        if adaptive_model is not None:
+            self.model.adaptive_model
+        self.model.labels = self.model_labels
 
         self.uncertainty_calculations.model = self.model
 
