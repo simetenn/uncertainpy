@@ -42,7 +42,6 @@ class TestRunModel(unittest.TestCase):
                                  supress_model_graphics=True)
 
 
-
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -65,8 +64,7 @@ class TestRunModel(unittest.TestCase):
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
         self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
 
-        self.assertEqual(self.runmodel.data.xlabel, "x")
-        self.assertEqual(self.runmodel.data.ylabel, "y")
+        self.assertEqual(self.runmodel.data.labels, {"TestingModel1d": ["x", "y"]})
         self.assertEqual(self.runmodel.data.model_name, "TestingModel1d")
 
 
@@ -100,8 +98,7 @@ class TestRunModel(unittest.TestCase):
         self.assertIsInstance(self.runmodel.model, Model)
         self.assertIsInstance(self.runmodel.parallel.model, Model)
 
-        self.assertEqual(self.runmodel.data.xlabel, "")
-        self.assertEqual(self.runmodel.data.ylabel, "")
+        self.assertEqual(self.runmodel.data.labels, {})
 
 
     def test_init_model_function(self):
@@ -110,8 +107,8 @@ class TestRunModel(unittest.TestCase):
         self.assertIsInstance(self.runmodel.model, Model)
         self.assertIsInstance(self.runmodel.parallel.model, Model)
 
-        self.assertEqual(self.runmodel.data.xlabel, "")
-        self.assertEqual(self.runmodel.data.ylabel, "")
+        self.assertEqual(self.runmodel.data.labels, {})
+
 
     def test_feature_function(self):
         def feature_function(t, U):
@@ -755,8 +752,6 @@ class TestRunModel(unittest.TestCase):
         uncertain_parameters = ["a"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)
-
-        print data.t
 
         self.assertEqual(data.U.keys(), ["TestingModel1d"])
         self.assertEqual(data.t.keys(), ["TestingModel1d"])

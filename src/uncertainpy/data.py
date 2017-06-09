@@ -43,7 +43,7 @@ feature_list
                            "sensitivity_t", "total_sensitivity_t"]
 
 
-        self.data_information = ["xlabel", "ylabel", "features_0d",
+        self.data_information = ["labels", "features_0d",
                                  "features_1d", "features_2d", "feature_list",
                                  "uncertain_parameters", "model_name"]
 
@@ -85,6 +85,8 @@ feature_list
 
             for feature in self.feature_list:
                 output_str += "=== {feature} ===\n".format(feature=feature)
+                if feature in self.labels:
+                     output_str += "{}\n\n".format(self.labels[feature])
                 if feature in current_data:
                     output_str += "{data}\n\n".format(data=current_data[feature])
                 else:
@@ -103,7 +105,7 @@ feature_list
         self._features_2d = []
         self.feature_list = []
 
-        self.feature_labels = {}
+        self.labels = {}
 
         self.U = {}
         self.t = {}
@@ -116,9 +118,6 @@ feature_list
         self.sensitivity_t = {}
         self.total_sensitivity_t = {}
 
-        self.xlabel = ""
-        self.ylabel = ""
-        self.zlabel = ""
         self.model_name = ""
 
 
@@ -177,13 +176,15 @@ Test if the model returned an adaptive result
             # f.attrs["name"] = self.output_file.split("/")[-1]
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["features"] = self.feature_list
-            f.attrs["xlabel"] = self.xlabel
-            f.attrs["ylabel"] = self.ylabel
-            f.attrs["zlabel"] = self.zlabel
             f.attrs["features_0d"] = self.features_0d
             f.attrs["features_1d"] = self.features_1d
             f.attrs["features_2d"] = self.features_2d
             f.attrs["model name"] = self.model_name
+
+            label_group = f.create_group("_labels")
+
+            for feature in self.labels:
+                label_group.attrs[feature] = self.labels[feature]
 
 
             for feature in self.feature_list:
@@ -205,33 +206,24 @@ Test if the model returned an adaptive result
         #     raise FileNotFoundError("{} file not found".format(self.filename))
 
         with h5py.File(self.filename, 'r') as f:
-            self.t = {}
-            self.U = {}
-            self.E = {}
-            self.Var = {}
-            self.p_05 = {}
-            self.p_95 = {}
-            self.sensitivity_1 = {}
-            self.total_sensitivity_1 = {}
-            self.sensitivity_t = {}
-            self.total_sensitivity_t = {}
-
+            self.clear()
 
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
 
-            self.xlabel = f.attrs["xlabel"]
-            self.ylabel = f.attrs["ylabel"]
-            self.zlabel = f.attrs["zlabel"]
             self.model_name = f.attrs["model name"]
 
 
-            # self.feature_list = listf.attrs["features"]
+            self.feature_list = list(f.attrs["features"])
             self.features_0d = list(f.attrs["features_0d"])
             self.features_1d = list(f.attrs["features_1d"])
             self.features_2d = list(f.attrs["features_2d"])
 
 
-            for feature in f.keys():
+            for feature in f["_labels"].attrs.keys():
+                self.labels[feature] = list(f["_labels"].attrs[feature])
+
+
+            for feature in self.feature_list:
                 for data_name in self.data_names:
                     data = getattr(self, data_name)
 

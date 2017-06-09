@@ -103,8 +103,8 @@ class TestData(unittest.TestCase):
 
 
         self.data.uncertain_parameters = ["a", "b"]
-        self.data.xlabel = "xlabel"
-        self.data.ylabel = "ylabel"
+        self.data.labels = {"feature1d": ["xlabel", "ylabel"], "TestingModel1d": ["xlabel", "ylabel"]}
+
         self.data.model_name = "TestingModel1d"
         self.data.feature_list = ["TestingModel1d", "feature1d"]
 
@@ -174,8 +174,8 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.uncertain_parameters[0], "a")
         self.assertEqual(self.data.uncertain_parameters[1], "b")
 
-        self.assertEqual(self.data.xlabel, "xlabel")
-        self.assertEqual(self.data.ylabel, "ylabel")
+        self.assertEqual(self.data.labels["TestingModel1d"], ["xlabel", "ylabel"])
+        self.assertEqual(self.data.labels["feature1d"], ["xlabel", "ylabel"])
 
         self.assertEqual(self.data.feature_list[0], "TestingModel1d")
         self.assertEqual(self.data.feature_list[1], "feature1d")
@@ -197,8 +197,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.features_2d, [])
         self.assertEqual(self.data.feature_list, [])
         self.assertEqual(self.data.uncertain_parameters, [])
-        self.assertEqual(self.data.xlabel, "")
-        self.assertEqual(self.data.ylabel, "")
+        self.assertEqual(self.data.labels, {})
 
 
     def test_remove_only_invalid_results(self):
@@ -275,8 +274,7 @@ class TestData(unittest.TestCase):
         self.data.total_sensitivity_t = -1
 
 
-        self.data.xlabel = -1
-        self.data.ylabel = -1
+        self.data.labels = -1
 
         self.data.clear()
 
@@ -296,3 +294,5 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.total_sensitivity_1, {})
         self.assertEqual(self.data.sensitivity_t, {})
         self.assertEqual(self.data.total_sensitivity_t, {})
+        self.assertEqual(self.data.labels, {})
+

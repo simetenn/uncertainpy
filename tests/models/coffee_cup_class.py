@@ -8,8 +8,7 @@ class CoffeeCup(Model):
     """
     def __init__(self):
         Model.__init__(self,
-                       xlabel="time [s]",
-                       ylabel="Temperature [C]")
+                       labels=["time [s]", "Temperature [C]"])
 
 
     def run(self, kappa=-0.05, u_env=20):

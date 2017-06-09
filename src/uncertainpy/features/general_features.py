@@ -87,14 +87,20 @@ class GeneralFeatures(object):
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
             self._features_to_run.append(new_features.__name__)
-            self.labels[new_features.__name__] = labels.get(new_features.__name__)
+
+            tmp_label = labels.get(new_features.__name__)
+            if tmp_label is not None:
+                self.labels[new_features.__name__] = tmp_label
         else:
             try:
                 for feature in new_features:
                     if callable(feature):
                         setattr(self, feature.__name__, feature)
                         self._features_to_run.append(feature.__name__)
-                        self.labels[feature.__name__] = labels.get(feature.__name__)
+
+                        tmp_lables = labels.get(feature.__name__)
+                        if tmp_lables is not None:
+                            self.labels[feature.__name__] = tmp_lables
                     else:
                         raise TypeError("Feature in iterable is not callable")
             except TypeError as error:

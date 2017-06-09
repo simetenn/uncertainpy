@@ -64,7 +64,7 @@ class UncertaintyEstimation(ParameterBase):
             self._uncertainty_calculations = uncertainty_calculations
 
         # TODO Make it so features_labels can be set from all classes
-        self.feature_labels = feature_labels
+        self.features_labels = features_labels
 
         super(UncertaintyEstimation, self).__init__(parameters=parameters,
                                                     model=model,
@@ -110,8 +110,7 @@ class UncertaintyEstimation(ParameterBase):
     def features(self, new_features):
         ParameterBase.features.fset(self, new_features)
 
-        self.features.labels = self.features_labels
-
+        self.features.labels.update(self.features_labels)
         self.uncertainty_calculations.features = self.features
 
 

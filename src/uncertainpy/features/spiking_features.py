@@ -19,7 +19,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         super(SpikingFeatures, self).__init__(features_to_run=features_to_run,
                                               adaptive_features=adaptive_features,
-                                              thresh=-thresh,
+                                              thresh=thresh,
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels)
         self.labels = labels
@@ -27,6 +27,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
     def nr_spikes(self, t, spikes):
         return None, spikes.nr_spikes
+
 
     # TODO get time of stimulus onset from model
     def time_before_first_spike(self, t, spikes):

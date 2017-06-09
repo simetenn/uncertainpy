@@ -71,24 +71,40 @@ class RunModel(ParameterBase):
 
     @ParameterBase.features.setter
     def features(self, new_features):
+        # Remove all labels but the model labels from data
+        if self.model is not None and self.model.name in self.data.labels:
+            if len(self.model.labels) > 0:
+                self.data.labels = {self.model.name: self.model.labels}
+            else:
+                self.data.labels = {}
+
         ParameterBase.features.fset(self, new_features)
 
         self.parallel.features = self.features
 
         if self.features is not None:
-            self.data.labels = self.features.labels
+            # Update data feature labels only if there are labels belonging to that feature
+            for feature in self.features.labels:
+                if len(self.features.labels[feature]) > 0:
+                    self.data.labels[feature] = self.features.labels[feature]
+
+            self.data.labels.update(self.features.labels)
 
 
     @ParameterBase.model.setter
     def model(self, new_model):
+        # If model labels are in data remove them
+        if self.model is not None and self.model.name in self.data.labels:
+            del self.data.labels[self.model.name]
+
         ParameterBase.model.fset(self, new_model)
 
         self.parallel.model = self.model
 
         if self.model is not None:
-            self.data.xlabel = self.model.xlabel
-            self.data.ylabel = self.model.ylabel
-            self.data.zlabel = self.model.zlabel
+            if len(self.model.labels) > 0:
+                self.data.labels[self.model.name] = self.model.labels
+
             self.data.model_name = self.model.name
 
 

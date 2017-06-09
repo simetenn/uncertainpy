@@ -71,12 +71,10 @@ class TestModel(unittest.TestCase):
 
         model = Model(run_function=f,
                       adaptive_model=True,
-                      xlabel="x",
-                      ylabel="y")
+                      labels=["test x", "text y"])
 
         self.assertEqual(model.run, f)
-        self.assertEqual(model.xlabel, "x")
-        self.assertEqual(model.ylabel, "y")
+        self.assertEqual(model.labels, ["test x", "text y"])
         self.assertTrue(model.adaptive_model)
 
 
