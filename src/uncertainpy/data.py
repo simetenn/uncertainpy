@@ -114,7 +114,6 @@ feature_list
         self.total_sensitivity_1 = {}
         self.sensitivity_t = {}
         self.total_sensitivity_t = {}
-        self._temperature = 0
 
         self.xlabel = ""
         self.ylabel = ""
@@ -212,6 +211,9 @@ Test if the model returned an adaptive result
             self.p_05 = {}
             self.p_95 = {}
             self.sensitivity_1 = {}
+            self.total_sensitivity_1 = {}
+            self.sensitivity_t = {}
+            self.total_sensitivity_t = {}
 
 
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])

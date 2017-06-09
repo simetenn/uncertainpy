@@ -186,7 +186,7 @@ class PlotUncertainty(object):
         value = getattr(self.data, attribute)[feature]
         t = self.data.t[feature]
 
-        if np.all(np.isnan(value)):
+        if value is None:
             msg = "{attribute_name} of {feature} is NaN. Unable to plot {attribute_name}"
             self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
             return
@@ -323,8 +323,8 @@ class PlotUncertainty(object):
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if np.all(np.isnan(self.data.E[feature])) or np.all(np.isnan(self.data.Var[feature])):
-            self.logger.warning("Mean and/or variance of {feature} is NaN.".format(feature=feature)
+        if self.data.E[feature] is None or self.data.Var[feature] is None:
+            self.logger.warning("Mean and/or variance of {feature} is None.".format(feature=feature)
                                 + "Unable to plot mean and variance")
             return
 
@@ -394,9 +394,9 @@ class PlotUncertainty(object):
         if feature not in self.data.features_1d:
             raise ValueError("%s is not a 1D feature" % (feature))
 
-        if np.all(np.isnan(self.data.E[feature])) \
-            or  np.all(np.isnan(self.data.p_05[feature])) \
-                or  np.all(np.isnan(self.data.p_95[feature])):
+        if self.data.E[feature] is None \
+            or self.data.p_05[feature] is None \
+                or self.data.p_95[feature] is None:
             msg = "Mean, p_05  and/or p_95 of {feature} is NaN. Unable to plot confidence interval"
             self.logger.warning(msg.format(feature=feature))
             return
@@ -457,8 +457,8 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if np.all(np.isnan(sense[feature])):
-            msg = "{sensitivity} of {feature} is NaN. Unable to plot {sensitivity}"
+        if sense[feature] is None:
+            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
@@ -514,8 +514,8 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if np.all(np.isnan(sense[feature])):
-            msg = "{sensitivity} of {feature} is NaN. Unable to plot {sensitivity}"
+        if sense[feature] is None:
+            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
@@ -609,8 +609,8 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if np.all(np.isnan(sense[feature])):
-            msg = "{sensitivity} of {feature} is NaN. Unable to plot {sensitivity}"
+        if sense[feature] is None:
+            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
