@@ -517,7 +517,7 @@ class TestRunModel(unittest.TestCase):
 
 
     # def test_store_resultsAdaptiveError(self):
-    #     self.runmodel = RunModel(TestingModelAdaptive(adaptive_model=True),
+    #     self.runmodel = RunModel(TestingModelAdaptive(adaptive=True),
     #                              features=TestingFeatures(),
     #                              supress_model_output=True,
     #                              supress_model_graphics=True)
@@ -669,7 +669,7 @@ class TestRunModel(unittest.TestCase):
     def test_perform_interpolation(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         self.runmodel.data.uncertain_parameters = ["a", "b"]
-        self.runmodel.model.adaptive_model = True
+        self.runmodel.model.adaptive = True
         self.runmodel.data.feature_list = []
 
         results = self.runmodel.evaluate_nodes(nodes)
@@ -784,7 +784,7 @@ class TestRunModel(unittest.TestCase):
                                   "models/dLGN_modelDB/")
 
         model = NeuronModel(model_path=model_path,
-                            adaptive_model=True)
+                            adaptive=True)
 
         self.runmodel = RunModel(model=model, parameters=self.parameters, CPUs=1)
         uncertain_parameters = ["cap", "Rm"]

@@ -19,7 +19,7 @@ parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.Distribution(0.05).uniform)
 
 model = un.NeuronModel(model_path=model_path,
-                       adaptive_model=True)
+                       adaptive=True)
 
 features = un.SpikingFeatures(features_to_run="all")
 

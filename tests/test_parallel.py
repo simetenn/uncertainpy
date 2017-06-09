@@ -227,7 +227,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_create_interpolations_model_0d(self):
-        self.parallel.model.adaptive_model = True
+        self.parallel.model.adaptive = True
         results = {"TestingModel1d": {"U": 1,
                                       "t": np.arange(0, 10)}}
 
@@ -236,7 +236,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_create_interpolations_model_2d(self):
-        self.parallel.model.adaptive_model = True
+        self.parallel.model.adaptive = True
         results = {"TestingModel1d": {"U": np.array([np.arange(0, 10),
                                                      np.arange(0, 10)]),
                                       "t": np.arange(0, 10)}}
@@ -267,7 +267,7 @@ class TestParallel(unittest.TestCase):
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
 
-    def test_run_adaptive_model(self):
+    def test_run_adaptive(self):
         parallel = Parallel(model=TestingModelAdaptive(),
                             features=TestingFeatures(features_to_run="feature_adaptive"))
         results = parallel.run(self.model_parameters)
@@ -302,7 +302,7 @@ class TestParallel(unittest.TestCase):
                                   "models/dLGN_modelDB/")
 
         model = NeuronModel(model_path=model_path,
-                            adaptive_model=True)
+                            adaptive=True)
 
         parallel = Parallel(model=model)
         model_parameters = {"cap": 1.1, "Rm": 22000}

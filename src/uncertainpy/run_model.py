@@ -134,10 +134,10 @@ class RunModel(ParameterBase):
         self.data.features_1d = features_1d
         self.data.features_2d = features_2d
 
-        if self.is_adaptive(results) and not self.model.adaptive_model:
+        if self.is_adaptive(results) and not self.model.adaptive:
             # TODO if the model is adaptive perform the complete interpolation here instead.
             raise ValueError("The number of simulation points varies between simulations."
-                             + " Try setting adaptive_model=True in model()")
+                             + " Try setting adaptive=True in model()")
 
 
         for feature in self.data.features_2d:

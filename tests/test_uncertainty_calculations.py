@@ -514,7 +514,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         parameters.set_all_distributions(Distribution(1).uniform)
 
         model = TestingModelAdaptive()
-        model.adaptive_model=False
+        model.adaptive=False
 
         features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
         self.uncertainty_calculations = UncertaintyCalculations(model=model,

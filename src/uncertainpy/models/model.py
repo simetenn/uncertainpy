@@ -4,15 +4,14 @@ run(**parameters) must return t and U
     """
     def __init__(self,
                  run_function=None,
-                 adaptive_model=False,
+                 adaptive=False,
                  labels=[]):
         """
         """
 
-        self.adaptive_model = adaptive_model
+        self.adaptive = adaptive
         self.labels = labels
 
-        # TODO must either remove this or implement a permanent solution for setting adaptive_model = true when having a function as a model
         if run_function is not None:
             self.run = run_function
         else:

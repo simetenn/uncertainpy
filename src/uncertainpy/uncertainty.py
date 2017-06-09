@@ -20,8 +20,8 @@ class UncertaintyEstimation(ParameterBase):
                  model,
                  parameters,
                  base_model=Model,
-                 model_labels=[],
-                 adaptive_model=None,
+                 model_labels=None,
+                 model_adaptive=None,
                  features=None,
                  base_features=GeneralFeatures,
                  features_labels={},
@@ -30,9 +30,6 @@ class UncertaintyEstimation(ParameterBase):
                  figureformat=".png",
                  save_data=True,
                  output_dir_data="data/",
-                 xlabel=None,
-                 ylabel=None,
-                 zlabel=None,
                  verbose_level="info",
                  verbose_filename=None,
                  uncertainty_calculations=None,
@@ -68,6 +65,7 @@ class UncertaintyEstimation(ParameterBase):
         # TODO Make it so features_labels can be set from all classes
         self.features_labels = features_labels
         self.model_labels = model_labels
+        self.model_adaptive = model_adaptive
 
         super(UncertaintyEstimation, self).__init__(parameters=parameters,
                                                     model=model,
@@ -115,10 +113,11 @@ class UncertaintyEstimation(ParameterBase):
     def model(self, new_model):
         ParameterBase.model.fset(self, new_model)
 
-        self.model.labels = self.model_labels
-        if adaptive_model is not None:
-            self.model.adaptive_model
-        self.model.labels = self.model_labels
+        if self.model_adaptive is not None:
+            self.model.adaptive = self.model_adaptive
+
+        if self.model_labels is not None:
+            self.model.labels = self.model_labels
 
         self.uncertainty_calculations.model = self.model
 

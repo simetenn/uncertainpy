@@ -11,7 +11,7 @@ parameters.set_all_distributions(un.Distribution(0.5).uniform)
 
 # model = BrunelNetwork()
 # model = un.Model(brunel_network,
-#                  adaptive_model=False)
+#                  adaptive=False)
 model = brunel_network
 features = un.NetworkFeatures(features_to_run="all")
 

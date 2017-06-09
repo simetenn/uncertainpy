@@ -3,7 +3,7 @@ from uncertainpy import NeuronModel
 class NeuronModelBahl(NeuronModel):
     def __init__(self):
         NeuronModel.__init__(self,
-                             adaptive_model=True,
+                             adaptive=True,
                              model_file="mosinit.hoc",
                              model_path="bahl_neuron_model")
 

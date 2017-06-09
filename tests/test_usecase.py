@@ -280,7 +280,7 @@ class TestUseCases(unittest.TestCase):
         model = uncertainpy.NeuronModel(parameters=parameters,
                                         model_file=model_file,
                                         model_path=full_model_path,
-                                        adaptive_model=True)
+                                        adaptive=True)
         model.set_all_distributions(uncertainpy.Distribution(0.05).uniform)
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -323,7 +323,7 @@ class TestUseCases(unittest.TestCase):
         model = uncertainpy.NeuronModel(parameters=parameters,
                                         model_file=model_file,
                                         model_path=full_model_path,
-                                        adaptive_model=True)
+                                        adaptive=True)
 
         model.set_all_distributions(uncertainpy.Distribution(0.05).uniform)
 

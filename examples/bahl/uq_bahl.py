@@ -6,7 +6,7 @@ parameterlist = [["e_pas", -80, cp.Uniform(-60, -85)],
 
 
 model = un.NeuronModel(model_path="bahl_neuron_model",
-                       adaptive_model=True)
+                       adaptive=True)
 
 uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameterlist,

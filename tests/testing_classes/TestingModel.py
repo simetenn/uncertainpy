@@ -52,7 +52,7 @@ class TestingModel2d(Model):
 
 class TestingModelAdaptive(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"], adaptive_model=True)
+        Model.__init__(self, labels=["x", "y"], adaptive=True)
 
 
     def run(self, a=1, b=2):
