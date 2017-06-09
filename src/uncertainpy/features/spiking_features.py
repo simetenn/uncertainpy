@@ -4,10 +4,31 @@ import scipy.optimize
 from uncertainpy.features import GeneralSpikingFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
-    def nrSpikes(self, t, spikes):
+    def __init__(self,
+                features_to_run="all",
+                adaptive_features=None,
+                thresh=-30,
+                extended_spikes=False,
+                labels={}):
+
+        implemented_labels = {"nr_spikes": ["number of spikes"],
+                              "spike_rate": ["spike rate [1/ms]"],
+                              "time_before_first_spike": ["time [ms]"],
+                              "accomondation_index": ["accomondation index"]
+                              }
+
+        super(SpikingFeatures, self).__init__(features_to_run=features_to_run,
+                                              adaptive_features=adaptive_features,
+                                              thresh=-thresh,
+                                              extended_spikes=extended_spikes,
+                                              labels=implemented_labels)
+        self.labels = labels
+
+
+    def nr_spikes(self, t, spikes):
         return None, spikes.nr_spikes
 
-
+    # TODO get time of stimulus onset from model
     def time_before_first_spike(self, t, spikes):
         if spikes.nr_spikes <= 0:
             return None, None

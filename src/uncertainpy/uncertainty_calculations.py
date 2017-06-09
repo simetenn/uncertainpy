@@ -19,6 +19,7 @@ class UncertaintyCalculations(ParameterBase):
                  parameters=None,
                  features=None,
                  base_features=GeneralFeatures,
+                 features_labels={},
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
                  M=3,

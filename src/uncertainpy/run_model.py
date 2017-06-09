@@ -75,6 +75,8 @@ class RunModel(ParameterBase):
 
         self.parallel.features = self.features
 
+        if self.features is not None:
+            self.data.labels = self.features.labels
 
 
     @ParameterBase.model.setter
@@ -83,7 +85,7 @@ class RunModel(ParameterBase):
 
         self.parallel.model = self.model
 
-        if self._model is not None:
+        if self.model is not None:
             self.data.xlabel = self.model.xlabel
             self.data.ylabel = self.model.ylabel
             self.data.zlabel = self.model.zlabel

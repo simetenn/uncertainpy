@@ -209,7 +209,7 @@ class TestUncertainty(unittest.TestCase):
         def feature_function2(t, U):
             return "t2", "U2"
 
-        implemented_features = ["nrSpikes", "time_before_first_spike",
+        implemented_features = ["nr_spikes", "time_before_first_spike",
                                 "spike_rate", "average_AP_overshoot",
                                 "average_AHP_depth", "average_AP_width",
                                 "accomondation_index"]

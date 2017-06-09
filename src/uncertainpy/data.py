@@ -103,6 +103,7 @@ feature_list
         self._features_2d = []
         self.feature_list = []
 
+        self.feature_labels = {}
 
         self.U = {}
         self.t = {}

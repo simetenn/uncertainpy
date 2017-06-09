@@ -7,12 +7,15 @@ class GeneralSpikingFeatures(GeneralFeatures):
                  features_to_run="all",
                  adaptive_features=None,
                  thresh=-30,
-                 extended_spikes=False):
+                 extended_spikes=False,
+                 labels={}):
+
         new_utility_methods = ["calculate_spikes"]
 
         super(GeneralSpikingFeatures, self).__init__(features_to_run=features_to_run,
                                                      adaptive_features=adaptive_features,
-                                                     new_utility_methods=new_utility_methods)
+                                                     new_utility_methods=new_utility_methods,
+                                                     labels=labels)
 
         self.spikes = None
 

@@ -171,7 +171,7 @@ class TestSpikingFeatures(unittest.TestCase):
         t = np.load(os.path.join(folder, "data/t_test.npy"))
         U = np.load(os.path.join(folder, "data/U_test.npy"))
 
-        self.implemented_features = ["nrSpikes", "time_before_first_spike",
+        self.implemented_features = ["nr_spikes", "time_before_first_spike",
                                      "spike_rate", "average_AP_overshoot",
                                      "average_AHP_depth", "average_AP_width",
                                      "accomondation_index"]
@@ -208,8 +208,8 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertEqual(set(self.features.implemented_features()), set(self.implemented_features))
 
 
-    def test_nrSpikes(self):
-        self.assertEqual(self.features.nrSpikes(self.t, self.spikes), (None, 12))
+    def test_nr_spikes(self):
+        self.assertEqual(self.features.nr_spikes(self.t, self.spikes), (None, 12))
 
 
     def test_time_before_first_spike(self):

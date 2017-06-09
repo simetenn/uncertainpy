@@ -22,6 +22,7 @@ class UncertaintyEstimation(ParameterBase):
                  base_model=Model,
                  features=None,
                  base_features=GeneralFeatures,
+                 features_labels={},
                  save_figures=True,
                  output_dir_figures="figures/",
                  figureformat=".png",
@@ -62,6 +63,8 @@ class UncertaintyEstimation(ParameterBase):
         else:
             self._uncertainty_calculations = uncertainty_calculations
 
+        # TODO Make it so features_labels can be set from all classes
+        self.feature_labels = feature_labels
 
         super(UncertaintyEstimation, self).__init__(parameters=parameters,
                                                     model=model,
@@ -74,6 +77,7 @@ class UncertaintyEstimation(ParameterBase):
 
 
         self.data = None
+
         self.save_figures = save_figures
         self.save_data = save_data
         self.output_dir_data = output_dir_data
@@ -105,6 +109,8 @@ class UncertaintyEstimation(ParameterBase):
     @ParameterBase.features.setter
     def features(self, new_features):
         ParameterBase.features.fset(self, new_features)
+
+        self.features.labels = self.features_labels
 
         self.uncertainty_calculations.features = self.features
 

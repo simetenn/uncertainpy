@@ -27,6 +27,7 @@ class Base(object):
         self.model = model
 
 
+
     @property
     def features(self):
         return self._features
@@ -56,6 +57,7 @@ class Base(object):
             # self._model.run = new_model
         else:
             raise TypeError("model must be a Model instance, callable or None")
+
 
 
 class ParameterBase(Base):

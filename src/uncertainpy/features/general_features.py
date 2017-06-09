@@ -3,7 +3,8 @@ class GeneralFeatures(object):
     def __init__(self,
                  features_to_run="all",
                  new_utility_methods=None,
-                 adaptive_features=None):
+                 adaptive_features=None,
+                 labels={}):
 
         # self.implemented_features = []
         self.utility_methods = ["calculate_feature",
@@ -23,15 +24,28 @@ class GeneralFeatures(object):
 
         self._features_to_run = None
         self._adaptive_features = None
+        self._labels = {}
 
         self.utility_methods += new_utility_methods
 
         self.features_to_run = features_to_run
         self.adaptive_features = adaptive_features
+        self.labels = labels
+
+
 
 
     def preprocess(self, t, U):
         return t, U
+
+
+    @property
+    def labels(self):
+        return self._labels
+
+    @labels.setter
+    def labels(self, new_labels):
+        self.labels.update(new_labels)
 
 
     @property
@@ -68,24 +82,29 @@ class GeneralFeatures(object):
 
 
     # TODO is it correct that adding a new feature adds it to features_to_run
-    def add_features(self, new_features):
+    # TODO do we need labels here?
+    def add_features(self, new_features, labels={}):
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
             self._features_to_run.append(new_features.__name__)
+            self.labels[new_features.__name__] = labels.get(new_features.__name__)
         else:
             try:
                 for feature in new_features:
                     if callable(feature):
                         setattr(self, feature.__name__, feature)
                         self._features_to_run.append(feature.__name__)
+                        self.labels[feature.__name__] = labels.get(feature.__name__)
                     else:
-                        raise TypeError("feature in iterable is not callable")
+                        raise TypeError("Feature in iterable is not callable")
             except TypeError as error:
                 msg = "Added features must be a GeneralFeatures instance, callable or list of callables"
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)
                 raise
+
+
 
 
     def calculate(self, t, U, feature_name=None):
