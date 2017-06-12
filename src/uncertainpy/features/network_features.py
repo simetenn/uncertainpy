@@ -4,14 +4,14 @@ import elephant.statistics as stat
 
 class NetworkFeatures(GeneralFeatures):
     def __init__(self,
-                  new_features=None,
-                  features_to_run="all",
-                  adaptive=None,
-                  labels={}):
+                 new_features=None,
+                 features_to_run="all",
+                 adaptive=None,
+                 labels={}):
 
         implemented_labels = {"cv": ["Neuron", "Coefficient of variation"],
                               "mean cv": ["Coefficient of variation"]
-                              }
+                             }
 
         super(NetworkFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,

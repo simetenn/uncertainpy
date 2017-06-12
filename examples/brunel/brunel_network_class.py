@@ -1,4 +1,4 @@
-from uncertainpy import Model
+from uncertainpy import NestModel
 
 import pandas as pd
 import numpy as np
@@ -7,9 +7,9 @@ import nest.raster_plot
 
 import matplotlib.pyplot as plt
 
-class BrunelNetwork(Model):
+class BrunelNetwork(NestModel):
     def __init__(self):
-        Model.__init__(self)
+        super(BrunelNetwork, self).__init__()
 
         # Network parameters. These are given in Brunel (2000) J.Comp.Neuro.
         self.g = 5.0  # Ratio of IPSP to EPSP amplitude: J_I/J_E
@@ -30,8 +30,7 @@ class BrunelNetwork(Model):
         self.N_rec = 100   # Number of neurons to record from
         self.simtime = 100
 
-        self.xlabel = "time [ms]"
-        self.ylabel = "Coefficient of Variation"
+
 
 
     def reset(self):
@@ -89,22 +88,13 @@ class BrunelNetwork(Model):
         spikes = nest.Create("spike_detector", 2,
                              params=[{"label": "Exc", "to_file": False},
                                      {"label": "Inh", "to_file": False}])
-        self.spike_detec_E = spikes[:1]
-        self.spike_detec_I = spikes[1:]
+        self.spike_detect_E = spikes[:1]
+        self.spike_detect_I = spikes[1:]
 
         # connect using all_to_all: all recorded excitatory neurons to one
         # detector
-        nest.Connect(nodes_E[:self.N_rec], self.spike_detec_E)
-        nest.Connect(nodes_I[:self.N_rec], self.spike_detec_I)
-
-
-    def calc_CV(self, spikes):
-        isi = np.diff(spikes)
-        if len(isi) > 0:
-            CV = np.sqrt(np.mean(isi**2) - np.mean(isi)**2) / np.mean(isi)
-            return CV
-        else:
-            return np.nan
+        nest.Connect(nodes_E[:self.N_rec], self.spike_detect_E)
+        nest.Connect(nodes_I[:self.N_rec], self.spike_detect_I)
 
 
     def run(self, **parameters):
@@ -113,24 +103,15 @@ class BrunelNetwork(Model):
         self.reset()
 
         nest.Simulate(self.simtime)
-        events = nest.GetStatus(spike_detect_E, 'events')[0]
+        events = nest.GetStatus(self.spike_detect_E, 'events')[0]
 
-        cv_list = []
+        spiketrains = []
         for sender in set(events["senders"]):
             spiketrain = events["times"][events["senders"] == sender]
-            cv_list.append(calc_CV(spiketrain))
+            spiketrains.append(spiketrain)
 
-        U = np.nanmean(np.array(cv_list))
+        # U must be a list/array of spiketrains
+        U = spiketrains
         t = None
 
-        return None, np.nanmean(np.array(cv_list))
-
-if __name__ == "__main__":
-    parameters = {"J_E": 4, "g": 4}
-
-    nest_network = BrunelNetworkModel()
-    nest_network.set_parameters_file(parameters=parameters)
-    nest_network.reset()
-    nest_network.run()
-    nest.raster_plot.from_device(nest_network.spike_detec_E)
-    plt.savefig("nest_E.png")
+        return t, U

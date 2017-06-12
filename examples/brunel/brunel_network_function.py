@@ -112,8 +112,9 @@ def brunel_network(J_E=0.5, g=5.0):
         spiketrain = events["times"][events["senders"] == sender]
         spiketrains.append(spiketrain)
 
-    # U must be a list/array if spiketrains
+    # U must be a list/array of spiketrains
     U = spiketrains
     t = None
+
 
     return t, U
