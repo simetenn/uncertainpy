@@ -4,7 +4,7 @@ import unittest
 from logging import Logger
 
 from uncertainpy.base import Base, ParameterBase
-from uncertainpy import NestModel, SpikingFeatures, GeneralFeatures, Parameters
+from uncertainpy import Model, SpikingFeatures, GeneralFeatures, Parameters
 
 from testing_classes import TestingFeatures, model_function
 from testing_classes import TestingModel1d
@@ -27,13 +27,11 @@ class TestBase(unittest.TestCase):
 
     def test_init(self):
         base = Base(model=model_function,
-                    base_model=NestModel,
                     features=model_function,
-                    base_features=GeneralFeatures,
                     verbose_level="warning",
                     verbose_filename=self.filename)
 
-        self.assertIsInstance(base.model, NestModel)
+        self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)
 
         self.assertIsInstance(base.features, GeneralFeatures)
@@ -57,17 +55,11 @@ class TestBase(unittest.TestCase):
 
     def test_set_model(self):
         base = Base()
-        base.model = TestingModel1d()
 
-        self.assertIsInstance(base.model, TestingModel1d)
-        self.assertIsInstance(base._model, TestingModel1d)
-        self.assertEqual(base.model.name, "TestingModel1d")
-
-        base = Base(base_model=NestModel)
         base.model = model_function
 
-        self.assertIsInstance(base.model, NestModel)
-        self.assertIsInstance(base._model, NestModel)
+        self.assertIsInstance(base.model, Model)
+        self.assertIsInstance(base._model, Model)
         self.assertEqual(base.model.run, model_function)
         self.assertEqual(base.model.name, "model_function")
 
@@ -83,11 +75,9 @@ class TestParameterBase(unittest.TestCase):
 
         base = ParameterBase(parameters=parameterlist,
                              model=model_function,
-                             base_model=NestModel,
-                             features=model_function,
-                             base_features=GeneralFeatures)
+                             features=model_function,)
 
-        self.assertIsInstance(base.model, NestModel)
+        self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)
 
         self.assertIsInstance(base.features, GeneralFeatures)

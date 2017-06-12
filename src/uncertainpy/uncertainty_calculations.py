@@ -15,11 +15,8 @@ from base import ParameterBase
 class UncertaintyCalculations(ParameterBase):
     def __init__(self,
                  model=None,
-                 base_model=Model,
                  parameters=None,
                  features=None,
-                 base_features=GeneralFeatures,
-                 features_labels={},
                  CPUs=mp.cpu_count(),
                  supress_model_graphics=True,
                  M=3,
@@ -34,9 +31,7 @@ class UncertaintyCalculations(ParameterBase):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
-                                 base_model=base_model,
                                  features=features,
-                                 base_features=base_features,
                                  verbose_level=verbose_level,
                                  verbose_filename=verbose_filename,
                                  CPUs=CPUs,
@@ -45,9 +40,7 @@ class UncertaintyCalculations(ParameterBase):
 
         super(UncertaintyCalculations, self).__init__(parameters=parameters,
                                                       model=model,
-                                                      base_model=base_model,
                                                       features=features,
-                                                      base_features=base_features,
                                                       verbose_level=verbose_level,
                                                       verbose_filename=verbose_filename)
 

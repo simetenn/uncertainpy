@@ -39,9 +39,7 @@ class RunModel(ParameterBase):
     def __init__(self,
                  model,
                  parameters,
-                 base_model=Model,
                  features=None,
-                 base_features=GeneralFeatures,
                  verbose_level="info",
                  verbose_filename=None,
                  CPUs=mp.cpu_count(),
@@ -50,17 +48,13 @@ class RunModel(ParameterBase):
 
         self.data = Data()
         self.parallel = Parallel(model=model,
-                                 base_model=base_model,
                                  features=features,
-                                 base_features=base_features,
                                  verbose_level=verbose_level,
                                  verbose_filename=verbose_filename)
 
-        super(RunModel, self).__init__(parameters=parameters,
-                                       model=model,
-                                       base_model=base_model,
+        super(RunModel, self).__init__(model=model,
+                                       parameters=parameters,
                                        features=features,
-                                       base_features=base_features,
                                        verbose_level=verbose_level,
                                        verbose_filename=verbose_filename)
 
@@ -102,7 +96,7 @@ class RunModel(ParameterBase):
         self.parallel.model = self.model
 
         if self.model is not None:
-            if len(self.model.labels) > 0:
+            if self.model.labels:
                 self.data.labels[self.model.name] = self.model.labels
 
             self.data.model_name = self.model.name

@@ -1,12 +1,12 @@
 
 class GeneralFeatures(object):
     def __init__(self,
+                 new_features=None,
                  features_to_run="all",
                  new_utility_methods=None,
                  adaptive=None,
                  labels={}):
 
-        # self.implemented_features = []
         self.utility_methods = ["calculate_feature",
                                 "calculate_features",
                                 "calculate_all_features",
@@ -31,6 +31,9 @@ class GeneralFeatures(object):
         self.features_to_run = features_to_run
         self.adaptive = adaptive
         self.labels = labels
+
+        if new_features:
+            self.add_features(new_features, labels=labels)
 
 
 
@@ -82,7 +85,6 @@ class GeneralFeatures(object):
 
 
     # TODO is it correct that adding a new feature adds it to features_to_run
-    # TODO do we need labels here?
     def add_features(self, new_features, labels={}):
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)

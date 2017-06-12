@@ -5,6 +5,7 @@ from uncertainpy.features import GeneralSpikingFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
     def __init__(self,
+                 new_features=None,
                  features_to_run="all",
                  adaptive=None,
                  thresh=-30,
@@ -20,7 +21,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                               "average_AP_width": ["voltage [mV]"]
                               }
 
-        super(SpikingFeatures, self).__init__(features_to_run=features_to_run,
+        super(SpikingFeatures, self).__init__(new_features=new_features,
+                                              features_to_run=features_to_run,
                                               adaptive=adaptive,
                                               thresh=thresh,
                                               extended_spikes=extended_spikes,

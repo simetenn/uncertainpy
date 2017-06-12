@@ -70,6 +70,34 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(features.features_to_run, [])
 
 
+    def test_intitNewFeatures(self):
+        def feature_function(t, U):
+            return "t", "U"
+
+        def feature_function2(t, U):
+            return "t2", "U2"
+
+        features = GeneralFeatures(new_features=[feature_function, feature_function2],
+                                   labels={"feature_function": ["x", "y"]})
+
+
+
+        t, U = features.feature_function(None, None)
+        self.assertEqual(t, "t")
+        self.assertEqual(U, "U")
+
+        t, U = features.feature_function2(None, None)
+        self.assertEqual(t, "t2")
+        self.assertEqual(U, "U2")
+
+        self.assertEqual(features.implemented_features(),
+                         ["feature_function", "feature_function2"])
+
+        self.assertEqual(features.features_to_run,
+                         ["feature_function", "feature_function2"])
+
+        self.assertEqual(features.labels, {"feature_function": ["x", "y"]})
+
     def test_intitAdaptiveList(self):
         features = GeneralFeatures(adaptive=None)
         self.assertEqual(features.adaptive, [])
@@ -184,10 +212,13 @@ class TestSpikingFeatures(unittest.TestCase):
         self.implemented_labels = {"nr_spikes": ["number of spikes"],
                                    "spike_rate": ["spike rate [1/ms]"],
                                    "time_before_first_spike": ["time [ms]"],
-                                   "accomondation_index": ["accomondation index"]
-                                   }
+                                   "accomondation_index": ["accomondation index"],
+                                   "average_AP_overshoot": ["voltage [mV]"],
+                                   "average_AHP_depth": ["voltage [mV]"],
+                                   "average_AP_width": ["voltage [mV]"]
+                                  }
 
-        self.features = SpikingFeatures(self.t, self.U)
+        self.features = SpikingFeatures(t, U)
 
         self.t, self.spikes = self.features.preprocess(t, U)
 
@@ -208,12 +239,15 @@ class TestSpikingFeatures(unittest.TestCase):
     def test_initLabels(self):
         features = SpikingFeatures(labels={"nr_spikes": ["changed"],
                                            "new": ["new"]})
-        labels = {"nr_spikes": ["changed"],
+
+        labels = {"nr_spikes": ["number of spikes"],
                   "spike_rate": ["spike rate [1/ms]"],
                   "time_before_first_spike": ["time [ms]"],
                   "accomondation_index": ["accomondation index"],
+                  "average_AP_overshoot": ["voltage [mV]"],
+                  "average_AHP_depth": ["voltage [mV]"],
                   "new": ["new"]
-                  }
+                 }
 
         self.assertEqual(self.features.labels, labels)
 

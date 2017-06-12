@@ -98,37 +98,6 @@ class TestParallel(unittest.TestCase):
                          ["feature_function", "feature_function2"])
 
 
-    def test_feature_functions_base(self):
-        def feature_function(t, U):
-            return "t", "U"
-
-        def feature_function2(t, U):
-            return "t2", "U2"
-
-        implemented_features = ["nr_spikes", "time_before_first_spike",
-                                "spike_rate", "average_AP_overshoot",
-                                "average_AHP_depth", "average_AP_width",
-                                "accomondation_index"]
-
-        self.parallel.base_features = SpikingFeatures
-        self.parallel.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.parallel.features, SpikingFeatures)
-
-        t, U = self.parallel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
-
-        t, U = self.parallel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
-
-        t, U = self.parallel.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
-
-        self.assertEqual(set(self.parallel.features.features_to_run),
-                         set(["feature_function", "feature_function2"] + implemented_features))
-
 
     def test_model(self):
         self.parallel.model = model_function

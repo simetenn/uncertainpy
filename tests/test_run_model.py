@@ -176,17 +176,13 @@ class TestRunModel(unittest.TestCase):
                                 "average_AHP_depth", "average_AP_width",
                                 "accomondation_index"]
 
-        self.runmodel.base_features = SpikingFeatures
-        self.runmodel.features = [feature_function, feature_function2]
+        self.runmodel.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.runmodel.features, SpikingFeatures)
 
         t, U = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.runmodel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
 
         t, U = self.runmodel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
@@ -203,7 +199,7 @@ class TestRunModel(unittest.TestCase):
                               "average_AHP_depth": ["voltage [mV]"],
                               "average_AP_width": ["voltage [mV]"],
                               "TestingModel1d": ["x", "y"]
-                              }
+                             }
 
         self.assertEqual(self.runmodel.data.labels, implemented_labels)
 

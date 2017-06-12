@@ -154,13 +154,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                 "average_AHP_depth", "average_AP_width",
                                 "accomondation_index"]
 
-        self.uncertainty_calculations.base_features = SpikingFeatures
-        self.uncertainty_calculations.features = [feature_function, feature_function2]
+        self.uncertainty_calculations.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.uncertainty_calculations.features, SpikingFeatures)
-
-        t, U = self.uncertainty_calculations.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
 
         t, U = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")
