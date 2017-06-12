@@ -14,8 +14,7 @@ class LgnSimulator(Model):
                  output_file=None):
 
         Model.__init__(self,
-                       xlabel="spatial points",
-                       ylabel="response")
+                       labels=["spatial points", "response"])
 
 
         self.config_file_base = config_file_base

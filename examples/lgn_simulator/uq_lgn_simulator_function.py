@@ -14,7 +14,7 @@ parameterlist = [["w_ri", 0.5, cp.Uniform(-2, 0)],
 
 parameters = un.Parameters(parameterlist)
 
-model = lgn_simulator
+model = un.Model(lgn_simulator, labels=["spatial points", "response"])
 features = [irfmax, irfmin, irf_size]
 
 uncertainty = un.UncertaintyEstimation(model,

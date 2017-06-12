@@ -13,8 +13,7 @@ class HodgkinHuxley(Model):
     def __init__(self):
         Model.__init__(self,
                        adaptive=False,
-                       xlabel="time [ms]",
-                       ylabel="voltage [mv]")
+                       labels=["time [ms]", "voltage [mv]"])
 
         ## HH Parameters
         self.V_rest = -65   # mV

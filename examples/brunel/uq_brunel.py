@@ -7,7 +7,7 @@ parameterlist = [["J_E", 4, None],
                  ["g", 4, None]]
 
 parameters = un.Parameters(parameterlist)
-parameters.set_all_distributions(un.Distribution(0.5).uniform)
+parameters.set_all_distributions(un.Distribution(0.1).uniform)
 
 # model = BrunelNetwork()
 # model = un.Model(brunel_network,
