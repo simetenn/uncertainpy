@@ -199,6 +199,9 @@ class TestRunModel(unittest.TestCase):
                               "spike_rate": ["spike rate [1/ms]"],
                               "time_before_first_spike": ["time [ms]"],
                               "accomondation_index": ["accomondation index"],
+                              "average_AP_overshoot": ["voltage [mV]"],
+                              "average_AHP_depth": ["voltage [mV]"],
+                              "average_AP_width": ["voltage [mV]"],
                               "TestingModel1d": ["x", "y"]
                               }
 
@@ -453,7 +456,7 @@ class TestRunModel(unittest.TestCase):
                                                     "feature1d",
                                                     "feature2d",
                                                     "feature_adaptive"],
-                                   adaptive_features="feature_adaptive")
+                                   adaptive="feature_adaptive")
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,

@@ -5,10 +5,10 @@ import numpy as np
 
 class TestingFeatures(GeneralFeatures):
     def __init__(self, features_to_run="all",
-                 adaptive_features=["feature_adaptive"]):
+                 adaptive=["feature_adaptive"]):
         GeneralFeatures.__init__(self,
                                  features_to_run=features_to_run,
-                                 adaptive_features=adaptive_features)
+                                 adaptive=adaptive)
 
         implemented_labels = {"feature0d": ["feature0d"],
                               "feature1d": ["feature1d x", "feature1d y"],
@@ -16,7 +16,7 @@ class TestingFeatures(GeneralFeatures):
                               }
 
         super(TestingFeatures, self).__init__(features_to_run=features_to_run,
-                                              adaptive_features=adaptive_features,
+                                              adaptive=adaptive,
                                               labels=implemented_labels)
 
         self.is_preprocess_run = False

@@ -71,16 +71,16 @@ class TestGeneralFeatures(unittest.TestCase):
 
 
     def test_intitAdaptiveList(self):
-        features = GeneralFeatures(adaptive_features=None)
-        self.assertEqual(features.adaptive_features, [])
+        features = GeneralFeatures(adaptive=None)
+        self.assertEqual(features.adaptive, [])
 
-        features = GeneralFeatures(adaptive_features=["feature1d", "feature2"])
-        self.assertEqual(features.adaptive_features,
+        features = GeneralFeatures(adaptive=["feature1d", "feature2"])
+        self.assertEqual(features.adaptive,
                          ["feature1d", "feature2"])
 
 
-        features = GeneralFeatures(adaptive_features="all")
-        self.assertEqual(features.adaptive_features, [])
+        features = GeneralFeatures(adaptive="all")
+        self.assertEqual(features.adaptive, [])
 
 
     def test_add_feature(self):
@@ -222,9 +222,9 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
-    def test_adaptive_features_all(self):
-        features = SpikingFeatures(adaptive_features="all")
-        self.assertEqual(set(features.adaptive_features), set(self.implemented_features))
+    def test_adaptive_all(self):
+        features = SpikingFeatures(adaptive="all")
+        self.assertEqual(set(features.adaptive), set(self.implemented_features))
 
 
     def test_implemented_features(self):

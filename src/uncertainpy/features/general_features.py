@@ -3,7 +3,7 @@ class GeneralFeatures(object):
     def __init__(self,
                  features_to_run="all",
                  new_utility_methods=None,
-                 adaptive_features=None,
+                 adaptive=None,
                  labels={}):
 
         # self.implemented_features = []
@@ -23,13 +23,13 @@ class GeneralFeatures(object):
         self.U = None
 
         self._features_to_run = None
-        self._adaptive_features = None
+        self._adaptive = None
         self._labels = {}
 
         self.utility_methods += new_utility_methods
 
         self.features_to_run = features_to_run
-        self.adaptive_features = adaptive_features
+        self.adaptive = adaptive
         self.labels = labels
 
 
@@ -65,20 +65,20 @@ class GeneralFeatures(object):
 
 
     @property
-    def adaptive_features(self):
-        return self._adaptive_features
+    def adaptive(self):
+        return self._adaptive
 
 
-    @adaptive_features.setter
-    def adaptive_features(self, new_adaptive_features):
-        if new_adaptive_features == "all":
-            self._adaptive_features = self.implemented_features()
-        elif new_adaptive_features is None:
-            self._adaptive_features = []
-        elif isinstance(new_adaptive_features, str):
-            self._adaptive_features = [new_adaptive_features]
+    @adaptive.setter
+    def adaptive(self, new_adaptive):
+        if new_adaptive == "all":
+            self._adaptive = self.implemented_features()
+        elif new_adaptive is None:
+            self._adaptive = []
+        elif isinstance(new_adaptive, str):
+            self._adaptive = [new_adaptive]
         else:
-            self._adaptive_features = new_adaptive_features
+            self._adaptive = new_adaptive
 
 
     # TODO is it correct that adding a new feature adds it to features_to_run

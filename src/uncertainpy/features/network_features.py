@@ -5,7 +5,7 @@ import elephant.statistics as stat
 class NetworkFeatures(GeneralFeatures):
     def __init__(self,
                   features_to_run="all",
-                  adaptive_features=None,
+                  adaptive=None,
                   labels={}):
 
         implemented_labels = {"cv": ["Neuron", "Coefficient of variation"],
@@ -13,7 +13,7 @@ class NetworkFeatures(GeneralFeatures):
                               }
 
         super(NetworkFeatures, self).__init__(features_to_run=features_to_run,
-                                              adaptive_features=adaptive_features,
+                                              adaptive=adaptive,
                                               labels=implemented_labels)
         self.labels = labels
 

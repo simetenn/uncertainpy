@@ -65,13 +65,13 @@ class Parallel(Base):
         features_0d, features_1d, features_2d = self.sort_features(results)
 
         for feature in features_0d:
-            if feature in self.features.adaptive_features or \
+            if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 raise AttributeError("{} is 0D,".format(feature)
                                      + " unable to perform interpolation")
 
         for feature in features_1d:
-            if feature in self.features.adaptive_features or \
+            if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 if np.any(np.isnan(results[feature]["t"])):
                     raise AttributeError("{} does not return any t values.".format(feature)
@@ -84,7 +84,7 @@ class Parallel(Base):
 
 
         for feature in features_2d:
-            if feature in self.features.adaptive_features or \
+            if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 raise NotImplementedError("{feature},".format(feature=feature)
                                           + " no support for >= 2D interpolation")

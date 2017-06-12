@@ -262,16 +262,13 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def test_label(self):
-        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
-                                            parameters=None,
-                                            verbose_level="error",
-                                            xlabel="xlabel",
-                                            ylabel="ylabel",
-                                            seed=self.seed)
+    # def test_label(self):
+    #     uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+    #                                         parameters=None,
+    #                                         verbose_level="error",
+    #                                         seed=self.seed)
 
-        self.assertEqual(uncertainty.model.xlabel, "xlabel")
-        self.assertEqual(uncertainty.model.ylabel, "ylabel")
+
 
     def test_create_PCE_custom(self):
 

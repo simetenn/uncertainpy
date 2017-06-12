@@ -5,7 +5,7 @@ from uncertainpy.features import GeneralFeatures
 class GeneralSpikingFeatures(GeneralFeatures):
     def __init__(self,
                  features_to_run="all",
-                 adaptive_features=None,
+                 adaptive=None,
                  thresh=-30,
                  extended_spikes=False,
                  labels={}):
@@ -13,7 +13,7 @@ class GeneralSpikingFeatures(GeneralFeatures):
         new_utility_methods = ["calculate_spikes"]
 
         super(GeneralSpikingFeatures, self).__init__(features_to_run=features_to_run,
-                                                     adaptive_features=adaptive_features,
+                                                     adaptive=adaptive,
                                                      new_utility_methods=new_utility_methods,
                                                      labels=labels)
 

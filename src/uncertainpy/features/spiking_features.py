@@ -5,11 +5,11 @@ from uncertainpy.features import GeneralSpikingFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
     def __init__(self,
-                features_to_run="all",
-                adaptive_features=None,
-                thresh=-30,
-                extended_spikes=False,
-                labels={}):
+                 features_to_run="all",
+                 adaptive=None,
+                 thresh=-30,
+                 extended_spikes=False,
+                 labels={}):
 
         implemented_labels = {"nr_spikes": ["number of spikes"],
                               "spike_rate": ["spike rate [1/ms]"],
@@ -21,7 +21,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                               }
 
         super(SpikingFeatures, self).__init__(features_to_run=features_to_run,
-                                              adaptive_features=adaptive_features,
+                                              adaptive=adaptive,
                                               thresh=thresh,
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels)

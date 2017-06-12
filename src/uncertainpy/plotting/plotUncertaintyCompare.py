@@ -88,18 +88,18 @@ class PlotUncertaintyCompare(PlotUncertainty):
             raise ValueError("No 1D features")
 
 
-        adaptive_features = []
+        adaptive = []
 
         for feature in self.data.features_1d:
             E_prev = self.E_compare[self.compare_folders[0]][feature]
             for data in self.compare_folders[1:]:
                 E = self.E_compare[data][feature]
                 if E.shape != E_prev.shape:
-                    adaptive_features.append(feature)
+                    adaptive.append(feature)
                     break
                 E_prev = E
 
-        return adaptive_features
+        return adaptive
 
 
     def setData(self, dictionary, data, feature):
@@ -134,10 +134,10 @@ class PlotUncertaintyCompare(PlotUncertainty):
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
 
-        self.adaptive_features = self.adaptiveFeatures()
+        self.adaptive = self.adaptiveFeatures()
 
 
-        for feature in self.adaptive_features:
+        for feature in self.adaptive:
             t = self.interpolateData(self.E_compare, feature)
             # IMPROVEMENT do not recalculate the t every time
 
