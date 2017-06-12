@@ -215,7 +215,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                    "accomondation_index": ["accomondation index"],
                                    "average_AP_overshoot": ["voltage [mV]"],
                                    "average_AHP_depth": ["voltage [mV]"],
-                                   "average_AP_width": ["voltage [mV]"]
+                                   "average_AP_width": ["time [ms]"]
                                   }
 
         self.features = SpikingFeatures(t, U)

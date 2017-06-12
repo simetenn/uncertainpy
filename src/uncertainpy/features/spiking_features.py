@@ -18,8 +18,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                               "accomondation_index": ["accomondation index"],
                               "average_AP_overshoot": ["voltage [mV]"],
                               "average_AHP_depth": ["voltage [mV]"],
-                              "average_AP_width": ["voltage [mV]"]
-                              }
+                              "average_AP_width": ["time [ms]"]
+                             }
 
         super(SpikingFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,
