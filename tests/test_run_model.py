@@ -624,7 +624,10 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.data.features_1d = ["TestingModel1d", "feature1d"]
         self.runmodel.data.features_2d = ["feature2d"]
 
-        self.assertFalse(self.runmodel.is_adaptive(test_solves))
+
+        self.assertFalse(self.runmodel.is_adaptive(test_solves, "feature2d"))
+        self.assertFalse(self.runmodel.is_adaptive(test_solves, "feature1d"))
+        self.assertFalse(self.runmodel.is_adaptive(test_solves, "TestingModel1d"))
 
 
 
@@ -646,7 +649,7 @@ class TestRunModel(unittest.TestCase):
                         "feature1d": {"U": np.arange(0, 10)},
                         "feature0d": {"U": 1},
                         "feature_invalid": {"U": None}},
-                       {"TestingModelAdaptive": {"U": np.arange(0, 10)},
+                       {"TestingModelAdaptive": {"U": np.arange(0, 15)},
                         "feature2d": {"U": np.array([np.arange(0, 10),
                                                      np.arange(0, 10)])},
                         "feature1d": {"U": np.arange(0, 10)},
@@ -662,7 +665,9 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.data.features_1d = ["TestingModelAdaptive", "feature1d"]
         self.runmodel.data.features_2d = ["feature2d"]
 
-        self.assertTrue(self.runmodel.is_adaptive(test_solves))
+        self.assertFalse(self.runmodel.is_adaptive(test_solves, "feature2d"))
+        self.assertTrue(self.runmodel.is_adaptive(test_solves, "TestingModelAdaptive"))
+        self.assertTrue(self.runmodel.is_adaptive(test_solves, "feature1d"))
 
 
     def test_perform_interpolation(self):

@@ -128,10 +128,16 @@ class RunModel(ParameterBase):
         self.data.features_1d = features_1d
         self.data.features_2d = features_2d
 
-        if self.is_adaptive(results) and not self.model.adaptive:
-            # TODO if the model is adaptive perform the complete interpolation here instead.
-            raise ValueError("The number of simulation points varies between simulations."
-                             + " Try setting adaptive=True in model()")
+
+        for feature in self.data.features_1d + self.data.features_2d:
+            if self.is_adaptive(results, feature):
+                print feature
+                print self.model.name
+                print self.model.adaptive
+                if (feature == self.model.name and not self.model.adaptive) or feature not in self.features.adaptive:
+                    # TODO if the model is adaptive perform the complete interpolation here instead.
+                    raise ValueError("The number of points varies between runs."
+                                     + " Try setting adaptive to True in {}".format(feature))
 
 
         for feature in self.data.features_2d:
@@ -231,19 +237,17 @@ class RunModel(ParameterBase):
         return model_parameters
 
 
-    # TODO should this check one specific feature.
-    # Return false for all features?
-    def is_adaptive(self, results):
+    def is_adaptive(self, results, feature):
         """
 Test if results is an adaptive result
         """
-        for feature in self.data.features_1d + self.data.features_2d:
-            u_prev = results[0][feature]["U"]
-            for solve in results[1:]:
-                u = solve[feature]["U"]
-                if u_prev.shape != u.shape:
-                    return True
-                u_prev = u
+        u_prev = results[0][feature]["U"]
+        for solve in results[1:]:
+            u = solve[feature]["U"]
+            if u_prev.shape != u.shape:
+                return True
+            u_prev = u
+
         return False
 
 

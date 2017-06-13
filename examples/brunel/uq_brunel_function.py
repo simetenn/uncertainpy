@@ -13,11 +13,12 @@ model = un.NestModel(brunel_network,
 
 features = un.NetworkFeatures(features_to_run="all")
 
+
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
-                                       features=None,
+                                       features=features,
                                        CPUs=1)
 
 
 uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_simulator_results=True)
+                                       plot_simulator_results=False)

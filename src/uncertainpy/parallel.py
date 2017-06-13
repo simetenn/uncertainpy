@@ -128,6 +128,7 @@ class Parallel(Base):
 
             # Calculate features from the model results
             t_preprocess, U_preprocess = self.features.preprocess(t, U)
+
             feature_results = self.features.calculate_features(t_preprocess, U_preprocess)
 
             for feature in feature_results:

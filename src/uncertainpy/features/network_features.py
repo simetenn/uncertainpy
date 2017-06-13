@@ -30,9 +30,28 @@ class NetworkFeatures(GeneralFeatures):
 
         return None, np.array(cv)
 
+
     def mean_cv(self, t, spiketrains):
         cv = []
         for spiketrain in spiketrains:
             cv.append(stat.cv(spiketrain))
 
         return None, np.mean(cv)
+
+
+    # def isi(self, t, spiketrains):
+    #     isi = []
+    #     for spiketrain in spiketrains:
+    #         if len(spiketrain) > 1:
+    #             isi.append(stat.isi(spiketrain))
+
+    #     return None, np.array(isi)
+
+
+    def mean_isi(self, t, spiketrains):
+        isi = []
+        for spiketrain in spiketrains:
+            if len(spiketrain) > 1:
+                isi.append(stat.isi(spiketrain))
+
+        return None, np.mean(isi)

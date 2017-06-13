@@ -56,6 +56,7 @@ class UncertaintyCalculations(ParameterBase):
         self.U_hat = {}
         self.U_mc = {}
 
+
         if seed is not None:
             np.random.seed(seed)
 
