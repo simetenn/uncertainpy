@@ -16,26 +16,26 @@ if not platform.system() == "Linux":
     print("Warning: OS not supported, installation may fail")
 
 name = "uncertainpy"
-virtual_enviroment = name
+# virtual_enviroment = name
 
 uncertainpy_req = []
 dependency_links = []
-uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "pandas", "tqdm"]
+uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "tqdm"]
 dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy"]
 
 
 
-def activate_virtualev(virtual_enviroment=virtual_enviroment, system_site_packages=False):
-    cmd = "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && mkvirtualenv " + virtual_enviroment
+# def activate_virtualev(virtual_enviroment=virtual_enviroment, system_site_packages=False):
+#     cmd = "source /usr/share/virtualenvwrapper/virtualenvwrapper.sh && mkvirtualenv " + virtual_enviroment
 
-    if system_site_packages:
-        cmd = cmd + "--system-site-packages"
+#     if system_site_packages:
+#         cmd = cmd + "--system-site-packages"
 
-    subprocess.call(cmd, executable='bash', shell=True)
-    virtual_path = os.environ["VIRTUALENVWRAPPER_HOOK_DIR"] + "/" + virtual_enviroment
-    activate_this_file = virtual_path + "/bin/activate_this.py"
+#     subprocess.call(cmd, executable='bash', shell=True)
+#     virtual_path = os.environ["VIRTUALENVWRAPPER_HOOK_DIR"] + "/" + virtual_enviroment
+#     activate_this_file = virtual_path + "/bin/activate_this.py"
 
-    execfile(activate_this_file, dict(__file__=activate_this_file))
+#     execfile(activate_this_file, dict(__file__=activate_this_file))
 
 
 
@@ -73,20 +73,20 @@ Custom commandline arguments:
     develop: Install uncertainpy with dependencies as a developer
     """)
 
-if "--virtual" in sys.argv:
-    # subprocess.call("sudo ./uncertainpy/install_scripts/install_virtual.sh", shell=True)
-    activate_virtualev()
-    sys.argv.remove("--virtual")
+# if "--virtual" in sys.argv:
+#     # subprocess.call("sudo ./uncertainpy/install_scripts/install_virtual.sh", shell=True)
+#     activate_virtualev()
+#     sys.argv.remove("--virtual")
 
-if "--neuron" in sys.argv:
-    subprocess.call("sudo ./install_scripts/install_neuron.sh", shell=True)
-    sys.argv.remove("--neuron")
+# if "--neuron" in sys.argv:
+#     subprocess.call("sudo ./install_scripts/install_neuron.sh", shell=True)
+#     sys.argv.remove("--neuron")
 
 
-if "--no-dependencies" in sys.argv:
-    sys.argv.remove("--no-dependencies")
-elif "develop" in sys.argv or "install" in sys.argv:
-    subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
+# if "--no-dependencies" in sys.argv:
+#     sys.argv.remove("--no-dependencies")
+# elif "develop" in sys.argv or "install" in sys.argv:
+#     subprocess.call("./install_scripts/install_dependencies.sh", shell=True)
 
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']

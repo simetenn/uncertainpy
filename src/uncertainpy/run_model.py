@@ -131,9 +131,9 @@ class RunModel(ParameterBase):
 
         for feature in self.data.features_1d + self.data.features_2d:
             if self.is_adaptive(results, feature):
-                print feature
-                print self.model.name
-                print self.model.adaptive
+                print(feature)
+                print(self.model.name)
+                print(self.model.adaptive)
                 if (feature == self.model.name and not self.model.adaptive) or feature not in self.features.adaptive:
                     # TODO if the model is adaptive perform the complete interpolation here instead.
                     raise ValueError("The number of points varies between runs."

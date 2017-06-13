@@ -15,7 +15,7 @@ def lgn_simulator(**parameters):
 
     copyfile(config_file_base, config_file)
 
-    print "config file: ", config_file
+    print("config file: ", config_file)
     with open(config_file, 'r') as stream:
         config_data = yaml.load(stream)
 
@@ -43,7 +43,7 @@ def lgn_simulator(**parameters):
     app_name = "spatialSummation"
     sys.path.append("/home/simen/src/lgn-simulator/tools")
 
-    print "Building in:\n", build_path
+    print(Building in:\n", build_path)
 
 
     #build and run----------------------------------------------------------------------------------
@@ -61,10 +61,10 @@ def lgn_simulator(**parameters):
     run_argument = ["./lgnSimulator_spatialSummation",
                     config_file,
                     os.path.dirname(config_file)]
-    print " ".join(run_argument)
+    print(" ".join(run_argument))
     proc = subprocess.call(run_argument, cwd=app_path, env=env)
 
-    print "Results saved to this directory:\n", os.path.dirname(config_file) + "/*"
+    print("Results saved to this directory:\n", os.path.dirname(config_file) + "/*")
     #os.remove(config_file)
 
     #Reading data---------------------------------------------------------------------

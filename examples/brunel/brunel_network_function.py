@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import nest
 import nest.raster_plot

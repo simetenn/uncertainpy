@@ -1,5 +1,11 @@
 import scipy.interpolate
 import scipy.optimize
+# try:
+#     import scipy.interpolate
+#     import scipy.optimize
+# except ImportError:
+#     print("Warning: Spiking features need scipy to function.")
+
 
 from uncertainpy.features import GeneralSpikingFeatures
 

@@ -312,7 +312,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
-        print open(logfile).read()
         message = "WARNING - uncertainty_calculations - Feature: TestingModel1d does not yield results for all parameter combinations"
         self.assertTrue(message in open(logfile).read())
 

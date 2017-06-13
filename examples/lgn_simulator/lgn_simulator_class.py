@@ -25,11 +25,11 @@ class LgnSimulator(Model):
     def set_parameters(self, **parameters):
         copyfile(self.config_file_base, self.config_file)
 
-        print "config file: ", self.config_file
+        print("config file: ", self.config_file)
         with open(self.config_file, 'r') as stream:
             config_data = yaml.load(stream)
 
-        print parameters
+        print(parameters)
 
         config_data["OutputManager"]["outputFilename"] = unicode(self.output_file)
         if "w_rc" in parameters:
@@ -59,7 +59,7 @@ class LgnSimulator(Model):
         app_name = "spatialSummation"
         sys.path.append("/home/simen/src/lgn-simulator/tools")
 
-        print "Building in:\n", build_path
+        print("Building in:\n", build_path)
 
 
         #build and run----------------------------------------------------------------------------------
@@ -77,10 +77,10 @@ class LgnSimulator(Model):
         run_argument = ["./lgnSimulator_spatialSummation",
                         self.config_file,
                         os.path.dirname(self.config_file)]
-        print " ".join(run_argument)
+        print(" ".join(run_argument))
         proc = subprocess.call(run_argument, cwd=app_path, env=env)
 
-        print "Results saved to this directory:\n", os.path.dirname(self.config_file) + "/*"
+        print("Results saved to this directory:\n", os.path.dirname(self.config_file) + "/*")
         #os.remove(config_file)
 
         #Reading data---------------------------------------------------------------------

@@ -10,7 +10,7 @@ import glob
 def sortByParameters(path="figures", outputpath="parameter_sorted", hardcopy=False, file_extension = ".png"):
     current_path = os.getcwd()
 
-    print "Copying files..."
+    print("Copying files...")
     for folder in os.listdir(path):
         if re.search("._\d", folder):
             distribution, interval = folder.split("_")

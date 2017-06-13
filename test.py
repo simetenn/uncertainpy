@@ -149,100 +149,100 @@ args = parser.parse_args()
 results = {}
 
 if args.utils:
-    print "-----------------------------------------"
-    print "Running testsuite: utils"
+    print("-----------------------------------------")
+    print("Running testsuite: utils")
     results["utils"] = test_runner.run(test_utils)
 if args.prerequisites:
-    print "-----------------------------------------"
-    print "Running testsuite: prerequisites"
+    print("-----------------------------------------")
+    print("Running testsuite: prerequisites")
     results["prerequisites"] = test_runner.run(test_prerequisites)
 if args.basic:
-    print "-----------------------------------------"
-    print "Running testsuite: basic"
+    print("-----------------------------------------")
+    print("Running testsuite: basic")
     results["basic"] = test_runner.run(test_basic)
 if args.fast:
-    print "-----------------------------------------"
-    print "Running testsuite: fast"
+    print("-----------------------------------------")
+    print("Running testsuite: fast")
     results["fast"] = test_runner.run(test_fast)
 if args.uncertainpy:
-    print "-----------------------------------------"
-    print "Running testsuite: uncertainpy"
+    print("-----------------------------------------")
+    print("Running testsuite: uncertainpy")
     results["uncertainpy"] = test_runner.run(test_uncertainty)
 # if args.exploration:
 #     print "-----------------------------------------"
 #     print "Running testsuite: exploration"
 #     results["exploration"] = test_runner.run(test_exploration)
 if args.parameters:
-    print "-----------------------------------------"
-    print "Running testsuite: parameters"
+    print("-----------------------------------------")
+    print("Running testsuite: parameters")
     results["parameters"] = test_runner.run(test_parameters)
 if args.distribution:
-    print "-----------------------------------------"
-    print "Running testsuite: distribution"
+    print("-----------------------------------------")
+    print("Running testsuite: distribution")
     results["distribution"] = test_runner.run(test_distribution)
 if args.spike_sorting:
-    print "-----------------------------------------"
-    print "Running testsuite: spike_sorting"
+    print("-----------------------------------------")
+    print("Running testsuite: spike_sorting")
     results["spike_sorting"] = test_runner.run(test_spike_sorting)
 if args.spike:
-    print "-----------------------------------------"
-    print "Running testsuite: spike"
+    print("-----------------------------------------")
+    print("Running testsuite: spike")
     results["spike"] = test_runner.run(test_spike)
 if args.spikes:
-    print "-----------------------------------------"
-    print "Running testsuite: spikes"
+    print("-----------------------------------------")
+    print("Running testsuite: spikes")
     results["spikes"] = test_runner.run(test_spikes)
 if args.plotuncertainty:
-    print "-----------------------------------------"
-    print "Running testsuite: plotUncertainty"
+    print("-----------------------------------------")
+    print("Running testsuite: plotUncertainty")
     results["plotUncertainty"] = test_runner.run(test_plotUncertainty)
 # if args.plotuncertaintycompare:
 #     print "-----------------------------------------"
 #     print "Running testsuite: plotUncertaintyCompare"
 #     results["plotUncertaintyCompare"] = test_runner.run(test_plotUncertaintyCompare)
 if args.features:
-    print "-----------------------------------------"
-    print "Running testsuite: features"
+    print("-----------------------------------------")
+    print("Running testsuite: features")
     results["features"] = test_runner.run(test_features)
 if args.model:
-    print "-----------------------------------------"
-    print "Running testsuite: model"
+    print("-----------------------------------------")
+    print("Running testsuite: model")
     results["model"] = test_runner.run(test_model)
 if args.runmodel:
-    print "-----------------------------------------"
-    print "Running testsuite: runModel"
+    print("-----------------------------------------")
+    print("Running testsuite: runModel")
     results["runModel"] = test_runner.run(test_runModel)
 if args.logger:
-    print "-----------------------------------------"
-    print "Running testsuite: logger"
+    print("-----------------------------------------")
+    print("Running testsuite: logger")
     results["logger"] = test_runner.run(test_logger)
 if args.plotting:
-    print "-----------------------------------------"
-    print "Running testsuite: plotting"
+    print("-----------------------------------------")
+    print("Running testsuite: plotting")
     results["plotting"] = test_runner.run(test_plotting)
 if args.usecase:
-    print "-----------------------------------------"
-    print "Running testsuite: usecase"
+    print("-----------------------------------------")
+    print("Running testsuite: usecase")
     results["usecase"] = test_runner.run(test_usecase)
 if args.data:
-    print "-----------------------------------------"
-    print "Running testsuite: data"
+    print("-----------------------------------------")
+    print("Running testsuite: data")
     results["data"] = test_runner.run(test_data)
 if args.uncertaintycalculations:
-    print "-----------------------------------------"
-    print "Running testsuite: uncertaintycalculations"
+    print("-----------------------------------------")
+    print("Running testsuite: uncertaintycalculations")
     results["uncertaintycalculations"] = test_runner.run(test_uncertaintycalculations)
 if args.travis:
-    print "-----------------------------------------"
-    print "Running testsuite: travis"
+    print("-----------------------------------------")
+    print("Running testsuite: travis")
     results["travis"] = test_runner.run(test_travis)
 if args.all:
-    print "-----------------------------------------"
-    print "Running testsuite: all"
+    print("-----------------------------------------")
+    print("Running testsuite: all")
     results["all"] = test_runner.run(test_all)
 if args.examples:
-    print "-----------------------------------------"
-    print "Running testsuite: examples"
+    print("-----------------------------------------")
+    print("Running testsuite: examples")
     results["examples"] = test_runner.run(test_examples)
 
 

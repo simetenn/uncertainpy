@@ -38,7 +38,7 @@ class Memory:
             v = t.read()
             t.close()
         except:
-            print "memory.py has failed"
+            print("memory.py has failed")
             return 0.0  # non-Linux?
 
         # get VmKey line e.g. 'VmRSS:  9999  kB\n ...'
