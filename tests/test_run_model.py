@@ -464,6 +464,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.data.uncertain_parameters = ["a", "b"]
 
         results = self.runmodel.evaluate_nodes(nodes)
+        print results
         self.runmodel.store_results(results)
 
         self.assertEqual(set(self.runmodel.data.U.keys()),

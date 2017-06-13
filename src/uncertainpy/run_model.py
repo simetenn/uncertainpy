@@ -17,7 +17,7 @@ from base import ParameterBase
 
 """
 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature0d": {"U": 1,
@@ -122,6 +122,25 @@ class RunModel(ParameterBase):
 
 
     def store_results(self, results):
+        """
+result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature0d": {"U": 1,
+                        "t": np.nan},
+          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
+          "feature_invalid": {"U": np.nan,
+                              "t": np.nan}}
+
+results = [result 1, result 2, ..., result N]
+        """
+
         features_0d, features_1d, features_2d = self.parallel.sort_features(results[0])
 
         self.data.features_0d = features_0d
@@ -129,17 +148,18 @@ class RunModel(ParameterBase):
         self.data.features_2d = features_2d
 
 
+        # Check if features are adaptive withouth being specified as a adaptive
+        # TODO if the feature is adaptive, perform the complete interpolation here instead
         for feature in self.data.features_1d + self.data.features_2d:
             if self.is_adaptive(results, feature):
-                print(feature)
-                print(self.model.name)
-                print(self.model.adaptive)
-                if (feature == self.model.name and not self.model.adaptive) or feature not in self.features.adaptive:
-                    # TODO if the model is adaptive perform the complete interpolation here instead.
+                if (feature == self.model.name and not self.model.adaptive) \
+                    or (feature != self.model.name and feature not in self.features.adaptive):
                     raise ValueError("The number of points varies between runs."
                                      + " Try setting adaptive to True in {}".format(feature))
 
 
+
+        # TODO implement interpolation of >= 2d data
         for feature in self.data.features_2d:
             if "interpolation" in results[0][feature]:
                 raise NotImplementedError("Feature: {feature},".format(feature=feature)
@@ -152,6 +172,8 @@ class RunModel(ParameterBase):
                     self.data.U[feature].append(solved[feature]["U"])
 
 
+        # Store 2d data from results in a Data object
+        # Interpolate the data if it is adaptive
         for feature in self.data.features_1d:
             if "interpolation" in results[0][feature]:
                 ts = []
@@ -166,10 +188,6 @@ class RunModel(ParameterBase):
 
                 self.data.t[feature], self.data.U[feature] = self.perform_interpolation(ts, interpolations)
             else:
-                # if "t" in results[0][feature]:
-                #     self.data.t[feature] = results[0][feature]["t"]
-                # else:
-                #     self.data.t[feature] = results[0][self.model.name]["t"]
                 self.data.t[feature] = results[0][feature]["t"]
                 self.data.U[feature] = []
                 for solved in results:
@@ -178,11 +196,14 @@ class RunModel(ParameterBase):
                 # self.data.U[feature] = np.array(self.data.U[feature])
 
 
+
+        # Store 1d data from results in a Data object
         for feature in self.data.features_0d:
             self.data.t[feature] = results[0][feature]["t"]
             self.data.U[feature] = []
             for solved in results:
                 self.data.U[feature].append(solved[feature]["U"])
+
 
         # TODO is this necessary to ensure all results are arrays?
         for feature in self.data.feature_list:
@@ -240,6 +261,23 @@ class RunModel(ParameterBase):
     def is_adaptive(self, results, feature):
         """
 Test if results is an adaptive result
+
+result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature0d": {"U": 1,
+                        "t": np.nan},
+          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
+          "feature_invalid": {"U": np.nan,
+                              "t": np.nan}}
+
+results = [result 1, result 2, ..., result N]
         """
         u_prev = results[0][feature]["U"]
         for solve in results[1:]:
