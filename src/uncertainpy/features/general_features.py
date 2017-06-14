@@ -14,13 +14,11 @@ class GeneralFeatures(object):
                                 "__init__",
                                 "implemented_features",
                                 "preprocess",
-                                "add_features"]
+                                "add_features",
+                                "serialize"]
 
         if new_utility_methods is None:
             new_utility_methods = []
-
-        self.t = None
-        self.U = None
 
         self._features_to_run = None
         self._adaptive = None
@@ -82,6 +80,18 @@ class GeneralFeatures(object):
             self._adaptive = [new_adaptive]
         else:
             self._adaptive = new_adaptive
+
+
+    def serialize(feature):
+        decorated = True
+        for i, spiketrain in enumerate(spiketrains):
+            def serialized_feature(t, spiketrains):
+                return feature(t, spiketrains[i])
+
+            setattr(self, feature.__name__+ "_i", serialized_feature)
+
+
+
 
 
     # TODO is it correct that adding a new feature adds it to features_to_run

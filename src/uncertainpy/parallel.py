@@ -68,14 +68,14 @@ class Parallel(Base):
             if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 raise AttributeError("{} is 0D,".format(feature)
-                                     + " unable to perform interpolation")
+                                     + " interpolation makes no sense.")
 
         for feature in features_1d:
             if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 if np.any(np.isnan(results[feature]["t"])):
                     raise AttributeError("{} does not return any t values.".format(feature)
-                                         + " Unable to perform interpolation")
+                                         + " Unable to perform interpolation.")
 
                 interpolation = scpi.InterpolatedUnivariateSpline(results[feature]["t"],
                                                                   results[feature]["U"],
@@ -116,14 +116,15 @@ class Parallel(Base):
 
             t_postprocess, U_postprocess = self.model.postprocess(t, U)
 
-            if t_postprocess is None:
-                t_postprocess = np.nan
+            # if t_postprocess is None:
+            #     t_postprocess = np.nan
 
-            if U_postprocess is None:
-                U_postprocess = np.nan
+            # if U_postprocess is None:
+            #     U_postprocess = np.nan
 
             results = {}
-            results[self.model.name] = {"t": t_postprocess, "U": U_postprocess}
+            results[self.model.name] = {"t": np.array(t_postprocess, dtype=float),
+                                        "U": np.array(U_postprocess, dtype=float)}
 
 
             # Calculate features from the model results
@@ -135,14 +136,14 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-                if t_feature is None:
-                    t_feature = np.nan
+                # if t_feature is None:
+                #     t_feature = np.nan
 
-                if U_feature is None:
-                    U_feature = np.nan
+                # if U_feature is None:
+                #     U_feature = np.nan
 
-                results[feature] = {"U": np.array(U_feature),
-                                    "t": np.array(t_feature)}
+                results[feature] = {"U": np.array(U_feature, dtype=float),
+                                    "t": np.array(t_feature, dtype=float)}
 
             # Create interpolations
             results = self.create_interpolations(results)

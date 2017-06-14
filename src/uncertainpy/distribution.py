@@ -3,6 +3,8 @@ import chaospy as cp
 # __all__ = ["Distribution"]
 # __version__ = "0.1"
 
+
+# TODO remove the use if dist class
 class Distribution():
     def __init__(self, interval, function=None):
         self.interval = interval
@@ -25,7 +27,7 @@ class Distribution():
                           parameter + abs(self.interval/2.*parameter))
 
 
-# 
+#
 # def create_distribution(interval, func):
 #     def distribution(parameter):
 #         if parameter == 0:

@@ -1,6 +1,9 @@
 from uncertainpy.features import GeneralFeatures
 import numpy as np
-import elephant.statistics as stat
+import elephant
+
+import neo.core
+import quantities as pq
 
 class NetworkFeatures(GeneralFeatures):
     def __init__(self,
@@ -9,9 +12,19 @@ class NetworkFeatures(GeneralFeatures):
                  adaptive=None,
                  labels={}):
 
-        implemented_labels = {"cv": ["Neuron", "Coefficient of variation"],
-                              "mean cv": ["Coefficient of variation"]
-                             }
+        implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
+                              "mean_cv": ["mean coefficient of variation"],
+                              "mean_isi": ["Neuron nr", "Mean interspike interval [ms]"],
+                              "lv": ["Neuron nr", "Local variation"],
+                              "mean_firing_rate": ["Neuron nr", "Hz"],
+                              "instantaneous_rate": ["time ms", "Neuron nr", "Hz"],
+                              "fanofactor": ["fanofactor"],
+                              "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
+                              "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
+                              "binned_isi": ["Interspike interval ms", "Neuron nr", "count"]
+                              "corrcoeff": ["Neuron nr", "Neuron nr", ""],
+                              "covariance": ["Neuron nr", "Neuron nr", ""]
+                               }
 
         super(NetworkFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,
@@ -19,39 +32,132 @@ class NetworkFeatures(GeneralFeatures):
                                               labels=implemented_labels)
         self.labels = labels
 
+        self.instantaneous_rate_nr_samples = 50.
+        self.isi_bin_size = 1
+        self.corrcoef_bin_size = 1
+        self.covariance_bin_size = 1
+        self.units = pq.ms
+
 
     def preprocess(self, t, spiketrains):
-        return t, spiketrains
-
-    def cv(self, t, spiketrains):
-        cv = []
+        neo_spiketrains = []
         for spiketrain in spiketrains:
-            cv.append(stat.cv(spiketrain))
+            neo_spiketrain = neo.core.SpikeTrain(spiketrain, t_stop=t, units=self.units)
+            neo_spiketrains.append(neo_spiketrain)
 
-        return None, np.array(cv)
-
-
-    def mean_cv(self, t, spiketrains):
-        cv = []
-        for spiketrain in spiketrains:
-            cv.append(stat.cv(spiketrain))
-
-        return None, np.mean(cv)
+        return None, neo_spiketrains
 
 
-    # def isi(self, t, spiketrains):
+    # def cv(self, t, spiketrains):
+    #     cv = []
+    #     for spiketrain in spiketrains:
+    #         cv.append(elephant.statistics.cv(spiketrain))
+
+    #     return None, np.array(cv)
+
+
+    # def mean_cv(self, t, spiketrains):
+    #     cv = []
+    #     for spiketrain in spiketrains:
+    #         cv.append(elephant.statistics.cv(spiketrain))
+
+    #     return None, np.mean(cv)
+
+
+    # # def isi(self, t, spiketrains):
+    # #     isi = []
+    # #     for spiketrain in spiketrains:
+    # #         if len(spiketrain) > 1:
+    # #             isi.append(elephant.statistics.isi(spiketrain))
+    # #         else:
+    # #             isi.append([])
+
+    # #     print isi
+    # #     return None, np.array(isi)
+
+
+    # def binned_isi(self, t, spiketrains):
+    #     tmp = []
+    #     bins = np.arange(0, spiketrains[0].t_stop.magnitude + 1, self.isi_bin_size)
+
+    #     for spiketrain in spiketrains:
+    #         if len(spiketrain) > 1:
+    #             isi = elephant.statistics.isi(spiketrain)
+    #             tmp.append(np.histogram(isi, bins=bins)[0])
+    #         else:
+    #             tmp.append(np.zeros, spiketrains[0].t_stop.magnitude + 1)
+
+    #     centers = bins[1:] - 0.5
+    #     return centers, tmp
+
+
+    # def mean_isi(self, t, spiketrains):
     #     isi = []
     #     for spiketrain in spiketrains:
     #         if len(spiketrain) > 1:
-    #             isi.append(stat.isi(spiketrain))
+    #             isi.append(np.mean(elephant.statistics.isi(spiketrain)))
 
-    #     return None, np.array(isi)
+    #     return None, np.mean(isi)
 
 
-    def mean_isi(self, t, spiketrains):
-        isi = []
-        for spiketrain in spiketrains:
-            if len(spiketrain) > 1:
-                isi.append(stat.isi(spiketrain))
+    # def lv(self, t, spiketrains):
+    #     lv = []
+    #     for spiketrain in spiketrains:
+    #         isi = elephant.statistics.isi(spiketrain)
+    #         if len(isi) >= 2:
+    #             lv.append(elephant.statistics.lv(isi))
+    #         else:
+    #             lv.append(None)
 
-        return None, np.mean(isi)
+    #     return None, lv
+
+    # TODO get this to work with units
+    # def mean_firing_rate(self, t, spiketrains):
+    #     mean_firing_rate = []
+    #     for spiketrain in spiketrains:
+    #         mean_firing_rate.append(elephant.statistics.mean_firing_rate(spiketrain)*1000)
+
+    #     return None, mean_firing_rate
+
+
+    # def fanofactor(self, t, spiketrains):
+    #     return None, elephant.statistics.fanofactor(spiketrains)
+
+
+
+    # def instantaneous_rate(self, t, spiketrains):
+    #     instantaneous_rates = []
+    #     for spiketrain in spiketrains:
+    #         # TODO is this a good sampling period?
+    #         sampling_period = spiketrain.t_stop/self.instantaneous_rate_nr_samples
+    #         instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)
+    #         instantaneous_rates.append(np.array(instantaneous_rate).flatten())
+
+    #     t = instantaneous_rate.times.copy()
+    #     t.units = self.units
+
+    #     return t.magnitude, instantaneous_rates
+
+
+    # def van_rossum_dist(self, t, spiketrains):
+    #     van_rossum_dist = elephant.spike_train_dissimilarity.van_rossum_dist(spiketrains)
+    #     return None, van_rossum_dist
+
+    # def victor_purpura_dist(self, t, spiketrains):
+    #     victor_purpura_dist = elephant.spike_train_dissimilarity.victor_purpura_dist(spiketrains)
+    #     return None, victor_purpura_dist
+
+
+    # def corrcoef(self, t, spiketrains):
+
+    #     binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains, binsize=self.corrcoef_bin_size*self.units)
+    #     corrcoef = elephant.spike_train_correlation.corrcoef(binned_sts)
+
+    #     return None, corrcoef
+
+    def covariance(self, t, spiketrains):
+
+        binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains, binsize=self.covariance_bin_size*self.units)
+        covariance = elephant.spike_train_correlation.covariance(binned_sts)
+
+        return None, covariance

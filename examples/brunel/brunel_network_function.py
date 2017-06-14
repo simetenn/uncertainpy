@@ -35,7 +35,7 @@ def brunel_network(J_E=0.5, g=5.0):
     P_E = .8           # P_I = 1 - P_E
 
     N_rec = 10        # Number of neurons to record from
-    simtime = 10
+    simtime = 40
 
 
     nest.ResetKernel()
@@ -113,7 +113,7 @@ def brunel_network(J_E=0.5, g=5.0):
 
     # U must be a list/array of spiketrains
     U = spiketrains
-    t = None
+    t = simtime
 
 
     return t, U

@@ -198,9 +198,9 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
             return
 
-
         if np.all(np.isnan(t)):
             t = np.arange(0, len(value))
+
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
@@ -246,7 +246,7 @@ class PlotUncertainty(object):
 
         value = getattr(self.data, attribute)
 
-        if self.data.t[feature] is None or value[feature] is None:
+        if value[feature] is None:
             msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
             self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
             return
@@ -255,19 +255,25 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
+        if np.all(np.isnan(self.data.t[feature])):
+            extent = None
+        else:
+            extent=[self.data.t[feature][0], self.data.t[feature][-1],
+                    0, value[feature].shape[0]]
+
+
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title(title.replace("_", " "))
 
         iax = ax.imshow(value[feature], cmap="viridis", aspect="auto",
-                        extent=[self.data.t[feature][0], self.data.t[feature][-1],
-                                0, value[feature].shape[0]],
+                        extent=extent,
                         **plot_kwargs)
 
         cbar = fig.colorbar(iax)
-        cbar.ax.set_title(ylabel)
+        cbar.ax.set_title(zlabel)
         ax.set_xlabel(xlabel)
-        ax.set_ylabel(zlabel)
+        ax.set_ylabel(ylabel)
 
         save_name = feature + "_" + attribute_name
 
@@ -746,6 +752,7 @@ class PlotUncertainty(object):
                   self.data.p_05[feature], self.data.p_95[feature]]
 
         ylabel = self.data.get_labels(feature)[0]
+
         ax = prettyBar(values,
                        index=xticks,
                        xlabels=xlabels,
