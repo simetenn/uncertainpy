@@ -1,6 +1,9 @@
 import numpy as np
 import unittest
 import os
+import quantities as pq
+import neo
+import elephant
 
 from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures, SpikingFeatures, NetworkFeatures
 from uncertainpy import Spikes
@@ -240,9 +243,10 @@ class TestSpikingFeatures(unittest.TestCase):
         features = SpikingFeatures(labels={"nr_spikes": ["changed"],
                                            "new": ["new"]})
 
-        labels = {"nr_spikes": ["number of spikes"],
+        labels = {"nr_spikes": ["changed"],
                   "spike_rate": ["spike rate [Hz]"],
                   "time_before_first_spike": ["time [ms]"],
+                  'average_AP_width': ['time [ms]'],
                   "accomondation_index": ["accomondation index"],
                   "average_AP_overshoot": ["voltage [mV]"],
                   "average_AHP_depth": ["voltage [mV]"],
@@ -335,46 +339,215 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
 class TestNetworkFeatures(unittest.TestCase):
-     def setUp(self):
+    def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.t_original = np.arange(0, 10)
+        self.t_original = 8
         spiketrain = np.array([1, 3, 5, 6])
-        self.U = [spiketrain, spiketrain, spiketrain]
+        self.U = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
-        self.implemented_features = ["cv", "mean_cv"]
+        self.implemented_features = ["cv", "mean_cv", "binned_isi",
+                                     "mean_isi", "lv", "mean_firing_rate",
+                                     "fanofactor", "instantaneous_rate",
+                                     "van_rossum_dist", "victor_purpura_dist",
+                                     "corrcoef", "covariance"]
+
+
 
         self.features = NetworkFeatures()
 
         self.t, self.spiketrains = self.features.preprocess(self.t_original, self.U)
 
 
-     def test_initNone(self):
+    def test_initNone(self):
         self.features = NetworkFeatures()
 
         self.assertIsInstance(self.features, NetworkFeatures)
 
 
-     def test_init(self):
-        self.features = NetworkFeatures(new_features=None,
-                                        features_to_run="all",
-                                        adaptive=None,
-                                        labels={},
-                                        instantaneous_rate_nr_samples=50.,
-                                        isi_bin_size=1,
-                                        corrcoef_bin_size=1,
-                                        covariance_bin_size=1,
-                                        units=pq.ms)
+    def test_init(self):
+        def feature(t, U):
+            return "t", "U"
 
-        self.assertIsInstance(self.features, NetworkFeatures)
+        features = NetworkFeatures(new_features=feature,
+                                   features_to_run=None,
+                                   adaptive=["cv"],
+                                   labels={"cv": ["test"]},
+                                   instantaneous_rate_nr_samples=-1.,
+                                   isi_bin_size=-1,
+                                   corrcoef_bin_size=-1,
+                                   covariance_bin_size=-1,
+                                   units="")
+
+        self.assertIsInstance(features, NetworkFeatures)
+        self.assertEqual(features.features_to_run, [])
+        self.assertEqual(features.adaptive, ["cv"])
+        self.assertEqual(features.instantaneous_rate_nr_samples, -1)
+        self.assertEqual(features.isi_bin_size, -1)
+        self.assertEqual(features.corrcoef_bin_size, -1)
+        self.assertEqual(features.covariance_bin_size, -1)
+        self.assertEqual(features.units, "")
+        self.assertEqual(set(features.implemented_features()),
+                         set(["feature"] + self.implemented_features))
 
 
-     def test_preprocess(self):
+    def test_preprocess(self):
         self.features = NetworkFeatures()
 
         t, spiketrains = self.features.preprocess(self.t_original, self.U)
 
+        self.assertIsNone(t)
+        self.assertIsInstance(spiketrains[0], neo.core.SpikeTrain)
+        self.assertIsInstance(spiketrains[1], neo.core.SpikeTrain)
+        self.assertIsInstance(spiketrains[2], neo.core.SpikeTrain)
+        self.assertIsInstance(spiketrains[3], neo.core.SpikeTrain)
 
+        self.assertTrue(np.array_equal(spiketrains[0], self.U[0]))
+        self.assertTrue(np.array_equal(spiketrains[1], self.U[1]))
+        self.assertTrue(np.array_equal(spiketrains[2], self.U[2]))
+        self.assertTrue(np.array_equal(spiketrains[3], self.U[3]))
+
+        self.assertEqual(spiketrains[0].t_stop, self.t_original)
+
+
+    def test_cv(self):
+        t, U = self.features.cv(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertTrue(np.array_equal([0.51207638319124049,
+                                        0.51207638319124049,
+                                        0.51207638319124049,
+                                        0],
+                                       U))
+
+    def test_mean_cv(self):
+        t, U = self.features.mean_cv(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(0.38405728739343037, U)
+
+
+    def test_binned_isi(self):
+        t, U = self.features.binned_isi(self.t, self.spiketrains)
+
+        centers = np.arange(0, self.t_original + 1)[1:] - 0.5
+
+        self.assertTrue(np.array_equal(centers, t))
+        self.assertTrue(np.array_equal(U, [[0, 1, 2, 0, 0, 0, 0, 0],
+                                           [0, 1, 2, 0, 0, 0, 0, 0],
+                                           [0, 1, 2, 0, 0, 0, 0, 0],
+                                           [0, 0, 0, 0, 0, 0, 0, 0]]))
+
+
+    def test_mean_isi(self):
+        t, U = self.features.mean_isi(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(1.66666666666666667, U)
+
+
+    def test_lv(self):
+        t, U = self.features.lv(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertTrue(np.array_equal([0.16666666666666666,
+                                        0.16666666666666666,
+                                        0.16666666666666666,
+                                        None],
+                                       U))
+
+    def test_mean_firing_rate(self):
+        t, U = self.features.mean_firing_rate(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertTrue(np.array_equal([500, 500, 500, 125], U))
+
+
+    def test_instantaneous_rate(self):
+        t, U = self.features.instantaneous_rate(self.t, self.spiketrains)
+
+        rates = [201.7976071573258992, 270.7685498293570845,
+                 345.7639606392203859, 420.3430010464927022,
+                 486.7768188367210769, 537.5579992556051820,
+                 567.1860438550103254, 573.7223146658689075,
+                 559.5994608897037779, 531.3529919395189154,
+                 498.2464223998736657, 470.1236785019651734,
+                 455.0277266711299262, 457.2299460378653748,
+                 476.1919997742103305, 506.7447214089696104,
+                 540.4430043620118340, 567.7746503588338101,
+                 580.6406099880132388, 574.4777562099577608,
+                 549.4763516278245561, 510.6019227450684639,
+                 466.4604005235715363, 427.3459903488383134,
+                 402.9914602412301292, 400.5619369321500471,
+                 423.3169253559639174, 470.1674223081157038,
+                 536.1340587481936382, 613.5114750284128604,
+                 693.3963029036556236, 767.1795921375620537,
+                 827.6464085719730974, 869.5173515546268845,
+                 889.4655805998627329, 885.8505116405049193,
+                 858.4580587318871494, 808.4356634670250514,
+                 738.4088696230276128, 652.5870483357980447,
+                 556.6158845552261027, 457.0407336107435299,
+                 360.4412580216865081, 272.4742619759052218,
+                 197.1057281755237511, 136.2592191048793211,
+                 89.9202782005130530, 56.5991363488668640,
+                 33.9579695054921231, 19.4106207950416447]
+
+        correct_U = [np.array(rates), np.array(rates), np.array(rates), None]
+        correct_t = np.linspace(0, 8, 51)[:-1]
+
+        self.assertTrue(np.array_equal(U[0], rates))
+        self.assertTrue(np.array_equal(U[1], rates))
+        self.assertTrue(np.array_equal(U[2], rates))
+        self.assertIsNone(U[3])
+        self.assertTrue(np.array_equal(t, correct_t))
+
+
+
+    def test_fanofactor(self):
+        t, U = self.features.fanofactor(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(U, 0.51923076923076927)
+
+
+    def test_van_rossum_dist(self):
+        t, U = self.features.van_rossum_dist(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(U.shape, (4, 4))
+
+        # correct_U = [[0.0, 5.9604644775390625e-08, 5.9604644775390625e-08, 2.9980016657780828],
+        #              [5.9604644775390625e-08, 0.0, 5.9604644775390625e-08, 2.9980016657780828],
+        #              [5.9604644775390625e-08, 5.9604644775390625e-08, 0.0, 2.9980016657780828],
+        #              [2.9980016657780828, 2.9980016657780828, 2.9980016657780828, 0.0]]
+
+        # self.assertTrue(np.array_equal(U, correct_U))
+
+        diag = np.diag_indices(4)
+        self.assertTrue(np.all(U[diag] == 0))
+
+    def test_victor_purpura_dist(self):
+        t, U = self.features.victor_purpura_dist(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(U.shape, (4, 4))
+        diag = np.diag_indices(4)
+        self.assertTrue(np.all(U[diag] == 0))
+
+
+    def test_corrcoef(self):
+        t, U = self.features.corrcoef(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(U.shape, (4, 4))
+        diag = np.diag_indices(4)
+        self.assertTrue(np.all(U[diag] == 1))
+
+    def test_covariance(self):
+        t, U = self.features.covariance(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        self.assertEqual(U.shape, (4, 4))
 
 
 

@@ -30,7 +30,8 @@ test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
 test_features = create_test_suite([TestGeneralFeatures,
                                    TestGeneralSpikingFeatures,
                                    TestSpikingFeatures,
-                                   TestTestingFeatures])
+                                   TestTestingFeatures,
+                                   TestNetworkFeatures])
 
 # test_features.addTest(test_spike_sorting)
 test_features.addTest(test_spike)

@@ -57,106 +57,111 @@ class NetworkFeatures(GeneralFeatures):
         return None, neo_spiketrains
 
 
-    # def cv(self, t, spiketrains):
-    #     cv = []
-    #     for spiketrain in spiketrains:
-    #         cv.append(elephant.statistics.cv(spiketrain))
+    def cv(self, t, spiketrains):
+        cv = []
+        for spiketrain in spiketrains:
+            cv.append(elephant.statistics.cv(spiketrain))
 
-    #     return None, np.array(cv)
-
-
-    # def mean_cv(self, t, spiketrains):
-    #     cv = []
-    #     for spiketrain in spiketrains:
-    #         cv.append(elephant.statistics.cv(spiketrain))
-
-    #     return None, np.mean(cv)
+        return None, np.array(cv)
 
 
+    def mean_cv(self, t, spiketrains):
+        cv = []
+        for spiketrain in spiketrains:
+            cv.append(elephant.statistics.cv(spiketrain))
 
-    # def binned_isi(self, t, spiketrains):
-    #     tmp = []
-    #     bins = np.arange(0, spiketrains[0].t_stop.magnitude + 1, self.isi_bin_size)
-
-    #     for spiketrain in spiketrains:
-    #         if len(spiketrain) > 1:
-    #             isi = elephant.statistics.isi(spiketrain)
-    #             tmp.append(np.histogram(isi, bins=bins)[0])
-    #         else:
-    #             tmp.append(np.zeros, spiketrains[0].t_stop.magnitude + 1)
-
-    #     centers = bins[1:] - 0.5
-    #     return centers, tmp
-
-
-    # def mean_isi(self, t, spiketrains):
-    #     isi = []
-    #     for spiketrain in spiketrains:
-    #         if len(spiketrain) > 1:
-    #             isi.append(np.mean(elephant.statistics.isi(spiketrain)))
-
-    #     return None, np.mean(isi)
-
-
-    # def lv(self, t, spiketrains):
-    #     lv = []
-    #     for spiketrain in spiketrains:
-    #         isi = elephant.statistics.isi(spiketrain)
-    #         if len(isi) >= 2:
-    #             lv.append(elephant.statistics.lv(isi))
-    #         else:
-    #             lv.append(None)
-
-    #     return None, lv
-
-    # def mean_firing_rate(self, t, spiketrains):
-    #     mean_firing_rates = []
-    #     for spiketrain in spiketrains:
-    #         mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
-    #         mean_firing_rate.units = pq.Hz
-    #         mean_firing_rates.append(mean_firing_rate)
-
-    #     return None, mean_firing_rates
-
-
-    # def fanofactor(self, t, spiketrains):
-    #     return None, elephant.statistics.fanofactor(spiketrains)
+        return None, np.mean(cv)
 
 
 
-    # def instantaneous_rate(self, t, spiketrains):
-    #     instantaneous_rates = []
-    #     for spiketrain in spiketrains:
-    #         # TODO is this a good sampling period?
-    #         sampling_period = spiketrain.t_stop/self.instantaneous_rate_nr_samples
-    #         instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)
-    #         instantaneous_rates.append(np.array(instantaneous_rate).flatten())
+    def binned_isi(self, t, spiketrains):
+        binned_isi = []
+        bins = np.arange(0, spiketrains[0].t_stop.magnitude + self.isi_bin_size, self.isi_bin_size)
 
-    #     t = instantaneous_rate.times.copy()
-    #     t.units = self.units
+        for spiketrain in spiketrains:
+            if len(spiketrain) > 1:
+                isi = elephant.statistics.isi(spiketrain)
+                binned_isi.append(np.histogram(isi, bins=bins)[0])
+            else:
+                binned_isi.append(np.zeros(len(bins) - 1))
 
-    #     return t.magnitude, instantaneous_rates
-
-
-    # def van_rossum_dist(self, t, spiketrains):
-    #     van_rossum_dist = elephant.spike_train_dissimilarity.van_rossum_dist(spiketrains)
-    #     return None, van_rossum_dist
-
-    # def victor_purpura_dist(self, t, spiketrains):
-    #     victor_purpura_dist = elephant.spike_train_dissimilarity.victor_purpura_dist(spiketrains)
-    #     return None, victor_purpura_dist
+        centers = bins[1:] - 0.5
+        return centers, binned_isi
 
 
-    # def corrcoef(self, t, spiketrains):
+    def mean_isi(self, t, spiketrains):
+        isi = []
+        for spiketrain in spiketrains:
+            if len(spiketrain) > 1:
+                isi.append(np.mean(elephant.statistics.isi(spiketrain)))
 
-    #     binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains, binsize=self.corrcoef_bin_size*self.units)
-    #     corrcoef = elephant.spike_train_correlation.corrcoef(binned_sts)
 
-    #     return None, corrcoef
+        return None, np.mean(isi)
 
-    # def covariance(self, t, spiketrains):
 
-    #     binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains, binsize=self.covariance_bin_size*self.units)
-    #     covariance = elephant.spike_train_correlation.covariance(binned_sts)
+    def lv(self, t, spiketrains):
+        lv = []
+        for spiketrain in spiketrains:
+            isi = elephant.statistics.isi(spiketrain)
+            if len(isi) >= 2:
+                lv.append(elephant.statistics.lv(isi))
+            else:
+                lv.append(None)
 
-    #     return None, covariance
+        return None, lv
+
+
+    def mean_firing_rate(self, t, spiketrains):
+        mean_firing_rates = []
+        for spiketrain in spiketrains:
+            mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
+            mean_firing_rate.units = pq.Hz
+            mean_firing_rates.append(mean_firing_rate)
+
+        return None, mean_firing_rates
+
+
+    def instantaneous_rate(self, t, spiketrains):
+        instantaneous_rates = []
+        for spiketrain in spiketrains:
+            if len(spiketrain) > 1:
+                sampling_period = spiketrain.t_stop/self.instantaneous_rate_nr_samples
+                instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)
+                instantaneous_rates.append(np.array(instantaneous_rate).flatten())
+            else:
+                instantaneous_rates.append(None)
+
+        t = instantaneous_rate.times.copy()
+        t.units = self.units
+
+        return t.magnitude, instantaneous_rates
+
+
+    def fanofactor(self, t, spiketrains):
+        return None, elephant.statistics.fanofactor(spiketrains)
+
+
+    def van_rossum_dist(self, t, spiketrains):
+        van_rossum_dist = elephant.spike_train_dissimilarity.van_rossum_dist(spiketrains)
+
+        return None, van_rossum_dist
+
+    def victor_purpura_dist(self, t, spiketrains):
+        victor_purpura_dist = elephant.spike_train_dissimilarity.victor_purpura_dist(spiketrains)
+
+        return None, victor_purpura_dist
+
+
+    def corrcoef(self, t, spiketrains):
+        binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
+                                                          binsize=self.corrcoef_bin_size*self.units)
+        corrcoef = elephant.spike_train_correlation.corrcoef(binned_sts)
+
+        return None, corrcoef
+
+    def covariance(self, t, spiketrains):
+        binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
+                                                          binsize=self.covariance_bin_size*self.units)
+        covariance = elephant.spike_train_correlation.covariance(binned_sts)
+
+        return None, covariance

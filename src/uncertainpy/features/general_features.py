@@ -20,19 +20,20 @@ class GeneralFeatures(object):
         if new_utility_methods is None:
             new_utility_methods = []
 
-        self._features_to_run = None
+        self._features_to_run = []
         self._adaptive = None
         self._labels = {}
 
         self.utility_methods += new_utility_methods
 
-        self.features_to_run = features_to_run
+
         self.adaptive = adaptive
-        self.labels = labels
 
         if new_features is not None:
             self.add_features(new_features, labels=labels)
 
+        self.labels = labels
+        self.features_to_run = features_to_run
 
 
 
@@ -94,11 +95,10 @@ class GeneralFeatures(object):
 
 
 
-    # TODO is it correct that adding a new feature adds it to features_to_run
     def add_features(self, new_features, labels={}):
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
-            self._features_to_run.append(new_features.__name__)
+            self.features_to_run.append(new_features.__name__)
 
             tmp_label = labels.get(new_features.__name__)
             if tmp_label is not None:
@@ -108,7 +108,7 @@ class GeneralFeatures(object):
                 for feature in new_features:
                     if callable(feature):
                         setattr(self, feature.__name__, feature)
-                        self._features_to_run.append(feature.__name__)
+                        self.features_to_run.append(feature.__name__)
 
                         tmp_lables = labels.get(feature.__name__)
                         if tmp_lables is not None:
