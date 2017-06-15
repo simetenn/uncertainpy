@@ -30,7 +30,7 @@ class GeneralFeatures(object):
         self.adaptive = adaptive
         self.labels = labels
 
-        if new_features:
+        if new_features is not None:
             self.add_features(new_features, labels=labels)
 
 

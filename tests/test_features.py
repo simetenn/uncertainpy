@@ -210,7 +210,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                      "accomondation_index"]
 
         self.implemented_labels = {"nr_spikes": ["number of spikes"],
-                                   "spike_rate": ["spike rate [1/ms]"],
+                                   "spike_rate": ["spike rate [Hz]"],
                                    "time_before_first_spike": ["time [ms]"],
                                    "accomondation_index": ["accomondation index"],
                                    "average_AP_overshoot": ["voltage [mV]"],
@@ -218,7 +218,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                    "average_AP_width": ["time [ms]"]
                                   }
 
-        self.features = SpikingFeatures(t, U)
+        self.features = SpikingFeatures()
 
         self.t, self.spikes = self.features.preprocess(t, U)
 
@@ -241,7 +241,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                            "new": ["new"]})
 
         labels = {"nr_spikes": ["number of spikes"],
-                  "spike_rate": ["spike rate [1/ms]"],
+                  "spike_rate": ["spike rate [Hz]"],
                   "time_before_first_spike": ["time [ms]"],
                   "accomondation_index": ["accomondation index"],
                   "average_AP_overshoot": ["voltage [mV]"],
@@ -249,7 +249,7 @@ class TestSpikingFeatures(unittest.TestCase):
                   "new": ["new"]
                  }
 
-        self.assertEqual(self.features.labels, labels)
+        self.assertEqual(features.labels, labels)
 
     def test_features_to_run_all(self):
         features = SpikingFeatures(features_to_run="all")
@@ -333,7 +333,8 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
 
-class TestSpikingFeatures(unittest.TestCase):
+
+class TestNetworkFeatures(unittest.TestCase):
      def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
@@ -348,8 +349,22 @@ class TestSpikingFeatures(unittest.TestCase):
         self.t, self.spiketrains = self.features.preprocess(self.t_original, self.U)
 
 
-     def test_init(self):
+     def test_initNone(self):
         self.features = NetworkFeatures()
+
+        self.assertIsInstance(self.features, NetworkFeatures)
+
+
+     def test_init(self):
+        self.features = NetworkFeatures(new_features=None,
+                                        features_to_run="all",
+                                        adaptive=None,
+                                        labels={},
+                                        instantaneous_rate_nr_samples=50.,
+                                        isi_bin_size=1,
+                                        corrcoef_bin_size=1,
+                                        covariance_bin_size=1,
+                                        units=pq.ms)
 
         self.assertIsInstance(self.features, NetworkFeatures)
 
@@ -359,7 +374,8 @@ class TestSpikingFeatures(unittest.TestCase):
 
         t, spiketrains = self.features.preprocess(self.t_original, self.U)
 
-        # TODO implement this test once preprocess is finished
+
+
 
 
 class TestTestingFeatures(unittest.TestCase):

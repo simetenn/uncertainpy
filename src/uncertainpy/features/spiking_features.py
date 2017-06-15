@@ -19,7 +19,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  labels={}):
 
         implemented_labels = {"nr_spikes": ["number of spikes"],
-                              "spike_rate": ["spike rate [1/ms]"],
+                              "spike_rate": ["spike rate [Hz]"],
                               "time_before_first_spike": ["time [ms]"],
                               "accomondation_index": ["accomondation index"],
                               "average_AP_overshoot": ["voltage [mV]"],

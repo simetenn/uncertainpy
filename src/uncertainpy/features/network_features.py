@@ -10,21 +10,30 @@ class NetworkFeatures(GeneralFeatures):
                  new_features=None,
                  features_to_run="all",
                  adaptive=None,
-                 labels={}):
+                 labels={},
+                 instantaneous_rate_nr_samples=50.,
+                 isi_bin_size=1,
+                 corrcoef_bin_size=1,
+                 covariance_bin_size=1,
+                 units=pq.ms):
+
+        unit_string = str(pq.m).split()[1]
 
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
                               "mean_cv": ["mean coefficient of variation"],
-                              "mean_isi": ["Neuron nr", "Mean interspike interval [ms]"],
+                              "mean_isi": ["Neuron nr",
+                                           "Mean interspike interval [{}]".format(unit_string)],
                               "lv": ["Neuron nr", "Local variation"],
                               "mean_firing_rate": ["Neuron nr", "Hz"],
                               "instantaneous_rate": ["time ms", "Neuron nr", "Hz"],
                               "fanofactor": ["fanofactor"],
                               "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
                               "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
-                              "binned_isi": ["Interspike interval ms", "Neuron nr", "count"]
+                              "binned_isi": ["Interspike interval [{}]".format(unit_string),
+                                             "Neuron nr", "count"],
                               "corrcoeff": ["Neuron nr", "Neuron nr", ""],
                               "covariance": ["Neuron nr", "Neuron nr", ""]
-                               }
+                             }
 
         super(NetworkFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,
@@ -32,11 +41,11 @@ class NetworkFeatures(GeneralFeatures):
                                               labels=implemented_labels)
         self.labels = labels
 
-        self.instantaneous_rate_nr_samples = 50.
-        self.isi_bin_size = 1
-        self.corrcoef_bin_size = 1
-        self.covariance_bin_size = 1
-        self.units = pq.ms
+        self.instantaneous_rate_nr_samples = instantaneous_rate_nr_samples
+        self.isi_bin_size = isi_bin_size
+        self.corrcoef_bin_size = corrcoef_bin_size
+        self.covariance_bin_size = covariance_bin_size
+        self.units = units
 
 
     def preprocess(self, t, spiketrains):
@@ -63,17 +72,6 @@ class NetworkFeatures(GeneralFeatures):
 
     #     return None, np.mean(cv)
 
-
-    # # def isi(self, t, spiketrains):
-    # #     isi = []
-    # #     for spiketrain in spiketrains:
-    # #         if len(spiketrain) > 1:
-    # #             isi.append(elephant.statistics.isi(spiketrain))
-    # #         else:
-    # #             isi.append([])
-
-    # #     print isi
-    # #     return None, np.array(isi)
 
 
     # def binned_isi(self, t, spiketrains):
@@ -111,13 +109,14 @@ class NetworkFeatures(GeneralFeatures):
 
     #     return None, lv
 
-    # TODO get this to work with units
     # def mean_firing_rate(self, t, spiketrains):
-    #     mean_firing_rate = []
+    #     mean_firing_rates = []
     #     for spiketrain in spiketrains:
-    #         mean_firing_rate.append(elephant.statistics.mean_firing_rate(spiketrain)*1000)
+    #         mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
+    #         mean_firing_rate.units = pq.Hz
+    #         mean_firing_rates.append(mean_firing_rate)
 
-    #     return None, mean_firing_rate
+    #     return None, mean_firing_rates
 
 
     # def fanofactor(self, t, spiketrains):
@@ -155,9 +154,9 @@ class NetworkFeatures(GeneralFeatures):
 
     #     return None, corrcoef
 
-    def covariance(self, t, spiketrains):
+    # def covariance(self, t, spiketrains):
 
-        binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains, binsize=self.covariance_bin_size*self.units)
-        covariance = elephant.spike_train_correlation.covariance(binned_sts)
+    #     binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains, binsize=self.covariance_bin_size*self.units)
+    #     covariance = elephant.spike_train_correlation.covariance(binned_sts)
 
-        return None, covariance
+    #     return None, covariance
