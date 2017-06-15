@@ -35,7 +35,7 @@ def brunel_network(J_E=0.5, g=5.0):
     P_E = .8           # P_I = 1 - P_E
 
     N_rec = 10        # Number of neurons to record from
-    simtime = 40
+    simtime = 12
 
 
     nest.ResetKernel()

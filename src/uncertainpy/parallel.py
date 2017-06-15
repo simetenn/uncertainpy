@@ -123,8 +123,8 @@ class Parallel(Base):
             #     U_postprocess = np.nan
 
             results = {}
-            results[self.model.name] = {"t": np.array(t_postprocess, dtype=float),
-                                        "U": np.array(U_postprocess, dtype=float)}
+            results[self.model.name] = {"t": np.array(t_postprocess),
+                                        "U": np.array(U_postprocess)}
 
 
             # Calculate features from the model results
@@ -136,14 +136,22 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-                # if t_feature is None:
-                #     t_feature = np.nan
+                if t_feature is None:
+                    t_feature = np.nan
 
-                # if U_feature is None:
-                #     U_feature = np.nan
+                if U_feature is None:
+                    U_feature = np.nan
 
-                results[feature] = {"U": np.array(U_feature, dtype=float),
-                                    "t": np.array(t_feature, dtype=float)}
+
+                # print U_feature
+                # U_feature = np.array(U_feature)
+
+                # U_feature = np.where(U_feature is None, np.nan, U_feature)
+
+                print U_feature
+                # a.astype(float)
+                results[feature] = {"U": np.array(U_feature, dtype=object),
+                                    "t": np.array(t_feature, dtype=object)}
 
             # Create interpolations
             results = self.create_interpolations(results)

@@ -202,6 +202,7 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data.feature_list)):
             masked_nodes, masked_U = self.create_mask(nodes, feature)
 
+            print masked_nodes, masked_U
             self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                     masked_U, rule="T")
 

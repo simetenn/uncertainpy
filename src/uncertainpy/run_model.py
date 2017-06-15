@@ -209,7 +209,6 @@ results = [result 1, result 2, ..., result N]
         for feature in self.data.feature_list:
             self.data.U[feature] = np.array(self.data.U[feature])
 
-
         self.data.remove_only_invalid_results()
 
 

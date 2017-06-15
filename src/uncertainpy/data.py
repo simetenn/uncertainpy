@@ -173,13 +173,6 @@ feature_list
             else:
                 return [""]
 
-        # elif (self.model_name in self.features_2d and )\
-        #     or (self.model_name in self.features_1d and )\
-        #         or (self.model_name in self.features_0d and feature in self.features_0d):
-        #            return self.labels[self.model_name]
-        # else:
-        #     return ["", "", ""]
-
 
 
     def is_adaptive(self):
@@ -305,8 +298,15 @@ Test if the model returned an adaptive result
 
             all_nan = True
             for U in self.U[feature]:
-                if not np.all(np.isnan(U)):
-                    all_nan = False
+                print U.shape
+                if U.shape == 0:
+                    if str(n) != "nan":
+                        all_nan = False
+                else:
+                    mask = [True if str(n) == "nan" else False for n in U]
+                    if not np.all(np.isnan(mask)):
+                    # if not np.all(np.isnan(U)):
+                        all_nan = False
 
             if all_nan:
                 self.logger.warning("Feature: {} does".format(feature)

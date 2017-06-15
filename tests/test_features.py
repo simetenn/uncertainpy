@@ -492,7 +492,8 @@ class TestNetworkFeatures(unittest.TestCase):
                  89.9202782005130530, 56.5991363488668640,
                  33.9579695054921231, 19.4106207950416447]
 
-        correct_U = [np.array(rates), np.array(rates), np.array(rates), None]
+        correct_U = [np.array(rates), np.array(rates),
+                     np.array(rates), None]
         correct_t = np.linspace(0, 8, 51)[:-1]
 
         self.assertTrue(np.array_equal(U[0], rates))

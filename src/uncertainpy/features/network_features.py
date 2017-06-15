@@ -103,7 +103,7 @@ class NetworkFeatures(GeneralFeatures):
         lv = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)
-            if len(isi) >= 2:
+            if len(isi) > 1:
                 lv.append(elephant.statistics.lv(isi))
             else:
                 lv.append(None)
@@ -123,18 +123,24 @@ class NetworkFeatures(GeneralFeatures):
 
     def instantaneous_rate(self, t, spiketrains):
         instantaneous_rates = []
+        t = None
         for spiketrain in spiketrains:
-            if len(spiketrain) > 1:
+            if len(spiketrain) > 2:
                 sampling_period = spiketrain.t_stop/self.instantaneous_rate_nr_samples
                 instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)
                 instantaneous_rates.append(np.array(instantaneous_rate).flatten())
+
+                if t is None:
+                    t = instantaneous_rate.times.copy()
+                    t.units = self.units
+
             else:
-                instantaneous_rates.append(None)
+                instantaneous_rates.append(np.nan)
 
-        t = instantaneous_rate.times.copy()
-        t.units = self.units
-
-        return t.magnitude, instantaneous_rates
+        if t is None:
+            return None, instantaneous_rates
+        else:
+            return t.magnitude, instantaneous_rates
 
 
     def fanofactor(self, t, spiketrains):
