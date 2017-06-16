@@ -155,13 +155,13 @@ class TestParallel(unittest.TestCase):
         self.assertTrue(np.array_equal(results["TestingModel1d"]["U"], np.arange(0, 10) + 1))
         self.assertTrue(np.array_equal(results["feature1d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature1d"]["U"], np.arange(0, 10)))
-        self.assertTrue(np.isnp.nan(results["feature0d"]["t"]))
+        self.assertTrue(np.isnan(results["feature0d"]["t"]))
         self.assertEqual(results["feature0d"]["U"], 1)
         self.assertTrue(np.array_equal(results["feature2d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature2d"]["U"], np.array([np.arange(0, 10),
                                                                             np.arange(0, 10)])))
-        self.assertTrue(np.isnp.nan(results["feature_invalid"]["t"]))
-        self.assertTrue(np.isnp.nan(results["feature_invalid"]["U"]))
+        self.assertTrue(np.isnan(results["feature_invalid"]["t"]))
+        self.assertTrue(np.isnan(results["feature_invalid"]["U"]))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["U"], np.arange(0, 10) + 1))
         self.assertIsInstance(results["feature_adaptive"]["interpolation"],
@@ -223,13 +223,13 @@ class TestParallel(unittest.TestCase):
         self.assertTrue(np.array_equal(results["TestingModel1d"]["U"], np.arange(0, 10) + 1))
         self.assertTrue(np.array_equal(results["feature1d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature1d"]["U"], np.arange(0, 10)))
-        self.assertTrue(np.isnp.nan(results["feature0d"]["t"]))
+        self.assertTrue(np.isnan(results["feature0d"]["t"]))
         self.assertEqual(results["feature0d"]["U"], 1)
         self.assertTrue(np.array_equal(results["feature2d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature2d"]["U"], np.array([np.arange(0, 10),
                                                                             np.arange(0, 10)])))
-        self.assertTrue(np.isnp.nan(results["feature_invalid"]["t"]))
-        self.assertTrue(np.isnp.nan(results["feature_invalid"]["U"]))
+        self.assertTrue(np.isnan(results["feature_invalid"]["t"]))
+        self.assertTrue(np.isnan(results["feature_invalid"]["U"]))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["U"], np.arange(0, 10) + 1))
         self.assertIsInstance(results["feature_adaptive"]["interpolation"],
