@@ -106,6 +106,7 @@ class NetworkFeatures(GeneralFeatures):
             if len(isi) > 1:
                 lv.append(elephant.statistics.lv(isi))
             else:
+                # return None, None
                 lv.append(None)
 
         return None, lv
@@ -135,7 +136,7 @@ class NetworkFeatures(GeneralFeatures):
                     t.units = self.units
 
             else:
-                instantaneous_rates.append(np.nan)
+                instantaneous_rates.append(None)
 
         if t is None:
             return None, instantaneous_rates

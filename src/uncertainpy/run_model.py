@@ -172,7 +172,7 @@ results = [result 1, result 2, ..., result N]
                     self.data.U[feature].append(solved[feature]["U"])
 
 
-        # Store 2d data from results in a Data object
+        # Store 1d data from results in a Data object
         # Interpolate the data if it is adaptive
         for feature in self.data.features_1d:
             if "interpolation" in results[0][feature]:

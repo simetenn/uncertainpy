@@ -192,7 +192,7 @@ class TestRunModel(unittest.TestCase):
                          set(["feature_function", "feature_function2"] + implemented_features))
 
         implemented_labels = {"nr_spikes": ["number of spikes"],
-                              "spike_rate": ["spike rate [1/ms]"],
+                              "spike_rate": ["spike rate [Hz]"],
                               "time_before_first_spike": ["time [ms]"],
                               "accomondation_index": ["accomondation index"],
                               "average_AP_overshoot": ["voltage [mV]"],

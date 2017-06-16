@@ -279,3 +279,15 @@ class TestParallel(unittest.TestCase):
 
         with Xvfb() as xvfb:
             parallel.run(model_parameters)
+
+
+    def test_to_array(self):
+        U_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])
+
+        U_irregular = np.array([np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
+                                np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
+                                np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
+                                None])
+
+        result = self.parallel.to_array(U_irregular)
+        print result

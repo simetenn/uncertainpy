@@ -147,11 +147,10 @@ class Parallel(Base):
                 # U_feature = np.array(U_feature)
 
                 # U_feature = np.where(U_feature is None, np.nan, U_feature)
-
-                print U_feature
-                # a.astype(float)
-                results[feature] = {"U": np.array(U_feature, dtype=object),
-                                    "t": np.array(t_feature, dtype=object)}
+                # print feature
+                # print U_feature
+                results[feature] = {"U": np.array(U_feature, dtype=float),
+                                    "t": np.array(t_feature)}
 
             # Create interpolations
             results = self.create_interpolations(results)
@@ -165,3 +164,36 @@ class Parallel(Base):
             traceback.print_exc()
             print("")
             raise e
+
+
+
+    def to_array(self, U):
+        # U_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])
+
+        print "U:", U
+        if hasattr(U, "__iter__"):
+            for i, u in enumerate(U):
+                if hasattr(u, "__iter__"):
+                    U[i] = self.to_array(u)
+
+            print
+            print U
+            print
+
+            for i, u in enumerate(U):
+                if u is not None:
+                    print "Shape: ", u.shape
+                    print u
+                    fill_array = np.full(u.shape, np.nan)
+                    print "fill array: ", fill_array
+                    break
+
+            for i, u in enumerate(U):
+                if u is None:
+                    U[i] = fill_array
+
+        elif U is None:
+            U = np.nan
+
+        return np.array(U)
+

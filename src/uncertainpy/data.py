@@ -272,7 +272,7 @@ Test if the model returned an adaptive result
 
         return tmp_array
 
-    #
+
     # def all_to_none(self):
     #     for data_name in self.data_names:
     #         data = getattr(self, data_name)
@@ -292,21 +292,26 @@ Test if the model returned an adaptive result
     #
     #         data = self.nan_to_none(data)
 
+
     def remove_only_invalid_results(self):
         old_feature_list = self.feature_list[:]
         for feature in old_feature_list:
 
+            # This commented out region handles a None results as part of a result [[1, 2, None, ..], [..]]
+            # all_nan = True
+            # for U in self.U[feature]:
+            #     if U.shape == ():
+            #         if str(U) != "nan":
+            #             all_nan = False
+            #     else:
+            #         mask = [True if str(n) == "nan" else False for n in U]
+            #         if not np.all(np.isnan(mask)):
+            #             all_nan = False
+
             all_nan = True
             for U in self.U[feature]:
-                print U.shape
-                if U.shape == 0:
-                    if str(n) != "nan":
-                        all_nan = False
-                else:
-                    mask = [True if str(n) == "nan" else False for n in U]
-                    if not np.all(np.isnan(mask)):
-                    # if not np.all(np.isnan(U)):
-                        all_nan = False
+                if not np.all(np.isnan(U)):
+                    all_nan = False
 
             if all_nan:
                 self.logger.warning("Feature: {} does".format(feature)
