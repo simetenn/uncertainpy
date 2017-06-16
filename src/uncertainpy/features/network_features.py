@@ -117,7 +117,7 @@ class NetworkFeatures(GeneralFeatures):
         for spiketrain in spiketrains:
             mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
             mean_firing_rate.units = pq.Hz
-            mean_firing_rates.append(mean_firing_rate)
+            mean_firing_rates.append(mean_firing_rate.magnitude)
 
         return None, mean_firing_rates
 

@@ -287,9 +287,13 @@ class TestParallel(unittest.TestCase):
 
         result = self.parallel.none_to_nan(U_irregular)
 
-        U_correct = [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]]
+        U_correct = np.array([[np.nan, np.nan, np.nan], [1, 2, 3],
+                              [np.nan, np.nan, np.nan], [1, 2, 3]])
 
-        self.assertTrue(np.array_equal(result, U_correct))
+
+        result = np.array(result)
+        self.assertTrue(((result == U_correct) | (np.isnan(result) & np.isnan(U_correct))).all())
+
 
 
         U_irregular = np.array([None,
@@ -300,15 +304,21 @@ class TestParallel(unittest.TestCase):
 
         result = self.parallel.none_to_nan(U_irregular)
 
-        U_correct = [[[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
-                      [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]],
-                     [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]],
-                     [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]],
-                     [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]],
-                     [[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
-                      [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]]]
+        U_correct = np.array([[[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
+                               [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]],
+                              [[np.nan, np.nan, np.nan], [1, 2, 3],
+                               [np.nan, np.nan, np.nan], [1, 2, 3]],
+                              [[np.nan, np.nan, np.nan], [1, 2, 3],
+                               [np.nan, np.nan, np.nan], [1, 2, 3]],
+                              [[np.nan, np.nan, np.nan], [1, 2, 3],
+                               [np.nan, np.nan, np.nan], [1, 2, 3]],
+                              [[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
+                               [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]]])
 
-        self.assertTrue(np.array_equal(result, U_correct))
+        print result
+        result = np.array(result)
+        self.assertTrue(((result == U_correct) | (np.isnan(result) & np.isnan(U_correct))).all())
+
 
 
         U_irregular = np.array([np.array([1, 2, 3]), np.array([1, 2, 3]),
@@ -316,5 +326,28 @@ class TestParallel(unittest.TestCase):
 
         result = self.parallel.none_to_nan(U_irregular)
 
+        result = np.array(result)
         self.assertTrue(np.array_equal(result, U_irregular))
 
+
+
+        U_irregular = np.array([None, np.array([np.array(1), np.array(2), np.array(3)]), None, np.array([np.array(1), np.array(2), np.array(3)])])
+
+        result = self.parallel.none_to_nan(U_irregular)
+
+        U_correct = np.array([[np.nan, np.nan, np.nan], [1, 2, 3],
+                              [np.nan, np.nan, np.nan], [1, 2, 3]])
+
+
+        result = np.array(result)
+        self.assertTrue(((result == U_correct) | (np.isnan(result) & np.isnan(U_correct))).all())
+
+
+        U_irregular =  np.array([np.array(1), np.array(2), np.array(3)])
+
+        result = self.parallel.none_to_nan(U_irregular)
+
+        U_correct = np.array([np.array(1), np.array(2), np.array(3)])
+
+        result = np.array(result)
+        self.assertTrue(np.array_equal(result, U_irregular))

@@ -122,6 +122,9 @@ class Parallel(Base):
             # if U_postprocess is None:
             #     U_postprocess = np.nan
 
+            U_postprocess = np.array(self.none_to_nan(U_postprocess))
+            t_postprocess = np.array(self.none_to_nan(t_postprocess))
+
             results = {}
             results[self.model.name] = {"t": np.array(t_postprocess),
                                         "U": np.array(U_postprocess)}
@@ -136,11 +139,9 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-                if t_feature is None:
-                    t_feature = np.nan
 
-                if U_feature is None:
-                    U_feature = np.nan
+                U_feature = np.array(self.none_to_nan(U_feature))
+                t_feature = np.array(self.none_to_nan(t_feature))
 
 
                 # print U_feature
@@ -149,8 +150,8 @@ class Parallel(Base):
                 # U_feature = np.where(U_feature is None, np.nan, U_feature)
                 # print feature
                 # print U_feature
-                results[feature] = {"U": np.array(U_feature, dtype=float),
-                                    "t": np.array(t_feature)}
+                results[feature] = {"U":U_feature,
+                                    "t": t_feature}
 
             # Create interpolations
             results = self.create_interpolations(results)
@@ -168,27 +169,28 @@ class Parallel(Base):
 
 
     def none_to_nan(self, U):
-        # U_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])
+        U_list = np.array(U).tolist()
 
-        U_list = list(U)
-
-        if hasattr(U, "__iter__"):
-            for i, u in enumerate(U):
-                if hasattr(u, "__iter__"):
-                    U_list[i] = self.none_to_nan(u)
-
-            for i, u in enumerate(U):
-                if u is not None:
-                    tmp_array = np.array(U_list[i])
-                    fill = np.full(tmp_array.shape, np.nan, dtype=float).tolist()
-                    break
-
-            for i, u in enumerate(U):
-                if u is None:
-                    U_list[i] = fill
-
-        elif U is None:
+        if U is None:
             U_list = [np.nan]
+        else:
+            # To handle the special case of 0d arrays, which have an __iter__, but cannot be iterated over
+            try:
+                for i, u in enumerate(U):
+                    if hasattr(u, "__iter__"):
+                        U_list[i] = self.none_to_nan(u)
+
+                for i, u in enumerate(U):
+                    if u is not None:
+                        fill = np.full(np.shape(U_list[i]), np.nan, dtype=float).tolist()
+                        break
+
+                for i, u in enumerate(U):
+                    if u is None:
+                        U_list[i] = fill
+
+            except TypeError:
+                return U_list
 
 
         return U_list
