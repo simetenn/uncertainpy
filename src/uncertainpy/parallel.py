@@ -167,33 +167,29 @@ class Parallel(Base):
 
 
 
-    def to_array(self, U):
+    def none_to_nan(self, U):
         # U_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])
 
-        print "U:", U
+        U_list = list(U)
+
         if hasattr(U, "__iter__"):
             for i, u in enumerate(U):
                 if hasattr(u, "__iter__"):
-                    U[i] = self.to_array(u)
-
-            print
-            print U
-            print
+                    U_list[i] = self.none_to_nan(u)
 
             for i, u in enumerate(U):
                 if u is not None:
-                    print "Shape: ", u.shape
-                    print u
-                    fill_array = np.full(u.shape, np.nan)
-                    print "fill array: ", fill_array
+                    tmp_array = np.array(U_list[i])
+                    fill = np.full(tmp_array.shape, np.nan, dtype=float).tolist()
                     break
 
             for i, u in enumerate(U):
                 if u is None:
-                    U[i] = fill_array
+                    U_list[i] = fill
 
         elif U is None:
-            U = np.nan
+            U_list = [np.nan]
 
-        return np.array(U)
+
+        return U_list
 

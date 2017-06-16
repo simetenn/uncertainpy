@@ -155,13 +155,13 @@ class TestParallel(unittest.TestCase):
         self.assertTrue(np.array_equal(results["TestingModel1d"]["U"], np.arange(0, 10) + 1))
         self.assertTrue(np.array_equal(results["feature1d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature1d"]["U"], np.arange(0, 10)))
-        self.assertTrue(np.isnan(results["feature0d"]["t"]))
+        self.assertTrue(np.isnp.nan(results["feature0d"]["t"]))
         self.assertEqual(results["feature0d"]["U"], 1)
         self.assertTrue(np.array_equal(results["feature2d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature2d"]["U"], np.array([np.arange(0, 10),
                                                                             np.arange(0, 10)])))
-        self.assertTrue(np.isnan(results["feature_invalid"]["t"]))
-        self.assertTrue(np.isnan(results["feature_invalid"]["U"]))
+        self.assertTrue(np.isnp.nan(results["feature_invalid"]["t"]))
+        self.assertTrue(np.isnp.nan(results["feature_invalid"]["U"]))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["U"], np.arange(0, 10) + 1))
         self.assertIsInstance(results["feature_adaptive"]["interpolation"],
@@ -223,13 +223,13 @@ class TestParallel(unittest.TestCase):
         self.assertTrue(np.array_equal(results["TestingModel1d"]["U"], np.arange(0, 10) + 1))
         self.assertTrue(np.array_equal(results["feature1d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature1d"]["U"], np.arange(0, 10)))
-        self.assertTrue(np.isnan(results["feature0d"]["t"]))
+        self.assertTrue(np.isnp.nan(results["feature0d"]["t"]))
         self.assertEqual(results["feature0d"]["U"], 1)
         self.assertTrue(np.array_equal(results["feature2d"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature2d"]["U"], np.array([np.arange(0, 10),
                                                                             np.arange(0, 10)])))
-        self.assertTrue(np.isnan(results["feature_invalid"]["t"]))
-        self.assertTrue(np.isnan(results["feature_invalid"]["U"]))
+        self.assertTrue(np.isnp.nan(results["feature_invalid"]["t"]))
+        self.assertTrue(np.isnp.nan(results["feature_invalid"]["U"]))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["t"], np.arange(0, 10)))
         self.assertTrue(np.array_equal(results["feature_adaptive"]["U"], np.arange(0, 10) + 1))
         self.assertIsInstance(results["feature_adaptive"]["interpolation"],
@@ -281,13 +281,40 @@ class TestParallel(unittest.TestCase):
             parallel.run(model_parameters)
 
 
-    def test_to_array(self):
+    def test_none_to_nan(self):
+
         U_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])
 
-        U_irregular = np.array([np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
+        result = self.parallel.none_to_nan(U_irregular)
+
+        U_correct = [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]]
+
+        self.assertTrue(np.array_equal(result, U_correct))
+
+
+        U_irregular = np.array([None,
+                                np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
                                 np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
                                 np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
                                 None])
 
-        result = self.parallel.to_array(U_irregular)
-        print result
+        result = self.parallel.none_to_nan(U_irregular)
+
+        U_correct = [[[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
+                      [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]],
+                     [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]],
+                     [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]],
+                     [[np.nan, np.nan, np.nan], [1, 2, 3], [np.nan, np.nan, np.nan], [1, 2, 3]],
+                     [[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
+                      [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]]]
+
+        self.assertTrue(np.array_equal(result, U_correct))
+
+
+        U_irregular = np.array([np.array([1, 2, 3]), np.array([1, 2, 3]),
+                                np.array([1, 2, 3]), np.array([1, 2, 3])])
+
+        result = self.parallel.none_to_nan(U_irregular)
+
+        self.assertTrue(np.array_equal(result, U_irregular))
+
