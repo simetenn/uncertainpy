@@ -116,12 +116,6 @@ class Parallel(Base):
 
             t_postprocess, U_postprocess = self.model.postprocess(t, U)
 
-            # if t_postprocess is None:
-            #     t_postprocess = np.nan
-
-            # if U_postprocess is None:
-            #     U_postprocess = np.nan
-
             U_postprocess = np.array(self.none_to_nan(U_postprocess))
             t_postprocess = np.array(self.none_to_nan(t_postprocess))
 
@@ -139,17 +133,9 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-
                 U_feature = np.array(self.none_to_nan(U_feature))
                 t_feature = np.array(self.none_to_nan(t_feature))
 
-
-                # print U_feature
-                # U_feature = np.array(U_feature)
-
-                # U_feature = np.where(U_feature is None, np.nan, U_feature)
-                # print feature
-                # print U_feature
                 results[feature] = {"U":U_feature,
                                     "t": t_feature}
 

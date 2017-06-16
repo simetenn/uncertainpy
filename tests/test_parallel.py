@@ -315,7 +315,6 @@ class TestParallel(unittest.TestCase):
                               [[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
                                [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]]])
 
-        print result
         result = np.array(result)
         self.assertTrue(((result == U_correct) | (np.isnan(result) & np.isnan(U_correct))).all())
 
@@ -331,19 +330,20 @@ class TestParallel(unittest.TestCase):
 
 
 
-        U_irregular = np.array([None, np.array([np.array(1), np.array(2), np.array(3)]), None, np.array([np.array(1), np.array(2), np.array(3)])])
+        U_irregular = np.array([None, np.array([np.array(1), np.array(2), np.array(3)]),
+                                None, np.array([np.array(1), np.array(2), np.array(3)])])
 
         result = self.parallel.none_to_nan(U_irregular)
 
         U_correct = np.array([[np.nan, np.nan, np.nan], [1, 2, 3],
                               [np.nan, np.nan, np.nan], [1, 2, 3]])
 
-
         result = np.array(result)
         self.assertTrue(((result == U_correct) | (np.isnan(result) & np.isnan(U_correct))).all())
 
 
-        U_irregular =  np.array([np.array(1), np.array(2), np.array(3)])
+
+        U_irregular = np.array([np.array(1), np.array(2), np.array(3)])
 
         result = self.parallel.none_to_nan(U_irregular)
 

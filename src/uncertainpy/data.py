@@ -214,7 +214,6 @@ Test if the model returned an adaptive result
                     data = getattr(self, data_name)
 
                     if feature in data and data[feature] is not None:
-                        # group.create_dataset(data_name, data=self.none_to_nan(data[feature]))
                         group.create_dataset(data_name, data=data[feature])
 
 
@@ -248,29 +247,28 @@ Test if the model returned an adaptive result
                     data = getattr(self, data_name)
 
                     if data_name in f[feature].keys():
-                        # data[feature] = self.nan_to_none(f[feature][data_name][()])
                         data[feature] = f[feature][data_name][()]
                     else:
                         data[feature] = None
 
 
 
-    # TODO rewrite so this is using np.nan. Currently this makes it so when loading a data file it is loaded as an object
-    def nan_to_none(self, array):
-        try:
-            tmp_array = array.astype(object)
-            tmp_array[np.isnan(array)] = None
+    # # TODO rewrite so this is using np.nan. Currently this makes it so when loading a data file it is loaded as an object
+    # def nan_to_none(self, array):
+    #     try:
+    #         tmp_array = array.astype(object)
+    #         tmp_array[np.isnan(array)] = None
 
-            return tmp_array
+    #         return tmp_array
 
-        except TypeError:
-            return array
+    #     except TypeError:
+    #         return array
 
 
-    def none_to_nan(self, array):
-        tmp_array = np.array(array, dtype=float)
+    # def none_to_nan(self, array):
+    #     tmp_array = np.array(array, dtype=float)
 
-        return tmp_array
+    #     return tmp_array
 
 
     # def all_to_none(self):
@@ -296,17 +294,6 @@ Test if the model returned an adaptive result
     def remove_only_invalid_results(self):
         old_feature_list = self.feature_list[:]
         for feature in old_feature_list:
-
-            # This commented out region handles a None results as part of a result [[1, 2, None, ..], [..]]
-            # all_nan = True
-            # for U in self.U[feature]:
-            #     if U.shape == ():
-            #         if str(U) != "nan":
-            #             all_nan = False
-            #     else:
-            #         mask = [True if str(n) == "nan" else False for n in U]
-            #         if not np.all(np.isnan(mask)):
-            #             all_nan = False
 
             all_nan = True
             for U in self.U[feature]:
