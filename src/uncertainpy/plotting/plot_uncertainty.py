@@ -11,7 +11,7 @@ from ..utils import create_logger
 from prettyplot import prettyPlot, prettyBar
 from prettyplot import spines_color, get_current_colormap
 from prettyplot import get_colormap_tableu20, set_style
-from prettyplot import axis_grey, labelsize, fontsize, titlesize
+from prettyplot import AXIS_GREY, labelsize, fontsize, TITLESIZE
 
 
 # TODO find a good way to find the directory where the data files are
@@ -595,7 +595,7 @@ class PlotUncertainty(object):
                 ax.axis("off")
 
         title = feature.replace("_", " ") + ", " + sensitivity.replace("_", " ")
-        plt.suptitle(title, fontsize=titlesize)
+        plt.suptitle(title, fontsize=TITLESIZE)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
 
@@ -765,9 +765,9 @@ class PlotUncertainty(object):
             ax2 = ax.twinx()
 
             spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                     "right": axis_grey, "left": "None"})
+                                     "right": AXIS_GREY, "left": "None"})
             ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                            color=axis_grey, labelcolor="black", labelsize=labelsize)
+                            color=AXIS_GREY, labelcolor="black", labelsize=labelsize)
             ax2.set_ylabel('sensitivity', fontsize=fontsize)
             ax2.set_ylim([0, 1.05])
 
@@ -810,7 +810,7 @@ class PlotUncertainty(object):
                 tick.set_rotation(-25)
 
 
-        plt.suptitle(feature.replace("_", " "), fontsize=titlesize)
+        plt.suptitle(feature.replace("_", " "), fontsize=TITLESIZE)
 
         if sensitivity is None:
             save_name = feature + self.figureformat
@@ -1089,7 +1089,7 @@ class PlotUncertainty(object):
                 ax.axis("off")
 
         title = "total " + sensitivity.replace("_", " ")
-        plt.suptitle(title, fontsize=titlesize)
+        plt.suptitle(title, fontsize=TITLESIZE)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
 

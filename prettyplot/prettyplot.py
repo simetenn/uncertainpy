@@ -58,7 +58,7 @@ Set font options. Note, uses latex.
               "text.antialiased": True,
               "font.family": "lmodern",
               "font.weight": "normal"
-              }
+             }
 
     plt.rcParams.update(params)
 
@@ -91,7 +91,7 @@ Set tick style options
               "ytick.major.size": ticksize,
               "xtick.labelsize": ticklabelsize,
               "ytick.labelsize": ticklabelsize,
-              }
+            }
 
     plt.rcParams.update(params)
 
@@ -109,7 +109,7 @@ Set tick style options
               "axes.spines.right": False,
               "axes.spines.top": False,
               "axes.unicode_minus": True
-            }
+           }
 
     plt.rcParams.update(params)
 

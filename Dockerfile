@@ -97,7 +97,6 @@ RUN apt-get -y install Xvfb
 RUN apt-get -y install h5utils
 RUN apt-get -y install libx11-dev libxext-dev x11-apps
 
-# RUN conda install -c undy odespy
 
 RUN conda install -c conda-forge xvfbwrapper
 RUN conda install -c conda-forge multiprocess
@@ -108,6 +107,8 @@ RUN conda install -c conda-forge multiprocess
 # RUN conda install -c anaconda pandas
 # RUN conda install -c anaconda seaborn
 
+
+# RUN conda install -c undy odespy
 # RUN apt-get -y install git
 # RUN git clone git@github.com:hplgit/odespy.git
 # RUN cd odespy; sudo python setup.py install
@@ -115,13 +116,14 @@ RUN conda install -c conda-forge multiprocess
 
 RUN pip install elephant
 
-
-
 # # RUN conda install -c conda-forge matplotlib=2.0.0
 
 
 
 COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
+
+RUN cd prettyplot; python setup.py install
+
 RUN cp -r tests/figures_docker/. tests/figures/.
 RUN python setup.py install
