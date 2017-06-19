@@ -9,7 +9,7 @@ from uncertainpy.plotting.plotUncertainty import PlotUncertainty
 from prettyplot import prettyPlot, prettyBar
 from prettyplot import spines_color, get_current_colormap
 # from prettyplot import set_legend, get_colormap_tableu20
-from prettyplot import AXIS_GREY, labelsize, fontsize  # , titlesize
+from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 
 
 # TODO find a good way to find the directory where the data files are
@@ -359,9 +359,9 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
 
         spines_color(ax2, edges={"top": "None", "bottom": "None",
-                          "right": AXIS_GREY, "left": "None"})
+                          "right": axis_grey, "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=AXIS_GREY, labelcolor="black", labelsize=labelsize)
+                        color=axis_grey, labelcolor="black", labelsize=labelsize)
         ax2.set_ylabel(self.data.ylabel + ', variance', color="black", fontsize=labelsize)
         ax2.yaxis.offsetText.set_fontsize(labelsize)
 
