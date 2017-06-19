@@ -251,21 +251,21 @@ total_run = 0
 total_errors = 0
 total_failures = 0
 
-print "----------------------------------------------------------------------"
-print "             Test summary"
-print
+print("----------------------------------------------------------------------")
+print("             Test summary")
+print("")
 for key in results.keys():
     errors = len(results[key].errors)
     failures = len(results[key].failures)
     run = results[key].testsRun
-    print "Test: {}, run={} errors={} failures={}".format(key, run, errors, failures)
+    print("Test: {}, run={} errors={} failures={}".format(key, run, errors, failures))
 
     total_run += run
     total_errors += errors
     total_failures += failures
 
-print ""
-print "Total tests run={} errors={} failures={}".format(total_run, total_errors, total_failures)
+print("")
+print("Total tests run={} errors={} failures={}".format(total_run, total_errors, total_failures))
 
 
 for key in results.keys():

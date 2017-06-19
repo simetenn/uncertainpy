@@ -74,11 +74,11 @@ data = {"model_cmds": model_cmds
             ut, err = simulation.communicate()
 
             if not supress_model_output and len(ut) != 0:
-                print ut
+                print(ut)
 
 
             if simulation.returncode != 0:
-                print ut
+                print(ut)
                 raise RuntimeError(err)
 
 

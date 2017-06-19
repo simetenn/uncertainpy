@@ -20,8 +20,8 @@ name = "uncertainpy"
 
 uncertainpy_req = []
 dependency_links = []
-uncertainpy_req = ["xvfbwrapper", "psutil", "odespy", "chaospy", "tqdm"]
-dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy"]
+uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "pandas", "seaborn"]
+dependency_links = []
 
 
 
