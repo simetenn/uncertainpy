@@ -1,2 +1,3 @@
-from plot_uncertainty import PlotUncertainty
-# from plotUncertaintyCompare import PlotUncertaintyCompare
+__all__ = ["PlotUncertainty"]
+
+from .plot_uncertainty import PlotUncertainty

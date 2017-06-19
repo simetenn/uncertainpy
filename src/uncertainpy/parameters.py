@@ -1,12 +1,11 @@
-import chaospy as cp
 import re
 import fileinput
 import sys
 
+import chaospy as cp
+
+
 __all__ = ["Parameters", "Parameter"]
-__version__ = "0.9"
-
-
 
 class Parameter(object):
     def __init__(self, name, value, distribution=None):

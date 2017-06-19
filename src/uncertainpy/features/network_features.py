@@ -1,9 +1,11 @@
-from uncertainpy.features import GeneralFeatures
-import numpy as np
 import elephant
-
 import neo.core
+
+import numpy as np
 import quantities as pq
+
+from general_features import GeneralFeatures
+
 
 class NetworkFeatures(GeneralFeatures):
     def __init__(self,

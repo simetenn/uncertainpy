@@ -1,19 +1,16 @@
+import os
+import types
+import multiprocess as mp
+
+from .uncertainty_calculations import UncertaintyCalculations
+from .plotting.plot_uncertainty import PlotUncertainty
+from .utils import create_logger
+from .data import Data
+from .base import ParameterBase
+
+
 #  Figures are always saved on the format:
 #  output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
-
-import os
-import multiprocess as mp
-import types
-
-from uncertainty_calculations import UncertaintyCalculations
-from features import GeneralFeatures
-from plotting.plot_uncertainty import PlotUncertainty
-from utils import create_logger
-from models import Model
-from uncertainpy import Data
-from parameters import Parameters
-
-from base import ParameterBase
 
 class UncertaintyEstimation(ParameterBase):
     def __init__(self,

@@ -38,23 +38,24 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
-    def test_nan_to_none(self):
-        a = np.array([0, 1, 2, None, 4, None, None])
-        b = np.array([0, 1, 2, np.nan, 4, np.nan, np.nan])
+    # def test_nan_to_none(self):
+    #     a = np.array([0, 1, 2, None, 4, None, None])
+    #     b = np.array([0, 1, 2, np.nan, 4, np.nan, np.nan])
 
-        result = self.data.nan_to_none(b)
+    #     result = self.data.nan_to_none(b)
 
-        self.assertTrue(np.array_equal(a, result))
+    #     self.assertTrue(np.array_equal(a, result))
 
 
-    def test_none_to_nan(self):
-        a = [0, 1, 2, None, 4, None, None]
-        b = np.array([0, 1, 2, np.nan, 4, np.nan, np.nan])
+    # def test_none_to_nan(self):
+    #     a = [0, 1, 2, None, 4, None, None]
+    #     b = np.array([0, 1, 2, np.nan, 4, np.nan, np.nan])
 
-        result = self.data.none_to_nan(a)
+    #     result = self.data.none_to_nan(a)
 
-        self.assertTrue(np.array_equal(b[~np.isnan(b)], result[~np.isnan(result)]))
-        self.assertTrue(np.array_equal(np.isnan(b), np.isnan(result)))
+    #     self.assertTrue(np.array_equal(b[~np.isnan(b)], result[~np.isnan(result)]))
+    #     self.assertTrue(np.array_equal(np.isnan(b), np.isnan(result)))
+
 
     def test_features_2d(self):
         self.data.features_2d = ["feature2d"]

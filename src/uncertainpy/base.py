@@ -1,7 +1,7 @@
-from utils import create_logger
-from features import GeneralFeatures
-from models import Model
-from parameters import Parameters
+from .utils import create_logger
+from .features import GeneralFeatures
+from .models import Model
+from .parameters import Parameters
 
 class Base(object):
     def __init__(self,

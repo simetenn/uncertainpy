@@ -1,4 +1,4 @@
-FROM continuumio/anaconda
+FROM continuumio/anaconda3
 
 # https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
 RUN set -x \
@@ -37,7 +37,7 @@ RUN { \
 
 
 
-ENV DEBIAN_FRONTEND noninteractive
+# ENV DEBIAN_FRONTEND noninteractive
 ENV LANG=C.UTF-8
 
 RUN apt-get update; apt-get install -y automake libtool build-essential openmpi-bin libopenmpi-dev git vim  \
@@ -46,20 +46,22 @@ RUN apt-get update; apt-get install -y automake libtool build-essential openmpi-
                        ipython3 python3-httplib2 python3-docutils python3-yaml \
                        subversion python3-venv python3-mpi4py python3-tables cmake
 
-RUN useradd -ms /bin/bash docker
-USER docker
+# RUN useradd -ms /bin/bash docker
+# USER docker
+
 ENV HOME=/home/docker
-RUN mkdir $HOME/env; mkdir $HOME/packages
+RUN mkdir $HOME; mkdir $HOME/env; mkdir $HOME/packages
 
 ENV VENV=$HOME/env/neurosci
+RUN mkdir $VENV
 
 # we run venv twice because of this bug: https://bugs.python.org/issue24875
 # using the workaround proposed by Georges Racinet
-RUN python3 -m venv $VENV && python3 -m venv --system-site-packages $VENV
+# RUN python3 -m venv $VENV && python3 -m venv --system-site-packages $VENV
 
-RUN $VENV/bin/pip3 install --upgrade pip
-RUN $VENV/bin/pip3 install parameters quantities neo django django-tagging future hgapi gitpython sumatra
-RUN $VENV/bin/pip3 install --upgrade nose ipython
+# RUN $VENV/bin/pip3 install --upgrade pip
+# RUN $VENV/bin/pip3 install parameters quantities neo django django-tagging future hgapi gitpython sumatra
+# RUN $VENV/bin/pip3 install --upgrade nose ipython
 
 
 
@@ -67,22 +69,24 @@ RUN $VENV/bin/pip3 install --upgrade nose ipython
 
 ENV NEST_VER=2.12.0 NRN_VER=7.4
 ENV NEST=nest-$NEST_VER NRN=nrn-$NRN_VER
-ENV PATH=$PATH:$VENV/bin
-RUN ln -s /usr/bin/2to3-3.4 $VENV/bin/2to3
+# ENV PATH=$PATH:$VENV/bin
+# RUN ln -s /usr/bin/2to3-3.4 $VENV/bin/2to3
 
 WORKDIR $HOME/packages
-RUN wget https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz -O $HOME/packages/$NEST.tar.gz;
-RUN wget http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz
+ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
+ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz .
+# RUN wget https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz -O $HOME/packages/$NEST.tar.gz;
+# RUN wget http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz
 RUN tar xzf $NEST.tar.gz; tar xzf $NRN.tar.gz; rm $NEST.tar.gz $NRN.tar.gz
-RUN git clone --depth 1 https://github.com/INCF/libneurosim.git
-RUN cd libneurosim; ./autogen.sh
+# RUN git clone --depth 1 https://github.com/INCF/libneurosim.git
+# RUN cd libneurosim; ./autogen.sh
 
 RUN mkdir $VENV/build
 WORKDIR $VENV/build
-RUN mkdir libneurosim; \
-    cd libneurosim; \
-    PYTHON=$VENV/bin/python $HOME/packages/libneurosim/configure --prefix=$VENV; \
-    make; make install; ls $VENV/lib $VENV/include
+# RUN mkdir libneurosim; \
+#     cd libneurosim; \
+#     PYTHON=$VENV/bin/python $HOME/packages/libneurosim/configure --prefix=$VENV; \
+#     make; make install; ls $VENV/lib $VENV/include
 RUN mkdir $NEST; \
     cd $NEST; \
     # ln -s /usr/lib/python3.4/config-3.4m-x86_64-linux-gnu/libpython3.4.so $VENV/lib/; \
@@ -90,23 +94,23 @@ RUN mkdir $NEST; \
           -Dwith-mpi=ON  \
           -Dwith-python=3 \
           ###-Dwith-music=ON \
-          -Dwith-libneurosim=ON \
+        #   -Dwith-libneurosim=ON \
         #   -DPYTHON_LIBRARY=$VENV/lib/libpython3.4.so \
         #   -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
           $HOME/packages/$NEST; \
-    make; make install
+    make; make install; make install
 RUN mkdir $NRN; \
     cd $NRN; \
-    $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=$VENV/bin/python --disable-rx3d --without-iv --prefix=$VENV; \
+    $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV; \
     make; make install; \
-    cd src/nrnpython; $VENV/bin/python setup.py install; \
+    cd src/nrnpython; python setup.py install; \
     cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl
 
 # RUN $VENV/bin/pip3 install lazyarray nrnutils PyNN
 # RUN $VENV/bin/pip3 install brian2
 
 WORKDIR /home/docker/
-RUN echo "source $VENV/bin/activate" >> .bashrc
+RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
 
 
 

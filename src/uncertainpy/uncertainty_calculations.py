@@ -1,15 +1,10 @@
-import chaospy as cp
 import numpy as np
-import multiprocessing as mp
+import multiprocess as mp
 from tqdm import tqdm
+import chaospy as cp
 
-from run_model import RunModel
-from models import Model
-from utils import create_logger
-from features import GeneralFeatures
-from parameters import Parameters
-
-from base import ParameterBase
+from .run_model import RunModel
+from .base import ParameterBase
 
 # Model is now potentially set two places, is that a problem?
 class UncertaintyCalculations(ParameterBase):

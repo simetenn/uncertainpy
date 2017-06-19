@@ -4,15 +4,9 @@ from xvfbwrapper import Xvfb
 import numpy as np
 import multiprocess as mp
 
-
-from data import Data
-from features import GeneralFeatures
-from models import Model
-from utils import create_logger
-from parallel import Parallel
-from parameters import Parameters
-
-from base import ParameterBase
+from .data import Data
+from .parallel import Parallel
+from .base import ParameterBase
 
 
 """
@@ -33,7 +27,6 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 
 results = [result 1, result 2, ..., result N]
 """
-
 
 class RunModel(ParameterBase):
     def __init__(self,

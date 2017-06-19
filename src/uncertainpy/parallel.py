@@ -3,11 +3,7 @@ import traceback
 import numpy as np
 import scipy.interpolate as scpi
 
-from utils import create_logger
-from features import GeneralFeatures
-from models import Model
-
-from base import Base
+from .base import Base
 
 """
 result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),

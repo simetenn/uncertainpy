@@ -1,23 +1,23 @@
-import os
 import glob
 import argparse
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from uncertainpy import Data
+from ..data import Data
+from ..utils import create_logger
+
 from prettyplot import prettyPlot, prettyBar
 from prettyplot import spines_color, get_current_colormap
 from prettyplot import get_colormap_tableu20, set_style
 from prettyplot import axis_grey, labelsize, fontsize, titlesize
-from uncertainpy.utils import create_logger
 
 
 # TODO find a good way to find the directory where the data files are
 
 # TODO compare plots in a grid of all plots,
 # such as plotting all features in a grid plot
-
 
 # TODO Change the use of **plot_kwargs to use a dict for specific plotting commands?
 

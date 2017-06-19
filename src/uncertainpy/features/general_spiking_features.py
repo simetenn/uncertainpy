@@ -1,5 +1,5 @@
-from uncertainpy.features.spikes import Spikes
-from uncertainpy.features import GeneralFeatures
+from .spikes import Spikes
+from .general_features import GeneralFeatures
 
 
 class GeneralSpikingFeatures(GeneralFeatures):

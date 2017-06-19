@@ -1,4 +1,3 @@
-
 class GeneralFeatures(object):
     def __init__(self,
                  new_features=None,

@@ -1,9 +1,8 @@
 import sys
-import subprocess
-import scipy
 import os
 import traceback
-
+import subprocess
+import scipy
 
 import numpy as np
 import multiprocess as mp

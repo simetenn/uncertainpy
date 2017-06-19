@@ -1,14 +1,15 @@
 import time
 import os
 
-from uncertainty_calculations import UncertaintyCalculations
-from uncertainpy.features import GeneralFeatures
-from uncertainpy.plotting.plotUncertainty import PlotUncertainty
-from uncertainpy.utils import create_logger
-from uncertainpy import Data
+from .uncertainty_calculations import UncertaintyCalculations
+from .features import GeneralFeatures
+from .plotting import PlotUncertainty
+from .utils import create_logger
+from .data import Data
 
 
-from uncertainpy import UncertaintyEstimation, uniform, normal
+from .uncertainty import UncertaintyEstimation
+from .distribution import uniform, normal
 from uncertainpy.plotting import PlotUncertaintyCompare
 from uncertainpy.utils import create_logger
 
