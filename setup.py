@@ -63,15 +63,15 @@ dependency_links = ["http://github.com/hplgit/odespy/tarball/master#egg=odespy"]
 
 cmdclass = {}
 
-if "-h" in sys.argv:
-    print("""
-Custom commandline arguments:
-    --virtual: Install in a virtual enviroment
-    --neuron: Install neuron
-    --no-dependencies: Only install uncertainpy
-    install: Install uncertainpy with dependencies
-    develop: Install uncertainpy with dependencies as a developer
-    """)
+# if "-h" in sys.argv:
+#     print("""
+# Custom commandline arguments:
+#     --virtual: Install in a virtual enviroment
+#     --neuron: Install neuron
+#     --no-dependencies: Only install uncertainpy
+#     install: Install uncertainpy with dependencies
+#     develop: Install uncertainpy with dependencies as a developer
+#     """)
 
 # if "--virtual" in sys.argv:
 #     # subprocess.call("sudo ./uncertainpy/install_scripts/install_virtual.sh", shell=True)
