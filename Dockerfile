@@ -87,18 +87,6 @@ WORKDIR $VENV/build
 #     cd libneurosim; \
 #     PYTHON=$VENV/bin/python $HOME/packages/libneurosim/configure --prefix=$VENV; \
 #     make; make install; ls $VENV/lib $VENV/include
-RUN mkdir $NEST; \
-    cd $NEST; \
-    # ln -s /usr/lib/python3.4/config-3.4m-x86_64-linux-gnu/libpython3.4.so $VENV/lib/; \
-    cmake -DCMAKE_INSTALL_PREFIX=$VENV \
-          -Dwith-mpi=ON  \
-          -Dwith-python=3 \
-          ###-Dwith-music=ON \
-        #   -Dwith-libneurosim=ON \
-        #   -DPYTHON_LIBRARY=$VENV/lib/libpython3.4.so \
-        #   -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
-          $HOME/packages/$NEST; \
-    make; make install; make install
 RUN mkdir $NRN; \
     cd $NRN; \
     $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV; \
@@ -106,13 +94,31 @@ RUN mkdir $NRN; \
     cd src/nrnpython; python setup.py install; \
     cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl
 
+RUN mkdir $NEST; \
+    cd $NEST; \
+    # ln -s /usr/lib/python3.4/config-3.4m-x86_64-linux-gnu/libpython3.4.so $VENV/lib/; \
+    cmake -DCMAKE_INSTALL_PREFIX=$VENV \
+          -Dwith-mpi=ON  \
+          -Dwith-python=3 \
+        #   -DPYTHON_EXECUTABLE=python \
+          -DPYTHON_EXECUTABLE=/opt/conda/bin/python3.6 \
+          ###-Dwith-music=ON \
+        #   -Dwith-libneurosim=ON \
+          -DPYTHON_LIBRARY=/opt/conda/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6m.a \
+          -DPYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m \
+        #   -DPYTHON_LIBRARY=$VENV/lib/libpython3.4.so \
+        #   -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
+          $HOME/packages/$NEST; \
+    make; make install;
+
+
 # RUN $VENV/bin/pip3 install lazyarray nrnutils PyNN
 # RUN $VENV/bin/pip3 install brian2
 
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
 
-
+RUN conda install libgcc
 
 
 

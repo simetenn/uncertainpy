@@ -1,13 +1,15 @@
-import numpy as np
 import unittest
 import os
-import quantities as pq
 import neo
 import elephant
 
-from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures, SpikingFeatures, NetworkFeatures
+import numpy as np
+import quantities as pq
+
+from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures
+from uncertainpy.features import SpikingFeatures, NetworkFeatures
 from uncertainpy import Spikes
-from testing_classes import TestingFeatures
+from .testing_classes import TestingFeatures
 
 
 class TestGeneralFeatures(unittest.TestCase):

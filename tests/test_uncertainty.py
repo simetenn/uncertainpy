@@ -2,8 +2,8 @@ import unittest
 import os
 import shutil
 import subprocess
-import numpy as np
 import glob
+import numpy as np
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
@@ -15,9 +15,9 @@ from uncertainpy import Model
 from uncertainpy import SpikingFeatures
 
 
-from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d, model_function
-from testing_classes import TestingUncertaintyCalculations
+from .testing_classes import TestingFeatures
+from .testing_classes import TestingModel1d, model_function
+from .testing_classes import TestingUncertaintyCalculations
 
 
 class TestUncertainty(unittest.TestCase):

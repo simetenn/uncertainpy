@@ -1,10 +1,10 @@
-import numpy as np
 import unittest
-import chaospy as cp
 import os
 import shutil
 import subprocess
 
+import numpy as np
+import chaospy as cp
 
 from uncertainpy import UncertaintyCalculations
 from uncertainpy.parameters import Parameters
@@ -15,9 +15,9 @@ from uncertainpy.models import Model
 from uncertainpy import SpikingFeatures
 
 
-from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d, model_function
-from testing_classes import TestingModelAdaptive
+from .testing_classes import TestingFeatures
+from .testing_classes import TestingModel1d, model_function
+from .testing_classes import TestingModelAdaptive
 
 
 class TestUncertaintyCalculations(unittest.TestCase):

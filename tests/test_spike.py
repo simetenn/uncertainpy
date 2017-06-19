@@ -1,8 +1,9 @@
-import numpy as np
 import os
 import unittest
 import shutil
 import subprocess
+
+import numpy as np
 
 from uncertainpy.features.spikes import Spike
 

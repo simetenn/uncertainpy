@@ -6,8 +6,7 @@ from logging import Logger
 from uncertainpy.base import Base, ParameterBase
 from uncertainpy import Model, SpikingFeatures, GeneralFeatures, Parameters
 
-from testing_classes import TestingFeatures, model_function
-from testing_classes import TestingModel1d
+from .testing_classes import TestingFeatures, model_function
 
 
 class TestBase(unittest.TestCase):

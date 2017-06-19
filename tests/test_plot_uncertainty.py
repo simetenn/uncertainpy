@@ -1,10 +1,10 @@
-import numpy as np
 import glob
 import os
 import unittest
 import subprocess
 import shutil
 import matplotlib
+import numpy as np
 
 matplotlib.use('Agg')
 

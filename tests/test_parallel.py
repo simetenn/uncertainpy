@@ -1,18 +1,19 @@
-import numpy as np
 import unittest
-import scipy.interpolate
 import os
 import shutil
+import scipy.interpolate
+
+import numpy as np
 
 from xvfbwrapper import Xvfb
 from uncertainpy import Parallel
 from uncertainpy.models import NeuronModel, Model
-from uncertainpy.features import GeneralFeatures, SpikingFeatures
+from uncertainpy.features import GeneralFeatures
 
-from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d, model_function
-from testing_classes import TestingModelNoTime
-from testing_classes import TestingModelAdaptive
+from .testing_classes import TestingFeatures
+from .testing_classes import TestingModel1d, model_function
+from .testing_classes import TestingModelNoTime
+from .testing_classes import TestingModelAdaptive
 
 
 class TestParallel(unittest.TestCase):

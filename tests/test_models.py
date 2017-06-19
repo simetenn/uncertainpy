@@ -1,21 +1,19 @@
-import numpy as np
 import os
 import unittest
-import chaospy as cp
 
+import numpy as np
 from xvfbwrapper import Xvfb
 
 from uncertainpy.models import Model, NeuronModel, NestModel
-from uncertainpy import Parameters
 
-from models import HodgkinHuxley
-from models import CoffeeCup
-from models import izhikevich
-from models import brunel_network
+from .models import HodgkinHuxley
+from .models import CoffeeCup
+from .models import izhikevich
+from .models import brunel_network
 
 
-from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModelAdaptive, model_function
+from .testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
+from .testing_classes import TestingModelAdaptive, model_function
 
 
 folder = os.path.dirname(os.path.realpath(__file__))

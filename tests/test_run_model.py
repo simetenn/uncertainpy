@@ -1,18 +1,17 @@
-import numpy as np
 import unittest
-import scipy.interpolate
 import os
 import shutil
+import scipy.interpolate
 
+import numpy as np
 
 from uncertainpy import RunModel, Parameters
 from uncertainpy.models import NeuronModel, Model
 from uncertainpy.features import GeneralFeatures, SpikingFeatures
 
-
-from testing_classes import TestingFeatures, model_function
-from testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
-from testing_classes import TestingModelAdaptive
+from .testing_classes import TestingFeatures, model_function
+from .testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
+from .testing_classes import TestingModelAdaptive
 
 
 
