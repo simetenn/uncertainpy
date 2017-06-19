@@ -7,7 +7,7 @@ import scipy.optimize
 #     print("Warning: Spiking features need scipy to function.")
 
 
-from uncertainpy.features import GeneralSpikingFeatures
+from .general_spiking_features import GeneralSpikingFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
     def __init__(self,

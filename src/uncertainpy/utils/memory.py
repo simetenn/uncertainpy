@@ -1,7 +1,7 @@
 import os
 import time
 import psutil
-import multiprocessing as mp
+import multiprocess as mp
 
 class Memory:
     """

@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from model import Model
+from .model import Model
 
 
 class NeuronModel(Model):

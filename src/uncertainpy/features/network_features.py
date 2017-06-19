@@ -4,7 +4,7 @@ import neo.core
 import numpy as np
 import quantities as pq
 
-from general_features import GeneralFeatures
+from .general_features import GeneralFeatures
 
 
 class NetworkFeatures(GeneralFeatures):

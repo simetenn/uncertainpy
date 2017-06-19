@@ -1,7 +1,7 @@
-from TestingModel import TestingModel0d, TestingModel1d, TestingModel2d
-from TestingModel import TestingModelNoTime, TestingModelNoTimeU
-from TestingModel import TestingModelAdaptive, TestingModelConstant
-from TestingModel import model_function
+from testing_models import TestingModel0d, TestingModel1d, TestingModel2d
+from testing_models import TestingModelNoTime, TestingModelNoTimeU
+from testing_models import TestingModelAdaptive, TestingModelConstant
+from testing_models import model_function
 
-from TestingFeatures import TestingFeatures
-from TestingUncertaintyCalculations import TestingUncertaintyCalculations
+from testing_features import TestingFeatures
+from testing_uncertainty import TestingUncertaintyCalculations
