@@ -1,7 +1,7 @@
 from uncertainpy import Model
 
 import numpy as np
-import odespy
+from scipy.integrate import odeint
 
 
 class HodgkinHuxley(Model):
@@ -105,12 +105,7 @@ class HodgkinHuxley(Model):
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
-
-        solver = odespy.RK4(self.dXdt)
-        solver.set_initial_condition(initial_conditions)
-        X, t = solver.solve(self.t)
-
-
+        X = odeint(self.dXdt, initial_conditions, self.t)
         U = X[:, 0]
 
-        return t, U
+        return self.t, U

@@ -1,16 +1,13 @@
 import numpy as np
-import odespy
+from scipy.integrate import odeint
 
 def coffe_cup(kappa=-0.05, u_env=20):
     u0 = 95
-    t_points = np.linspace(0, 200, 150)
+    t = np.linspace(0, 200, 150)
 
-    def f(u, t):
+    def f(u, t, kappa, u_env):
         return kappa*(u - u_env)
 
-    solver = odespy.RK4(f)
-    solver.set_initial_condition(u0)
-
-    U, t = solver.solve(t_points)
+    U = odeint(f, u0, t, args=(kappa, u_env))[:, 0]
 
     return t, U

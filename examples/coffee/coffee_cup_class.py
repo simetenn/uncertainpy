@@ -1,7 +1,6 @@
 from uncertainpy import Model
-
+from scipy.integrate import odeint
 import numpy as np
-import odespy
 
 class CoffeeCup(Model):
     """
@@ -13,15 +12,13 @@ class CoffeeCup(Model):
 
     def run(self, kappa=-0.05, u_env=20):
         u0 = 95
-        t_points = np.linspace(0, 200, 150)
+        t = np.linspace(0, 200, 150)
 
-        def f(u, t):
+        def f(u, t, kappa, u_env):
             return kappa*(u - u_env)
 
+        U = odeint(f, u0, t, args=(kappa, u_env))[:, 0]
 
-        solver = odespy.RK4(f)
-        solver.set_initial_condition(u0)
-
-        U, t = solver.solve(t_points)
+        return t, U
 
         return t, U

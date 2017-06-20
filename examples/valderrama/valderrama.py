@@ -1,7 +1,7 @@
 from uncertainpy import Model
 
 import numpy as np
-import odespy
+from scipy.integrate import odeint
 
 # The class name and file name must be the same
 class Valderrama(Model):
@@ -109,16 +109,18 @@ class Valderrama(Model):
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
 
-        solver = odespy.RK4(self.dXdt)
-        solver.set_initial_condition(initial_conditions)
-        X, t = solver.solve(self.t)
+        # solver = odespy.RK4(self.dXdt)
+        # solver.set_initial_condition(initial_conditions)
+        # X, t = solver.solve(self.t)
 
+        X = odeint(self.dXdt, initial_conditions, self.t)
+        U = X[:, 0]
 
         # t = t[t > 5]
         # U = X[:, 0][t > 5]
 
 
-        t = t
+        t = self.t
         U = X[:, 0]
 
         return t, U

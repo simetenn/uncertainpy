@@ -95,7 +95,7 @@ RUN apt-get -y install texlive-latex-base texlive-latex-extra texlive-fonts-reco
 RUN apt-get -y install dvipng
 RUN apt-get -y install Xvfb
 RUN apt-get -y install h5utils
-RUN apt-get -y install libx11-dev libxext-dev x11-apps
+# RUN apt-get -y install libx11-dev libxext-dev x11-apps
 
 
 RUN conda install -c conda-forge xvfbwrapper
