@@ -9,36 +9,25 @@ class MyFormatter(logging.Formatter):
     warning_format = "%(levelname)s - %(module)s - %(message)s"
     error_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
 
+    debugg_fmt = logging.Formatter(debugg_format)
+    info_fmt = logging.Formatter(info_format)
+    warning_fmt = logging.Formatter(warning_format)
+    error_fmt = logging.Formatter(error_format)
+
 
     def __init__(self, fmt="%(levelno)s: %(msg)s"):
-        logging.Formatter.__init__(self, fmt)
+        super(MyFormatter, self).__init__(fmt)
 
 
     def format(self, record):
-        # Save the original format configured by the user
-        # when the logger formatter was instantiated
-        format_orig = self._fmt
-
-        # Replace the original format with one customized by logging level
         if record.levelno == logging.DEBUG:
-            self._fmt = MyFormatter.debugg_format
-
+            return self.debugg_fmt.format(record)
         elif record.levelno == logging.INFO:
-            self._fmt = MyFormatter.info_format
-
+            return self.info_fmt.format(record)
         elif record.levelno == logging.WARNING:
-            self._fmt = MyFormatter.warning_format
-
+            return self.warning_fmt.format(record)
         elif record.levelno == logging.ERROR:
-            self._fmt = MyFormatter.error_format
-
-        # Call the original formatter class to do the grunt work
-        result = logging.Formatter.format(self, record)
-
-        # Restore the original format configured by the user
-        self._fmt = format_orig
-
-        return result
+            return self.error_fmt.format(record)
 
 
 def create_logger(logger_level, logger_filename=None, logger_name="logger"):

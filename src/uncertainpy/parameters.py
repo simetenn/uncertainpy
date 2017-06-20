@@ -1,6 +1,7 @@
 import re
 import fileinput
 import sys
+from builtins import dict
 
 import chaospy as cp
 
@@ -176,13 +177,13 @@ Parameter object
 Return a readable string
         """
         result = ""
-        for name in self.parameters.keys():
+        for name in sorted(self.parameters.keys()):
             result += str(self.parameters[name]) + "\n"
 
         return result.strip()
 
     def __iter__(self):
-        return self.parameters.itervalues()
+        return iter(self.parameters.values())
 
 
     def set_distribution(self, parameter, distribution):
