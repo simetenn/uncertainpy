@@ -233,8 +233,10 @@ results = [result 1, result 2, ..., result N]
     def create_model_parameters(self, nodes, uncertain_parameters):
         model_parameters = []
         for node in nodes.T:
-            if isinstance(node, float) or isinstance(node, int):
+            if node.ndim == 0:
                 node = [node]
+            # if isinstance(node, float) or isinstance(node, int):
+            #     node = [node]
 
             # New setparameters
             parameters = {}
