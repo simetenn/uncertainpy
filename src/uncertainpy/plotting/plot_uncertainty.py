@@ -5,10 +5,10 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from prettyplot import prettyPlot, prettyBar
-from prettyplot import spines_color, get_current_colormap
-from prettyplot import get_colormap_tableu20, set_style
-from prettyplot import axis_grey, labelsize, fontsize, titlesize
+from .prettyplot import prettyPlot, prettyBar
+from .prettyplot import spines_color, get_current_colormap
+from .prettyplot import get_colormap_tableu20, set_style
+from .prettyplot import axis_grey, labelsize, fontsize, titlesize
 
 from ..data import Data
 from ..utils import create_logger

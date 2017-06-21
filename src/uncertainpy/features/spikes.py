@@ -1,4 +1,4 @@
-from prettyplot import prettyPlot, create_figure, reset_style
+from ..plotting.prettyplot import prettyPlot, create_figure
 
 import pylab as plt
 import numpy as np

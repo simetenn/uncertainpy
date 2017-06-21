@@ -113,14 +113,8 @@ RUN pip install elephant
 
 # # # RUN conda install -c conda-forge matplotlib=2.0.0
 
-
-
 COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
 
 RUN cp -r tests/figures_docker/. tests/figures/.
 RUN python setup.py install
-
-# TODO does not work so manually added to pythonpath
-# RUN cd prettyplot; python setup.py install
-# RUN echo "export PYTHONPATH=$PYTHONPATH:/home/docker/uncertainpy/prettyplot" >> ../.bashrc
