@@ -120,7 +120,7 @@ RUN pip install elephant
 
 
 
-COPY . $HOME/uncertainpy
+COPY ../. $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
 
 RUN cd prettyplot; python setup.py install

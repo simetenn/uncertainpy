@@ -1,0 +1,129 @@
+FROM continuumio/anaconda
+
+# https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
+RUN set -x \
+	&& apt-get update \
+	&& { \
+		which gpg \
+# prefer gnupg2, to match APT's Recommends
+		|| apt-get install -y --no-install-recommends gnupg2 \
+		|| apt-get install -y --no-install-recommends gnupg \
+	; } \
+# Ubuntu includes "gnupg" (not "gnupg2", but still 2.x), but not dirmngr, and gnupg 2.x requires dirmngr
+# so, if we're not running gnupg 1.x, explicitly install dirmngr too
+	&& { \
+		gpg --version | grep -q '^gpg (GnuPG) 1\.' \
+		|| apt-get install -y --no-install-recommends dirmngr \
+	; } \
+	&& rm -rf /var/lib/apt/lists/*
+
+# apt-key is a bit finicky during "docker build" with gnupg 2.x, so install the repo key the same way debian-archive-keyring does (/etc/apt/trusted.gpg.d)
+# this makes "apt-key list" output prettier too!
+RUN set -x \
+	&& export GNUPGHOME="$(mktemp -d)" \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys DD95CC430502E37EF840ACEEA5D32F012649A5A9 \
+	&& gpg --export DD95CC430502E37EF840ACEEA5D32F012649A5A9 > /etc/apt/trusted.gpg.d/neurodebian.gpg \
+	&& rm -rf "$GNUPGHOME" \
+	&& apt-key list | grep neurodebian
+
+RUN { \
+	echo 'deb http://neuro.debian.net/debian artful main'; \
+	echo 'deb http://neuro.debian.net/debian data main'; \
+	echo '#deb-src http://neuro.debian.net/debian-devel artful main'; \
+} > /etc/apt/sources.list.d/neurodebian.sources.list
+
+
+
+# Install Nest and Neuron
+ENV LANG=C.UTF-8
+
+RUN apt-get update; apt-get install -y automake libtool build-essential openmpi-bin libopenmpi-dev \
+                                       libncurses5-dev libreadline-dev libgsl0-dev cmake
+
+
+ENV HOME=/home/docker
+ENV VENV=$HOME/simulators
+RUN mkdir $HOME; mkdir $HOME/packages; mkdir $VENV
+
+
+ENV NEST_VER=2.12.0 NRN_VER=7.4
+ENV NEST=nest-$NEST_VER NRN=nrn-$NRN_VER
+
+WORKDIR $HOME/packages
+ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
+ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz .
+RUN tar xzf $NEST.tar.gz; tar xzf $NRN.tar.gz; rm $NEST.tar.gz $NRN.tar.gz
+
+RUN mkdir $VENV/build
+WORKDIR $VENV/build
+RUN mkdir $NRN; \
+    cd $NRN; \
+    $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV; \
+    make; make install; \
+    cd src/nrnpython; python setup.py install; \
+    cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl
+
+RUN mkdir $NEST; \
+    cd $NEST; \
+    cmake -DCMAKE_INSTALL_PREFIX=$VENV \
+          -Dwith-mpi=ON  \
+          -Dwith-python=2 \
+        #   -DPYTHON_EXECUTABLE=/opt/conda/bin/python3.6 \
+        #   -DPYTHON_LIBRARY=/opt/conda/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6m.a \
+        #   -DPYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m \
+          $HOME/packages/$NEST; \
+    make; make install;
+
+
+RUN pip install nrnutils
+
+WORKDIR /home/docker/
+RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
+
+RUN conda install libgcc
+
+
+
+
+# Install uncertainpy and dependencies
+
+
+# # Uncertainpy dependencies
+RUN apt-get update --fix-missing
+
+RUN apt-get -y install texlive-latex-base texlive-latex-extra texlive-fonts-recommended
+RUN apt-get -y install dvipng
+RUN apt-get -y install Xvfb
+RUN apt-get -y install h5utils
+# RUN apt-get -y install libx11-dev libxext-dev x11-apps
+
+
+RUN conda install -c conda-forge xvfbwrapper
+RUN conda install -c conda-forge multiprocess
+
+
+# # Downgrade the pyqt package to solve a bug in anaconda
+# RUN conda install pyqt=4.11
+# RUN conda install -c anaconda pandas
+# RUN conda install -c anaconda seaborn
+
+
+# RUN conda install -c undy odespy
+# RUN apt-get -y install git
+# RUN git clone git@github.com:hplgit/odespy.git
+# RUN cd odespy; sudo python setup.py install
+
+
+RUN pip install elephant
+
+# # RUN conda install -c conda-forge matplotlib=2.0.0
+
+
+
+COPY ../. $HOME/uncertainpy
+WORKDIR $HOME/uncertainpy
+
+RUN cd prettyplot; python setup.py install
+
+RUN cp -r tests/figures_docker/. tests/figures/.
+RUN python setup.py install
