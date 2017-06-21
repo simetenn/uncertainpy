@@ -65,22 +65,15 @@ test_parameters = create_test_suite([TestParameter, TestParameters])
 test_data = create_test_suite([TestData])
 
 test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
-
-# test_plotUncertaintyCompare = create_test_suite([TestPlotUncertainpyCompare])
-
+test_plotUncertaintyEqual = create_test_suite([TestPlotUncertainpyEqual])
 
 test_uncertainty = create_test_suite([TestUncertainty])
-
-# test_exploration = create_test_suite([TestExploration])
 
 test_usecase = create_test_suite([TestUseCases])
 
 test_utils = unittest.TestSuite([test_logger])
 
-
-
-# test_plotting = unittest.TestSuite([test_plotUncertainty, test_plotUncertaintyCompare])
-test_plotting = unittest.TestSuite([test_plotUncertainty])
+test_plotting = unittest.TestSuite([test_plotUncertainty, test_plotUncertaintyEqual])
 
 test_prerequisites = unittest.TestSuite([test_utils,
                                          test_parameters,
@@ -94,14 +87,14 @@ test_prerequisites = unittest.TestSuite([test_utils,
 test_basic = unittest.TestSuite([test_prerequisites,
                                  test_uncertaintycalculations])
 
-test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
+test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertaintyEqual])
 
 test_examples = create_test_suite([TestExamples])
 
-test_travis = unittest.TestSuite([test_basic, test_uncertainty])
+test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
 
 test_all = unittest.TestSuite([test_basic, test_uncertainty,
-                               test_plotUncertainty, test_examples])
+                               test_plotUncertainty, test_plotUncertaintyEqual, test_examples])
 
 # test_all = unittest.TestSuite([test_fast, test_usecase])
 # test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])

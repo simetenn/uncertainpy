@@ -23,6 +23,7 @@ __all__ = ["TestDistribution",
            "TestParameter",
            "TestParameters",
            "TestPlotUncertainpy",
+           "TestPlotUncertainpyEqual",
         #    "TestPlotUncertainpyCompare",
            "TestSpike",
            "TestSpikes",
@@ -46,6 +47,7 @@ from .test_models import TestTestingModel2d, TestNeuronModel
 
 from .test_parameters import TestParameter, TestParameters
 from .test_plot_uncertainty import TestPlotUncertainpy
+from .test_plot_uncertainty_equal import TestPlotUncertainpyEqual
 # from test_plotUncertaintyCompare import TestPlotUncertainpyCompare
 from .test_spike import TestSpike
 from .test_spikes import TestSpikes
