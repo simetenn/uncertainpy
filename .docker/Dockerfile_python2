@@ -91,6 +91,8 @@ RUN conda install libgcc
 RUN apt-get -y install texlive-latex-base texlive-latex-extra # texlive-fonts-recommended
 RUN apt-get -y install dvipng
 RUN apt-get -y install Xvfb
+RUN conda install -c conda-forge matplotlib
+RUN conda install -c anaconda seaborn
 # RUN apt-get -y install h5utils
 # # RUN apt-get -y install libx11-dev libxext-dev x11-apps
 
@@ -109,7 +111,6 @@ RUN conda install -c anaconda future
 
 RUN pip install elephant
 
-# # # RUN conda install -c conda-forge matplotlib=2.0.0
 
 COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
