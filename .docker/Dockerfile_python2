@@ -118,9 +118,9 @@ RUN pip install elephant
 COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
 
-# TODO does not work so manually added to pythonpath
-# RUN cd prettyplot; python setup.py install
-RUN echo "export {PYTHONPATH}:/home/docker/uncertainpy/prettyplot" >> .bashrc
-
 RUN cp -r tests/figures_docker/. tests/figures/.
 RUN python setup.py install
+
+# TODO does not work so manually added to pythonpath
+# RUN cd prettyplot; python setup.py install
+# RUN echo "export PYTHONPATH=$PYTHONPATH:/home/docker/uncertainpy/prettyplot" >> ../.bashrc

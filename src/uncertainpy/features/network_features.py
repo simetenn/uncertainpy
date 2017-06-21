@@ -33,7 +33,7 @@ class NetworkFeatures(GeneralFeatures):
                               "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
                               "binned_isi": ["Interspike interval [{}]".format(unit_string),
                                              "Neuron nr", "count"],
-                              "corrcoeff": ["Neuron nr", "Neuron nr", ""],
+                              "corrcoef": ["Neuron nr", "Neuron nr", ""],
                               "covariance": ["Neuron nr", "Neuron nr", ""]
                              }
 
