@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git@github.com:simetenn/prettyplot.git
 	branch = master
-	commit = 306cb49a59b2950ed0fc48d40ed67381166c950f
-	parent = e1cc7dfc4275d722ac05382e2685fc527f56c4ab
+	commit = 9b20a5e30b8c5f549aa59b35cbd2d2f8495852d0
+	parent = 8a2a578a22914655e544c7c911e50a9a8e09e658
 	cmdver = 0.3.1
