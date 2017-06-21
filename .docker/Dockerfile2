@@ -68,9 +68,9 @@ RUN mkdir $NEST; \
     cmake -DCMAKE_INSTALL_PREFIX=$VENV \
           -Dwith-mpi=ON  \
           -Dwith-python=2 \
-        #   -DPYTHON_EXECUTABLE=/opt/conda/bin/python3.6 \
-        #   -DPYTHON_LIBRARY=/opt/conda/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6m.a \
-        #   -DPYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m \
+          -DPYTHON_EXECUTABLE=/opt/conda/bin/python2.7 \
+          -DPYTHON_LIBRARY=/opt/conda/lib/python2.7 \
+          -DPYTHON_INCLUDE_DIR=/opt/conda/include/python2.7 \
           $HOME/packages/$NEST; \
     make; make install;
 
@@ -84,43 +84,42 @@ RUN conda install libgcc
 
 
 
+# # Install uncertainpy and dependencies
 
-# Install uncertainpy and dependencies
 
+# # # Uncertainpy dependencies
+# RUN apt-get update --fix-missing
 
-# # Uncertainpy dependencies
-RUN apt-get update --fix-missing
-
-RUN apt-get -y install texlive-latex-base texlive-latex-extra texlive-fonts-recommended
+RUN apt-get -y install texlive-latex-base texlive-latex-extra # texlive-fonts-recommended
 RUN apt-get -y install dvipng
 RUN apt-get -y install Xvfb
-RUN apt-get -y install h5utils
-# RUN apt-get -y install libx11-dev libxext-dev x11-apps
+# RUN apt-get -y install h5utils
+# # RUN apt-get -y install libx11-dev libxext-dev x11-apps
 
 
 RUN conda install -c conda-forge xvfbwrapper
 RUN conda install -c conda-forge multiprocess
+RUN conda install -c anaconda future
+
+# # # Downgrade the pyqt package to solve a bug in anaconda
+# # RUN conda install pyqt=4.11
+# # RUN conda install -c anaconda pandas
+# # RUN conda install -c anaconda seaborn
 
 
-# # Downgrade the pyqt package to solve a bug in anaconda
-# RUN conda install pyqt=4.11
-# RUN conda install -c anaconda pandas
-# RUN conda install -c anaconda seaborn
-
-
-# RUN conda install -c undy odespy
-# RUN apt-get -y install git
-# RUN git clone git@github.com:hplgit/odespy.git
-# RUN cd odespy; sudo python setup.py install
+# # RUN conda install -c undy odespy
+# # RUN apt-get -y install git
+# # RUN git clone git@github.com:hplgit/odespy.git
+# # RUN cd odespy; sudo python setup.py install
 
 
 RUN pip install elephant
 
-# # RUN conda install -c conda-forge matplotlib=2.0.0
+# # # RUN conda install -c conda-forge matplotlib=2.0.0
 
 
 
-COPY ../. $HOME/uncertainpy
+COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
 
 RUN cd prettyplot; python setup.py install

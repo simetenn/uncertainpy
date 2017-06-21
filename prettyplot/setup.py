@@ -9,7 +9,7 @@ except ImportError:
 
 
 name = "prettyPlot"
-version = "0.8"
+version = "0.p"
 
 prettyplot_req = ["seaborn", "matplotlib", "numpy"]
 
@@ -20,4 +20,4 @@ setup(name=name,
       platforms='linux',
       packages=find_packages(),
       install_requires=prettyplot_req
-      )
+     )
