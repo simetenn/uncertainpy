@@ -107,10 +107,6 @@ RUN conda install -c anaconda future
 # # RUN conda install -c anaconda seaborn
 
 
-# # RUN conda install -c undy odespy
-# # RUN apt-get -y install git
-# # RUN git clone git@github.com:hplgit/odespy.git
-# # RUN cd odespy; sudo python setup.py install
 
 
 RUN pip install elephant
@@ -122,7 +118,9 @@ RUN pip install elephant
 COPY . $HOME/uncertainpy
 WORKDIR $HOME/uncertainpy
 
-RUN cd prettyplot; python setup.py install
+# TODO does not work so manually added to pythonpath
+# RUN cd prettyplot; python setup.py install
+RUN echo "export {PYTHONPATH}:/home/docker/uncertainpy/prettyplot" >> .bashrc
 
 RUN cp -r tests/figures_docker/. tests/figures/.
 RUN python setup.py install

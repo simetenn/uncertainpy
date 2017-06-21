@@ -20,5 +20,5 @@ uncertainty = un.UncertaintyEstimation(model,
                                        CPUs=1)
 
 
-uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_simulator_results=False)
+uncertainty.uncertainty_quantification(plot_condensed=True,
+                                       plot_simulator_results=True)
