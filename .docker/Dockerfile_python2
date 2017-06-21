@@ -79,13 +79,11 @@ RUN pip install nrnutils
 
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
-
 RUN conda install libgcc
 
 
 
 # # Install uncertainpy and dependencies
-
 
 # # # Uncertainpy dependencies
 # RUN apt-get update --fix-missing

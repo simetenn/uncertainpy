@@ -1,6 +1,6 @@
 from ..plotting.prettyplot import prettyPlot, create_figure
 
-import pylab as plt
+import matplotlib.pyplot as plt
 import numpy as np
 
 

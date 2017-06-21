@@ -1,5 +1,5 @@
 import glob
-import argparse
+# import argparse
 import os
 
 import matplotlib.pyplot as plt
@@ -1106,16 +1106,16 @@ class PlotUncertainty(object):
 
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Plot data")
-    parser.add_argument("-d", "--data_dir",
-                        help="Directory the data is stored in", default="data")
-    parser.add_argument("-o", "--output_dir",
-                        help="Folders to find compare files", default="figures")
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(description="Plot data")
+#     parser.add_argument("-d", "--data_dir",
+#                         help="Directory the data is stored in", default="data")
+#     parser.add_argument("-o", "--output_dir",
+#                         help="Folders to find compare files", default="figures")
 
-    args = parser.parse_args()
+#     args = parser.parse_args()
 
-    figureformat = ".png"
+#     figureformat = ".png"
 
 
     # plot = PlotUncertainty(data_dir=args.data_dir,
