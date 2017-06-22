@@ -38,21 +38,19 @@ feature_list
         # TODO consider storing all data belonging to one
         # specific feature in a dict for that feature
 
-        self.data_names = ["U", "t", "E", "Var", "p_05", "p_95",
+        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t"]
+                           "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
-        self.data_information = ["labels", "features_0d",
-                                 "features_1d", "features_2d", "feature_list",
-                                 "uncertain_parameters", "model_name"]
+        self.data_information = ["features_0d", "features_1d", "features_2d",
+                                 "feature_list", "uncertain_parameters", "model_name"]
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
-
 
         self.clear()
 
@@ -78,7 +76,7 @@ feature_list
                                                             current_info=current_info)
 
         output_str += border("Content of Data")
-        for name in self.data_names:
+        for name in self.data_types:
 
             output_str += border(name)
             current_data = getattr(self, name)
@@ -105,18 +103,7 @@ feature_list
         self._features_2d = []
         self.feature_list = []
 
-        self.labels = {}
-
-        self.U = {}
-        self.t = {}
-        self.E = {}
-        self.Var = {}
-        self.p_05 = {}
-        self.p_95 = {}
-        self.sensitivity_1 = {}
-        self.total_sensitivity_1 = {}
-        self.sensitivity_t = {}
-        self.total_sensitivity_t = {}
+        self.data = {}
 
         self.model_name = ""
 
@@ -153,38 +140,79 @@ feature_list
         self.feature_list.sort()
 
 
-    def get_labels(self, feature):
-        if feature in self.labels:
-            return self.labels[feature]
+    def sort_features(self, results):
+        """
+        result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                  "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
+                  self.model.name: {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
+                                    "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                  "feature0d": {"U": 1}}
+        """
 
-        elif feature in self.features_2d:
-            if self.model_name in self.features_2d and self.model_name in self.labels:
-                return self.labels[self.model_name]
+        features_2d = []
+        features_1d = []
+        features_0d = []
+
+        for feature in results:
+            if hasattr(results[feature]["U"], "__iter__"):
+                if len(results[feature]["U"].shape) == 0:
+                    features_0d.append(feature)
+                elif len(results[feature]["U"].shape) == 1:
+                    features_1d.append(feature)
+                else:
+                    features_2d.append(feature)
             else:
-                return ["", "", ""]
-        elif feature in self.features_1d:
-            if self.model_name in self.features_1d and self.model_name in self.labels:
-                return self.labels[self.model_name]
-            else:
-                return ["", ""]
-        elif feature in self.features_0d:
-            if self.model_name in self.features_0d and self.model_name in self.labels:
-                return self.labels[self.model_name]
-            else:
-                return [""]
+                features_0d.append(feature)
+
+        return features_0d, features_1d, features_2d
+
+
+    # def get_labels(self, feature):
+    #     if feature in self.labels:
+    #         return self.labels[feature]
+
+    #     elif feature in self.features_2d:
+    #         if self.model_name in self.features_2d and self.model_name in self.labels:
+    #             return self.labels[self.model_name]
+    #         else:
+    #             return ["", "", ""]
+    #     elif feature in self.features_1d:
+    #         if self.model_name in self.features_1d and self.model_name in self.labels:
+    #             return self.labels[self.model_name]
+    #         else:
+    #             return ["", ""]
+    #     elif feature in self.features_0d:
+    #         if self.model_name in self.features_0d and self.model_name in self.labels:
+    #             return self.labels[self.model_name]
+    #         else:
+    #             return [""]
+
+
+    def __getitem__(self, feature):
+        return self.data[feature]
+
+    # def __setitem__(self, feature, value):
+    #     self.data[feature] = value
+
+
+    def add_feature(self, feature):
+        self.data[feature] = {}
+
+        for data_type in self.data_types:
+            self.data[feature][data_type] = None
 
 
 
-    def is_adaptive(self):
+    def is_adaptive(self, feature):
         """
 Test if the model returned an adaptive result
         """
-        for feature in self.features_1d + self.features_2d:
-            u_prev = self.U[feature][0]
-            for u in self.U[feature][1:]:
-                if u_prev.shape != u.shape:
-                    return True
-                u_prev = u
+        u_prev = self[feature]["U"][0]
+        for u in self[feature]["U"][1:]:
+            if u_prev.shape != u.shape:
+                return True
+            u_prev = u
         return False
 
 
@@ -195,26 +223,34 @@ Test if the model returned an adaptive result
 
             # f.attrs["name"] = self.output_file.split("/")[-1]
             f.attrs["uncertain parameters"] = self.uncertain_parameters
-            f.attrs["features"] = self.feature_list
-            f.attrs["features_0d"] = self.features_0d
-            f.attrs["features_1d"] = self.features_1d
-            f.attrs["features_2d"] = self.features_2d
+            # f.attrs["features"] = self.feature_list
+            # f.attrs["features_0d"] = self.features_0d
+            # f.attrs["features_1d"] = self.features_1d
+            # f.attrs["features_2d"] = self.features_2d
             f.attrs["model name"] = self.model_name
 
-            label_group = f.create_group("_labels")
+            # label_group = f.create_group("_labels")
 
-            for feature in self.labels:
-                label_group.attrs[feature] = self.labels[feature]
+            # for feature in self.labels:
+            #     label_group.attrs[feature] = self.labels[feature]
 
-
-            for feature in self.feature_list:
+            for feature in self.data:
                 group = f.create_group(feature)
 
-                for data_name in self.data_names:
-                    data = getattr(self, data_name)
+                for data_type in self.data[feature]:
+                    if self.data[feature][data_type] is not None:
 
-                    if feature in data and data[feature] is not None:
-                        group.create_dataset(data_name, data=data[feature])
+                        group.create_dataset(data_type, data=self.data[feature][data_type])
+
+
+            # for feature in self.feature_list:
+            #     group = f.create_group(feature)
+
+            #     for data_name in self.data_types:
+            #         data = getattr(self, data_name)
+
+            #         if feature in data and data[feature] is not None:
+            #             group.create_dataset(data_name, data=data[feature])
 
 
     def load(self, filename):
@@ -243,7 +279,7 @@ Test if the model returned an adaptive result
 
 
             for feature in self.feature_list:
-                for data_name in self.data_names:
+                for data_name in self.data_types:
                     data = getattr(self, data_name)
 
                     if data_name in f[feature].keys():
@@ -272,7 +308,7 @@ Test if the model returned an adaptive result
 
 
     # def all_to_none(self):
-    #     for data_name in self.data_names:
+    #     for data_name in self.data_types:
     #         data = getattr(self, data_name)
     #         if data is not None:
     #             for feature in data:
@@ -282,7 +318,7 @@ Test if the model returned an adaptive result
     #         data = self.nan_to_none(data)
     #
     # def all_to_nan(self):
-    #     for data_name in self.data_names:
+    #     for data_name in self.data_types:
     #         data = getattr(self, data_name)
     #         if data is not None:
     #             for feature in data:
