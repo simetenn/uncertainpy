@@ -3,12 +3,7 @@ import os
 import unittest
 import subprocess
 import shutil
-import matplotlib
 import numpy as np
-
-matplotlib.use('Agg')
-
-
 
 from uncertainpy.plotting.plot_uncertainty import PlotUncertainty
 from uncertainpy import Data

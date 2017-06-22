@@ -13,15 +13,14 @@ except ImportError:
 
 
 if not platform.system() == "Linux":
-    print("Warning: OS not supported, installation may fail")
+    print("Warning: UncertainPy not tested for current Operating System")
 
 name = "uncertainpy"
 # virtual_enviroment = name
 
-uncertainpy_req = []
-dependency_links = []
 uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "future", "h5py",
-                   "multiprocess", "seaborn", "numpy", "scipy", "matplotlib"]
+                   "multiprocess", "seaborn", "numpy", "scipy"]
+# uncertainpy_req = ["chaospy", "numpy"]
 dependency_links = []
 
 

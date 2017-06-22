@@ -2,8 +2,8 @@ import unittest
 import sys
 import argparse
 
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 
 
 from tests import *

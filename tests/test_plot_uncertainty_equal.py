@@ -3,10 +3,10 @@ import os
 import unittest
 import subprocess
 import shutil
-import matplotlib
 import numpy as np
 
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 
 
 
