@@ -191,6 +191,11 @@ feature_list
     def __contains__(self, feature):
         return feature in self.data
 
+
+    def __delitem__(self, feature):
+        del self.data[feature]
+
+
     def add_features(self, features):
         if isinstance(features, str):
             features = [features]
@@ -302,8 +307,7 @@ Test if the model returned an adaptive result
                 # raise RuntimeWarning("Feature: {} does not yield
                 # results for any parameter combinations".format(feature))
 
-                self.U[feature] = "Only invalid results for all set of parameters"
-                self.feature_list.remove(feature)
+                del self[feature]
 
                 if feature in self.features_0d:
                     self.features_0d.remove(feature)

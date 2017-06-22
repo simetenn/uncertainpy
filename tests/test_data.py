@@ -243,6 +243,17 @@ class TestData(unittest.TestCase):
         self.assertTrue("test2" in self.data)
         self.assertFalse("random" in self.data)
 
+
+    def test_delitem(self):
+        self.data.data["test1"] = 1
+        self.data.data["test2"] = 2
+
+        del self.data["test2"]
+
+        self.assertTrue("test1" in self.data)
+        self.assertFalse("test2" in self.data)
+
+
     # def test_remove_only_invalid_results(self):
     #     self.data.t = {"feature1d": np.array([1, 2]), "TestingModel1d": np.array([3, 4])}
     #     self.data.U = {"feature1d": np.array([[1, 2], [2, 3]]),
