@@ -18,4 +18,4 @@ before_install:
 #   - "sh -e /etc/init.d/xvfb start"
 #   - sleep 3 # give xvfb some time to start
 script:
-    - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/travis.sh
+    - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.travis/travis.sh
