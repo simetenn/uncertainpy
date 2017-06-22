@@ -35,16 +35,13 @@ features_2d
 feature_list
         """
 
-        # TODO consider storing all data belonging to one
-        # specific feature in a dict for that feature
-
         self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
                            "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
         self.data_information = ["features_0d", "features_1d", "features_2d",
-                                 "feature_list", "uncertain_parameters", "model_name"]
+                                 "uncertain_parameters", "model_name"]
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -68,27 +65,22 @@ feature_list
 {line}\n\n""".format(line=line, msg=msg)
             return string
 
-        output_str = border("Information on Data")
+        output_str = border("Information")
 
         for info in self.data_information:
             current_info = getattr(self, info)
             output_str += "{info}: {current_info}\n".format(info=info,
                                                             current_info=current_info)
 
-        output_str += border("Content of Data")
-        for name in self.data_types:
+        output_str += border("Content")
 
-            output_str += border(name)
-            current_data = getattr(self, name)
 
-            for feature in self.feature_list:
-                output_str += "=== {feature} ===\n".format(feature=feature)
-                if feature in self.labels:
-                     output_str += "{}\n\n".format(self.labels[feature])
-                if feature in current_data:
-                    output_str += "{data}\n\n".format(data=current_data[feature])
-                else:
-                    output_str += "No data\n\n"
+
+        for feature in self.data:
+            output_str += border(feature)
+            for data_type in self.data[feature]:
+                output_str += "=== {data_type} ===\n".format(data_type=data_type)
+                output_str += "{data}\n\n".format(data=self.data[feature][data_type])
 
 
         return output_str.strip()
@@ -101,7 +93,6 @@ feature_list
         self._features_0d = []
         self._features_1d = []
         self._features_2d = []
-        self.feature_list = []
 
         self.data = {}
 
@@ -192,15 +183,17 @@ feature_list
     def __getitem__(self, feature):
         return self.data[feature]
 
-    # def __setitem__(self, feature, value):
-    #     self.data[feature] = value
 
 
-    def add_feature(self, feature):
-        self.data[feature] = {}
+    def add_features(self, features):
+        if isinstance(features, str):
+            features = [features]
 
-        for data_type in self.data_types:
-            self.data[feature][data_type] = None
+        for feature in features:
+            self.data[feature] = {}
+
+            # for data_type in self.data_types:
+            #     self.data[feature][data_type] = None
 
 
 

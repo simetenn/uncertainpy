@@ -19,6 +19,14 @@ class TestData(unittest.TestCase):
 
         self.data = Data()
 
+        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                           "sensitivity_1", "total_sensitivity_1",
+                           "sensitivity_t", "total_sensitivity_t", "labels"]
+
+
+        self.data_information = ["features_0d", "features_1d", "features_2d",
+                                 "feature_list", "uncertain_parameters", "model_name"]
+
 
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
@@ -38,15 +46,14 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
-    def test_add_feature(self):
-        self.data.add_feature("feature1d")
+    def test_add_features(self):
+        self.data.add_features("feature1")
 
-        correct = {'E': None, 'p_05': None, 'sensitivity_1': None,
-                   'p_95': None, 'total_sensitivity_1': None,
-                   'total_sensitivity_t': None, 'U': None,
-                   't': None, 'Var': None, 'sensitivity_t': None}
+        self.assertEqual(self.data.data, {"feature1": {}})
 
-        self.assertEqual(self.data.data['feature1d'], correct)
+        self.data.add_features(["feature2", "feature3"])
+
+        self.assertEqual(self.data.data, {"feature1": {}, "feature2": {}, "feature3": {}})
 
     # def test_nan_to_none(self):
     #     a = np.array([0, 1, 2, None, 4, None, None])
@@ -100,26 +107,20 @@ class TestData(unittest.TestCase):
     #     self.assertTrue(self.data.is_adaptive())
 
     def test_save(self):
-        self.data.data.add_feature("feature1d")
-
-        self.data.t = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-        self.data.U = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-        self.data.E = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-        self.data.Var = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-        self.data.p_05 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-        self.data.p_95 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-        self.data.sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-        self.data.total_sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-
-        self.data.sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-        self.data.total_sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
 
 
-        self.data.uncertain_parameters = ["a", "b"]
-        self.data.labels = {"feature1d": ["xlabel", "ylabel"], "TestingModel1d": ["xlabel", "ylabel"]}
+        self.data.add_features(["feature1d", "TestingModel1d"])
+
+        for data_type in self.data_types:
+            self.data["feature1d"][data_type] = [1., 2.]
+            self.data["TestingModel1d"][data_type] = [3., 4.]
+
+        self.data["feature1d"]["labels"] = ["xlabel", "ylabel"]
+        self.data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
 
         self.data.model_name = "TestingModel1d"
-        self.data.feature_list = ["TestingModel1d", "feature1d"]
+
+        print self.data
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -275,14 +276,14 @@ class TestData(unittest.TestCase):
     #     self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
-    # def test_str(self):
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+    def test_str(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
 
-    #     self.data.load(compare_file)
+        self.data.load(compare_file)
 
-    #     # TODO Test that the content of the data string is correct
-    #     self.assertIsInstance(str(self.data), str)
+        # TODO Test that the content of the data string is correct
+        self.assertIsInstance(str(self.data), str)
 
 
 
@@ -292,11 +293,8 @@ class TestData(unittest.TestCase):
         self.data._features_0d = -1
         self.data._features_1d = -1
         self.data._features_2d = -1
-        self.data.feature_list = -1
 
         self.data.data = -1
-
-        self.data.labels = -1
 
         self.data.clear()
 
@@ -305,7 +303,5 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.features_1d, [])
         self.assertEqual(self.data.features_2d, [])
-        self.assertEqual(self.data.feature_list, [])
         self.assertEqual(self.data.data, {})
-        self.assertEqual(self.data.labels, {})
 
