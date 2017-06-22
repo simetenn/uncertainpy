@@ -108,28 +108,28 @@ class TestParallel(unittest.TestCase):
 
 
 
-    def test_sort_features(self):
-        results = {"TestingModel1d": {"U": np.arange(0, 10) + 1,
-                                        "t": np.arange(0, 10)},
-                   "feature1d": {"U": np.arange(0, 10),
-                                 "t": np.arange(0, 10)},
-                   "feature0d": {"U": 1,
-                                 "t": np.nan},
-                   "feature2d": {"U": np.array([np.arange(0, 10),
-                                                np.arange(0, 10)]),
-                                 "t": np.arange(0, 10)},
-                   "feature_adaptive": {"U": np.arange(0, 10) + 1,
-                                        "t": np.arange(0, 10),
-                                        "interpolation": "interpolation object"},
-                   "feature_invalid": {"U": np.nan,
-                                       "t": np.nan}}
+    # def test_sort_features(self):
+    #     results = {"TestingModel1d": {"U": np.arange(0, 10) + 1,
+    #                                     "t": np.arange(0, 10)},
+    #                "feature1d": {"U": np.arange(0, 10),
+    #                              "t": np.arange(0, 10)},
+    #                "feature0d": {"U": 1,
+    #                              "t": np.nan},
+    #                "feature2d": {"U": np.array([np.arange(0, 10),
+    #                                             np.arange(0, 10)]),
+    #                              "t": np.arange(0, 10)},
+    #                "feature_adaptive": {"U": np.arange(0, 10) + 1,
+    #                                     "t": np.arange(0, 10),
+    #                                     "interpolation": "interpolation object"},
+    #                "feature_invalid": {"U": np.nan,
+    #                                    "t": np.nan}}
 
-        features_0d, features_1d, features_2d = self.parallel.sort_features(results)
+    #     features_0d, features_1d, features_2d = self.parallel.sort_features(results)
 
-        self.assertEqual(features_0d, ["feature0d", "feature_invalid"])
-        self.assertEqual(set(features_1d),
-                         set(["feature1d", "TestingModel1d", "feature_adaptive"]))
-        self.assertEqual(features_2d, ["feature2d"])
+    #     self.assertEqual(features_0d, ["feature0d", "feature_invalid"])
+    #     self.assertEqual(set(features_1d),
+    #                      set(["feature1d", "TestingModel1d", "feature_adaptive"]))
+    #     self.assertEqual(features_2d, ["feature2d"])
 
 
 

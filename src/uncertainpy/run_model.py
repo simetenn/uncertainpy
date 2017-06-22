@@ -21,7 +21,9 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
+                               "interpolation": <scipy.interpolate.fitpack2. \
+                                                InterpolatedUnivariateSpline \
+                                                object at 0x7f1c78f0d4d0>},
           "feature_invalid": {"U": np.nan,
                               "t": np.nan}}
 
@@ -56,14 +58,18 @@ class RunModel(ParameterBase):
 
 
 
+    # TODO working here, updating to use new data
     @ParameterBase.features.setter
     def features(self, new_features):
         # Remove all labels but the model labels from data
         if self.model is not None and self.model.name in self.data.labels:
-            if len(self.model.labels) > 0:
+            if self.model.labels:
                 self.data.labels = {self.model.name: self.model.labels}
             else:
                 self.data.labels = {}
+
+        # for feature in self.data:
+
 
         ParameterBase.features.fset(self, new_features)
 
@@ -72,7 +78,7 @@ class RunModel(ParameterBase):
         if self.features is not None:
             # Update data feature labels only if there are labels belonging to that feature
             for feature in self.features.labels:
-                if len(self.features.labels[feature]) > 0:
+                if self.features.labels[feature]:
                     self.data.labels[feature] = self.features.labels[feature]
 
             self.data.labels.update(self.features.labels)
@@ -134,11 +140,11 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 results = [result 1, result 2, ..., result N]
         """
 
-        features_0d, features_1d, features_2d = self.parallel.sort_features(results[0])
+        # features_0d, features_1d, features_2d = self.parallel.sort_features(results[0])
 
-        self.data.features_0d = features_0d
-        self.data.features_1d = features_1d
-        self.data.features_2d = features_2d
+        # self.data.features_0d = features_0d
+        # self.data.features_1d = features_1d
+        # self.data.features_2d = features_2d
 
 
         # Check if features are adaptive withouth being specified as a adaptive
@@ -235,8 +241,6 @@ results = [result 1, result 2, ..., result N]
         for node in nodes.T:
             if node.ndim == 0:
                 node = [node]
-            # if isinstance(node, float) or isinstance(node, int):
-            #     node = [node]
 
             # New setparameters
             parameters = {}

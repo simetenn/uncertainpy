@@ -41,8 +41,7 @@ feature_list
                            "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
-        self.data_information = ["features_0d", "features_1d", "features_2d",
-                                 "uncertain_parameters", "model_name"]
+        self.data_information = ["uncertain_parameters", "model_name"]
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -50,13 +49,19 @@ feature_list
                                     verbose_filename,
                                     self.__class__.__name__)
 
-        self.clear()
+
+        self.uncertain_parameters = []
+        self.model_name = ""
+        self.data = {}
+
 
         if filename is not None:
             self.load(filename)
 
 
+
     def __str__(self):
+
         def border(msg):
             count = len(msg) + 6
             line = "="*(count + 2)
@@ -90,14 +95,15 @@ feature_list
 
     def clear(self):
         self.uncertain_parameters = []
-
-        self.features_0d = []
-        self.features_1d = []
-        self.features_2d = []
+        self.model_name = ""
 
         self.data = {}
+        # self.features_0d = []
+        # self.features_1d = []
+        # self.features_2d = []
 
-        self.model_name = ""
+
+
 
 
     # @property
@@ -170,7 +176,7 @@ feature_list
     def ndim(self, feature):
     #     if "U" in self[feature]:
     #         ndim = np.ndim(self[feature]["U"])
-        return np.ndim(self[feature]["U"])
+        return np.ndim(self[feature]["U"][0])
 
 
 
@@ -178,28 +184,43 @@ feature_list
         if "labels" in self[feature]:
             return self[feature]["labels"]
 
-        elif feature in self.features_2d:
-            if self.model_name in self.features_2d and "labels" in self[self.model_name]:
+        elif self.ndim(feature) == 2:
+            if self.ndim(self.model_name) == 2 and "labels" in self[self.model_name]:
                 return self[self.model_name]["labels"]
             else:
                 return ["", "", ""]
-        elif feature in self.features_1d:
-            if self.model_name in self.features_1d and "labels" in self[self.model_name]:
+        elif self.ndim(feature) == 1:
+            if self.ndim(self.model_name) == 1 and "labels" in self[self.model_name]:
                 return self[self.model_name]["labels"]
             else:
                 return ["", ""]
-        elif feature in self.features_0d:
-            if self.model_name in self.features_0d and "labels" in self[self.model_name]:
+        elif self.ndim(feature) == 0:
+            if self.ndim(self.model_name) == 0 and "labels" in self[self.model_name]:
                 return self[self.model_name]["labels"]
             else:
                 return [""]
+
+        # elif feature in self.features_2d:
+        #     if self.model_name in self.features_2d and "labels" in self[self.model_name]:
+        #         return self[self.model_name]["labels"]
+        #     else:
+        #         return ["", "", ""]
+        # elif feature in self.features_1d:
+        #     if self.model_name in self.features_1d and "labels" in self[self.model_name]:
+        #         return self[self.model_name]["labels"]
+        #     else:
+        #         return ["", ""]
+        # elif feature in self.features_0d:
+        #     if self.model_name in self.features_0d and "labels" in self[self.model_name]:
+        #         return self[self.model_name]["labels"]
+        #     else:
+        #         return [""]
 
 
     def __getitem__(self, feature):
         return self.data[feature]
 
     def __setitem__(self, feature, value):
-        # TODO consider removing thist test
         if not isinstance(value, dict):
             raise ValueError("Value must be of type dict")
         self.data[feature] = value
@@ -245,7 +266,6 @@ Test if the model returned an adaptive result
         ### TODO expand the save function to also save parameters and model information
 
         with h5py.File(os.path.join(filename), 'w') as f:
-
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name
 
@@ -330,11 +350,11 @@ Test if the model returned an adaptive result
 
                 del self[feature]
 
-                if feature in self.features_0d:
-                    self.features_0d.remove(feature)
+                # if feature in self.features_0d:
+                #     self.features_0d.remove(feature)
 
-                if feature in self.features_2d:
-                    self.features_2d.remove(feature)
+                # if feature in self.features_2d:
+                #     self.features_2d.remove(feature)
 
-                if feature in self.features_1d:
-                    self.features_1d.remove(feature)
+                # if feature in self.features_1d:
+                #     self.features_1d.remove(feature)

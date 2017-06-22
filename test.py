@@ -43,8 +43,8 @@ test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
 
 test_base = create_test_suite([TestBase, TestParameterBase])
 
-
 test_runModel = create_test_suite([TestRunModel, TestParallel])
+test_parallel = create_test_suite([TestParallel])
 
 test_model = create_test_suite([TestModel,
                                 TestHodgkinHuxleyModel,
@@ -130,6 +130,7 @@ parser.add_argument("--model", help="Model tests", action="store_true")
 parser.add_argument("--runmodel", help="RunModel tests", action="store_true")
 parser.add_argument("--logger", help="Logger tests", action="store_true")
 parser.add_argument("--plotting", help="Plotting tests", action="store_true")
+parser.add_argument("--parallel", help="Parallel tests", action="store_true")
 parser.add_argument("--usecase", help="Usecase tests", action="store_true")
 parser.add_argument("--data", help="Data tests", action="store_true")
 parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests",
@@ -163,6 +164,10 @@ if args.uncertainpy:
     print("-----------------------------------------")
     print("Running testsuite: uncertainpy")
     results["uncertainpy"] = test_runner.run(test_uncertainty)
+if args.parallel:
+    print("-----------------------------------------")
+    print("Running testsuite: parallel")
+    results["parallel"] = test_runner.run(test_parallel)
 # if args.exploration:
 #     print "-----------------------------------------"
 #     print "Running testsuite: exploration"

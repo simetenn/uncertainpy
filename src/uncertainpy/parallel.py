@@ -57,35 +57,50 @@ class Parallel(Base):
 
 
 
-    def create_interpolations(self, results):
-        # features_0d, features_1d, features_2d = self.sort_features(results)
+    def create_interpolations(self, result):
+        """
+result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                       "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature0d": {"U": 1,
+                        "t": np.nan},
+          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature_invalid": {"U": np.nan,
+                              "t": np.nan}}
+        """
 
-        for feature in features_0d:
-            if feature in self.features.adaptive or \
+        for feature in result:
+            if np.ndim(result[feature]["U"]) == 0:
+                if feature in self.features.adaptive or \
+                        (feature == self.model.name and self.model.adaptive):
+                    raise AttributeError("{} is 0D,".format(feature)
+                                         + " interpolation makes no sense.")
+
+            if np.ndim(result[feature]["U"]) == 1:
+                if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
-                raise AttributeError("{} is 0D,".format(feature)
-                                     + " interpolation makes no sense.")
+                    if np.any(np.isnan(result[feature]["t"])):
+                        raise AttributeError("{} does not return any t values.".format(feature)
+                                             + " Unable to perform interpolation.")
 
-        for feature in features_1d:
-            if feature in self.features.adaptive or \
-                    (feature == self.model.name and self.model.adaptive):
-                if np.any(np.isnan(results[feature]["t"])):
-                    raise AttributeError("{} does not return any t values.".format(feature)
-                                         + " Unable to perform interpolation.")
-
-                interpolation = scpi.InterpolatedUnivariateSpline(results[feature]["t"],
-                                                                  results[feature]["U"],
-                                                                  k=3)
-                results[feature]["interpolation"] = interpolation
+                    interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["t"],
+                                                                      result[feature]["U"],
+                                                                      k=3)
+                    result[feature]["interpolation"] = interpolation
 
 
-        for feature in features_2d:
-            if feature in self.features.adaptive or \
-                    (feature == self.model.name and self.model.adaptive):
-                raise NotImplementedError("{feature},".format(feature=feature)
-                                          + " no support for >= 2D interpolation")
+            if np.ndim(result[feature]["U"]) >= 2:
+                if feature in self.features.adaptive or \
+                        (feature == self.model.name and self.model.adaptive):
+                    raise NotImplementedError("{feature},".format(feature=feature)
+                                              + " no support for >= 2D interpolation")
 
-        return results
+        return result
 
 
 
