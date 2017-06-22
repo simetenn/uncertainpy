@@ -58,7 +58,7 @@ class Parallel(Base):
 
 
     def create_interpolations(self, results):
-        features_0d, features_1d, features_2d = self.sort_features(results)
+        # features_0d, features_1d, features_2d = self.sort_features(results)
 
         for feature in features_0d:
             if feature in self.features.adaptive or \
