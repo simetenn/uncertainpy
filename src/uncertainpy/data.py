@@ -293,8 +293,8 @@ Test if the model returned an adaptive result
 
 
     def remove_only_invalid_results(self):
-        old_feature_list = self.feature_list[:]
-        for feature in old_feature_list:
+        feature_list = self.data.keys()[:]
+        for feature in feature_list:
 
             all_nan = True
             for U in self[feature]["U"]:
