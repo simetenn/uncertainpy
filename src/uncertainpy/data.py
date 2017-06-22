@@ -78,9 +78,9 @@ feature_list
 
         for feature in self.data:
             output_str += border(feature)
-            for data_type in self.data[feature]:
+            for data_type in self[feature]:
                 output_str += "=== {data_type} ===\n".format(data_type=data_type)
-                output_str += "{data}\n\n".format(data=self.data[feature][data_type])
+                output_str += "{data}\n\n".format(data=self[feature][data_type])
 
 
         return output_str.strip()
@@ -160,22 +160,22 @@ feature_list
 
 
     def get_labels(self, feature):
-        if "labels" in self.data[feature]:
-            return self.data[feature]["labels"]
+        if "labels" in self[feature]:
+            return self[feature]["labels"]
 
         elif feature in self.features_2d:
-            if self.model_name in self.features_2d and "labels" in self.data[self.model_name]:
-                return self.data[self.model_name]["labels"]
+            if self.model_name in self.features_2d and "labels" in self[self.model_name]:
+                return self[self.model_name]["labels"]
             else:
                 return ["", "", ""]
         elif feature in self.features_1d:
-            if self.model_name in self.features_1d and "labels" in self.data[self.model_name]:
-                return self.data[self.model_name]["labels"]
+            if self.model_name in self.features_1d and "labels" in self[self.model_name]:
+                return self[self.model_name]["labels"]
             else:
                 return ["", ""]
         elif feature in self.features_0d:
-            if self.model_name in self.features_0d and "labels" in self.data[self.model_name]:
-                return self.data[self.model_name]["labels"]
+            if self.model_name in self.features_0d and "labels" in self[self.model_name]:
+                return self[self.model_name]["labels"]
             else:
                 return [""]
 
@@ -183,6 +183,9 @@ feature_list
     def __getitem__(self, feature):
         return self.data[feature]
 
+
+    def __iter__(self):
+        return iter(self.data)
 
 
     def add_features(self, features):
@@ -220,8 +223,8 @@ Test if the model returned an adaptive result
             for feature in self.data:
                 group = f.create_group(feature)
 
-                for data_type in self.data[feature]:
-                    group.create_dataset(data_type, data=self.data[feature][data_type])
+                for data_type in self[feature]:
+                    group.create_dataset(data_type, data=self[feature][data_type])
 
 
     def load(self, filename):
@@ -239,7 +242,7 @@ Test if the model returned an adaptive result
             for feature in f:
                 self.add_features(str(feature))
                 for data_type in f[feature]:
-                    self.data[feature][data_type] = f[feature][data_type][()]
+                    self[feature][data_type] = f[feature][data_type][()]
 
 
 
@@ -286,7 +289,7 @@ Test if the model returned an adaptive result
         for feature in old_feature_list:
 
             all_nan = True
-            for U in self.U[feature]:
+            for U in self[feature]["U"]:
                 if not np.all(np.isnan(U)):
                     all_nan = False
 

@@ -190,6 +190,7 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.model_name, "")
 
 
+
     def test_get_labels(self):
         self.data.add_features(["model_name", "feature", "feature2"])
 
@@ -214,6 +215,26 @@ class TestData(unittest.TestCase):
 
 
 
+    def test_getitem(self):
+        self.data.data["test1"] = 1
+        self.data.data["test2"] = 2
+
+        self.assertEqual(self.data["test1"], 1)
+        self.assertEqual(self.data["test2"], 2)
+
+
+
+    def test_iter(self):
+        self.data.data["test1"] = 1
+        self.data.data["test2"] = 2
+
+        result = []
+        for feature in self.data:
+            result.append(feature)
+
+        self.assertEqual(result, ["test1", "test2"])
+
+
     # def test_remove_only_invalid_results(self):
     #     self.data.t = {"feature1d": np.array([1, 2]), "TestingModel1d": np.array([3, 4])}
     #     self.data.U = {"feature1d": np.array([[1, 2], [2, 3]]),
@@ -233,7 +254,7 @@ class TestData(unittest.TestCase):
     #     self.assertEqual(self.data.feature_list[1], "feature1d")
 
     #     self.assertEqual(self.data.features_1d[0], "TestingModel1d")
-    #     self.assertEqual(self.data.features_1d[1], "feature1d")
+        # self.assertEqual(self.data.features_1d[1], "feature1d")
 
 
     # def test_remove_only_invalid_results_error(self):
@@ -257,14 +278,14 @@ class TestData(unittest.TestCase):
     #     self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
-    # def test_str(self):
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+    def test_str(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
 
-    #     self.data.load(compare_file)
+        self.data.load(compare_file)
 
-    #     # TODO Test that the content of the data string is correct
-    #     self.assertIsInstance(str(self.data), str)
+        # TODO Test that the content of the data string is correct
+        self.assertIsInstance(str(self.data), str)
 
 
 
