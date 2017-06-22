@@ -250,28 +250,21 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
 def generate_data_data():  # pragma: no cover
     data = un.Data()
+    data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                  "sensitivity_1", "total_sensitivity_1",
+                  "sensitivity_t", "total_sensitivity_t", "labels"]
+
+    data.add_features(["feature1d", "TestingModel1d"])
+
+    for data_type in data_types:
+        data["feature1d"][data_type] = [1., 2.]
+        data["TestingModel1d"][data_type] = [3., 4.]
+
+    data["feature1d"]["labels"] = ["xlabel", "ylabel"]
+    data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
 
     data.uncertain_parameters = ["a", "b"]
-    data.feature_list = ["TestingModel1d", "feature1d"]
-    data.t = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-    data.U = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-    data.E = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-    data.Var = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-    data.p_05 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-    data.p_95 = {"feature1d": [1., 2.], "TestingModel1d": [3., 4.]}
-    data.sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-    data.total_sensitivity_1 = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-    data.sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-    data.total_sensitivity_t = {"feature1d": [1, 2], "TestingModel1d": [3., 4.]}
-
     data.model_name = "TestingModel1d"
-    data.labels = {"feature1d": ["xlabel", "ylabel"],
-                   "TestingModel1d": ["xlabel", "ylabel"]}
-
-    data.features_0d = ["TestingModel1d", "feature1d"]
-    data.features_1d = []
-    data.features_2d = []
-
 
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
@@ -315,16 +308,16 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
 
 
 if __name__ == "__main__":  # pragma: no cover
-    generate_data_polynomial_chaos()
-    generate_data_PC_model_function()
-    generate_data_PC_0D()
-    generate_data_PC_2D()
-    generate_data_polynomial_chaos_single()
+    # generate_data_polynomial_chaos()
+    # generate_data_PC_model_function()
+    # generate_data_PC_0D()
+    # generate_data_PC_2D()
+    # generate_data_polynomial_chaos_single()
 
-    generate_data_monte_carlo()
-    generate_data_monte_carlo_single()
-    # generate_data_comparemonte_carlo()
-    generate_data_PC_rosenblatt()
-    generate_data_uncertainty_calculations()
+    # generate_data_monte_carlo()
+    # generate_data_monte_carlo_single()
+    # # generate_data_comparemonte_carlo()
+    # generate_data_PC_rosenblatt()
+    # generate_data_uncertainty_calculations()
     generate_data_data()
     generate_data_empty()

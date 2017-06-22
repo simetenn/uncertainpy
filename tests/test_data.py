@@ -33,17 +33,17 @@ class TestData(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
-    def test_features_0d(self):
-        self.data.features_0d = ["feature0d"]
+    # def test_features_0d(self):
+    #     self.data.features_0d = ["feature0d"]
 
-        self.assertEqual(self.data.feature_list, ["feature0d"])
-        self.assertEqual(self.data.features_0d, ["feature0d"])
+    #     self.assertEqual(self.data.feature_list, ["feature0d"])
+    #     self.assertEqual(self.data.features_0d, ["feature0d"])
 
-    def test_features_1d(self):
-        self.data.features_1d = ["feature1d"]
+    # def test_features_1d(self):
+    #     self.data.features_1d = ["feature1d"]
 
-        self.assertEqual(self.data.feature_list, ["feature1d"])
-        self.assertEqual(self.data.features_1d, ["feature1d"])
+    #     self.assertEqual(self.data.feature_list, ["feature1d"])
+    #     self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
     def test_add_features(self):
@@ -74,19 +74,19 @@ class TestData(unittest.TestCase):
     #     self.assertTrue(np.array_equal(np.isnan(b), np.isnan(result)))
 
 
-    def test_features_2d(self):
-        self.data.features_2d = ["feature2d"]
+    # def test_features_2d(self):
+    #     self.data.features_2d = ["feature2d"]
 
-        self.assertEqual(self.data.feature_list, ["feature2d"])
-        self.assertEqual(self.data.features_2d, ["feature2d"])
+    #     self.assertEqual(self.data.feature_list, ["feature2d"])
+    #     self.assertEqual(self.data.features_2d, ["feature2d"])
 
 
-    def test_update_feature_list(self):
-        self.data._features_1d = ["b"]
-        self.data._features_2d = ["a"]
+    # def test_update_feature_list(self):
+    #     self.data._features_1d = ["b"]
+    #     self.data._features_2d = ["a"]
 
-        self.data._update_feature_list()
-        self.assertEqual(self.data.feature_list, ["a", "b"])
+    #     self.data._update_feature_list()
+    #     self.assertEqual(self.data.feature_list, ["a", "b"])
 
 
     # def test_is_adaptive_false(self):
@@ -107,8 +107,6 @@ class TestData(unittest.TestCase):
     #     self.assertTrue(self.data.is_adaptive())
 
     def test_save(self):
-
-
         self.data.add_features(["feature1d", "TestingModel1d"])
 
         for data_type in self.data_types:
@@ -119,8 +117,7 @@ class TestData(unittest.TestCase):
         self.data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
 
         self.data.model_name = "TestingModel1d"
-
-        print self.data
+        self.data.uncertain_parameters = ["a", "b"]
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -141,26 +138,41 @@ class TestData(unittest.TestCase):
     # #     with self.assertRaises(FileNotFoundError):
     # #         self.data.load(compare_file)
 
-    # def test_save_empty(self):
-    #     data = Data()
 
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/test_save_empty")
-    #     filename = os.path.join(self.output_test_dir, "test_save_empty")
+    def test_save_empty(self):
+        data = Data()
 
-    #     data.save(filename)
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_empty")
+        filename = os.path.join(self.output_test_dir, "test_save_empty")
 
-    #     result = subprocess.call(["h5diff", filename, compare_file])
+        data.save(filename)
 
-    #     self.assertEqual(result, 0)
+        result = subprocess.call(["h5diff", filename, compare_file])
 
-
-    # def test_load(self):
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/test_save_mock")
+        self.assertEqual(result, 0)
 
 
-    #     self.data.load(compare_file)
+    def test_load(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock")
+
+
+        self.data.load(compare_file)
+
+        for data_type in self.data_types:
+            if data_type == "labels":
+                continue
+            else:
+                self.assertTrue(np.array_equal(self.data["feature1d"][data_type], [1., 2.]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][data_type], [3., 4.]))
+
+        self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
+
+        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
+        self.assertTrue(np.array_equal(self.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
+
+
 
     #     self.assertTrue(np.array_equal(self.data.U["feature1d"], [1., 2.]))
     #     self.assertTrue(np.array_equal(self.data.U["TestingModel1d"], [3., 4.]))
@@ -195,23 +207,20 @@ class TestData(unittest.TestCase):
     #     self.assertEqual(self.data.feature_list[1], "feature1d")
 
 
-    # def test_load_empty(self):
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "data/test_save_empty")
+    def test_load_empty(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_empty")
 
 
-    #     self.data.load(compare_file)
+        self.data.load(compare_file)
 
-    #     for data_name in self.data.data_names:
-    #         data = getattr(self.data, data_name)
-    #         self.assertEqual(data, {})
+        self.assertEqual(self.data.data, {})
 
-    #     self.assertEqual(self.data.features_0d, [])
-    #     self.assertEqual(self.data.features_1d, [])
-    #     self.assertEqual(self.data.features_2d, [])
-    #     self.assertEqual(self.data.feature_list, [])
-    #     self.assertEqual(self.data.uncertain_parameters, [])
-    #     self.assertEqual(self.data.labels, {})
+        self.assertEqual(self.data.features_0d, [])
+        self.assertEqual(self.data.features_1d, [])
+        self.assertEqual(self.data.features_2d, [])
+        self.assertEqual(self.data.uncertain_parameters, [])
+        self.assertEqual(self.data.model_name, "")
 
 
     # def test_get_labels(self):
@@ -276,31 +285,29 @@ class TestData(unittest.TestCase):
     #     self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
-    def test_str(self):
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+    # def test_str(self):
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/TestingModel1d.h5")
 
-        self.data.load(compare_file)
+    #     self.data.load(compare_file)
 
-        # TODO Test that the content of the data string is correct
-        self.assertIsInstance(str(self.data), str)
+    #     # TODO Test that the content of the data string is correct
+    #     self.assertIsInstance(str(self.data), str)
 
 
 
     def test_clear(self):
         self.uncertain_parameters = None
 
-        self.data._features_0d = -1
-        self.data._features_1d = -1
-        self.data._features_2d = -1
-
+        self.data.features_0d = -1
+        self.data.features_1d = -1
+        self.data.features_2d = -1
         self.data.data = -1
 
         self.data.clear()
 
 
         self.assertEqual(self.data.features_0d, [])
-
         self.assertEqual(self.data.features_1d, [])
         self.assertEqual(self.data.features_2d, [])
         self.assertEqual(self.data.data, {})

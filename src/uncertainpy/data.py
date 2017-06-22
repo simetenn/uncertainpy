@@ -90,45 +90,45 @@ feature_list
     def clear(self):
         self.uncertain_parameters = []
 
-        self._features_0d = []
-        self._features_1d = []
-        self._features_2d = []
+        self.features_0d = []
+        self.features_1d = []
+        self.features_2d = []
 
         self.data = {}
 
         self.model_name = ""
 
 
-    @property
-    def features_0d(self):
-        return self._features_0d
+    # @property
+    # def features_0d(self):
+    #     return self._features_0d
 
-    @features_0d.setter
-    def features_0d(self, new_features_0d):
-        self._features_0d = new_features_0d
-        self._update_feature_list()
+    # @features_0d.setter
+    # def features_0d(self, new_features_0d):
+    #     self._features_0d = new_features_0d
+    #     self._update_feature_list()
 
-    @property
-    def features_1d(self):
-        return self._features_1d
+    # @property
+    # def features_1d(self):
+    #     return self._features_1d
 
-    @features_1d.setter
-    def features_1d(self, new_features_1d):
-        self._features_1d = new_features_1d
-        self._update_feature_list()
+    # @features_1d.setter
+    # def features_1d(self, new_features_1d):
+    #     self._features_1d = new_features_1d
+    #     self._update_feature_list()
 
-    @property
-    def features_2d(self):
-        return self._features_2d
+    # @property
+    # def features_2d(self):
+    #     return self._features_2d
 
-    @features_2d.setter
-    def features_2d(self, new_features_2d):
-        self._features_2d = new_features_2d
-        self._update_feature_list()
+    # @features_2d.setter
+    # def features_2d(self, new_features_2d):
+    #     self._features_2d = new_features_2d
+    #     self._update_feature_list()
 
-    def _update_feature_list(self):
-        self.feature_list = self._features_0d + self._features_1d + self._features_2d
-        self.feature_list.sort()
+    # def _update_feature_list(self):
+    #     self.feature_list = self._features_0d + self._features_1d + self._features_2d
+    #     self.feature_list.sort()
 
 
     def sort_features(self, results):
@@ -214,36 +214,14 @@ Test if the model returned an adaptive result
 
         with h5py.File(os.path.join(filename), 'w') as f:
 
-            # f.attrs["name"] = self.output_file.split("/")[-1]
             f.attrs["uncertain parameters"] = self.uncertain_parameters
-            # f.attrs["features"] = self.feature_list
-            # f.attrs["features_0d"] = self.features_0d
-            # f.attrs["features_1d"] = self.features_1d
-            # f.attrs["features_2d"] = self.features_2d
             f.attrs["model name"] = self.model_name
-
-            # label_group = f.create_group("_labels")
-
-            # for feature in self.labels:
-            #     label_group.attrs[feature] = self.labels[feature]
 
             for feature in self.data:
                 group = f.create_group(feature)
 
                 for data_type in self.data[feature]:
-                    if self.data[feature][data_type] is not None:
-
-                        group.create_dataset(data_type, data=self.data[feature][data_type])
-
-
-            # for feature in self.feature_list:
-            #     group = f.create_group(feature)
-
-            #     for data_name in self.data_types:
-            #         data = getattr(self, data_name)
-
-            #         if feature in data and data[feature] is not None:
-            #             group.create_dataset(data_name, data=data[feature])
+                    group.create_dataset(data_type, data=self.data[feature][data_type])
 
 
     def load(self, filename):
@@ -252,33 +230,16 @@ Test if the model returned an adaptive result
         # TODO add this check when changing to python 3
         # if not os.path.isfile(self.filename):
         #     raise FileNotFoundError("{} file not found".format(self.filename))
+        self.clear()
 
         with h5py.File(self.filename, 'r') as f:
-            self.clear()
-
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
-
             self.model_name = f.attrs["model name"]
 
-
-            self.feature_list = list(f.attrs["features"])
-            self.features_0d = list(f.attrs["features_0d"])
-            self.features_1d = list(f.attrs["features_1d"])
-            self.features_2d = list(f.attrs["features_2d"])
-
-
-            for feature in f["_labels"].attrs.keys():
-                self.labels[feature] = list(f["_labels"].attrs[feature])
-
-
-            for feature in self.feature_list:
-                for data_name in self.data_types:
-                    data = getattr(self, data_name)
-
-                    if data_name in f[feature].keys():
-                        data[feature] = f[feature][data_name][()]
-                    else:
-                        data[feature] = None
+            for feature in f:
+                self.add_features(str(feature))
+                for data_type in f[feature]:
+                    self.data[feature][data_type] = f[feature][data_type][()]
 
 
 
