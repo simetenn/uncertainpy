@@ -235,14 +235,6 @@ class TestData(unittest.TestCase):
         self.assertEqual(result, ["test1", "test2"])
 
 
-    # def test_contains(self):
-    #     self.data.data["test1"] = 1
-    #     self.data.data["test2"] = 2
-
-    #     self.assertTrue("test1" in self.data)
-    #     self.assertTrue("test2" in self.data)
-    #     self.assertFalse("random" in self.data)
-
 
     def test_len(self):
         self.data.data["test1"] = 1
@@ -277,7 +269,8 @@ class TestData(unittest.TestCase):
 
         self.assertTrue(np.array_equal(self.data["feature1d"]["U"], np.array([[1, 2], [2, 3]])))
         self.assertTrue(np.array_equal(self.data["feature1d"]["t"], np.array([1, 2])))
-        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["U"], np.array([[3, 4], [np.nan]])))
+        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["U"],
+                                       np.array([[3, 4], [np.nan]])))
         self.assertTrue(np.array_equal(self.data["TestingModel1d"]["t"], np.array([3, 4])))
 
         self.assertEqual(self.data.features_1d[0], "TestingModel1d")
@@ -330,3 +323,19 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.features_2d, [])
         self.assertEqual(self.data.data, {})
 
+
+    def test_ndim(self):
+        self.data["feature0d"] = {"U": 1,
+                                  "t": np.nan}
+        self.data["feature1d"] = {"U": np.arange(0, 10),
+                                  "t": np.arange(0, 10)}
+        self.data["feature2d"] = {"U": np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)]),
+                                  "t": np.arange(0, 10)}
+        self.data["feature_invalid"] = {"U": np.nan,
+                                        "t": np.nan}
+
+        self.assertEqual(self.data.ndim("feature0d"), 0)
+        self.assertEqual(self.data.ndim("feature1d"), 1)
+        self.assertEqual(self.data.ndim("feature2d"), 2)
+        self.assertEqual(self.data.ndim("feature_invalid"), 0)

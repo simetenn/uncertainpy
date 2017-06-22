@@ -142,11 +142,16 @@ feature_list
     #               "feature0d": {"U": 1}}
     #     """
 
-    #     features_2d = []
-    #     features_1d = []
-    #     features_0d = []
+    #     self.features_gt_2d = []
+    #     self.features_2d = []
+    #     self.features_1d = []
+    #     self.features_0d = []
 
     #     for feature in self:
+    #         if "U" in self[feature]:
+    #             ndim = np.ndim(self[feature]["U"])
+
+
 
 
     #     for feature in results:
@@ -161,6 +166,12 @@ feature_list
     #             features_0d.append(feature)
 
     #     return features_0d, features_1d, features_2d
+
+    def ndim(self, feature):
+    #     if "U" in self[feature]:
+    #         ndim = np.ndim(self[feature]["U"])
+        return np.ndim(self[feature]["U"])
+
 
 
     def get_labels(self, feature):
