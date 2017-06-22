@@ -1,9 +1,12 @@
 import unittest
 import sys
 import argparse
-import matplotlib
 
-matplotlib.use('Agg')
+try:
+    import matplotlib
+    matplotlib.use('Agg')
+except ImportError:
+    pass
 
 from tests import *
 
