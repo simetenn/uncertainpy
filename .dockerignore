@@ -2,3 +2,5 @@
 .docker
 .vscode
 .eggs
+.X11-unix
+dist
