@@ -5,10 +5,8 @@ import subprocess
 import shutil
 import numpy as np
 
-# import matplotlib
-# matplotlib.use('Agg')
-
-
+import matplotlib
+matplotlib.use('Agg')
 
 from uncertainpy.plotting.plot_uncertainty import PlotUncertainty
 from uncertainpy import Data

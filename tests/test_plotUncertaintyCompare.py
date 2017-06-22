@@ -5,10 +5,13 @@ import subprocess
 import shutil
 import scipy
 
+import matplotlib
+matplotlib.use('Agg')
 
 from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
-from testing_classes import TestingFeatures
-from testing_classes import TestingModel1d
+
+from .testing_classes import TestingFeatures
+from .testing_classes import TestingModel1d
 
 class TestPlotUncertainpyCompare(unittest.TestCase):
     def setUp(self):
