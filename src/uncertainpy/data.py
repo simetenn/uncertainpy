@@ -1,5 +1,6 @@
 import os
 import h5py
+import collections
 
 import numpy as np
 
@@ -8,7 +9,7 @@ from uncertainpy.utils import create_logger
 
 # TODO instead of a data object, could just a  h5py file have been used ?
 
-class Data(object):
+class Data(collections.MutableMapping):
     def __init__(self,
                  filename=None,
                  verbose_level="info",
@@ -131,32 +132,35 @@ feature_list
     #     self.feature_list.sort()
 
 
-    def sort_features(self, results):
-        """
-        result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                  "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
-                  self.model.name: {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
-                                    "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                  "feature0d": {"U": 1}}
-        """
+    # def sort_features(self):
+    #     """
+    #     result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+    #               "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    #                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
+    #               self.model.name: {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
+    #                                 "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+    #               "feature0d": {"U": 1}}
+    #     """
 
-        features_2d = []
-        features_1d = []
-        features_0d = []
+    #     features_2d = []
+    #     features_1d = []
+    #     features_0d = []
 
-        for feature in results:
-            if hasattr(results[feature]["U"], "__iter__"):
-                if len(results[feature]["U"].shape) == 0:
-                    features_0d.append(feature)
-                elif len(results[feature]["U"].shape) == 1:
-                    features_1d.append(feature)
-                else:
-                    features_2d.append(feature)
-            else:
-                features_0d.append(feature)
+    #     for feature in self:
 
-        return features_0d, features_1d, features_2d
+
+    #     for feature in results:
+    #         if hasattr(results[feature]["U"], "__iter__"):
+    #             if len(results[feature]["U"].shape) == 0:
+    #                 features_0d.append(feature)
+    #             elif len(results[feature]["U"].shape) == 1:
+    #                 features_1d.append(feature)
+    #             else:
+    #                 features_2d.append(feature)
+    #         else:
+    #             features_0d.append(feature)
+
+    #     return features_0d, features_1d, features_2d
 
 
     def get_labels(self, feature):
@@ -183,17 +187,23 @@ feature_list
     def __getitem__(self, feature):
         return self.data[feature]
 
+    def __setitem__(self, feature, value):
+        # TODO consider removing thist test
+        if not isinstance(value, dict):
+            raise ValueError("Value must be of type dict")
+        self.data[feature] = value
+
 
     def __iter__(self):
         return iter(self.data)
 
 
-    def __contains__(self, feature):
-        return feature in self.data
-
-
     def __delitem__(self, feature):
         del self.data[feature]
+
+
+    def __len__(self):
+        return len(self.data)
 
 
     def add_features(self, features):

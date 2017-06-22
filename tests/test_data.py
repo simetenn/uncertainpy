@@ -235,13 +235,21 @@ class TestData(unittest.TestCase):
         self.assertEqual(result, ["test1", "test2"])
 
 
-    def test_contains(self):
+    # def test_contains(self):
+    #     self.data.data["test1"] = 1
+    #     self.data.data["test2"] = 2
+
+    #     self.assertTrue("test1" in self.data)
+    #     self.assertTrue("test2" in self.data)
+    #     self.assertFalse("random" in self.data)
+
+
+    def test_len(self):
         self.data.data["test1"] = 1
         self.data.data["test2"] = 2
 
-        self.assertTrue("test1" in self.data)
-        self.assertTrue("test2" in self.data)
-        self.assertFalse("random" in self.data)
+        self.assertEqual(len(self.data), 2)
+
 
 
     def test_delitem(self):
@@ -254,47 +262,45 @@ class TestData(unittest.TestCase):
         self.assertFalse("test2" in self.data)
 
 
-    # def test_remove_only_invalid_results(self):
-    #     self.data.t = {"feature1d": np.array([1, 2]), "TestingModel1d": np.array([3, 4])}
-    #     self.data.U = {"feature1d": np.array([[1, 2], [2, 3]]),
-    #                    "TestingModel1d": np.array([[3, 4], [np.nan]])}
+    def test_remove_only_invalid_results(self):
+        self.data.add_features(["feature1d", "TestingModel1d"])
+        self.data["feature1d"]["U"] = np.array([[1, 2], [2, 3]])
+        self.data["TestingModel1d"]["U"] = np.array([[3, 4], [np.nan]])
 
-    #     self.data.feature_list = ["TestingModel1d", "feature1d"]
-    #     self.data.features_1d = ["TestingModel1d", "feature1d"]
-
-    #     self.data.remove_only_invalid_results()
-
-    #     self.assertTrue(np.array_equal(self.data.U["feature1d"], np.array([[1, 2], [2, 3]])))
-    #     self.assertTrue(np.array_equal(self.data.t["feature1d"], np.array([1, 2])))
-    #     self.assertTrue(np.array_equal(self.data.U["TestingModel1d"], np.array([[3, 4], [np.nan]])))
-    #     self.assertTrue(np.array_equal(self.data.t["TestingModel1d"], np.array([3, 4])))
-
-    #     self.assertEqual(self.data.feature_list[0], "TestingModel1d")
-    #     self.assertEqual(self.data.feature_list[1], "feature1d")
-
-    #     self.assertEqual(self.data.features_1d[0], "TestingModel1d")
-        # self.assertEqual(self.data.features_1d[1], "feature1d")
+        self.data["feature1d"]["t"] = np.array([1, 2])
+        self.data["TestingModel1d"]["t"] = np.array([3, 4])
 
 
-    # def test_remove_only_invalid_results_error(self):
-    #     self.data.t = {"feature1d": np.array([1, 2]), "TestingModel1d": np.array([3, 4])}
-    #     self.data.U = {"feature1d": np.array([[1, 2], [2, 3]]),
-    #                    "TestingModel1d": np.array([[np.nan], [np.nan]])}
+        self.data.features_1d = ["TestingModel1d", "feature1d"]
 
-    #     self.data.feature_list = ["TestingModel1d", "feature1d"]
-    #     self.data.features_1d = ["TestingModel1d", "feature1d"]
+        self.data.remove_only_invalid_results()
 
-    #     self.data.remove_only_invalid_results()
+        self.assertTrue(np.array_equal(self.data["feature1d"]["U"], np.array([[1, 2], [2, 3]])))
+        self.assertTrue(np.array_equal(self.data["feature1d"]["t"], np.array([1, 2])))
+        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["U"], np.array([[3, 4], [np.nan]])))
+        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["t"], np.array([3, 4])))
 
-    #     self.assertTrue(np.array_equal(self.data.U["feature1d"], np.array([[1, 2], [2, 3]])))
-    #     self.assertTrue(np.array_equal(self.data.t["feature1d"], np.array([1, 2])))
-    #     self.assertEqual(self.data.U["TestingModel1d"],
-    #                      "Only invalid results for all set of parameters")
-    #     self.assertTrue(np.array_equal(self.data.t["TestingModel1d"], np.array([3, 4])))
+        self.assertEqual(self.data.features_1d[0], "TestingModel1d")
+        self.assertEqual(self.data.features_1d[1], "feature1d")
 
 
-    #     self.assertEqual(self.data.feature_list, ["feature1d"])
-    #     self.assertEqual(self.data.features_1d, ["feature1d"])
+    def test_remove_only_invalid_results_error(self):
+        self.data.add_features(["feature1d", "TestingModel1d"])
+        self.data["feature1d"]["U"] = np.array([[1, 2], [2, 3]])
+        self.data["TestingModel1d"]["U"] = np.array([[np.nan], [np.nan]])
+
+        self.data["feature1d"]["t"] = np.array([1, 2])
+        self.data["TestingModel1d"]["t"] = np.array([3, 4])
+
+        self.data.features_1d = ["TestingModel1d", "feature1d"]
+
+        self.data.remove_only_invalid_results()
+
+        self.assertTrue(np.array_equal(self.data["feature1d"]["U"], np.array([[1, 2], [2, 3]])))
+        self.assertTrue(np.array_equal(self.data["feature1d"]["t"], np.array([1, 2])))
+        self.assertFalse("TestingModel1d" in self.data)
+
+        self.assertEqual(self.data.features_1d, ["feature1d"])
 
 
     def test_str(self):
