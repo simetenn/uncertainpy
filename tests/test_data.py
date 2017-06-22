@@ -235,6 +235,14 @@ class TestData(unittest.TestCase):
         self.assertEqual(result, ["test1", "test2"])
 
 
+    def test_contains(self):
+        self.data.data["test1"] = 1
+        self.data.data["test2"] = 2
+
+        self.assertTrue("test1" in self.data)
+        self.assertTrue("test2" in self.data)
+        self.assertFalse("random" in self.data)
+
     # def test_remove_only_invalid_results(self):
     #     self.data.t = {"feature1d": np.array([1, 2]), "TestingModel1d": np.array([3, 4])}
     #     self.data.U = {"feature1d": np.array([[1, 2], [2, 3]]),

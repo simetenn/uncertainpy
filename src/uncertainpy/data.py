@@ -76,7 +76,7 @@ feature_list
 
 
 
-        for feature in self.data:
+        for feature in self:
             output_str += border(feature)
             for data_type in self[feature]:
                 output_str += "=== {data_type} ===\n".format(data_type=data_type)
@@ -188,6 +188,9 @@ feature_list
         return iter(self.data)
 
 
+    def __contains__(self, feature):
+        return feature in self.data
+
     def add_features(self, features):
         if isinstance(features, str):
             features = [features]
@@ -220,7 +223,7 @@ Test if the model returned an adaptive result
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name
 
-            for feature in self.data:
+            for feature in self:
                 group = f.create_group(feature)
 
                 for data_type in self[feature]:
