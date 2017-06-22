@@ -159,25 +159,25 @@ feature_list
         return features_0d, features_1d, features_2d
 
 
-    # def get_labels(self, feature):
-    #     if feature in self.labels:
-    #         return self.labels[feature]
+    def get_labels(self, feature):
+        if "labels" in self.data[feature]:
+            return self.data[feature]["labels"]
 
-    #     elif feature in self.features_2d:
-    #         if self.model_name in self.features_2d and self.model_name in self.labels:
-    #             return self.labels[self.model_name]
-    #         else:
-    #             return ["", "", ""]
-    #     elif feature in self.features_1d:
-    #         if self.model_name in self.features_1d and self.model_name in self.labels:
-    #             return self.labels[self.model_name]
-    #         else:
-    #             return ["", ""]
-    #     elif feature in self.features_0d:
-    #         if self.model_name in self.features_0d and self.model_name in self.labels:
-    #             return self.labels[self.model_name]
-    #         else:
-    #             return [""]
+        elif feature in self.features_2d:
+            if self.model_name in self.features_2d and "labels" in self.data[self.model_name]:
+                return self.data[self.model_name]["labels"]
+            else:
+                return ["", "", ""]
+        elif feature in self.features_1d:
+            if self.model_name in self.features_1d and "labels" in self.data[self.model_name]:
+                return self.data[self.model_name]["labels"]
+            else:
+                return ["", ""]
+        elif feature in self.features_0d:
+            if self.model_name in self.features_0d and "labels" in self.data[self.model_name]:
+                return self.data[self.model_name]["labels"]
+            else:
+                return [""]
 
 
     def __getitem__(self, feature):
