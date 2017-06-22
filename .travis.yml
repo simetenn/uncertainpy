@@ -18,7 +18,4 @@ before_install:
 #   - "sh -e /etc/init.d/xvfb start"
 #   - sleep 3 # give xvfb some time to start
 script:
-    # - docker run -t uncertainpy /home/docker/simulators/bin/nest_vars.sh; python test.py --travis
     - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/travis.sh
-
-    # - docker run -v $(pwd):/uncertainpy -t uncertainpy

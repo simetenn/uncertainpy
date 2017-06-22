@@ -20,7 +20,7 @@ name = "uncertainpy"
 
 uncertainpy_req = []
 dependency_links = []
-uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "future", "h5py"
+uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "future", "h5py",
                    "multiprocess", "seaborn", "numpy", "scipy"]
 dependency_links = []
 

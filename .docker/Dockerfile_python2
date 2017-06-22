@@ -97,7 +97,7 @@ RUN apt-get -y install Xvfb
 # # RUN apt-get -y install libx11-dev libxext-dev x11-apps
 
 
-# RUN conda install -c conda-forge xvfbwrapper
+RUN conda install -c conda-forge xvfbwrapper
 # RUN conda install -c conda-forge multiprocess
 # RUN conda install -c anaconda future
 
