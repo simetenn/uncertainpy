@@ -145,10 +145,10 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-                U_feature = np.array(self.none_to_nan(U_feature))
                 t_feature = np.array(self.none_to_nan(t_feature))
+                U_feature = np.array(self.none_to_nan(U_feature))
 
-                results[feature] = {"U":U_feature,
+                results[feature] = {"U": U_feature,
                                     "t": t_feature}
 
             # Create interpolations

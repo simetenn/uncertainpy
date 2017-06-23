@@ -85,24 +85,28 @@ class PlotUncertainty(object):
 
 
     def simulator_results(self, foldername="simulator_results"):
-        if self.data.model_name in self.data.features_0d:
+        if self.data.ndim(self.data.model_name) == 0:
             self.simulator_results_0d(foldername=foldername)
-        elif self.data.model_name in self.data.features_1d:
+
+        elif self.data.ndim(self.data.model_name) == 1:
             self.simulator_results_1d(foldername=foldername)
-        else:
+
+        elif self.data.ndim(self.data.model_name) == 2:
             self.simulator_results_2d(foldername=foldername)
+        else:
+            raise NotImplementedError(">2D plots not implementes")
 
 
     # TODO does not have a test
     def simulator_results_0d(self, foldername="simulator_results", **plot_kwargs):
-        if self.data.model_name not in self.data.features_0d:
+        if self.data.ndim(self.data.model_name) == 0:
             raise ValueError("{} is not a 0D feature".format(self.data.model_name))
 
         save_folder = os.path.join(self.output_dir, foldername)
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        prettyPlot(self.data.U[self.data.model_name],
+        prettyPlot(self.data[self.data.model_name]["U"],
                    xlabel="simulator run \#number",
                    ylabel=self.data.get_labels(self.data.model_name)[0],
                    title="{}, simulator result".format(self.data.model_name.replace("_", " ")),
@@ -112,7 +116,7 @@ class PlotUncertainty(object):
 
 
     def simulator_results_1d(self, foldername="simulator_results", **plot_kwargs):
-        if self.data.model_name not in self.data.features_1d:
+        if self.data.ndim(self.data.model_name) == 1:
             raise ValueError("{} is not a 1D feature".format(self.data.model_name))
 
         i = 1
@@ -123,9 +127,9 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(self.data.model_name)
         xlabel, ylabel = labels
 
-        padding = len(str(len(self.data.U[self.data.model_name]) + 1))
-        for U in self.data.U[self.data.model_name]:
-            prettyPlot(self.data.t[self.data.model_name], U,
+        padding = len(str(len(self.data[self.data.model_name]["U"]) + 1))
+        for U in self.data[self.data.model_name]["U"]:
+            prettyPlot(self.data[self.data.model_name]["t"], U,
                        xlabel=xlabel, ylabel=ylabel,
                        title="{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
@@ -136,7 +140,7 @@ class PlotUncertainty(object):
 
     # TODO double check ylabel ans zlabel
     def simulator_results_2d(self, foldername="simulator_results", **plot_kwargs):
-        if self.data.model_name not in self.data.features_2d:
+        if self.data.ndim(self.data.model_name) == 2:
             raise ValueError("{} is not a 2D feature".format(self.data.model_name))
 
         i = 1
@@ -148,15 +152,15 @@ class PlotUncertainty(object):
         xlabel, ylabel, zlabel = labels
 
 
-        padding = len(str(len(self.data.U[self.data.model_name]) + 1))
-        for U in self.data.U[self.data.model_name]:
+        padding = len(str(len(self.data[self.data.model_name]["U"]) + 1))
+        for U in self.data[self.data.model_name]["U"]:
             fig = plt.figure()
             ax = fig.add_subplot(111)
             ax.set_title("{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i))
 
             iax = ax.imshow(U, cmap="viridis", aspect="auto",
-                            extent=[self.data.t[self.data.model_name][0],
-                                    self.data.t[self.data.model_name][-1],
+                            extent=[self.data[self.data.model_name]["t"][0],
+                                    self.data[self.data.model_name]["t"][-1],
                                     0, U.shape[0]],
                             **plot_kwargs)
 
@@ -183,24 +187,25 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_1d:
+        if self.data.ndim(feature) == 1:
             raise ValueError("%s is not a 1D feature" % (feature))
 
         if attribute not in ["E", "Var"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
-        value = getattr(self.data, attribute)[feature]
-        t = self.data.t[feature]
 
-        if value is None:
+        if attribute not in self.data[feature]:
             msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
             self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
             return
 
+
+        value = self.data[feature][attribute]
+        t = self.data[feature]["t"]
+
         if np.all(np.isnan(t)):
             t = np.arange(0, len(value))
-
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels

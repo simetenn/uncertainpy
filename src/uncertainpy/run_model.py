@@ -203,6 +203,7 @@ results = [result 1, result 2, ..., result N]
 
         # TODO is this necessary to ensure all results are arrays?
         for feature in data:
+            data[feature]["t"] = np.array(data[feature]["t"])
             data[feature]["U"] = np.array(data[feature]["U"])
 
         data.remove_only_invalid_results()
