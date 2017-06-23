@@ -466,7 +466,7 @@ class TestRunModel(unittest.TestCase):
 
     def assert_feature_0d(self, data):
         self.assertIn("feature0d", data)
-        self.assertTrue(np.isnan(data["feature0d"]["t"]))
+        self.assertNotIn("t", data["feature0d"])
         self.assertTrue(np.array_equal(data["feature0d"]["U"], [1, 1, 1]))
         self.assertEqual(data["feature0d"]["labels"], ["feature0d"])
 

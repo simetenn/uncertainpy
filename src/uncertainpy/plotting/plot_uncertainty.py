@@ -99,7 +99,14 @@ class PlotUncertainty(object):
 
     # TODO does not have a test
     def simulator_results_0d(self, foldername="simulator_results", **plot_kwargs):
-        if self.data.ndim(self.data.model_name) == 0:
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
+
+        if self.data.model_name not in self.data or "U"  not in self.data[self.data.model_name]:
+            self.logger.warning("No model results to plot.")
+            return
+
+        if self.data.ndim(self.data.model_name) != 0:
             raise ValueError("{} is not a 0D feature".format(self.data.model_name))
 
         save_folder = os.path.join(self.output_dir, foldername)
@@ -107,7 +114,7 @@ class PlotUncertainty(object):
             os.makedirs(save_folder)
 
         prettyPlot(self.data[self.data.model_name]["U"],
-                   xlabel="simulator run \#number",
+                   xlabel=r"simulator run \#number",
                    ylabel=self.data.get_labels(self.data.model_name)[0],
                    title="{}, simulator result".format(self.data.model_name.replace("_", " ")),
                    new_figure=True,
@@ -116,7 +123,14 @@ class PlotUncertainty(object):
 
 
     def simulator_results_1d(self, foldername="simulator_results", **plot_kwargs):
-        if self.data.ndim(self.data.model_name) == 1:
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
+
+        if self.data.model_name not in self.data or "U"  not in self.data[self.data.model_name]:
+            self.logger.warning("No model results to plot.")
+            return
+
+        if self.data.ndim(self.data.model_name) != 1:
             raise ValueError("{} is not a 1D feature".format(self.data.model_name))
 
         i = 1
@@ -140,8 +154,16 @@ class PlotUncertainty(object):
 
     # TODO double check ylabel ans zlabel
     def simulator_results_2d(self, foldername="simulator_results", **plot_kwargs):
-        if self.data.ndim(self.data.model_name) == 2:
-            raise ValueError("{} is not a 2D feature".format(self.data.model_name))
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
+
+        if self.data.model_name not in self.data or "U"  not in self.data[self.data.model_name]:
+            self.logger.warning("No model results to plot.")
+            return
+
+        if self.data.ndim(self.data.model_name) != 2:
+            raise ValueError("{} is not a 2D feature.".format(self.data.model_name))
+
 
         i = 1
         save_folder = os.path.join(self.output_dir, foldername)
@@ -174,6 +196,7 @@ class PlotUncertainty(object):
             i += 1
 
 
+
     def attribute_feature_1d(self,
                              feature=None,
                              attribute="E",
@@ -182,36 +205,33 @@ class PlotUncertainty(object):
                              show=False,
                              **plot_kwargs):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if self.data.ndim(feature) == 1:
-            raise ValueError("%s is not a 1D feature" % (feature))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
         if attribute not in ["E", "Var"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
-
-
         if attribute not in self.data[feature]:
-            msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
-            self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
+            msg = "{attribute_name} of {feature} does not exist. Unable to plot {attribute_name}"
+            self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature][attribute]))
+        else:
+            t = self.data[feature]["t"]
 
-        value = self.data[feature][attribute]
-        t = self.data[feature]["t"]
-
-        if np.all(np.isnan(t)):
-            t = np.arange(0, len(value))
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature + ", " + attribute_name
-        prettyPlot(t, value,
+        prettyPlot(t, self.data[feature][attribute],
                    title.replace("_", " "), xlabel, ylabel, **plot_kwargs)
 
 
@@ -228,6 +248,7 @@ class PlotUncertainty(object):
             plt.close()
 
 
+
     def attribute_feature_2d(self,
                              feature=None,
                              attribute="E",
@@ -237,41 +258,43 @@ class PlotUncertainty(object):
                              **plot_kwargs):
 
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_2d:
-            raise ValueError("%s is not a 2D feature" % (feature))
+        if self.data.ndim(feature) != 2:
+            raise ValueError("{} is not a 2D feature".format(feature))
 
         if attribute not in ["E", "Var"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
-        value = getattr(self.data, attribute)
-
-        if value[feature] is None:
-            msg = "{attribute_name} of {feature} is None. Unable to plot {attribute_name}"
-            self.logger.warning(msg.format(attribute_name=attribute_name, feature=feature))
+        if attribute not in self.data[feature]:
+            msg = "{attribute_name} of {feature} does not exist. Unable to plot {attribute_name}"
+            self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
+
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            extent = None
+        else:
+            extent=[self.data[feature]["t"][0], self.data[feature]["t"][-1],
+                    0, self.data[feature][attribute].shape[0]]
+
+
 
         title = feature + ", " + attribute_name
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
-        if np.all(np.isnan(self.data.t[feature])):
-            extent = None
-        else:
-            extent=[self.data.t[feature][0], self.data.t[feature][-1],
-                    0, value[feature].shape[0]]
-
+        set_style("seaborn-dark")
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title(title.replace("_", " "))
 
-        iax = ax.imshow(value[feature], cmap="viridis", aspect="auto",
+
+        iax = ax.imshow(self.data[feature][attribute], cmap="viridis", aspect="auto",
                         extent=extent,
                         **plot_kwargs)
 
@@ -337,30 +360,35 @@ class PlotUncertainty(object):
                          color=0,
                          style="seaborn-dark",
                          **plot_kwargs):
+
+
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
-        if self.data.E[feature] is None or self.data.Var[feature] is None:
-            self.logger.warning("Mean and/or variance of {feature} is None.".format(feature=feature)
-                                + "Unable to plot mean and variance")
+        if "E" not in self.data[feature] or "Var" not in self.data[feature]:
+            msg = "Mean and/or variance of {feature} does not exist. ".format(feature=feature) \
+                    + "Unable to plot mean and variance"
+            self.logger.warning(msg)
             return
 
-        t = self.data.t[feature]
 
-        if np.all(np.isnan(t)):
-            t = np.arange(0, len(self.data.E[feature]))
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature]["E"]))
+        else:
+            t = self.data[feature]["t"]
+
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature + ", mean and variance"
-        ax = prettyPlot(t, self.data.E[feature],
+        ax = prettyPlot(t, self.data[feature]["E"],
                         title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style, **plot_kwargs)
 
@@ -377,7 +405,7 @@ class PlotUncertainty(object):
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
         # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
 
-        ax2.plot(t, self.data.Var[feature],
+        ax2.plot(t, self.data[feature]["Var"],
                  color=colors[color+1], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -411,43 +439,44 @@ class PlotUncertainty(object):
                                show=False,
                                **plot_kwargs):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
-        if self.data.E[feature] is None \
-            or self.data.p_05[feature] is None \
-                or self.data.p_95[feature] is None:
-            msg = "Mean, p_05  and/or p_95 of {feature} is NaN. Unable to plot confidence interval"
+        if "E" not in self.data[feature] \
+            or "p_05" not in self.data[feature] \
+                or "p_95" not in self.data[feature]:
+            msg = "E, p_05  and/or p_95 of {feature} does not exist. Unable to plot confidence interval"
             self.logger.warning(msg.format(feature=feature))
             return
 
-        t = self.data.t[feature]
 
-        if np.all(np.isnan(t)):
-            t = np.arange(0, len(self.data.E[feature]))
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature]["E"]))
+        else:
+            t = self.data[feature]["t"]
+
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature.replace("_", " ") + ", 90\\% confidence interval"
-        prettyPlot(t, self.data.E[feature], title=title,
+        prettyPlot(t, self.data[feature]["E"], title=title,
                    xlabel=xlabel, ylabel=ylabel, color=0,
                    **plot_kwargs)
 
         colors = get_current_colormap()
         plt.fill_between(t,
-                         self.data.p_05[feature],
-                         self.data.p_95[feature],
+                         self.data[feature]["p_05"],
+                         self.data[feature]["p_95"],
                          alpha=0.5, color=colors[0])
 
 
         plt.legend(["mean", "90\% confidence interval"])
-
 
 
         if hardcopy:
@@ -469,37 +498,29 @@ class PlotUncertainty(object):
                        **plot_kwargs):
 
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
-        sense = getattr(self.data, sensitivity)
-
-        if feature not in sense:
-            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity}"
+        if sensitivity not in self.data[feature]:
+            msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if sense[feature] is None:
-            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
-            return
-
-
-        t = self.data.t[feature]
-
-        if np.all(np.isnan(t)):
-            t = np.arange(0, len(sense[feature][0]))
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature][sensitivity][0]))
+        else:
+            t = self.data[feature]["t"]
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        for i in range(len(sense[feature])):
-            prettyPlot(t, sense[feature][i],
+        for i in range(len(self.data[feature][sensitivity])):
+            prettyPlot(t, self.data[feature][sensitivity][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=xlabel, ylabel="sensitivity",
                        color=i,
@@ -528,32 +549,23 @@ class PlotUncertainty(object):
                             show=False,
                             **plot_kwargs):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
-        sense = getattr(self.data, sensitivity)
-
-        if feature not in sense:
-            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity}"
+        if sensitivity not in self.data[feature]:
+            msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if sense[feature] is None:
-            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
-            return
-
-
-        t = self.data.t[feature]
-
-        if np.all(np.isnan(t)):
-            t = np.arange(0, len(sense[feature][0]))
-
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature][sensitivity][0]))
+        else:
+            t = self.data[feature]["t"]
 
         parameter_names = self.data.uncertain_parameters
 
@@ -585,7 +597,7 @@ class PlotUncertainty(object):
             ax = axes[ny][nx]
 
             if i < nr_plots:
-                prettyPlot(t, sense[feature][i],
+                prettyPlot(t, self.data[feature][sensitivity][i],
                            title=self.str_to_latex(parameter_names[i]), color=i,
                            nr_colors=nr_plots, ax=ax,
                            **plot_kwargs)
@@ -625,37 +637,31 @@ class PlotUncertainty(object):
                                 show=False,
                                 **plot_kwargs):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data.features_1d:
-            raise ValueError("%s is not a 1D feature" % (feature))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
-        sense = getattr(self.data, sensitivity)
-
-        if feature not in sense:
-            msg = "{feature} not in {sensitivity}. Unable to plot {sensitivity} combined"
+        if sensitivity not in self.data[feature]:
+            msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if sense[feature] is None:
-            msg = "{sensitivity} of {feature} is None. Unable to plot {sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
-            return
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature][sensitivity][0]))
+        else:
+            t = self.data[feature]["t"]
+
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        t = self.data.t[feature]
-
-        if np.all(np.isnan(t)):
-            t = np.arange(0, len(sense[feature][0]))
-
-        for i in range(len(sense[feature])):
+        for i in range(len(self.data[feature][sensitivity])):
             prettyPlot(t,
-                       sense[feature][i],
+                       self.data[feature][sensitivity][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " "),
                        xlabel=xlabel,
                        ylabel="sensitivity",
@@ -666,8 +672,8 @@ class PlotUncertainty(object):
                        **plot_kwargs)
 
         plt.ylim([0, 1.05])
-        if len(sense[feature]) > 4:
-            plt.xlim([self.data.t[feature][0], 1.3*self.data.t[feature][-1]])
+        if len(self.data[feature][sensitivity]) > 4:
+            plt.xlim([t[0], 1.3*t[-1]])
 
         plt.legend()
 
@@ -683,22 +689,30 @@ class PlotUncertainty(object):
 
 
     def features_1d(self, sensitivity="sensitivity_1"):
-        for feature in self.data.features_1d:
-            self.mean_1d(feature=feature)
-            self.variance_1d(feature=feature)
-            self.mean_variance_1d(feature=feature)
-            self.confidence_interval_1d(feature=feature)
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
 
-            if sensitivity is not None:
-                self.sensitivity_1d(feature=feature, sensitivity=sensitivity)
-                self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity)
-                self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
+        for feature in self.data:
+            if self.data.ndim(feature) == 1:
+                self.mean_1d(feature=feature)
+                self.variance_1d(feature=feature)
+                self.mean_variance_1d(feature=feature)
+                self.confidence_interval_1d(feature=feature)
+
+                if sensitivity in self.data[feature]:
+                    self.sensitivity_1d(feature=feature, sensitivity=sensitivity)
+                    self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity)
+                    self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
 
 
     def features_2d(self):
-        for feature in self.data.features_2d:
-            self.mean_2d(feature=feature)
-            self.variance_2d(feature=feature)
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
+
+        for feature in self.data:
+            if self.data.ndim(feature) == 2:
+                self.mean_2d(feature=feature)
+                self.variance_2d(feature=feature)
 
 
     # TODO not finished, missing correct label placement
@@ -710,35 +724,16 @@ class PlotUncertainty(object):
                    hardcopy=True,
                    show=False):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
-        if feature not in self.data.features_0d:
-            raise ValueError("%s is not a 0D feature" % (feature))
+        if self.data.ndim(feature) != 0:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
-        if sensitivity is None:
-            sense = None
-        else:
-            sense = getattr(self.data, sensitivity)
-
-        if self.data.E[feature] is None:
-            msg = "Missing E for {feature}. Unable to plot"
-            self.logger.warning(msg.format(feature=feature))
-            return
-
-        if self.data.Var[feature] is None:
-            msg = "Missing Var for {feature}. Unable to plot"
-            self.logger.warning(msg.format(feature=feature))
-            return
-
-        if self.data.p_05[feature] is None:
-            msg = "Missing p_05 for {feature}. Unable to plot"
-            self.logger.warning(msg.format(feature=feature))
-            return
-
-        if self.data.p_95[feature] is None:
-            msg = "Missing p_95 for {feature}. Unable to plot"
-            self.logger.warning(msg.format(feature=feature))
-            return
+        for data_type in ["E", "Var", "p_05", "p_95"]:
+            if data_type not in self.data[feature]:
+                msg = "{data_type} for {feature} does not exist. Unable to plot"
+                self.logger.warning(msg.format(data_type=data_type,feature=feature))
+                return
 
         if len(self.data.uncertain_parameters) > max_legend_size:
             legend_size = max_legend_size
@@ -753,8 +748,8 @@ class PlotUncertainty(object):
         xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
-        values = [self.data.E[feature], self.data.Var[feature],
-                  self.data.p_05[feature], self.data.p_95[feature]]
+        values = [self.data[feature]["E"], self.data[feature]["Var"],
+                  self.data[feature]["p_05"], self.data[feature]["p_95"]]
 
         ylabel = self.data.get_labels(feature)[0]
 
@@ -764,7 +759,7 @@ class PlotUncertainty(object):
                        ylabel=ylabel,
                        palette=get_colormap_tableu20())
 
-        if sense is not None and sense[feature] is not None:
+        if sensitivity in self.data[feature]:
             pos = 2*distance + 2*width
 
             ax2 = ax.twinx()
@@ -783,7 +778,7 @@ class PlotUncertainty(object):
 
             for parameter in self.data.uncertain_parameters:
 
-                l = ax2.bar(pos, sense[feature][i], width=width,
+                l = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
                             align='center', color=colors[4+i], linewidth=0)
 
                 legend_bars.append(l)
@@ -840,21 +835,13 @@ class PlotUncertainty(object):
                           hardcopy=True,
                           show=False):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
-        if feature not in self.data.feature_list:
-            raise ValueError("%s is not a feature" % (feature))
+        if feature not in self.data:
+            raise ValueError("{} is not a feature".format(feature))
 
-        total_sense = getattr(self.data, "total_" + sensitivity)
-
-
-        if feature not in total_sense:
-            msg = "{feature} not in total_{sensitivity}. Unable to plot total_{sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
-            return
-
-        if total_sense[feature] is None:
-            msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}"
+        if "total_" + sensitivity not in self.data[feature]:
+            msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
@@ -863,7 +850,7 @@ class PlotUncertainty(object):
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
 
-        prettyBar(total_sense[feature],
+        prettyBar(self.data[feature]["total_" + sensitivity],
                   title="total " + sensitivity.replace("_", " ")
                   + ", " + feature.replace("_", " "),
                   xlabels=self.list_to_latex(self.data.uncertain_parameters),
@@ -873,7 +860,6 @@ class PlotUncertainty(object):
 
 
         plt.ylim([0, 1])
-
 
         save_name = feature + "_total-" + sensitivity + self.figureformat
 
@@ -891,22 +877,23 @@ class PlotUncertainty(object):
                               hardcopy=True,
                               show=False):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
-        for feature in self.data.feature_list:
-            self.total_sensitivity(feature=feature,
-                                   sensitivity=sensitivity,
-                                   hardcopy=hardcopy,
-                                   show=show)
+        for feature in self.data:
+            if "total_" + sensitivity in self.data[feature]:
+                self.total_sensitivity(feature=feature,
+                                    sensitivity=sensitivity,
+                                    hardcopy=hardcopy,
+                                    show=show)
 
 
     def features_0d(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
-
-        for feature in self.data.features_0d:
-            self.feature_0d(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
+        for feature in self.data:
+            if self.data.ndim(feature) == 0:
+                self.feature_0d(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
 
 
 
@@ -923,7 +910,7 @@ class PlotUncertainty(object):
 
     # def plot_allNoSensitivity(self, sensitivity="sensitivity_1"):
     #     if self.data is None:
-    #         raise ValueError("Datafile must be loaded")
+    #         raise ValueError("Datafile must be loaded.")
     #
     #
     #     self.features_1d(sensitivity=sensitivity)
@@ -932,7 +919,7 @@ class PlotUncertainty(object):
 
     def plot_all(self, sensitivity="sensitivity_1"):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
         self.features_2d()
         self.features_1d(sensitivity=sensitivity)
@@ -947,15 +934,16 @@ class PlotUncertainty(object):
     # TODO find a more descriptive name
     def plot_all_sensitivities(self):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
+            raise ValueError("Datafile must be loaded.")
 
 
         self.plot_all(sensitivity="sensitivity_1")
 
-        for feature in self.data.features_1d:
-            self.sensitivity_1d(feature=feature, sensitivity="sensitivity_t")
-            self.sensitivity_1d_combined(feature=feature, sensitivity="sensitivity_t")
-            self.sensitivity_1d_grid(feature=feature, sensitivity="sensitivity_t")
+        for feature in self.data:
+            if self.data.ndim(feature) == 1:
+                self.sensitivity_1d(feature=feature, sensitivity="sensitivity_t")
+                self.sensitivity_1d_combined(feature=feature, sensitivity="sensitivity_t")
+                self.sensitivity_1d_grid(feature=feature, sensitivity="sensitivity_t")
 
         self.features_0d(sensitivity="sensitivity_t")
 
@@ -964,15 +952,16 @@ class PlotUncertainty(object):
 
 
     def plot_condensed(self, sensitivity="sensitivity_1"):
-        for feature in self.data.features_1d:
-            self.features_2d()
-            self.mean_variance_1d(feature=feature)
-            self.confidence_interval_1d(feature=feature)
+        for feature in self.data:
+            if self.data.ndim(feature) == 1:
+                self.mean_variance_1d(feature=feature)
+                self.confidence_interval_1d(feature=feature)
 
-            if sensitivity is not None:
-                self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
+                if sensitivity in self.data[feature]:
+                    self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
 
         self.features_0d(sensitivity=sensitivity)
+        self.features_2d()
 
         if sensitivity is not None:
             self.total_sensitivity_grid(sensitivity=sensitivity)
@@ -1019,23 +1008,20 @@ class PlotUncertainty(object):
                                show=False,
                                **plot_kwargs):
         if self.data is None:
-            raise ValueError("Datafile must be loaded")
-
-        total_sense = getattr(self.data, "total_" + sensitivity)
-
+            raise ValueError("Datafile must be loaded.")
 
         no_sensitivity = True
-        for feature in self.data.feature_list:
-            if total_sense[feature] is not None:
+        for feature in self.data:
+            if "total_" + sensitivity in self.data[feature]:
                 no_sensitivity = False
 
         if no_sensitivity:
-            msg = "All total_{sensitivity}s are None. Unable to plot total_{sensitivity}_grid"
+            msg = "All total_{sensitivity}s are missing. Unable to plot total_{sensitivity}_grid"
             self.logger.warning(msg.format(sensitivity=sensitivity))
             return
 
         # get size of the grid in x and y directions
-        nr_plots = len(self.data.feature_list)
+        nr_plots = len(self.data)
         grid_size = np.ceil(np.sqrt(nr_plots))
         grid_x_size = int(grid_size)
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
@@ -1068,15 +1054,15 @@ class PlotUncertainty(object):
             ax = axes[ny][nx]
 
             if i < nr_plots:
-                if total_sense[self.data.feature_list[i]] is None:
+                if "total_" + sensitivity not in self.data[self.data.keys()[i]]:
                     msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}_grid"
                     self.logger.warning(msg.format(sensitivity=sensitivity,
-                                                   feature=self.data.feature_list[i]))
+                                                   feature=self.data.keys()[i]))
                     ax.axis("off")
                     continue
 
-                prettyBar(total_sense[self.data.feature_list[i]],
-                          title=self.data.feature_list[i].replace("_", " "),
+                prettyBar(self.data[self.data.keys()[i]]["total_" + sensitivity],
+                          title=self.data.keys()[i].replace("_", " "),
                           xlabels=self.list_to_latex(self.data.uncertain_parameters),
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,

@@ -173,10 +173,13 @@ results = [result 1, result 2, ..., result N]
                     t_interpolate = []
                     interpolations = []
                     for result in results:
-                        if "t" in result[feature]:
+                        # if "t" in result[feature]:
+                        if not np.all(np.isnan(result[feature]["t"])):
                             t_interpolate.append(result[feature]["t"])
-                        else:
+                        elif not np.all(np.isnan(result[self.model.name]["t"])):
                             t_interpolate.append(result[self.model.name]["t"])
+                        else:
+                            raise ValueError("Neither {} or model has t values to use in interpolation".format(feature))
 
                         interpolations.append(result[feature]["interpolation"])
 
@@ -187,23 +190,29 @@ results = [result 1, result 2, ..., result N]
                 elif np.ndim(results[0][feature]["U"]) == 0:
                     self.logger.warning("Feature: {feature}, ".format(feature=feature) +
                                         "is a 0D result. No interpolation is performed")
-                    data[feature]["t"] = results[0][feature]["t"]
-                    data[feature]["U"] = []
 
+                    t = results[0][feature]["t"]
+                    if not np.all(np.isnan(t)):
+                        data[feature]["t"] = t
+
+                    data[feature]["U"] = []
                     for result in results:
                         data[feature]["U"].append(result[feature]["U"])
 
             else:
                 # Store data from results in a Data object
-                data[feature]["t"] = results[0][feature]["t"]
-                data[feature]["U"] = []
+                t = results[0][feature]["t"]
+                if not np.all(np.isnan(t)):
+                    data[feature]["t"] = t
 
+                data[feature]["U"] = []
                 for result in results:
                     data[feature]["U"].append(result[feature]["U"])
 
         # TODO is this necessary to ensure all results are arrays?
         for feature in data:
-            data[feature]["t"] = np.array(data[feature]["t"])
+            if "t" in data[feature]:
+                data[feature]["t"] = np.array(data[feature]["t"])
             data[feature]["U"] = np.array(data[feature]["U"])
 
         data.remove_only_invalid_results()

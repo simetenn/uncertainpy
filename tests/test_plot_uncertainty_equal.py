@@ -65,6 +65,7 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("feature1d_total-sensitivity_1")
 
+
     def test_total_sensitivity_t(self):
         self.plot.load(self.data_file_path)
 
@@ -98,16 +99,16 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
 
     def test_simulator_results_1d(self):
-        folder = os.path.dirname(os.path.realpath(__file__))
 
         self.plot.data = Data()
 
-        self.plot.data.t["TestingModel1d"] = np.load(os.path.join(folder, "data/t_test.npy"))
-        U = np.load(os.path.join(folder, "data/U_test.npy"))
-
-        self.plot.data.U["TestingModel1d"] = [U, U, U, U, U]
-        self.plot.data.features_1d = ["TestingModel1d"]
+        self.plot.data.add_features("TestingModel1d")
+        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
+
         self.plot.simulator_results_1d()
 
         plot_count = 0
@@ -118,38 +119,70 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
 
     def test_simulator_results_0d_error(self):
+        with self.assertRaises(ValueError):
+            self.plot.simulator_results_0d()
+
         self.plot.data = Data()
 
+        self.plot.simulator_results_0d()
+
+        self.plot.data.add_features("TestingModel1d")
+        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
+        self.plot.data.model_name = "TestingModel1d"
+
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_1d()
+            self.plot.simulator_results_0d()
 
 
     def test_simulator_results_1d_error(self):
+        with self.assertRaises(ValueError):
+            self.plot.simulator_results_1d()
+
         self.plot.data = Data()
+
+        self.plot.simulator_results_1d()
+
+        self.plot.data.add_features("TestingModel1d")
+        self.plot.data["TestingModel1d"]["U"] = [1, 1, 1, 1, 1]
+        self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
             self.plot.simulator_results_1d()
 
 
     def test_simulator_results_2d_error(self):
+        with self.assertRaises(ValueError):
+            self.plot.simulator_results_2d()
+
         self.plot.data = Data()
+
+        self.plot.simulator_results_2d()
+
+        self.plot.data.add_features("TestingModel1d")
+        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
+        self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
             self.plot.simulator_results_2d()
 
-
     def test_simulator_results_1d_model(self):
-        folder = os.path.dirname(os.path.realpath(__file__))
 
         self.plot.data = Data()
 
-        self.plot.data.t["TestingModel1d"] = np.load(os.path.join(folder, "data/t_test.npy"))
-        U = np.load(os.path.join(folder, "data/U_test.npy"))
 
-        self.plot.data.U["TestingModel1d"] = [U, U, U, U, U]
-        self.plot.data.features_1d = ["TestingModel1d"]
+        self.plot.data.add_features("TestingModel1d")
+        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
-        self.plot.data.labels = {"TestingModel1d": ["x", "y"]}
+
         self.plot.simulator_results()
 
         plot_count = 0
@@ -243,56 +276,18 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
 
     def assert_data(self):
-        self.assertTrue(np.array_equal(self.plot.data.U["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.U["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.E["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.E["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.t["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.t["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.Var["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.Var["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_05["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_05["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_95["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.p_95["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_1["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_1["TestingModel1d"], [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_1["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_1["TestingModel1d"],
-                                       [3., 4.]))
+        for data_type in self.plot.data.data_types:
+            if data_type == "labels":
+                continue
+            else:
+                self.assertTrue(np.array_equal(self.plot.data["feature1d"][data_type], [1., 2.]))
+                self.assertTrue(np.array_equal(self.plot.data["TestingModel1d"][data_type], [3., 4.]))
 
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_t["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.sensitivity_t["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_t["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.plot.data.total_sensitivity_t["TestingModel1d"],
-                                       [3., 4.]))
+        self.assertEqual(self.plot.data.uncertain_parameters, ["a", "b"])
 
+        self.assertTrue(np.array_equal(self.plot.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
+        self.assertTrue(np.array_equal(self.plot.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
 
-        self.assertEqual(self.plot.data.uncertain_parameters[0], "a")
-        self.assertEqual(self.plot.data.uncertain_parameters[1], "b")
-
-        self.assertEqual(self.plot.data.labels["TestingModel1d"], ["xlabel", "ylabel"])
-        self.assertEqual(self.plot.data.labels["feature1d"], ["xlabel", "ylabel"])
-
-        self.assertEqual(self.plot.data.feature_list[0], "TestingModel1d")
-        self.assertEqual(self.plot.data.feature_list[1], "feature1d")
 
 
 
@@ -307,6 +302,19 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.plot.attribute_feature_1d(attribute="test")
+
+
+    def test_attribute_feature_2d_error(self):
+        self.plot.load(self.data_file_path)
+
+        with self.assertRaises(ValueError):
+            self.plot.attribute_feature_2d(feature="feature0d")
+
+        with self.assertRaises(ValueError):
+            self.plot.attribute_feature_2d(feature="feature1d")
+
+        with self.assertRaises(ValueError):
+            self.plot.attribute_feature_2d(attribute="test")
 
 
     def test_attribute_feature_1d_mean(self):
@@ -328,6 +336,26 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("TestingModel1d_variance")
 
+
+
+    def test_attribute_feature_2d_mean(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.attribute_feature_2d(feature="feature2d",
+                                       attribute="E",
+                                       attribute_name="mean")
+
+        self.compare_plot("feature2d_mean")
+
+
+    def test_attribute_feature_2d_variance(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.attribute_feature_2d(feature="feature2d",
+                                       attribute="Var",
+                                       attribute_name="Variance")
+
+        self.compare_plot("feature2d_variance")
 
 
     def test_mean_error(self):
@@ -381,6 +409,21 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("feature1d_variance")
 
+
+    def test_mean_2d(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.mean_2d("feature2d")
+
+        self.compare_plot("feature2d_mean")
+
+
+    def test_variance_2d(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.variance_2d("feature2d")
+
+        self.compare_plot("feature2d_variance")
 
 
     def test_mean_variance_error(self):
@@ -541,9 +584,18 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
         self.compare_plot("feature1d_sensitivity_1")
 
 
+    def test_feature_2d(self):
+        self.plot.load(self.data_file_path)
+
+        self.plot.features_2d()
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
+
+
     def test_features_1d_no_t(self):
         self.plot.load(self.data_file_path)
-        self.plot.data.t["feature1d"] = np.nan
+        del self.plot.data["feature1d"]["t"]
 
         self.plot.features_1d(sensitivity="sensitivity_1")
 
@@ -590,6 +642,7 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
         self.compare_plot("feature0d_sensitivity_t")
 
 
+
     def test_plot_condensed(self):
         self.plot.load(self.data_file_path)
 
@@ -606,6 +659,10 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
         self.compare_plot("feature0d_sensitivity_1")
 
         self.compare_plot("total-sensitivity_1_grid")
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
+
 
 
     def test_plot_all_1(self):
@@ -645,6 +702,11 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_1_grid")
 
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
+
+
     def test_plot_all_t(self):
         self.plot.load(self.data_file_path)
 
@@ -673,6 +735,9 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
 
         self.compare_plot("total-sensitivity_t_grid")
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
 
 
     def test_plot_all_sensitivities(self):
@@ -732,6 +797,8 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_t_grid")
 
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
 
 
     def test_plot_condensed_sensitivity_1(self):
@@ -751,6 +818,9 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_1_grid")
 
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
+
 
     def test_plot_condensed_no_sensitivity(self):
         self.plot.load(self.data_file_path)
@@ -764,6 +834,9 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
         self.compare_plot("feature1d_confidence-interval")
 
         self.compare_plot("feature0d")
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
 
 
 
@@ -782,6 +855,9 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
         self.compare_plot("feature1d_confidence-interval")
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
 
 
 
@@ -841,6 +917,8 @@ class TestPlotUncertainpyEqual(unittest.TestCase):
 
         self.compare_plot("total-sensitivity_t_grid")
 
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
 
 
     def compare_plot(self, name):
