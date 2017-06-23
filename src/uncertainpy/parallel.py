@@ -26,37 +26,6 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 
 
 class Parallel(Base):
-
-    # def sort_features(self, results):
-
-    #     """
-    #     result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-    #               "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    #                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
-    #               self.model.name: {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
-    #                                 "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-    #               "feature0d": {"U": 1}}
-    #     """
-
-    #     features_2d = []
-    #     features_1d = []
-    #     features_0d = []
-
-    #     for feature in results:
-    #         if hasattr(results[feature]["U"], "__iter__"):
-    #             if len(results[feature]["U"].shape) == 0:
-    #                 features_0d.append(feature)
-    #             elif len(results[feature]["U"].shape) == 1:
-    #                 features_1d.append(feature)
-    #             else:
-    #                 features_2d.append(feature)
-    #         else:
-    #             features_0d.append(feature)
-
-    #     return features_0d, features_1d, features_2d
-
-
-
     def create_interpolations(self, result):
         """
 result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),

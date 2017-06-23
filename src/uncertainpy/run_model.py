@@ -59,42 +59,16 @@ class RunModel(ParameterBase):
 
     @ParameterBase.features.setter
     def features(self, new_features):
-        # Remove old features from data, except the model
-        # feature_list = data.keys()[:]
-        # for feature in feature_list:
-        #     if self.model is not None and feature != self.model.name:
-        #         del data[feature]
-
         ParameterBase.features.fset(self, new_features)
 
         self.parallel.features = self.features
 
-        # if self.features is not None:
-        #     # Update data feature labels only if there are labels belonging to that feature
-        #     for feature in self.features.features_to_run:
-        #         data.add_features(feature)
-
-        #         if feature in self.features.labels:
-        #             data[feature]["labels"] = self.features.labels[feature]
-
 
     @ParameterBase.model.setter
     def model(self, new_model):
-        # # If model is in data remove it
-        # if self.model is not None:
-        #     if self.model.name in data:
-        #             del data[self.model.name]
-
         ParameterBase.model.fset(self, new_model)
 
         self.parallel.model = self.model
-
-        # if self.model is not None:
-        #     data.add_features(self.model.name)
-        #     data.model_name = self.model.name
-
-        #     if self.model.labels:
-        #         data[self.model.name]["labels"] = self.model.labels
 
 
     def apply_interpolation(self, t_interpolate, interpolation):

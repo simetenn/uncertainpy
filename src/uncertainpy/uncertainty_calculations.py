@@ -22,8 +22,6 @@ class UncertaintyCalculations(ParameterBase):
                  verbose_level="info",
                  verbose_filename=None):
 
-
-
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
                                  features=features,
@@ -38,7 +36,6 @@ class UncertaintyCalculations(ParameterBase):
                                                       features=features,
                                                       verbose_level=verbose_level,
                                                       verbose_filename=verbose_filename)
-
 
         self.nr_pc_samples = nr_pc_samples
         self.nr_mc_samples = nr_mc_samples
@@ -403,27 +400,3 @@ class UncertaintyCalculations(ParameterBase):
                         total_sense[i] /= float(total_sensitivity)
 
                 self.data[feature]["total_" + sensitivity] = np.array(total_sense)
-
-        # sense = getattr(self.data, sensitivity)
-
-
-
-        # for feature in sense:
-        #     if sense[feature] is None:
-        #         total_sense[feature] = None
-        #         continue
-
-        #     total_sensitivity = 0
-        #     total_sense[feature] = []
-        #     for i in range(0, len(self.data.uncertain_parameters)):
-        #         tmp_sum_sensitivity = np.sum(sense[feature][i])
-
-        #         total_sensitivity += tmp_sum_sensitivity
-        #         total_sense[feature].append(tmp_sum_sensitivity)
-
-        #     for i in range(0, len(self.data.uncertain_parameters)):
-        #         if not total_sensitivity == 0:
-        #             total_sense[feature][i] /= float(total_sensitivity)
-
-
-        # setattr(self.data, "total_" + sensitivity, total_sense)

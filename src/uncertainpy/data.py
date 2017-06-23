@@ -94,80 +94,7 @@ feature_list
         self.model_name = ""
 
         self.data = {}
-        # self.features_0d = []
-        # self.features_1d = []
-        # self.features_2d = []
 
-
-
-
-
-    # @property
-    # def features_0d(self):
-    #     return self._features_0d
-
-    # @features_0d.setter
-    # def features_0d(self, new_features_0d):
-    #     self._features_0d = new_features_0d
-    #     self._update_feature_list()
-
-    # @property
-    # def features_1d(self):
-    #     return self._features_1d
-
-    # @features_1d.setter
-    # def features_1d(self, new_features_1d):
-    #     self._features_1d = new_features_1d
-    #     self._update_feature_list()
-
-    # @property
-    # def features_2d(self):
-    #     return self._features_2d
-
-    # @features_2d.setter
-    # def features_2d(self, new_features_2d):
-    #     self._features_2d = new_features_2d
-    #     self._update_feature_list()
-
-    # def _update_feature_list(self):
-    #     self.feature_list = self._features_0d + self._features_1d + self._features_2d
-    #     self.feature_list.sort()
-
-
-    # def sort_features(self):
-    #     """
-    #     result = {"feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-    #               "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    #                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]])},
-    #               self.model.name: {"U": array([ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10]),
-    #                                 "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-    #               "feature0d": {"U": 1}}
-    #     """
-
-    #     self.features_gt_2d = []
-    #     self.features_2d = []
-    #     self.features_1d = []
-    #     self.features_0d = []
-
-    #     for feature in self:
-    #         if "U" in self[feature]:
-    #             ndim = np.ndim(self[feature]["U"])
-
-
-
-
-    #     for feature in results:
-    #         if hasattr(results[feature]["U"], "__iter__"):
-    #             if len(results[feature]["U"].shape) == 0:
-    #                 features_0d.append(feature)
-    #             elif len(results[feature]["U"].shape) == 1:
-    #                 features_1d.append(feature)
-    #             else:
-    #                 features_2d.append(feature)
-    #         else:
-    #             features_0d.append(feature)
-
-    #     return features_0d, features_1d, features_2d
 
     def ndim(self, feature):
     #     if "U" in self[feature]:
@@ -195,22 +122,6 @@ feature_list
                 return self[self.model_name]["labels"]
             else:
                 return [""]
-
-        # elif feature in self.features_2d:
-        #     if self.model_name in self.features_2d and "labels" in self[self.model_name]:
-        #         return self[self.model_name]["labels"]
-        #     else:
-        #         return ["", "", ""]
-        # elif feature in self.features_1d:
-        #     if self.model_name in self.features_1d and "labels" in self[self.model_name]:
-        #         return self[self.model_name]["labels"]
-        #     else:
-        #         return ["", ""]
-        # elif feature in self.features_0d:
-        #     if self.model_name in self.features_0d and "labels" in self[self.model_name]:
-        #         return self[self.model_name]["labels"]
-        #     else:
-        #         return [""]
 
 
     def __getitem__(self, feature):
@@ -240,10 +151,6 @@ feature_list
 
         for feature in features:
             self.data[feature] = {}
-
-            # for data_type in self.data_types:
-            #     self.data[feature][data_type] = None
-
 
 
     def is_adaptive(self, feature):
@@ -340,16 +247,5 @@ Test if the model returned an adaptive result
             if all_nan:
                 self.logger.warning("Feature: {} does".format(feature)
                                     + " not yield results for any parameter combinations")
-                # raise RuntimeWarning("Feature: {} does not yield
-                # results for any parameter combinations".format(feature))
 
                 del self[feature]
-
-                # if feature in self.features_0d:
-                #     self.features_0d.remove(feature)
-
-                # if feature in self.features_2d:
-                #     self.features_2d.remove(feature)
-
-                # if feature in self.features_1d:
-                #     self.features_1d.remove(feature)

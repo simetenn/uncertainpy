@@ -10,7 +10,7 @@ from .base import ParameterBase
 
 
 #  Figures are always saved on the format:
-#  output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-extension
+#  output_dir_figures/parameter_value-that-is-plotted.figure-extension
 
 class UncertaintyEstimation(ParameterBase):
     def __init__(self,
