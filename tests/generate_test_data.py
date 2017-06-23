@@ -308,16 +308,16 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
 
 
 if __name__ == "__main__":  # pragma: no cover
-    # generate_data_polynomial_chaos()
-    # generate_data_PC_model_function()
-    # generate_data_PC_0D()
-    # generate_data_PC_2D()
-    # generate_data_polynomial_chaos_single()
+    generate_data_polynomial_chaos()
+    generate_data_PC_model_function()
+    generate_data_PC_0D()
+    generate_data_PC_2D()
+    generate_data_polynomial_chaos_single()
 
-    # generate_data_monte_carlo()
-    # generate_data_monte_carlo_single()
-    # # generate_data_comparemonte_carlo()
-    # generate_data_PC_rosenblatt()
-    # generate_data_uncertainty_calculations()
+    generate_data_monte_carlo()
+    generate_data_monte_carlo_single()
+    # generate_data_comparemonte_carlo()
+    generate_data_PC_rosenblatt()
+    generate_data_uncertainty_calculations()
     generate_data_data()
     generate_data_empty()

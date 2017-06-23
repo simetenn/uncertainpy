@@ -519,57 +519,18 @@ class TestUncertainty(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        self.assertTrue(np.array_equal(self.uncertainty.data.U["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.U["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.E["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.E["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.t["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.t["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.Var["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.Var["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_05["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.p_95["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_1["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_1["TestingModel1d"],
-                                       [3., 4.]))
+        for data_type in self.uncertainty.data.data_types:
+            if data_type == "labels":
+                continue
+            else:
+                self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"][data_type], [1., 2.]))
+                self.assertTrue(np.array_equal(self.uncertainty.data["TestingModel1d"][data_type], [3., 4.]))
 
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.sensitivity_t["TestingModel1d"],
-                                       [3., 4.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["feature1d"],
-                                       [1., 2.]))
-        self.assertTrue(np.array_equal(self.uncertainty.data.total_sensitivity_t["TestingModel1d"],
-                                       [3., 4.]))
+        self.assertEqual(self.uncertainty.data.uncertain_parameters, ["a", "b"])
 
+        self.assertTrue(np.array_equal(self.uncertainty.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
+        self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
 
-        self.assertEqual(self.uncertainty.data.uncertain_parameters[0], "a")
-        self.assertEqual(self.uncertainty.data.uncertain_parameters[1], "b")
-
-        self.assertEqual(self.uncertainty.data.labels, {"feature1d": ["xlabel", "ylabel"],
-                                                        "TestingModel1d": ["xlabel", "ylabel"]})
-
-        self.assertEqual(self.uncertainty.data.feature_list[0], "TestingModel1d")
-        self.assertEqual(self.uncertainty.data.feature_list[1], "feature1d")
 
 
     def test_plot_all(self):

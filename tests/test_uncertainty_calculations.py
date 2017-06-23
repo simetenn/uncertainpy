@@ -48,7 +48,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 verbose_level="error",
                                                                 seed=self.seed)
 
-
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -213,9 +212,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.model, Model)
         self.assertIsInstance(self.uncertainty_calculations.runmodel.model, Model)
 
-        self.assertEqual(self.uncertainty_calculations.runmodel.data.labels, {})
-
-
 
 
     def test_create_distribution_none(self):
@@ -261,10 +257,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
 
-        U_0 = self.uncertainty_calculations.data.U["TestingModel1d"][0]
-        U_2 = self.uncertainty_calculations.data.U["TestingModel1d"][2]
+        U_0 = self.uncertainty_calculations.data["TestingModel1d"]["U"][0]
+        U_2 = self.uncertainty_calculations.data["TestingModel1d"]["U"][2]
 
-        self.uncertainty_calculations.data.U["TestingModel1d"] = np.array([U_0, np.nan, U_2])
+        self.uncertainty_calculations.data["TestingModel1d"]["U"] = np.array([U_0, np.nan, U_2])
 
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
@@ -305,10 +301,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
 
-        U_0 = self.uncertainty_calculations.data.U["TestingModel1d"][0]
-        U_2 = self.uncertainty_calculations.data.U["TestingModel1d"][2]
+        U_0 = self.uncertainty_calculations.data["TestingModel1d"]["U"][0]
+        U_2 = self.uncertainty_calculations.data["TestingModel1d"]["U"][2]
 
-        self.uncertainty_calculations.data.U["TestingModel1d"] = np.array([U_0, np.nan, U_2])
+        self.uncertainty_calculations.data["TestingModel1d"]["U"] = np.array([U_0, np.nan, U_2])
 
         self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
@@ -338,7 +334,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        self.uncertainty_calculations.data.U["feature0d"] = np.array([1, np.nan, 1])
+        self.uncertainty_calculations.data["feature0d"]["U"] = np.array([1, np.nan, 1])
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature0d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
@@ -370,7 +366,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
 
-        self.uncertainty_calculations.data.U["feature1d"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
+        self.uncertainty_calculations.data["feature1d"]["U"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature1d")
 
         self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
@@ -407,10 +403,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        U_0 = self.uncertainty_calculations.data.U["feature2d"][0]
-        U_2 = self.uncertainty_calculations.data.U["feature2d"][2]
-
-        self.uncertainty_calculations.data.U["feature2d"] = np.array([U_0, np.nan, U_2])
+        U_0 = self.uncertainty_calculations.data["feature2d"]["U"][0]
+        U_2 = self.uncertainty_calculations.data["feature2d"]["U"][2]
+        self.uncertainty_calculations.data["feature2d"]["U"] = np.array([U_0, np.nan, U_2])
 
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
@@ -433,10 +428,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        U_0 = self.uncertainty_calculations.data.U["feature2d"][0]
-        U_2 = self.uncertainty_calculations.data.U["feature2d"][1]
+        U_0 = self.uncertainty_calculations.data["feature2d"]["U"][0]
+        U_2 = self.uncertainty_calculations.data["feature2d"]["U"][1]
 
-        self.uncertainty_calculations.data.U["feature2d"] = np.array([U_0, np.nan, U_2])
+        self.uncertainty_calculations.data["feature2d"]["U"] = np.array([U_0, np.nan, U_2])
 
         masked_nodes, masked_U = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
@@ -533,8 +528,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-
-
     def test_create_PCE_regression_rosenblatt_one(self):
 
         self.uncertainty_calculations.create_PCE_regression_rosenblatt("a")
@@ -545,45 +538,46 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
         self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
 
-    # def test_PCERquadrature(self):
-    #
-    #     self.uncertainty_calculations.create_PCE_quadrature()
-    #
-    #     print self.uncertainty_calculations.U_hat
-    #     self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
-    #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
-    #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
-    #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
-    #     self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+    # # def test_PCERquadrature(self):
+    # #
+    # #     self.uncertainty_calculations.create_PCE_quadrature()
+    # #
+    # #     print self.uncertainty_calculations.U_hat
+    # #     self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
 
 
 
     def test_calculate_total_sensitivity_1(self):
         self.uncertainty_calculations.data = Data()
-        self.uncertainty_calculations.data.sensitivity_1 = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2], "testNone": None}
+
+        self.uncertainty_calculations.data["test2D"] = {"sensitivity_1": [[4, 6], [8, 12]]}
+        self.uncertainty_calculations.data["test1D"] ={"sensitivity_1": [1, 2]}
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.calculate_total_sensitivity(sensitivity="sensitivity_1")
 
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test2D"][0], 1/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test2D"][1], 2/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test1D"][0], 1/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["test1D"][1], 2/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_1["testNone"], None)
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["total_sensitivity_1"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["total_sensitivity_1"][1], 2/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["total_sensitivity_1"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["total_sensitivity_1"][1], 2/3.)
 
 
     def test_calculate_total_sensitivity_t(self):
         self.uncertainty_calculations.data = Data()
-        self.uncertainty_calculations.data.sensitivity_t = {"test2D": [[4, 6], [8, 12]], "test1D": [1, 2], "testNone": None}
+        self.uncertainty_calculations.data["test2D"] = {"sensitivity_t": [[4, 6], [8, 12]]}
+        self.uncertainty_calculations.data["test1D"] ={"sensitivity_t": [1, 2]}
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.calculate_total_sensitivity(sensitivity="sensitivity_t")
 
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test2D"][0], 1/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test2D"][1], 2/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test1D"][0], 1/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["test1D"][1], 2/3.)
-        self.assertEqual(self.uncertainty_calculations.data.total_sensitivity_t["testNone"], None)
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["total_sensitivity_t"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["total_sensitivity_t"][1], 2/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["total_sensitivity_t"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["total_sensitivity_t"][1], 2/3.)
 
 
     def test_analyse_PCE(self):
@@ -606,8 +600,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 verbose_level="error")
 
         self.uncertainty_calculations.data = Data()
-        self.uncertainty_calculations.data.feature_list = ["feature0d", "feature1d",
-                                                           "feature2d", "TestingModel1d"]
 
         q0, q1 = cp.variable(2)
         parameter_space = parameters.get_from_uncertain("distribution")
@@ -615,6 +607,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
+        self.uncertainty_calculations.data.add_features(["TestingModel1d", "feature0d",
+                                                        "feature1d", "feature2d"])
 
         self.uncertainty_calculations.U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
         self.uncertainty_calculations.U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
@@ -623,50 +617,55 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.analyse_PCE()
 
-
         # Test if all calculated properties actually exists
-        self.assertIsInstance(self.uncertainty_calculations.data.p_05["TestingModel1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.p_05["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.p_05["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.p_05["feature2d"], np.ndarray)
-
-        self.assertIsInstance(self.uncertainty_calculations.data.p_95["TestingModel1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.p_95["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.p_95["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.p_95["feature2d"], np.ndarray)
-
-        self.assertIsInstance(self.uncertainty_calculations.data.E["TestingModel1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.E["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.E["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.E["feature2d"], np.ndarray)
-
-        self.assertIsInstance(self.uncertainty_calculations.data.Var["TestingModel1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.Var["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.Var["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.Var["feature2d"], np.ndarray)
-
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["TestingModel1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["feature2d"], np.ndarray)
-
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["TestingModel1d"], list)
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["feature0d"], list)
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["feature1d"], list)
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["feature2d"], list)
+        data = self.uncertainty_calculations.data
+        for data_type in data.data_types:
+            if data_type not in ["U", "t", "labels"]:
+                for feature in data:
+                    self.assertIsInstance(data[feature][data_type], np.ndarray)
 
 
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["TestingModel1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["feature0d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["feature1d"], np.ndarray)
-        self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["feature2d"], np.ndarray)
-
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["TestingModel1d"], list)
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["feature0d"], list)
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["feature1d"], list)
-        self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["feature2d"], list)
 
 
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_05["TestingModel1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_05["feature0d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_05["feature1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_05["feature2d"], np.ndarray)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_95["TestingModel1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_95["feature0d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_95["feature1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.p_95["feature2d"], np.ndarray)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.E["TestingModel1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.E["feature0d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.E["feature1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.E["feature2d"], np.ndarray)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.Var["TestingModel1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.Var["feature0d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.Var["feature1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.Var["feature2d"], np.ndarray)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["TestingModel1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["feature0d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["feature1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_1["feature2d"], np.ndarray)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["TestingModel1d"], list)
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["feature0d"], list)
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["feature1d"], list)
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_1["feature2d"], list)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["TestingModel1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["feature0d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["feature1d"], np.ndarray)
+        # self.assertIsInstance(self.uncertainty_calculations.data.sensitivity_t["feature2d"], np.ndarray)
+
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["TestingModel1d"], list)
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["feature0d"], list)
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["feature1d"], list)
+        # self.assertIsInstance(self.uncertainty_calculations.data.total_sensitivity_t["feature2d"], list)
 
         self.assertIsInstance(self.uncertainty_calculations.U_mc["TestingModel1d"], np.ndarray)
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature0d"], np.ndarray)
@@ -770,13 +769,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data = self.uncertainty_calculations.monte_carlo()
 
         # Rough tests
-        self.assertTrue(np.allclose(self.uncertainty_calculations.data.E["TestingModel1d"],
+        self.assertTrue(np.allclose(self.uncertainty_calculations.data["TestingModel1d"]["E"],
                                     np.arange(0, 10) + 3, atol=0.1))
-        self.assertTrue(np.allclose(self.uncertainty_calculations.data.Var["TestingModel1d"],
+        self.assertTrue(np.allclose(self.uncertainty_calculations.data["TestingModel1d"]["Var"],
                                     np.zeros(10), atol=0.1))
-        self.assertTrue(np.all(np.less(self.uncertainty_calculations.data.p_05["TestingModel1d"],
+        self.assertTrue(np.all(np.less(self.uncertainty_calculations.data["TestingModel1d"]["p_05"],
                                        np.arange(0, 10) + 3)))
-        self.assertTrue(np.all(np.greater(self.uncertainty_calculations.data.p_95["TestingModel1d"],
+        self.assertTrue(np.all(np.greater(self.uncertainty_calculations.data["TestingModel1d"]["p_95"],
                                           np.arange(0, 10) + 3)))
 
 
@@ -814,12 +813,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.monte_carlo()
 
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature0d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature0d"]["E"],
                                        features.feature0d(None, None)[1]))
-        self.assertEqual(self.uncertainty_calculations.data.Var["feature0d"], 0)
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature0d"],
+        self.assertEqual(self.uncertainty_calculations.data["feature0d"]["Var"], 0)
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature0d"]["p_05"],
                                        features.feature0d(None, None)[1]))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature0d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature0d"]["p_95"],
                                        features.feature0d(None, None)[1]))
 
 
@@ -843,13 +842,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.monte_carlo()
 
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature1d"]["E"],
                                        features.feature1d(None, None)[1]))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.Var["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature1d"]["Var"],
                                        np.zeros(10)))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature1d"]["p_05"],
                                        features.feature1d(None, None)[1]))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature1d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature1d"]["p_95"],
                                        features.feature1d(None, None)[1]))
 
 
@@ -873,11 +872,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.monte_carlo()
 
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.E["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature2d"]["E"],
                                        features.feature2d(None, None)[1]))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.Var["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature2d"]["Var"],
                                        np.zeros((2, 10))))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_05["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature2d"]["p_05"],
                                        features.feature2d(None, None)[1]))
-        self.assertTrue(np.array_equal(self.uncertainty_calculations.data.p_95["feature2d"],
+        self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature2d"]["p_95"],
                                        features.feature2d(None, None)[1]))
