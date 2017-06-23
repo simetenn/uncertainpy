@@ -95,6 +95,7 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 
 
             if np.ndim(result[feature]["U"]) >= 2:
+                # TODO implement interpolation of >= 2d data, part 1
                 if feature in self.features.adaptive or \
                         (feature == self.model.name and self.model.adaptive):
                     raise NotImplementedError("{feature},".format(feature=feature)

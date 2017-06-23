@@ -78,10 +78,6 @@ feature_list
             output_str += "{info}: {current_info}\n".format(info=info,
                                                             current_info=current_info)
 
-        output_str += border("Content")
-
-
-
         for feature in self:
             output_str += border(feature)
             for data_type in self[feature]:
@@ -336,7 +332,6 @@ Test if the model returned an adaptive result
     def remove_only_invalid_results(self):
         feature_list = self.data.keys()[:]
         for feature in feature_list:
-
             all_nan = True
             for U in self[feature]["U"]:
                 if not np.all(np.isnan(U)):

@@ -196,17 +196,15 @@ class TestData(unittest.TestCase):
         self.data["feature"]["U"] = [[1, 2], [1, 2]]
         self.data["feature2"]["U"] = [[1, 2], [1, 2]]
 
-
         self.data.model_name = "model_name"
-
 
         self.assertEqual(self.data.get_labels("feature"), ["x", "y"])
         self.assertEqual(self.data.get_labels("feature2"), ["x", "y"])
 
-        self.data["feature2"]["U"] = [[[1],  [2]], [[1], [2]]]
+        self.data["feature2"]["U"] = [[[1], [2]], [[1], [2]]]
         self.assertEqual(self.data.get_labels("feature2"), ["", "", ""])
 
-        self.data["feature"]["labels"] =  ["x"]
+        self.data["feature"]["labels"] = ["x"]
 
         self.assertEqual(self.data.get_labels("feature"), ["x"])
 
