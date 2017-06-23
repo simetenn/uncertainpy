@@ -1,5 +1,6 @@
 import os
 import h5py
+import collections
 
 import numpy as np
 
@@ -8,7 +9,7 @@ from uncertainpy.utils import create_logger
 
 # TODO instead of a data object, could just a  h5py file have been used ?
 
-class Data(object):
+class Data(collections.MutableMapping):
     def __init__(self,
                  filename=None,
                  verbose_level="info",
@@ -35,17 +36,12 @@ features_2d
 feature_list
         """
 
-        # TODO consider storing all data belonging to one
-        # specific feature in a dict for that feature
-
-        self.data_names = ["U", "t", "E", "Var", "p_05", "p_95",
+        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t"]
+                           "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
-        self.data_information = ["labels", "features_0d",
-                                 "features_1d", "features_2d", "feature_list",
-                                 "uncertain_parameters", "model_name"]
+        self.data_information = ["uncertain_parameters", "model_name"]
 
         self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -54,13 +50,18 @@ feature_list
                                     self.__class__.__name__)
 
 
-        self.clear()
+        self.uncertain_parameters = []
+        self.model_name = ""
+        self.data = {}
+
 
         if filename is not None:
             self.load(filename)
 
 
+
     def __str__(self):
+
         def border(msg):
             count = len(msg) + 6
             line = "="*(count + 2)
@@ -70,27 +71,18 @@ feature_list
 {line}\n\n""".format(line=line, msg=msg)
             return string
 
-        output_str = border("Information on Data")
+        output_str = border("Information")
 
         for info in self.data_information:
             current_info = getattr(self, info)
             output_str += "{info}: {current_info}\n".format(info=info,
                                                             current_info=current_info)
 
-        output_str += border("Content of Data")
-        for name in self.data_names:
-
-            output_str += border(name)
-            current_data = getattr(self, name)
-
-            for feature in self.feature_list:
-                output_str += "=== {feature} ===\n".format(feature=feature)
-                if feature in self.labels:
-                     output_str += "{}\n\n".format(self.labels[feature])
-                if feature in current_data:
-                    output_str += "{data}\n\n".format(data=current_data[feature])
-                else:
-                    output_str += "No data\n\n"
+        for feature in self:
+            output_str += border(feature)
+            for data_type in self[feature]:
+                output_str += "=== {data_type} ===\n".format(data_type=data_type)
+                output_str += "{data}\n\n".format(data=self[feature][data_type])
 
 
         return output_str.strip()
@@ -99,92 +91,77 @@ feature_list
 
     def clear(self):
         self.uncertain_parameters = []
-
-        self._features_0d = []
-        self._features_1d = []
-        self._features_2d = []
-        self.feature_list = []
-
-        self.labels = {}
-
-        self.U = {}
-        self.t = {}
-        self.E = {}
-        self.Var = {}
-        self.p_05 = {}
-        self.p_95 = {}
-        self.sensitivity_1 = {}
-        self.total_sensitivity_1 = {}
-        self.sensitivity_t = {}
-        self.total_sensitivity_t = {}
-
         self.model_name = ""
 
+        self.data = {}
 
-    @property
-    def features_0d(self):
-        return self._features_0d
 
-    @features_0d.setter
-    def features_0d(self, new_features_0d):
-        self._features_0d = new_features_0d
-        self._update_feature_list()
+    def ndim(self, feature):
+    #     if "U" in self[feature]:
+    #         ndim = np.ndim(self[feature]["U"])
+        return np.ndim(self[feature]["U"][0])
 
-    @property
-    def features_1d(self):
-        return self._features_1d
-
-    @features_1d.setter
-    def features_1d(self, new_features_1d):
-        self._features_1d = new_features_1d
-        self._update_feature_list()
-
-    @property
-    def features_2d(self):
-        return self._features_2d
-
-    @features_2d.setter
-    def features_2d(self, new_features_2d):
-        self._features_2d = new_features_2d
-        self._update_feature_list()
-
-    def _update_feature_list(self):
-        self.feature_list = self._features_0d + self._features_1d + self._features_2d
-        self.feature_list.sort()
 
 
     def get_labels(self, feature):
-        if feature in self.labels:
-            return self.labels[feature]
+        if "labels" in self[feature]:
+            return self[feature]["labels"]
 
-        elif feature in self.features_2d:
-            if self.model_name in self.features_2d and self.model_name in self.labels:
-                return self.labels[self.model_name]
+        elif self.ndim(feature) == 2:
+            if self.ndim(self.model_name) == 2 and "labels" in self[self.model_name]:
+                return self[self.model_name]["labels"]
             else:
                 return ["", "", ""]
-        elif feature in self.features_1d:
-            if self.model_name in self.features_1d and self.model_name in self.labels:
-                return self.labels[self.model_name]
+        elif self.ndim(feature) == 1:
+            if self.ndim(self.model_name) == 1 and "labels" in self[self.model_name]:
+                return self[self.model_name]["labels"]
             else:
                 return ["", ""]
-        elif feature in self.features_0d:
-            if self.model_name in self.features_0d and self.model_name in self.labels:
-                return self.labels[self.model_name]
+        elif self.ndim(feature) == 0:
+            if self.ndim(self.model_name) == 0 and "labels" in self[self.model_name]:
+                return self[self.model_name]["labels"]
             else:
                 return [""]
 
 
+    def __getitem__(self, feature):
+        return self.data[feature]
 
-    def is_adaptive(self):
+    def __setitem__(self, feature, value):
+        if not isinstance(value, dict):
+            raise ValueError("Value must be of type dict")
+        self.data[feature] = value
+
+
+    def __iter__(self):
+        return iter(self.data)
+
+
+    def __delitem__(self, feature):
+        del self.data[feature]
+
+
+    def __len__(self):
+        return len(self.data)
+
+
+    def add_features(self, features):
+        if isinstance(features, str):
+            features = [features]
+
+        for feature in features:
+            self.data[feature] = {}
+
+
+    def is_adaptive(self, feature):
         """
 Test if the model returned an adaptive result
         """
-        for feature in self.features_1d + self.features_2d:
-            u_prev = self.U[feature][0]
-            for u in self.U[feature][1:]:
-                if u_prev.shape != u.shape:
-                    return True
-                u_prev = u
+        u_prev = self[feature]["U"][0]
+        for u in self[feature]["U"][1:]:
+            if u_prev.shape != u.shape:
+                return True
+            u_prev = u
         return False
 
 
@@ -192,29 +169,14 @@ Test if the model returned an adaptive result
         ### TODO expand the save function to also save parameters and model information
 
         with h5py.File(os.path.join(filename), 'w') as f:
-
-            # f.attrs["name"] = self.output_file.split("/")[-1]
             f.attrs["uncertain parameters"] = self.uncertain_parameters
-            f.attrs["features"] = self.feature_list
-            f.attrs["features_0d"] = self.features_0d
-            f.attrs["features_1d"] = self.features_1d
-            f.attrs["features_2d"] = self.features_2d
             f.attrs["model name"] = self.model_name
 
-            label_group = f.create_group("_labels")
-
-            for feature in self.labels:
-                label_group.attrs[feature] = self.labels[feature]
-
-
-            for feature in self.feature_list:
+            for feature in self:
                 group = f.create_group(feature)
 
-                for data_name in self.data_names:
-                    data = getattr(self, data_name)
-
-                    if feature in data and data[feature] is not None:
-                        group.create_dataset(data_name, data=data[feature])
+                for data_type in self[feature]:
+                    group.create_dataset(data_type, data=self[feature][data_type])
 
 
     def load(self, filename):
@@ -223,33 +185,16 @@ Test if the model returned an adaptive result
         # TODO add this check when changing to python 3
         # if not os.path.isfile(self.filename):
         #     raise FileNotFoundError("{} file not found".format(self.filename))
+        self.clear()
 
         with h5py.File(self.filename, 'r') as f:
-            self.clear()
-
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
-
             self.model_name = f.attrs["model name"]
 
-
-            self.feature_list = list(f.attrs["features"])
-            self.features_0d = list(f.attrs["features_0d"])
-            self.features_1d = list(f.attrs["features_1d"])
-            self.features_2d = list(f.attrs["features_2d"])
-
-
-            for feature in f["_labels"].attrs.keys():
-                self.labels[feature] = list(f["_labels"].attrs[feature])
-
-
-            for feature in self.feature_list:
-                for data_name in self.data_names:
-                    data = getattr(self, data_name)
-
-                    if data_name in f[feature].keys():
-                        data[feature] = f[feature][data_name][()]
-                    else:
-                        data[feature] = None
+            for feature in f:
+                self.add_features(str(feature))
+                for data_type in f[feature]:
+                    self[feature][data_type] = f[feature][data_type][()]
 
 
 
@@ -272,7 +217,7 @@ Test if the model returned an adaptive result
 
 
     # def all_to_none(self):
-    #     for data_name in self.data_names:
+    #     for data_name in self.data_types:
     #         data = getattr(self, data_name)
     #         if data is not None:
     #             for feature in data:
@@ -282,7 +227,7 @@ Test if the model returned an adaptive result
     #         data = self.nan_to_none(data)
     #
     # def all_to_nan(self):
-    #     for data_name in self.data_names:
+    #     for data_name in self.data_types:
     #         data = getattr(self, data_name)
     #         if data is not None:
     #             for feature in data:
@@ -292,28 +237,15 @@ Test if the model returned an adaptive result
 
 
     def remove_only_invalid_results(self):
-        old_feature_list = self.feature_list[:]
-        for feature in old_feature_list:
-
+        feature_list = self.data.keys()[:]
+        for feature in feature_list:
             all_nan = True
-            for U in self.U[feature]:
+            for U in self[feature]["U"]:
                 if not np.all(np.isnan(U)):
                     all_nan = False
 
             if all_nan:
                 self.logger.warning("Feature: {} does".format(feature)
                                     + " not yield results for any parameter combinations")
-                # raise RuntimeWarning("Feature: {} does not yield
-                # results for any parameter combinations".format(feature))
 
-                self.U[feature] = "Only invalid results for all set of parameters"
-                self.feature_list.remove(feature)
-
-                if feature in self.features_0d:
-                    self.features_0d.remove(feature)
-
-                if feature in self.features_2d:
-                    self.features_2d.remove(feature)
-
-                if feature in self.features_1d:
-                    self.features_1d.remove(feature)
+                del self[feature]

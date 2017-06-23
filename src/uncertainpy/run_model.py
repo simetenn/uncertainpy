@@ -21,7 +21,9 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
+                               "interpolation": <scipy.interpolate.fitpack2. \
+                                                InterpolatedUnivariateSpline \
+                                                object at 0x7f1c78f0d4d0>},
           "feature_invalid": {"U": np.nan,
                               "t": np.nan}}
 
@@ -39,7 +41,6 @@ class RunModel(ParameterBase):
                  supress_model_graphics=True):
 
 
-        self.data = Data()
         self.parallel = Parallel(model=model,
                                  features=features,
                                  verbose_level=verbose_level,
@@ -58,50 +59,25 @@ class RunModel(ParameterBase):
 
     @ParameterBase.features.setter
     def features(self, new_features):
-        # Remove all labels but the model labels from data
-        if self.model is not None and self.model.name in self.data.labels:
-            if len(self.model.labels) > 0:
-                self.data.labels = {self.model.name: self.model.labels}
-            else:
-                self.data.labels = {}
-
         ParameterBase.features.fset(self, new_features)
 
         self.parallel.features = self.features
 
-        if self.features is not None:
-            # Update data feature labels only if there are labels belonging to that feature
-            for feature in self.features.labels:
-                if len(self.features.labels[feature]) > 0:
-                    self.data.labels[feature] = self.features.labels[feature]
-
-            self.data.labels.update(self.features.labels)
-
 
     @ParameterBase.model.setter
     def model(self, new_model):
-        # If model labels are in data remove them
-        if self.model is not None and self.model.name in self.data.labels:
-            del self.data.labels[self.model.name]
-
         ParameterBase.model.fset(self, new_model)
 
         self.parallel.model = self.model
 
-        if self.model is not None:
-            if self.model.labels:
-                self.data.labels[self.model.name] = self.model.labels
 
-            self.data.model_name = self.model.name
-
-
-    def perform_interpolation(self, ts, interpolation):
+    def apply_interpolation(self, t_interpolate, interpolation):
         lengths = []
-        for s in ts:
-            lengths.append(len(s))
+        for t_tmp in t_interpolate:
+            lengths.append(len(t_tmp))
 
         index_max_len = np.argmax(lengths)
-        t = ts[index_max_len]
+        t = t_interpolate[index_max_len]
 
         interpolated_results = []
         for inter in interpolation:
@@ -112,9 +88,7 @@ class RunModel(ParameterBase):
         return t, interpolated_results
 
 
-
-
-    def store_results(self, results):
+    def results_to_data(self, results):
         """
 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
@@ -134,16 +108,23 @@ result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 results = [result 1, result 2, ..., result N]
         """
 
-        features_0d, features_1d, features_2d = self.parallel.sort_features(results[0])
+        data = Data()
 
-        self.data.features_0d = features_0d
-        self.data.features_1d = features_1d
-        self.data.features_2d = features_2d
+        # Add features and labels
+        for feature in results[0]:
+            data.add_features(feature)
+
+            if feature == self.model.name:
+                data[feature]["labels"] = self.model.labels
+            elif feature in self.features.labels:
+                data[feature]["labels"] = self.features.labels[feature]
+
+        data.model_name = self.model.name
 
 
         # Check if features are adaptive withouth being specified as a adaptive
         # TODO if the feature is adaptive, perform the complete interpolation here instead
-        for feature in self.data.features_1d + self.data.features_2d:
+        for feature in data:
             if self.is_adaptive(results, feature):
                 if (feature == self.model.name and not self.model.adaptive) \
                     or (feature != self.model.name and feature not in self.features.adaptive):
@@ -151,63 +132,71 @@ results = [result 1, result 2, ..., result N]
                                      + " Try setting adaptive to True in {}".format(feature))
 
 
+        # Store all results in data, interpolate as needed
+        for feature in data:
+            # Interpolate the data if it is adaptive
+            # if "interpolation" in results[0][feature]:
+            if feature in self.features.adaptive or \
+                    (feature == self.model.name and self.model.adaptive):
+                # TODO implement interpolation of >= 2d data, part2
+                if np.ndim(results[0][feature]["U"]) >= 2:
+                    raise NotImplementedError("Feature: {feature},".format(feature=feature)
+                                              + " no support for >= 2D interpolation")
 
-        # TODO implement interpolation of >= 2d data
-        for feature in self.data.features_2d:
-            if "interpolation" in results[0][feature]:
-                raise NotImplementedError("Feature: {feature},".format(feature=feature)
-                                          + " no support for >= 2D interpolation")
+                elif np.ndim(results[0][feature]["U"]) == 1:
+                    t_interpolate = []
+                    interpolations = []
+                    for result in results:
+                        # if "t" in result[feature]:
+                        if not np.all(np.isnan(result[feature]["t"])):
+                            t_interpolate.append(result[feature]["t"])
+                        elif not np.all(np.isnan(result[self.model.name]["t"])):
+                            t_interpolate.append(result[self.model.name]["t"])
+                        else:
+                            raise ValueError("Neither {} or model has t values to use in interpolation".format(feature))
+
+                        interpolations.append(result[feature]["interpolation"])
+
+                    data[feature]["t"], data[feature]["U"] = self.apply_interpolation(t_interpolate, interpolations)
+
+                # Interpolating a 0D result makes no sense, so if a 0D feature
+                # is supposed to be interpolated store it as normal
+                elif np.ndim(results[0][feature]["U"]) == 0:
+                    self.logger.warning("Feature: {feature}, ".format(feature=feature) +
+                                        "is a 0D result. No interpolation is performed")
+
+                    t = results[0][feature]["t"]
+                    if not np.all(np.isnan(t)):
+                        data[feature]["t"] = t
+
+                    data[feature]["U"] = []
+                    for result in results:
+                        data[feature]["U"].append(result[feature]["U"])
 
             else:
-                self.data.t[feature] = results[0][feature]["t"]
-                self.data.U[feature] = []
-                for solved in results:
-                    self.data.U[feature].append(solved[feature]["U"])
+                # Store data from results in a Data object
+                t = results[0][feature]["t"]
+                if not np.all(np.isnan(t)):
+                    data[feature]["t"] = t
 
-
-        # Store 1d data from results in a Data object
-        # Interpolate the data if it is adaptive
-        for feature in self.data.features_1d:
-            if "interpolation" in results[0][feature]:
-                ts = []
-                interpolations = []
-                for solved in results:
-                    if "t" in solved[feature]:
-                        ts.append(solved[feature]["t"])
-                    else:
-                        ts.append(solved[self.model.name]["t"])
-
-                    interpolations.append(solved[feature]["interpolation"])
-
-                self.data.t[feature], self.data.U[feature] = self.perform_interpolation(ts, interpolations)
-            else:
-                self.data.t[feature] = results[0][feature]["t"]
-                self.data.U[feature] = []
-                for solved in results:
-                    self.data.U[feature].append(solved[feature]["U"])
-
-                # self.data.U[feature] = np.array(self.data.U[feature])
-
-
-
-        # Store 1d data from results in a Data object
-        for feature in self.data.features_0d:
-            self.data.t[feature] = results[0][feature]["t"]
-            self.data.U[feature] = []
-            for solved in results:
-                self.data.U[feature].append(solved[feature]["U"])
-
+                data[feature]["U"] = []
+                for result in results:
+                    data[feature]["U"].append(result[feature]["U"])
 
         # TODO is this necessary to ensure all results are arrays?
-        for feature in self.data.feature_list:
-            self.data.U[feature] = np.array(self.data.U[feature])
+        for feature in data:
+            if "t" in data[feature]:
+                data[feature]["t"] = np.array(data[feature]["t"])
+            data[feature]["U"] = np.array(data[feature]["U"])
 
-        self.data.remove_only_invalid_results()
+        data.remove_only_invalid_results()
+
+        return data
 
 
 
 
-    def evaluate_nodes(self, nodes):
+    def evaluate_nodes(self, nodes, uncertain_parameters):
         if self.supress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()
@@ -215,7 +204,7 @@ results = [result 1, result 2, ..., result N]
         results = []
         pool = mp.Pool(processes=self.CPUs)
 
-        model_parameters = self.create_model_parameters(nodes, self.data.uncertain_parameters)
+        model_parameters = self.create_model_parameters(nodes, uncertain_parameters)
         for result in tqdm(pool.imap(self.parallel.run, model_parameters),
                            desc="Running model",
                            total=len(nodes.T)):
@@ -235,8 +224,6 @@ results = [result 1, result 2, ..., result N]
         for node in nodes.T:
             if node.ndim == 0:
                 node = [node]
-            # if isinstance(node, float) or isinstance(node, int):
-            #     node = [node]
 
             # New setparameters
             parameters = {}
@@ -289,10 +276,9 @@ results = [result 1, result 2, ..., result N]
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
 
-        self.data.uncertain_parameters = uncertain_parameters
+        results = self.evaluate_nodes(nodes, uncertain_parameters)
 
-        results = self.evaluate_nodes(nodes)
+        data = self.results_to_data(results)
+        data.uncertain_parameters = uncertain_parameters
 
-        self.store_results(results)
-
-        return self.data
+        return data
