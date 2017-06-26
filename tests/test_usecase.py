@@ -257,10 +257,10 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_LgnExploreParameters(self):
-        model_file = "INmodel.hoc"
-        model_path = "../models/neuron_models/dLGN_modelDB/"
+        file = "INmodel.hoc"
+        path = "../models/neuron_models/dLGN_modelDB/"
 
-        full_model_path = os.path.join(self.folder, model_path)
+        full_path = os.path.join(self.folder, path)
 
         # parameterlist = [["cap", 1.1, None],
         #                  ["Rm", 22000, None],
@@ -278,8 +278,8 @@ class TestUseCases(unittest.TestCase):
 
         parameters = uncertainpy.Parameters(parameterlist)
         model = uncertainpy.NeuronModel(parameters=parameters,
-                                        model_file=model_file,
-                                        model_path=full_model_path,
+                                        file=file,
+                                        path=full_path,
                                         adaptive=True)
         model.set_all_distributions(uncertainpy.Distribution(0.05).uniform)
 
@@ -299,10 +299,10 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_LgnModelComparemonte_carlo(self):
-        model_file = "INmodel.hoc"
-        model_path = "../models/neuron_models/dLGN_modelDB/"
+        file = "INmodel.hoc"
+        path = "../models/neuron_models/dLGN_modelDB/"
 
-        full_model_path = os.path.join(self.folder, model_path)
+        full_path = os.path.join(self.folder, path)
 
         # parameterlist = [["cap", 1.1, None],
         #                  ["Rm", 22000, None],
@@ -321,8 +321,8 @@ class TestUseCases(unittest.TestCase):
 
         parameters = uncertainpy.Parameters(parameterlist)
         model = uncertainpy.NeuronModel(parameters=parameters,
-                                        model_file=model_file,
-                                        model_path=full_model_path,
+                                        file=file,
+                                        path=full_path,
                                         adaptive=True)
 
         model.set_all_distributions(uncertainpy.Distribution(0.05).uniform)

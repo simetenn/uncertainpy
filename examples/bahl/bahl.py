@@ -4,8 +4,8 @@ class NeuronModelBahl(NeuronModel):
     def __init__(self):
         NeuronModel.__init__(self,
                              adaptive=True,
-                             model_file="mosinit.hoc",
-                             model_path="bahl_neuron_model")
+                             file="mosinit.hoc",
+                             path="bahl_neuron_model")
 
 
     def set_parameters(self, parameters):
@@ -14,5 +14,5 @@ class NeuronModelBahl(NeuronModel):
 
         # These commands must be added for this specific
         # model to set the parameters
-        # self.h("recalculate_passive_properties()")
-        # self.h("recalculate_channel_densities()")
+        self.h("recalculate_passive_properties()")
+        self.h("recalculate_channel_densities()")

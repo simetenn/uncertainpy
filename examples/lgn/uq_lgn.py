@@ -1,6 +1,6 @@
 import uncertainpy as un
 
-model_path = "dLGN_modelDB/"
+path = "dLGN_modelDB/"
 
 
 parameterlist = [["cap", 1.1, None],
@@ -18,8 +18,7 @@ parameterlist = [["cap", 1.1, None],
 parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.Distribution(0.05).uniform)
 
-model = un.NeuronModel(model_path=model_path,
-                       adaptive=True)
+model = un.NeuronModel(path=path, adaptive=True)
 
 features = un.SpikingFeatures(features_to_run="all")
 

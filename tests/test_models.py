@@ -165,25 +165,25 @@ class TestTestingModelAdaptive(unittest.TestCase):
 
 class TestNeuronModel(unittest.TestCase):
     def test_init(self):
-        model_file = "mosinit.hoc"
-        model_path = "models/dLGN_modelDB/"
+        file = "mosinit.hoc"
+        path = "models/dLGN_modelDB/"
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)
 
-        model = NeuronModel(model_file=model_file,
-                            model_path=os.path.join(filedir, model_path))
+        model = NeuronModel(file=file,
+                            path=os.path.join(filedir, path))
 
 
     def test_run(self):
-        model_file = "mosinit.hoc"
-        model_path = "models/dLGN_modelDB/"
+        file = "mosinit.hoc"
+        path = "models/dLGN_modelDB/"
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)
 
-        model = NeuronModel(model_file=model_file,
-                            model_path=os.path.join(filedir, model_path))
+        model = NeuronModel(file=file,
+                            path=os.path.join(filedir, path))
 
         model_parameters = {"cap": 1.1, "Rm": 22000}
 

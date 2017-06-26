@@ -7,27 +7,31 @@ from .model import Model
 
 class NeuronModel(Model):
     def __init__(self,
-                 model_file="mosinit.hoc",
-                 model_path=None,
+                 file="mosinit.hoc",
+                 path=None,
+                 name=None,
                  adaptive=True,
                  labels=["time [ms]", "voltage [mv]"]):
 
         super(NeuronModel, self).__init__(adaptive=adaptive,
                                           labels=labels)
 
-        self.model_file = model_file
-        self.model_path = model_path
+        self.file = file
+        self.path = path
+
+        if name:
+            self.name = name
 
 
 
     def load_neuron(self):
         current_dir = os.getcwd()
-        os.chdir(self.model_path)
+        os.chdir(self.path)
 
         import neuron
 
         self.h = neuron.h
-        self.h.load_file(1, self.model_file)
+        self.h.load_file(1, self.file)
 
         os.chdir(current_dir)
 

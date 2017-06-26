@@ -268,10 +268,10 @@ class TestParallel(unittest.TestCase):
 
 
     def test_run_neuron_model(self):
-        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                   "models/dLGN_modelDB/")
 
-        model = NeuronModel(model_path=model_path,
+        model = NeuronModel(path=path,
                             adaptive=True)
 
         parallel = Parallel(model=model)
