@@ -10,9 +10,8 @@ from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures
 from uncertainpy.features import SpikingFeatures, NetworkFeatures
 from uncertainpy import Spikes
 from .testing_classes import TestingFeatures
-from .testing_classes import TestCaseExact
 
-class TestGeneralFeatures(TestCaseExact):
+class TestGeneralFeatures(unittest.TestCase):
     def setUp(self):
         self.t = np.arange(0, 10)
         self.U = np.arange(0, 10) + 1

@@ -8,13 +8,12 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 
-from .testing_classes import TestCaseExact
 
 from uncertainpy.features.spikes import Spike, Spikes
 
+from .testing_classes import TestCasePlot
 
-
-class TestSpikes(TestCaseExact):
+class TestSpikes(TestCasePlot):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
@@ -33,21 +32,6 @@ class TestSpikes(TestCaseExact):
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
-
-
-    def compare_plot(self, name):
-        if self.exact_plots:
-            folder = os.path.dirname(os.path.realpath(__file__))
-            compare_file = os.path.join(folder, "figures",
-                                        name + self.figureformat)
-
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-
-            result = subprocess.call(["diff", plot_file, compare_file])
-            self.assertEqual(result, 0)
-        else:
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-            self.assertTrue(os.path.isfile(plot_file))
 
 
     def test_init_no_input(self):

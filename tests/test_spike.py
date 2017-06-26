@@ -7,9 +7,9 @@ import numpy as np
 
 from uncertainpy.features.spikes import Spike
 
-from .testing_classes import TestCaseExact
+from .testing_classes import TestCasePlot
 
-class TestSpike(TestCaseExact):
+class TestSpike(TestCasePlot):
     def setUp(self):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + 10
@@ -46,19 +46,3 @@ class TestSpike(TestCaseExact):
         self.spike.plot(os.path.join(self.output_test_dir, "spike.png"))
 
         self.compare_plot("spike")
-
-
-    def compare_plot(self, name):
-        if self.exact_plots:
-            folder = os.path.dirname(os.path.realpath(__file__))
-            compare_file = os.path.join(folder, "figures",
-                                        name + self.figureformat)
-
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-
-            result = subprocess.call(["diff", plot_file, compare_file])
-            self.assertEqual(result, 0)
-        else:
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-            self.assertTrue(os.path.isfile(plot_file))
-

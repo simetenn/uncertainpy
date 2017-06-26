@@ -21,16 +21,16 @@ def create_test_suite(test_classes_to_run):
     return big_suite
 
 
-def create_test_suite_parameter(testcase, exact_plots=False):
+def create_test_suite_parameter(testcase, parameter=False):
     """
 Create a suite containing all tests taken from the given
-class, passing them the parameter 'exact_plots'.
+class, passing them a parameter.
     """
     loader = unittest.TestLoader()
     testnames = loader.getTestCaseNames(testcase)
     suite = unittest.TestSuite()
     for name in testnames:
-        suite.addTest(testcase(name, exact_plots=exact_plots))
+        suite.addTest(testcase(name, parameter=parameter))
     return suite
 
 
@@ -88,8 +88,8 @@ args = parser.parse_args()
 
 test_distribution = create_test_suite([TestDistribution])
 
-test_spike = create_test_suite_parameter(TestSpike, exact_plots=args.exact)
-test_spikes = create_test_suite_parameter(TestSpikes, exact_plots=args.exact)
+test_spike = create_test_suite_parameter(TestSpike, parameter=args.exact)
+test_spikes = create_test_suite_parameter(TestSpikes, parameter=args.exact)
 test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
 
 test_features = create_test_suite([TestGeneralFeatures,
@@ -125,9 +125,9 @@ test_parameters = create_test_suite([TestParameter, TestParameters])
 
 test_data = create_test_suite([TestData])
 
-test_plotUncertainty = create_test_suite_parameter(TestPlotUncertainpy, exact_plots=args.exact)
+test_plotUncertainty = create_test_suite_parameter(TestPlotUncertainpy, parameter=args.exact)
 
-test_uncertainty = create_test_suite_parameter(TestUncertainty, exact_plots=args.exact)
+test_uncertainty = create_test_suite_parameter(TestUncertainty, parameter=args.exact)
 
 test_usecase = create_test_suite([TestUseCases])
 

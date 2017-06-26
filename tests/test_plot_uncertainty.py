@@ -8,13 +8,13 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 
-from .testing_classes import TestCaseExact
+from .testing_classes import TestCasePlot
 from uncertainpy.plotting.plot_uncertainty import PlotUncertainty
 from uncertainpy import Data
 
 
 
-class TestPlotUncertainpy(TestCaseExact):
+class TestPlotUncertainpy(TestCasePlot):
     def setUp(self):
         self.folder = os.path.dirname(os.path.realpath(__file__))
 
@@ -927,22 +927,6 @@ class TestPlotUncertainpy(TestCaseExact):
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
-
-
-
-    def compare_plot(self, name):
-        if self.exact_plots:
-            folder = os.path.dirname(os.path.realpath(__file__))
-            compare_file = os.path.join(folder, "figures",
-                                        name + self.figureformat)
-
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-
-            result = subprocess.call(["diff", plot_file, compare_file])
-            self.assertEqual(result, 0)
-        else:
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-            self.assertTrue(os.path.isfile(plot_file))
 
 
 # TODO test combined features 0 for many features

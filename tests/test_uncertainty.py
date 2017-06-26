@@ -21,10 +21,10 @@ from uncertainpy import SpikingFeatures
 from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
 from .testing_classes import TestingUncertaintyCalculations
-from .testing_classes import TestCaseExact
+from .testing_classes import TestCasePlot
 
 
-class TestUncertainty(TestCaseExact):
+class TestUncertainty(TestCasePlot):
     def setUp(self):
         self.output_test_dir = ".tests/"
         self.seed = 10
@@ -732,21 +732,6 @@ class TestUncertainty(TestCaseExact):
         self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
 
-
-
-    def compare_plot(self, name):
-        if self.exact_plots:
-            folder = os.path.dirname(os.path.realpath(__file__))
-            compare_file = os.path.join(folder, "figures",
-                                        name + self.figureformat)
-
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-
-            result = subprocess.call(["diff", plot_file, compare_file])
-            self.assertEqual(result, 0)
-        else:
-            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
-            self.assertTrue(os.path.isfile(plot_file))
 
 
 if __name__ == "__main__":

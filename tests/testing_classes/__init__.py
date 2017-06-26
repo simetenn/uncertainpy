@@ -5,4 +5,4 @@ from .testing_models import model_function
 
 from .testing_features import TestingFeatures
 from .testing_uncertainty import TestingUncertaintyCalculations
-from .parametrized_test import TestCaseExact
+from .testcase_plot import TestCasePlot
