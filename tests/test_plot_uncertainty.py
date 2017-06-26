@@ -361,7 +361,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.attribute_feature_2d(feature="feature2d",
                                        attribute="Var",
-                                       attribute_name="Variance")
+                                       attribute_name="variance")
 
         self.compare_plot("feature2d_variance")
 
