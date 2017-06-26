@@ -7,8 +7,9 @@ import numpy as np
 
 from uncertainpy.features.spikes import Spike
 
+from .testing_classes import TestCaseExact
 
-class TestSpike(unittest.TestCase):
+class TestSpike(TestCaseExact):
     def setUp(self):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + 10
@@ -20,6 +21,7 @@ class TestSpike(unittest.TestCase):
                            xlabel="time", ylabel="voltage")
 
         self.output_test_dir = ".tests/"
+        self.figureformat = ".png"
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -43,20 +45,20 @@ class TestSpike(unittest.TestCase):
     def test_plot(self):
         self.spike.plot(os.path.join(self.output_test_dir, "spike.png"))
 
-        self.plot_exists("spike")
+        self.compare_plot("spike")
 
 
-    # def compare_plot(self, name):
-    #     folder = os.path.dirname(os.path.realpath(__file__))
-    #     compare_file = os.path.join(folder, "figures/",
-    #                                 name + ".png")
+    def compare_plot(self, name):
+        if self.exact_plots:
+            folder = os.path.dirname(os.path.realpath(__file__))
+            compare_file = os.path.join(folder, "figures",
+                                        name + self.figureformat)
 
-    #     plot_file = os.path.join(self.output_test_dir, name + ".png")
+            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
 
-    #     result = subprocess.call(["diff", plot_file, compare_file])
-    #     self.assertEqual(result, 0)
+            result = subprocess.call(["diff", plot_file, compare_file])
+            self.assertEqual(result, 0)
+        else:
+            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
+            self.assertTrue(os.path.isfile(plot_file))
 
-
-    def plot_exists(self, name):
-        plot_file = os.path.join(self.output_test_dir, name + ".png")
-        self.assertTrue(os.path.isfile(plot_file))

@@ -5,6 +5,9 @@ import subprocess
 import glob
 import numpy as np
 
+import matplotlib
+matplotlib.use('Agg')
+
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
@@ -18,9 +21,10 @@ from uncertainpy import SpikingFeatures
 from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
 from .testing_classes import TestingUncertaintyCalculations
+from .testing_classes import TestCaseExact
 
 
-class TestUncertainty(unittest.TestCase):
+class TestUncertainty(TestCaseExact):
     def setUp(self):
         self.output_test_dir = ".tests/"
         self.seed = 10
@@ -53,6 +57,7 @@ class TestUncertainty(unittest.TestCase):
                                                  seed=self.seed,
                                                  nr_mc_samples=10)
 
+        self.figureformat = ".png"
 
 
     def tearDown(self):
@@ -377,17 +382,17 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.polynomial_chaos()
 
-        self.plot_exists("TestingModel1d_mean-variance")
-        self.plot_exists("TestingModel1d_confidence-interval")
-        self.plot_exists("TestingModel1d_sensitivity_1_grid")
+        self.compare_plot("TestingModel1d_mean-variance")
+        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
-        self.plot_exists("feature1d_mean-variance")
-        self.plot_exists("feature1d_confidence-interval")
-        self.plot_exists("feature1d_sensitivity_1_grid")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_1_grid")
 
-        self.plot_exists("feature0d_sensitivity_1")
+        self.compare_plot("feature0d_sensitivity_1")
 
-        self.plot_exists("total-sensitivity_1_grid")
+        self.compare_plot("total-sensitivity_1_grid")
 
 
     def test_polynomial_chaos_single_plot(self):
@@ -416,17 +421,17 @@ class TestUncertainty(unittest.TestCase):
 
         self.uncertainty.polynomial_chaos_single()
 
-        self.plot_exists("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
-        self.plot_exists("TestingModel1d_single-parameter-a/TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
+        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_confidence-interval")
 
-        self.plot_exists("TestingModel1d_single-parameter-a/feature1d_mean-variance")
-        self.plot_exists("TestingModel1d_single-parameter-a/feature1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance")
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_confidence-interval")
 
-        self.plot_exists("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
-        self.plot_exists("TestingModel1d_single-parameter-b/TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
+        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_confidence-interval")
 
-        self.plot_exists("TestingModel1d_single-parameter-b/feature1d_mean-variance")
-        self.plot_exists("TestingModel1d_single-parameter-b/feature1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_mean-variance")
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_confidence-interval")
 
 
     def test_monte_carlo_single(self):
@@ -538,74 +543,74 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.plot(condensed=False, sensitivity="sensitivity_1")
 
 
-        self.plot_exists("TestingModel1d_mean")
-        self.plot_exists("TestingModel1d_variance")
-        self.plot_exists("TestingModel1d_mean-variance")
-        self.plot_exists("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_mean")
+        self.compare_plot("TestingModel1d_variance")
+        self.compare_plot("TestingModel1d_mean-variance")
+        self.compare_plot("TestingModel1d_confidence-interval")
 
-        self.plot_exists("TestingModel1d_sensitivity_1_a")
-        self.plot_exists("TestingModel1d_sensitivity_1_b")
-        self.plot_exists("TestingModel1d_sensitivity_1")
-        self.plot_exists("TestingModel1d_sensitivity_1_grid")
-
-
-        self.plot_exists("feature1d_mean")
-        self.plot_exists("feature1d_variance")
-        self.plot_exists("feature1d_mean-variance")
-        self.plot_exists("feature1d_confidence-interval")
-
-        self.plot_exists("feature1d_sensitivity_1_a")
-        self.plot_exists("feature1d_sensitivity_1_b")
-        self.plot_exists("feature1d_sensitivity_1")
-        self.plot_exists("feature1d_sensitivity_1_grid")
-        self.plot_exists("feature0d_total-sensitivity_1")
-
-        self.plot_exists("TestingModel1d_total-sensitivity_1")
-        self.plot_exists("feature0d_total-sensitivity_1")
-        self.plot_exists("feature1d_total-sensitivity_1")
-        self.plot_exists("feature2d_total-sensitivity_1")
-
-        self.plot_exists("feature1d_sensitivity_t_a")
-        self.plot_exists("feature1d_sensitivity_t_b")
-        self.plot_exists("feature1d_sensitivity_t")
-        self.plot_exists("feature1d_sensitivity_t_grid")
+        self.compare_plot("TestingModel1d_sensitivity_1_a")
+        self.compare_plot("TestingModel1d_sensitivity_1_b")
+        self.compare_plot("TestingModel1d_sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
 
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
 
-        self.plot_exists("TestingModel1d_sensitivity_t_a")
-        self.plot_exists("TestingModel1d_sensitivity_t_b")
-        self.plot_exists("TestingModel1d_sensitivity_t")
-        self.plot_exists("TestingModel1d_sensitivity_t_grid")
+        self.compare_plot("feature1d_sensitivity_1_a")
+        self.compare_plot("feature1d_sensitivity_1_b")
+        self.compare_plot("feature1d_sensitivity_1")
+        self.compare_plot("feature1d_sensitivity_1_grid")
+        self.compare_plot("feature0d_total-sensitivity_1")
 
-        self.plot_exists("feature0d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_total-sensitivity_1")
+        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature1d_total-sensitivity_1")
+        self.compare_plot("feature2d_total-sensitivity_1")
 
-
-        self.plot_exists("TestingModel1d_total-sensitivity_t")
-        self.plot_exists("feature0d_total-sensitivity_t")
-        self.plot_exists("feature1d_total-sensitivity_t")
-        self.plot_exists("feature2d_total-sensitivity_t")
+        self.compare_plot("feature1d_sensitivity_t_a")
+        self.compare_plot("feature1d_sensitivity_t_b")
+        self.compare_plot("feature1d_sensitivity_t")
+        self.compare_plot("feature1d_sensitivity_t_grid")
 
 
 
-        self.plot_exists("total-sensitivity_t_grid")
-        self.plot_exists("total-sensitivity_1_grid")
+        self.compare_plot("TestingModel1d_sensitivity_t_a")
+        self.compare_plot("TestingModel1d_sensitivity_t_b")
+        self.compare_plot("TestingModel1d_sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_grid")
+
+        self.compare_plot("feature0d_total-sensitivity_t")
+
+
+        self.compare_plot("TestingModel1d_total-sensitivity_t")
+        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature1d_total-sensitivity_t")
+        self.compare_plot("feature2d_total-sensitivity_t")
+
+
+
+        self.compare_plot("total-sensitivity_t_grid")
+        self.compare_plot("total-sensitivity_1_grid")
 
 
     def test_plot_condensed(self):
         self.uncertainty.polynomial_chaos()
         self.uncertainty.plot()
 
-        self.plot_exists("TestingModel1d_mean-variance")
-        self.plot_exists("TestingModel1d_confidence-interval")
-        self.plot_exists("TestingModel1d_sensitivity_1_grid")
+        self.compare_plot("TestingModel1d_mean-variance")
+        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
-        self.plot_exists("feature1d_mean-variance")
-        self.plot_exists("feature1d_confidence-interval")
-        self.plot_exists("feature1d_sensitivity_1_grid")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_sensitivity_1_grid")
 
-        self.plot_exists("feature0d_sensitivity_1")
+        self.compare_plot("feature0d_sensitivity_1")
 
-        self.plot_exists("total-sensitivity_1_grid")
+        self.compare_plot("total-sensitivity_1_grid")
 
 
 
@@ -613,16 +618,16 @@ class TestUncertainty(unittest.TestCase):
         self.uncertainty.polynomial_chaos()
         self.uncertainty.plot(condensed=False, sensitivity=None)
 
-        self.plot_exists("TestingModel1d_mean")
-        self.plot_exists("TestingModel1d_variance")
-        self.plot_exists("TestingModel1d_mean-variance")
-        self.plot_exists("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_mean")
+        self.compare_plot("TestingModel1d_variance")
+        self.compare_plot("TestingModel1d_mean-variance")
+        self.compare_plot("TestingModel1d_confidence-interval")
 
 
-        self.plot_exists("feature1d_mean")
-        self.plot_exists("feature1d_variance")
-        self.plot_exists("feature1d_mean-variance")
-        self.plot_exists("feature1d_confidence-interval")
+        self.compare_plot("feature1d_mean")
+        self.compare_plot("feature1d_variance")
+        self.compare_plot("feature1d_mean-variance")
+        self.compare_plot("feature1d_confidence-interval")
 
 
     def test_simulator_results(self):
@@ -729,20 +734,19 @@ class TestUncertainty(unittest.TestCase):
 
 
 
-    def compare_plot(self, name, compare_folder=""):
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", compare_folder,
-                                    name + ".png")
+    def compare_plot(self, name):
+        if self.exact_plots:
+            folder = os.path.dirname(os.path.realpath(__file__))
+            compare_file = os.path.join(folder, "figures",
+                                        name + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, name + ".png")
+            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
 
-        result = subprocess.call(["diff", plot_file, compare_file])
-        self.assertEqual(result, 0)
-
-
-    def plot_exists(self, name):
-        plot_file = os.path.join(self.output_test_dir, name + ".png")
-        self.assertTrue(os.path.isfile(plot_file))
+            result = subprocess.call(["diff", plot_file, compare_file])
+            self.assertEqual(result, 0)
+        else:
+            plot_file = os.path.join(self.output_test_dir, name + self.figureformat)
+            self.assertTrue(os.path.isfile(plot_file))
 
 
 if __name__ == "__main__":

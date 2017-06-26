@@ -4,7 +4,7 @@ import unittest
 from logging import Logger
 
 from uncertainpy.base import Base, ParameterBase
-from uncertainpy import Model, SpikingFeatures, GeneralFeatures, Parameters
+from uncertainpy import Model, GeneralFeatures, Parameters
 
 from .testing_classes import TestingFeatures, model_function
 

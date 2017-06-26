@@ -43,7 +43,7 @@ def lgn_simulator(**parameters):
     app_name = "spatialSummation"
     sys.path.append("/home/simen/src/lgn-simulator/tools")
 
-    print(Building in:\n", build_path)
+    print("Building in:\n", build_path)
 
 
     #build and run----------------------------------------------------------------------------------

@@ -21,88 +21,19 @@ def create_test_suite(test_classes_to_run):
     return big_suite
 
 
-test_distribution = create_test_suite([TestDistribution])
-
-test_spike = create_test_suite([TestSpike])
-test_spikes = create_test_suite([TestSpikes])
-
-test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
-
-test_features = create_test_suite([TestGeneralFeatures,
-                                   TestGeneralSpikingFeatures,
-                                   TestSpikingFeatures,
-                                   TestTestingFeatures,
-                                   TestNetworkFeatures])
-
-# test_features.addTest(test_spike_sorting)
-test_features.addTest(test_spike)
-
-test_logger = create_test_suite([TestLogger])
-
-test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
-
-test_base = create_test_suite([TestBase, TestParameterBase])
-
-test_runModel = create_test_suite([TestRunModel, TestParallel])
-
-test_parallel = create_test_suite([TestParallel])
-
-test_model = create_test_suite([TestModel,
-                                TestHodgkinHuxleyModel,
-                                TestCoffeeCupModel,
-                                TestIzhikevichModel,
-                                TestTestingModel0d,
-                                TestTestingModel1d,
-                                TestTestingModel2d,
-                                # TestTestingModel0dNoTime,
-                                # TestTestingModel1dNoTime,
-                                # TestTestingModel2dNoTime,
-                                # TestTestingModelNoU,
-                                TestNeuronModel])
-test_model.addTest(test_runModel)
-
-test_parameters = create_test_suite([TestParameter, TestParameters])
+def create_test_suite_parameter(testcase, exact_plots=False):
+    """
+Create a suite containing all tests taken from the given
+class, passing them the parameter 'exact_plots'.
+    """
+    loader = unittest.TestLoader()
+    testnames = loader.getTestCaseNames(testcase)
+    suite = unittest.TestSuite()
+    for name in testnames:
+        suite.addTest(testcase(name, exact_plots=exact_plots))
+    return suite
 
 
-test_data = create_test_suite([TestData])
-
-test_plotUncertainty = create_test_suite([TestPlotUncertainpy])
-test_plotUncertaintyEqual = create_test_suite([TestPlotUncertainpyEqual])
-
-test_uncertainty = create_test_suite([TestUncertainty])
-
-test_usecase = create_test_suite([TestUseCases])
-
-test_utils = unittest.TestSuite([test_logger])
-
-test_plotting = unittest.TestSuite([test_plotUncertainty, test_plotUncertaintyEqual])
-
-test_prerequisites = unittest.TestSuite([test_utils,
-                                         test_parameters,
-                                         test_distribution,
-                                         test_features,
-                                         test_model,
-                                         test_data,
-                                         test_base])
-
-
-test_basic = unittest.TestSuite([test_prerequisites,
-                                 test_uncertaintycalculations])
-
-test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertaintyEqual])
-
-test_examples = create_test_suite([TestExamples])
-
-test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
-
-test_all = unittest.TestSuite([test_basic, test_uncertainty,
-                               test_plotUncertainty, test_plotUncertaintyEqual, test_examples])
-
-# test_all = unittest.TestSuite([test_fast, test_usecase])
-# test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
-
-
-test_runner = unittest.TextTestRunner()
 
 parser = argparse.ArgumentParser(description="Run tests for Uncertainpy")
 parser.add_argument("-u", "--utils", help="Utility tests", action="store_true")
@@ -114,6 +45,12 @@ parser.add_argument("-b", "--basic",
                     help="Basic tests (all test up to Uncertainpy)",
                     action="store_true")
 parser.add_argument("-f", "--fast", help="Run all tests except usecase test", action="store_true")
+parser.add_argument("-e", "--exact",
+                    help="Test if the plot files are exactly equal. " +\
+                         "WARNING: uses diff, test fails on most machines " + \
+                         "due to non vissible differences in the plots.",
+                    action="store_true")
+
 
 parser.add_argument("--uncertainpy", help="Uncertainpy tests", action="store_true")
 # parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test",
@@ -141,6 +78,96 @@ parser.add_argument("--examples", help="Test all examples", action="store_true")
 
 
 args = parser.parse_args()
+
+
+
+
+
+
+
+
+test_distribution = create_test_suite([TestDistribution])
+
+test_spike = create_test_suite_parameter(TestSpike, exact_plots=args.exact)
+test_spikes = create_test_suite_parameter(TestSpikes, exact_plots=args.exact)
+test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
+
+test_features = create_test_suite([TestGeneralFeatures,
+                                   TestGeneralSpikingFeatures,
+                                   TestSpikingFeatures,
+                                   TestTestingFeatures,
+                                   TestNetworkFeatures])
+
+test_features.addTest(test_spike_sorting)
+
+test_logger = create_test_suite([TestLogger])
+
+test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
+
+test_base = create_test_suite([TestBase, TestParameterBase])
+
+test_runModel = create_test_suite([TestRunModel, TestParallel])
+
+test_parallel = create_test_suite([TestParallel])
+
+test_model = create_test_suite([TestModel,
+                                TestHodgkinHuxleyModel,
+                                TestCoffeeCupModel,
+                                TestIzhikevichModel,
+                                TestTestingModel0d,
+                                TestTestingModel1d,
+                                TestTestingModel2d,
+                                TestNeuronModel])
+test_model.addTest(test_runModel)
+
+test_parameters = create_test_suite([TestParameter, TestParameters])
+
+
+test_data = create_test_suite([TestData])
+
+test_plotUncertainty = create_test_suite_parameter(TestPlotUncertainpy, exact_plots=args.exact)
+
+test_uncertainty = create_test_suite_parameter(TestUncertainty, exact_plots=args.exact)
+
+test_usecase = create_test_suite([TestUseCases])
+
+test_utils = unittest.TestSuite([test_logger])
+
+test_plotting = unittest.TestSuite([test_plotUncertainty])
+
+test_prerequisites = unittest.TestSuite([test_utils,
+                                         test_parameters,
+                                         test_distribution,
+                                         test_features,
+                                         test_model,
+                                         test_data,
+                                         test_base])
+
+
+test_basic = unittest.TestSuite([test_prerequisites,
+                                 test_uncertaintycalculations])
+
+test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
+
+test_examples = create_test_suite([TestExamples])
+
+test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
+
+test_all = unittest.TestSuite([test_basic, test_uncertainty,
+                               test_plotUncertainty, test_plotUncertainty, test_examples])
+
+# test_all = unittest.TestSuite([test_fast, test_usecase])
+# test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
+
+
+test_runner = unittest.TextTestRunner()
+
+
+
+
+
+
+
 
 
 results = {}

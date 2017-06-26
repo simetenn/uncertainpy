@@ -54,7 +54,7 @@ def generate_docker_images():
 
     system("docker build -t {} -f {} ../.".format(image_name,
                                                   os.path.join(folder, "../.docker/Dockerfile_python2")))
-    system("docker run --name='{}' --rm=False {} python tests/generate_test_plots.py".format(container_name, image_name))
+    system("docker run -v $(pwd):/home/docker/uncertainpy --name='{}' --rm=False {} python tests/generate_test_plots.py".format(container_name, image_name))
     system("docker cp {}:uncertainpy/tests/figures/. {}/.".format(container_name, docker_test_dir))
     system("docker stop {}".format(container_name))
     system("docker rm  {}".format(container_name))
