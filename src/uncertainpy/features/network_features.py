@@ -51,6 +51,9 @@ class NetworkFeatures(GeneralFeatures):
 
 
     def preprocess(self, t, spiketrains):
+        if t is None or np.isnan(t):
+            raise ValueError("t is NaN or None. t must be the time when the simulation ends.")
+
         neo_spiketrains = []
         for spiketrain in spiketrains:
             neo_spiketrain = neo.core.SpikeTrain(spiketrain, t_stop=t, units=self.units)
@@ -84,6 +87,7 @@ class NetworkFeatures(GeneralFeatures):
             if len(spiketrain) > 1:
                 isi = elephant.statistics.isi(spiketrain)
                 binned_isi.append(np.histogram(isi, bins=bins)[0])
+
             else:
                 binned_isi.append(np.zeros(len(bins) - 1))
 
@@ -130,12 +134,16 @@ class NetworkFeatures(GeneralFeatures):
         for spiketrain in spiketrains:
             if len(spiketrain) > 2:
                 sampling_period = spiketrain.t_stop/self.instantaneous_rate_nr_samples
-                instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)
-                instantaneous_rates.append(np.array(instantaneous_rate).flatten())
+                # try/except to solve problem with elephant
+                try:
+                    instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)
+                    instantaneous_rates.append(np.array(instantaneous_rate).flatten())
 
-                if t is None:
-                    t = instantaneous_rate.times.copy()
-                    t.units = self.units
+                    if t is None:
+                        t = instantaneous_rate.times.copy()
+                        t.units = self.units
+                except TypeError:
+                    instantaneous_rates.append(None)
 
             else:
                 instantaneous_rates.append(None)

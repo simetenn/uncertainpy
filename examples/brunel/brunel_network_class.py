@@ -111,6 +111,6 @@ class BrunelNetwork(NestModel):
 
         # U must be a list/array of spiketrains
         U = spiketrains
-        t = None
+        t = self.simtime
 
         return t, U
