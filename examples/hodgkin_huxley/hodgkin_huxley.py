@@ -102,7 +102,6 @@ class HodgkinHuxley(Model):
         self.m0 = self.m_inf(self.V_rest)
         self.n0 = self.n_inf(self.V_rest)
 
-
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
         X = odeint(self.dXdt, initial_conditions, self.t)

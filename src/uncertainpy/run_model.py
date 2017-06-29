@@ -128,7 +128,8 @@ results = [result 1, result 2, ..., result N]
             if self.is_adaptive(results, feature):
                 if (feature == self.model.name and not self.model.adaptive) \
                     or (feature != self.model.name and feature not in self.features.adaptive):
-                    raise ValueError("The number of points varies between runs."
+                    print results[feature]
+                    raise ValueError("{}: The number of points varies between runs.".format(feature)
                                      + " Try setting adaptive to True in {}".format(feature))
 
 
@@ -263,9 +264,11 @@ results = [result 1, result 2, ..., result N]
         u_prev = results[0][feature]["U"]
         for solve in results[1:]:
             u = solve[feature]["U"]
-            if u_prev.shape != u.shape:
-                return True
-            u_prev = u
+
+            if not np.all(np.isnan(u)):
+                if u_prev.shape != u.shape:
+                    return True
+                u_prev = u
 
         return False
 

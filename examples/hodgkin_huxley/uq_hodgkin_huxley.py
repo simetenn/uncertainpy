@@ -23,6 +23,7 @@ features = un.SpikingFeatures(features_to_run="all")
 
 uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameters,
-                                       features=features)
+                                       features=features,
+                                       CPUs=1)
 
 uncertainty.uncertainty_quantification()
