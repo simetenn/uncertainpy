@@ -128,7 +128,6 @@ results = [result 1, result 2, ..., result N]
             if self.is_adaptive(results, feature):
                 if (feature == self.model.name and not self.model.adaptive) \
                     or (feature != self.model.name and feature not in self.features.adaptive):
-                    print results[feature]
                     raise ValueError("{}: The number of points varies between runs.".format(feature)
                                      + " Try setting adaptive to True in {}".format(feature))
 
