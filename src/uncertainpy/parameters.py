@@ -10,6 +10,29 @@ import chaospy as cp
 __all__ = ["Parameters", "Parameter"]
 
 class Parameter(object):
+    """
+    Parameter object, contains name of parameter, value of parameter and distribution of parameter.
+
+    Parameters
+    ----------
+    name: str
+        Name of the parameter.
+    value: float, int
+        The value of the parameter.
+    distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
+        The distribution of the parameter, used if the parameter is uncertain.
+        Defaults to None.
+
+
+    Attributes
+    ----------
+    name: str
+        Name of the parameter.
+    value: float, int
+        The value of the parameter.
+    distribution
+    """
+
     def __init__(self, name, value, distribution=None):
         """
         Parameter object
@@ -17,9 +40,9 @@ class Parameter(object):
         Parameters
         ----------
         name: str
-            name of the parameter
-        value: number
-            the value of the parameter
+            Name of the parameter.
+        value: float, int
+            The value of the parameter.
         distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
             The distribution of the parameter, used if the parameter is uncertain.
             Defaults to None.
@@ -37,6 +60,7 @@ class Parameter(object):
     def distribution(self):
         """
         A Chaospy distribution or a function that returns a Chaospy distribution.
+        If None the parameter has no distribution and is not considered uncertain-
         """
         return self._distribution
 
@@ -65,9 +89,9 @@ class Parameter(object):
         Parameters
         ----------
         filename: str
-            name of file
+            Name of file.
         value: float, int
-            new value to set in parameter file
+            New value to set in parameter file.
 
         """
         search_string = r"(\A|\b)(" + self.name + r")(\s*=\s*)((([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))([eE][+-]?\d+)*)($|\b)"
@@ -84,7 +108,7 @@ class Parameter(object):
         Parameters
         ----------
         filename: str
-            name of file
+            Name of file.
 
         """
         self.set_parameter_file(filename, self.value)
@@ -96,9 +120,8 @@ class Parameter(object):
 
         Returns
         -------
-        out: str
-
-        A string containing ``name``, ``value``, and if a parameter is uncertain.
+        str
+            A string containing ``name``, ``value``, and if a parameter is uncertain.
 
         """
         if self.distribution is None:
@@ -112,37 +135,50 @@ class Parameter(object):
 
 
 
-
-
-
-# TODO use collections.mutablemapping
 class Parameters(collections.MutableMapping):
+    """
+    A collection of parameters.
+
+    Has all standard dictionary methods, such as items, value contains and so implemented.
+
+    Parameters
+    ----------
+    parameterlist: {list of Parameter objects, list [[name, value, distribution],...]}
+        List the parameters that should be created.
+        On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
+        Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
+        the arguments are similar to the arguments given to Parameter().
+
+
+    Attributes
+    ----------
+    parameters: dict
+        A dictionary of parameters with ``name`` as key and Parameter object as value.
+
+
+    See Also
+    --------
+    Parameter : Parameter object
+    """
+
     def __init__(self, parameterlist=[]):
         """
         A collection of parameters.
 
+        Implements collections.MutableMapping, and have all dictionary methods.
+
         Parameters
         ----------
-
-        parameterlist: {list of Parameter objects, list [[name, value, distribution],...]}
+        parameterlist: {list of Parameter objects, list [[name, value, distribution],...]}, optional
             List the parameters that should be created.
+            On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
+            Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
+            the arguments are similar to the arguments given to Parameter().
+            Default is an empty list.
 
-            On the form:
-
-            parameterlist = [[name1, value1, distribution1],
-                            [name2, value2, distribution2],
-                            ...]
-                name: str
-                    Name of the parameter
-                value: number
-                    Value of the parameter
-                distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
-                    The distribution of the parameter.
-                    A parameter is considered uncertain if if has a distributiona associated
-                    with it.
-
-            or
-            parameterlist = [ParameterObject1, ParameterObject2,...]
+        See Also
+        --------
+        Parameter : Parameter object
         """
         self.parameters = {}
 
@@ -162,28 +198,42 @@ class Parameters(collections.MutableMapping):
 
     def __getitem__(self, name):
         """
-Return Parameter object with name
+        Return Parameter object with `name`.
 
-Parameters
-----------
-Required arguments
+        Parameters
+        ----------
+        name: str
+            Name of parameter.
 
-name: str
-    name of parameter
-
-Returns
--------
-Parameter object
+        Returns
+        -------
+        Parameter object
+            The parameter object with `name`.
         """
+
         return self.parameters[name]
 
 
     def __iter__(self):
+        """
+        Iterate over the parameter objects.
+
+        Yields
+        ------
+        Parameter object
+            A parameter object.
+        """
+
         return iter(self.parameters.values())
 
     def __str__(self):
         """
-        Return a readable string
+        Convert all parameters to a readable string.
+
+        Returns
+        -------
+        str
+           A readable string of all parameter objects.
         """
         result = ""
         for name in sorted(self.parameters.keys()):
@@ -193,49 +243,69 @@ Parameter object
 
 
     def __len__(self):
+        """
+        Get the number of parameters.
+
+        Parameters
+        ----------
+        int
+            The number of parameters.
+        """
         return len(self.parameters)
 
 
     def __setitem__(self, name, parameter):
+        """
+        Set parameter with `name`.
+
+        Parameters
+        ----------
+        name: str
+            Name of parameter.
+        parameter: Parameter object
+            The parameter object of `name`.
+        """
+
         if not isinstance(parameter, Parameter):
             raise ValueError("parameter must be an instance of Parameter")
         self.parameters[name] = parameter
 
 
     def __delitem__(self, name):
+        """
+        Delete parameter with `name`.
+
+        Parameters
+        ----------
+        name: str
+            Name of parameter.
+        """
+
         del self.parameters[name]
 
 
     def set_distribution(self, parameter, distribution):
         """
-Set the distribution of a parameter.
+        Set the distribution of a parameter.
 
-Parameters
-----------
-Required arguments
-
-parameter: str
-    Name of parameter
-distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
-    The distribution of the parameter.
-    A parameter is considered uncertain if if has a distributiona associated
-    with it.
+        Parameters
+        ----------
+        parameter: str
+            Name of parameter.
+        distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}
+            The distribution of the parameter.
         """
         self.parameters[parameter].distribution = distribution
 
 
     def set_all_distributions(self, distribution):
         """
-Set the distribution of all parameters.
+        Set the distribution of all parameters.
 
-Parameters
-----------
-Required arguments
-
-distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
-    The distribution of the parameter.
-    A parameter is considered uncertain if if has a distributiona associated
-    with it.
+        Parameters
+        ----------
+        distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}
+            The distribution of the parameter.
         """
         for parameter in self.parameters:
             self.parameters[parameter].distribution = distribution
@@ -243,18 +313,21 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
 
     def get_from_uncertain(self, attribute="name"):
         """
-Get an attribute from all uncertain parameters(parameters that have a distribution)
+        Return attributes from uncertain parameters.
 
-Parameters
-----------
-Required arguments
+        Return a list of attributes (``name``, ``value``, or ``distribution``) from
+        each uncertain parameters (parameters that have a distribution).
 
-attribute: "name" | "value" | "distribution"
-    The name of the attribute to be returned
+        Parameters
+        ----------
+        attribute: {"name", "value", "distribution"}, optional
+            The name of the attribute to be returned from each uncertain parameter.
+            Default is `name`.
 
-Returns
--------
-List of the attribute of all uncertain parameters
+        Returns
+        -------
+        list
+            List containing the `attribute` of each uncertain parameters.
         """
 
         items = []
@@ -264,24 +337,27 @@ List of the attribute of all uncertain parameters
         return items
 
 
-    # TODO implement __getitem__
     def get(self, attribute="name", parameter_names=None):
         """
-Get the attribute of all parameters in parameter_names
+        Return attributes from all parameters.
 
-Parameters
-----------
-Required arguments
+        Return a list of attributes (``name``, ``value``, or ``distribution``) from
+        each parameters (parameters that have a distribution).
 
-attribute: "name" | "value" | "distribution"
-    The name of the attribute to be returned
-parameter_names: None | list | str
-    A list of all parameters of which attribute should be returned.
-    If None, the attribute all parameters are returned.
-    Default is None.
-Returns
--------
-List of the attribute of all uncertain parameters
+        Parameters
+        ----------
+        attribute: {"name", "value", "distribution"}, optional
+            The name of the attribute to be returned from each uncertain parameter. Default is `name`.
+        parameter_names: {None, list, str}, optional
+            A list of all parameters of which attribute should be returned,
+            or a string for a single parameter.
+            If None, the attribute all parameters are returned.
+            Default is None.
+
+        Returns
+        -------
+        list
+            List containing the `attribute` of each parameters.
         """
 
         if parameter_names is None:
@@ -299,14 +375,17 @@ List of the attribute of all uncertain parameters
 
     def set_parameters_file(self, filename, parameters):
         """
-Set all parameter to the original value in the parameter file, filename.
+        Set listed parameters to their value in a parameter file.
 
-Parameters
-----------
-Required arguments
+        For each parameter listed in `parameters`, search `filename` for occurrences of
+        ``parameter_name = number`` and replace ``number`` with value of that parameter.
 
-filename: str
-    name of file
+        Parameters
+        ----------
+        filename: str
+            Name of file.
+        parameters: list
+            List of parameter names.
         """
         for parameter in parameters:
             self.parameters[parameter].set_parameter_file(filename, parameters[parameter])
@@ -314,14 +393,15 @@ filename: str
 
     def reset_parameter_file(self, filename):
         """
-Set the parameter to the original value in the parameter file, filename.
+        Set all parameters to their value in a parameter file.
 
-Parameters
-----------
-Required arguments
+        For all parameters, search `filename` for occurrences of
+        ``parameter_name = number`` and replace ``number`` with value of that parameter.
 
-filename: str
-    name of file
+        Parameters
+        ----------
+        filename: str
+            Name of file.
         """
         for parameter in self.parameters:
             self.parameters[parameter].set_parameter_file(filename, self.parameters[parameter].value)

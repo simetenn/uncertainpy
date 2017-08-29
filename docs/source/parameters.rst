@@ -4,15 +4,18 @@ Parameter
 =========
 
 .. autoclass:: uncertainpy.Parameter
-   :members:
-   :inherited-members:
-   :undoc-members:
-   __str__
+    :members:
+    :undoc-members:
 
 Parameters
 ==========
 
 .. autoclass:: uncertainpy.Parameters
-   :members:
-   :inherited-members:
-   :undoc-members:
+    :members:
+    :undoc-members:
+    :inherited-members:
+
+
+
+.. autosummary::
+
