@@ -255,6 +255,29 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(result[2], Parameter)
 
 
+    def test_delitem(self):
+        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+                         ["gbar_K", 36, cp.Normal(36, 1)],
+                         ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
+
+        parameters = Parameters(parameterlist)
+
+        del parameters["gbar_Na"]
+
+        self.assertEqual(len(parameters.parameters), 2)
+
+
+    def test_setitem(self):
+
+        parameter = Parameter("gbar_Na", 120, cp.Uniform(110, 130))
+        parameters = Parameters()
+
+        parameters["gbar_Na"] = parameter
+
+        self.assertTrue("gbar_Na" in parameters.parameters)
+        self.assertIsInstance(parameters["gbar_Na"], Parameter)
+
+
     def test_set_distribution(self):
         parameterlist = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],

@@ -1,7 +1,8 @@
 import re
 import fileinput
 import sys
-from builtins import dict
+# from builtins import dict
+import collections
 
 import chaospy as cp
 
@@ -115,7 +116,7 @@ class Parameter(object):
 
 
 # TODO use collections.mutablemapping
-class Parameters(object):
+class Parameters(collections.MutableMapping):
     def __init__(self, parameterlist=[]):
         """
         A collection of parameters.
@@ -177,9 +178,12 @@ Parameter object
         return self.parameters[name]
 
 
+    def __iter__(self):
+        return iter(self.parameters.values())
+
     def __str__(self):
         """
-Return a readable string
+        Return a readable string
         """
         result = ""
         for name in sorted(self.parameters.keys()):
@@ -187,8 +191,19 @@ Return a readable string
 
         return result.strip()
 
-    def __iter__(self):
-        return iter(self.parameters.values())
+
+    def __len__(self):
+        return len(self.parameters)
+
+
+    def __setitem__(self, name, parameter):
+        if not isinstance(parameter, Parameter):
+            raise ValueError("parameter must be an instance of Parameter")
+        self.parameters[name] = parameter
+
+
+    def __delitem__(self, name):
+        del self.parameters[name]
 
 
     def set_distribution(self, parameter, distribution):
