@@ -1,5 +1,5 @@
 from .data import Data
-from .distribution import Distribution, uniform, normal
+from .distribution import uniform, normal
 from .parameters import Parameter, Parameters
 from .uncertainty import UncertaintyEstimation
 
