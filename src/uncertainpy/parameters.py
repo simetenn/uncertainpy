@@ -11,23 +11,18 @@ __all__ = ["Parameters", "Parameter"]
 class Parameter(object):
     def __init__(self, name, value, distribution=None):
         """
-Parameter object
+        Parameter object
 
-Parameters
-----------
-Required arguments
+        Parameters
+        ----------
+        name: str
+            name of the parameter
+        value: number
+            the value of the parameter
+        distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
+            The distribution of the parameter, used if the parameter is uncertain.
+            Defaults to None.
 
-name: str
-    name of the parameter
-value: number
-    the value of the paramter
-
-Optional arguments
-
-distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
-    The distribution of the parameter.
-    Used if the parameter is uncertain.
-    Default is None.
         """
         self.name = name
         self.value = value
@@ -39,6 +34,9 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
 
     @property
     def distribution(self):
+        """
+        A Chaospy distribution or a function that returns a Chaospy distribution.
+        """
         return self._distribution
 
     @distribution.setter
@@ -58,17 +56,18 @@ distribution: None | Chaospy distribution | Function that returns a Chaospy dist
 
     def set_parameter_file(self, filename, value):
         """
-Set the parameter to given value in a parameter file.
-Searches filename for occurences of 'name = #number' and replace the '#number' with value
+        Set parameters to given value in a parameter file.
 
-Parameters
-----------
-Required arguments
+        Search `filename` for occurrences of ``name = number``
+        and replace ``number`` with `value`.
 
-filename: str
-    name of file
-value: number
-    new value to set in parameter file
+        Parameters
+        ----------
+        filename: str
+            name of file
+        value: float, int
+            new value to set in parameter file
+
         """
         search_string = r"(\A|\b)(" + self.name + r")(\s*=\s*)((([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))([eE][+-]?\d+)*)($|\b)"
         pattern = re.compile(search_string)
@@ -79,21 +78,27 @@ value: number
 
     def reset_parameter_file(self, filename):
         """
-Set the parameter to the original value in the parameter file, filename.
+        Set the parameter to the original value in the parameter file, `filename`.
 
-Parameters
-----------
-Required arguments
+        Parameters
+        ----------
+        filename: str
+            name of file
 
-filename: str
-    name of file
-    """
+        """
         self.set_parameter_file(filename, self.value)
 
 
     def __str__(self):
         """
-Return a readable string of a parameter
+        Return a readable string describing the parameter.
+
+        Returns
+        -------
+        out: str
+
+        A string containing ``name``, ``value``, and if a parameter is uncertain.
+
         """
         if self.distribution is None:
             uncertain = ""
@@ -109,34 +114,34 @@ Return a readable string of a parameter
 
 
 
-
+# TODO use collections.mutablemapping
 class Parameters(object):
     def __init__(self, parameterlist=[]):
         """
-A collection of parameters.
+        A collection of parameters.
 
-Parameters
-----------
-Required arguments
+        Parameters
+        ----------
 
-parameterlist: list of Parameter objects | list [[name, value, distribution],...]
-    List the parameters that should be created.
-    On the form:
+        parameterlist: {list of Parameter objects, list [[name, value, distribution],...]}
+            List the parameters that should be created.
 
-    parameterlist = [[name1, value1, distribution1],
-                     [name2, value2, distribution2],
-                     ...]
-        name: str
-            Name of the parameter
-        value: number
-            Value of the parameter
-        distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
-            The distribution of the parameter.
-            A parameter is considered uncertain if if has a distributiona associated
-            with it.
+            On the form:
 
-    or
-    parameterlist = [ParameterObject1, ParameterObject2,...]
+            parameterlist = [[name1, value1, distribution1],
+                            [name2, value2, distribution2],
+                            ...]
+                name: str
+                    Name of the parameter
+                value: number
+                    Value of the parameter
+                distribution: None | Chaospy distribution | Function that returns a Chaospy distribution
+                    The distribution of the parameter.
+                    A parameter is considered uncertain if if has a distributiona associated
+                    with it.
+
+            or
+            parameterlist = [ParameterObject1, ParameterObject2,...]
         """
         self.parameters = {}
 
