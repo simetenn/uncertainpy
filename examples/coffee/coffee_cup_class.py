@@ -20,5 +20,3 @@ class CoffeeCup(Model):
         U = odeint(f, u0, t, args=(kappa, u_env))[:, 0]
 
         return t, U
-
-        return t, U

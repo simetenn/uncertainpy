@@ -11,7 +11,7 @@ matplotlib.use('Agg')
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
-from uncertainpy import Distribution
+from uncertainpy import uniform, normal
 from uncertainpy import UncertaintyCalculations
 from uncertainpy import Data
 from uncertainpy import Model
@@ -38,7 +38,7 @@ class TestUncertainty(TestCasePlot):
                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameterlist)
-        self.parameters.set_all_distributions(Distribution(0.5).uniform)
+        self.parameters.set_all_distributions(uniform(0.5))
 
         self.model = TestingModel1d()
 
@@ -360,7 +360,7 @@ class TestUncertainty(TestCasePlot):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -400,7 +400,7 @@ class TestUncertainty(TestCasePlot):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -439,7 +439,7 @@ class TestUncertainty(TestCasePlot):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -488,7 +488,7 @@ class TestUncertainty(TestCasePlot):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -652,7 +652,7 @@ class TestUncertainty(TestCasePlot):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 

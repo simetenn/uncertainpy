@@ -1,15 +1,15 @@
 import uncertainpy as un
 
-from coffee_cup_function import coffe_cup
+from coffee_cup_class import CoffeeCup
 
 parameterlist = [["kappa", -0.05, None],
                  ["u_env", 20, None]]
 
 parameters = un.Parameters(parameterlist)
-parameters.set_all_distributions(un.Distribution(0.5).uniform)
+parameters.set_all_distributions(un.uniform(0.5))
 
 
-model = un.Model(coffe_cup, labels=["time [s]", "Temperature [C]"])
+model = CoffeeCup()
 
 uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameters,

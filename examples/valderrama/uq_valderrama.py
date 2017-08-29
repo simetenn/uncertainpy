@@ -17,7 +17,7 @@ parameters = [["V_rest", -10, None],
               ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
 parameters = un.Parameters(parameters)
-parameters.set_all_distributions(un.Distribution(0.2).uniform)
+parameters.set_all_distributions(un.uniform(0.2))
 
 model = Valderrama()
 

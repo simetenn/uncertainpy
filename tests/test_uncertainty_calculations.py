@@ -9,7 +9,7 @@ import chaospy as cp
 from uncertainpy import UncertaintyCalculations
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import GeneralFeatures
-from uncertainpy import Distribution
+from uncertainpy import uniform, normal
 from uncertainpy import Data
 from uncertainpy.models import Model
 from uncertainpy import SpikingFeatures
@@ -34,7 +34,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameterlist)
-        self.parameters.set_all_distributions(Distribution(0.5).uniform)
+        self.parameters.set_all_distributions(uniform(0.5))
 
         self.model = TestingModel1d()
 
@@ -278,7 +278,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -500,7 +500,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(1).uniform)
+        parameters.set_all_distributions(uniform(1))
 
         model = TestingModelAdaptive()
         model.adaptive=False
@@ -585,7 +585,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -750,7 +750,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
 
@@ -798,7 +798,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
         features = TestingFeatures(features_to_run=["feature0d"])
@@ -827,7 +827,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
         features = TestingFeatures(features_to_run=["feature1d"])
@@ -858,7 +858,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          ["b", 2, None]]
 
         parameters = Parameters(parameterlist)
-        parameters.set_all_distributions(Distribution(0.5).uniform)
+        parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
         features = TestingFeatures(features_to_run=["feature2d"])

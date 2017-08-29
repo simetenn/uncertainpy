@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.integrate import odeint
 
-def coffe_cup_dependent(kappa=-0.05, u_env=20, alpha=1):
+def coffee_cup_dependent(kappa=-0.05, u_env=20, alpha=1):
     u0 = 95
     t = np.linspace(0, 200, 150)
 

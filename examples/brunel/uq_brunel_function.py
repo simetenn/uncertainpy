@@ -6,7 +6,7 @@ parameterlist = [["J_E", 4, None],
                  ["g", 4, None]]
 
 parameters = un.Parameters(parameterlist)
-parameters.set_all_distributions(un.Distribution(0.1).uniform)
+parameters.set_all_distributions(un.uniform(0.1))
 
 model = un.NestModel(brunel_network,
                      adaptive=False)

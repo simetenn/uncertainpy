@@ -7,7 +7,7 @@ parameterlist = [["a", 0.02, None],
                  ["d", 8, None]]
 
 parameters = un.Parameters(parameterlist)
-parameters.set_all_distributions(un.Distribution(0.5).uniform)
+parameters.set_all_distributions(un.uniform(0.5))
 
 
 model = izhikevich()
