@@ -27,10 +27,9 @@ class NestModel(Model):
 
 
 
-    def postprocess(self, t, U):
+    def postprocess(self, t_stop, U):
         dt = nest.GetKernelStatus()["resolution"]
-        T = nest.GetKernelStatus()["time"]
-        t = np.arange(0, T+dt, dt)
+        t = np.arange(0, t_stop, dt)
 
         expanded_spiketrains = []
         for spiketrain in U:

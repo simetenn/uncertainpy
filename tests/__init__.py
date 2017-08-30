@@ -33,7 +33,7 @@ __all__ = ["TestDistribution",
 from .test_distribution import TestDistribution
 # from test_exploration import TestExploration
 from .test_features import TestGeneralFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures
-from .test_features import TestNetworkFeatures, TestTestingFeatures
+from .test_features import TestNetworkFeatures, TestTestingFeatures, TestGeneralNetworkFeatures
 from .test_logger import TestLogger
 
 from .test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel

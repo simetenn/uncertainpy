@@ -6,8 +6,7 @@ try:
 except ImportError:
     prerequisites = False
 
-from .spikes import Spikes
-from .general_features import GeneralFeatures
+from .general_spiking_features import GeneralSpikingFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
     def __init__(self,

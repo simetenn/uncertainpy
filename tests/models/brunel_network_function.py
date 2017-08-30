@@ -18,10 +18,10 @@ def calc_CV(spikes):
 
 def brunel_network(J_E=0.5, g=5.0):
     """
-A brunel network.
-Note that for testing purposes this network has fewer neurons (N_neurons = 100)
-and run for a shorter time (simtime = 40) and record from fewer neuron (N_rec = 10) than
-the brunel network class.
+    A brunel network.
+    Note that for testing purposes this network has fewer neurons (N_neurons = 100)
+    and run for a shorter time (simtime = 40) and record from fewer neuron (N_rec = 10) than
+    the brunel network class.
     """
     # g = 5.0           # Ratio of IPSP to EPSP amplitude: J_I/J_E
     # J_E = 0.5         # J_I = -g*J_E

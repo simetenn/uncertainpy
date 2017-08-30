@@ -76,7 +76,7 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 
     def run(self, model_parameters):
 
-        # Try-except to catch exeptions and print stack trace
+        # Try-except to catch exceptions and print stack trace
         try:
             model_result = self.model.run(**model_parameters)
 

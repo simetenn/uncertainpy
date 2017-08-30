@@ -13,7 +13,7 @@ except ImportError:
 from .general_features import GeneralFeatures
 
 
-class NetworkFeatures(GeneralFeatures):
+class NetworkFeatures(GeneralNetworkFeatures):
     def __init__(self,
                  new_features=None,
                  features_to_run="all",
@@ -28,7 +28,7 @@ class NetworkFeatures(GeneralFeatures):
         if not prerequisites:
             raise ImportError("Network features require: elephant, neo and quantities")
 
-        unit_string = str(pq.m).split()[1]
+        unit_string = str(units).split()[1]
 
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
                               "mean_cv": ["mean coefficient of variation"],
@@ -46,29 +46,18 @@ class NetworkFeatures(GeneralFeatures):
                               "covariance": ["Neuron nr", "Neuron nr", ""]
                              }
 
+        implemented_labels.update(labels)
+
         super(NetworkFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,
                                               adaptive=adaptive,
-                                              labels=implemented_labels)
-        self.labels = labels
+                                              labels=implemented_labels,
+                                              units=units)
 
         self.instantaneous_rate_nr_samples = instantaneous_rate_nr_samples
         self.isi_bin_size = isi_bin_size
         self.corrcoef_bin_size = corrcoef_bin_size
         self.covariance_bin_size = covariance_bin_size
-        self.units = units
-
-
-    def preprocess(self, t, spiketrains):
-        if t is None or np.isnan(t):
-            raise ValueError("t is NaN or None. t must be the time when the simulation ends.")
-
-        neo_spiketrains = []
-        for spiketrain in spiketrains:
-            neo_spiketrain = neo.core.SpikeTrain(spiketrain, t_stop=t, units=self.units)
-            neo_spiketrains.append(neo_spiketrain)
-
-        return None, neo_spiketrains
 
 
     def cv(self, t, spiketrains):

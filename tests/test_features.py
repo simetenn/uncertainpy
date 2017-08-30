@@ -7,7 +7,7 @@ import numpy as np
 import quantities as pq
 
 from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures
-from uncertainpy.features import SpikingFeatures, NetworkFeatures
+from uncertainpy.features import SpikingFeatures, NetworkFeatures, GeneralNetworkFeatures
 from uncertainpy import Spikes
 from .testing_classes import TestingFeatures
 
@@ -337,6 +337,59 @@ class TestSpikingFeatures(unittest.TestCase):
                          set(self.implemented_features))
 
 
+
+class TestGeneralNetworkFeatures(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        self.t_original = 8
+        spiketrain = np.array([1, 3, 5, 6])
+        self.U = [spiketrain, spiketrain, spiketrain, np.array([1])]
+
+
+        self.features = NetworkFeatures()
+
+    def test_initNone(self):
+        self.features = GeneralNetworkFeatures()
+
+        self.assertIsInstance(self.features, GeneralNetworkFeatures)
+
+
+    def test_init(self):
+        def feature(t, U):
+            return "t", "U"
+
+        features = GeneralNetworkFeatures(new_features=feature,
+                                          features_to_run=None,
+                                          adaptive=["cv"],
+                                          labels={"cv": ["test"]},
+                                          units="")
+
+        self.assertIsInstance(features, GeneralNetworkFeatures)
+        self.assertEqual(features.features_to_run, [])
+        self.assertEqual(features.adaptive, ["cv"])
+        self.assertEqual(features.units, "")
+        self.assertEqual(set(features.implemented_features()),
+                         set(["feature"]))
+
+
+    def test_preprocess(self):
+        self.features = GeneralNetworkFeatures()
+
+        t, spiketrains = self.features.preprocess(self.t_original, self.U)
+
+        self.assertIsNone(t)
+        self.assertIsInstance(spiketrains[0], neo.core.SpikeTrain)
+        self.assertIsInstance(spiketrains[1], neo.core.SpikeTrain)
+        self.assertIsInstance(spiketrains[2], neo.core.SpikeTrain)
+        self.assertIsInstance(spiketrains[3], neo.core.SpikeTrain)
+
+        self.assertTrue(np.array_equal(spiketrains[0], self.U[0]))
+        self.assertTrue(np.array_equal(spiketrains[1], self.U[1]))
+        self.assertTrue(np.array_equal(spiketrains[2], self.U[2]))
+        self.assertTrue(np.array_equal(spiketrains[3], self.U[3]))
+
+        self.assertEqual(spiketrains[0].t_stop, self.t_original)
 
 
 class TestNetworkFeatures(unittest.TestCase):

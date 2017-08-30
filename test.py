@@ -96,7 +96,8 @@ test_features = create_test_suite([TestGeneralFeatures,
                                    TestGeneralSpikingFeatures,
                                    TestSpikingFeatures,
                                    TestTestingFeatures,
-                                   TestNetworkFeatures])
+                                   TestNetworkFeatures,
+                                   TestGeneralNetworkFeatures])
 
 test_features.addTest(test_spike_sorting)
 
