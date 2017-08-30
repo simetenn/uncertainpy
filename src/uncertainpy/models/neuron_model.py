@@ -28,7 +28,10 @@ class NeuronModel(Model):
         current_dir = os.getcwd()
         os.chdir(self.path)
 
-        import neuron
+        try:
+            import neuron
+        except ImportError:
+            raise ImportError("Neuron model requires: neuron")
 
         self.h = neuron.h
         self.h.load_file(1, self.file)

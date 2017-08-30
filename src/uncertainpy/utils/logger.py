@@ -4,12 +4,12 @@ import sys
 
 class MyFormatter(logging.Formatter):
 
-    debugg_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
+    debug_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
     info_format = "%(message)s"
     warning_format = "%(levelname)s - %(module)s - %(message)s"
     error_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
 
-    debugg_fmt = logging.Formatter(debugg_format)
+    debug_fmt = logging.Formatter(debug_format)
     info_fmt = logging.Formatter(info_format)
     warning_fmt = logging.Formatter(warning_format)
     error_fmt = logging.Formatter(error_format)
@@ -21,7 +21,7 @@ class MyFormatter(logging.Formatter):
 
     def format(self, record):
         if record.levelno == logging.DEBUG:
-            return self.debugg_fmt.format(record)
+            return self.debug_fmt.format(record)
         elif record.levelno == logging.INFO:
             return self.info_fmt.format(record)
         elif record.levelno == logging.WARNING:

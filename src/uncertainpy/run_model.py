@@ -38,7 +38,7 @@ class RunModel(ParameterBase):
                  verbose_level="info",
                  verbose_filename=None,
                  CPUs=mp.cpu_count(),
-                 supress_model_graphics=True):
+                 suppress_model_graphics=True):
 
 
         self.parallel = Parallel(model=model,
@@ -53,7 +53,7 @@ class RunModel(ParameterBase):
                                        verbose_filename=verbose_filename)
 
         self.CPUs = CPUs
-        self.supress_model_graphics = supress_model_graphics
+        self.suppress_model_graphics = suppress_model_graphics
 
 
 
@@ -197,7 +197,7 @@ results = [result 1, result 2, ..., result N]
 
 
     def evaluate_nodes(self, nodes, uncertain_parameters):
-        if self.supress_model_graphics:
+        if self.suppress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()
 
@@ -213,7 +213,7 @@ results = [result 1, result 2, ..., result N]
 
         pool.close()
 
-        if self.supress_model_graphics:
+        if self.suppress_model_graphics:
             vdisplay.stop()
 
         return np.array(results)

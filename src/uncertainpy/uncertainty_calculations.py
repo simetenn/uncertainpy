@@ -13,7 +13,7 @@ class UncertaintyCalculations(ParameterBase):
                  parameters=None,
                  features=None,
                  CPUs=mp.cpu_count(),
-                 supress_model_graphics=True,
+                 suppress_model_graphics=True,
                  M=3,
                  nr_pc_samples=None,
                  nr_mc_samples=10*3,
@@ -28,7 +28,7 @@ class UncertaintyCalculations(ParameterBase):
                                  verbose_level=verbose_level,
                                  verbose_filename=verbose_filename,
                                  CPUs=CPUs,
-                                 supress_model_graphics=supress_model_graphics)
+                                 suppress_model_graphics=suppress_model_graphics)
 
 
         super(UncertaintyCalculations, self).__init__(parameters=parameters,

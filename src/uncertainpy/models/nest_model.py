@@ -1,4 +1,10 @@
-import nest
+try:
+    import nest
+
+    prerequisites = True
+except ImportError:
+    prerequisites = False
+
 import numpy as np
 
 from .model import Model
@@ -9,6 +15,11 @@ class NestModel(Model):
                  run_function=None,
                  adaptive=False,
                  labels=["time [ms]", "Neuron nr", "Spiking probability"]):
+
+
+        if not prerequisites:
+            raise ImportError("Nest model requires: nest")
+
 
         super(NestModel, self).__init__(run_function=run_function,
                                         adaptive=adaptive,
