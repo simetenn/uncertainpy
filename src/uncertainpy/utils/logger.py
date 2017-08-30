@@ -1,4 +1,5 @@
 import logging
+import tqdm
 import sys
 
 
@@ -30,6 +31,12 @@ class MyFormatter(logging.Formatter):
             return self.error_fmt.format(record)
 
 
+class TqdmLoggingHandler(logging.StreamHandler):
+    def emit(self, record):
+        msg = self.format(record)
+        tqdm.tqdm.write(msg)
+
+
 def create_logger(logger_level, logger_filename=None, logger_name="logger"):
     numeric_level = getattr(logging, logger_level.upper(), None)
     if not isinstance(numeric_level, int):
@@ -44,7 +51,8 @@ def create_logger(logger_level, logger_filename=None, logger_name="logger"):
     logger.handlers = []
 
     if logger_filename is None:
-        console = logging.StreamHandler(stream=sys.stdout)
+        # console = logging.StreamHandler(stream=sys.stdout)
+        console = TqdmLoggingHandler()
         console.setLevel(numeric_level)
         console.setFormatter(MyFormatter())
 
