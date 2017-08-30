@@ -11,7 +11,10 @@ class Base(object):
     ----------
     model : {None, Model or Model subclass instance, model function}
         Model to perform uncertainty quantification on.
-    features :
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        Features to calculate from the model result.
+        If None, no features are calculated.
+        If list of feature functions, all will be calculated.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
@@ -123,13 +126,33 @@ class ParameterBase(Base):
     """
     Set and update features, model and parameters.
 
+    Parameters
+    ----------
+    model : {None, Model or Model subclass instance, model function}
+        Model to perform uncertainty quantification on.
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        Features to calculate from the model result.
+        If None, no features are calculated.
+        If list of feature functions, all will be calculated.
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
+            Either None, a Parameters instance or a list the parameters that should be created.
+            The two lists are similar to the arguments sent to Parameters.
+
+
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+
     Attributes
     ----------
     model
     features
     parameters
     logger : logging.Logger object
-        A logger
+        Logger object responsible for logging to screen or file.
     """
     def __init__(self,
                  model=None,
@@ -152,7 +175,16 @@ class ParameterBase(Base):
         """
         Model parameters.
 
+        Parameters
+        ----------
+        new_parameters : {None, Parameters instance, list of Parameter instances, list [[name, value, distribution], ...]}
+            Either None, a Parameters instance or a list the parameters that should be created.
+            The two lists are similar to the arguments sent to Parameters.
 
+        See Also
+        --------
+        uncertainpy.Parameter : Parameter class
+        uncertainpy.Parameters : Parameters collection class
         """
         return self._parameters
 

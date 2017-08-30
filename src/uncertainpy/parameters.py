@@ -148,11 +148,11 @@ class Parameters(collections.MutableMapping):
     """
     A collection of parameters.
 
-    Has all standard dictionary methods, such as items, value contains and so implemented.
+    Has all standard dictionary methods, such as items, value, contains and so implemented.
 
     Parameters
     ----------
-    parameterlist: {list of Parameter objects, list [[name, value, distribution],...]}
+    parameterlist: {list of Parameter instances, list [[name, value, distribution],...]}
         List the parameters that should be created.
         On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
         Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
@@ -178,7 +178,7 @@ class Parameters(collections.MutableMapping):
 
         Parameters
         ----------
-        parameterlist: {list of Parameter objects, list [[name, value, distribution],...]}, optional
+        parameterlist: {list of Parameter instances, list [[name, value, distribution],...]}, optional
             List the parameters that should be created.
             On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
             Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
