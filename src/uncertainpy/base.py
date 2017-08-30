@@ -4,6 +4,27 @@ from .models import Model
 from .parameters import Parameters
 
 class Base(object):
+    """
+    Set and update features and model.
+
+    Parameters
+    ----------
+    model : {None, Model or Model subclass instance, model function}
+        Model to perform uncertainty quantification on.
+    features :
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+
+    Attributes
+    ----------
+    model
+    features
+    logger : logging.Logger object
+    """
     def __init__(self,
                  model=None,
                  features=None,
@@ -12,7 +33,6 @@ class Base(object):
 
         self._model = None
         self._features = None
-        self._parameters = None
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -25,6 +45,20 @@ class Base(object):
 
     @property
     def features(self):
+        """
+        Features to calculate from the model result.
+
+        Parameters
+        ----------
+        new_features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+            Features to calculate from the model result.
+            If None, no features are calculated.
+            If list of feature functions, all will be calculated.
+
+        Returns
+        -------
+        features: {None, GeneralFeatures object}
+        """
         return self._features
 
 
@@ -41,6 +75,25 @@ class Base(object):
 
     @property
     def model(self):
+        """
+        Model to perform uncertainty quantification on.
+
+        Parameters
+        ----------
+        new_model : {None, Model or Model subclass instance, model function}
+            Model to perform uncertainty quantification on.
+
+        Returns
+        -------
+        model : Model or Model subclass instance
+            Model to perform uncertainty quantification on.
+
+        See Also
+        --------
+        uncertainpy.Model : Model class
+        uncertainpy.NestModel : Nest simulator model class
+        uncertainpy.NeuronModel : Neuron simulator model class
+        """
         return self._model
 
     @model.setter
@@ -51,11 +104,22 @@ class Base(object):
             self._model = Model(new_model)
             # self._model.run = new_model
         else:
-            raise TypeError("model must be a Model instance, callable or None")
+            raise TypeError("model must be a Model or Model subclass instance, callable or None")
 
 
 
 class ParameterBase(Base):
+     """
+    Set and update features, model and parameters.
+
+    Attributes
+    ----------
+    model
+    features
+    parameters
+    logger : logging.Logger object
+        A logger
+    """
     def __init__(self,
                  model=None,
                  parameters=None,
@@ -74,6 +138,11 @@ class ParameterBase(Base):
 
     @property
     def parameters(self):
+        """
+        Model parameters.
+
+
+        """
         return self._parameters
 
 

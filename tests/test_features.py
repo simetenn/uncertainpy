@@ -211,12 +211,12 @@ class TestSpikingFeatures(unittest.TestCase):
         self.implemented_features = ["nr_spikes", "time_before_first_spike",
                                      "spike_rate", "average_AP_overshoot",
                                      "average_AHP_depth", "average_AP_width",
-                                     "accomondation_index"]
+                                     "accommodation_index"]
 
         self.implemented_labels = {"nr_spikes": ["number of spikes"],
                                    "spike_rate": ["spike rate [Hz]"],
                                    "time_before_first_spike": ["time [ms]"],
-                                   "accomondation_index": ["accomondation index"],
+                                   "accommodation_index": ["accommodation index"],
                                    "average_AP_overshoot": ["voltage [mV]"],
                                    "average_AHP_depth": ["voltage [mV]"],
                                    "average_AP_width": ["time [ms]"]
@@ -248,7 +248,7 @@ class TestSpikingFeatures(unittest.TestCase):
                   "spike_rate": ["spike rate [Hz]"],
                   "time_before_first_spike": ["time [ms]"],
                   'average_AP_width': ['time [ms]'],
-                  "accomondation_index": ["accomondation index"],
+                  "accommodation_index": ["accommodation index"],
                   "average_AP_overshoot": ["voltage [mV]"],
                   "average_AHP_depth": ["voltage [mV]"],
                   "new": ["new"]
@@ -322,13 +322,13 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     # TODO Find correct test, this is a rough bound only
-    def test_accomondation_index(self):
-        self.assertIsNotNone(self.features.accomondation_index(self.t, self.spikes)[1])
+    def test_accommodation_index(self):
+        self.assertIsNotNone(self.features.accommodation_index(self.t, self.spikes)[1])
 
 
-    def test_accomondation_indexNone(self):
+    def test_accommodation_indexNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.accomondation_index(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.accommodation_index(self.t, self.spikes), (None, None))
 
 
     def test_calculate_all_features(self):

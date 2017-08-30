@@ -151,7 +151,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         implemented_features = ["nr_spikes", "time_before_first_spike",
                                 "spike_rate", "average_AP_overshoot",
                                 "average_AHP_depth", "average_AP_width",
-                                "accomondation_index"]
+                                "accommodation_index"]
 
         self.uncertainty_calculations.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.uncertainty_calculations.features, SpikingFeatures)

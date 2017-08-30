@@ -29,7 +29,9 @@ class Parameter(object):
         Name of the parameter.
     value: float, int
         The value of the parameter.
-    distribution
+    distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
+        The distribution of the parameter, used if the parameter is uncertain.
+        Defaults to None.
     """
 
     def __init__(self, name, value, distribution=None):
@@ -45,7 +47,6 @@ class Parameter(object):
         distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
             The distribution of the parameter, used if the parameter is uncertain.
             Defaults to None.
-
         """
         self.name = name
         self.value = value
@@ -59,7 +60,19 @@ class Parameter(object):
     def distribution(self):
         """
         A Chaospy distribution or a function that returns a Chaospy distribution.
-        If None the parameter has no distribution and is not considered uncertain-
+        If None the parameter has no distribution and is not considered uncertain.
+
+        Parameters
+        ----------
+        distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
+            The distribution of the parameter, used if the parameter is uncertain.
+            Defaults to None.
+
+        Returns
+        -------
+        distribution: {Chaospy distribution, None}
+            The distribution of the parameter, if None the
+            parameter has no distribution and is not considered uncertain.
         """
         return self._distribution
 
@@ -91,7 +104,6 @@ class Parameter(object):
             Name of file.
         value: float, int
             New value to set in parameter file.
-
         """
         search_string = r"(\A|\b)(" + self.name + r")(\s*=\s*)((([+-]?\d+[.]?\d*)|([+-]?\d*[.]?\d+))([eE][+-]?\d+)*)($|\b)"
         pattern = re.compile(search_string)
@@ -102,13 +114,12 @@ class Parameter(object):
 
     def reset_parameter_file(self, filename):
         """
-        Set the parameter to the original value in the parameter file, `filename`.
+        Set all parameters to the original value in the parameter file, `filename`.
 
         Parameters
         ----------
         filename: str
             Name of file.
-
         """
         self.set_parameter_file(filename, self.value)
 
@@ -121,7 +132,6 @@ class Parameter(object):
         -------
         str
             A string containing ``name``, ``value``, and if a parameter is uncertain.
-
         """
         if self.distribution is None:
             uncertain = ""
@@ -157,7 +167,7 @@ class Parameters(collections.MutableMapping):
 
     See Also
     --------
-    Parameter : Parameter object
+    uncertainpy.Parameter : Parameter class
     """
 
     def __init__(self, parameterlist=[]):
@@ -177,7 +187,7 @@ class Parameters(collections.MutableMapping):
 
         See Also
         --------
-        Parameter : Parameter object
+        uncertainpy.Parameter : Parameter object
         """
         self.parameters = {}
 

@@ -31,6 +31,9 @@ results = [result 1, result 2, ..., result N]
 """
 
 class RunModel(ParameterBase):
+    """
+    """
+
     def __init__(self,
                  model,
                  parameters,

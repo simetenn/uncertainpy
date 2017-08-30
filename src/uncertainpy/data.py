@@ -16,25 +16,57 @@ class Data(collections.MutableMapping):
                  verbose_filename=None):
 
         """
-U
-t
-E
-Var
-p_05
-p_95
-sensitivity_1
-total_sensitivity_1
-sensitivity_t
-total_sensitivity_t
+        Store data calculated in the uncertainty quantification.
 
-xlabel
-ylabel
 
-features_0d
-features_1d
-features_2d
-feature_list
+
+
+
+        Has all standard dictionary methods, such as items, value contains and so implemented.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file to save/load data from/to.
+
+        Attributes
+        ----------
+        model_name : str
+            Name of the model.
+
+        xlabel : str
+        ylabel : str
+
+        features_0d : list
+        features_1d : list
+        features_2d : list
+        feature_list : list
+
+        Each feature and the model has the following data
+
+        U : array_like
+            Feature or model result.
+        t : array_like
+            Time values for feature or model.
+        E : array_like
+            Mean of the feature or model results.
+        Var : array_like
+            Variance of the feature or model results.
+        p_05 : array_like
+            5 percentile of the feature or model results.
+        p_95 : array_like
+            95 percentile of the feature or model results.
+        sensitivity_1 : array_like
+            First order sensitivity of the feature or model results.
+        total_sensitivity_1 : array_like
+            First order sensitivity of the feature or model results.
+        sensitivity_t : array_like
+            Total effect sensitivity of the feature or model results.
+        total_sensitivity_t : array_like
+            Normalized sum of total effect sensitivity of the feature or model results.
+
         """
+
 
         self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
@@ -42,8 +74,6 @@ feature_list
 
 
         self.data_information = ["uncertain_parameters", "model_name"]
-
-        self.current_dir = os.path.dirname(os.path.realpath(__file__))
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -61,6 +91,14 @@ feature_list
 
 
     def __str__(self):
+        """
+        Convert all data to a readable string.
+
+        Returns
+        -------
+        str
+           A readable string of all parameter objects.
+        """
 
         def border(msg):
             count = len(msg) + 6
@@ -112,11 +150,13 @@ feature_list
                 return self[self.model_name]["labels"]
             else:
                 return ["", "", ""]
+
         elif self.ndim(feature) == 1:
             if self.ndim(self.model_name) == 1 and "labels" in self[self.model_name]:
                 return self[self.model_name]["labels"]
             else:
                 return ["", ""]
+
         elif self.ndim(feature) == 0:
             if self.ndim(self.model_name) == 0 and "labels" in self[self.model_name]:
                 return self[self.model_name]["labels"]

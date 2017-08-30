@@ -6,7 +6,8 @@ try:
 except ImportError:
     prerequisites = False
 
-from .general_spiking_features import GeneralSpikingFeatures
+from .spikes import Spikes
+from .general_features import GeneralFeatures
 
 class SpikingFeatures(GeneralSpikingFeatures):
     def __init__(self,
@@ -23,7 +24,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         implemented_labels = {"nr_spikes": ["number of spikes"],
                               "spike_rate": ["spike rate [Hz]"],
                               "time_before_first_spike": ["time [ms]"],
-                              "accomondation_index": ["accomondation index"],
+                              "accommodation_index": ["accommodation index"],
                               "average_AP_overshoot": ["voltage [mV]"],
                               "average_AHP_depth": ["voltage [mV]"],
                               "average_AP_width": ["time [ms]"]
@@ -99,7 +100,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         return None, sum_AP_width/float(spikes.nr_spikes)
 
 
-    def accomondation_index(self, t, spikes):
+    def accommodation_index(self, t, spikes):
         N = spikes.nr_spikes
         if N <= 1:
             return None, None
