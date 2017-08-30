@@ -120,7 +120,7 @@ class Base(object):
 
 
 class ParameterBase(Base):
-     """
+    """
     Set and update features, model and parameters.
 
     Attributes
