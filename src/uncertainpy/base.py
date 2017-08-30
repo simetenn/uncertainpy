@@ -24,6 +24,7 @@ class Base(object):
     model
     features
     logger : logging.Logger object
+        Logger object responsible for logging to screen or file.
     """
     def __init__(self,
                  model=None,
@@ -58,6 +59,16 @@ class Base(object):
         Returns
         -------
         features: {None, GeneralFeatures object}
+             Features to calculate from the model result.
+             If None, no features are calculated.
+
+        See Also
+        --------
+        uncertainpy.GeneralFeatures : General features class
+        uncertainpy.GeneralSpikingFeatures : General spiking features class
+        uncertainpy.SpikingFeatures : Implemented spiking features class
+        uncertainpy.GeneralNetworkFeatures : General network features class
+        uncertainpy.NetworkFeatures : Implemented network features class
         """
         return self._features
 

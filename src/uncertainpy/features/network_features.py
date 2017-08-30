@@ -2,7 +2,6 @@ import numpy as np
 
 try:
     import elephant
-    import neo.core
     import quantities as pq
 
     prerequisites = True
@@ -26,7 +25,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                  units=pq.ms):
 
         if not prerequisites:
-            raise ImportError("Network features require: elephant, neo and quantities")
+            raise ImportError("Network features require: elephant and quantities")
 
         unit_string = str(units).split()[1]
 
