@@ -1,11 +1,10 @@
-import scipy.interpolate
-import scipy.optimize
-# try:
-#     import scipy.interpolate
-#     import scipy.optimize
-# except ImportError:
-#     print("Warning: Spiking features need scipy to function.")
+try:
+    import scipy.interpolate
+    import scipy.optimize
 
+    prerequisites = True
+except ImportError:
+    prerequisites = False
 
 from .general_spiking_features import GeneralSpikingFeatures
 
@@ -17,6 +16,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  thresh=-30,
                  extended_spikes=False,
                  labels={}):
+
+        if not prerequisites:
+            raise ImportError("Spiking features require: scipy")
 
         implemented_labels = {"nr_spikes": ["number of spikes"],
                               "spike_rate": ["spike rate [Hz]"],

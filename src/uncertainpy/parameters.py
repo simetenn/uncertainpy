@@ -1,7 +1,6 @@
 import re
 import fileinput
 import sys
-# from builtins import dict
 import collections
 
 import chaospy as cp

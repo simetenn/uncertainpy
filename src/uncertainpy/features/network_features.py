@@ -1,8 +1,14 @@
-import elephant
-import neo.core
-
 import numpy as np
-import quantities as pq
+
+try:
+    import elephant
+    import neo.core
+    import quantities as pq
+
+    prerequisites = True
+except ImportError:
+    prerequisites = False
+
 
 from .general_features import GeneralFeatures
 
@@ -18,6 +24,9 @@ class NetworkFeatures(GeneralFeatures):
                  corrcoef_bin_size=1,
                  covariance_bin_size=1,
                  units=pq.ms):
+
+        if not prerequisites:
+            raise ImportError("Network features require: elephant, neo and quantities")
 
         unit_string = str(pq.m).split()[1]
 

@@ -23,6 +23,10 @@ uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "future", "h5py",
 # uncertainpy_req = ["chaospy", "numpy"]
 dependency_links = []
 
+extras_require={
+    'spike_features':  ["scipy"],
+    'network_features': ["elephant", "neo", "quantities"],
+}
 
 
 # def activate_virtualev(virtual_enviroment=virtual_enviroment, system_site_packages=False):
