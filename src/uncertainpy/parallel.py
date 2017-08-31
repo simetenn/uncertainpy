@@ -108,9 +108,7 @@ class Parallel(Base):
                                          "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                              "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                             "interpolation": <scipy.interpolate.fitpack2. \
-                                                                 InterpolatedUnivariateSpline \
-                                                                 object at 0x7f1c78f0d4d0>},
+                                             "interpolation": scipy interpolation object},
                           "feature_invalid": {"U": np.nan,
                                              "t": np.nan}}
 

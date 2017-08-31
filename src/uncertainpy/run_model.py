@@ -9,27 +9,6 @@ from .parallel import Parallel
 from .base import ParameterBase
 
 
-"""
-result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature0d": {"U": 1,
-                        "t": np.nan},
-          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2. \
-                                                InterpolatedUnivariateSpline \
-                                                object at 0x7f1c78f0d4d0>},
-          "feature_invalid": {"U": np.nan,
-                              "t": np.nan}}
-
-results = [result 1, result 2, ..., result N]
-"""
-
 class RunModel(ParameterBase):
     """
     Calculate model and feature results for a series if different model parameters,
@@ -116,6 +95,34 @@ class RunModel(ParameterBase):
 
 
     def apply_interpolation(self, t_interpolate, interpolation):
+        """
+        Perform interpolation of one model/feature using the interpolation
+        objects created by Parallel.
+
+        Parameters
+        ----------
+        t_interpolate : list
+            A list of time arrays from all runs of the model/features.
+        interpolation : list
+            A list of scipy interpolation objects from all runs of
+            the model/features.
+
+        Returns
+        -------
+        t : array
+            The time array with the highest number of time steps.
+        interpolated_results : array
+            An array containing all interpolated model/features results.
+            Interpolated at the points of the time array with the highest
+            number of time steps.
+
+        Notes
+        -----
+        Chooses the time array with the highest number of time points and use
+        this time array to interpolate the model/feature results in each of
+        those points.
+        """
+
         lengths = []
         for t_tmp in t_interpolate:
             lengths.append(len(t_tmp))
@@ -134,22 +141,45 @@ class RunModel(ParameterBase):
 
     def results_to_data(self, results):
         """
-result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature0d": {"U": 1,
-                        "t": np.nan},
-          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
-          "feature_invalid": {"U": np.nan,
-                              "t": np.nan}}
+        Store `results` in a Data object.
 
-results = [result 1, result 2, ..., result N]
+        Stores the time and (interpolated) results for the model and each
+        feature in a Data object. Performs the interpolation calculated in
+        Parallel, if the result is adaptive.
+
+        Parameters
+        ----------
+        results : list
+            A list where each element is a result dictionary for each set
+            of model evaluations.
+            An example:
+            .. code-block::
+                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature0d": {"U": 1,
+                                            "t": np.nan},
+                            "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                                "interpolation": scipy interpolation object},
+                            "feature_invalid": {"U": np.nan,
+                                                "t": np.nan}}
+
+                results = [result 1, result 2, ..., result N]
+
+        Returns
+        -------
+        data : Data object
+            A Data object with time and (interpolated) results for
+            the model and each feature.
+
+        See Also
+        --------
+        uncertainpy.Data : Data class
         """
 
         data = Data()
@@ -179,7 +209,6 @@ results = [result 1, result 2, ..., result N]
         # Store all results in data, interpolate as needed
         for feature in data:
             # Interpolate the data if it is adaptive
-            # if "interpolation" in results[0][feature]:
             if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 # TODO implement interpolation of >= 2d data, part2
@@ -241,6 +270,42 @@ results = [result 1, result 2, ..., result N]
 
 
     def evaluate_nodes(self, nodes, uncertain_parameters):
+        """
+        Evaluate the the model and calculate the features
+        for the nodes (values) for the uncertain parameters.
+
+        Parameters
+        ----------
+        nodes : array
+            The values for the uncertain parameters
+            to evaluate the model and features for.
+        uncertain_parameters : list
+            A list of the names of all uncertain parameters.
+
+        Returns
+        -------
+        results : list
+            A list where each element is a result dictionary for each set
+            of model evaluations.
+            An example:
+            .. code-block::
+                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature0d": {"U": 1,
+                                            "t": np.nan},
+                            "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                                "interpolation": scipy interpolation object},
+                            "feature_invalid": {"U": np.nan,
+                                                "t": np.nan}}
+
+                results = [result 1, result 2, ..., result N]
+        """
         if self.suppress_model_graphics:
             vdisplay = Xvfb()
             vdisplay.start()
@@ -263,7 +328,33 @@ results = [result 1, result 2, ..., result N]
         return np.array(results)
 
 
+    # TODO improve the docstring of this method
     def create_model_parameters(self, nodes, uncertain_parameters):
+        """
+        Combine nodes (values) with the uncertain parameter names to create a
+        list of dictionaries corresponding to the model values for each
+        model evaluation.
+
+        Parameters
+        ----------
+        nodes : array
+            A series of different set of parameters. The model and each feature is
+            evaluated for each set of parameters in the series.
+        uncertain_parameters : list
+            A list of names of the uncertain parameters.
+
+        Returns
+        -------
+        model_parameters : list
+            A list where each element is a dictionary with the model parameters
+            for a single evaluation.
+
+            An example:
+            .. code-block::
+                model_parameter = {"parameter 1": value 1, "parameter 2": value 2, ...}
+                model_parameters = [model_parameter 1, model_parameter 2, ...]
+        """
+
         model_parameters = []
         for node in nodes.T:
             if node.ndim == 0:
@@ -285,24 +376,39 @@ results = [result 1, result 2, ..., result N]
 
     def is_adaptive(self, results, feature):
         """
-Test if results is an adaptive result
+        Test if a `feature` in teh `results` is adaptive, meaning it has a
+        varying number of time points.
 
-result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature0d": {"U": 1,
-                        "t": np.nan},
-          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2.InterpolatedUnivariateSpline object at 0x7f1c78f0d4d0>},
-          "feature_invalid": {"U": np.nan,
-                              "t": np.nan}}
+        Parameters
+        ----------
+        results : list
+            A list where each element is a result dictionary for each set
+            of model evaluations.
+            An example:
+            .. code-block::
+                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature0d": {"U": 1,
+                                            "t": np.nan},
+                            "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                            "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                                "interpolation": scipy interpolation object},
+                            "feature_invalid": {"U": np.nan,
+                                                "t": np.nan}}
 
-results = [result 1, result 2, ..., result N]
+                results = [result 1, result 2, ..., result N]
+        feature: str
+            Name of a feature or the model.
+
+        Returns
+        -------
+        bool
+            If the feature is adaptive or not.
         """
         u_prev = results[0][feature]["U"]
         for solve in results[1:]:
@@ -318,6 +424,25 @@ results = [result 1, result 2, ..., result N]
 
 
     def run(self, nodes, uncertain_parameters):
+        """
+        Evaluate the the model and calculate the features
+        for the nodes (values) for the uncertain parameters.
+        The results are interpolated as necessary.
+
+        Parameters
+        ----------
+        nodes : array
+            A series of different set of parameters. The model and each feature is
+            evaluated for each set of parameters in the series.
+        uncertain_parameters : list
+            A list of names of the uncertain parameters.
+
+        Returns
+        -------
+        data : Data object
+            A Data object with time and (interpolated) results for
+            the model and each feature.
+        """
 
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
