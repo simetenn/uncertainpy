@@ -219,7 +219,6 @@ class Parameters(collections.MutableMapping):
         Parameter object
             The parameter object with `name`.
         """
-
         return self.parameters[name]
 
 
@@ -255,8 +254,8 @@ class Parameters(collections.MutableMapping):
         """
         Get the number of parameters.
 
-        Parameters
-        ----------
+        Returns
+        -------
         int
             The number of parameters.
         """

@@ -51,7 +51,6 @@ def normal(interval):
         A function that takes a ``parameter`` as input and
         returns a Gaussian distribution standard deviation ``interval*parameter``.
 
-
     Notes
     -----
     This function ultimately calculates:
