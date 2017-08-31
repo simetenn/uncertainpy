@@ -24,41 +24,72 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                               "t": np.nan}}
 """
 
-
+# TODO test what happens with inherited docstring
 class Parallel(Base):
     """
     Evaluates model and features in parallel.
 
 
+    Parameters
+    ----------
+    model : {None, Model or Model subclass instance, model function}
+        Model to perform uncertainty quantification on.
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        Features to calculate from the model result.
+        If None, no features are calculated.
+        If list of feature functions, all will be calculated.
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
 
-
+    Attributes
+    ----------
+    model
+    features
+    logger : logging.Logger object
+        Logger object responsible for logging to screen or file.
     """
     def create_interpolations(self, result):
         """
-        Interpolate model and features results.
+        Create an interpolation for adaptive model and features results.
 
-
+        Adaptive model or feature results, meaning they
+        have a varying number of time steps, are interpolated.
+        Interpolation is only performed for 1D results.
+        0D results does not need to be interpolated,
+        and support for interpolating 2D and above have currently not been implemented.
 
         Parameters
         ----------
         results : dict
-            The model and feature results. Consists of a dictionary for
-            the model and each feature
+            The model and feature results. The model and each feature each has
+            a dictionary with the time values, "t",  and model/feature results, "U".
+            An example:
 
-        .. code-block::
-            result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                    "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+            .. code-block::
+                result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                     "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                    "feature0d": {"U": 1,
-                                    "t": np.nan},
-                    "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                    "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                    "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                        "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                    "feature_invalid": {"U": np.nan,
-                                        "t": np.nan}}
+                        "feature0d": {"U": 1,
+                                        "t": np.nan},
+                        "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                        "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                        "feature_invalid": {"U": np.nan,
+                                            "t": np.nan}}
+        Notes
+        -----
+        If either model or feature results are adaptive,
+        the results  must be interpolated for Chaospy
+        to be able to create the polynomial approximation.
+        For 1D results this is done with scipy:
+        ``InterpolatedUnivariateSpline(time, U, k=3)``.
         """
 
         for feature in result:
@@ -154,6 +185,9 @@ class Parallel(Base):
 
 
     def none_to_nan(self, U):
+        """
+        Converts None results to numpy.nan.
+        """
         U_list = np.array(U).tolist()
 
         if U is None:
