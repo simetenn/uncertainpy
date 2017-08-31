@@ -135,10 +135,8 @@ class ParameterBase(Base):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
-            Either None, a Parameters instance or a list the parameters that should be created.
-            The two lists are similar to the arguments sent to Parameters.
-
-
+        Either None, a Parameters instance or a list the parameters that should be created.
+        The two lists are similar to the arguments sent to Parameters.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
@@ -180,6 +178,13 @@ class ParameterBase(Base):
         new_parameters : {None, Parameters instance, list of Parameter instances, list [[name, value, distribution], ...]}
             Either None, a Parameters instance or a list the parameters that should be created.
             The two lists are similar to the arguments sent to Parameters.
+            Default is None.
+
+        Returns
+        -------
+        parameters: {None, Parameters object}
+            Parameters of the model.
+            If None, no parameters have been set.
 
         See Also
         --------

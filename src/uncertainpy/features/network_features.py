@@ -9,7 +9,7 @@ except ImportError:
     prerequisites = False
 
 
-from .general_features import GeneralNetworkFeatures
+from .general_network_features import GeneralNetworkFeatures
 
 
 class NetworkFeatures(GeneralNetworkFeatures):

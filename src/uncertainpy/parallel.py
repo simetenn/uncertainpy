@@ -26,21 +26,39 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 
 
 class Parallel(Base):
+    """
+    Evaluates model and features in parallel.
+
+
+
+
+    """
     def create_interpolations(self, result):
         """
-result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                       "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature0d": {"U": 1,
-                        "t": np.nan},
-          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_invalid": {"U": np.nan,
-                              "t": np.nan}}
+        Interpolate model and features results.
+
+
+
+        Parameters
+        ----------
+        results : dict
+            The model and feature results. Consists of a dictionary for
+            the model and each feature
+
+        .. code-block::
+            result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                    "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                    "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                    "feature0d": {"U": 1,
+                                    "t": np.nan},
+                    "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                    "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                    "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                    "feature_invalid": {"U": np.nan,
+                                        "t": np.nan}}
         """
 
         for feature in result:
