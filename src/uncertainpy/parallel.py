@@ -27,23 +27,26 @@ result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
 # TODO test what happens with inherited docstring
 class Parallel(Base):
     """
-    Evaluates model and features in parallel.
-
+    Calculate model and features in parallel for one instance of model parameters.
 
     Parameters
     ----------
-    model : {None, Model or Model subclass instance, model function}
+    model : {None, Model or Model subclass instance, model function}, optional
         Model to perform uncertainty quantification on.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        Default is None.
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
+        Default is None.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
+        Default is `"info"`.
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+        No logging to screen if a filename is given.
+        Default is None.
 
     Attributes
     ----------

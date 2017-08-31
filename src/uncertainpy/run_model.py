@@ -32,6 +32,47 @@ results = [result 1, result 2, ..., result N]
 
 class RunModel(ParameterBase):
     """
+    Calculate model and feature results for a series if different model parameters,
+    and store them in a Data object.
+
+    Parameters
+    ----------
+    model : {None, Model or Model subclass instance, model function}, optional
+        Model to perform uncertainty quantification on.
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
+        Either None, a Parameters instance or a list the parameters that should be created.
+        The two lists are similar to the arguments sent to Parameters.
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
+        Features to calculate from the model result.
+        If None, no features are calculated.
+        If list of feature functions, all will be calculated.
+        Default is None.
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+    CPUs : int, optional
+        The number of CPUs to use when calculating the model and features.
+        Default is number of CPUs on the computer (multiprocess.cpu_count()).
+    suppress_model_graphics : bool, optional
+        Suppress all model graphics created by the model.
+        Default is True.
+
+
+    Attributes
+    ----------
+    model
+    parameters
+    features
+    logger : logging.Logger object
+        Logger object responsible for logging to screen or file.
+    CPUs : int
+        The number of CPUs used when calculating the model and features.
+    suppress_model_graphics : bool
+        Suppress all model graphics created by the model.
     """
 
     def __init__(self,
@@ -44,7 +85,7 @@ class RunModel(ParameterBase):
                  suppress_model_graphics=True):
 
 
-        self.parallel = Parallel(model=model,
+        self._parallel = Parallel(model=model,
                                  features=features,
                                  verbose_level=verbose_level,
                                  verbose_filename=verbose_filename)
@@ -64,14 +105,14 @@ class RunModel(ParameterBase):
     def features(self, new_features):
         ParameterBase.features.fset(self, new_features)
 
-        self.parallel.features = self.features
+        self._parallel.features = self.features
 
 
     @ParameterBase.model.setter
     def model(self, new_model):
         ParameterBase.model.fset(self, new_model)
 
-        self.parallel.model = self.model
+        self._parallel.model = self.model
 
 
     def apply_interpolation(self, t_interpolate, interpolation):
@@ -208,7 +249,7 @@ results = [result 1, result 2, ..., result N]
         pool = mp.Pool(processes=self.CPUs)
 
         model_parameters = self.create_model_parameters(nodes, uncertain_parameters)
-        for result in tqdm(pool.imap(self.parallel.run, model_parameters),
+        for result in tqdm(pool.imap(self._parallel.run, model_parameters),
                            desc="Running model",
                            total=len(nodes.T)):
 

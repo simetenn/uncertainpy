@@ -9,18 +9,22 @@ class Base(object):
 
     Parameters
     ----------
-    model : {None, Model or Model subclass instance, model function}
+    model : {None, Model or Model subclass instance, model function}, optional
         Model to perform uncertainty quantification on.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        Default is None.
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
+        Default is None.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
+        Default is `"info"`.
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+        No logging to screen if a filename is given.
+        Default is None.
 
     Attributes
     ----------
@@ -128,18 +132,22 @@ class ParameterBase(Base):
 
     Parameters
     ----------
-    model : {None, Model or Model subclass instance, model function}
+    model : {None, Model or Model subclass instance, model function}, optional
         Model to perform uncertainty quantification on.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        Default is None.
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
+        Either None, a Parameters instance or a list the parameters that should be created.
+        The two lists are similar to the arguments sent to Parameters.
+        Default is None.
+    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
-    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
-        Either None, a Parameters instance or a list the parameters that should be created.
-        The two lists are similar to the arguments sent to Parameters.
+        Default is None.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
+        Default is `"info"`.
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.
         No logging to screen if set. Default is None.
@@ -147,8 +155,8 @@ class ParameterBase(Base):
     Attributes
     ----------
     model
-    features
     parameters
+    features
     logger : logging.Logger object
         Logger object responsible for logging to screen or file.
     """
