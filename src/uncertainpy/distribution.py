@@ -2,6 +2,28 @@ import chaospy as cp
 
 
 def uniform(interval):
+    """
+    A closure that creates a function that takes a ``parameter`` as input and
+    returns a uniform distribution with `interval` around ``parameter``.
+
+    Parameters
+    ----------
+    interval : int, float
+        The interval of the uniform distribution around `parameter`.
+
+    Returns
+    -------
+    distribution : function
+        A function that takes ``parameter`` as input and returns a
+        uniform distribution with `interval` around this ``parameter``.
+
+    Notes
+    -----
+    This function ultimately calculates:
+    .. code-block::
+        cp.Uniform(parameter - abs(interval/2.*parameter),
+                   parameter + abs(interval/2.*parameter)).
+    """
     def distribution(parameter):
         if parameter == 0:
             raise ValueError("Creating a percentage distribution around 0 does not work")
@@ -12,6 +34,30 @@ def uniform(interval):
 
 
 def normal(interval):
+        """
+    A closure that creates a function that takes a ``parameter`` as input and
+    returns a Gaussian distribution with standard deviation ``interval*parameter``
+    around ``parameter``.
+
+    Parameters
+    ----------
+    interval : int, float
+        The interval of the standard deviation ``interval*parameter`` for the
+        Gaussian distribution.
+
+    Returns
+    -------
+    distribution : function
+        A function that takes a ``parameter`` as input and
+        returns a Gaussian distribution standard deviation ``interval*parameter``.
+
+
+    Notes
+    -----
+    This function ultimately calculates:
+    .. code-block::
+        cp.Normal(parameter, abs(interval*parameter))
+    """
     def distribution(parameter):
         if parameter == 0:
             raise ValueError("Creating a percentage distribution around 0 does not work")
