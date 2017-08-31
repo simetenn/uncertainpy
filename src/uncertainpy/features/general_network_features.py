@@ -2,6 +2,7 @@ import numpy as np
 
 try:
     import neo.core
+    import quantities as pq
 
     prerequisites = True
 except ImportError:

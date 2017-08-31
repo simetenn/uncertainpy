@@ -54,17 +54,18 @@ class Parallel(Base):
     """
     def create_interpolations(self, result):
         """
-        Create an interpolation for adaptive model and features results.
+        Create an interpolation for adaptive model and features `result`.
 
-        Adaptive model or feature results, meaning they
+        Adaptive model or feature `result`, meaning they
         have a varying number of time steps, are interpolated.
-        Interpolation is only performed for 1D results.
-        0D results does not need to be interpolated,
-        and support for interpolating 2D and above have currently not been implemented.
+        Interpolation is only performed for one dimensional `result`s.
+        zero dimensional `result`s does not need to be interpolated,
+        and support for interpolating two dimensional and above `result`s
+        have currently not been implemented.
 
         Parameters
         ----------
-        results : dict
+        result : dict
             The model and feature results. The model and each feature each has
             a dictionary with the time values, "t",  and model/feature results, "U".
             An example:
@@ -146,8 +147,8 @@ class Parallel(Base):
 
             t_postprocess, U_postprocess = self.model.postprocess(t, U)
 
-            U_postprocess = np.array(self.none_to_nan(U_postprocess))
-            t_postprocess = np.array(self.none_to_nan(t_postprocess))
+            U_postprocess = self.none_to_nan(U_postprocess)
+            t_postprocess = self.none_to_nan(t_postprocess)
 
             results = {}
             results[self.model.name] = {"t": np.array(t_postprocess),
@@ -163,8 +164,8 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-                t_feature = np.array(self.none_to_nan(t_feature))
-                U_feature = np.array(self.none_to_nan(U_feature))
+                t_feature = self.none_to_nan(t_feature)|
+                U_feature = self.none_to_nan(U_feature)|
 
                 results[feature] = {"U": U_feature,
                                     "t": t_feature}
@@ -186,7 +187,19 @@ class Parallel(Base):
 
     def none_to_nan(self, U):
         """
-        Converts None results to numpy.nan.
+        Converts None values in `U` to a arrays of np.nan.
+
+        Parameters
+        ----------
+        U : array_like
+            Result from model or features. Can be of any dimensions.
+
+        Returns
+        -------
+        array
+            Array with all None converted to arrays of NaN of the correct shape.
+
+
         """
         U_list = np.array(U).tolist()
 
@@ -212,5 +225,5 @@ class Parallel(Base):
                 return U_list
 
 
-        return U_list
+        return np.array(U_list)
 
