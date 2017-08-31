@@ -28,7 +28,7 @@ class GeneralNetworkFeatures(GeneralFeatures):
                                                      adaptive=adaptive,
                                                      labels=labels)
 
-    self.units = units
+        self.units = units
 
     def preprocess(self, t_stop, spiketrains):
         if t_stop is None or np.isnan(t_stop):

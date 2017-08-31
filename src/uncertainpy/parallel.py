@@ -84,6 +84,34 @@ class Parallel(Base):
                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                         "feature_invalid": {"U": np.nan,
                                             "t": np.nan}}
+
+        Returns
+        -------
+        result : dict
+            If an interpolation has been created, those features/model have
+            "interpolation" and the corresponding interpolation object added to
+            each features/model dictionary.
+            An example:
+
+            .. code-block::
+                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"U": 1,
+                                         "t": np.nan},
+                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                             "interpolation": <scipy.interpolate.fitpack2. \
+                                                                 InterpolatedUnivariateSpline \
+                                                                 object at 0x7f1c78f0d4d0>},
+                          "feature_invalid": {"U": np.nan,
+                                             "t": np.nan}}
+
+
         Notes
         -----
         If either model or feature results are adaptive,
@@ -125,6 +153,66 @@ class Parallel(Base):
 
 
     def run(self, model_parameters):
+        """
+        Run a model and calculate features from the model output, return the results.
+
+        The model is run and each feature of the model is calculated from the model output,
+        ``t`` (time values) and ``U`` (model result).
+        The results are interpolated if they are adaptive, meaning they return a varying number of steps,
+        An interpolation is created and added to results for the model/features that are adaptive.
+        Each instance of None is converted to an
+        array of numpy.nan of the correct shape, which makes the array regular.
+
+
+        Parameters
+        ----------
+        model_parameters : dict
+            All model parameters as a dictionary.
+            These parameters are sent to model.run.
+
+        Returns
+        -------
+        result : dict
+            The model and feature results. The model and each feature each has
+            a dictionary with the time values, "t",  and model/feature results, "U".
+            If an interpolation has been created, those features/model also has
+            "interpolation" added.
+            An example:
+
+            .. code-block::
+                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"U": 1,
+                                         "t": np.nan},
+                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                             "interpolation": <scipy.interpolate.fitpack2. \
+                                                                 InterpolatedUnivariateSpline \
+                                                                 object at 0x7f1c78f0d4d0>},
+                          "feature_invalid": {"U": np.nan,
+                                             "t": np.nan}}
+
+        Notes
+        -----
+       ``t`` and ``U`` are calculated from the model. Then sent to
+        model.postprocess, and the postprocessed result from model.postprocess
+        is added to result.
+        ``t`` and ``U`` are sent to features.preprocess and the preprocessed results
+        is used to calculate each feature.
+
+
+        See also
+        --------
+        Parallel.none_to_nan : Method for converting from None to NaN
+        features.preprocess : preprocessing model results before features are calculated
+        model.postprocess : posteprocessing of model results
+
+        """
 
         # Try-except to catch exceptions and print stack trace
         try:
@@ -164,8 +252,8 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-                t_feature = self.none_to_nan(t_feature)|
-                U_feature = self.none_to_nan(U_feature)|
+                t_feature = self.none_to_nan(t_feature)
+                U_feature = self.none_to_nan(U_feature)
 
                 results[feature] = {"U": U_feature,
                                     "t": t_feature}
@@ -187,7 +275,11 @@ class Parallel(Base):
 
     def none_to_nan(self, U):
         """
-        Converts None values in `U` to a arrays of np.nan.
+        Converts None values in `U` to a arrays of numpy.nan.
+
+        If `U` is a 2 dimensional or above array, each instance of None is converted to an
+        array of numpy.nan of the correct shape, which makes the array regular.
+
 
         Parameters
         ----------
@@ -198,6 +290,23 @@ class Parallel(Base):
         -------
         array
             Array with all None converted to arrays of NaN of the correct shape.
+
+
+        Examples
+        --------
+        >>> from uncertainpy import Parallel
+        >>> parallel = Parallel()
+        >>> U_irregular = np.array([None, np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])])
+        >>> result = parallel.none_to_nan(U_irregular)
+            array([[[ nan,  nan,  nan],
+                    [ nan,  nan,  nan],
+                    [ nan,  nan,  nan],
+                    [ nan,  nan,  nan]],
+
+                   [[ nan,  nan,  nan],
+                    [  1.,   2.,   3.],
+                    [ nan,  nan,  nan],
+                    [  1.,   2.,   3.]]])
 
 
         """

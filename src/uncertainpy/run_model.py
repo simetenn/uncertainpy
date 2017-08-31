@@ -228,7 +228,7 @@ results = [result 1, result 2, ..., result N]
             if node.ndim == 0:
                 node = [node]
 
-            # New setparameters
+            # New set parameters
             parameters = {}
             for j, parameter in enumerate(uncertain_parameters):
                 parameters[parameter] = node[j]
