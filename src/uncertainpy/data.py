@@ -233,9 +233,9 @@ class Data(collections.MutableMapping):
         data : dictionary
             Dictionary with data for `feature`.
         """
-        if not isinstance(value, dict):
+        if not isinstance(data, dict):
             raise ValueError("Value must be of type dict")
-        self.data[feature] = value
+        self.data[feature] = data
 
 
     def __iter__(self):
@@ -291,29 +291,6 @@ class Data(collections.MutableMapping):
             self.data[feature] = {}
 
 
-    def is_adaptive(self, feature):
-        """
-        Check if `feature` is adaptive (has varying number of
-        result values from one evaluation to the next).
-
-        Parameters
-        ----------
-        feature: str
-            Name of feature.
-
-        Returns
-        -------
-        bool
-            True if `feature` is adaptive, False if not.
-        """
-        u_prev = self[feature]["U"][0]
-        for u in self[feature]["U"][1:]:
-            if u_prev.shape != u.shape:
-                return True
-            u_prev = u
-        return False
-
-
     def save(self, filename):
         """
         Save data to a hdf5 file with name `filename`.
@@ -325,7 +302,7 @@ class Data(collections.MutableMapping):
         """
         ### TODO expand the save function to also save parameters and model information
 
-        with h5py.File(filename), 'w') as f:
+        with h5py.File(filename, 'w') as f:
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name
 

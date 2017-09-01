@@ -53,7 +53,7 @@ class TestRunModel(unittest.TestCase):
     def test_set_feature(self):
         self.runmodel.features = GeneralFeatures()
         self.assertIsInstance(self.runmodel._features, GeneralFeatures)
-        self.assertIsInstance(self.runmodel.parallel.features, GeneralFeatures)
+        self.assertIsInstance(self.runmodel._parallel.features, GeneralFeatures)
 
 
 
@@ -62,7 +62,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.model = TestingModel1d()
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
-        self.assertIsInstance(self.runmodel.parallel.model, TestingModel1d)
+        self.assertIsInstance(self.runmodel._parallel.model, TestingModel1d)
 
 
     def test_set_model_none(self):
@@ -70,7 +70,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.model = None
 
         self.assertIsNone(self.runmodel._model)
-        self.assertIsNone(self.runmodel.parallel.model)
+        self.assertIsNone(self.runmodel._parallel.model)
 
 
     def test_set_parameter_list(self):
@@ -94,14 +94,14 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.model = model_function
 
         self.assertIsInstance(self.runmodel.model, Model)
-        self.assertIsInstance(self.runmodel.parallel.model, Model)
+        self.assertIsInstance(self.runmodel._parallel.model, Model)
 
 
     def test_init_model_function(self):
         self.runmodel = RunModel(model_function, None)
 
         self.assertIsInstance(self.runmodel.model, Model)
-        self.assertIsInstance(self.runmodel.parallel.model, Model)
+        self.assertIsInstance(self.runmodel._parallel.model, Model)
 
 
     def test_feature_function(self):
@@ -144,11 +144,11 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(U, "U2")
 
 
-        t, U = self.runmodel.parallel.features.feature_function(None, None)
+        t, U = self.runmodel._parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.runmodel.parallel.features.feature_function2(None, None)
+        t, U = self.runmodel._parallel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 

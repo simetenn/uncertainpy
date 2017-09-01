@@ -65,9 +65,9 @@ class RunModel(ParameterBase):
 
 
         self._parallel = Parallel(model=model,
-                                 features=features,
-                                 verbose_level=verbose_level,
-                                 verbose_filename=verbose_filename)
+                                  features=features,
+                                  verbose_level=verbose_level,
+                                  verbose_filename=verbose_filename)
 
         super(RunModel, self).__init__(model=model,
                                        parameters=parameters,
@@ -376,7 +376,7 @@ class RunModel(ParameterBase):
 
     def is_adaptive(self, results, feature):
         """
-        Test if a `feature` in teh `results` is adaptive, meaning it has a
+        Test if a `feature` in the `results` is adaptive, meaning it has a
         varying number of time points.
 
         Parameters
@@ -408,14 +408,16 @@ class RunModel(ParameterBase):
         Returns
         -------
         bool
-            If the feature is adaptive or not.
+            True the feature is adaptive or
+            False if the feature is not.
         """
+
         u_prev = results[0][feature]["U"]
         for solve in results[1:]:
             u = solve[feature]["U"]
-
             if not np.all(np.isnan(u)):
-                if u_prev.shape != u.shape:
+
+                if np.shape(u_prev) != np.shape(u):
                     return True
                 u_prev = u
 

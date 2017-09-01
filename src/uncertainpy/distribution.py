@@ -34,7 +34,7 @@ def uniform(interval):
 
 
 def normal(interval):
-        """
+    """
     A closure that creates a function that takes a ``parameter`` as input and
     returns a Gaussian distribution with standard deviation ``interval*parameter``
     around ``parameter``.

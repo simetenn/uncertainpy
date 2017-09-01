@@ -20,6 +20,9 @@ run(**parameters) must return t and U
 
     @property
     def run(self):
+        """
+        Run must return t, U
+        """
         return self._run
 
 
@@ -38,9 +41,6 @@ run(**parameters) must return t and U
 
 
     def _run(self, **parameters):
-        """
-        Run must return t, U
-        """
         raise NotImplementedError("No run() method implemented")
 
 

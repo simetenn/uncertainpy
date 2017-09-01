@@ -431,7 +431,7 @@ class TestNetworkFeatures(unittest.TestCase):
                                    isi_bin_size=-1,
                                    corrcoef_bin_size=-1,
                                    covariance_bin_size=-1,
-                                   units="")
+                                   units=pq.ms)
 
         self.assertIsInstance(features, NetworkFeatures)
         self.assertEqual(features.features_to_run, [])
@@ -440,7 +440,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertEqual(features.isi_bin_size, -1)
         self.assertEqual(features.corrcoef_bin_size, -1)
         self.assertEqual(features.covariance_bin_size, -1)
-        self.assertEqual(features.units, "")
+        self.assertEqual(features.units, pq.ms)
         self.assertEqual(set(features.implemented_features()),
                          set(["feature"] + self.implemented_features))
 
