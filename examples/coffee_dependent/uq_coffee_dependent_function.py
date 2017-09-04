@@ -15,9 +15,8 @@ uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameters,
                                        features=None)
 
-uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       rosenblatt=True,
+uncertainty.uncertainty_quantification(rosenblatt=True,
+                                       filename="coffee_cup_dependent_rosenblatt",
                                        output_dir_figures="figures_rosenblatt")
 
-uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       rosenblatt=False)
+uncertainty.uncertainty_quantification(rosenblatt=False)
