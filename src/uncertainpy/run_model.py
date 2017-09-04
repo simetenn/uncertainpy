@@ -18,9 +18,11 @@ class RunModel(ParameterBase):
     ----------
     model : {None, Model or Model subclass instance, model function}, optional
         Model to perform uncertainty quantification on.
-    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
+        Default is None.
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
         Either None, a Parameters instance or a list the parameters that should be created.
         The two lists are similar to the arguments sent to Parameters.
+        Default is None.
     features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
@@ -43,15 +45,29 @@ class RunModel(ParameterBase):
 
     Attributes
     ----------
-    model
-    parameters
-    features
+    model : uncertainpy.RunModel.model
+    parameters : uncertainpy.RunModel.parameters
+    features : uncertainpy.RunModel.features
     logger : logging.Logger object
         Logger object responsible for logging to screen or file.
     CPUs : int
         The number of CPUs used when calculating the model and features.
     suppress_model_graphics : bool
         Suppress all model graphics created by the model.
+
+
+    See Also
+    --------
+    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.GeneralSpikingFeatures : General spiking features class
+    uncertainpy.features.SpikingFeatures : Implemented spiking features class
+    uncertainpy.features.GeneralNetworkFeatures : General network features class
+    uncertainpy.features.NetworkFeatures : Implemented network features class
+    uncertainpy.Parameter : Parameter class
+    uncertainpy.Parameters : Parameters collection class
+    uncertainpy.models.Model : Model class
+    uncertainpy.models.NestModel : Nest simulator model class
+    uncertainpy.models.NeuronModel : Neuron simulator model class
     """
 
     def __init__(self,
@@ -153,7 +169,9 @@ class RunModel(ParameterBase):
             A list where each element is a result dictionary for each set
             of model evaluations.
             An example:
-            .. code-block::
+
+            .. code-block:: Python
+
                 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                 "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                             "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -288,7 +306,9 @@ class RunModel(ParameterBase):
             A list where each element is a result dictionary for each set
             of model evaluations.
             An example:
-            .. code-block::
+
+            .. code-block:: Python
+
                 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                 "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                             "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -305,6 +325,7 @@ class RunModel(ParameterBase):
                                                 "t": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
+
         """
         if self.suppress_model_graphics:
             vdisplay = Xvfb()
@@ -348,11 +369,13 @@ class RunModel(ParameterBase):
         model_parameters : list
             A list where each element is a dictionary with the model parameters
             for a single evaluation.
-
             An example:
-            .. code-block::
+
+            .. code-block:: Python
+
                 model_parameter = {"parameter 1": value 1, "parameter 2": value 2, ...}
                 model_parameters = [model_parameter 1, model_parameter 2, ...]
+
         """
 
         model_parameters = []
@@ -385,7 +408,9 @@ class RunModel(ParameterBase):
             A list where each element is a result dictionary for each set
             of model evaluations.
             An example:
-            .. code-block::
+
+            .. code-block:: Python
+
                 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                 "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                             "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -402,14 +427,16 @@ class RunModel(ParameterBase):
                                                 "t": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
+
         feature: str
             Name of a feature or the model.
 
         Returns
         -------
         bool
-            True the feature is adaptive or
-            False if the feature is not.
+            ``True`` if the feature is adaptive or
+            ``False`` if the feature is not.
+
         """
 
         u_prev = results[0][feature]["U"]
@@ -444,6 +471,10 @@ class RunModel(ParameterBase):
         data : Data object
             A Data object with time and (interpolated) results for
             the model and each feature.
+
+        See Also
+        --------
+        uncertainpy.Data : Data class
         """
 
         if isinstance(uncertain_parameters, str):

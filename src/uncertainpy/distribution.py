@@ -17,10 +17,13 @@ def uniform(interval):
         A function that takes ``parameter`` as input and returns a
         uniform distribution with `interval` around this ``parameter``.
 
+
     Notes
     -----
     This function ultimately calculates:
-    .. code-block::
+
+    .. code-block:: Python
+
         cp.Uniform(parameter - abs(interval/2.*parameter),
                    parameter + abs(interval/2.*parameter)).
     """
@@ -54,7 +57,9 @@ def normal(interval):
     Notes
     -----
     This function ultimately calculates:
-    .. code-block::
+
+    .. code-block:: Python
+
         cp.Normal(parameter, abs(interval*parameter))
     """
     def distribution(parameter):

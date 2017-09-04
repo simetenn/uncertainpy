@@ -32,6 +32,17 @@ class Base(object):
     features
     logger : logging.Logger object
         Logger object responsible for logging to screen or file.
+
+    See Also
+    --------
+    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.GeneralSpikingFeatures : General spiking features class
+    uncertainpy.features.SpikingFeatures : Implemented spiking features class
+    uncertainpy.features.GeneralNetworkFeatures : General network features class
+    uncertainpy.features.NetworkFeatures : Implemented network features class
+    uncertainpy.models.Model : Model class
+    uncertainpy.models.NestModel : Nest simulator model class
+    uncertainpy.models.NeuronModel : Neuron simulator model class
     """
     def __init__(self,
                  model=None,
@@ -71,11 +82,11 @@ class Base(object):
 
         See Also
         --------
-        uncertainpy.GeneralFeatures : General features class
-        uncertainpy.GeneralSpikingFeatures : General spiking features class
-        uncertainpy.SpikingFeatures : Implemented spiking features class
-        uncertainpy.GeneralNetworkFeatures : General network features class
-        uncertainpy.NetworkFeatures : Implemented network features class
+        uncertainpy.features.GeneralFeatures : General features class
+        uncertainpy.features.GeneralSpikingFeatures : General spiking features class
+        uncertainpy.features.SpikingFeatures : Implemented spiking features class
+        uncertainpy.features.GeneralNetworkFeatures : General network features class
+        uncertainpy.features.NetworkFeatures : Implemented network features class
         """
         return self._features
 
@@ -108,9 +119,9 @@ class Base(object):
 
         See Also
         --------
-        uncertainpy.Model : Model class
-        uncertainpy.NestModel : Nest simulator model class
-        uncertainpy.NeuronModel : Neuron simulator model class
+        uncertainpy.models.Model : Model class
+        uncertainpy.models.NestModel : Nest simulator model class
+        uncertainpy.models.NeuronModel : Neuron simulator model class
         """
         return self._model
 
@@ -120,7 +131,6 @@ class Base(object):
             self._model = new_model
         elif callable(new_model):
             self._model = Model(new_model)
-            # self._model.run = new_model
         else:
             raise TypeError("model must be a Model or Model subclass instance, callable or None")
 
@@ -159,6 +169,20 @@ class ParameterBase(Base):
     features
     logger : logging.Logger object
         Logger object responsible for logging to screen or file.
+
+
+    See Also
+    --------
+    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.GeneralSpikingFeatures : General spiking features class
+    uncertainpy.features.SpikingFeatures : Implemented spiking features class
+    uncertainpy.features.GeneralNetworkFeatures : General network features class
+    uncertainpy.features.NetworkFeatures : Implemented network features class
+    uncertainpy.Parameter : Parameter class
+    uncertainpy.Parameters : Parameters collection class
+    uncertainpy.models.Model : Model class
+    uncertainpy.models.NestModel : Nest simulator model class
+    uncertainpy.models.NeuronModel : Neuron simulator model class
     """
     def __init__(self,
                  model=None,

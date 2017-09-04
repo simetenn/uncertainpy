@@ -50,10 +50,21 @@ class Parallel(Base):
 
     Attributes
     ----------
-    model
-    features
+    model : uncertainpy.Parallel.model
+    features : uncertainpy.Parallel.features
     logger : logging.Logger object
         Logger object responsible for logging to screen or file.
+
+    See Also
+    --------
+    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.GeneralSpikingFeatures : General spiking features class
+    uncertainpy.features.SpikingFeatures : Implemented spiking features class
+    uncertainpy.features.GeneralNetworkFeatures : General network features class
+    uncertainpy.features.NetworkFeatures : Implemented network features class
+    uncertainpy.models.Model : Model class
+    uncertainpy.models.NestModel : Nest simulator model class
+    uncertainpy.models.NeuronModel : Neuron simulator model class
     """
     def create_interpolations(self, result):
         """
@@ -61,19 +72,21 @@ class Parallel(Base):
 
         Adaptive model or feature `result`, meaning they
         have a varying number of time steps, are interpolated.
-        Interpolation is only performed for one dimensional `result`s.
-        zero dimensional `result`s does not need to be interpolated,
-        and support for interpolating two dimensional and above `result`s
+        Interpolation is only performed for one dimensional `result`.
+        zero dimensional `result` does not need to be interpolated,
+        and support for interpolating two dimensional and above `result`
         have currently not been implemented.
 
         Parameters
         ----------
         result : dict
             The model and feature results. The model and each feature each has
-            a dictionary with the time values, "t",  and model/feature results, "U".
+            a dictionary with the time values, ``"t"``,  and model/feature
+            results, ``"U"``.
             An example:
 
-            .. code-block::
+            .. code-block:: Python
+
                 result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                     "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                         "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -96,7 +109,8 @@ class Parallel(Base):
             each features/model dictionary.
             An example:
 
-            .. code-block::
+            .. code-block:: Python
+
                 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                              "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -120,6 +134,7 @@ class Parallel(Base):
         to be able to create the polynomial approximation.
         For 1D results this is done with scipy:
         ``InterpolatedUnivariateSpline(time, U, k=3)``.
+
         """
 
         for feature in result:
@@ -155,32 +170,33 @@ class Parallel(Base):
 
     def run(self, model_parameters):
         """
-        Run a model and calculate features from the model output, return the results.
+        Run a model and calculate features from the model output,
+        return the results.
 
         The model is run and each feature of the model is calculated from the model output,
         ``t`` (time values) and ``U`` (model result).
         The results are interpolated if they are adaptive, meaning they return a varying number of steps,
         An interpolation is created and added to results for the model/features that are adaptive.
-        Each instance of None is converted to an
-        array of numpy.nan of the correct shape, which makes the array regular.
+        Each instance of ``None`` is converted to an
+        array of ``numpy.nan`` of the correct shape, which makes the array regular.
 
 
         Parameters
         ----------
-        model_parameters : dict
+        model_parameters : dictionary
             All model parameters as a dictionary.
-            These parameters are sent to model.run.
+            These parameters are sent to model.run().
 
         Returns
         -------
-        result : dict
+        result : dictionary
             The model and feature results. The model and each feature each has
-            a dictionary with the time values, "t",  and model/feature results, "U".
+            a dictionary with the time values, ``"t"``,  and model/feature results, ``"U"``.
             If an interpolation has been created, those features/model also has
-            "interpolation" added.
-            An example:
+            ``"interpolation"`` added. An example:
 
-            .. code-block::
+            .. code-block:: Python
+
                 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                              "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -192,15 +208,14 @@ class Parallel(Base):
                                          "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                              "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                             "interpolation": <scipy.interpolate.fitpack2. \
-                                                                 InterpolatedUnivariateSpline \
-                                                                 object at 0x7f1c78f0d4d0>},
+                                             "interpolation": scipy interpolation object},
                           "feature_invalid": {"U": np.nan,
                                              "t": np.nan}}
 
+
         Notes
         -----
-       ``t`` and ``U`` are calculated from the model. Then sent to
+        Time ``t`` and result ``U`` are calculated from the model. Then sent to
         model.postprocess, and the postprocessed result from model.postprocess
         is added to result.
         ``t`` and ``U`` are sent to features.preprocess and the preprocessed results
@@ -209,10 +224,9 @@ class Parallel(Base):
 
         See also
         --------
-        Parallel.none_to_nan : Method for converting from None to NaN
-        features.preprocess : preprocessing model results before features are calculated
-        model.postprocess : posteprocessing of model results
-
+        uncertainpy.Parallel.none_to_nan : Method for converting from None to NaN
+        uncertainpy.features.GeneralFeatures.preprocess : preprocessing model results before features are calculated
+        uncertainpy.models.Model.postprocess : posteprocessing of model results
         """
 
         # Try-except to catch exceptions and print stack trace
@@ -303,7 +317,6 @@ class Parallel(Base):
                     [ nan,  nan,  nan],
                     [ nan,  nan,  nan],
                     [ nan,  nan,  nan]],
-
                    [[ nan,  nan,  nan],
                     [  1.,   2.,   3.],
                     [ nan,  nan,  nan],

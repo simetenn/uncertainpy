@@ -51,8 +51,8 @@ napoleon_use_ivar = True
 
 autosummary_generate = True
 
-napoleon_include_special_with_doc = True
-
+napoleon_include_special_with_doc = False
+napoleon_use_admonition_for_notes = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -191,3 +191,19 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+
+
+# TODO Remove this once issue #2549 on sphinx github repo have been fixed
+# Implemented from issue #3866 on sphinx github repo
+from sphinx.domains.python import PythonDomain
+
+
+class PatchedPythonDomain(PythonDomain):
+    def resolve_xref(self, env, fromdocname, builder, typ, target, node, contnode):
+        if 'refspecific' in node:
+            del node['refspecific']
+        return super(PatchedPythonDomain, self).resolve_xref(
+            env, fromdocname, builder, typ, target, node, contnode)
+
+def setup(sphinx):
+    sphinx.override_domain(PatchedPythonDomain)

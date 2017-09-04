@@ -149,7 +149,7 @@ class Data(collections.MutableMapping):
 
     def ndim(self, feature):
         """
-        Get the number of dimentions of a `feature.abs
+        Get the number of dimensions of a `feature`.
 
         Parameters
         ----------

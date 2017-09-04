@@ -5,17 +5,12 @@ Parameter
 
 .. autoclass:: uncertainpy.Parameter
     :members:
-    :undoc-members:
+    :special-members: __str__
 
 Parameters
 ==========
 
 .. autoclass:: uncertainpy.Parameters
     :members:
-    :undoc-members:
     :inherited-members:
-
-
-
-.. autosummary::
-
+    :special-members: __delitem__, __getitem__, __iter__, __len__, __setitem__, __str__
