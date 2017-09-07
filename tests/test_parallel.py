@@ -352,3 +352,15 @@ class TestParallel(unittest.TestCase):
 
         result = np.array(result)
         self.assertTrue(np.array_equal(result, U_irregular))
+
+
+        U_irregular = np.array([None, None, None])
+
+        result = self.parallel.none_to_nan(U_irregular)
+
+        U_correct = np.array([np.nan, np.nan, np.nan])
+
+        result = np.array(result)
+
+        self.assertTrue(np.all(np.isnan(result)))
+        self.assertEqual(len(result), 3)

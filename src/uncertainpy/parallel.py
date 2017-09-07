@@ -335,6 +335,7 @@ class Parallel(Base):
                     if hasattr(u, "__iter__"):
                         U_list[i] = self.none_to_nan(u)
 
+                fill = np.nan
                 for i, u in enumerate(U):
                     if u is not None:
                         fill = np.full(np.shape(U_list[i]), np.nan, dtype=float).tolist()
