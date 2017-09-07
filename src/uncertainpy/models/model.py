@@ -78,6 +78,11 @@ class Model(object):
             to be interpolated.
 
 
+        Raises
+        ------
+        NotImplementedError
+            If no run method have been implemented or set to a function.
+
         Notes
         -----
         The ``run(**parameters)`` method must either be implemented or set to a
@@ -146,6 +151,10 @@ class Model(object):
     def postprocess(self, t, U):
         """
         Postprocessing of the time and results from the model.
+
+        No postprocessing is performed, and the direct model results are
+        currently returned.
+        If postprocessing is needed it should follow teh below format.
 
         Returns
         -------

@@ -53,12 +53,13 @@ class NestModel(Model):
         if not prerequisites:
             raise ImportError("NestModel requires: nest")
 
-
         super(NestModel, self).__init__(run_function=run_function,
                                         adaptive=adaptive,
                                         labels=labels)
 
-    def run(self, **parameters):
+
+    @Model.run.getter
+    def run(self):
         """
         Run a Nest model and return the final simulation time and the
         spiketrains.
@@ -78,6 +79,11 @@ class NestModel(Model):
             The final simulation time.
         spiketrains : list
             A list of spike trains for each neuron.
+
+        Raises
+        ------
+        NotImplementedError
+            If no run method have been implemented or set to a function.
 
         Notes
         -----
@@ -100,8 +106,7 @@ class NestModel(Model):
         --------
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """
-        raise NotImplementedError("No run() method implemented in {class_name}".format(class_name=self.__class__.__name__))
-
+        return self._run
 
 
     def postprocess(self, t_stop, spiketrains):
@@ -140,7 +145,7 @@ class NestModel(Model):
         t = np.arange(0, t_stop, dt)
 
         expanded_spiketrains = []
-        for spiketrain in U:
+        for spiketrain in spiketrains:
             binary_spike = np.zeros(len(t))
             binary_spike[np.in1d(t, spiketrain)] = 1
 

@@ -74,7 +74,18 @@ class TestModel(unittest.TestCase):
         self.assertEqual(model.run, f)
         self.assertEqual(model.labels, ["test x", "text y"])
         self.assertTrue(model.adaptive)
+        self.assertEqual(model.name, "f")
 
+
+    def test_set_run(self):
+        def f(x):
+            return x
+
+        model = Model()
+
+        model.run = f
+        self.assertEqual(model.run, f)
+        self.assertEqual(model.name, "f")
 
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
@@ -195,6 +206,19 @@ class TestNeuronModel(unittest.TestCase):
 class TestNestModel(unittest.TestCase):
     def test_init(self):
         model = NestModel(brunel_network)
+        self.assertEqual(model.run, brunel_network)
+        self.assertEqual(model.name, "brunel_network")
+
+
+    def test_set_run(self):
+        def f(x):
+            return x
+
+        model = NestModel()
+
+        model.run = f
+        self.assertEqual(model.run, f)
+        self.assertEqual(model.name, "f")
 
 
     def test_run(self):

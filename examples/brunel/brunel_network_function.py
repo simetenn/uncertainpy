@@ -1,125 +1,130 @@
-import numpy as np
 import nest
 import nest.raster_plot
-from elephant.statistics import isi, cv
-
 import matplotlib.pyplot as plt
 
 
-def calc_CV(spikes):
-    isi = np.diff(spikes)
-    if len(isi) > 0:
-        CV = np.sqrt(np.mean(isi**2) - np.mean(isi)**2) / np.mean(isi)
-        return CV
-    else:
-        return np.nan
-
-
-
-def brunel_network(J_E=0.5, g=5.0):
+def brunel_network(eta=2, g=5):
     """
-    A brunel network.
+    A brunel network, from:
+
+    Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
+    Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
+    183-208 (2000).
+
+
+    Parameters
+    ----------
+    g : {int, float}, optional
+        Ratio inhibitory weight/excitatory weight. Default is 5.
+    eta : {int, float}, optional
+        External rate relative to threshold rate. Default is 2.
     Note that for testing purposes this network has fewer neurons (N_neurons = 100)
     and run for a shorter time (simtime = 40) and record from fewer neuron (N_rec = 10) than
     the brunel network class.
     """
-    # g = 5.0           # Ratio of IPSP to EPSP amplitude: J_I/J_E
-    # J_E = 0.5         # J_I = -g*J_E
 
+    # Network parameters
+    N_rec = 5              # Record from 50 neurons
+    simtime = 50          # Simulation time
 
-    # Network parameters. These are given in Brunel (2000) J.Comp.Neuro.
-    eta = 1.0         # rate of external population in multiples of threshold rate
-    delay = 1.5       # synaptic delay in ms
-    C_m = 281.0
-    tau_m = C_m/20.0  # Membrane time constant in mV
-    V_th = -50.4      # Spike threshold in mV
-    t_ref = 2.0
-    E_L = -60.
-    V_reset = -60.
+    # g = 5.0                # Ratio inhibitory weight/excitatory weight
+    # eta = 2.0              # External rate relative to threshold rate
+    delay = 1.5            # Synaptic delay in ms
+    tau_m = 20.0           # Time constant of membrane potential in ms
+    V_th = 20.0
+    N_E = 8000             # Number of inhibitory neurons
+    N_I = 2000             # Number of excitatory neurons
+    N_neurons = N_E + N_I  # Number of neurons in total
+    C_E = N_E/10           # Number of excitatory synapses per neuron
+    C_I = N_I/10           # Number of inhibitory synapses per neuron
+    J_E = 0.1              # Amplitude of excitatory postsynaptic current
+    J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
 
-    N_neurons = 100
-    P_E = .8           # P_I = 1 - P_E
-
-    N_rec = 10        # Number of neurons to record from
-    simtime = 40
-
+    nu_ex = eta*V_th/(J_E*C_E*tau_m)
+    p_rate = 1000.0*nu_ex*C_E
 
     nest.ResetKernel()
 
-    N_E = int(N_neurons*P_E)
-    N_I = int(N_neurons*(1 - P_E))
+    # Configure kernel
+    nest.SetKernelStatus({'print_time': False})
 
-    C_E = int(N_E/10)  # number of excitatory synapses per neuron
-    C_I = int(N_I/10)  # number of inhibitory synapses per neuron
 
-    J_I = -g*J_E
-    # rate of an external neuron in ms^-1
-    nu_ex = eta*abs(V_th)/(J_E*C_E*tau_m)
-    # rate of the external population in s^-1
-    p_rate = 1000.0*nu_ex*C_E
+    nest.SetDefaults('iaf_psc_delta',
+                     {'C_m': 1.0,
+                      'tau_m': tau_m,
+                      't_ref': 2.0,
+                      'E_L': 0.0,
+                      'V_th': V_th,
+                      'V_reset': 10.0})
 
-    # Configure kernel and neuron defaults
-    nest.SetKernelStatus({"print_time": True,
-                          "local_num_threads": 1})
 
-    nest.SetDefaults("iaf_psc_delta",
-                     {"C_m": C_m,
-                      "tau_m": tau_m,
-                      "t_ref": t_ref,
-                      "E_L": E_L,
-                      "V_th": V_th,
-                      "V_reset": V_reset})
     # Create neurons
-    nodes = nest.Create("iaf_psc_delta", N_neurons)
+    nodes   = nest.Create('iaf_psc_delta', N_neurons)
     nodes_E = nodes[:N_E]
     nodes_I = nodes[N_E:]
 
-    # Connect neurons with each other
-    nest.CopyModel("static_synapse", "excitatory",
-                   {"weight": float(J_E), "delay": float(delay)})
+    noise = nest.Create('poisson_generator',1,{'rate': p_rate})
 
+    spikes = nest.Create('spike_detector',2,
+                         [{'label': 'brunel-py-ex'},
+                          {'label': 'brunel-py-in'}])
+    spikes_E = spikes[:1]
+    spikes_I = spikes[1:]
+
+
+    # Connect neurons to each other
+    nest.CopyModel('static_synapse_hom_w', 'excitatory',
+                   {'weight':J_E, 'delay':delay})
     nest.Connect(nodes_E, nodes,
-                 {"rule": 'fixed_indegree', "indegree": C_E},
-                 "excitatory")
+                 {'rule': 'fixed_indegree', 'indegree': C_E},
+                 'excitatory')
 
-    nest.CopyModel("static_synapse", "inhibitory",
-                   {"weight": float(J_I), "delay": float(delay)})
-
+    nest.CopyModel('static_synapse_hom_w', 'inhibitory',
+                   {'weight': J_I, 'delay': delay})
     nest.Connect(nodes_I, nodes,
-                 {"rule": 'fixed_indegree', "indegree": C_I},
-                 "inhibitory")
+                {'rule': 'fixed_indegree', 'indegree': C_I},
+                 'inhibitory')
 
-    # Add stimulation and recording devices
-    noise = nest.Create("poisson_generator", params={"rate": p_rate})
-    # connect using all_to_all: one noise generator to all neurons
 
-    nest.Connect(noise, nodes, syn_spec="excitatory")
 
-    spikes = nest.Create("spike_detector", 2,
-                         params=[{"label": "Exc", "to_file": False},
-                                 {"label": "Inh", "to_file": False}])
-    spike_detect_E = spikes[:1]
-    spike_detect_I = spikes[1:]
+    # Connect poisson generator to all nodes
+    nest.Connect(noise, nodes, syn_spec='excitatory')
 
-    # connect using all_to_all: all recorded excitatory neurons to one
-    # detector
-    nest.Connect(nodes_E[:N_rec], spike_detect_E)
-    nest.Connect(nodes_I[:N_rec], spike_detect_I)
+    nest.Connect(nodes_E[:N_rec], spikes_E)
+    nest.Connect(nodes_I[:N_rec], spikes_I)
 
 
     # Run the simulation
     nest.Simulate(simtime)
-    events = nest.GetStatus(spike_detect_E, 'events')[0]
 
 
+    events_E = nest.GetStatus(spikes_E, 'events')[0]
+    events_I = nest.GetStatus(spikes_I, 'events')[0]
+
+
+    # TODO is there any difference in sending back only excitatory
+    #      or inhibitory neurons, or should both be sent back?
     spiketrains = []
-    for sender in set(events["senders"]):
-        spiketrain = events["times"][events["senders"] == sender]
+
+    # Excitatory spike trains
+    for sender in set(events_E["senders"]):
+        spiketrain = events_E["times"][events_E["senders"] == sender]
         spiketrains.append(spiketrain)
+
+    # Inhibitory spike trains
+    # for sender in set(events_I["senders"]):
+    #     spiketrain = events_I["times"][events_I["senders"] == sender]
+    #     spiketrains.append(spiketrain)
 
     # U must be a list/array of spiketrains
     U = spiketrains
     t = simtime
 
-
     return t, U
+
+
+
+
+if __name__ == "__main__":
+    t, U = brunel_network()
+    print U

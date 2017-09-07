@@ -1,4 +1,18 @@
 class GeneralFeatures(object):
+    """
+    Class for calculating features of the model.
+
+    Parameters
+    ----------
+    new_features : {None}, optinal
+    features_to_run : {"all"}, optional
+    new_utility_methods : {None}, optional
+    adaptive : {None}, optional
+    labels : dictionary, optional
+
+    Attributes
+    ----------
+    """
     def __init__(self,
                  new_features=None,
                  features_to_run="all",
@@ -13,8 +27,7 @@ class GeneralFeatures(object):
                                 "__init__",
                                 "implemented_features",
                                 "preprocess",
-                                "add_features",
-                                "serialize"]
+                                "add_features"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -37,6 +50,8 @@ class GeneralFeatures(object):
 
 
     def preprocess(self, t, U):
+        """
+        """
         return t, U
 
 
@@ -67,6 +82,8 @@ class GeneralFeatures(object):
 
     @property
     def adaptive(self):
+        """
+        """
         return self._adaptive
 
 
@@ -82,13 +99,13 @@ class GeneralFeatures(object):
             self._adaptive = new_adaptive
 
 
-    def serialize(feature):
-        decorated = True
-        for i, spiketrain in enumerate(spiketrains):
-            def serialized_feature(t, spiketrains):
-                return feature(t, spiketrains[i])
+    # def serialize(feature):
+    #     decorated = True
+    #     for i, spiketrain in enumerate(spiketrains):
+    #         def serialized_feature(t, spiketrains):
+    #             return feature(t, spiketrains[i])
 
-            setattr(self, feature.__name__+ "_i", serialized_feature)
+    #         setattr(self, feature.__name__+ "_i", serialized_feature)
 
 
 

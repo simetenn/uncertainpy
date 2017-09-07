@@ -9,7 +9,7 @@ class NeuronModel(Model):
     """
     Class for Neuron simulator models.
 
-    Loads a Neuron simulation, run it, and measures the voltage.
+    Loads a Neuron simulation, run it, and measures the voltage in the soma.
 
     Parameters
     ----------
@@ -122,13 +122,22 @@ class NeuronModel(Model):
 
     def _record_v(self):
         """
-        Record voltage
+        Record voltage in the soma.
+
+        Raises
+        ------
+        RuntimeError
+            If no section with name soma is found in Neuron model.
         """
-        for sec in self.h.allsec():
-            print sec
-            self.V = self.h.Vector()
-            self.V.record(sec(0.5)._ref_v)
-            break
+        self.V = None
+        for section in self.h.allsec():
+            if section.name().lower() == "soma":
+                self.V = self.h.Vector()
+                self.V.record(section(0.5)._ref_v)
+                break
+
+        if self.V is None:
+            raise RuntimeError("Soma not found in Neuron model: {model_name}".format(self.name))
 
 
     def _record_t(self):
@@ -190,7 +199,7 @@ class NeuronModel(Model):
     def postprocess(self, t, U):
         """
         Postprocessing of the time and results from the Neuron model is
-        generally not needed.
+        generally not needed. The direct model result is returned.
 
         Parameters
         ----------

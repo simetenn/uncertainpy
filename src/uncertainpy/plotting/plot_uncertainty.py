@@ -397,19 +397,19 @@ class PlotUncertainty(object):
         ax2 = ax.twinx()
 
         spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                 "right": colors[color+1], "left": "None"})
+                                 "right": colors[color+2], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=colors[color+1], labelcolor=colors[color+1], labelsize=labelsize)
-        ax2.set_ylabel(ylabel + ', variance', color=colors[color+1], fontsize=labelsize)
+                        color=colors[color+2], labelcolor=colors[color+2], labelsize=labelsize)
+        ax2.set_ylabel(ylabel + ', variance', color=colors[color+2], fontsize=labelsize)
 
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
         # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
 
         ax2.plot(t, self.data[feature]["Var"],
-                 color=colors[color+1], linewidth=2, antialiased=True)
+                 color=colors[color+2], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
-        ax2.yaxis.offsetText.set_color(colors[color+1])
+        ax2.yaxis.offsetText.set_color(colors[color+2])
 
 
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
@@ -543,7 +543,7 @@ class PlotUncertainty(object):
 
 
     def sensitivity_1d_grid(self,
-                            feature=None,
+                              feature=None,
                             sensitivity="sensitivity_1",
                             hardcopy=True,
                             show=False,
