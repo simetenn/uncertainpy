@@ -361,9 +361,14 @@ class TestRunModel(unittest.TestCase):
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
+
         data = self.runmodel.results_to_data(results)
 
-        self.assertNotIn("feature_invalid", data)
+        self.assertIn("feature_invalid", data)
+
+        self.assertTrue(np.isnan(data["feature_invalid"]["t"]))
+        self.assertTrue(np.all(np.isnan(data["feature_invalid"]["U"])))
+
 
 
     def test_results_to_data_model_1d_features_all_adaptive(self):
@@ -466,7 +471,8 @@ class TestRunModel(unittest.TestCase):
 
     def assert_feature_0d(self, data):
         self.assertIn("feature0d", data)
-        self.assertNotIn("t", data["feature0d"])
+
+        self.assertTrue(np.isnan(data["feature0d"]["t"]))
         self.assertTrue(np.array_equal(data["feature0d"]["U"], [1, 1, 1]))
         self.assertEqual(data["feature0d"]["labels"], ["feature0d"])
 
@@ -719,3 +725,32 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(correct_results[0]["a"]["t"].shape, new_results[0]["a"]["t"].shape)
         self.assertEqual(correct_results[1]["a"]["t"].shape, new_results[1]["a"]["t"].shape)
         self.assertEqual(correct_results[2]["a"]["t"].shape, new_results[2]["a"]["t"].shape)
+
+
+
+
+
+        results = [{"a": {"U": np.full(3, np.nan),
+                          "t": np.nan}},
+                   {"a": {"U": np.full((3, 3, 3), 2),
+                          "t": np.nan}},
+                   {"a": {"U": np.full(3, np.nan),
+                          "t": np.nan}}]
+
+
+        new_results = self.runmodel.regularize_nan_results(results)
+
+        correct_results = [{"a": {"U": np.full((3, 3, 3), np.nan),
+                                  "t": np.nan}},
+                           {"a": {"U": np.full((3, 3, 3), 2),
+                                  "t": np.nan}},
+                           {"a": {"U": np.full((3, 3, 3), np.nan),
+                                  "t": np.nan}}]
+
+        self.assertEqual(correct_results[0]["a"]["U"].shape, new_results[0]["a"]["U"].shape)
+        self.assertEqual(correct_results[1]["a"]["U"].shape, new_results[1]["a"]["U"].shape)
+        self.assertEqual(correct_results[2]["a"]["U"].shape, new_results[2]["a"]["U"].shape)
+
+        self.assertEqual(np.shape(correct_results[0]["a"]["t"]), np.shape(new_results[0]["a"]["t"]))
+        self.assertEqual(np.shape(correct_results[1]["a"]["t"]), np.shape(new_results[1]["a"]["t"]))
+        self.assertEqual(np.shape(correct_results[2]["a"]["t"]), np.shape(new_results[2]["a"]["t"]))

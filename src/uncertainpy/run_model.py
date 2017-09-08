@@ -554,11 +554,10 @@ class RunModel(ParameterBase):
             ---------
             data : {"U", "t"}
             """
-            shape = None
-
             features = results[0].keys()
             for feature in features:
                 # Find shape of the first result that is not only nan values
+                shape = np.shape(results[0][feature][data])
                 for i in range(len(results)):
                     U = results[i][feature][data]
                     if not np.all(np.isnan(U)):

@@ -545,7 +545,7 @@ class PlotUncertainty(object):
 
 
     def sensitivity_1d_grid(self,
-                              feature=None,
+                            feature=None,
                             sensitivity="sensitivity_1",
                             hardcopy=True,
                             show=False,

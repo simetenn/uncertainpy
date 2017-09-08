@@ -107,7 +107,7 @@ test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
 
 test_base = create_test_suite([TestBase, TestParameterBase])
 
-test_runModel = create_test_suite([TestRunModel, TestParallel])
+test_runModel = create_test_suite([TestRunModel])
 
 test_parallel = create_test_suite([TestParallel])
 

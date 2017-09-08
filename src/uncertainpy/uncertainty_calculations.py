@@ -89,26 +89,15 @@ class UncertaintyCalculations(ParameterBase):
         if feature not in self.data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
-        i = 0
         masked_U = []
         mask = np.ones(len(self.data[feature]["U"]), dtype=bool)
 
         # TODO use numpy masked array
-        for result in self.data[feature]["U"]:
-            # if not isinstance(result, np.ndarray) and np.all(np.isnan(result)):
-            # if result is None:
-            if self.strict_results:
-                if np.all(np.isnan(result)):
-                    mask[i] = False
-                else:
-                    masked_U.append(result)
+        for i, result in enumerate(self.data[feature]["U"]):
+            if np.any(np.isnan(result)):
+                mask[i] = False
             else:
-                if np.any(np.isnan(result)):
-                    mask[i] = False
-                else:
-                    masked_U.append(result)
-
-            i += 1
+                masked_U.append(result)
 
 
         if len(nodes.shape) > 1:
@@ -237,6 +226,7 @@ class UncertaintyCalculations(ParameterBase):
         if self.nr_pc_samples is None:
             self.nr_pc_samples = 2*len(self.P) + 1
 
+        # TODO fix order = 3.
         nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
                                                                   rule="J", sparse=True)
         # TODO Is this correct, copy pasted from below.

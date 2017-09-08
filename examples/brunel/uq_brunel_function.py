@@ -11,39 +11,36 @@ features = un.NetworkFeatures(features_to_run="all")
 
 
 
-# # SR parameter set
-
-# parameterlist = [["eta", 2, cp.Uniform(1.5, 3.5)],
-#                  ["g", 5, cp.Uniform(1, 3)]]
-
-# parameters = un.Parameters(parameterlist)
-
-# uncertainty = un.UncertaintyEstimation(model,
-#                                        parameters=parameters,
-#                                        features=features,
-#                                        output_dir_figures="figures_brunel_function_SR",
-#                                        CPUs=7)
-
-
-# uncertainty.uncertainty_quantification(plot_condensed=True,
-#                                        plot_simulator_results=True)
-
-
-
-
-# AI parameter set
-
-parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
-                 ["g", 5, cp.Uniform(5, 8)]]
+# SR parameter set
+parameterlist = [["eta", 2, cp.Uniform(1.5, 3.5)],
+                 ["g", 5, cp.Uniform(1, 3)]]
 
 parameters = un.Parameters(parameterlist)
 
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features,
-                                       output_dir_figures="figures_brunel_function_AI",
-                                       CPUs=7)
-
+                                       output_dir_figures="figures_brunel_function",
+                                       CPUs=7,
+                                       strict_results=True)
 
 uncertainty.uncertainty_quantification(plot_condensed=True,
                                        plot_simulator_results=True)
+
+
+
+
+# # AI parameter set
+# parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
+#                  ["g", 5, cp.Uniform(5, 8)]]
+
+# parameters = un.Parameters(parameterlist)
+
+# uncertainty = un.UncertaintyEstimation(model,
+#                                        parameters=parameters,
+#                                        features=features,
+#                                        output_dir_figures="figures_brunel_function_AI",
+#                                        CPUs=7)
+
+# uncertainty.uncertainty_quantification(plot_condensed=True,
+#                                        plot_simulator_results=True)

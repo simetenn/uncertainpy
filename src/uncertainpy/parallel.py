@@ -267,12 +267,6 @@ class Parallel(Base):
                 t_feature = feature_results[feature]["t"]
                 U_feature = feature_results[feature]["U"]
 
-
-                # if feature == "instantaneous_rate":
-                    # print "\n\n\n\n\n"
-                    # print feature_results[feature]["U"]
-                    # print "\n\n\n\n\n"
-
                 t_feature = self.none_to_nan(t_feature)
                 U_feature = self.none_to_nan(U_feature)
 
@@ -333,7 +327,7 @@ class Parallel(Base):
         U_list = np.array(U).tolist()
 
         if U is None:
-            U_list = [np.nan]
+            U_list = np.nan
         else:
             # To handle the special case of 0d arrays,
             # which have an __iter__, but cannot be iterated over

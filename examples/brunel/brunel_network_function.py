@@ -22,15 +22,15 @@ def brunel_network(eta=2, g=5):
 
     # Network parameters
     N_rec = 10              # Record from 50 neurons
-    simtime = 1000          # Simulation time
+    simtime = 50          # Simulation time
 
     # g = 5.0                # Ratio inhibitory weight/excitatory weight
     # eta = 2.0              # External rate relative to threshold rate
     delay = 1.5            # Synaptic delay in ms
     tau_m = 20.0           # Time constant of membrane potential in ms
     V_th = 20.0
-    N_E = 8000             # Number of inhibitory neurons
-    N_I = 2000             # Number of excitatory neurons
+    N_E = 800             # Number of inhibitory neurons
+    N_I = 200             # Number of excitatory neurons
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = N_E/10           # Number of excitatory synapses per neuron
     C_I = N_I/10           # Number of inhibitory synapses per neuron
