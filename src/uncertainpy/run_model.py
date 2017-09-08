@@ -272,7 +272,7 @@ class RunModel(ParameterBase):
 
             data[feature]["U"] = np.array(data[feature]["U"])
 
-        data.remove_only_invalid_features()
+        # data.remove_only_invalid_features()
 
         return data
 

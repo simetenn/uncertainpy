@@ -149,9 +149,9 @@ class PlotUncertainty(object):
                        title="{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
-            plt.clf()
+            plt.close()
             i += 1
-        plt.close()
+
 
 
     # TODO double check ylabel ans zlabel
@@ -189,9 +189,9 @@ class PlotUncertainty(object):
                             **plot_kwargs)
 
             cbar = fig.colorbar(iax)
-            cbar.ax.set_title(ylabel)
+            cbar.ax.set_title(zlabel)
             ax.set_xlabel(xlabel)
-            ax.set_ylabel(zlabel)
+            ax.set_ylabel(ylabel)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()

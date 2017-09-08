@@ -20,7 +20,8 @@ class UncertaintyCalculations(ParameterBase):
                  nr_pc_mc_samples=10*5,
                  seed=None,
                  verbose_level="info",
-                 verbose_filename=None):
+                 verbose_filename=None,
+                 strict_results=True):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
@@ -47,6 +48,8 @@ class UncertaintyCalculations(ParameterBase):
         self.data = None
         self.U_hat = {}
         self.U_mc = {}
+
+        self.strict_results = strict_results
 
 
         if seed is not None:
@@ -94,10 +97,16 @@ class UncertaintyCalculations(ParameterBase):
         for result in self.data[feature]["U"]:
             # if not isinstance(result, np.ndarray) and np.all(np.isnan(result)):
             # if result is None:
-            if np.all(np.isnan(result)):
-                mask[i] = False
+            if self.strict_results:
+                if np.all(np.isnan(result)):
+                    mask[i] = False
+                else:
+                    masked_U.append(result)
             else:
-                masked_U.append(result)
+                if np.any(np.isnan(result)):
+                    mask[i] = False
+                else:
+                    masked_U.append(result)
 
             i += 1
 
@@ -116,8 +125,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
         if not np.all(mask):
-            self.logger.warning("Feature: {} does not yield".format(feature)
-                                + " results for all parameter combinations")
+            self.logger.warning("Feature: {} only yields".format(feature)
+                                + " results for {}/{}".format(sum(mask), len(mask))
+                                + " parameter combinations")
 
 
         if weights is None:
