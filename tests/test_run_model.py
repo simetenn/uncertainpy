@@ -692,3 +692,30 @@ class TestRunModel(unittest.TestCase):
         nodes = np.array([[1.0, 1.1, 1.2], [21900, 22000, 22100]])
 
         self.runmodel.run(nodes, uncertain_parameters)
+
+
+    def test_regularize_nan_results(self):
+        results = [{"a": {"U": np.full(3, np.nan),
+                          "t": np.full(3, np.nan)}},
+                   {"a": {"U": np.full((3, 3, 3), 2),
+                          "t": np.full((3, 3, 3), 2)}},
+                   {"a": {"U": np.full(3, np.nan),
+                          "t": np.full(3, np.nan)}}]
+
+
+        new_results = self.runmodel.regularize_nan_results(results)
+
+        correct_results = [{"a": {"U": np.full((3, 3, 3), np.nan),
+                                  "t": np.full((3, 3, 3), np.nan)}},
+                           {"a": {"U": np.full((3, 3, 3), 2),
+                                  "t": np.full((3, 3, 3), 2)}},
+                           {"a": {"U": np.full((3, 3, 3), np.nan),
+                                  "t": np.full((3, 3, 3), np.nan)}}]
+
+        self.assertEqual(correct_results[0]["a"]["U"].shape, new_results[0]["a"]["U"].shape)
+        self.assertEqual(correct_results[1]["a"]["U"].shape, new_results[1]["a"]["U"].shape)
+        self.assertEqual(correct_results[2]["a"]["U"].shape, new_results[2]["a"]["U"].shape)
+
+        self.assertEqual(correct_results[0]["a"]["t"].shape, new_results[0]["a"]["t"].shape)
+        self.assertEqual(correct_results[1]["a"]["t"].shape, new_results[1]["a"]["t"].shape)
+        self.assertEqual(correct_results[2]["a"]["t"].shape, new_results[2]["a"]["t"].shape)

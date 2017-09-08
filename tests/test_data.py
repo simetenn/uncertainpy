@@ -249,7 +249,7 @@ class TestData(unittest.TestCase):
         self.assertFalse("test2" in self.data)
 
 
-    def test_remove_only_invalid_results(self):
+    def test_remove_only_invalid_features(self):
         self.data.add_features(["feature1d", "TestingModel1d"])
         self.data["feature1d"]["U"] = np.array([[1, 2], [2, 3]])
         self.data["TestingModel1d"]["U"] = np.array([[3, 4], [np.nan]])
@@ -257,7 +257,7 @@ class TestData(unittest.TestCase):
         self.data["feature1d"]["t"] = np.array([1, 2])
         self.data["TestingModel1d"]["t"] = np.array([3, 4])
 
-        self.data.remove_only_invalid_results()
+        self.data.remove_only_invalid_features()
 
         self.assertTrue(np.array_equal(self.data["feature1d"]["U"], np.array([[1, 2], [2, 3]])))
         self.assertTrue(np.array_equal(self.data["feature1d"]["t"], np.array([1, 2])))
@@ -267,7 +267,7 @@ class TestData(unittest.TestCase):
 
 
 
-    def test_remove_only_invalid_results_error(self):
+    def test_remove_only_invalid_features_error(self):
         self.data.add_features(["feature1d", "TestingModel1d"])
         self.data["feature1d"]["U"] = np.array([[1, 2], [2, 3]])
         self.data["TestingModel1d"]["U"] = np.array([[np.nan], [np.nan]])
@@ -275,7 +275,7 @@ class TestData(unittest.TestCase):
         self.data["feature1d"]["t"] = np.array([1, 2])
         self.data["TestingModel1d"]["t"] = np.array([3, 4])
 
-        self.data.remove_only_invalid_results()
+        self.data.remove_only_invalid_features()
 
         self.assertTrue(np.array_equal(self.data["feature1d"]["U"], np.array([[1, 2], [2, 3]])))
         self.assertTrue(np.array_equal(self.data["feature1d"]["t"], np.array([1, 2])))

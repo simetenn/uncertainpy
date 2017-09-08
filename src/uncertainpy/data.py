@@ -338,7 +338,7 @@ class Data(collections.MutableMapping):
                     self[feature][data_type] = f[feature][data_type][()]
 
 
-    def remove_only_invalid_results(self):
+    def remove_only_invalid_features(self):
         """
         Remove all features that only have invalid results (NaN or None).
         """

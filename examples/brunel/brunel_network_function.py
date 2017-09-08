@@ -24,8 +24,8 @@ def brunel_network(eta=2, g=5):
     """
 
     # Network parameters
-    N_rec = 5              # Record from 50 neurons
-    simtime = 50          # Simulation time
+    N_rec = 10              # Record from 50 neurons
+    simtime = 1000          # Simulation time
 
     # g = 5.0                # Ratio inhibitory weight/excitatory weight
     # eta = 2.0              # External rate relative to threshold rate
@@ -46,7 +46,7 @@ def brunel_network(eta=2, g=5):
     nest.ResetKernel()
 
     # Configure kernel
-    nest.SetKernelStatus({'print_time': False})
+    nest.SetKernelStatus({"grng_seed": 10})
 
 
     nest.SetDefaults('iaf_psc_delta',
