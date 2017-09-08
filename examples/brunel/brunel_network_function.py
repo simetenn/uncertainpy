@@ -1,7 +1,4 @@
 import nest
-import nest.raster_plot
-import matplotlib.pyplot as plt
-
 
 def brunel_network(eta=2, g=5):
     """

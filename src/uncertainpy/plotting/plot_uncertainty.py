@@ -120,6 +120,7 @@ class PlotUncertainty(object):
                    new_figure=True,
                    **plot_kwargs)
         plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
+        plt.close()
 
 
     def simulator_results_1d(self, foldername="simulator_results", **plot_kwargs):
@@ -150,6 +151,7 @@ class PlotUncertainty(object):
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.clf()
             i += 1
+        plt.close()
 
 
     # TODO double check ylabel ans zlabel

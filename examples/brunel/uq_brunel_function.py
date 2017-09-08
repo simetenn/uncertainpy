@@ -33,8 +33,8 @@ uncertainty.uncertainty_quantification(plot_condensed=True,
 
 # AI parameter set
 
-parameterlist = [["eta", 2, cp.Uniform(1.5, 3.5)],
-                 ["g", 5, cp.Uniform(1, 3)]]
+parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
+                 ["g", 5, cp.Uniform(5, 8)]]
 
 parameters = un.Parameters(parameterlist)
 
