@@ -630,20 +630,20 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("feature1d_confidence-interval")
 
 
-    def test_simulator_results(self):
+    def test_model_results(self):
         self.uncertainty.polynomial_chaos()
-        self.uncertainty.plot(simulator_results=True)
+        self.uncertainty.plot(model_results=True)
 
 
         self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir,
-                                                    "simulator_results/*.png"))),
+                                                    "model_results/*.png"))),
                          self.uncertainty.uncertainty_calculations.nr_pc_samples)
 
 
-    def test_PCsimulator_results(self):
-        self.uncertainty.polynomial_chaos(plot_simulator_results=True)
+    def test_PCmodel_results(self):
+        self.uncertainty.polynomial_chaos(plot_model_results=True)
 
-        self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png"))),
+        self.assertEqual(len(glob.glob(os.path.join(self.output_test_dir, "model_results/*.png"))),
                          self.uncertainty.uncertainty_calculations.nr_pc_samples)
 
 

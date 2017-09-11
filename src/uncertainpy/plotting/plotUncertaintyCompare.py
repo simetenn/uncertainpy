@@ -21,7 +21,7 @@ from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 
 # TODO CHange the use of **Kwargs to use a dict for specific plotting commands?
 
-# TODO plot simulator_results
+# TODO plot model_results
 
 class PlotUncertaintyCompare(PlotUncertainty):
     def __init__(self, data_dir="data/",

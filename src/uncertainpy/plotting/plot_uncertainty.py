@@ -84,21 +84,21 @@ class PlotUncertainty(object):
         return tmp
 
 
-    def simulator_results(self, foldername="simulator_results"):
+    def model_results(self, foldername="model_results"):
         if self.data.ndim(self.data.model_name) == 0:
-            self.simulator_results_0d(foldername=foldername)
+            self.model_results_0d(foldername=foldername)
 
         elif self.data.ndim(self.data.model_name) == 1:
-            self.simulator_results_1d(foldername=foldername)
+            self.model_results_1d(foldername=foldername)
 
         elif self.data.ndim(self.data.model_name) == 2:
-            self.simulator_results_2d(foldername=foldername)
+            self.model_results_2d(foldername=foldername)
         else:
             raise NotImplementedError(">2D plots not implementes")
 
 
     # TODO does not have a test
-    def simulator_results_0d(self, foldername="simulator_results", **plot_kwargs):
+    def model_results_0d(self, foldername="model_results", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -123,7 +123,7 @@ class PlotUncertainty(object):
         plt.close()
 
 
-    def simulator_results_1d(self, foldername="simulator_results", **plot_kwargs):
+    def model_results_1d(self, foldername="model_results", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -154,7 +154,7 @@ class PlotUncertainty(object):
 
 
 
-    def simulator_results_2d(self, foldername="simulator_results", **plot_kwargs):
+    def model_results_2d(self, foldername="model_results", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 

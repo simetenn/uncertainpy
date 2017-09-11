@@ -100,7 +100,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature2d_total-sensitivity_t")
 
 
-    def test_simulator_results_1d(self):
+    def test_model_results_1d(self):
 
         self.plot.data = Data()
 
@@ -111,22 +111,22 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
 
-        self.plot.simulator_results_1d()
+        self.plot.model_results_1d()
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "model_results/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 5)
 
 
-    def test_simulator_results_0d_error(self):
+    def test_model_results_0d_error(self):
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_0d()
+            self.plot.model_results_0d()
 
         self.plot.data = Data()
 
-        self.plot.simulator_results_0d()
+        self.plot.model_results_0d()
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
@@ -136,32 +136,32 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_0d()
+            self.plot.model_results_0d()
 
 
-    def test_simulator_results_1d_error(self):
+    def test_model_results_1d_error(self):
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_1d()
+            self.plot.model_results_1d()
 
         self.plot.data = Data()
 
-        self.plot.simulator_results_1d()
+        self.plot.model_results_1d()
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"]["U"] = [1, 1, 1, 1, 1]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_1d()
+            self.plot.model_results_1d()
 
 
-    def test_simulator_results_2d_error(self):
+    def test_model_results_2d_error(self):
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_2d()
+            self.plot.model_results_2d()
 
         self.plot.data = Data()
 
-        self.plot.simulator_results_2d()
+        self.plot.model_results_2d()
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
@@ -171,9 +171,9 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
-            self.plot.simulator_results_2d()
+            self.plot.model_results_2d()
 
-    def test_simulator_results_1d_model(self):
+    def test_model_results_1d_model(self):
 
         self.plot.data = Data()
 
@@ -185,49 +185,49 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
 
-        self.plot.simulator_results()
+        self.plot.model_results()
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "model_results/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 5)
 
 
-    def test_simulator_results_2d_model(self):
+    def test_model_results_2d_model(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel2d.h5"))
 
-        self.plot.simulator_results_2d()
+        self.plot.model_results_2d()
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "model_results/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
-    def test_simulator_results_2d(self):
+    def test_model_results_2d(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel2d.h5"))
 
-        self.plot.simulator_results()
+        self.plot.model_results()
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "simulator_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "model_results/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
 
-    def test_simulator_results_0d_model(self):
+    def test_model_results_0d_model(self):
         self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
 
-        self.plot.simulator_results_0d()
+        self.plot.model_results_0d()
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "simulator_results", "U" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "model_results", "U" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "simulator_results", "U" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "model_results", "U" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -236,15 +236,15 @@ class TestPlotUncertainpy(TestCasePlot):
             self.assertTrue(os.path.isfile(plot_file))
 
 
-    def test_simulator_results_0d(self):
+    def test_model_results_0d(self):
         self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
 
-        self.plot.simulator_results()
+        self.plot.model_results()
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "simulator_results", "U" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "model_results", "U" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "simulator_results", "U" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "model_results", "U" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
