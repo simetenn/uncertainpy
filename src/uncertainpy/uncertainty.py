@@ -409,8 +409,6 @@ pc_method: "regression"
         self.plotting.data = self.data
         self.plotting.output_dir = output_dir
 
-        self.logger.info("Plotting in {}".format(output_dir))
-
         if results:
             self.plotting.all_results()
         else:
