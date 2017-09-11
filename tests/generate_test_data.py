@@ -16,7 +16,7 @@ def generate_data_polynomial_chaos():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
 
@@ -43,7 +43,7 @@ def generate_data_PC_model_function():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
 
     features = TestingFeatures(features_to_run=["feature0d",
@@ -70,7 +70,7 @@ def generate_data_PC_0D():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel0d()
 
@@ -95,7 +95,7 @@ def generate_data_PC_2D():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel2d()
 
@@ -120,7 +120,7 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
 
@@ -150,7 +150,7 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
 
@@ -177,7 +177,7 @@ def generate_data_monte_carlo():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
 
@@ -202,7 +202,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
 
@@ -231,7 +231,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 #
 #     parameters = un.Parameters(parameterlist)
 #     model = TestingModel1d(parameters)
-#     model.set_all_distributions(un.Distribution(0.5).uniform)
+#     model.set_all_distributions(un.uniform(0.5))
 #
 #
 #     uncertainty = un.UncertaintyEstimations(model,
@@ -282,7 +282,7 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
                      ["b", 2, None]]
 
     parameters = un.Parameters(parameterlist)
-    parameters.set_all_distributions(un.Distribution(0.5).uniform)
+    parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
 
