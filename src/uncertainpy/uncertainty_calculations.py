@@ -21,7 +21,7 @@ class UncertaintyCalculations(ParameterBase):
                  seed=None,
                  verbose_level="info",
                  verbose_filename=None,
-                 strict_results=True):
+                 allow_incomplete=False):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
@@ -49,7 +49,7 @@ class UncertaintyCalculations(ParameterBase):
         self.U_hat = {}
         self.U_mc = {}
 
-        self.strict_results = strict_results
+        self.allow_incomplete = allow_incomplete
 
 
         if seed is not None:
@@ -161,8 +161,16 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data)):
             masked_nodes, masked_U, masked_weights = self.create_mask(nodes, feature, weights)
 
-            self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
-                                                    masked_weights, masked_U)
+
+
+
+            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+                self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
+                                                        masked_weights, masked_U)
+
+            if np.shape(masked_nodes) != np.shape(nodes):
+                self.data.incomplete.append(feature)
+
 
         # TODO perform for directComparison outside, since masking is not needed.?
         # self.U_hat[self.model.name] = cp.fit_quadrature(self.P, nodes,
@@ -194,10 +202,13 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data)):
             masked_nodes, masked_U = self.create_mask(nodes, feature)
 
-            # print masked_nodes, masked_U
-            self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                    masked_U, rule="T")
 
+            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+                self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                                                        masked_U, rule="T")
+
+            if np.shape(masked_nodes) != np.shape(nodes):
+                self.data.incomplete.append(feature)
 
 
         # TODO perform for directComparison outside, since masking is not needed.?
@@ -239,6 +250,7 @@ class UncertaintyCalculations(ParameterBase):
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
+
         # Calculate PC for each feature
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
@@ -247,7 +259,15 @@ class UncertaintyCalculations(ParameterBase):
                                                                       feature,
                                                                       weights)
 
-            self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes, masked_weights, masked_U)
+
+            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+                self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
+                                                        masked_weights,
+                                                        masked_U)
+
+            if np.shape(masked_nodes) != np.shape(nodes):
+                self.data.incomplete.append(feature)
+
 
 
         # # perform for directComparison outside, since masking is not needed.
@@ -291,8 +311,17 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data)):
             masked_nodes, masked_U = self.create_mask(nodes_MvNormal, feature)
 
-            self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                    masked_U, rule="T")
+
+
+
+            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+                self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                                                        masked_U, rule="T")
+
+            if np.shape(masked_nodes) != np.shape(nodes):
+                self.data.incomplete.append(feature)
+
+
 
         # TODO perform for directComparison outside, since masking is not needed.
         # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes_MvNormal,
@@ -306,24 +335,25 @@ class UncertaintyCalculations(ParameterBase):
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
 
         for feature in self.data:
-            self.data[feature]["E"] = cp.E(self.U_hat[feature], self.distribution)
-            self.data[feature]["Var"] = cp.Var(self.U_hat[feature], self.distribution)
+            if feature in self.U_hat:
+                self.data[feature]["E"] = cp.E(self.U_hat[feature], self.distribution)
+                self.data[feature]["Var"] = cp.Var(self.U_hat[feature], self.distribution)
 
-            samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
+                samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
 
-            if len(self.data.uncertain_parameters) > 1:
-                self.U_mc[feature] = self.U_hat[feature](*samples)
+                if len(self.data.uncertain_parameters) > 1:
+                    self.U_mc[feature] = self.U_hat[feature](*samples)
 
-                self.data[feature]["sensitivity_1"] = cp.Sens_m(self.U_hat[feature], self.distribution)
-                self.data[feature]["sensitivity_t"] = cp.Sens_t(self.U_hat[feature], self.distribution)
-                self.calculate_total_sensitivity(sensitivity="sensitivity_1")
-                self.calculate_total_sensitivity(sensitivity="sensitivity_t")
+                    self.data[feature]["sensitivity_1"] = cp.Sens_m(self.U_hat[feature], self.distribution)
+                    self.data[feature]["sensitivity_t"] = cp.Sens_t(self.U_hat[feature], self.distribution)
+                    self.calculate_total_sensitivity(sensitivity="sensitivity_1")
+                    self.calculate_total_sensitivity(sensitivity="sensitivity_t")
 
-            else:
-                self.U_mc[feature] = self.U_hat[feature](samples)
+                else:
+                    self.U_mc[feature] = self.U_hat[feature](samples)
 
-            self.data[feature]["p_05"] = np.percentile(self.U_mc[feature], 5, -1)
-            self.data[feature]["p_95"] = np.percentile(self.U_mc[feature], 95, -1)
+                self.data[feature]["p_05"] = np.percentile(self.U_mc[feature], 5, -1)
+                self.data[feature]["p_95"] = np.percentile(self.U_mc[feature], 95, -1)
 
 
 

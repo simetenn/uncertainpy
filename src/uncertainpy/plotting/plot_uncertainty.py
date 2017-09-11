@@ -154,7 +154,6 @@ class PlotUncertainty(object):
 
 
 
-    # TODO double check ylabel ans zlabel
     def simulator_results_2d(self, foldername="simulator_results", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -219,7 +218,7 @@ class PlotUncertainty(object):
             raise ValueError("{} is not a supported attribute".format(attribute))
 
         if attribute not in self.data[feature]:
-            msg = "{attribute_name} of {feature} does not exist. Unable to plot {attribute_name}"
+            msg = " Unable to plot {attribute_name}. {attribute_name} of {feature} does not exist."
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
@@ -273,7 +272,7 @@ class PlotUncertainty(object):
 
 
         if attribute not in self.data[feature]:
-            msg = "{attribute_name} of {feature} does not exist. Unable to plot {attribute_name}"
+            msg = " Unable to plot {attribute_name}. {attribute_name} of {feature} does not exist."
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
@@ -378,7 +377,6 @@ class PlotUncertainty(object):
                     + "Unable to plot mean and variance"
             self.logger.warning(msg)
             return
-
 
         if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
             t = np.arange(0, len(self.data[feature]["E"]))
@@ -1057,7 +1055,7 @@ class PlotUncertainty(object):
 
             if i < nr_plots:
                 if "total_" + sensitivity not in self.data[self.data.keys()[i]]:
-                    msg = "total_{sensitivity} of {feature} is None. Unable to plot total_{sensitivity}_grid"
+                    msg = " Unable to plot total_{sensitivity}_grid. total_{sensitivity} of {feature} does not exist."
                     self.logger.warning(msg.format(sensitivity=sensitivity,
                                                    feature=self.data.keys()[i]))
                     ax.axis("off")

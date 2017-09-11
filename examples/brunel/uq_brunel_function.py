@@ -22,7 +22,7 @@ uncertainty = un.UncertaintyEstimation(model,
                                        features=features,
                                        output_dir_figures="figures_brunel_function",
                                        CPUs=7,
-                                       strict_results=True)
+                                       allow_incomplete=False)
 
 uncertainty.uncertainty_quantification(plot_condensed=True,
                                        plot_simulator_results=True)

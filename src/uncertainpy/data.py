@@ -83,7 +83,8 @@ class Data(collections.MutableMapping):
                            "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
-        self.data_information = ["uncertain_parameters", "model_name"]
+        self.data_information = ["uncertain_parameters", "model_name",
+                                 "incomplete"]
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -92,6 +93,7 @@ class Data(collections.MutableMapping):
 
         self.uncertain_parameters = []
         self.model_name = ""
+        self.incomplete = []
         self.data = {}
 
 
@@ -305,6 +307,7 @@ class Data(collections.MutableMapping):
         with h5py.File(filename, 'w') as f:
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name
+            f.attrs["incomplete results"] = self.incomplete
 
             for feature in self:
                 group = f.create_group(feature)
@@ -331,6 +334,7 @@ class Data(collections.MutableMapping):
         with h5py.File(filename, 'r') as f:
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
             self.model_name = f.attrs["model name"]
+            self.incomplete = f.attrs["incomplete results"]
 
             for feature in f:
                 self.add_features(str(feature))
@@ -340,7 +344,7 @@ class Data(collections.MutableMapping):
 
     def remove_only_invalid_features(self):
         """
-        Remove all features that only have invalid results (NaN or None).
+        Remove all features that only have invalid results (NaN).
         """
         feature_list = self.data.keys()[:]
         for feature in feature_list:

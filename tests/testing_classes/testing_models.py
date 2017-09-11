@@ -108,3 +108,11 @@ class TestingModelThree(Model):
 
     def run(self, a=1, b=2):
         return 1, 2, 3
+
+class TestingModelIncomplete(Model):
+    def __init__(self):
+        Model.__init__(self, labels=["x", "y"])
+
+
+    def run(self, a=1, b=2):
+        return [1, 2, 3], [a, None, b]

@@ -17,7 +17,7 @@ from uncertainpy import SpikingFeatures
 
 from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
-from .testing_classes import TestingModelAdaptive
+from .testing_classes import TestingModelAdaptive, TestingModelIncomplete
 
 
 class TestUncertaintyCalculations(unittest.TestCase):
@@ -308,7 +308,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
-        message = "WARNING - uncertainty_calculations - Feature: TestingModel1d does not yield results for all parameter combinations"
+        message = "WARNING - uncertainty_calculations - Feature: TestingModel1d only yields results for 2/3 parameter combinations"
         self.assertTrue(message in open(logfile).read())
 
 
@@ -880,3 +880,111 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                        features.feature2d(None, None)[1]))
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature2d"]["p_95"],
                                        features.feature2d(None, None)[1]))
+
+
+    def test_create_PCE_regression_incomplete(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModelIncomplete()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed,
+                                                                allow_incomplete=False)
+
+        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+
+        self.assertEqual(self.uncertainty_calculations.U_hat, {})
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])
+
+
+
+
+
+    def test_create_PCE_regression_incomplete(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModelIncomplete()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed,
+                                                                allow_incomplete=False)
+
+        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+
+        self.assertEqual(self.uncertainty_calculations.U_hat, {})
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])
+
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed,
+                                                                allow_incomplete=True)
+
+        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+
+        self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])
+
+
+
+
+    def test_create_PCE_regression_rosenblatt_incomplete(self):
+        parameterlist = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameterlist)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModelIncomplete()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed,
+                                                                allow_incomplete=False)
+
+        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+
+        self.assertEqual(self.uncertainty_calculations.U_hat, {})
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])
+
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed,
+                                                                allow_incomplete=True)
+
+        self.uncertainty_calculations.create_PCE_regression_rosenblatt(["a", "b"])
+
+        self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])

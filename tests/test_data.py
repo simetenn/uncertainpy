@@ -24,7 +24,8 @@ class TestData(unittest.TestCase):
                            "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
-        self.data_information = ["uncertain_parameters", "model_name"]
+        self.data_information = ["uncertain_parameters", "model_name",
+                                 "incomplete"]
 
 
     def tearDown(self):

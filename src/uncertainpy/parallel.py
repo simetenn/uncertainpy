@@ -254,8 +254,11 @@ class Parallel(Base):
             t_postprocess = self.none_to_nan(t_postprocess)
 
             results = {}
-            results[self.model.name] = {"t": np.array(t_postprocess),
-                                        "U": np.array(U_postprocess)}
+            # results[self.model.name] = {"t": np.array(t_postprocess),
+            #                             "U": np.array(U_postprocess)}
+            results[self.model.name] = {"t": t_postprocess,
+                                        "U": U_postprocess}
+
 
 
             # Calculate features from the model results

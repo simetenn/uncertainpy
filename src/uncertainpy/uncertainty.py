@@ -33,7 +33,7 @@ class UncertaintyEstimation(ParameterBase):
                  nr_mc_samples=10*3,
                  nr_pc_mc_samples=10*5,
                  seed=None,
-                 strict_results=True):
+                 allow_incomplete=True):
 
 
         if uncertainty_calculations is None:
@@ -50,7 +50,7 @@ class UncertaintyEstimation(ParameterBase):
                 seed=seed,
                 verbose_level=verbose_level,
                 verbose_filename=verbose_filename,
-                strict_results=strict_results
+                allow_incomplete=allow_incomplete
             )
         else:
             self._uncertainty_calculations = uncertainty_calculations

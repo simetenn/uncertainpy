@@ -442,7 +442,6 @@ class RunModel(ParameterBase):
         for result in results[i:]:
             u = result[feature]["U"]
             if not np.all(np.isnan(u)):
-
                 if np.shape(u_prev) != np.shape(u):
                     return True
                 u_prev = u
