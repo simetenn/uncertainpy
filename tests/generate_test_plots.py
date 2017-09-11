@@ -99,7 +99,7 @@ def generate_simulator_plot_0d():
 
     plot.load(os.path.join(test_data_dir, data_file))
 
-    plot.model_results()
+    plot.results()
 
 
 def generate_spike_plot():

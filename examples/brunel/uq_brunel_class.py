@@ -20,4 +20,4 @@ uncertainty = un.UncertaintyEstimation(model,
 
 
 uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_model_results=True)
+                                       plot_results=True)

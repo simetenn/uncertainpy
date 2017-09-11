@@ -27,4 +27,4 @@ exploration = un.UncertaintyEstimation(model,
                                        features=features)
 
 exploration.uncertainty_quantification(plot_condensed=True,
-                                       plot_model_results=False)
+                                       plot_results=False)

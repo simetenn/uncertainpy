@@ -15,6 +15,6 @@ uncertainty = un.UncertaintyEstimation(model=model,
                                        save_figures=True)
 
 uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_model_results=True)
+                                       plot_results=True)
 uncertainty.uncertainty_quantification(single=True,
-                                       plot_model_results=False)
+                                       plot_results=False)

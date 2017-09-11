@@ -23,7 +23,7 @@ class UncertaintyEstimations():
                  uncertainty_calculations=None,
                  save_figures=False,
                  plot_type="results",
-                 plot_model_results=False,
+                 plot_results=False,
                  output_dir_figures="figures/",
                  figureformat=".png",
                  save_data=True,
@@ -52,7 +52,7 @@ class UncertaintyEstimations():
         self.save_data = save_data
         self.output_dir_data = output_dir_data
         self.output_dir_figures = output_dir_figures
-        self.plot_model_results = plot_model_results
+        self.plot_results = plot_results
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -139,8 +139,8 @@ class UncertaintyEstimations():
                     self.uncertainty_estimations.singleParameters()
                 self.uncertainty_estimations.allParameters()
 
-                if self.plot_model_results:
-                    self.uncertainty_estimations.model_results()
+                if self.plot_results:
+                    self.uncertainty_estimations.results()
 
                 del self.uncertainty_estimations
 
@@ -178,8 +178,8 @@ class UncertaintyEstimations():
 
         self.uncertainty_estimations.allParameters()
 
-        if self.plot_model_results:
-            self.uncertainty_estimations.model_results()
+        if self.plot_results:
+            self.uncertainty_estimations.results()
 
 
         del self.uncertainty_estimations
@@ -221,8 +221,8 @@ class UncertaintyEstimations():
             time_1 = time.time()
 
             self.uncertainty_estimations.allParametersmonte_carlo()
-            if self.plot_model_results:
-                self.uncertainty_estimations.model_results()
+            if self.plot_results:
+                self.uncertainty_estimations.results()
 
             # self.mc_var[nr_mc_sample] = self.uncertainty_estimations.Var
 

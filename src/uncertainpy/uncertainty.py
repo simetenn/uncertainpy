@@ -129,7 +129,7 @@ class UncertaintyEstimation(ParameterBase):
                                    pc_method="regression",
                                    rosenblatt=False,
                                    plot_condensed=True,
-                                   plot_model_results=False,
+                                   plot_results=False,
                                    output_dir_figures=None,
                                    output_dir_data=None,
                                    filename=None,
@@ -146,7 +146,7 @@ pc_method: "regression"
                                              method=pc_method,
                                              rosenblatt=rosenblatt,
                                              plot_condensed=plot_condensed,
-                                             plot_model_results=plot_model_results,
+                                             plot_results=plot_results,
                                              output_dir_figures=output_dir_figures,
                                              output_dir_data=output_dir_data,
                                              filename=filename)
@@ -155,7 +155,7 @@ pc_method: "regression"
                                       method=pc_method,
                                       rosenblatt=rosenblatt,
                                       plot_condensed=plot_condensed,
-                                      plot_model_results=plot_model_results,
+                                      plot_results=plot_results,
                                       output_dir_figures=output_dir_figures,
                                       output_dir_data=output_dir_data,
                                       filename=filename)
@@ -163,21 +163,21 @@ pc_method: "regression"
             if single:
                 self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
                                         plot_condensed=plot_condensed,
-                                        plot_model_results=plot_model_results,
+                                        plot_results=plot_results,
                                         output_dir_figures=output_dir_figures,
                                         output_dir_data=output_dir_data,
                                         filename=filename)
             else:
                 self.monte_carlo(uncertain_parameters=uncertain_parameters,
                                  plot_condensed=plot_condensed,
-                                 plot_model_results=plot_model_results,
+                                 plot_results=plot_results,
                                  output_dir_figures=output_dir_figures,
                                  output_dir_data=output_dir_data,
                                  filename=filename)
 
         elif method.lower() == "custom":
             self.custom_uncertainty_quantification(plot_condensed=plot_condensed,
-                                                   plot_model_results=plot_model_results,
+                                                   plot_results=plot_results,
                                                    output_dir_figures=output_dir_figures,
                                                    output_dir_data=output_dir_data,
                                                    filename=filename,
@@ -187,7 +187,7 @@ pc_method: "regression"
 
     def custom_uncertainty_quantification(self,
                                           plot_condensed=True,
-                                          plot_model_results=False,
+                                          plot_results=False,
                                           output_dir_figures=None,
                                           output_dir_data=None,
                                           filename=None,
@@ -208,8 +208,8 @@ pc_method: "regression"
                       sensitivity=None,
                       output_dir=output_dir_figures)
 
-        if plot_model_results:
-            self.plot(model_results=True, output_dir=output_dir_figures)
+        if plot_results:
+            self.plot(results=True, output_dir=output_dir_figures)
 
 
 
@@ -218,7 +218,7 @@ pc_method: "regression"
                          method="regression",
                          rosenblatt=False,
                          plot_condensed=True,
-                         plot_model_results=False,
+                         plot_results=False,
                          output_dir_figures=None,
                          output_dir_data=None,
                          filename=None):
@@ -245,15 +245,15 @@ pc_method: "regression"
         if self.save_figures:
             self.plot(condensed=plot_condensed, output_dir=output_dir_figures)
 
-        if plot_model_results:
-            self.plot(model_results=True, output_dir=output_dir_figures)
+        if plot_results:
+            self.plot(results=True, output_dir=output_dir_figures)
 
 
 
     def monte_carlo(self,
                     uncertain_parameters=None,
                     plot_condensed=True,
-                    plot_model_results=False,
+                    plot_results=False,
                     output_dir_figures=None,
                     output_dir_data=None,
                     filename=None):
@@ -274,8 +274,8 @@ pc_method: "regression"
                       sensitivity=None,
                       output_dir=output_dir_figures)
 
-        if plot_model_results:
-            self.plot(model_results=True, output_dir=output_dir_figures)
+        if plot_results:
+            self.plot(results=True, output_dir=output_dir_figures)
 
 
 
@@ -286,7 +286,7 @@ pc_method: "regression"
                                 method="regression",
                                 rosenblatt=False,
                                 plot_condensed=True,
-                                plot_model_results=False,
+                                plot_results=False,
                                 output_dir_data=None,
                                 output_dir_figures=None,
                                 filename=None):
@@ -331,15 +331,15 @@ pc_method: "regression"
                           sensitivity=None,
                           output_dir=tmp_output_dir_figures)
 
-            if plot_model_results:
-                self.plot(model_results=True,
+            if plot_results:
+                self.plot(results=True,
                           output_dir=tmp_output_dir_figures)
 
 
     def monte_carlo_single(self,
                            uncertain_parameters=None,
                            plot_condensed=True,
-                           plot_model_results=False,
+                           plot_results=False,
                            output_dir_data=None,
                            output_dir_figures=None,
                            filename=None):
@@ -371,8 +371,8 @@ pc_method: "regression"
             if self.save_figures:
                 self.plot(condensed=plot_condensed, output_dir=tmp_output_dir_figures)
 
-            if plot_model_results:
-                self.plot(model_results=True, output_dir=tmp_output_dir_figures)
+            if plot_results:
+                self.plot(results=True, output_dir=tmp_output_dir_figures)
 
 
 
@@ -399,7 +399,7 @@ pc_method: "regression"
     def plot(self,
              condensed=True,
              sensitivity="sensitivity_1",
-             model_results=False,
+             results=False,
              output_dir=None):
 
         if output_dir is None:
@@ -411,8 +411,8 @@ pc_method: "regression"
 
         self.logger.info("Plotting in {}".format(output_dir))
 
-        if model_results:
-            self.plotting.model_results()
+        if results:
+            self.plotting.all_results()
         else:
             self.plotting.plot(condensed=condensed,
                                sensitivity=sensitivity)

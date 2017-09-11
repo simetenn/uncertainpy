@@ -84,69 +84,90 @@ class PlotUncertainty(object):
         return tmp
 
 
-    def model_results(self, foldername="model_results"):
-        if self.data.ndim(self.data.model_name) == 0:
-            self.model_results_0d(foldername=foldername)
-
-        elif self.data.ndim(self.data.model_name) == 1:
-            self.model_results_1d(foldername=foldername)
-
-        elif self.data.ndim(self.data.model_name) == 2:
-            self.model_results_2d(foldername=foldername)
-        else:
-            raise NotImplementedError(">2D plots not implementes")
+    def all_results(self, foldername="results"):
+        for feature in self.data:
+            self.results(feature=feature, foldername=foldername)
 
 
-    # TODO does not have a test
-    def model_results_0d(self, foldername="model_results", **plot_kwargs):
+    def results(self, feature=None, foldername=""):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
-        if self.data.model_name not in self.data or "U"  not in self.data[self.data.model_name]:
-            self.logger.warning("No model results to plot.")
-            return
-
-        if self.data.ndim(self.data.model_name) != 0:
-            raise ValueError("{} is not a 0D feature".format(self.data.model_name))
+        if feature is None:
+            feature = self.data.model_name
 
         save_folder = os.path.join(self.output_dir, foldername)
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        prettyPlot(self.data[self.data.model_name]["U"],
+
+        if self.data.ndim(feature) == 0:
+            self.results_0d(feature=feature, foldername=foldername)
+
+        elif self.data.ndim(feature) == 1:
+            self.results_1d(feature=feature, foldername=foldername)
+
+        elif self.data.ndim(feature) == 2:
+            self.results_2d(feature=feature, foldername=foldername)
+        else:
+            raise NotImplementedError(">2D plots not implemented.")
+
+
+    def results_0d(self, feature=None, foldername="", **plot_kwargs):
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
+
+        if feature is None:
+            feature = self.data.model_name
+
+        if feature not in self.data or "U"  not in self.data[feature]:
+            self.logger.warning("No {} results to plot.".format(feature))
+            return
+
+        if self.data.ndim(feature) != 0:
+            raise ValueError("{} is not a 0D feature".format(self.data.model_name))
+
+        save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
+        if not os.path.isdir(save_folder):
+            os.makedirs(save_folder)
+
+        prettyPlot(self.data[feature]["U"],
                    xlabel=r"simulator run \#number",
-                   ylabel=self.data.get_labels(self.data.model_name)[0],
-                   title="{}, simulator result".format(self.data.model_name.replace("_", " ")),
+                   ylabel=self.data.get_labels(feature)[0],
+                   title="{}, result".format(feature.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
         plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
         plt.close()
 
 
-    def model_results_1d(self, foldername="model_results", **plot_kwargs):
+    def results_1d(self, feature=None, foldername="", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
-        if self.data.model_name not in self.data or "U"  not in self.data[self.data.model_name]:
+        if feature is None:
+            feature = self.data.model_name
+
+        if feature not in self.data or "U"  not in self.data[feature]:
             self.logger.warning("No model results to plot.")
             return
 
-        if self.data.ndim(self.data.model_name) != 1:
-            raise ValueError("{} is not a 1D feature".format(self.data.model_name))
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
 
         i = 1
-        save_folder = os.path.join(self.output_dir, foldername)
+        save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        labels = self.data.get_labels(self.data.model_name)
+        labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        padding = len(str(len(self.data[self.data.model_name]["U"]) + 1))
-        for U in self.data[self.data.model_name]["U"]:
-            prettyPlot(self.data[self.data.model_name]["t"], U,
+        padding = len(str(len(self.data[feature]["U"]) + 1))
+        for U in self.data[feature]["U"]:
+            prettyPlot(self.data[feature]["t"], U,
                        xlabel=xlabel, ylabel=ylabel,
-                       title="{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i), new_figure=True, **plot_kwargs)
+                       title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
@@ -154,36 +175,39 @@ class PlotUncertainty(object):
 
 
 
-    def model_results_2d(self, foldername="model_results", **plot_kwargs):
+    def results_2d(self, feature=None, foldername="", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
-        if self.data.model_name not in self.data or "U"  not in self.data[self.data.model_name]:
+        if feature is None:
+            feature = self.data.model_name
+
+        if feature not in self.data or "U"  not in self.data[feature]:
             self.logger.warning("No model results to plot.")
             return
 
-        if self.data.ndim(self.data.model_name) != 2:
-            raise ValueError("{} is not a 2D feature.".format(self.data.model_name))
+        if self.data.ndim(feature) != 2:
+            raise ValueError("{} is not a 2D feature.".format(feature))
 
 
         i = 1
-        save_folder = os.path.join(self.output_dir, foldername)
+        save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        labels = self.data.get_labels(self.data.model_name)
+        labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
 
-        padding = len(str(len(self.data[self.data.model_name]["U"]) + 1))
-        for U in self.data[self.data.model_name]["U"]:
+        padding = len(str(len(self.data[feature]["U"]) + 1))
+        for U in self.data[feature]["U"]:
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            ax.set_title("{}, simulator result {:d}".format(self.data.model_name.replace("_", " "), i))
+            ax.set_title("{}, result {:d}".format(feature.replace("_", " "), i))
 
             iax = ax.imshow(U, cmap="viridis", aspect="auto",
-                            extent=[self.data[self.data.model_name]["t"][0],
-                                    self.data[self.data.model_name]["t"][-1],
+                            extent=[self.data[feature]["t"][0],
+                                    self.data[feature]["t"][-1],
                                     0, U.shape[0]],
                             **plot_kwargs)
 
