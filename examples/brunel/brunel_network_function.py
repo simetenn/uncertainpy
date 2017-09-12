@@ -21,7 +21,7 @@ def brunel_network(eta=2, g=5, delay=1.5):
     """
 
     # Network parameters
-    N_rec = 10             # Record from 50 neurons
+    N_rec = 20             # Record from 20 neurons
     simtime = 1000         # Simulation time
 
     # g = 5.0                # Ratio inhibitory weight/excitatory weight
