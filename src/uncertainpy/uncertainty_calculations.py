@@ -112,7 +112,6 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 masked_weights = weights[mask]
 
-
         if not np.all(mask):
             self.logger.warning("Feature: {} only yields".format(feature)
                                 + " results for {}/{}".format(sum(mask), len(mask))
@@ -120,9 +119,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
         if weights is None:
-            return np.array(masked_nodes), np.array(masked_U)
+            return np.array(masked_nodes), np.array(masked_U), mask
         else:
-            return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights)
+            return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights), mask
 
 
     def convert_uncertain_parameters(self, uncertain_parameters):
@@ -159,16 +158,13 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, masked_weights = self.create_mask(nodes, feature, weights)
+            masked_nodes, masked_U, masked_weights, mask = self.create_mask(nodes, feature, weights)
 
-
-
-
-            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights, masked_U)
 
-            if np.shape(masked_nodes) != np.shape(nodes):
+            if not np.all(mask):
                 self.data.incomplete.append(feature)
 
 
@@ -200,14 +196,12 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U = self.create_mask(nodes, feature)
+            masked_nodes, masked_U, mask = self.create_mask(nodes, feature)
 
-
-            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
-
-            if np.shape(masked_nodes) != np.shape(nodes):
+            if not np.all(mask):
                 self.data.incomplete.append(feature)
 
 
@@ -255,17 +249,16 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, masked_weights = self.create_mask(nodes_MvNormal,
+            masked_nodes, masked_U, masked_weights, mask = self.create_mask(nodes_MvNormal,
                                                                       feature,
                                                                       weights)
 
 
-            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+            if (np.allany(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights,
                                                         masked_U)
-
-            if np.shape(masked_nodes) != np.shape(nodes):
+            if not np.all(mask):
                 self.data.incomplete.append(feature)
 
 
@@ -309,16 +302,15 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U = self.create_mask(nodes_MvNormal, feature)
+            masked_nodes, masked_U, mask = self.create_mask(nodes_MvNormal, feature)
 
 
 
 
-            if np.shape(masked_nodes) == np.shape(nodes) or self.allow_incomplete:
+            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
-
-            if np.shape(masked_nodes) != np.shape(nodes):
+            if not np.all(mask):
                 self.data.incomplete.append(feature)
 
 

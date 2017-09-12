@@ -163,9 +163,15 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        padding = len(str(len(self.data[feature]["U"]) + 1))
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature]["U"][0]))
+        else:
+            t = self.data[feature]["t"]
+
+
+        padding = len(str(len(self.data[feature]["U"][0]) + 1))
         for U in self.data[feature]["U"]:
-            prettyPlot(self.data[feature]["t"], U,
+            prettyPlot(t, U,
                        xlabel=xlabel, ylabel=ylabel,
                        title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
@@ -189,8 +195,8 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 2:
             raise ValueError("{} is not a 2D feature.".format(feature))
 
+        set_style("seaborn-dark")
 
-        i = 1
         save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
@@ -198,16 +204,20 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
+        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+            t = np.arange(0, len(self.data[feature]["U"][0]))
+        else:
+            t = self.data[feature]["t"]
 
         padding = len(str(len(self.data[feature]["U"]) + 1))
-        for U in self.data[feature]["U"]:
+        for i, U in enumerate(self.data[feature]["U"]):
             fig = plt.figure()
             ax = fig.add_subplot(111)
             ax.set_title("{}, result {:d}".format(feature.replace("_", " "), i))
 
             iax = ax.imshow(U, cmap="viridis", aspect="auto",
-                            extent=[self.data[feature]["t"][0],
-                                    self.data[feature]["t"][-1],
+                            extent=[t[0],
+                                    t[-1],
                                     0, U.shape[0]],
                             **plot_kwargs)
 
@@ -218,7 +228,7 @@ class PlotUncertainty(object):
             plt.savefig(os.path.join(save_folder,
                                      "U_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
-            i += 1
+
 
 
 

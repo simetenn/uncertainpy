@@ -33,7 +33,7 @@ class UncertaintyEstimation(ParameterBase):
                  nr_mc_samples=10*3,
                  nr_pc_mc_samples=10*5,
                  seed=None,
-                 allow_incomplete=True):
+                 allow_incomplete=False):
 
 
         if uncertainty_calculations is None:

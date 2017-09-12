@@ -117,6 +117,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def mean_firing_rate(self, t, spiketrains):
         mean_firing_rates = []
+
         for spiketrain in spiketrains:
             mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
             mean_firing_rate.units = pq.Hz
@@ -157,6 +158,11 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def van_rossum_dist(self, t, spiketrains):
         van_rossum_dist = elephant.spike_train_dissimilarity.van_rossum_dist(spiketrains)
+
+        # van_rossum_dist returns 0.j imaginary parts in some cases
+        van_rossum_dist = np.real_if_close(van_rossum_dist)
+        if np.any(np.iscomplex(van_rossum_dist)):
+            return None, None
 
         return None, van_rossum_dist
 

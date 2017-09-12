@@ -20,27 +20,30 @@ parameters = un.Parameters(parameterlist)
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features,
-                                       output_dir_figures="figures_brunel_function",
+                                       output_dir_figures="figures_brunel_function_SR",
                                        CPUs=7,
-                                       allow_incomplete=False)
+                                       allow_incomplete=True)
 
 uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=True)
+                                       plot_results=True,
+                                       filename="brunel_function_SR")
 
 
 
 
-# # AI parameter set
-# parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
-#                  ["g", 5, cp.Uniform(5, 8)]]
+# AI parameter set
+parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
+                 ["g", 5, cp.Uniform(5, 8)]]
 
-# parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameterlist)
 
-# uncertainty = un.UncertaintyEstimation(model,
-#                                        parameters=parameters,
-#                                        features=features,
-#                                        output_dir_figures="figures_brunel_function_AI",
-#                                        CPUs=7)
+uncertainty = un.UncertaintyEstimation(model,
+                                       parameters=parameters,
+                                       features=features,
+                                       output_dir_figures="figures_brunel_function_AI",
+                                       CPUs=7,
+                                       allow_incomplete=True)
 
-# uncertainty.uncertainty_quantification(plot_condensed=True,
-#                                        plot_results=True)
+uncertainty.uncertainty_quantification(plot_condensed=True,
+                                       plot_results=True,
+                                       filename="brunel_function_AI")

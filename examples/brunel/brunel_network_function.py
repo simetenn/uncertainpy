@@ -1,6 +1,6 @@
 import nest
 
-def brunel_network(eta=2, g=5):
+def brunel_network(eta=2, g=5, delay=1.5):
     """
     A brunel network, from:
 
@@ -15,22 +15,22 @@ def brunel_network(eta=2, g=5):
         Ratio inhibitory weight/excitatory weight. Default is 5.
     eta : {int, float}, optional
         External rate relative to threshold rate. Default is 2.
-    Note that for testing purposes this network has fewer neurons (N_neurons = 100)
-    and run for a shorter time (simtime = 40) and record from fewer neuron (N_rec = 10) than
-    the brunel network class.
+    delay : {int, float}, optional
+        Synaptic delay in ms. Default is 1.5.
+
     """
 
     # Network parameters
-    N_rec = 10              # Record from 50 neurons
-    simtime = 50          # Simulation time
+    N_rec = 10             # Record from 50 neurons
+    simtime = 1000         # Simulation time
 
     # g = 5.0                # Ratio inhibitory weight/excitatory weight
     # eta = 2.0              # External rate relative to threshold rate
-    delay = 1.5            # Synaptic delay in ms
+    # delay = 1.5            # Synaptic delay in ms
     tau_m = 20.0           # Time constant of membrane potential in ms
     V_th = 20.0
-    N_E = 800             # Number of inhibitory neurons
-    N_I = 200             # Number of excitatory neurons
+    N_E = 10000            # Number of inhibitory neurons
+    N_I = 2500             # Number of excitatory neurons
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = N_E/10           # Number of excitatory synapses per neuron
     C_I = N_I/10           # Number of inhibitory synapses per neuron
@@ -102,14 +102,15 @@ def brunel_network(eta=2, g=5):
     # TODO is there any difference in sending back only excitatory
     #      or inhibitory neurons, or should both be sent back?
     spiketrains = []
-
     # Excitatory spike trains
-    for sender in set(events_E["senders"]):
+    # Makes sure the spiketrain is added even if there are no results
+    # to get a regular result
+    for sender in nodes_E[:N_rec]:
         spiketrain = events_E["times"][events_E["senders"] == sender]
         spiketrains.append(spiketrain)
 
     # Inhibitory spike trains
-    # for sender in set(events_I["senders"]):
+    # for sender in nodes_I[:N_rec]:
     #     spiketrain = events_I["times"][events_I["senders"] == sender]
     #     spiketrains.append(spiketrain)
 
