@@ -36,13 +36,7 @@ class Base(object):
     See Also
     --------
     uncertainpy.features.GeneralFeatures : General features class
-    uncertainpy.features.GeneralSpikingFeatures : General spiking features class
-    uncertainpy.features.SpikingFeatures : Implemented spiking features class
-    uncertainpy.features.GeneralNetworkFeatures : General network features class
-    uncertainpy.features.NetworkFeatures : Implemented network features class
     uncertainpy.models.Model : Model class
-    uncertainpy.models.NestModel : Nest simulator model class
-    uncertainpy.models.NeuronModel : Neuron simulator model class
     """
     def __init__(self,
                  model=None,
@@ -174,15 +168,7 @@ class ParameterBase(Base):
     See Also
     --------
     uncertainpy.features.GeneralFeatures : General features class
-    uncertainpy.features.GeneralSpikingFeatures : General spiking features class
-    uncertainpy.features.SpikingFeatures : Implemented spiking features class
-    uncertainpy.features.GeneralNetworkFeatures : General network features class
-    uncertainpy.features.NetworkFeatures : Implemented network features class
-    uncertainpy.Parameter : Parameter class
-    uncertainpy.Parameters : Parameters collection class
     uncertainpy.models.Model : Model class
-    uncertainpy.models.NestModel : Nest simulator model class
-    uncertainpy.models.NeuronModel : Neuron simulator model class
     """
     def __init__(self,
                  model=None,

@@ -1,17 +1,28 @@
 class GeneralFeatures(object):
     """
-    Class for calculating features of the model.
+    Class for calculating features of a model.
 
     Parameters
     ----------
-    new_features : {None}, optinal
-    features_to_run : {"all"}, optional
+    new_features : {None}, optional
+        A list if features
+    features_to_run : {"all", None, str, list of feature names}, optional
+        Which features to calculate uncertainties for.
+        If ``"all"``, the uncertainties will be calculated for all
+        implemented and assigned features.
+        If ``None``, or an empty list ``[]``, no features will be
+        calculated.
+        If str, only that feature ic calculated.
+        If list of feature names, all the listed features will be
+        calculated. Default is ``"all"``.
     new_utility_methods : {None}, optional
     adaptive : {None}, optional
     labels : dictionary, optional
 
     Attributes
     ----------
+
+
     """
     def __init__(self,
                  new_features=None,
@@ -57,6 +68,23 @@ class GeneralFeatures(object):
 
     @property
     def labels(self):
+        """
+        Labels for the axes of each feature, used when plotting.
+
+        Parameters
+        ----------
+        new_labels : dictionary
+            A dictionary with key as the feature name and the value a list of
+            labels for each axis `
+            {"nr_spikes": ["number of spikes"],
+                              "spike_rate": ["spike rate [Hz]"],
+                              "time_before_first_spike": ["time [ms]"],
+                              "accommodation_index": ["accommodation index"],
+                              "average_AP_overshoot": ["voltage [mV]"],
+                              "average_AHP_depth": ["voltage [mV]"],
+                              "average_AP_width": ["time [ms]"]
+                             }
+        """
         return self._labels
 
     @labels.setter
@@ -66,6 +94,28 @@ class GeneralFeatures(object):
 
     @property
     def features_to_run(self):
+        """
+        Which features to calculate uncertainties for.
+
+        Parameters
+        ----------
+        new_features_to_run : {"all", None, str, list of feature names}
+            Which features to calculate uncertainties for.
+            If ``"all"``, the uncertainties will be calculated for all
+            implemented and assigned features.
+            If ``None``, or an empty list , no features will be
+            calculated.
+            If ``str``, only that feature is calculated.
+            If ``list`` of feature names, all listed features will be
+            calculated. Default is ``"all"``.
+
+        Returns
+        -------
+        list
+            A list of features to calculate uncertainties for.
+
+        """
+
         return self._features_to_run
 
     @features_to_run.setter
@@ -97,17 +147,6 @@ class GeneralFeatures(object):
             self._adaptive = [new_adaptive]
         else:
             self._adaptive = new_adaptive
-
-
-    # def serialize(feature):
-    #     decorated = True
-    #     for i, spiketrain in enumerate(spiketrains):
-    #         def serialized_feature(t, spiketrains):
-    #             return feature(t, spiketrains[i])
-
-    #         setattr(self, feature.__name__+ "_i", serialized_feature)
-
-
 
 
 

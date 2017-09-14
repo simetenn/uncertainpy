@@ -19,7 +19,8 @@ features = un.NetworkFeatures(features_to_run="all")
 # peaked
 parameterlist = [["eta", 2, cp.Uniform(1.5, 3.5)],
                  ["g", 5, cp.Uniform(1, 3)],
-                 ["delay", 5, cp.Uniform(1.5, 3)]]
+                 ["delay", 5, cp.Uniform(1.5, 3)],
+                 ["J_E", 5, cp.Uniform(0.05, 0.15)]]
 
 parameters = un.Parameters(parameterlist)
 
@@ -44,7 +45,8 @@ uncertainty.uncertainty_quantification(plot_condensed=True,
 # an intermediate range of external frequencies
 parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
                  ["g", 5, cp.Uniform(5, 8)],
-                 ["delay", 5, cp.Uniform(1.5, 3)]]
+                 ["delay", 5, cp.Uniform(1.5, 3)],
+                 ["J_E", 5, cp.Uniform(0.05, 0.15)]]
 
 parameters = un.Parameters(parameterlist)
 
@@ -58,3 +60,23 @@ uncertainty = un.UncertaintyEstimation(model,
 uncertainty.uncertainty_quantification(plot_condensed=True,
                                        plot_results=True,
                                        filename="brunel_function_AI")
+
+
+# the border between SR and AI parameter set
+parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
+                 ["g", 5, cp.Uniform(1, 8)],
+                 ["delay", 5, cp.Uniform(1.5, 3)],
+                 ["J_E", 5, cp.Uniform(0.05, 0.15)]]
+
+parameters = un.Parameters(parameterlist)
+
+uncertainty = un.UncertaintyEstimation(model,
+                                       parameters=parameters,
+                                       features=features,
+                                       output_dir_figures="figures_brunel_function_border",
+                                       CPUs=7,
+                                       allow_incomplete=True)
+
+uncertainty.uncertainty_quantification(plot_condensed=True,
+                                       plot_results=True,
+                                       filename="brunel_function_border")

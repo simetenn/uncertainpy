@@ -78,12 +78,14 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def create_distribution(self, uncertain_parameters=None):
-        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        if self.parameters.distribution is None:
+            uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
+            parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
 
-        self.distribution = cp.J(*parameter_distributions)
-
+            self.distribution = cp.J(*parameter_distributions)
+        else:
+            self.distribution = self.parameters.distribution
 
     def create_mask(self, nodes, feature, weights=None):
         if feature not in self.data:

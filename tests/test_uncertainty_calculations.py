@@ -213,6 +213,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.runmodel.model, Model)
 
 
+    def test_create_distribution_dist(self):
+
+        dist = cp.J(cp.Uniform())
+        self.uncertainty_calculations.parameters.distribution = dist
+        self.uncertainty_calculations.create_distribution()
+
+        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
+        self.assertEqual(self.uncertainty_calculations.distribution, dist)
 
     def test_create_distribution_none(self):
 

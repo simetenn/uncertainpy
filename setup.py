@@ -19,7 +19,7 @@ name = "uncertainpy"
 # virtual_enviroment = name
 
 uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "future", "h5py",
-                   "multiprocess", "seaborn", "numpy", "scipy", "elephant"]
+                   "multiprocess", "seaborn", "numpy", "scipy"]
 # uncertainpy_req = ["chaospy", "numpy"]
 dependency_links = []
 

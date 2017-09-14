@@ -213,7 +213,20 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(parameters["gbar_Na"], Parameter)
         self.assertIsInstance(parameters["gbar_K"], Parameter)
         self.assertIsInstance(parameters["gbar_l"], Parameter)
+        self.assertIsNone(parameters.distribution)
 
+    def test_init_object_dist(self):
+        parameterlist = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
+                         Parameter("gbar_K", 36),
+                         Parameter("gbar_l", 10.3)]
+
+        parameters = Parameters(parameterlist, distribution=cp.Uniform(110, 130))
+
+        self.assertIsInstance(parameters, Parameters)
+        self.assertIsInstance(parameters["gbar_Na"], Parameter)
+        self.assertIsInstance(parameters["gbar_K"], Parameter)
+        self.assertIsInstance(parameters["gbar_l"], Parameter)
+        self.assertIsInstance(parameters.distribution, cp.Dist)
 
 
     def test_init_list_to_long(self):

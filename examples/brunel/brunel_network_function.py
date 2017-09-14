@@ -1,6 +1,6 @@
 import nest
 
-def brunel_network(eta=2, g=5, delay=1.5):
+def brunel_network(eta=2, g=5, delay=1.5, J_E=0.1):
     """
     A brunel network, from:
 
@@ -8,6 +8,7 @@ def brunel_network(eta=2, g=5, delay=1.5):
     Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
     183-208 (2000).
 
+    http://www.nest-simulator.org/py_sample/random-balanced-network-exp-synapses-multiple-time-constants/
 
     Parameters
     ----------
@@ -34,7 +35,7 @@ def brunel_network(eta=2, g=5, delay=1.5):
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = N_E/10           # Number of excitatory synapses per neuron
     C_I = N_I/10           # Number of inhibitory synapses per neuron
-    J_E = 0.1              # Amplitude of excitatory postsynaptic current
+    # J_E = 0.1              # Amplitude of excitatory postsynaptic current
     J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
 
     nu_ex = eta*V_th/(J_E*C_E*tau_m)

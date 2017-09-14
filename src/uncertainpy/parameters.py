@@ -155,20 +155,27 @@ class Parameters(collections.MutableMapping):
         On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
         Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
         the arguments are similar to the arguments given to Parameter().
+    distribution: {None, multivariate Chaospy distribution}, optional
+        A multivariate distribution of all parameters, if it exists, it is used
+        instead of individual distributions.
+        Defaults to None.
 
 
     Attributes
     ----------
     parameters: dict
         A dictionary of parameters with ``name`` as key and Parameter object as value.
-
+    distribution: {None, multivariate Chaospy distribution}, optional
+        A multivariate distribution of all parameters, if it exists, it is used
+        instead of individual distributions.
+        Defaults to None.
 
     See Also
     --------
     uncertainpy.Parameter : Parameter class
     """
 
-    def __init__(self, parameterlist=[]):
+    def __init__(self, parameterlist=[], distribution=None):
         """
         A collection of parameters.
 
@@ -188,6 +195,7 @@ class Parameters(collections.MutableMapping):
         uncertainpy.Parameter : Parameter object
         """
         self.parameters = {}
+        self.distribution = distribution
 
         try:
             for i in parameterlist:

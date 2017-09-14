@@ -42,16 +42,14 @@ class NeuronModel(Model):
         True if the model is adaptive, meaning it has a varying number of
         time values. False if not. Default is False.
 
+    Raises
+    ------
+    RuntimeError
+        If no section with name ``soma`` is found in the Neuron model.
+
     Notes
     -----
-    Measures the voltage in:
-
-    .. code-block:: Python
-
-        for sec in h.allsec():
-            V = h.Vector()
-            V.record(sec(0.5)._ref_v)
-            break
+    Measures the voltage in the section with name ``soma``.
     """
     def __init__(self,
                  file="mosinit.hoc",
@@ -127,7 +125,7 @@ class NeuronModel(Model):
         Raises
         ------
         RuntimeError
-            If no section with name soma is found in Neuron model.
+            If no section with name ``soma`` is found in the Neuron model.
         """
         self.V = None
         for section in self.h.allsec():
