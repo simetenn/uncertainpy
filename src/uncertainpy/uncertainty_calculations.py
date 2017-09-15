@@ -127,17 +127,21 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def convert_uncertain_parameters(self, uncertain_parameters):
-        if self.parameters.distribution is not None and uncertain_parameters is not None:
-            raise ValueError("A common multivariate distribution is given, " +
-                             "uncertain_parameters must be set to None and " +
-                             "default uncertain parameters is used.")
 
-        if uncertain_parameters is None and self.parameters.distribution is None:
-            uncertain_parameters = self.parameters.get_from_uncertain("name")
-        elif self.parameters.distribution is not None:
-            uncertain_parameters = self.parameters.get("name")
-        elif isinstance(uncertain_parameters, str):
+        if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
+
+        if self.parameters.distribution is not None:
+            if uncertain_parameters is None:
+                uncertain_parameters = self.parameters.get("name")
+            elif sorted(uncertain_parameters) != sorted(self.parameters.get("name")):
+                 raise ValueError("A common multivariate distribution is given, " +
+                                  "and all uncertain parameters must be used. " +
+                                  "Set uncertain_parameters to None or a list of all "
+                                  "uncertain parameters.")
+        else:
+            if uncertain_parameters is None:
+                uncertain_parameters = self.parameters.get_from_uncertain("name")
 
         return uncertain_parameters
 
