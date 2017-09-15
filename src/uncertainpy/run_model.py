@@ -327,6 +327,7 @@ class RunModel(ParameterBase):
         pool = mp.Pool(processes=self.CPUs)
 
         model_parameters = self.create_model_parameters(nodes, uncertain_parameters)
+
         for result in tqdm(pool.imap(self._parallel.run, model_parameters),
                            desc="Running model",
                            total=len(nodes.T)):

@@ -229,6 +229,36 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(parameters.distribution, cp.Dist)
 
 
+    def test_ordered(self):
+        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+                         ["gbar_K", 36, cp.Normal(36, 1)],
+                         ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
+
+        parameters = Parameters(parameterlist)
+
+        uncertain_parameters = parameters.get_from_uncertain("name")
+        self.assertEqual(uncertain_parameters, ["gbar_Na", "gbar_K", "gbar_l"])
+
+        uncertain_parameters = parameters.get("name")
+        self.assertEqual(uncertain_parameters, ["gbar_Na", "gbar_K", "gbar_l"])
+
+
+        parameterlist = [["gbar_K", 36, cp.Normal(36, 1)],
+                         ["gbar_Na", 120, cp.Uniform(110, 130)],
+                         ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
+
+        parameters = Parameters(parameterlist)
+
+        uncertain_parameters = parameters.get_from_uncertain("name")
+        self.assertEqual(uncertain_parameters, ["gbar_K", "gbar_Na", "gbar_l"])
+
+        uncertain_parameters = parameters.get("name")
+        self.assertEqual(uncertain_parameters, ["gbar_K", "gbar_Na", "gbar_l"])
+
+        uncertain_parameters = parameters.get("value")
+        self.assertEqual(uncertain_parameters, [36, 120, 0.3])
+
+
     def test_init_list_to_long(self):
         parameterlist = [["gbar_Na", 120, None, 1]]
 

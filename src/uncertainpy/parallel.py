@@ -222,7 +222,6 @@ class Parallel(Base):
         uncertainpy.features.GeneralFeatures.preprocess : preprocessing model results before features are calculated
         uncertainpy.models.Model.postprocess : posteprocessing of model results
         """
-
         # Try-except to catch exceptions and print stack trace
         try:
             model_result = self.model.run(**model_parameters)

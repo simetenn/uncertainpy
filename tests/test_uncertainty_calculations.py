@@ -482,6 +482,54 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(result, ["a", "b"])
 
 
+    def test_convert_uncertain_parameters_error(self):
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
+
+        self.parameters = Parameters(self.parameterlist)
+
+        self.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
+
+        self.model = TestingModel1d()
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                                parameters=self.parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed)
+
+        with self.assertRaises(ValueError):
+            result = self.uncertainty_calculations.convert_uncertain_parameters(["a"])
+
+
+    def test_convert_uncertain_parameters_distribution(self):
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
+
+        self.parameters = Parameters(self.parameterlist)
+
+        self.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
+
+        self.model = TestingModel1d()
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                                parameters=self.parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed)
+
+
+        result = self.uncertainty_calculations.convert_uncertain_parameters(None)
+
+
     def test_create_PCE_custom(self):
         with self.assertRaises(NotImplementedError):
             self.uncertainty_calculations.create_PCE_custom()

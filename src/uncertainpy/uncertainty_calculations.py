@@ -127,13 +127,16 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def convert_uncertain_parameters(self, uncertain_parameters):
-        if self.model is None:
-            raise RuntimeError("No model is set")
+        if self.parameters.distribution is not None and uncertain_parameters is not None:
+            raise ValueError("A common multivariate distribution is given, " +
+                             "uncertain_parameters must be set to None and " +
+                             "default uncertain parameters is used.")
 
-        if uncertain_parameters is None:
+        if uncertain_parameters is None and self.parameters.distribution is None:
             uncertain_parameters = self.parameters.get_from_uncertain("name")
-
-        if isinstance(uncertain_parameters, str):
+        elif self.parameters.distribution is not None:
+            uncertain_parameters = self.parameters.get("name")
+        elif isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
 
         return uncertain_parameters
@@ -215,7 +218,7 @@ class UncertaintyCalculations(ParameterBase):
 
 
     # TODO not tested
-    def create_create_PCE_quadrature_rosenblatt(self, uncertain_parameters=None):
+    def create_PCE_quadrature_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.create_distribution(uncertain_parameters=uncertain_parameters)

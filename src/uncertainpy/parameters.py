@@ -194,7 +194,7 @@ class Parameters(collections.MutableMapping):
         --------
         uncertainpy.Parameter : Parameter object
         """
-        self.parameters = {}
+        self.parameters = collections.OrderedDict()
         self.distribution = distribution
 
         try:
