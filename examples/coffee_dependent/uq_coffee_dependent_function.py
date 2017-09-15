@@ -48,6 +48,18 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
                                        filename="coffee_dependent_large_correlation")
 
 
+C = [[.0001, 0, -0.00099999],
+     [0, 5, 0],
+     [-0.00099999, 0, .01]]
+mu = [-0.05, 20, 1]
+dist = cp.MvNormal(mu, C)
+
+
+uncertainty.parameters.distribution = dist
+uncertainty.uncertainty_quantification(rosenblatt=True,
+                                       output_dir_figures="figures_coffee_dependent_large_reverse_correlation",
+                                       filename="coffee_dependent_large_reverse_correlation")
+
 dist_u_env = cp.Uniform(15, 25)
 dist_a = cp.Uniform(0.5, 1.5)
 dist_kappa = cp.Uniform(-0.075, -0.025)
@@ -69,7 +81,7 @@ uncertainty.uncertainty_quantification(rosenblatt=False,
 
 parameterlist = [["a", 1, None],
                  ["u_env", 20, None],
-                 ["kappa", -0.05, None],]
+                 ["kappa", -0.05, None]]
 
 # C = [[3, 0, 0],
 #      [0, .0001, 0.0005],
@@ -77,7 +89,7 @@ parameterlist = [["a", 1, None],
 C = [[.01, 0, 0.0005],
      [0, 5, 0],
      [0.0005, 0, .0001]]
-mu = [1, -0.05, 20]
+mu = [1, 20, -0.05]
 dist = cp.MvNormal(mu, C)
 
 parameters = un.Parameters(parameterlist)
