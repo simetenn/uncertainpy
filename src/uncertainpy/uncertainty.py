@@ -138,7 +138,8 @@ class UncertaintyEstimation(ParameterBase):
 method: pc, mc
 pc_method: "regression"
         """
-        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
+
 
         if method.lower() == "pc":
             if single:
@@ -223,7 +224,7 @@ pc_method: "regression"
                          output_dir_data=None,
                          filename=None):
 
-        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high."
@@ -258,7 +259,7 @@ pc_method: "regression"
                     output_dir_data=None,
                     filename=None):
 
-        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameters)
 
@@ -291,7 +292,7 @@ pc_method: "regression"
                                 output_dir_figures=None,
                                 filename=None):
 
-        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. "
@@ -343,7 +344,7 @@ pc_method: "regression"
                            output_dir_data=None,
                            output_dir_figures=None,
                            filename=None):
-        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
             filename = self.model.name
@@ -417,11 +418,11 @@ pc_method: "regression"
 
 
 
-    def convert_uncertain_parameters(self, uncertain_parameters):
-        if uncertain_parameters is None:
-            uncertain_parameters = self.parameters.get_from_uncertain("name")
+    # def convert_uncertain_parameters(self, uncertain_parameters):
+    #     if uncertain_parameters is None:
+    #         uncertain_parameters = self.parameters.get_from_uncertain("name")
 
-        if isinstance(uncertain_parameters, str):
-            uncertain_parameters = [uncertain_parameters]
+    #     if isinstance(uncertain_parameters, str):
+    #         uncertain_parameters = [uncertain_parameters]
 
-        return uncertain_parameters
+    #     return uncertain_parameters

@@ -290,21 +290,21 @@ class TestUncertainty(TestCasePlot):
         self.assertTrue(uncertainty.uncertainty_calculations.test_value,
                         "custom PCE method")
 
-    def test_convert_uncertain_parameters_list(self):
-        result = self.uncertainty.convert_uncertain_parameters(["a", "b"])
+    # def test_convert_uncertain_parameters_list(self):
+    #     result = self.uncertainty.convert_uncertain_parameters(["a", "b"])
 
-        self.assertEqual(result, ["a", "b"])
+    #     self.assertEqual(result, ["a", "b"])
 
-    def test_convert_uncertain_parameters_string(self):
-        result = self.uncertainty.convert_uncertain_parameters("a")
+    # def test_convert_uncertain_parameters_string(self):
+    #     result = self.uncertainty.convert_uncertain_parameters("a")
 
-        self.assertEqual(result, ["a"])
+    #     self.assertEqual(result, ["a"])
 
 
-    def test_convert_uncertain_parameters_none(self):
-        result = self.uncertainty.convert_uncertain_parameters(None)
+    # def test_convert_uncertain_parameters_none(self):
+    #     result = self.uncertainty.convert_uncertain_parameters(None)
 
-        self.assertEqual(result, ["a", "b"])
+    #     self.assertEqual(result, ["a", "b"])
 
 
     def test_polynomial_chaos_single(self):

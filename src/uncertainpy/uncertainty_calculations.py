@@ -127,7 +127,6 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def convert_uncertain_parameters(self, uncertain_parameters):
-
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
 

@@ -528,6 +528,33 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
         result = self.uncertainty_calculations.convert_uncertain_parameters(None)
+        self.assertEqual(result, ["a", "b"])
+
+
+
+    def test_convert_uncertain_parameters_distribution_list(self):
+        self.parameterlist = [["a", 1, None],
+                              ["b", 2, None]]
+
+        self.parameters = Parameters(self.parameterlist)
+
+        self.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
+
+        self.model = TestingModel1d()
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                                parameters=self.parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                seed=self.seed)
+
+
+        result = self.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
+        self.assertEqual(result, ["a", "b"])
 
 
     def test_create_PCE_custom(self):
