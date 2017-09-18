@@ -133,6 +133,7 @@ class UncertaintyEstimation(ParameterBase):
                                    output_dir_figures=None,
                                    output_dir_data=None,
                                    filename=None,
+                                   sensitivity="sensitivity_1",
                                    **custom_kwargs):
         """
 method: pc, mc
@@ -159,7 +160,8 @@ pc_method: "regression"
                                       plot_results=plot_results,
                                       output_dir_figures=output_dir_figures,
                                       output_dir_data=output_dir_data,
-                                      filename=filename)
+                                      filename=filename,
+                                      sensitivity=sensitivity)
         elif method.lower() == "mc":
             if single:
                 self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
@@ -222,6 +224,7 @@ pc_method: "regression"
                          plot_results=False,
                          output_dir_figures=None,
                          output_dir_data=None,
+                         sensitivity="sensitivity_1",
                          filename=None):
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
@@ -244,7 +247,7 @@ pc_method: "regression"
             self.save(filename, output_dir=output_dir_data)
 
         if self.save_figures:
-            self.plot(condensed=plot_condensed, output_dir=output_dir_figures)
+            self.plot(condensed=plot_condensed, output_dir=output_dir_figures, sensitivity=sensitivity)
 
         if plot_results:
             self.plot(results=True, output_dir=output_dir_figures)
@@ -296,8 +299,7 @@ pc_method: "regression"
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. "
-                                 + "A Monte-Carlo method _might_ be faster.")
-
+                                 + "A Monte-Carlo method might be faster.")
 
         if filename is None:
             filename = self.model.name

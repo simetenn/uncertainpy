@@ -229,7 +229,7 @@ class UncertaintyCalculations(ParameterBase):
 
         # Create the Multivariat normal distribution
         dist_MvNormal = []
-        for parameter in self.data.uncertain_parameters:
+        for parameter in uncertain_parameters:
             dist_MvNormal.append(cp.Normal())
 
         dist_MvNormal = cp.J(*dist_MvNormal)
@@ -281,11 +281,13 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_regression_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        print uncertain_parameters
 
         self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
+        # dist_MvNormal = cp.Iid(cp.Normal(), len(uncertain_parameters))
         dist_MvNormal = []
         for parameter in uncertain_parameters:
             dist_MvNormal.append(cp.Normal())
@@ -300,6 +302,8 @@ class UncertaintyCalculations(ParameterBase):
 
         nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
+
+        self.nodes = nodes_MvNormal
 
         self.distribution = dist_MvNormal
 
@@ -331,6 +335,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def analyse_PCE(self):
+        print self.data.uncertain_parameters
+        print self.distribution
+
         if len(self.data.uncertain_parameters) == 1:
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
 
