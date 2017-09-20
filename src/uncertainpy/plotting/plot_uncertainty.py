@@ -71,7 +71,7 @@ class PlotUncertainty(object):
     def str_to_latex(self, text):
         if "_" in text:
             txt = text.split("_")
-            return "$" + txt[0] + "_{" + "-".join(txt[1:]) + "}$"
+            return "$\mathrm{" + txt[0] + "}_{\mathrm{" + "-".join(txt[1:]) + "}}$"
         else:
             return text
 
@@ -610,7 +610,7 @@ class PlotUncertainty(object):
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
         set_style("seaborn-darkgrid")
-        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
+        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex='col', sharey='row')
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
@@ -1064,7 +1064,7 @@ class PlotUncertainty(object):
 
 
         set_style("seaborn-dark")
-        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False)
+        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex='col', sharey='row')
         set_style("seaborn-white")
 
 

@@ -303,8 +303,7 @@ class UncertaintyCalculations(ParameterBase):
         nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
 
-        self.nodes = nodes_MvNormal
-
+        print nodes
         self.distribution = dist_MvNormal
 
         # Running the model
@@ -336,7 +335,6 @@ class UncertaintyCalculations(ParameterBase):
 
     def analyse_PCE(self):
         print self.data.uncertain_parameters
-        print self.distribution
 
         if len(self.data.uncertain_parameters) == 1:
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
