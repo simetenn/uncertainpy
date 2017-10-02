@@ -241,16 +241,18 @@ class Parallel(Base):
             # if U is None:
             #     raise ValueError("U has not been calculated")
 
-            t_postprocess, U_postprocess = self.model.postprocess(t, U)
-
-            U_postprocess = self.none_to_nan(U_postprocess)
-            t_postprocess = self.none_to_nan(t_postprocess)
-
             results = {}
+
             # results[self.model.name] = {"t": np.array(t_postprocess),
             #                             "U": np.array(U_postprocess)}
-            results[self.model.name] = {"t": t_postprocess,
-                                        "U": U_postprocess}
+
+            if not self.model.ignore:
+                t_postprocess, U_postprocess = self.model.postprocess(t, U)
+
+                U_postprocess = self.none_to_nan(U_postprocess)
+                t_postprocess = self.none_to_nan(t_postprocess)
+                results[self.model.name] = {"t": t_postprocess,
+                                            "U": U_postprocess}
 
 
 

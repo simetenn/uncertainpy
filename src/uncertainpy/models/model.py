@@ -41,10 +41,12 @@ class Model(object):
     def __init__(self,
                  run_function=None,
                  adaptive=False,
-                 labels=[]):
+                 labels=[],
+                 ignore=False):
 
         self.adaptive = adaptive
         self.labels = labels
+        self.ignore = ignore
 
         if run_function is not None:
             self.run = run_function
