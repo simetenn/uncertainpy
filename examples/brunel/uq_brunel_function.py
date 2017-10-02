@@ -32,7 +32,7 @@ uncertainty = un.UncertaintyEstimation(model,
                                        allow_incomplete=True)
 
 uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=True,
+                                       plot_results=False,
                                        filename="brunel_function_SR")
 
 
@@ -58,7 +58,7 @@ uncertainty = un.UncertaintyEstimation(model,
                                        allow_incomplete=True)
 
 uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=True,
+                                       plot_results=False,
                                        filename="brunel_function_AI")
 
 
@@ -78,5 +78,5 @@ uncertainty = un.UncertaintyEstimation(model,
                                        allow_incomplete=True)
 
 uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=True,
+                                       plot_results=False,
                                        filename="brunel_function_border")

@@ -29,20 +29,20 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
         unit_string = str(units).split()[1]
 
-        implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
+        implemented_labels = {"cv": ["neuron nr", "coefficient of variation"],
                               "mean_cv": ["mean coefficient of variation"],
-                              "mean_isi": ["Neuron nr",
-                                           "Mean interspike interval [{}]".format(unit_string)],
-                              "lv": ["Neuron nr", "Local variation"],
-                              "mean_firing_rate": ["Neuron nr", "Hz"],
-                              "instantaneous_rate": ["time ms", "Neuron nr", "Hz"],
+                              "mean_isi": ["neuron nr",
+                                           "mean interspike interval [{}]".format(unit_string)],
+                              "lv": ["neuron nr", "local variation"],
+                              "mean_firing_rate": ["neuron nr", "rate [Hz]"],
+                              "instantaneous_rate": ["time [ms]", "neuron nr", "rate [Hz]"],
                               "fanofactor": ["fanofactor"],
-                              "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
-                              "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
-                              "binned_isi": ["Interspike interval [{}]".format(unit_string),
-                                             "Neuron nr", "count"],
-                              "corrcoef": ["Neuron nr", "Neuron nr", ""],
-                              "covariance": ["Neuron nr", "Neuron nr", ""]
+                              "van_rossum_dist": ["neuron nr", "neuron nr", ""],
+                              "victor_purpura_dist": ["neuron nr", "neuron nr", ""],
+                              "binned_isi": ["interspike interval [{}]".format(unit_string),
+                                             "neuron nr", "count"],
+                              "corrcoef": ["neuron nr", "neuron nr", ""],
+                              "covariance": ["neuron nr", "neuron nr", ""]
                              }
 
         implemented_labels.update(labels)
@@ -103,6 +103,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
 
     def lv(self, t, spiketrains):
+        """
+        Calculate the measure of local variation LV for a sequence of time intervals between events.
+        """
         lv = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)

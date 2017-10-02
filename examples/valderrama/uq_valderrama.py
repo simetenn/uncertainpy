@@ -24,7 +24,8 @@ model = Valderrama()
 features = un.SpikingFeatures(thresh="auto")
 exploration = un.UncertaintyEstimation(model,
                                        parameters=parameters,
-                                       features=features)
+                                       features=features,
+                                       allow_incomplete=True)
 
 exploration.uncertainty_quantification(plot_condensed=True,
                                        plot_results=False)

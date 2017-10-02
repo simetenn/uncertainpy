@@ -154,7 +154,7 @@ class Model(object):
 
         No postprocessing is performed, and the direct model results are
         currently returned.
-        If postprocessing is needed it should follow teh below format.
+        If postprocessing is needed it should follow the below format.
 
         Returns
         -------

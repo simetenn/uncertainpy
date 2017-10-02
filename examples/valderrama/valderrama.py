@@ -123,6 +123,9 @@ class Valderrama(Model):
         t = self.t
         U = X[:, 0]
 
+        U = U[t > 5]
+        t = t[t > 5]
+
         return t, U
 
 if __name__ == "__main__":
