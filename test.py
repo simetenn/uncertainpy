@@ -103,8 +103,6 @@ test_features = create_test_suite([TestGeneralFeatures,
 
 test_features.addTest(test_spike_sorting)
 
-test_features = create_test_suite([TestEfelFeatures])
-
 
 test_logger = create_test_suite([TestLogger])
 

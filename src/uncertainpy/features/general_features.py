@@ -153,7 +153,7 @@ class GeneralFeatures(object):
     def add_features(self, new_features, labels={}):
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
-            self.features_to_run.append(new_features.__name__)
+            # self.features_to_run.append(new_features.__name__)
 
             tmp_label = labels.get(new_features.__name__)
             if tmp_label is not None:
@@ -163,7 +163,7 @@ class GeneralFeatures(object):
                 for feature in new_features:
                     if callable(feature):
                         setattr(self, feature.__name__, feature)
-                        self.features_to_run.append(feature.__name__)
+                        # self.features_to_run.append(feature.__name__)
 
                         tmp_lables = labels.get(feature.__name__)
                         if tmp_lables is not None:

@@ -16,16 +16,18 @@ parameters = [["V_0", -10, None],
               ["E_K", -12, cp.Uniform(-74, -79)],
               ["E_l", 10.613, cp.Uniform(-61, -43)]]
 
+
 parameters = un.Parameters(parameters)
 parameters.set_all_distributions(un.uniform(0.2))
 
 model = Valderrama()
 
-features = un.SpikingFeatures(thresh="auto")
+# features = un.SpikingFeatures(thresh="auto")
+features = un.EfelFeatures()
 exploration = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features,
-                                       allow_incomplete=True)
+                                       allow_incomplete=False)
 
 exploration.uncertainty_quantification(plot_condensed=True,
                                        plot_results=False)

@@ -130,6 +130,7 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
+        features.features_to_run = "all"
         self.assertEqual(features.features_to_run,
                          ["feature_function"])
 
@@ -156,11 +157,12 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 
+
         self.assertEqual(features.implemented_features(),
                          ["feature_function", "feature_function2"])
 
         self.assertEqual(features.features_to_run,
-                         ["feature_function", "feature_function2"])
+                         [])
 
         self.assertEqual(features.labels, {"feature_function": ["x", "y"]})
 
@@ -395,85 +397,19 @@ class TestEfelFeatures(unittest.TestCase):
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
-    # def test_adaptive_all(self):
-    #     features = SpikingFeatures(adaptive="all")
-    #     self.assertEqual(set(features.adaptive), set(self.implemented_features))
-
-
     def test_implemented_features(self):
         self.assertEqual(set(self.features.implemented_features()), set(self.implemented_features))
 
 
     def test_Spikecount(self):
         self.features.Spikecount(self.t, self.U)
-        print self.features.Spikecount(self.t, self.U)
-        self.assertEqual(self.features.Spikecount(self.t, self.U), (None, 12))
-
-    # def test_average_AHP_depthNone(self):
-    #     self.features.spikes.nr_spikes = 0
-    #     self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes), (None, None))
-
-    # def test_time_before_first_spike(self):
-    #     self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes)[1], 10)
+        self.assertEqual(self.features.Spikecount(self.t, self.U), (self.t, 12))
 
 
-    # def test_time_before_first_spikeNone(self):
-    #     self.features.spikes.nr_spikes = 0
-    #     self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes), (None, None))
-
-
-    # def test_spike_rate(self):
-    #     self.assertEqual(self.features.spike_rate(self.t, self.spikes), (None, 0.12))
-
-
-    # def test_spike_rateNone(self):
-    #     self.features.spikes.nr_spikes = -1
-    #     self.assertEqual(self.features.spike_rate(self.t, self.spikes), (None, None))
-
-
-    # def test_average_AP_overshoot(self):
-    #     self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes), (None, 30))
-
-
-    # def test_average_AP_overshootNone(self):
-    #     self.features.spikes.nr_spikes = 0
-    #     self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes), (None, None))
-
-
-    # # TODO Find correct test, this is a rough bound only
-    # def test_average_AHP_depth(self):
-    #     self.features.average_AHP_depth(self.t, self.spikes)
-    #     self.assertLess(self.features.average_AHP_depth(self.t, self.spikes)[1], 0)
-
-
-    # def test_average_AHP_depthNone(self):
-    #     self.features.spikes.nr_spikes = 0
-    #     self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes), (None, None))
-
-    # # TODO Find correct test, this is a rough bound only
-    # def test_average_AP_width(self):
-    #     self.assertLess(self.features.average_AP_width(self.t, self.spikes)[1], 5)
-
-
-    # def test_average_AP_widthNone(self):
-    #     self.features.spikes.nr_spikes = 0
-    #     self.assertEqual(self.features.average_AP_width(self.t, self.spikes), (None, None))
-
-
-    # # TODO Find correct test, this is a rough bound only
-    # def test_accommodation_index(self):
-    #     self.assertIsNotNone(self.features.accommodation_index(self.t, self.spikes)[1])
-
-
-    # def test_accommodation_indexNone(self):
-    #     self.features.spikes.nr_spikes = 0
-    #     self.assertEqual(self.features.accommodation_index(self.t, self.spikes), (None, None))
-
-
-    # def test_calculate_all_features(self):
-    #     result = self.features.calculate_all_features(self.t, self.spikes)
-    #     self.assertEqual(set(result.keys()),
-    #                      set(self.implemented_features))
+    def test_calculate_all_features(self):
+        result = self.features.calculate_all_features(self.t, self.U)
+        self.assertEqual(set(result.keys()),
+                         set(self.implemented_features))
 
 
 
