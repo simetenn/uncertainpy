@@ -1,13 +1,12 @@
 import numpy as np
 from scipy.integrate import odeint
 
-def coffee_cup(kappa=-0.05, u_env=20):
-    u0 = 95
+def coffee_cup(kappa=-0.05, T_env=20, T_0=95):
     t = np.linspace(0, 200, 150)
 
-    def f(u, t, kappa, u_env):
-        return kappa*(u - u_env)
+    def f(T, t, kappa, T_env):
+        return kappa*(T - T_env)
 
-    U = odeint(f, u0, t, args=(kappa, u_env))[:, 0]
+    U = odeint(f, T_0, t, args=(kappa, T_env))[:, 0]
 
     return t, U

@@ -71,7 +71,7 @@ class PlotUncertainty(object):
     def str_to_latex(self, text):
         if "_" in text:
             txt = text.split("_")
-            return "$\mathrm{" + txt[0] + "}_{\mathrm{" + "-".join(txt[1:]) + "}}$"
+            return "$" + txt[0] + "_{\mathrm{" + "-".join(txt[1:]) + "}}$"
         else:
             return text
 

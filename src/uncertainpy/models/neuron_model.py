@@ -56,7 +56,7 @@ class NeuronModel(Model):
                  path=None,
                  name=None,
                  adaptive=True,
-                 labels=["time [ms]", "voltage [mv]"]):
+                 labels=["Time [ms]", "Membrane potential [mV]"]):
 
         super(NeuronModel, self).__init__(adaptive=adaptive,
                                           labels=labels)

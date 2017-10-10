@@ -4,18 +4,18 @@ import numpy as np
 
 from coffee_cup_dependent_function import coffee_cup_dependent
 
-dist_u_env = cp.Uniform(15, 25)
-dist_a = cp.Uniform(0.5, 1.5)
-dist_kappa = cp.Uniform(-0.075, -0.025)/dist_a
+alpha_dist = cp.Uniform(0.5, 1.5)
+beta_dist = cp.Uniform(-0.075, -0.025)/alpha_dist
+T_env_dist = cp.Uniform(15, 25)
 
 # # percentage = 0.2
-# # dist_a = un.uniform(percentage)(0.22)
-# # dist_u_env = un.uniform(percentage)(20)
-# # dist_kappa = un.uniform(percentage)(-0.22)*dist_a
+# # alpha_dist = un.uniform(percentage)(0.22)
+# # T_env_dist = un.uniform(percentage)(20)
+# # beta_dist = un.uniform(percentage)(-0.22)*alpha_dist
 
-parameterlist = [["kappa", -0.05, dist_kappa],
-                 ["u_env", 20, dist_u_env],
-                 ["a", 1, dist_a]]
+parameterlist = [["alpha", 1, alpha_dist]
+                 ["beta", -0.05, beta_dist],
+                 ["T_env", 20, T_env_dist],]
 
 parameters = un.Parameters(parameterlist)
 
@@ -99,18 +99,18 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_large_reverse_correlation",
 #                                        filename="coffee_dependent_large_reverse_correlation")
 
-# dist_u_env = cp.Uniform(18, 22)
-# dist_a = cp.Uniform(0.9, 1.1)
-# dist_kappa = cp.Uniform(-0.075, -0.025)
+# T_env_dist = cp.Uniform(18, 22)
+# alpha_dist = cp.Uniform(0.9, 1.1)
+# beta_dist = cp.Uniform(-0.075, -0.025)
 
 # percentage = 0.1
-# dist_kappa = un.uniform(percentage)(-0.22)
-# dist_a = un.uniform(percentage)(0.22)
-# dist_u_env = un.uniform(percentage)(20)
+# beta_dist = un.uniform(percentage)(-0.22)
+# alpha_dist = un.uniform(percentage)(0.22)
+# T_env_dist = un.uniform(percentage)(20)
 
-# parameterlist = [["kappa", -0.05, dist_kappa],
-#                  ["u_env", 20, dist_u_env],
-#                  ["a", 1, dist_a]]
+# parameterlist = [["kappa", -0.05, beta_dist],
+#                  ["u_env", 20, T_env_dist],
+#                  ["a", 1, alpha_dist]]
 
 # parameters = un.Parameters(parameterlist)
 
@@ -150,9 +150,9 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 #                                        filename="coffee_dependent_reverse_order")
 
 
-parameterlist = [["u_env", 20, None],
-                 ["a", 1, None],
-                 ["kappa", -0.05, None]]
+parameterlist = [["T_env", 20, None],
+                 ["alpha", 1, None],
+                 ["beta", -0.05, None]]
 
 # C = [[.01, 0, 0.0005],
 #      [0, 5, 0],
@@ -187,9 +187,9 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
                                        sensitivity="sensitivity_t")
 
 
-parameterlist = [["u_env", 20, None],
-                 ["kappa", -0.05, None],
-                 ["a", 1, None]]
+parameterlist = [["T_env", 20, None],
+                 ["beta", -0.05, None],
+                 ["alpha", 1, None]]
 
 C = [[1, 0, 0],
      [0, .001, .00099],

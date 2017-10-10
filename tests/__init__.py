@@ -29,12 +29,14 @@ __all__ = ["TestDistribution",
            "TestUncertaintyCalculations",
            "TestExamples",
            "TestBase",
-           "TestParameterBase"]
+           "TestParameterBase",
+           "TestEfelFeatures"]
 
 from .test_distribution import TestDistribution
 # from test_exploration import TestExploration
 from .test_features import TestGeneralFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures
 from .test_features import TestNetworkFeatures, TestTestingFeatures, TestGeneralNetworkFeatures
+from .test_features import TestEfelFeatures
 from .test_logger import TestLogger
 
 from .test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel

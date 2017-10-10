@@ -28,4 +28,4 @@ uncertainty = un.UncertaintyEstimation(model,
                                        CPUs=7,
                                        allow_incomplete=True)
 
-uncertainty.uncertainty_quantification(plot_results=True)
+uncertainty.uncertainty_quantification(p)

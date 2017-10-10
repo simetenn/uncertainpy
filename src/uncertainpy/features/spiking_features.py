@@ -113,4 +113,5 @@ class SpikingFeatures(GeneralSpikingFeatures):
         A = 0
         for i in range(k+1, N-1):
             A += (ISIs[i] - ISIs[i-1])/(ISIs[i] + ISIs[i-1])
+
         return None, A/(N - k - 1)

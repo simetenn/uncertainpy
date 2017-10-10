@@ -8,6 +8,7 @@ import quantities as pq
 
 from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures
 from uncertainpy.features import SpikingFeatures, NetworkFeatures, GeneralNetworkFeatures
+from uncertainpy.features import EfelFeatures
 from uncertainpy import Spikes
 from .testing_classes import TestingFeatures
 
@@ -335,6 +336,142 @@ class TestSpikingFeatures(unittest.TestCase):
         result = self.features.calculate_all_features(self.t, self.spikes)
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
+
+
+
+
+class TestEfelFeatures(unittest.TestCase):
+    def setUp(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        t = np.load(os.path.join(folder, "data/t_test.npy"))
+        U = np.load(os.path.join(folder, "data/U_test.npy"))
+
+        # self.implemented_features = ["nr_spikes", "time_before_first_spike",
+        #                              "spike_rate", "average_AP_overshoot",
+        #                              "average_AHP_depth", "average_AP_width",
+        #                              "accommodation_index"]
+
+        # self.implemented_labels = {"nr_spikes": ["number of spikes"],
+        #                            "spike_rate": ["spike rate [Hz]"],
+        #                            "time_before_first_spike": ["time [ms]"],
+        #                            "accommodation_index": ["accommodation index"],
+        #                            "average_AP_overshoot": ["voltage [mV]"],
+        #                            "average_AHP_depth": ["voltage [mV]"],
+        #                            "average_AP_width": ["time [ms]"]
+        #                           }
+
+        self.features = EfelFeatures()
+
+        # self.t, self.spikes = self.features.preprocess(t, U)
+
+
+    # def test_initNone(self):
+    #     self.features = SpikingFeatures()
+
+    #     self.assertIsInstance(self.features, SpikingFeatures)
+    #     self.assertIsNone(self.features.spikes)
+
+
+    def test_init(self):
+        self.assertIsInstance(self.features, EfelFeatures)
+
+    # def test_initLabels(self):
+    #     features = SpikingFeatures(labels={"nr_spikes": ["changed"],
+    #                                        "new": ["new"]})
+
+    #     labels = {"nr_spikes": ["changed"],
+    #               "spike_rate": ["spike rate [Hz]"],
+    #               "time_before_first_spike": ["time [ms]"],
+    #               'average_AP_width': ['time [ms]'],
+    #               "accommodation_index": ["accommodation index"],
+    #               "average_AP_overshoot": ["voltage [mV]"],
+    #               "average_AHP_depth": ["voltage [mV]"],
+    #               "new": ["new"]
+    #              }
+
+    #     self.assertEqual(features.labels, labels)
+
+    # def test_features_to_run_all(self):
+    #     features = SpikingFeatures(features_to_run="all")
+    #     self.assertEqual(set(features.features_to_run), set(self.implemented_features))
+
+
+    # def test_adaptive_all(self):
+    #     features = SpikingFeatures(adaptive="all")
+    #     self.assertEqual(set(features.adaptive), set(self.implemented_features))
+
+
+    # def test_implemented_features(self):
+    #     self.assertEqual(set(self.features.implemented_features()), set(self.implemented_features))
+
+
+    # def test_nr_spikes(self):
+    #     self.assertEqual(self.features.nr_spikes(self.t, self.spikes), (None, 12))
+
+
+    # def test_time_before_first_spike(self):
+    #     self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes)[1], 10)
+
+
+    # def test_time_before_first_spikeNone(self):
+    #     self.features.spikes.nr_spikes = 0
+    #     self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes), (None, None))
+
+
+    # def test_spike_rate(self):
+    #     self.assertEqual(self.features.spike_rate(self.t, self.spikes), (None, 0.12))
+
+
+    # def test_spike_rateNone(self):
+    #     self.features.spikes.nr_spikes = -1
+    #     self.assertEqual(self.features.spike_rate(self.t, self.spikes), (None, None))
+
+
+    # def test_average_AP_overshoot(self):
+    #     self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes), (None, 30))
+
+
+    # def test_average_AP_overshootNone(self):
+    #     self.features.spikes.nr_spikes = 0
+    #     self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes), (None, None))
+
+
+    # # TODO Find correct test, this is a rough bound only
+    # def test_average_AHP_depth(self):
+    #     self.features.average_AHP_depth(self.t, self.spikes)
+    #     self.assertLess(self.features.average_AHP_depth(self.t, self.spikes)[1], 0)
+
+
+    # def test_average_AHP_depthNone(self):
+    #     self.features.spikes.nr_spikes = 0
+    #     self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes), (None, None))
+
+    # # TODO Find correct test, this is a rough bound only
+    # def test_average_AP_width(self):
+    #     self.assertLess(self.features.average_AP_width(self.t, self.spikes)[1], 5)
+
+
+    # def test_average_AP_widthNone(self):
+    #     self.features.spikes.nr_spikes = 0
+    #     self.assertEqual(self.features.average_AP_width(self.t, self.spikes), (None, None))
+
+
+    # # TODO Find correct test, this is a rough bound only
+    # def test_accommodation_index(self):
+    #     self.assertIsNotNone(self.features.accommodation_index(self.t, self.spikes)[1])
+
+
+    # def test_accommodation_indexNone(self):
+    #     self.features.spikes.nr_spikes = 0
+    #     self.assertEqual(self.features.accommodation_index(self.t, self.spikes), (None, None))
+
+
+    # def test_calculate_all_features(self):
+    #     result = self.features.calculate_all_features(self.t, self.spikes)
+    #     self.assertEqual(set(result.keys()),
+    #                      set(self.implemented_features))
+
 
 
 

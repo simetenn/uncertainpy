@@ -3,16 +3,17 @@ import chaospy as cp
 
 from coffee_cup_function import coffee_cup
 
-dist_u_env = cp.Uniform(15, 25)
-dist_kappa = cp.Uniform(-0.075, -0.025)
+T_0_dist = cp.Uniform(90, 100)
+T_env_dist = cp.Uniform(15, 25)
+kappa_dist = cp.Uniform(-0.075, -0.025)
 
-parameterlist = [["kappa", -0.05, dist_kappa],
-                 ["u_env", 20, dist_u_env]]
+parameterlist = [["kappa", -0.05, kappa_dist],
+                 ["T_env", 20, T_env_dist],
+                 ["T_0", 95, None]]
 
 parameters = un.Parameters(parameterlist)
 
-
-model = un.Model(coffee_cup, labels=["time [s]", "Temperature [C]"])
+model = un.Model(coffee_cup, labels=["Time [s]", "Temperature [C]"])
 
 uncertainty = un.UncertaintyEstimation(model=model,
                                        parameters=parameters,

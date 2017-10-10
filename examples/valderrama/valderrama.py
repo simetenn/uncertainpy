@@ -10,12 +10,12 @@ class Valderrama(Model):
     """
     def __init__(self):
         Model.__init__(self,
-                       labels=["time [ms]", "voltage [mv]"])
+                       labels=["Time [ms]", "Membrane potential [mV]"])
 
 
         ## HH Parameters
-        self.V_rest = -10   # mV
-        self.Cm = 1         # uF/cm**2
+        self.V_0 = -10   # mV
+        self.C_m = 1         # uF/cm**2
         self.gbar_Na = 120  # mS/cm**2
         self.gbar_K = 36    # mS/cm**2
         self.gbar_l = 0.3   # mS/cm**2
@@ -23,9 +23,9 @@ class Valderrama(Model):
         self.E_K = -12      # mV
         self.E_l = 10.6     # mV
 
-        self.m0 = 0.0011    # unitless
-        self.n0 = 0.0003    # unitless
-        self.h0 = 0.9998    # unitless
+        self.m_0 = 0.0011    # unitless
+        self.n_0 = 0.0003    # unitless
+        self.h_0 = 0.9998    # unitless
 
         ## setup parameters and state variables
         self.I_value = 150     # mA
@@ -94,7 +94,7 @@ class Valderrama(Model):
         dhdt = self.h_f(h, V)
         dndt = self.n_f(n, V)
 
-        dVdt = (self.I(t) - g_Na*(V - self.E_Na) - g_K*(V - self.E_K) - g_l*(V - self.E_l))/self.Cm
+        dVdt = (self.I(t) - g_Na*(V - self.E_Na) - g_K*(V - self.E_K) - g_l*(V - self.E_l))/self.C_m
 
         return [dVdt, dhdt, dmdt, dndt]
 
@@ -102,11 +102,11 @@ class Valderrama(Model):
     def run(self, **parameters):
         self.set_parameters(**parameters)
 
-        # self.h0 = self.h_inf(self.V_rest)
-        # self.m0 = self.m_inf(self.V_rest)
-        # self.n0 = self.n_inf(self.V_rest)
+        # self.h_0 = self.h_inf(self.V_0)
+        # self.m_0 = self.m_inf(self.V_0)
+        # self.n_0 = self.n_inf(self.V_0)
 
-        initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
+        initial_conditions = [self.V_0, self.h_0, self.m_0, self.n_0]
 
 
         # solver = odespy.RK4(self.dXdt)
