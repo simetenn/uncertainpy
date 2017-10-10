@@ -14,9 +14,6 @@ parameterlist = [["cap", 1.1, None],
                  ["gahp", 6.4e-5, None],
                  ["gcat", 1.17e-5, None]]
 
-parameterlist = [["cap", 1.1, None],
-                 ["Rm", 22000, None],
-                 ["Vrest", -63, None]]
 
 parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.uniform(0.05))
