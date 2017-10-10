@@ -106,19 +106,19 @@ class Parallel(Base):
             .. code-block:: Python
 
                 result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature0d": {"U": 1,
-                                         "t": np.nan},
+                                        "t": np.nan},
                           "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                              "interpolation": scipy interpolation object},
                           "feature_invalid": {"U": np.nan,
-                                             "t": np.nan}}
+                                              "t": np.nan}}
 
 
         Notes
@@ -145,8 +145,6 @@ class Parallel(Base):
                         raise AttributeError("{} does not return any t values.".format(feature)
                                              + " Unable to perform interpolation.")
 
-                    print result[feature]["t"]
-                    print result[feature]["U"]
                     interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["t"],
                                                                       result[feature]["U"],
                                                                       k=3)
@@ -324,7 +322,9 @@ class Parallel(Base):
         """
         U_list = np.array(U).tolist()
 
-        if U is None or len(U) == 0:
+        if U is None:
+            U_list = np.nan
+        elif hasattr(U, "__iter__") and len(U) == 0:
             U_list = np.nan
         else:
             # To handle the special case of 0d arrays,

@@ -20,6 +20,8 @@ class EfelFeatures(GeneralFeatures):
         if not prerequisites:
             raise ImportError("Efel features require: efel")
 
+        efel.reset()
+
         # implemented_labels = {"nr_spikes": ["number of spikes"],
         #                       "spike_rate": ["spike rate [Hz]"],
         #                       "time_before_first_spike": ["time [ms]"],
@@ -43,10 +45,9 @@ class EfelFeatures(GeneralFeatures):
                 if feature_name == "decay_time_constant_after_stim":
                     return None, None
 
-                result = efel.getFeatureValues([trace], [feature_name], raise_warnings=False)
+                result = efel.getMeanFeatureValues([trace], [feature_name], raise_warnings=False)
 
-
-                return t, result[0][feature_name]
+                return None, result[0][feature_name]
 
             function.__name__ = feature_name
             return function

@@ -25,11 +25,8 @@ model = un.NeuronModel(path=path, adaptive=True)
 
 # features = un.SpikingFeatures(features_to_run="all")
 
-features = un.EfelFeatures(features_to_run="Spikecount")
+features = un.EfelFeatures(features_to_run="all")
 
-print features.features_to_run
-import sys
-sys.exit(1)
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features,
