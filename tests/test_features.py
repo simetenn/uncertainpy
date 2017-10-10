@@ -2,6 +2,7 @@ import unittest
 import os
 import neo
 import elephant
+import efel
 
 import numpy as np
 import quantities as pq
@@ -344,13 +345,10 @@ class TestEfelFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        t = np.load(os.path.join(folder, "data/t_test.npy"))
-        U = np.load(os.path.join(folder, "data/U_test.npy"))
+        self.t = np.load(os.path.join(folder, "data/t_test.npy"))
+        self.U = np.load(os.path.join(folder, "data/U_test.npy"))
 
-        # self.implemented_features = ["nr_spikes", "time_before_first_spike",
-        #                              "spike_rate", "average_AP_overshoot",
-        #                              "average_AHP_depth", "average_AP_width",
-        #                              "accommodation_index"]
+        self.implemented_features = efel.getFeatureNames()
 
         # self.implemented_labels = {"nr_spikes": ["number of spikes"],
         #                            "spike_rate": ["spike rate [Hz]"],
@@ -362,7 +360,6 @@ class TestEfelFeatures(unittest.TestCase):
         #                           }
 
         self.features = EfelFeatures()
-        print self.features.implemented_features()
 
         # self.t, self.spikes = self.features.preprocess(t, U)
 
@@ -393,9 +390,9 @@ class TestEfelFeatures(unittest.TestCase):
 
     #     self.assertEqual(features.labels, labels)
 
-    # def test_features_to_run_all(self):
-    #     features = SpikingFeatures(features_to_run="all")
-    #     self.assertEqual(set(features.features_to_run), set(self.implemented_features))
+    def test_features_to_run_all(self):
+        features = EfelFeatures(features_to_run="all")
+        self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
     # def test_adaptive_all(self):
@@ -403,13 +400,18 @@ class TestEfelFeatures(unittest.TestCase):
     #     self.assertEqual(set(features.adaptive), set(self.implemented_features))
 
 
-    # def test_implemented_features(self):
-    #     self.assertEqual(set(self.features.implemented_features()), set(self.implemented_features))
+    def test_implemented_features(self):
+        self.assertEqual(set(self.features.implemented_features()), set(self.implemented_features))
 
 
-    # def test_nr_spikes(self):
-    #     self.assertEqual(self.features.nr_spikes(self.t, self.spikes), (None, 12))
+    def test_Spikecount(self):
+        self.features.Spikecount(self.t, self.U)
+        print self.features.Spikecount(self.t, self.U)
+        self.assertEqual(self.features.Spikecount(self.t, self.U), (None, 12))
 
+    # def test_average_AHP_depthNone(self):
+    #     self.features.spikes.nr_spikes = 0
+    #     self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes), (None, None))
 
     # def test_time_before_first_spike(self):
     #     self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes)[1], 10)
