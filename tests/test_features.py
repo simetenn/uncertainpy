@@ -362,6 +362,7 @@ class TestEfelFeatures(unittest.TestCase):
         #                           }
 
         self.features = EfelFeatures()
+        print self.features.implemented_features()
 
         # self.t, self.spikes = self.features.preprocess(t, U)
 
