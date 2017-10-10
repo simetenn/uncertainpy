@@ -83,7 +83,7 @@ class UncertaintyEstimation(ParameterBase):
 
         self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
                                         figureformat=figureformat,
-                                        verbose_level="verbose_level",
+                                        verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
 
 
