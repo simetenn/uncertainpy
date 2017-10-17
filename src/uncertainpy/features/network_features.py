@@ -29,20 +29,19 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
         unit_string = str(units).split()[1]
 
-        implemented_labels = {"cv": ["neuron nr", "coefficient of variation"],
-                              "mean_cv": ["mean coefficient of variation"],
-                              "mean_isi": ["neuron nr",
-                                           "mean interspike interval [{}]".format(unit_string)],
-                              "lv": ["neuron nr", "local variation"],
-                              "mean_firing_rate": ["neuron nr", "rate [Hz]"],
-                              "instantaneous_rate": ["time [ms]", "neuron nr", "rate [Hz]"],
-                              "fanofactor": ["fanofactor"],
-                              "van_rossum_dist": ["neuron nr", "neuron nr", ""],
-                              "victor_purpura_dist": ["neuron nr", "neuron nr", ""],
-                              "binned_isi": ["interspike interval [{}]".format(unit_string),
-                                             "neuron nr", "count"],
-                              "corrcoef": ["neuron nr", "neuron nr", ""],
-                              "covariance": ["neuron nr", "neuron nr", ""]
+        implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
+                              "mean_cv": ["Mean coefficient of variation"],
+                              "mean_isi": ["Mean interspike interval [{}]".format(unit_string)],
+                              "lv": ["Neuron nr", "Local variation"],
+                              "mean_firing_rate": ["Neuron nr", "Rate [Hz]"],
+                              "instantaneous_rate": ["Time [ms]", "Neuron nr", "Rate [Hz]"],
+                              "fanofactor": ["Fanofactor"],
+                              "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
+                              "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
+                              "binned_isi": ["Interspike interval [{}]".format(unit_string),
+                                             "Neuron nr", "Count"],
+                              "corrcoef": ["Neuron nr", "Neuron nr", ""],
+                              "covariance": ["Neuron nr", "Neuron nr", ""]
                              }
 
         implemented_labels.update(labels)

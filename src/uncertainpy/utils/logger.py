@@ -7,7 +7,7 @@ class MyFormatter(logging.Formatter):
 
     debug_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
     info_format = "%(message)s"
-    warning_format = "%(levelname)s - %(module)s - %(message)s"
+    warning_format = "%(levelname)s - %(message)s"
     error_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
 
     debug_fmt = logging.Formatter(debug_format)

@@ -642,6 +642,7 @@ def prettyBar(x, error=None,
               style="seaborn-dark",
               palette="hls",
               nr_colors=6,
+              align="center",
               error_kw={"ecolor": axis_grey,
                         "lw": 2,
                         "capsize": 10,
@@ -759,7 +760,7 @@ ax : matplotlib ax Object
         colors = sns.color_palette()[color]
 
     ax.bar(index, x, yerr=error, color=colors, width=width,
-           align="center", linewidth=linewidth, error_kw=error_kw,
+           align=align, linewidth=linewidth, error_kw=error_kw,
            edgecolor=axis_grey, **kwargs)
 
     ax.set_xticks(xticks)
