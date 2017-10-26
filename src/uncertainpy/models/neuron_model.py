@@ -159,7 +159,7 @@ class NeuronModel(Model):
         t : array
             Time values of the model.
         U : array
-            Voltage of the neuron. Note that `U` myst either be regular
+            Voltage of the neuron. Note that `U` must either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
         """

@@ -33,6 +33,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                               "mean_cv": ["Mean coefficient of variation"],
                               "mean_isi": ["Mean interspike interval [{}]".format(unit_string)],
                               "lv": ["Neuron nr", "Local variation"],
+                              "mean_lv": ["Mean local variation"],
                               "mean_firing_rate": ["Neuron nr", "Rate [Hz]"],
                               "instantaneous_rate": ["Time [ms]", "Neuron nr", "Rate [Hz]"],
                               "fanofactor": ["Fanofactor"],
@@ -111,11 +112,25 @@ class NetworkFeatures(GeneralNetworkFeatures):
             if len(isi) > 1:
                 lv.append(elephant.statistics.lv(isi))
             else:
-                # return None, None
                 lv.append(None)
 
         return None, lv
 
+
+
+    def mean_lv(self, t, spiketrains):
+        """
+        Calculate the mean local variation LV for a sequence of time intervals between events.
+        """
+        lv = []
+        for spiketrain in spiketrains:
+            isi = elephant.statistics.isi(spiketrain)
+            if len(isi) > 1:
+                lv.append(elephant.statistics.lv(isi))
+            else:
+                lv.append(None)
+
+        return None, np.mean(lv)
 
     def mean_firing_rate(self, t, spiketrains):
         mean_firing_rates = []
