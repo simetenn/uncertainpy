@@ -7,7 +7,7 @@ install:
   - source libs/travis-conda-scripts/scripts/config.sh
   - bash -ex libs/travis-conda-scripts/scripts/travis_install.sh
 before_script:
-  - pip install pytest pyyaml coverage codecov quantities numpy matplotlib scipy h5py
+  - pip install pytest pyyaml coverage codecov quantities numpy matplotlib scipy h5py xvfbwrapper
   - python setup.py install
 script:
   - python test.py --travis
