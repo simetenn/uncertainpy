@@ -16,15 +16,13 @@ if not platform.system() == "Linux":
     print("Warning: UncertainPy not tested for current Operating System")
 
 name = "uncertainpy"
-# virtual_enviroment = name
 
-uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "future", "h5py",
+uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                    "multiprocess", "seaborn", "numpy", "scipy"]
-# uncertainpy_req = ["chaospy", "numpy"]
 dependency_links = []
 
 extras_require={
-    'spike_features':  ["scipy"],
+    'spike_features':  ["scipy", "efel"],
     'network_features': ["elephant", "neo", "quantities"],
 }
 
@@ -65,8 +63,6 @@ extras_require={
 # cmdclass = {'install': CustomInstall,
 #             'develop': CustomDevelop}
 
-cmdclass = {}
-
 # if "-h" in sys.argv:
 #     print("""
 # Custom commandline arguments:
@@ -98,11 +94,11 @@ setup(name="uncertainpy",
       version="0.9",
       url="https://github.com/simetenn/uncertainpy",
       author="Simen Tennøe",
-      description='Uncertainty quantification',
+      description='Uncertainty quantification and sensitivity analysis',
       platforms='linux',
       packages=find_packages("src"),
       package_dir={"": "src", "uncertainpy.examples": "examples"},
-      cmdclass=cmdclass,
       install_requires=uncertainpy_req,
+      extras_require=extras_require,
       dependency_links=dependency_links
       )
