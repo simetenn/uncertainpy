@@ -10,8 +10,9 @@ before_script:
 
   - python setup.py install
 script:
-  - coverage run --source pylgn -m py.test -s
-  - coverage report
+  - python test.py --travis
+  # - coverage run --source pylgn -m py.test -s
+  # - coverage report
   - source libs/travis-conda-scripts/scripts/config.sh
   - bash -ex libs/travis-conda-scripts/scripts/build.sh
 # deploy:
