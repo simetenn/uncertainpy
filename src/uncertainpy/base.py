@@ -87,13 +87,10 @@ class Base(object):
 
     @features.setter
     def features(self, new_features):
-        if new_features is None:
-            self._features = GeneralFeatures(features_to_run=None)
-        elif isinstance(new_features, GeneralFeatures):
+        if isinstance(new_features, GeneralFeatures):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(features_to_run="all")
-            self._features.add_features(new_features)
+            self._features = GeneralFeatures(new_features=new_features)
 
 
     @property

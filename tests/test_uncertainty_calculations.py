@@ -319,7 +319,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
-        message = "WARNING - uncertainty_calculations - Feature: TestingModel1d only yields results for 2/3 parameter combinations"
+        message = "WARNING - Feature: TestingModel1d only yields results for 2/3 parameter combinations"
         self.assertTrue(message in open(logfile).read())
 
 

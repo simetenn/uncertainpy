@@ -101,7 +101,7 @@ class TestCoffeeCupModel(unittest.TestCase):
     def test_run(self):
         model = CoffeeCup()
 
-        parameters = {"kappa": -0.05, "u_env": 20}
+        parameters = {"kappa": -0.05, "T_env": 20}
         model.run(**parameters)
 
 
