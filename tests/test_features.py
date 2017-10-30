@@ -223,7 +223,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                    "accommodation_index": ["accommodation index"],
                                    "average_AP_overshoot": ["voltage [mV]"],
                                    "average_AHP_depth": ["voltage [mV]"],
-                                   "average_AP_width": ["time [ms]"]
+                                   "average_AP_width": ["time [ms]"],
                                   }
 
         self.features = SpikingFeatures()
@@ -402,8 +402,10 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_Spikecount(self):
-        self.features.Spikecount(self.t, self.U)
-        self.assertEqual(self.features.Spikecount(self.t, self.U), (self.t, 12))
+        t, U = self.features.Spikecount(self.t, self.U)
+
+        self.assertIsNone(t)
+        self.assertEqual(U, 12)
 
 
     def test_calculate_all_features(self):
@@ -480,7 +482,7 @@ class TestNetworkFeatures(unittest.TestCase):
                                      "mean_isi", "lv", "mean_firing_rate",
                                      "fanofactor", "instantaneous_rate",
                                      "van_rossum_dist", "victor_purpura_dist",
-                                     "corrcoef", "covariance"]
+                                     "corrcoef", "covariance", "mean_lv"]
 
 
 
