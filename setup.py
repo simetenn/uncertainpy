@@ -18,11 +18,14 @@ uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                    "multiprocess", "numpy", "scipy", "seaborn"]
 
 
-extras_require={
-    'spike_features':  ["scipy", "efel"],
+extras_require = {
+    'spike_features':  ["efel"],
     'network_features': ["elephant", "neo", "quantities"],
 }
 
+anaconda_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
+                "multiprocess", "numpy", "scipy", "seaborn",
+                "efel", "elephant",  "neo", "quantities"]
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name="uncertainpy",
@@ -33,6 +36,6 @@ setup(name="uncertainpy",
       platforms='linux',
       packages=find_packages("src"),
       package_dir={"": "src", "uncertainpy.examples": "examples", "uncertainpy.tests": "tests",},
-      install_requires=uncertainpy_req,
+      install_requires=anaconda_req,
       extras_require=extras_require,
       )
