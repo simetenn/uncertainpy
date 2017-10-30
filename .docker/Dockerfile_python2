@@ -75,7 +75,7 @@ RUN mkdir $NEST; \
     make; make install;
 
 
-RUN pip install nrnutils
+# RUN pip install nrnutils
 
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
@@ -84,7 +84,7 @@ RUN conda install libgcc
 
 
 # Install uncertainpy dependencies
-
+RUN apt-get update --fix-missing
 RUN apt-get -y install texlive-latex-base texlive-latex-extra # texlive-fonts-recommended
 RUN apt-get -y install dvipng
 RUN apt-get -y install Xvfb
