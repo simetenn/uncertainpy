@@ -115,8 +115,9 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
+
         self.assertEqual(self.runmodel.features.features_to_run,
-                         ["feature_function"])
+                         [])
 
 
     def test_feature_functions(self):
@@ -153,7 +154,7 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(U, "U2")
 
         self.assertEqual(self.runmodel.features.features_to_run,
-                         ["feature_function", "feature_function2"])
+                         [])
 
 
     def test_feature_functions_base(self):
