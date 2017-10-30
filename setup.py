@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import platform
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
     print("Setuptools is needed to install all dependencies")
     print("Setuptools: https://pypi.python.org/pypi/setuptools")
 
+import platform
 
 if not platform.system() == "Linux":
     print("Warning: UncertainPy not tested for current operating system")
@@ -17,11 +16,11 @@ name = "uncertainpy"
 uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                    "multiprocess", "numpy", "scipy", "seaborn"]
 
-
 extras_require = {
     'spike_features':  ["efel"],
     'network_features': ["elephant", "neo", "quantities"],
 }
+
 
 anaconda_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                 "multiprocess", "numpy", "scipy", "seaborn",

@@ -9,9 +9,10 @@ install:
   - bash -ex libs/travis-conda-scripts/scripts/travis_install.sh
 before_script:
   - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
+  - pip install coverage
 script:
   - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.travis/travis.sh
-  # - coverage run --source pylgn -m py.test -s
+  # - coverage run --source uncertainpy -m py.test -s
   # - coverage report
   # - source libs/travis-conda-scripts/scripts/config.sh
   # - bash -ex libs/travis-conda-scripts/scripts/build.sh
