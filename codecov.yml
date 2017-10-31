@@ -1,0 +1,6 @@
+ignore:
+    - "uncertainpy/plotting/plotUncertaintyCompare.py"
+    - "uncertainpy/utils/collect_by_parameter.py"
+    - "uncertainpy/utils/memory.py"
+    - "uncertainpy/evaluate_node_function.py"
+    - "uncertainpy/exploration.py"
