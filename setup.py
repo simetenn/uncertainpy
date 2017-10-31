@@ -21,12 +21,15 @@ extras_require = {
     'network_features': ["elephant", "neo", "quantities"],
 }
 
-
 anaconda_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                 "multiprocess", "numpy", "scipy", "seaborn",
                 "efel", "elephant",  "neo", "quantities"]
 
 long_description = open("README.md").read()
+
+# Remove badges from the description
+long_description = "\n".join(long_description.split("\n")[4:])
+
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name=name,

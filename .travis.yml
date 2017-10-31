@@ -21,6 +21,7 @@ deploy:
     secure: "IwuT72yh8/mbvI02nVGX26vcoB76S2oAvNaA6H/fAxySTw564BrqmS6Rv6LgosYAJ41mcXtczX8AJgXbZot03hvV0fZmVRUKk7gnmzrsIYCj3GjCVdFYNPegWqo2amHe041ndH6GklzHXSPSeuIhocGkRZxkNH4+hYHymRw7M1DFNUvav57S1Kqu48QWwwqmJ6JVITCRw8WHDRZPpvRZVvO9OSKTYdNIPoBaBSrBzE+YbzK25kILZx4MDCO3N1eMmgzgtArcGEK7PQ9mZsB0+dOWzJTy+HOYDJudHFI0j8hjBHAgRYOHlfGlaYXkmlq0xQ2TDsYtJgGAIQLKpjyUut3a5fedQn33BC08h21bWZ2b0nUklGjK23SWODWryS6z/NufjtenALb3vUOLhAPx9aLWvJCuIA8bYUOjJdeXEgwMGP/VFDGGhabrNyYj2NpQQg1ZPbldp1e327hQfg38cCeHHsemlMdnLLpZHP5xVfx7pEoNhwqN8F78iAgojfPyXIt1v0m1ibZaZdAqR+4g8LxjpgSkMSCfgLY+IMrwsmAvXnmaGDW1zkmgaPQlN+0L41N0w4QJXQtTzLiw+pcwHiZLznqgY7BNz8iEbssrWtGJVnxZAYoXAWV5+LNUuvfW0yy20Uh4xDqvdykxnP9CmGHOmhuUZ5fg6nRQAv2n/q0="
   server: https://test.pypi.org/legacy/
   distributions: "sdist bdist_wheel"
+  skip_cleanup: true
 # deploy:
 #   - provider: script
 #     skip_cleanup: true
