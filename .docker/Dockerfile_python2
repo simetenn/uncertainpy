@@ -80,6 +80,10 @@ RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
 RUN conda install libgcc
 
 
+# Install test coverage dependencies
+RUN conda install -c anaconda coverage
+RUN conda install -c conda-forge codecov
+
 # Install uncertainpy dependencies
 RUN apt-get update --fix-missing
 RUN apt-get -y install texlive-latex-base texlive-latex-extra # texlive-fonts-recommended

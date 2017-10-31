@@ -9,11 +9,10 @@ install:
   - bash -ex libs/travis-conda-scripts/scripts/travis_install.sh
 before_script:
   - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
-  - pip install coverage
+  - pip install coverage codecov
 script:
-  - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.travis/travis.sh
-  # - coverage run --source uncertainpy -m py.test -s
-  # - coverage report
+  - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
+  - codecov --token=504e6f55-2e64-481b-88fe-8da7201c462e
   # - source libs/travis-conda-scripts/scripts/config.sh
   # - bash -ex libs/travis-conda-scripts/scripts/build.sh
 # deploy:
