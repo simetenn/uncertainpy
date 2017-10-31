@@ -145,7 +145,8 @@ test_prerequisites = unittest.TestSuite([test_utils,
                                          test_features,
                                          test_model,
                                          test_data,
-                                         test_base])
+                                         test_base,
+                                         test_parallel])
 
 
 test_basic = unittest.TestSuite([test_prerequisites,
