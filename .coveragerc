@@ -2,9 +2,12 @@
 [run]
 source = uncertainpy
 omit = uncertainpy/tests/*
-       # Runs in a subprocess and is tested in test_RunModel,
-       # but is not caught by coverage.py
-       uncertainpy/models/run_model.py 
+       # Old files, not removed from repo yet
+       uncertainpy/plotting/plotUncertaintyCompare.py
+       uncertainpy/utils/collect_by_parameter.py
+       uncertainpy/utils/memory.py
+       uncertainpy/evaluate_node_function.py
+       uncertainpy/exploration.py
 
 
 [report]
