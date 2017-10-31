@@ -30,7 +30,7 @@ long_description = open("README.md").read()
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name=name,
-      version="0.9.2",
+      version="0.9.3",
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
     #   description='Uncertainty quantification and sensitivity analysis',
