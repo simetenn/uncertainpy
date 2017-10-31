@@ -33,7 +33,7 @@ long_description = "\n".join(long_description.split("\n")[4:])
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name=name,
-      version="0.9.3",
+      version="0.9.4",
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
     #   description='Uncertainty quantification and sensitivity analysis',
