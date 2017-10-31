@@ -75,12 +75,9 @@ RUN mkdir $NEST; \
     make; make install;
 
 
-# RUN pip install nrnutils
-
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
 RUN conda install libgcc
-
 
 
 # Install uncertainpy dependencies
