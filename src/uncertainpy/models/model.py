@@ -127,7 +127,7 @@ class Model(object):
     @run.setter
     def run(self, new_run_function):
         if not callable(new_run_function):
-            raise TypeError("run function must be callable")
+            raise TypeError("run() function must be callable")
 
         self._run = new_run_function
         self.name = new_run_function.__name__
@@ -147,7 +147,7 @@ class Model(object):
 
 
     def _run(self, **parameters):
-        raise NotImplementedError("No run() method implemented in {class_name}".format(class_name=self.__class__.__name__))
+        raise NotImplementedError("No run() method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
 
 
     def postprocess(self, t, U):
