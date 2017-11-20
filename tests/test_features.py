@@ -43,6 +43,17 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(U, self.U))
 
 
+    def test_preprocess_args(self):
+        features = GeneralFeatures()
+        t, U, a, b = features.preprocess(self.t, self.U, 1, 2)
+
+        self.assertTrue(np.array_equal(t, self.t))
+        self.assertTrue(np.array_equal(U, self.U))
+        self.assertEqual(a, 1)
+        self.assertEqual(b, 2)
+
+
+
     def test_calculate_featureNotImplemented(self):
         with self.assertRaises(AttributeError):
             self.features.calculate_feature("not_in_class", self.t, self.U)
