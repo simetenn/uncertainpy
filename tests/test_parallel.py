@@ -14,6 +14,10 @@ from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
 from .testing_classes import TestingModelNoTime
 from .testing_classes import TestingModelAdaptive
+from .testing_classes import PostprocessErrorNumpy
+from .testing_classes import PostprocessErrorOne
+from .testing_classes import PostprocessErrorValue
+
 
 
 class TestParallel(unittest.TestCase):
@@ -280,6 +284,27 @@ class TestParallel(unittest.TestCase):
 
         with Xvfb() as xvfb:
             parallel.run(model_parameters)
+
+
+    def test_postprocess_error_numpy(self):
+        parallel = Parallel(model=PostprocessErrorNumpy())
+
+        with self.assertRaises(ValueError):
+            parallel.run(self.model_parameters)
+
+
+    def test_postprocess_error_one(self):
+        parallel = Parallel(model=PostprocessErrorOne())
+
+        with self.assertRaises(TypeError):
+            parallel.run(self.model_parameters)
+
+
+    def test_postprocess_error_value(self):
+        parallel = Parallel(model=PostprocessErrorValue())
+
+        with self.assertRaises(ValueError):
+            parallel.run(self.model_parameters)
 
 
     def test_none_to_nan(self):

@@ -226,6 +226,7 @@ class Parallel(Base):
         try:
             model_result = self.model.run(**model_parameters)
 
+            # TODO is this check correct?
             if isinstance(model_result, np.ndarray):
                 raise ValueError("model.run() returns an numpy array. This indicates only t or U is returned. model.run() or model function must return t and U (return t, U | return None, U)")
 
@@ -239,24 +240,14 @@ class Parallel(Base):
                 error.args = error.args + (msg,)
                 raise
 
-            # if U is None:
-            #     raise ValueError("U has not been calculated")
-
             results = {}
-
-            # results[self.model.name] = {"t": np.array(t_postprocess),
-            #                             "U": np.array(U_postprocess)}
 
             if not self.model.ignore:
                 postprocess_result = self.model.postprocess(*model_result)
 
-                # TODO is this check correct?
-                if isinstance(postprocess_result, np.ndarray):
-                    raise ValueError("model.postprocess_result() returns an numpy array. This indicates only t or U is returned. model.postprocess() must return t and U (return t, U | return None, U)")
-
                 try:
-                    t_postprocess, U_postprocess = postprocess_result[:2]
-                except ValueError as error:
+                    t_postprocess, U_postprocess = postprocess_result
+                except (ValueError, TypeError) as error:
                     msg = "model.postprocess() must return t and U (return t, U | return None, U)"
                     if not error.args:
                         error.args = ("",)

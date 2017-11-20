@@ -37,6 +37,7 @@ class TestingModel1d(Model):
 
 
 
+
 class TestingModel2d(Model):
     def __init__(self):
         Model.__init__(self, labels=["x", "y", "z"])
@@ -116,3 +117,49 @@ class TestingModelIncomplete(Model):
 
     def run(self, a=1, b=2):
         return [1, 2, 3], [a, None, b]
+
+
+
+class PostprocessErrorNumpy(Model):
+    def __init__(self):
+        Model.__init__(self, labels=["x", "y"])
+
+    def run(self, a=1, b=2):
+
+        t = np.arange(0, 10)
+        U = np.arange(0, 10) + a + b
+
+        return t, U
+
+    def postprocess(self, t, U):
+        return np.linspace(0, 10, 100)
+
+
+class PostprocessErrorOne(Model):
+    def __init__(self):
+        Model.__init__(self, labels=["x", "y"])
+
+    def run(self, a=1, b=2):
+
+        t = np.arange(0, 10)
+        U = np.arange(0, 10) + a + b
+
+        return t, U
+
+    def postprocess(self, t, U):
+        return 1
+
+
+class PostprocessErrorValue(Model):
+    def __init__(self):
+        Model.__init__(self, labels=["x", "y"])
+
+    def run(self, a=1, b=2):
+
+        t = np.arange(0, 10)
+        U = np.arange(0, 10) + a + b
+
+        return t, U
+
+    def postprocess(self, t, U):
+        return (1, 2, 3)
