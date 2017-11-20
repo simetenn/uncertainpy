@@ -7,8 +7,79 @@ import numpy as np
 from uncertainpy.utils import create_logger
 
 
-# TODO instead of a data object, could just a  h5py file have been used ?
+class Result(collections.MutableMapping):
+    def __init__(self,
+                 name,
+                 U=None,
+                 t=None,
+                 Var=None,
+                 p_05=None,
+                 p_95=None,
+                 sensitivity_1=None,
+                 total_sensitivity_1=None,
+                 sensitivity_t=None,
+                 total_sensitivity_t=None,
+                 labels=[]):
 
+        self.name = name
+        self.U = U
+        self.t = t
+        self.Var = Var
+        self.p_05 = p_05
+        self.p_95 = p_95
+        self.sensitivity_1 = sensitivity_1
+        self.total_sensitivity_1 = total_sensitivity_1
+        self.sensitivity_t = sensitivity_t
+        self.total_sensitivity_t = total_sensitivity_t
+        self.labels = labels
+
+        self.built_in_data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                                    "sensitivity_1", "total_sensitivity_1",
+                                    "sensitivity_t", "total_sensitivity_t", "labels"]
+
+
+    def __getitem__(self, data_type):
+        return getattr(self, data_type)
+
+
+    def get_data_types(self):
+        data_types = []
+
+        for data_type in dir(self):
+            if data_type.startswith('__') and not callable(self[data_type]) and self[data_type] is not None:
+                data_types.append(data_type)
+
+        return data_types
+
+
+    def __setitem__(self, data_type, value):
+        if data_type not in self.built_in_data_types:
+            raise AttributeError("{} is not a supported attribute".format(data_type))
+
+        setattr(self, data_type, value)
+
+
+    def __iter__(self):
+        for data_type in self.built_in_data_types:
+            if self[data_type] is not None:
+                yield self[data_type]
+
+
+    def __delitem__(self, data_type):
+        if data_type not in self.built_in_data_types:
+            raise AttributeError("{} is not a supported attribute".format(data_type))
+
+        setattr(self, data_type, None)
+
+
+    def __len__(self):
+        return len(self.get_data_types())
+
+
+
+
+
+# TODO instead of a data object, could just a  h5py file have been used ?
 class Data(collections.MutableMapping):
     """
     Store data calculated from the uncertainty quantification.

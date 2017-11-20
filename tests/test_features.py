@@ -42,14 +42,15 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(t, self.t))
         self.assertTrue(np.array_equal(U, self.U))
 
+
     def test_calculate_featureNotImplemented(self):
         with self.assertRaises(AttributeError):
-            self.features.calculate_feature(self.t, self.U, "not_in_class")
+            self.features.calculate_feature("not_in_class", self.t, self.U)
 
 
     def test_calculate_featureUtilityMethod(self):
         with self.assertRaises(TypeError):
-            self.features.calculate_feature(self.t, self.U, "preprocess")
+            self.features.calculate_feature("preprocess", self.t, self.U)
 
 
     def test_implemented_features(self):
@@ -60,8 +61,8 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(self.features.calculate_all_features(self.t, self.U), {})
 
 
-    def test_calculate(self):
-        self.assertEqual(self.features.calculate(self.t, self.U), {})
+    # def test_calculate(self):
+    #     self.assertEqual(self.features.calculate(self.t, self.U), {})
 
 
     def test_intitFeatureList(self):
@@ -719,18 +720,18 @@ class TestTestingFeatures(unittest.TestCase):
                          set(self.implemented_features))
 
 
-    def test_calculate_none(self):
-        self.assertEqual(set(self.features.calculate(None, None).keys()),
-                         set(self.implemented_features))
+    # def test_calculate_none(self):
+    #     self.assertEqual(set(self.features.calculate(None, None).keys()),
+    #                      set(self.implemented_features))
 
-    def test_calculate_all(self):
-        with self.assertRaises(ValueError):
-            self.features.calculate(None, None, "all")
+    # def test_calculate_all(self):
+    #     with self.assertRaises(ValueError):
+    #         self.features.calculate(None, None, "all")
 
 
-    def test_calculate_one(self):
-        self.assertEqual(self.features.calculate(None, None, "feature2d").keys(),
-                         ["feature2d"])
+    # def test_calculate_one(self):
+    #     self.assertEqual(self.features.calculate(None, None, "feature2d").keys(),
+    #                      ["feature2d"])
 
     def test_feature_no_time(self):
         features = TestingFeatures(features_to_run="feature_no_time")

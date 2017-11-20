@@ -209,7 +209,7 @@ class RunModel(ParameterBase):
 
         results = self.regularize_nan_results(results)
 
-        # Check if features are adaptive withouth being specified as a adaptive
+        # Check if features are adaptive without being specified as a adaptive
         # TODO if the feature is adaptive, perform the complete interpolation here instead
         for feature in data:
             if self.is_adaptive(results, feature):

@@ -226,11 +226,12 @@ class Parallel(Base):
         try:
             model_result = self.model.run(**model_parameters)
 
+            if isinstance(model_result, np.ndarray):
+                raise ValueError("model.run() returns an numpy array. This indicates only t or U is returned. model.run() or model function must return t and U (return t, U | return None, U)")
+
+
             try:
-                # TODO allow for more parameters to be returned, but only the two first are used?
-                # use a dictionary for more values?
-                # t, U = model_result[:2]
-                t, U = model_result
+                t, U = model_result[:2]
             except ValueError as error:
                 msg = "model.run() or model function must return t and U (return t, U | return None, U)"
                 if not error.args:
@@ -247,19 +248,32 @@ class Parallel(Base):
             #                             "U": np.array(U_postprocess)}
 
             if not self.model.ignore:
-                t_postprocess, U_postprocess = self.model.postprocess(t, U)
+                postprocess_result = self.model.postprocess(*model_result)
+
+                # TODO is this check correct?
+                if isinstance(postprocess_result, np.ndarray):
+                    raise ValueError("model.postprocess_result() returns an numpy array. This indicates only t or U is returned. model.postprocess() must return t and U (return t, U | return None, U)")
+
+                try:
+                    t_postprocess, U_postprocess = postprocess_result[:2]
+                except ValueError as error:
+                    msg = "model.postprocess() must return t and U (return t, U | return None, U)"
+                    if not error.args:
+                        error.args = ("",)
+                    error.args = error.args + (msg,)
+                    raise
 
                 U_postprocess = self.none_to_nan(U_postprocess)
                 t_postprocess = self.none_to_nan(t_postprocess)
+
                 results[self.model.name] = {"t": t_postprocess,
                                             "U": U_postprocess}
 
 
 
             # Calculate features from the model results
-            t_preprocess, U_preprocess = self.features.preprocess(t, U)
-
-            feature_results = self.features.calculate_features(t_preprocess, U_preprocess)
+            feature_preprocess = self.features.preprocess(*model_result)
+            feature_results = self.features.calculate_features(*feature_preprocess)
 
             for feature in feature_results:
                 t_feature = feature_results[feature]["t"]

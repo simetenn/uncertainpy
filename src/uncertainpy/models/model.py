@@ -150,7 +150,7 @@ class Model(object):
         raise NotImplementedError("No run() method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
 
 
-    def postprocess(self, t, U):
+    def postprocess(self, *args):
         """
         Postprocessing of the time and results from the model.
 
@@ -193,4 +193,4 @@ class Model(object):
         but still need to postprocess the model results to perform the
         uncertainty quantification.
         """
-        return t, U
+        return args[:2]
