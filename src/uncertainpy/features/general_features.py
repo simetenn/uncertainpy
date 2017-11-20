@@ -204,23 +204,25 @@ class GeneralFeatures(object):
         if feature_name in self.utility_methods:
             raise TypeError("%s is a utility method")
 
-        return getattr(self, feature_name)(*args)
+        feature_result = getattr(self, feature_name)(*args)
+
+        try:
+            feature_t, feature_U = feature_result
+        except (ValueError, TypeError) as error:
+            msg = "feature {} must return t and U (return t, U | return None, U)".format(feature_name)
+            if not error.args:
+                error.args = ("",)
+            error.args = error.args + (msg,)
+            raise
+
+        return feature_result #getattr(self, feature_name)(*args)
 
 
 
     def calculate_features(self, *args):
         results = {}
         for feature in self.features_to_run:
-            feature_result = self.calculate_feature(feature, *args)
-
-            try:
-                feature_t, feature_U = feature_result
-            except ValueError as error:
-                msg = "feature {} must return t and U (return t, U | return None, U)".format(feature)
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            feature_t, feature_U = self.calculate_feature(feature, *args)
 
             results[feature] = {"t": feature_t, "U": feature_U}
 
@@ -230,16 +232,7 @@ class GeneralFeatures(object):
     def calculate_all_features(self, *args):
         results = {}
         for feature in self.implemented_features():
-            feature_result = self.calculate_feature(feature, *args)
-
-            try:
-                feature_t, feature_U = feature_result
-            except ValueError as error:
-                msg = "feature {} must return t and U (return t, U | return None, U)".format(feature)
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            feature_t, feature_U = self.calculate_feature(feature, *args)
 
             results[feature] = {"t": feature_t, "U": feature_U}
 

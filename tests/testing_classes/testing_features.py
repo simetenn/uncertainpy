@@ -42,3 +42,13 @@ class TestingFeatures(GeneralFeatures):
     def preprocess(self, t, U):
         self.is_preprocess_run = True
         return t, U
+
+    def feature_info(self, t, U, info):
+        self.info = info
+        return t, U
+
+    def feature_error_one(self):
+        return 1
+
+    def feature_error_value(self):
+        return (1, 2, 3)

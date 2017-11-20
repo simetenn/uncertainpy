@@ -53,7 +53,6 @@ class TestGeneralFeatures(unittest.TestCase):
         self.assertEqual(b, 2)
 
 
-
     def test_calculate_featureNotImplemented(self):
         with self.assertRaises(AttributeError):
             self.features.calculate_feature("not_in_class", self.t, self.U)
@@ -115,6 +114,8 @@ class TestGeneralFeatures(unittest.TestCase):
                          ["feature_function", "feature_function2"])
 
         self.assertEqual(features.labels, {"feature_function": ["x", "y"]})
+
+
 
     def test_intitAdaptiveList(self):
         features = GeneralFeatures(adaptive=None)
@@ -762,6 +763,23 @@ class TestTestingFeatures(unittest.TestCase):
         features = TestingFeatures(features_to_run="all")
         self.assertEqual(features.features_to_run.sort(), (self.implemented_features + ["feature_no_time"]).sort())
 
+
+
+
+    def test_calculate_feature_info(self):
+        t, U,= self.features.feature_info(1, 2, "info")
+
+        self.assertEqual(self.features.info, "info")
+
+
+    def test_calculate_feature_error_one(self):
+        with self.assertRaises(TypeError):
+            self.features.calculate_feature("feature_error_one")
+
+
+    def test_calculate_feature_error_one(self):
+        with self.assertRaises(ValueError):
+            self.features.calculate_feature("feature_error_value")
 
 
 if __name__ == "__main__":
