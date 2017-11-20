@@ -146,7 +146,7 @@ class Parameters(collections.MutableMapping):
     """
     A collection of parameters.
 
-    Has all standard dictionary methods, such as items, value, contains and similar implemented.
+    Has all standard dictionary methods implemented, such as items, value, contains and similar implemented.
 
     Parameters
     ----------
