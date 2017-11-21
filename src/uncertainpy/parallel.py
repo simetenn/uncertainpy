@@ -226,19 +226,7 @@ class Parallel(Base):
         try:
             model_result = self.model.run(**model_parameters)
 
-            # TODO is this check correct?
-            if isinstance(model_result, np.ndarray):
-                raise ValueError("model.run() returns an numpy array. This indicates only t or U is returned. model.run() or model function must return t and U (return t, U | return None, U)")
-
-
-            try:
-                t, U = model_result[:2]
-            except ValueError as error:
-                msg = "model.run() or model function must return t and U (return t, U | return None, U)"
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            self.model.validate_run_result(model_result)
 
             results = {}
 
@@ -259,7 +247,6 @@ class Parallel(Base):
 
                 results[self.model.name] = {"t": t_postprocess,
                                             "U": U_postprocess}
-
 
 
             # Calculate features from the model results
@@ -288,7 +275,6 @@ class Parallel(Base):
             traceback.print_exc()
             print("")
             raise e
-
 
 
     def none_to_nan(self, U):

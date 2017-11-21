@@ -1,3 +1,5 @@
+import numpy as np
+
 class Model(object):
     """
     Class for storing the model to perform uncertainty quantification on.
@@ -78,6 +80,9 @@ class Model(object):
             Result of the model. Note that `U` myst either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
+        *info, optional
+            Any number of info objects that is passed on to feature calculations.
+
 
 
         Raises
@@ -97,14 +102,18 @@ class Model(object):
 
         2. ``run(**parameters)`` must return the time values or equivalent (``t``)
         and the model result (``U``). If the model have no time values,
-        return None instead.
+        return None instead. Additionally, any number of objects can be returned
+        after ``t``, and ``U``. These info objects are passed on to feature
+        calculations, and are optional. It is assumed that the first two
+        arguments returned are ``t``, and ``U``.
 
         The model does not need to be implemented in Python, you can use any
         model/simulator as long as you are able to set the model parameters of
         the model from the run method Python and return the results from the
         model into the run method.
 
-        The model results ``t`` and ``U`` is used to calculate the features.
+        The model results ``t`` and ``U`` are used to calculate the features, as
+        well as the optional info objects returned.
 
         The model results must either be regular or be able to be interpolated, or
         be able to be postprocessed to a regular form or a form that can
@@ -115,7 +124,8 @@ class Model(object):
         If you want to calculate features directly from the original model results,
         but still need to postprocess the model results to perform the
         uncertainty quantification, you can implement the postprocessing in the
-        ``postprocess(t, U)`` method.
+        ``postprocess(t, U)`` method. the info objects are avaiable in
+        ``postprocess``.
 
         See also
         --------
@@ -146,11 +156,13 @@ class Model(object):
             setattr(self, parameter, parameters[parameter])
 
 
+
     def _run(self, **parameters):
         raise NotImplementedError("No run() method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
 
 
-    def postprocess(self, *args):
+
+    def postprocess(self, *model_result):
         """
         Postprocessing of the time and results from the model.
 
@@ -158,13 +170,22 @@ class Model(object):
         currently returned.
         If postprocessing is needed it should follow the below format.
 
-        Returns
-        -------
-        t : {None, numpy.nan, array_like}
-            Time values of the model, if no time values returns None or
-            numpy.nan.
-        U : array_like
-            Result of the model.
+        Parameters
+        ----------
+        *model_result
+            Variable length argument list. Is the arguments that ``run()``
+            returns. It should contain `t` and `U`,
+            and then any number of optional *info arguments.
+
+            t : {None, numpy.nan, array_like}
+                Time values of the model. If no time values it should return None or
+                numpy.nan.
+            U : array_like
+                Result of the model.
+            *info, optional
+                Any number of info objects that is passed on to feature
+                calculations and ``postprocess``.
+
 
         Returns
         -------
@@ -193,4 +214,58 @@ class Model(object):
         but still need to postprocess the model results to perform the
         uncertainty quantification.
         """
-        return args[:2]
+        return model_result[:2]
+
+
+    def validate_run_result(self, model_result):
+        """
+        Validate the results from ``run()``.
+
+        This method ensures the results from returns ``t``, ``U``, and optional
+        info objects.
+
+        Returns
+        -------
+        model_results
+            Any type of model results returned by ``run()``.
+
+        Raises
+        ------
+        ValueError
+            If the model result does not fit the requirements.
+        TypeError
+            If the model result does not fit the requirements.
+
+        Notes
+        -----
+        Tries to verify that at least, ``t`` and ``U`` are returned from ``run()``.
+        ``run()`` should return on the following format ``return t, U, *info``.
+
+        t : {None, numpy.nan, array_like}
+            Time values of the model. If no time values it should return None or
+            numpy.nan.
+        U : array_like
+            Result of the model.
+        *info, optional
+            Any number of info objects that is passed on to feature calculations.
+        """
+        if isinstance(model_result, np.ndarray):
+            raise ValueError("model.run() returns an numpy array. "
+                             "This indicates only t or U is returned. "
+                             "model.run() or model function must return "
+                             "t and U (return t, U | return None, U)")
+
+        if isinstance(model_result, str):
+            raise ValueError("model.run() returns an string. "
+                             "This indicates only t or U is returned. "
+                             "model.run() or model function must return "
+                             "t and U (return t, U | return None, U)")
+
+        try:
+            t, U = model_result[:2]
+        except (ValueError, TypeError) as error:
+            msg = "model.run() or model function must return t and U (return t, U | return None, U)"
+            if not error.args:
+                error.args = ("",)
+            error.args = error.args + (msg,)
+            raise
