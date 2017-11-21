@@ -108,6 +108,6 @@ class HodgkinHuxley(Model):
         U = X[:, 0]
 
          # Add info needed by certain spiking features and efel features
-        info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
+        info = {"stimulus_start": self.t[0], "stimulus_end": self.t[-1]}
 
-        return t, U, info
+        return self.t, U, info
