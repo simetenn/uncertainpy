@@ -307,7 +307,7 @@ class TestParallel(unittest.TestCase):
             parallel.run(self.model_parameters)
 
 
-    def test_feature_function(self):
+    def test_use_info_arg(self):
         def model_function(**model_parameters):
             return 1, 2, True
 
@@ -319,8 +319,21 @@ class TestParallel(unittest.TestCase):
         self.parallel.model = model_function
         self.parallel.features = feature_function
 
-        self.assertEqual(self.parallel.features.features_to_run,
-                         ["feature_function"])
+        self.parallel.run(self.model_parameters)
+
+
+    def test_use_info_arg_dict(self):
+        def model_function(**model_parameters):
+            return 1, 2, {"1": 1, "2": 2}
+
+        def feature_function(t, U, info):
+            self.assertEqual(info["1"], 1)
+            self.assertEqual(info["2"], 2)
+
+            return "t", "U"
+
+        self.parallel.model = model_function
+        self.parallel.features = feature_function
 
         self.parallel.run(self.model_parameters)
 

@@ -89,7 +89,6 @@ class TestModel(unittest.TestCase):
 
 
     def test_validate_run_result(self):
-
         self.model.validate_run_result(("t", "U"))
         self.model.validate_run_result((1, 2, 3))
         self.model.validate_run_result([1, 2, 3, 4])
