@@ -3,7 +3,6 @@ from uncertainpy import Model
 import numpy as np
 from scipy.integrate import odeint
 
-# The class name and file name must be the same
 class Valderrama(Model):
     """
 
@@ -14,8 +13,8 @@ class Valderrama(Model):
 
 
         ## HH Parameters
-        self.V_0 = -10   # mV
-        self.C_m = 1         # uF/cm**2
+        self.V_0 = -10      # mV
+        self.C_m = 1        # uF/cm**2
         self.gbar_Na = 120  # mS/cm**2
         self.gbar_K = 36    # mS/cm**2
         self.gbar_l = 0.3   # mS/cm**2
@@ -35,10 +34,6 @@ class Valderrama(Model):
 
 
     def I(self, t):
-        # if t >= 5 and t <= 30:
-        #     return self.I_value
-        # else:
-        #     return 0
         return self.I_value
 
     # K channel
@@ -102,23 +97,10 @@ class Valderrama(Model):
     def run(self, **parameters):
         self.set_parameters(**parameters)
 
-        # self.h_0 = self.h_inf(self.V_0)
-        # self.m_0 = self.m_inf(self.V_0)
-        # self.n_0 = self.n_inf(self.V_0)
-
         initial_conditions = [self.V_0, self.h_0, self.m_0, self.n_0]
-
-
-        # solver = odespy.RK4(self.dXdt)
-        # solver.set_initial_condition(initial_conditions)
-        # X, t = solver.solve(self.t)
 
         X = odeint(self.dXdt, initial_conditions, self.t)
         U = X[:, 0]
-
-        # t = t[t > 5]
-        # U = X[:, 0][t > 5]
-
 
         t = self.t
         U = X[:, 0]
@@ -126,7 +108,10 @@ class Valderrama(Model):
         U = U[t > 5]
         t = t[t > 5]
 
-        return t, U
+        # Add info needed by certain spiking features and efel features
+        info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
+
+        return t, U, info
 
 if __name__ == "__main__":
     model = Valderrama()

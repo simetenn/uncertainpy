@@ -56,13 +56,26 @@ class NeuronModel(Model):
                  path=None,
                  name=None,
                  adaptive=True,
-                 labels=["Time [ms]", "Membrane potential [mV]"]):
+                 labels=["Time [ms]", "Membrane potential [mV]"],
+                 stimulus_start=None,
+                 stimulus_end=None,
+                 **kwargs):
 
         super(NeuronModel, self).__init__(adaptive=adaptive,
                                           labels=labels)
 
         self.file = file
         self.path = path
+        self.info = {}
+
+        if stimulus_end:
+            self.info["stimulus_end"] = stimulus_end
+
+        if stimulus_start:
+            self.info["stimulus_start"] = stimulus_start
+
+        for key in kwargs:
+            self.info[key] = kwargs[key]
 
         if name:
             self.name = name
@@ -162,6 +175,10 @@ class NeuronModel(Model):
             Voltage of the neuron. Note that `U` must either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
+        info : dictionary
+            A dictionary with information needed by features.
+            Efel features require ``"stimulus_start"`` and ``"stimulus_end"``
+            as keys, while spiking_features require ``stimulus_start"``.
         """
 
         self.load_neuron()
@@ -176,7 +193,7 @@ class NeuronModel(Model):
         U = self._to_array(self.V)
         t = self._to_array(self.t)
 
-        return t, U
+        return t, U, self.info
 
 
 
@@ -194,10 +211,11 @@ class NeuronModel(Model):
             self.h(parameter + " = " + str(parameters[parameter]))
 
 
-    def postprocess(self, t, U):
+    def postprocess(self, t, U, info):
         """
         Postprocessing of the time and results from the Neuron model is
-        generally not needed. The direct model result is returned.
+        generally not needed. The direct model result except the info
+        is returned.
 
         Parameters
         ----------
@@ -205,6 +223,8 @@ class NeuronModel(Model):
             Time values of the Neuron model.
         U : array_like
             Voltage of the neuron.
+        info : dict
+            Dictionary with information needed by features.
 
         Returns
         -------

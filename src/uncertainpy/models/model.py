@@ -82,6 +82,10 @@ class Model(object):
             to be interpolated.
         *info, optional
             Any number of info objects that is passed on to feature calculations.
+            It is recommended to use a single dictionary with the information
+            stored as key-value pairs.
+            This is what the implemented features requires, as well as
+            require that specific keys to be present.
 
 
 
@@ -129,6 +133,7 @@ class Model(object):
 
         See also
         --------
+        uncertainpy.model.features : Features of models
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """
         return self._run
@@ -175,7 +180,7 @@ class Model(object):
         *model_result
             Variable length argument list. Is the arguments that ``run()``
             returns. It should contain `t` and `U`,
-            and then any number of optional *info arguments.
+            and then any number of optional `*info` arguments.
 
             t : {None, numpy.nan, array_like}
                 Time values of the model. If no time values it should return None or
@@ -183,9 +188,11 @@ class Model(object):
             U : array_like
                 Result of the model.
             *info, optional
-                Any number of info objects that is passed on to feature
-                calculations and ``postprocess``.
-
+                Any number of info objects that is passed on to feature calculations.
+                It is recommended to use a single dictionary with the information
+                stored as key-value pairs.
+                This is what the implemented features requires, as well as
+                require that specific keys to be present.
 
         Returns
         -------
@@ -248,6 +255,10 @@ class Model(object):
             Result of the model.
         *info, optional
             Any number of info objects that is passed on to feature calculations.
+            It is recommended to use a single dictionary with the information
+            stored as key-value pairs.
+            This is what the implemented features requires, as well as
+            require that specific keys to be present.
         """
         if isinstance(model_result, np.ndarray):
             raise ValueError("model.run() returns an numpy array. "

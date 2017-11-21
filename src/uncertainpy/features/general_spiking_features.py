@@ -26,12 +26,12 @@ class GeneralSpikingFeatures(GeneralFeatures):
 
 
 
-    def preprocess(self, t, U):
+    def preprocess(self, t, U, info):
         self.U = U
 
         self.calculate_spikes(t, U, thresh=self.thresh, extended_spikes=self.extended_spikes)
 
-        return t, self.spikes
+        return t, self.spikes, info
 
 
     def calculate_spikes(self, t, U, thresh=-30, extended_spikes=False):

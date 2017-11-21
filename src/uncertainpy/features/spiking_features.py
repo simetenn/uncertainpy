@@ -38,26 +38,26 @@ class SpikingFeatures(GeneralSpikingFeatures):
         self.labels = labels
 
 
-    def nr_spikes(self, t, spikes):
+    def nr_spikes(self, t, spikes, info):
         return None, spikes.nr_spikes
 
 
     # TODO get time of stimulus onset from model
-    def time_before_first_spike(self, t, spikes):
+    def time_before_first_spike(self, t, spikes, info):
         if spikes.nr_spikes <= 0:
             return None, None
 
         return None, spikes.spikes[0].t_spike
 
 
-    def spike_rate(self, t, spikes):
+    def spike_rate(self, t, spikes, info):
         if spikes.nr_spikes < 0:
             return None, None
 
         return None, spikes.nr_spikes/float(t[-1] - t[0])
 
 
-    def average_AP_overshoot(self, t, spikes):
+    def average_AP_overshoot(self, t, spikes, info):
         if spikes.nr_spikes <= 0:
             return None, None
 
@@ -67,7 +67,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         return None, sum_AP_overshoot/float(spikes.nr_spikes)
 
 
-    def average_AHP_depth(self, t, spikes):
+    def average_AHP_depth(self, t, spikes, info):
         if spikes.nr_spikes <= 0:
             return None, None
 
@@ -78,7 +78,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         return None, sum_AHP_depth/float(spikes.nr_spikes)
 
 
-    def average_AP_width(self, t, spikes):
+    def average_AP_width(self, t, spikes, info):
         if spikes.nr_spikes <= 0:
             return None, None
 
@@ -99,7 +99,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         return None, sum_AP_width/float(spikes.nr_spikes)
 
 
-    def accommodation_index(self, t, spikes):
+    def accommodation_index(self, t, spikes, info):
         N = spikes.nr_spikes
         if N <= 1:
             return None, None

@@ -49,7 +49,6 @@ class GeneralFeatures(object):
 
         self.utility_methods += new_utility_methods
 
-
         self.adaptive = adaptive
 
         if new_features is not None:
@@ -202,7 +201,7 @@ class GeneralFeatures(object):
 
     def calculate_feature(self, feature_name, *args):
         if feature_name in self.utility_methods:
-            raise TypeError("%s is a utility method")
+            raise TypeError("{} is a utility method".format(feature_name))
 
         feature_result = getattr(self, feature_name)(*args)
 
@@ -215,7 +214,7 @@ class GeneralFeatures(object):
             error.args = error.args + (msg,)
             raise
 
-        return feature_result #getattr(self, feature_name)(*args)
+        return feature_result
 
 
 

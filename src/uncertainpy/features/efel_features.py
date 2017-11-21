@@ -8,14 +8,17 @@ except ImportError:
 import types
 from .general_features import GeneralFeatures
 
-
+from ..utils import create_logger
 
 class EfelFeatures(GeneralFeatures):
     def __init__(self,
                  new_features=None,
                  features_to_run="all",
                  adaptive=None,
-                 labels={}):
+                 labels={},
+                 strict=True,
+                 verbose_level="info",
+                 verbose_filename=None):
 
         if not prerequisites:
             raise ImportError("Efel features require: efel")
@@ -32,17 +35,48 @@ class EfelFeatures(GeneralFeatures):
         #                      }
         implemented_labels = {}
 
+
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
+
+
         def efel_wrapper(feature_name):
-            def function(t, U):
+            def function(t, U, info):
+                disable = False
+
+                if not "stimulus_start" in info:
+                    if strict:
+                        raise RuntimeError("Efel features require info[stimulus_start]. "
+                                           "No stimulus_start found in info, "
+                                           "Set stimulus_start, or set strict to "
+                                           "False to use initial time as stimulus start")
+                    else:
+                        info["stimulus_start"] = t[0]
+                        self.logger.warning("Efel features require info[stimulus_start]. "
+                                            "No stimulus_start found in info, "
+                                            "setting stimulus start as initial time")
+
+                if not "stimulus_end" in info:
+                    if strict:
+                        raise RuntimeError("Efel features require info[stimulus_end]. "
+                                           "No stimulus_end found in info, "
+                                           "Set stimulus_start, or set strict to "
+                                           "False to use end time as stimulus end")
+                    else:
+                        disable = True
+                        info["stimulus_end"] = t[-1]
+                        self.logger.warning("Efel features require info[stimulus_start]. "
+                                            "No stimulus_end found in info, "
+                                            "setting stimulus end as end time")
 
                 trace = {}
                 trace['T'] = t
                 trace['V'] = U
-                trace['stim_start'] = [t[0]]
-                trace['stim_end'] = [t[-1]]
+                trace['stim_start'] = [info["stimulus_start"]]
+                trace['stim_end'] = [info["stimulus_end"]]
 
-                # TODO tmp hack until stim time is set from model
-                if feature_name == "decay_time_constant_after_stim":
+                if feature_name == "decay_time_constant_after_stim" and disable:
                     return None, None
 
                 result = efel.getMeanFeatureValues([trace], [feature_name], raise_warnings=False)

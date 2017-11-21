@@ -107,4 +107,7 @@ class HodgkinHuxley(Model):
         X = odeint(self.dXdt, initial_conditions, self.t)
         U = X[:, 0]
 
-        return self.t, U
+         # Add info needed by certain spiking features and efel features
+        info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
+
+        return t, U, info

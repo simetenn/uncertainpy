@@ -17,6 +17,7 @@ class TestGeneralFeatures(unittest.TestCase):
     def setUp(self):
         self.t = np.arange(0, 10)
         self.U = np.arange(0, 10) + 1
+        self.info = {"info": 1}
 
         self.features = GeneralFeatures()
 
@@ -187,6 +188,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
 
         self.t = np.load(os.path.join(folder, "data/t_test.npy"))
         self.U = np.load(os.path.join(folder, "data/U_test.npy"))
+        self.info = {"info": 1}
 
 
     def test_initNone(self):
@@ -208,7 +210,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
     def test_preprocess(self):
         self.features = GeneralSpikingFeatures()
 
-        t, spikes = self.features.preprocess(self.t, self.U)
+        t, spikes, info = self.features.preprocess(self.t, self.U, self.info)
 
         self.assertEqual(spikes.nr_spikes, 12)
 
@@ -241,7 +243,9 @@ class TestSpikingFeatures(unittest.TestCase):
 
         self.features = SpikingFeatures()
 
-        self.t, self.spikes = self.features.preprocess(t, U)
+        self.info = {"info": 1}
+
+        self.t, self.spikes, info = self.features.preprocess(t, U, self.info)
 
 
     def test_initNone(self):
@@ -288,68 +292,68 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_nr_spikes(self):
-        self.assertEqual(self.features.nr_spikes(self.t, self.spikes), (None, 12))
+        self.assertEqual(self.features.nr_spikes(self.t, self.spikes, self.info), (None, 12))
 
 
     def test_time_before_first_spike(self):
-        self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes)[1], 10)
+        self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes, self.info)[1], 10)
 
 
     def test_time_before_first_spikeNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, self.info), (None, None))
 
 
     def test_spike_rate(self):
-        self.assertEqual(self.features.spike_rate(self.t, self.spikes), (None, 0.12))
+        self.assertEqual(self.features.spike_rate(self.t, self.spikes, self.info), (None, 0.12))
 
 
     def test_spike_rateNone(self):
         self.features.spikes.nr_spikes = -1
-        self.assertEqual(self.features.spike_rate(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.spike_rate(self.t, self.spikes, self.info), (None, None))
 
 
     def test_average_AP_overshoot(self):
-        self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes), (None, 30))
+        self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes, self.info), (None, 30))
 
 
     def test_average_AP_overshootNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes, self.info), (None, None))
 
 
     # TODO Find correct test, this is a rough bound only
     def test_average_AHP_depth(self):
-        self.features.average_AHP_depth(self.t, self.spikes)
-        self.assertLess(self.features.average_AHP_depth(self.t, self.spikes)[1], 0)
+        self.features.average_AHP_depth(self.t, self.spikes, self.info)
+        self.assertLess(self.features.average_AHP_depth(self.t, self.spikes, self.info)[1], 0)
 
 
     def test_average_AHP_depthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes, self.info), (None, None))
 
     # TODO Find correct test, this is a rough bound only
     def test_average_AP_width(self):
-        self.assertLess(self.features.average_AP_width(self.t, self.spikes)[1], 5)
+        self.assertLess(self.features.average_AP_width(self.t, self.spikes, self.info)[1], 5)
 
 
     def test_average_AP_widthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.average_AP_width(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.average_AP_width(self.t, self.spikes, self.info), (None, None))
 
 
     # TODO Find correct test, this is a rough bound only
     def test_accommodation_index(self):
-        self.assertIsNotNone(self.features.accommodation_index(self.t, self.spikes)[1])
+        self.assertIsNotNone(self.features.accommodation_index(self.t, self.spikes, self.info)[1])
 
 
     def test_accommodation_indexNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.accommodation_index(self.t, self.spikes), (None, None))
+        self.assertEqual(self.features.accommodation_index(self.t, self.spikes, self.info), (None, None))
 
 
     def test_calculate_all_features(self):
-        result = self.features.calculate_all_features(self.t, self.spikes)
+        result = self.features.calculate_all_features(self.t, self.spikes, self.info)
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 
@@ -375,6 +379,10 @@ class TestEfelFeatures(unittest.TestCase):
         #                           }
 
         self.features = EfelFeatures()
+
+        self.info = {}
+        self.info["stimulus_start"] = self.t[0]
+        self.info["stimulus_end"] = self.t[-10]
 
         # self.t, self.spikes = self.features.preprocess(t, U)
 
@@ -414,18 +422,25 @@ class TestEfelFeatures(unittest.TestCase):
         self.assertEqual(set(self.features.implemented_features()), set(self.implemented_features))
 
 
-    def test_Spikecount(self):
-        t, U = self.features.Spikecount(self.t, self.U)
+    def test_spikecount(self):
+        t, U = self.features.Spikecount(self.t, self.U, self.info)
 
         self.assertIsNone(t)
         self.assertEqual(U, 12)
 
 
     def test_calculate_all_features(self):
-        result = self.features.calculate_all_features(self.t, self.U)
+        result = self.features.calculate_all_features(self.t, self.U, self.info)
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 
+
+
+    def test_spikecount_error(self):
+        with self.assertRaises(RuntimeError):
+            self.features.Spikecount(self.t, self.U, {})
+            self.features.Spikecount(self.t, self.U, {"stimulus_start": self.t[0]})
+            self.features.Spikecount(self.t, self.U, {"stimulus_end": self.t[-1]})
 
 
 
