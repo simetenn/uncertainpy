@@ -18,7 +18,8 @@ parameterlist = [["cap", 1.1, None],
 parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.uniform(0.05))
 
-model = un.NeuronModel(path=path, adaptive=True)
+model = un.NeuronModel(path=path, adaptive=True,
+                       stimulus_start=1000, stimulus_end=1900)
 
 # features = un.SpikingFeatures(features_to_run="all")
 

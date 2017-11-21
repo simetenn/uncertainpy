@@ -1,11 +1,13 @@
 from uncertainpy import NeuronModel
 
 class NeuronModelBahl(NeuronModel):
-    def __init__(self):
+    def __init__(self, stimulus_start=None, stimulus_end=None):
         NeuronModel.__init__(self,
                              adaptive=True,
                              file="mosinit.hoc",
-                             path="bahl_neuron_model")
+                             path="bahl_neuron_model",
+                             stimulus_start=stimulus_start,
+                             stimulus_end=stimulus_start)
 
 
     def set_parameters(self, parameters):
