@@ -1,20 +1,24 @@
 import numpy as np
 
 
-def I(t):
-    if 10 <= t:
-        return 10
-    else:
-        return 0
-
-
 def izhikevich(a=0.02, b=0.2, c=-50, d=2):
     t_end = 100
     dt = 0.25
-
     v0 = -70
 
     t = np.linspace(0, t_end, t_end/dt)
+
+
+
+    def I(t):
+        if t >= 10:
+            return 10
+        else:
+            return 0
+
+
+    info = {"stimulus_start": 10,
+            "stimulus_end": t_end}
 
 
     def f(u_in, t):
@@ -51,4 +55,4 @@ def izhikevich(a=0.02, b=0.2, c=-50, d=2):
 
         u[n+1] = u_new
 
-    return t, np.array(U)
+    return t, np.array(U), info

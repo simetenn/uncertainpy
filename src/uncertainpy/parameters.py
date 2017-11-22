@@ -17,19 +17,23 @@ class Parameter(object):
     name: str
         Name of the parameter.
     value: float, int
-        The value of the parameter.
+        The fixed value of the parameter. If you give a parameter a distribution,
+        in most cases you do not need to give it a fixed value.
     distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
-        The distribution of the parameter, used if the parameter is uncertain.
+        The distribution of the parameter. A parameter is considered uncertain
+        if it has a distribution.
         Defaults to None.
 
 
     Attributes
     ----------
-    distribution : uncertainpy.Parameter.distribution
     name: str
         Name of the parameter.
     value: float, int
         The value of the parameter.
+    distribution : uncertainpy.Parameter.distribution
+        The distribution of the parameter. A parameter is considered uncertain
+        if it has a distribution.
     """
 
     def __init__(self, name, value, distribution=None):

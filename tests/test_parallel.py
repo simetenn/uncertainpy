@@ -338,6 +338,20 @@ class TestParallel(unittest.TestCase):
         self.parallel.run(self.model_parameters)
 
 
+    def test_use_model_feature_arguments_error(self):
+        def model_function(**model_parameters):
+            return 1, 2, 3
+
+        def feature_function(t, U):
+            return "t", "U"
+
+        self.parallel.model = model_function
+        self.parallel.features = feature_function
+        with self.assertRaises(TypeError):
+            self.parallel.run(self.model_parameters)
+
+
+
     def test_none_to_nan(self):
 
         U_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])

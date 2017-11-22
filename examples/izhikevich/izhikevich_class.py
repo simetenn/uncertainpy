@@ -12,9 +12,11 @@ class izhikevich(Model):
         self.v0 = -70
         self.t = np.linspace(0, t_end, t_end/self.dt)
 
+        self.info = {"stimulus_start": 10,
+                     "stimulus_end": t_end}
 
     def I(self, t):
-        if 10 <= t:
+        if t >= 10:
             return 10
         else:
             return 0
@@ -56,4 +58,4 @@ class izhikevich(Model):
 
             u[n+1] = u_new
 
-        return self.t, np.array(self.U)
+        return self.t, np.array(self.U), self.info

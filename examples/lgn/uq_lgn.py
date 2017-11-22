@@ -15,15 +15,15 @@ parameterlist = [["cap", 1.1, None],
                  ["gcat", 1.17e-5, None]]
 
 
+
 parameters = un.Parameters(parameterlist)
 parameters.set_all_distributions(un.uniform(0.05))
 
 model = un.NeuronModel(path=path, adaptive=True,
                        stimulus_start=1000, stimulus_end=1900)
 
-# features = un.SpikingFeatures(features_to_run="all")
-
-features = un.EfelFeatures(features_to_run="all")
+features = un.SpikingFeatures(features_to_run="all")
+# features = un.EfelFeatures(features_to_run="all")
 
 uncertainty = un.UncertaintyEstimation(model,
                                        parameters=parameters,
