@@ -9,7 +9,9 @@ class GeneralSpikingFeatures(GeneralFeatures):
                  adaptive=None,
                  thresh=-30,
                  extended_spikes=False,
-                 labels={}):
+                 labels={},
+                 verbose_level="info",
+                 verbose_filename=None):
 
         new_utility_methods = ["calculate_spikes"]
 
@@ -17,7 +19,9 @@ class GeneralSpikingFeatures(GeneralFeatures):
                                                      features_to_run=features_to_run,
                                                      adaptive=adaptive,
                                                      new_utility_methods=new_utility_methods,
-                                                     labels=labels)
+                                                     labels=labels,
+                                                     verbose_level=verbose_level,
+                                                     verbose_filename=verbose_filename)
 
         self.spikes = None
 

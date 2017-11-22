@@ -5,10 +5,7 @@ try:
 except ImportError:
     prerequisites = False
 
-import types
 from .general_features import GeneralFeatures
-
-from ..utils import create_logger
 
 class EfelFeatures(GeneralFeatures):
     def __init__(self,
@@ -35,17 +32,11 @@ class EfelFeatures(GeneralFeatures):
         #                      }
         implemented_labels = {}
 
-
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
-
-
         def efel_wrapper(feature_name):
             def function(t, U, info):
                 disable = False
 
-                if not "stimulus_start" in info:
+                if "stimulus_start" not in info:
                     if strict:
                         raise RuntimeError("Efel features require info[stimulus_start]. "
                                            "No stimulus_start found in info, "
@@ -57,7 +48,7 @@ class EfelFeatures(GeneralFeatures):
                                             "No stimulus_start found in info, "
                                             "setting stimulus start as initial time")
 
-                if not "stimulus_end" in info:
+                if "stimulus_end" not in info:
                     if strict:
                         raise RuntimeError("Efel features require info[stimulus_end]. "
                                            "No stimulus_end found in info, "
@@ -74,6 +65,7 @@ class EfelFeatures(GeneralFeatures):
                 trace['V'] = U
                 trace['stim_start'] = [info["stimulus_start"]]
                 trace['stim_end'] = [info["stimulus_end"]]
+
 
                 # Disable decay_time_constant_after_stim if no time points left
                 # in simulation after stimulation has ended.
@@ -93,7 +85,9 @@ class EfelFeatures(GeneralFeatures):
                                            features_to_run=features_to_run,
                                            adaptive=adaptive,
                                            new_utility_methods=[],
-                                           labels=implemented_labels)
+                                           labels=implemented_labels,
+                                           verbose_level=verbose_level,
+                                           verbose_filename=verbose_filename)
 
         for feature_name in efel.getFeatureNames():
             self.add_features(efel_wrapper(feature_name))

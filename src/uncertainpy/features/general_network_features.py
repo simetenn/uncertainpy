@@ -18,15 +18,19 @@ class GeneralNetworkFeatures(GeneralFeatures):
                  features_to_run="all",
                  adaptive=None,
                  labels={},
-                 units=pq.ms):
+                 units=pq.ms,
+                 verbose_level="info",
+                 verbose_filename=None):
 
         if not prerequisites:
-            raise ImportError("Network features require: neo")
+            raise ImportError("Network features require: neo, quantities")
 
         super(GeneralNetworkFeatures, self).__init__(new_features=new_features,
                                                      features_to_run=features_to_run,
                                                      adaptive=adaptive,
-                                                     labels=labels)
+                                                     labels=labels,
+                                                     verbose_level=verbose_level,
+                                                     verbose_filename=verbose_filename)
 
         self.units = units
 

@@ -15,7 +15,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  adaptive=None,
                  thresh=-30,
                  extended_spikes=False,
-                 labels={}):
+                 labels={},
+                 verbose_level="info",
+                 verbose_filename=None):
 
         if not prerequisites:
             raise ImportError("Spiking features require: scipy")
@@ -34,7 +36,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                               adaptive=adaptive,
                                               thresh=thresh,
                                               extended_spikes=extended_spikes,
-                                              labels=implemented_labels)
+                                              labels=implemented_labels,
+                                              verbose_level=verbose_level,
+                                              verbose_filename=verbose_filename)
         self.labels = labels
 
 
@@ -42,12 +46,18 @@ class SpikingFeatures(GeneralSpikingFeatures):
         return None, spikes.nr_spikes
 
 
-    # TODO get time of stimulus onset from model
     def time_before_first_spike(self, t, spikes, info):
+        if "stimulus_start" not in info:
+            self.logger.warning("time_before_first_spike: info['stimulus_start'] missing.
+                                "time_before_first_spike requires info['stimulus_start'], and is not calculated")
+            return None, None
+
         if spikes.nr_spikes <= 0:
             return None, None
 
-        return None, spikes.spikes[0].t_spike
+        time = info["stimulus_start"] - spikes.spikes[0].t_spike
+
+        return None, time
 
 
     def spike_rate(self, t, spikes, info):

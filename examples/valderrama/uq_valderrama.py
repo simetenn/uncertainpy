@@ -22,8 +22,8 @@ parameters.set_all_distributions(un.uniform(0.2))
 
 model = Valderrama()
 
-# features = un.SpikingFeatures(thresh="auto")
-features = un.EfelFeatures()
+features = un.SpikingFeatures(thresh="auto")
+# features = un.EfelFeatures()
 exploration = un.UncertaintyEstimation(model,
                                        parameters=parameters,
                                        features=features,

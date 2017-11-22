@@ -1,3 +1,5 @@
+from ..utils import create_logger
+
 class GeneralFeatures(object):
     """
     Class for calculating features of a model.
@@ -29,7 +31,9 @@ class GeneralFeatures(object):
                  features_to_run="all",
                  new_utility_methods=None,
                  adaptive=None,
-                 labels={}):
+                 labels={},
+                 verbose_level="info",
+                 verbose_filename=None):
 
         self.utility_methods = ["calculate_feature",
                                 "calculate_features",
@@ -56,6 +60,10 @@ class GeneralFeatures(object):
 
         self.labels = labels
         self.features_to_run = features_to_run
+
+        self.logger = create_logger(verbose_level,
+                                    verbose_filename,
+                                    self.__class__.__name__)
 
 
 
