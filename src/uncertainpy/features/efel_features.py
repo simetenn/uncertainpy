@@ -64,7 +64,6 @@ class EfelFeatures(GeneralFeatures):
                                            "Set stimulus_start, or set strict to "
                                            "False to use end time as stimulus end")
                     else:
-                        disable = True
                         info["stimulus_end"] = t[-1]
                         self.logger.warning("Efel features require info[stimulus_start]. "
                                             "No stimulus_end found in info, "
@@ -76,8 +75,12 @@ class EfelFeatures(GeneralFeatures):
                 trace['stim_start'] = [info["stimulus_start"]]
                 trace['stim_end'] = [info["stimulus_end"]]
 
-                if feature_name == "decay_time_constant_after_stim" and disable:
-                    return None, None
+                # Disable decay_time_constant_after_stim if no time points left
+                # in simulation after stimulation has ended.
+                # Otherwise it thros an error
+                if feature_name == "decay_time_constant_after_stim":
+                    if info["stimulus_end"] >= t[-1]:
+                        return None, None
 
                 result = efel.getMeanFeatureValues([trace], [feature_name], raise_warnings=False)
 
