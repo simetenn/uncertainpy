@@ -17,10 +17,10 @@ features = un.NetworkFeatures(features_to_run="all")
 # have  as  oscillators  when  excitation  dominates  in-
 # hibition and synaptic time distributions are sharply
 # peaked
-parameterlist = [["eta", 2, cp.Uniform(1.5, 3.5)],
-                 ["g", 5, cp.Uniform(1, 3)],
-                 ["delay", 5, cp.Uniform(1.5, 3)],
-                 ["J_E", 5, cp.Uniform(0.05, 0.15)]]
+parameterlist = [["eta", None, cp.Uniform(1.5, 3.5)],
+                 ["g", None, cp.Uniform(1, 3)],
+                 ["delay", None, cp.Uniform(1.5, 3)],
+                 ["J_E", None, cp.Uniform(0.05, 0.15)]]
 
 parameters = un.Parameters(parameterlist)
 
@@ -43,10 +43,10 @@ uncertainty.uncertainty_quantification(plot_condensed=True,
 # global activity but strongly irregular individual firing
 # at low rates when inhibition dominates excitation in
 # an intermediate range of external frequencies
-parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
-                 ["g", 5, cp.Uniform(5, 8)],
-                 ["delay", 5, cp.Uniform(1.5, 3)],
-                 ["J_E", 5, cp.Uniform(0.05, 0.15)]]
+parameterlist = [["eta", None, cp.Uniform(1.5, 2.2)],
+                 ["g", None, cp.Uniform(5, 8)],
+                 ["delay", None, cp.Uniform(1.5, 3)],
+                 ["J_E", None, cp.Uniform(0.05, 0.15)]]
 
 parameters = un.Parameters(parameterlist)
 
@@ -63,10 +63,10 @@ uncertainty.uncertainty_quantification(plot_condensed=True,
 
 
 # the border between SR and AI parameter set
-parameterlist = [["eta", 2, cp.Uniform(1.5, 2.2)],
-                 ["g", 5, cp.Uniform(1, 8)],
-                 ["delay", 5, cp.Uniform(1.5, 3)],
-                 ["J_E", 5, cp.Uniform(0.05, 0.15)]]
+parameterlist = [["eta", None, cp.Uniform(1.5, 2.2)],
+                 ["g", None, cp.Uniform(1, 8)],
+                 ["delay", None, cp.Uniform(1.5, 3)],
+                 ["J_E", None, cp.Uniform(0.05, 0.15)]]
 
 parameters = un.Parameters(parameterlist)
 

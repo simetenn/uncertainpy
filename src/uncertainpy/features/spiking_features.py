@@ -48,7 +48,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
     def time_before_first_spike(self, t, spikes, info):
         if "stimulus_start" not in info:
-            self.logger.warning("time_before_first_spike: info['stimulus_start'] missing.
+            self.logger.warning("time_before_first_spike: info['stimulus_start'] missing."
                                 "time_before_first_spike requires info['stimulus_start'], and is not calculated")
             return None, None
 
