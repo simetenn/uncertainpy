@@ -1,6 +1,9 @@
 import nest
 
-def brunel_network(eta=2, g=5, delay=1.5, J_E=0.1):
+def brunel_network(eta=2,
+                   g=5,
+                   delay=1.5,
+                   J_E=0.1):
     """
     A brunel network, from:
 
@@ -8,6 +11,7 @@ def brunel_network(eta=2, g=5, delay=1.5, J_E=0.1):
     Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
     183-208 (2000).
 
+    Implementation adapted from:
     http://www.nest-simulator.org/py_sample/random-balanced-network-exp-synapses-multiple-time-constants/
 
     Parameters
@@ -18,16 +22,14 @@ def brunel_network(eta=2, g=5, delay=1.5, J_E=0.1):
         External rate relative to threshold rate. Default is 2.
     delay : {int, float}, optional
         Synaptic delay in ms. Default is 1.5.
-
+    J_E : {int, float}, optional
+        Amplitude of excitatory postsynaptic current. Default is 0.1
     """
 
     # Network parameters
     N_rec = 20             # Record from 20 neurons
     simtime = 1000         # Simulation time
 
-    # g = 5.0                # Ratio inhibitory weight/excitatory weight
-    # eta = 2.0              # External rate relative to threshold rate
-    # delay = 1.5            # Synaptic delay in ms
     tau_m = 20.0           # Time constant of membrane potential in ms
     V_th = 20.0
     N_E = 10000            # Number of inhibitory neurons
@@ -35,7 +37,6 @@ def brunel_network(eta=2, g=5, delay=1.5, J_E=0.1):
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = N_E/10           # Number of excitatory synapses per neuron
     C_I = N_I/10           # Number of inhibitory synapses per neuron
-    # J_E = 0.1              # Amplitude of excitatory postsynaptic current
     J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
 
     nu_ex = eta*V_th/(J_E*C_E*tau_m)

@@ -4,7 +4,7 @@ import collections
 
 import numpy as np
 
-from uncertainpy.utils import create_logger
+from .utils import create_logger
 
 
 class Result(collections.MutableMapping):

@@ -211,8 +211,17 @@ class GeneralFeatures(object):
         if feature_name in self.utility_methods:
             raise TypeError("{} is a utility method".format(feature_name))
 
-        feature_result = getattr(self, feature_name)(*args)
 
+        try:
+            feature_result = getattr(self, feature_name)(*args)
+        except Exception as error:
+            msg = "Error in calculation of feature: {}".format(feature_name)
+            if not error.args:
+                error.args = ("",)
+            error.args = error.args + (msg,)
+            raise
+
+        # Check that t, and U is returned
         try:
             feature_t, feature_U = feature_result
         except (ValueError, TypeError) as error:

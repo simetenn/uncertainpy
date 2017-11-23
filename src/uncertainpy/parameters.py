@@ -69,8 +69,10 @@ class Parameter(object):
 
         Parameters
         ----------
-        distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
-            The distribution of the parameter, used if the parameter is uncertain.
+        distribution: {None, Chaospy distribution, callable that returns a Chaospy distribution}, optional
+            The distribution of the parameter, used if the parameter is uncertain
+            If it is a callable that returns a Chaospy distribution, the
+            function sends `value` value to the function.
             Defaults to None.
 
         Returns

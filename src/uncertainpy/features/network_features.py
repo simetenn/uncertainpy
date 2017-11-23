@@ -104,7 +104,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def lv(self, t, spiketrains):
         """
-        Calculate the measure of local variation LV for a sequence of time intervals between events.
+        Calculate the measure of local variation (LV) for a sequence of time intervals between events.
         """
         lv = []
         for spiketrain in spiketrains:
@@ -120,15 +120,13 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def mean_lv(self, t, spiketrains):
         """
-        Calculate the mean local variation LV for a sequence of time intervals between events.
+        Calculate the mean local variation (LV) for a sequence of time intervals between events.
         """
         lv = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)
             if len(isi) > 1:
                 lv.append(elephant.statistics.lv(isi))
-            else:
-                lv.append(None)
 
         return None, np.mean(lv)
 

@@ -250,23 +250,8 @@ class Parallel(Base):
 
 
             # Calculate features from the model results
-            try:
-                feature_preprocess = self.features.preprocess(*model_result)
-            except TypeError as error:
-                msg = "features.preprocess(*model_result) arguments are not the same as the model arguments model.run() returns."
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
-
-            try:
-                feature_results = self.features.calculate_features(*feature_preprocess)
-            except TypeError as error:
-                msg = "feature(*model_result) arguments are not the same as the model arguments model.run() returns."
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            feature_preprocess = self.features.preprocess(*model_result)
+            feature_results = self.features.calculate_features(*feature_preprocess)
 
             for feature in feature_results:
                 t_feature = feature_results[feature]["t"]
@@ -284,12 +269,12 @@ class Parallel(Base):
             return results
 
 
-        except Exception as e:
+        except Exception as error:
             print("Caught exception in parallel run of model:")
             print("")
             traceback.print_exc()
             print("")
-            raise e
+            raise error
 
 
     def none_to_nan(self, U):
