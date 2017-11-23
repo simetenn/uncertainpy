@@ -106,10 +106,11 @@ class Model(object):
 
         2. ``run(**parameters)`` must return the time values or equivalent (``t``)
         and the model result (``U``). If the model have no time values,
-        return None instead. Additionally, any number of objects can be returned
-        after ``t``, and ``U``. These info objects are passed on to feature
-        calculations, and are optional. It is assumed that the first two
-        arguments returned are ``t``, and ``U``.
+        return ``None`` instead. The first two arguments returned must be
+        ``t``, and ``U``. Additionally, any number of info objects can be
+        returned after ``t``, and ``U``. These info objects are optional and are
+        passed on to model.postprocess, feature.preprocess, and feature
+        calculations.
 
         The model does not need to be implemented in Python, you can use any
         model/simulator as long as you are able to set the model parameters of
@@ -117,7 +118,7 @@ class Model(object):
         model into the run method.
 
         The model results ``t`` and ``U`` are used to calculate the features, as
-        well as the optional info objects returned.
+        well as the optional ``*info`` objects returned.
 
         The model results must either be regular or be able to be interpolated, or
         be able to be postprocessed to a regular form or a form that can
@@ -128,12 +129,13 @@ class Model(object):
         If you want to calculate features directly from the original model results,
         but still need to postprocess the model results to perform the
         uncertainty quantification, you can implement the postprocessing in the
-        ``postprocess(t, U)`` method. the info objects are avaiable in
+        ``postprocess(t, U, *info)`` method. The info objects are available in
         ``postprocess``.
 
         See also
         --------
         uncertainpy.model.features : Features of models
+        uncertainpy.model.features.GeneralFeatures.preprocess : Preprocessing of model results before feature calculation
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """
         return self._run

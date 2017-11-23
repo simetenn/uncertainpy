@@ -113,11 +113,10 @@ class NestModel(Model):
         """
         Postprocessing of the spiketrains from a Nest model.
 
-        For each neuron, convert a spiketrain
-        to a list of the probability for a spike at each timestep,
-        as well as creating a time array.
-        For each timestep in the simulation the result is 0 if there is no
-        spike and 1 if there is a spike.
+        For each neuron, convert a spiketrain to a list of the probability for
+        a spike at each timestep, as well as creating a time array. For each
+        timestep in the simulation the result is 0 if there is no spike
+        and 1 if there is a spike.
 
         Parameters
         ----------
