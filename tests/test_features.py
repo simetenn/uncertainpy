@@ -243,7 +243,7 @@ class TestSpikingFeatures(unittest.TestCase):
 
         self.features = SpikingFeatures()
 
-        self.info = {"info": 1}
+        self.info = {"stimulus_start": 0}
 
         self.t, self.spikes, info = self.features.preprocess(t, U, self.info)
 
@@ -298,10 +298,13 @@ class TestSpikingFeatures(unittest.TestCase):
     def test_time_before_first_spike(self):
         self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes, self.info)[1], 10)
 
-
     def test_time_before_first_spikeNone(self):
         self.features.spikes.nr_spikes = 0
         self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, self.info), (None, None))
+
+    def test_time_before_first_spike_no_info(self):
+        self.features.spikes.nr_spikes = 0
+        self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, {}), (None, None))
 
 
     def test_spike_rate(self):

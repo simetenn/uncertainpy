@@ -55,7 +55,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         if spikes.nr_spikes <= 0:
             return None, None
 
-        time = info["stimulus_start"] - spikes.spikes[0].t_spike
+        time = spikes.spikes[0].t_spike - info["stimulus_start"]
 
         return None, time
 
