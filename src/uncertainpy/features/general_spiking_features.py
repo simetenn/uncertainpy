@@ -128,7 +128,7 @@ class GeneralSpikingFeatures(Features):
         U : array_like
             Result of the model.
         info : dictionary
-            A dictionary with info["stimulus_start"].
+            A dictionary with info["stimulus_start"] and info["stimulus_end"].
 
         Returns
         -------
@@ -137,7 +137,11 @@ class GeneralSpikingFeatures(Features):
         U : Spikes
             The spikes found in the model results.
         info : dictionary
-            A dictionary with info["stimulus_start"].
+            A dictionary with info["stimulus_start"] and info["stimulus_end"].
+
+        Notes
+        -----
+        Also sets self.U = U, so features have access to self.U if necessary.
 
         See also
         --------
@@ -187,3 +191,41 @@ class GeneralSpikingFeatures(Features):
         spikes.find_spikes(t, U, threshold=threshold, extended_spikes=extended_spikes)
 
         return spikes
+
+
+    def example_feature(self, t, spikes, info):
+        """
+        An example of an GeneralSpikingFeature. The feature functions have the
+        following requirements, and the given parameters must either be
+        returned by ``model.run`` or ``features.preprocess``.
+
+        Parameters
+        ----------
+        t : {None, numpy.nan, array_like}
+            Time values of the model. If no time values it is None or numpy.nan.
+        spikes : Spikes
+            Spikes found in the model result.
+        info : dictionary
+            A dictionary with info["stimulus_start"] and
+            info["stimulus_end"] set.
+
+        Returns
+        -------
+        t : {None, numpy.nan, array_like}
+            Time values, or equivalent, of the feature, if no time values
+            return None or numpy.nan.
+        U : array_like
+            The feature results, `U`. Returns None if there are no feature
+            results and that evaluation will be disregarded.
+
+        See also
+        --------
+        uncertainpy.features.GeneralSpikingFeatures.preprocess : The GeneralSpikingFeatures preprocess method.
+        uncertainpy.models.Model.run : The model run method
+        """
+
+        # Perform feature calculations here
+        t = None
+        U = None
+
+        return t, U

@@ -53,7 +53,7 @@ class EfelFeatures(Features):
                          }
 
     strict : bool, optional
-        If True missing ``"stimulus_start"`` and ``"stimulus_end"`` from `info`
+        If True, missing ``"stimulus_start"`` and ``"stimulus_end"`` from `info`
         raises a RuntimeError. If False the simulation start time is used
         as ``"stimulus_start"`` and the simulation end time is used for
         ``"stimulus_end"``. The decay_time_constant_after_stim feature becomes
@@ -78,6 +78,8 @@ class EfelFeatures(Features):
         that is not in the list of utility methods is considered to be a feature.
     labels : dictionary
         Labels for the axes of each feature, used when plotting.
+    strict : bool
+        If missing info values should raise an error.
     logger : logging.Logger object
         Logger object responsible for logging to screen or file.
 
@@ -195,7 +197,7 @@ class EfelFeatures(Features):
 
                 if "stimulus_end" not in info:
                     if strict:
-                        raise RuntimeError("Efel features require info[stimulus_end]. "
+                        raise RuntimeError("Efel features require info['stimulus_end']. "
                                            "No 'stimulus_end' found in info, "
                                            "Set 'stimulus_start', or set strict to "
                                            "False to use end time as stimulus end")
@@ -247,8 +249,8 @@ class EfelFeatures(Features):
     def example_feature(self, t, U, info):
         """
         An example of an Efel feature. Efel feature functions have the following
-        requirements, and the given parameters should either be returned by
-        ``model.run`` or ``model.postprocess``.
+        requirements, and the given parameters must either be returned by
+        ``model.run`` or ``features.preprocess``.
 
         Parameters
         ----------
@@ -272,8 +274,8 @@ class EfelFeatures(Features):
         --------
         uncertainpy.features.Features.preprocess : The features preprocess method.
         uncertainpy.models.Model.run : The model run method
-        uncertainpy.models.Model.postprocess : The postprocessing method.
         """
+
         # Perform feature calculations here
         t = None
         U = None

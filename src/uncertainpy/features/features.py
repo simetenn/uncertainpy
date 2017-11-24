@@ -520,6 +520,7 @@ class Features(object):
         uncertainpy.models.Model.run : The model run method
         uncertainpy.models.Model.postprocess : The postprocessing method.
         """
+
         # Perform feature calculations here
         t = None
         U = None

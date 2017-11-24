@@ -241,9 +241,9 @@ class TestSpikingFeatures(unittest.TestCase):
                                    "average_AP_width": ["time [ms]"],
                                   }
 
-        self.features = SpikingFeatures()
+        self.features = SpikingFeatures(verbose_level="error")
 
-        self.info = {"stimulus_start": 0}
+        self.info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
 
         self.t, self.spikes, info = self.features.preprocess(t, U, self.info)
 
@@ -298,22 +298,43 @@ class TestSpikingFeatures(unittest.TestCase):
     def test_time_before_first_spike(self):
         self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes, self.info)[1], 10)
 
+
     def test_time_before_first_spikeNone(self):
         self.features.spikes.nr_spikes = 0
         self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, self.info), (None, None))
 
-    def test_time_before_first_spike_no_info(self):
+
+    def test_time_before_first_spike_no_strict(self):
+        self.features.strict = False
         self.features.spikes.nr_spikes = 0
         self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, {}), (None, None))
+
+
+    def test_time_before_first_spike_error(self):
+        with self.assertRaises(RuntimeError):
+            self.features.time_before_first_spike(self.t, self.spikes, {})
+            self.features.time_before_first_spike(self.t, self.spikes, {"stimulus_end": 1})
 
 
     def test_spike_rate(self):
         self.assertEqual(self.features.spike_rate(self.t, self.spikes, self.info), (None, 0.12))
 
 
+    def test_spike_rate_no_strict(self):
+        self.features.strict = False
+        self.assertEqual(self.features.spike_rate(self.t, self.spikes, {}), (None, 0.12))
+
+
     def test_spike_rateNone(self):
         self.features.spikes.nr_spikes = -1
         self.assertEqual(self.features.spike_rate(self.t, self.spikes, self.info), (None, None))
+
+
+    def test_spike_rate_error(self):
+        with self.assertRaises(RuntimeError):
+            self.features.spike_rate(self.t, self.spikes, {})
+            self.features.spike_rate(self.t, self.spikes, {"stimulus_start": 1})
+            self.features.spike_rate(self.t, self.spikes, {"stimulus_end": 1})
 
 
     def test_average_AP_overshoot(self):
