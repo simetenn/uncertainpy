@@ -182,20 +182,19 @@ class Model(object):
         ----------
         *model_result
             Variable length argument list. Is the arguments that ``run()``
-            returns. It should contain `t` and `U`,
+            returns. It contains `t` and `U`,
             and then any number of optional `info` arguments.
-
-            t : {None, numpy.nan, array_like}
-                Time values of the model. If no time values it should return None or
-                numpy.nan.
-            U : array_like
-                Result of the model.
-            info, optional
-                Any number of info objects that is passed on to feature calculations.
-                It is recommended to use a single dictionary with the information
-                stored as key-value pairs.
-                This is what the implemented features requires, as well as
-                require that specific keys to be present.
+        t : {None, numpy.nan, array_like}
+            Time values of the model. If no time values it should return None or
+            numpy.nan.
+        U : array_like
+            Result of the model.
+        info, optional
+            Any number of info objects that is passed on to feature calculations.
+            It is recommended to use a single dictionary with the information
+            stored as key-value pairs.
+            This is what the implemented features requires, as well as
+            require that specific keys to be present.
 
         Returns
         -------

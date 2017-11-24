@@ -21,7 +21,7 @@ class Features(object):
         calculated. Default is ``"all"``.
     new_utility_methods : {None, list}, optional
         A list of new utility methods. All methods in this class that is not in
-        the list of utility methods is considered to be a feature.
+        the list of utility methods, is considered to be a feature.
         Default is None.
     adaptive : {None, "all", str, list of feature names}, optional
         Which features that are adaptive, meaning they have a varying number of
@@ -518,6 +518,7 @@ class Features(object):
         --------
         uncertainpy.features.Features.preprocess : The features preprocess method.
         uncertainpy.models.Model.run : The model run method
+        uncertainpy.models.Model.postprocess : The postprocessing method.
         """
         # Perform feature calculations here
         t = None
