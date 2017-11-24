@@ -1,7 +1,7 @@
-from uncertainpy.features import GeneralFeatures
+from uncertainpy.features import Features
 import numpy as np
 
-class LgnSimulatorFeatures(GeneralFeatures):
+class LgnSimulatorFeatures(Features):
     def irfmax(self, t, U):
         return None, U[0]
 

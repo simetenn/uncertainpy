@@ -5,9 +5,9 @@ try:
 except ImportError:
     prerequisites = False
 
-from .general_features import GeneralFeatures
+from .general_features import Features
 
-class EfelFeatures(GeneralFeatures):
+class EfelFeatures(Features):
     def __init__(self,
                  new_features=None,
                  features_to_run="all",

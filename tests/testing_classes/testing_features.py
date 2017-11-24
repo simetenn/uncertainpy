@@ -1,12 +1,12 @@
-from uncertainpy import GeneralFeatures
+from uncertainpy import Features
 
 import numpy as np
 
 
-class TestingFeatures(GeneralFeatures):
+class TestingFeatures(Features):
     def __init__(self, features_to_run="all",
                  adaptive=["feature_adaptive"]):
-        GeneralFeatures.__init__(self,
+        Features.__init__(self,
                                  features_to_run=features_to_run,
                                  adaptive=adaptive)
 

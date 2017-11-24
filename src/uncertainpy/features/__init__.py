@@ -1,4 +1,4 @@
-__all__ = ["GeneralFeatures",
+__all__ = ["Features",
            "GeneralSpikingFeatures",
            "SpikingFeatures",
            "Spike",
@@ -7,7 +7,7 @@ __all__ = ["GeneralFeatures",
            "GeneralNetworkFeatures",
            "EfelFeatures"]
 
-from .general_features import GeneralFeatures
+from .general_features import Features
 from .general_spiking_features import GeneralSpikingFeatures
 from .spiking_features import SpikingFeatures
 from .spikes import Spike, Spikes

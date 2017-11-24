@@ -8,7 +8,7 @@ import numpy as np
 from xvfbwrapper import Xvfb
 from uncertainpy import Parallel
 from uncertainpy.models import NeuronModel, Model
-from uncertainpy.features import GeneralFeatures
+from uncertainpy.features import Features
 
 from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
@@ -55,8 +55,8 @@ class TestParallel(unittest.TestCase):
 
 
     def test_feature(self):
-        self.parallel.features = GeneralFeatures
-        self.assertIsInstance(self.parallel.features, GeneralFeatures)
+        self.parallel.features = Features
+        self.assertIsInstance(self.parallel.features, Features)
 
 
 
@@ -65,7 +65,7 @@ class TestParallel(unittest.TestCase):
                 return "t", "U"
 
         self.parallel.features = feature_function
-        self.assertIsInstance(self.parallel.features, GeneralFeatures)
+        self.assertIsInstance(self.parallel.features, Features)
 
         t, U = self.parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")
@@ -84,7 +84,7 @@ class TestParallel(unittest.TestCase):
 
 
         self.parallel.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.parallel.features, GeneralFeatures)
+        self.assertIsInstance(self.parallel.features, Features)
 
         t, U = self.parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")

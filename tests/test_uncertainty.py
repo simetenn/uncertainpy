@@ -10,7 +10,7 @@ matplotlib.use('Agg')
 
 from uncertainpy import UncertaintyEstimation
 from uncertainpy.parameters import Parameters
-from uncertainpy.features import GeneralFeatures
+from uncertainpy.features import Features
 from uncertainpy import uniform, normal
 from uncertainpy import UncertaintyCalculations
 from uncertainpy import Data
@@ -88,7 +88,7 @@ class TestUncertainty(TestCasePlot):
         uncertainty = UncertaintyEstimation(self.model,
                                             self.parameters,
                                             verbose_level="error")
-        self.assertIsInstance(uncertainty.features, GeneralFeatures)
+        self.assertIsInstance(uncertainty.features, Features)
 
         uncertainty = UncertaintyEstimation(self.model,
                                             self.parameters,
@@ -170,7 +170,7 @@ class TestUncertainty(TestCasePlot):
             return "t", "U"
 
         self.uncertainty.features = feature_function
-        self.assertIsInstance(self.uncertainty.features, GeneralFeatures)
+        self.assertIsInstance(self.uncertainty.features, Features)
 
         t, U = self.uncertainty.features.feature_function(None, None)
         self.assertEqual(t, "t")
@@ -189,7 +189,7 @@ class TestUncertainty(TestCasePlot):
 
 
         self.uncertainty.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.uncertainty.features, GeneralFeatures)
+        self.assertIsInstance(self.uncertainty.features, Features)
 
         t, U = self.uncertainty.features.feature_function(None, None)
         self.assertEqual(t, "t")

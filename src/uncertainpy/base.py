@@ -1,5 +1,5 @@
 from .utils import create_logger
-from .features import GeneralFeatures
+from .features import Features
 from .models import Model
 from .parameters import Parameters
 
@@ -12,7 +12,7 @@ class Base(object):
     model : {None, Model or Model subclass instance, model function}, optional
         Model to perform uncertainty quantification on.
         Default is None.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
+    features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all listed features will be calculated.
@@ -35,7 +35,7 @@ class Base(object):
 
     See Also
     --------
-    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.Features : General features class
     uncertainpy.models.Model : Model class
     """
     def __init__(self,
@@ -63,20 +63,20 @@ class Base(object):
 
         Parameters
         ----------
-        new_features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}
+        new_features : {None, Features or Features subclass instance, list of feature functions}
             Features to calculate from the model result.
             If None, no features are calculated.
             If list of feature functions, all will be calculated.
 
         Returns
         -------
-        features: {None, GeneralFeatures object}
+        features: {None, Features object}
              Features to calculate from the model result.
              If None, no features are calculated.
 
         See Also
         --------
-        uncertainpy.features.GeneralFeatures : General features class
+        uncertainpy.features.Features : General features class
         uncertainpy.features.GeneralSpikingFeatures : General spiking features class
         uncertainpy.features.SpikingFeatures : Implemented spiking features class
         uncertainpy.features.GeneralNetworkFeatures : General network features class
@@ -87,10 +87,10 @@ class Base(object):
 
     @features.setter
     def features(self, new_features):
-        if isinstance(new_features, GeneralFeatures):
+        if isinstance(new_features, Features):
             self._features = new_features
         else:
-            self._features = GeneralFeatures(new_features=new_features)
+            self._features = Features(new_features=new_features)
 
 
     @property
@@ -140,7 +140,7 @@ class ParameterBase(Base):
         Either None, a Parameters instance or a list the parameters that should be created.
         The two lists are similar to the arguments sent to Parameters.
         Default is None.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
+    features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
@@ -164,7 +164,7 @@ class ParameterBase(Base):
 
     See Also
     --------
-    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.Features : General features class
     uncertainpy.models.Model : Model class
     """
     def __init__(self,

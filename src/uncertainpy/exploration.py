@@ -2,7 +2,7 @@ import time
 import os
 
 from .uncertainty_calculations import UncertaintyCalculations
-from .features import GeneralFeatures
+from .features import Features
 from .plotting import PlotUncertainty
 from .utils import create_logger
 from .data import Data
@@ -44,7 +44,7 @@ class UncertaintyEstimations():
         self.data = None
 
         if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
+            self.features = Features(features_to_run=None)
         else:
             self.features = features
 
@@ -59,7 +59,7 @@ class UncertaintyEstimations():
                                     self.__class__.__name__)
 
         if features is None:
-            self.features = GeneralFeatures(features_to_run=None)
+            self.features = Features(features_to_run=None)
         else:
             self.features = features
 

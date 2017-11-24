@@ -1,6 +1,6 @@
 __all__ = ["TestDistribution",
         #    "TestExploration",
-           "TestGeneralFeatures",
+           "TestFeatures",
            "TestRunModel",
            "TestParallel",
            "TestGeneralSpikingFeatures",
@@ -34,7 +34,7 @@ __all__ = ["TestDistribution",
 
 from .test_distribution import TestDistribution
 # from test_exploration import TestExploration
-from .test_features import TestGeneralFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures
+from .test_features import TestFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures
 from .test_features import TestNetworkFeatures, TestTestingFeatures, TestGeneralNetworkFeatures
 from .test_features import TestEfelFeatures
 from .test_logger import TestLogger

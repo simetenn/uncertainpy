@@ -7,37 +7,37 @@ import efel
 import numpy as np
 import quantities as pq
 
-from uncertainpy.features import GeneralFeatures, GeneralSpikingFeatures
+from uncertainpy.features import Features, GeneralSpikingFeatures
 from uncertainpy.features import SpikingFeatures, NetworkFeatures, GeneralNetworkFeatures
 from uncertainpy.features import EfelFeatures
 from uncertainpy import Spikes
 from .testing_classes import TestingFeatures
 
-class TestGeneralFeatures(unittest.TestCase):
+class TestFeatures(unittest.TestCase):
     def setUp(self):
         self.t = np.arange(0, 10)
         self.U = np.arange(0, 10) + 1
         self.info = {"info": 1}
 
-        self.features = GeneralFeatures()
+        self.features = Features()
 
     def test_initNone(self):
-        features = GeneralFeatures()
+        features = Features()
 
-        self.assertIsInstance(features, GeneralFeatures)
+        self.assertIsInstance(features, Features)
 
 
     def test_initUtility(self):
         new_utility_methods = ["new"]
 
-        features = GeneralFeatures(new_utility_methods=new_utility_methods)
+        features = Features(new_utility_methods=new_utility_methods)
 
         self.assertIn("new", features.utility_methods)
 
 
 
     def test_preprocess(self):
-        features = GeneralFeatures()
+        features = Features()
         t, U = features.preprocess(self.t, self.U)
 
         self.assertTrue(np.array_equal(t, self.t))
@@ -45,7 +45,7 @@ class TestGeneralFeatures(unittest.TestCase):
 
 
     def test_preprocess_args(self):
-        features = GeneralFeatures()
+        features = Features()
         t, U, a, b = features.preprocess(self.t, self.U, 1, 2)
 
         self.assertTrue(np.array_equal(t, self.t))
@@ -77,14 +77,14 @@ class TestGeneralFeatures(unittest.TestCase):
 
 
     def test_intitFeatureList(self):
-        features = GeneralFeatures(features_to_run=None)
+        features = Features(features_to_run=None)
         self.assertEqual(features.features_to_run, [])
 
-        features = GeneralFeatures(features_to_run=["feature1d", "feature2"])
+        features = Features(features_to_run=["feature1d", "feature2"])
         self.assertEqual(features.features_to_run,
                          ["feature1d", "feature2"])
 
-        features = GeneralFeatures(features_to_run="all")
+        features = Features(features_to_run="all")
         self.assertEqual(features.features_to_run, [])
 
 
@@ -95,7 +95,7 @@ class TestGeneralFeatures(unittest.TestCase):
         def feature_function2(t, U):
             return "t2", "U2"
 
-        features = GeneralFeatures(new_features=[feature_function, feature_function2],
+        features = Features(new_features=[feature_function, feature_function2],
                                    labels={"feature_function": ["x", "y"]})
 
 
@@ -119,15 +119,15 @@ class TestGeneralFeatures(unittest.TestCase):
 
 
     def test_intitAdaptiveList(self):
-        features = GeneralFeatures(adaptive=None)
+        features = Features(adaptive=None)
         self.assertEqual(features.adaptive, [])
 
-        features = GeneralFeatures(adaptive=["feature1d", "feature2"])
+        features = Features(adaptive=["feature1d", "feature2"])
         self.assertEqual(features.adaptive,
                          ["feature1d", "feature2"])
 
 
-        features = GeneralFeatures(adaptive="all")
+        features = Features(adaptive="all")
         self.assertEqual(features.adaptive, [])
 
 
@@ -135,7 +135,7 @@ class TestGeneralFeatures(unittest.TestCase):
         def feature_function(t, U):
                 return "t", "U"
 
-        features = GeneralFeatures()
+        features = Features()
 
         features.add_features(feature_function,
                               labels={"feature_function": ["x", "y"]})
@@ -158,7 +158,7 @@ class TestGeneralFeatures(unittest.TestCase):
         def feature_function2(t, U):
             return "t2", "U2"
 
-        features = GeneralFeatures()
+        features = Features()
 
         features.add_features([feature_function, feature_function2],
                               labels={"feature_function": ["x", "y"]})

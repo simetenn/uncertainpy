@@ -7,7 +7,7 @@ import numpy as np
 
 from uncertainpy import RunModel, Parameters
 from uncertainpy.models import NeuronModel, Model
-from uncertainpy.features import GeneralFeatures, SpikingFeatures
+from uncertainpy.features import Features, SpikingFeatures
 
 from .testing_classes import TestingFeatures, model_function
 from .testing_classes import TestingModel0d, TestingModel1d, TestingModel2d
@@ -51,9 +51,9 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_feature(self):
-        self.runmodel.features = GeneralFeatures()
-        self.assertIsInstance(self.runmodel._features, GeneralFeatures)
-        self.assertIsInstance(self.runmodel._parallel.features, GeneralFeatures)
+        self.runmodel.features = Features()
+        self.assertIsInstance(self.runmodel._features, Features)
+        self.assertIsInstance(self.runmodel._parallel.features, Features)
 
 
 
@@ -109,7 +109,7 @@ class TestRunModel(unittest.TestCase):
             return "t", "U"
 
         self.runmodel.features = feature_function
-        self.assertIsInstance(self.runmodel.features, GeneralFeatures)
+        self.assertIsInstance(self.runmodel.features, Features)
 
         t, U = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")
@@ -129,7 +129,7 @@ class TestRunModel(unittest.TestCase):
 
 
         self.runmodel.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.runmodel.features, GeneralFeatures)
+        self.assertIsInstance(self.runmodel.features, Features)
 
         t, U = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")

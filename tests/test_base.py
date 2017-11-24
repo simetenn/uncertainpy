@@ -4,7 +4,7 @@ import unittest
 from logging import Logger
 
 from uncertainpy.base import Base, ParameterBase
-from uncertainpy import Model, GeneralFeatures, Parameters
+from uncertainpy import Model, Features, Parameters
 
 from .testing_classes import TestingFeatures, model_function
 
@@ -33,7 +33,7 @@ class TestBase(unittest.TestCase):
         self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)
 
-        self.assertIsInstance(base.features, GeneralFeatures)
+        self.assertIsInstance(base.features, Features)
         self.assertEqual(base.features.features_to_run, ["model_function"])
 
         self.assertIsInstance(base.logger, Logger)
@@ -47,8 +47,8 @@ class TestBase(unittest.TestCase):
         self.assertIsInstance(base.features, TestingFeatures)
 
         base.features = None
-        self.assertIsInstance(base._features, GeneralFeatures)
-        self.assertIsInstance(base.features, GeneralFeatures)
+        self.assertIsInstance(base._features, Features)
+        self.assertIsInstance(base.features, Features)
         self.assertEqual(base.features.features_to_run, [])
 
 
@@ -79,7 +79,7 @@ class TestParameterBase(unittest.TestCase):
         self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)
 
-        self.assertIsInstance(base.features, GeneralFeatures)
+        self.assertIsInstance(base.features, Features)
         self.assertEqual(base.features.features_to_run, ["model_function"])
 
         self.assertIsInstance(base.parameters, Parameters)

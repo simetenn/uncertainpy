@@ -92,7 +92,7 @@ test_spike = create_test_suite_parameter(TestSpike, parameter=args.exact)
 test_spikes = create_test_suite_parameter(TestSpikes, parameter=args.exact)
 test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
 
-test_features = create_test_suite([TestGeneralFeatures,
+test_features = create_test_suite([TestFeatures,
                                    TestGeneralSpikingFeatures,
                                    TestSpikingFeatures,
                                    TestTestingFeatures,

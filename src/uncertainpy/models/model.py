@@ -108,7 +108,7 @@ class Model(object):
 
         2. ``run(**parameters)`` must return the time values (`t`) or equivalent
         and the model result (`U`). If the model have no time values,
-        return None instead. The first two arguments returned must be
+        return None or numpy.nan instead. The first two arguments returned must be
         `t`, and `U`. Additionally, any number of info objects can be
         returned after `t`, and `U`. These info objects are optional and are
         passed on to ``model.postprocess``, ``features.preprocess``, and feature
@@ -136,7 +136,7 @@ class Model(object):
         See also
         --------
         uncertainpy.features : Features of models
-        uncertainpy.features.GeneralFeatures.preprocess : Preprocessing of model results before feature calculation
+        uncertainpy.features.Features.preprocess : Preprocessing of model results before feature calculation
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """
         return self._run

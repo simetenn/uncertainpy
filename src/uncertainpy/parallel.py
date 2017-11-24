@@ -34,7 +34,7 @@ class Parallel(Base):
     model : {None, Model or Model subclass instance, model function}, optional
         Model to perform uncertainty quantification on.
         Default is None.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
+    features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
@@ -57,7 +57,7 @@ class Parallel(Base):
 
     See Also
     --------
-    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.Features : General features class
     uncertainpy.models.Model : Model class
     """
     def create_interpolations(self, result):
@@ -216,7 +216,7 @@ class Parallel(Base):
         See also
         --------
         uncertainpy.Parallel.none_to_nan : Method for converting from None to NaN
-        uncertainpy.features.GeneralFeatures.preprocess : preprocessing model results before features are calculated
+        uncertainpy.features.Features.preprocess : preprocessing model results before features are calculated
         uncertainpy.models.Model.postprocess : posteprocessing of model results
         """
         # Try-except to catch exceptions and print stack trace

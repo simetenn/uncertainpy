@@ -8,7 +8,7 @@ import chaospy as cp
 
 from uncertainpy import UncertaintyCalculations
 from uncertainpy.parameters import Parameters
-from uncertainpy.features import GeneralFeatures
+from uncertainpy.features import Features
 from uncertainpy import uniform, normal
 from uncertainpy import Data
 from uncertainpy.models import Model
@@ -58,14 +58,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                               parameters=self.parameters)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
-        self.assertIsInstance(uncertainty.features, GeneralFeatures)
+        self.assertIsInstance(uncertainty.features, Features)
 
 
 
     def test_intit_features(self):
         uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                            verbose_level="error")
-        self.assertIsInstance(uncertainty_calculations.features, GeneralFeatures)
+        self.assertIsInstance(uncertainty_calculations.features, Features)
 
         uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                            parameters=None,
@@ -103,7 +103,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                 return "t", "U"
 
         self.uncertainty_calculations.features = feature_function
-        self.assertIsInstance(self.uncertainty_calculations.features, GeneralFeatures)
+        self.assertIsInstance(self.uncertainty_calculations.features, Features)
 
         t, U = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")
@@ -122,7 +122,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
         self.uncertainty_calculations.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.uncertainty_calculations.features, GeneralFeatures)
+        self.assertIsInstance(self.uncertainty_calculations.features, Features)
 
         t, U = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")

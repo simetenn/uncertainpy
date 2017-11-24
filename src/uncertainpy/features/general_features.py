@@ -1,6 +1,6 @@
 from ..utils import create_logger
 
-class GeneralFeatures(object):
+class Features(object):
     """
     Class for calculating features of a model.
 
@@ -69,7 +69,7 @@ class GeneralFeatures(object):
 
     See also
     --------
-    uncertainpy.features.GeneralFeatures.example_feature : example_feature showing the requirements of a feature function.
+    uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
     """
     def __init__(self,
                  new_features=None,
@@ -287,7 +287,7 @@ class GeneralFeatures(object):
 
         See also
         --------
-        uncertainpy.features.GeneralFeatures.example_feature : example_feature showing the requirements of a feature function.
+        uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
         """
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
@@ -418,7 +418,7 @@ class GeneralFeatures(object):
 
         See also
         --------
-        uncertainpy.features.GeneralFeatures.calculate_feature : Method for calculating a single feature.
+        uncertainpy.features.Features.calculate_feature : Method for calculating a single feature.
         """
         results = {}
         for feature in self.features_to_run:
@@ -462,7 +462,7 @@ class GeneralFeatures(object):
 
         See also
         --------
-        uncertainpy.features.GeneralFeatures.calculate_feature : Method for calculating a single feature.
+        uncertainpy.features.Features.calculate_feature : Method for calculating a single feature.
         """
         results = {}
         for feature in self.implemented_features():
@@ -516,7 +516,7 @@ class GeneralFeatures(object):
 
         See also
         --------
-        uncertainpy.features.GeneralFeatures.preprocess : The features preprocess method.
+        uncertainpy.features.Features.preprocess : The features preprocess method.
         uncertainpy.models.Model.run : The model run method
         """
         # Perform feature calculations here

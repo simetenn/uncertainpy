@@ -23,7 +23,7 @@ class RunModel(ParameterBase):
         Either None, a Parameters instance or a list the parameters that should be created.
         The two lists are similar to the arguments sent to Parameters.
         Default is None.
-    features : {None, GeneralFeatures or GeneralFeatures subclass instance, list of feature functions}, optional
+    features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
@@ -58,7 +58,7 @@ class RunModel(ParameterBase):
 
     See Also
     --------
-    uncertainpy.features.GeneralFeatures : General features class
+    uncertainpy.features.Features : General features class
     uncertainpy.Parameter : Parameter class
     uncertainpy.Parameters : Parameters collection class
     uncertainpy.models.Model : Model class

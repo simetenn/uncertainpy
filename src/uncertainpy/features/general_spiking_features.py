@@ -1,8 +1,8 @@
 from .spikes import Spikes
-from .general_features import GeneralFeatures
+from .general_features import Features
 
 
-class GeneralSpikingFeatures(GeneralFeatures):
+class GeneralSpikingFeatures(Features):
     def __init__(self,
                  new_features=None,
                  features_to_run="all",
