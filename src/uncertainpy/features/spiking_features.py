@@ -102,15 +102,14 @@ class SpikingFeatures(GeneralSpikingFeatures):
     -----
     The implemented features are:
 
-    nr_spikes
-    time_before_first_spike
-    spike_rate
-    average_AP_overshoot
-    average_AHP_depth
-    average_AP_width
+    ==========================  ==========================
+    nr_spikes                   time_before_first_spike
+    spike_rate                  average_AP_overshoot
+    average_AHP_depth           average_AP_width
     accommodation_index
+    ==========================  ==========================
 
-    The features are taken from:
+    The features are from:
     Druckmann, S., Banitt, Y., Gidon, A. A., Schurmann, F., Markram, H., and Segev, I.
     (2007). A novel multiple objective optimization framework for constraining conductance-
     based neuron models by experimental data. Frontiers in Neuroscience 1, 7-18. doi:10.
@@ -219,14 +218,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                     "No 'stimulus_start' found in info, "
                                     "setting stimulus start as initial time")
 
-        # if "stimulus_start" not in info:
-        #     self.logger.warning("time_before_first_spike: info['stimulus_start'] missing."
-        #                         "time_before_first_spike requires info['stimulus_start'], and is not calculated")
-        #     return None, None
 
         if spikes.nr_spikes <= 0:
             return None, None
-
 
         time = spikes.spikes[0].t_spike - info["stimulus_start"]
 
