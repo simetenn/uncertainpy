@@ -168,12 +168,11 @@ class Parallel(Base):
         return the results.
 
         The model is run and each feature of the model is calculated from the model output,
-        ``t`` (time values) and ``U`` (model result).
+        `t` (time values) and `U` (model result).
         The results are interpolated if they are adaptive, meaning they return a varying number of steps,
         An interpolation is created and added to results for the model/features that are adaptive.
-        Each instance of ``None`` is converted to an
+        Each instance of None is converted to an
         array of ``numpy.nan`` of the correct shape, which makes the array regular.
-
 
         Parameters
         ----------
@@ -206,15 +205,13 @@ class Parallel(Base):
                           "feature_invalid": {"U": np.nan,
                                              "t": np.nan}}
 
-
         Notes
         -----
-        Time ``t`` and result ``U`` are calculated from the model. Then sent to
+        Time `t` and result `U` are calculated from the model. Then sent to
         model.postprocess, and the postprocessed result from model.postprocess
         is added to result.
-        ``t`` and ``U`` are sent to features.preprocess and the preprocessed results
+        `t` and `U` are sent to features.preprocess and the preprocessed results
         is used to calculate each feature.
-
 
         See also
         --------

@@ -83,7 +83,7 @@ class NestModel(Model):
         Raises
         ------
         NotImplementedError
-            If no run method have been implemented or set to a function.
+            If no ``run`` method have been implemented or set to a function.
 
         Notes
         -----
@@ -94,10 +94,10 @@ class NestModel(Model):
         the parameters to the model. These parameters must be assigned to
         the Nest model.
 
-        2. ``run(**parameters)`` must return final simulation time  (``t_stop``)
-        and a list of spike trains (``spiketrains``).
+        2. ``run(**parameters)`` must return final simulation time  (`t_stop`)
+        and a list of spike trains (`spiketrains`).
 
-        The model results ``t_stop`` and ``spiketrains`` is used to calculate
+        The model results `t_stop` and `spiketrains` is used to calculate
         the features.
         The model result is postprocessed to create a regular result before
         the calculating the uncertainties of the model.
@@ -136,7 +136,8 @@ class NestModel(Model):
         Example
         -------
         In a simulation that gives the spiketrain ``[0, 2, 3]``, with a
-        resolution of 0.5 and end time at 4, the resulting spike train become:
+        time resolution of 0.5 ms and ends after 4 ms,
+        the resulting spike train become:
         ``[1, 0, 0, 0, 1, 0, 1, 0, 0]``.
         """
 

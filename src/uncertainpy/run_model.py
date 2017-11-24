@@ -427,8 +427,8 @@ class RunModel(ParameterBase):
         Returns
         -------
         bool
-            ``True`` if the feature is adaptive or
-            ``False`` if the feature is not.
+            True if the feature is adaptive or
+            False if the feature is not.
 
         """
 

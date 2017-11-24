@@ -3,8 +3,8 @@ import chaospy as cp
 
 def uniform(interval):
     """
-    A closure that creates a function that takes a ``parameter`` as input and
-    returns a uniform distribution with `interval` around ``parameter``.
+    A closure that creates a function that takes a `parameter` as input and
+    returns a uniform distribution with `interval` around `parameter`.
 
     Parameters
     ----------
@@ -14,8 +14,8 @@ def uniform(interval):
     Returns
     -------
     distribution : function
-        A function that takes ``parameter`` as input and returns a
-        uniform distribution with `interval` around this ``parameter``.
+        A function that takes `parameter` as input and returns a
+        uniform distribution with `interval` around this `parameter`.
 
 
     Notes
@@ -38,9 +38,9 @@ def uniform(interval):
 
 def normal(interval):
     """
-    A closure that creates a function that takes a ``parameter`` as input and
-    returns a Gaussian distribution with standard deviation ``interval*parameter``
-    around ``parameter``.
+    A closure that creates a function that takes a `parameter` as input and
+    returns a Gaussian distribution with standard deviation `interval*parameter`
+    around `parameter`.
 
     Parameters
     ----------
@@ -51,7 +51,7 @@ def normal(interval):
     Returns
     -------
     distribution : function
-        A function that takes a ``parameter`` as input and
+        A function that takes a `parameter` as input and
         returns a Gaussian distribution standard deviation ``interval*parameter``.
 
     Notes

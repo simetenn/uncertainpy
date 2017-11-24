@@ -6,25 +6,70 @@ class GeneralFeatures(object):
 
     Parameters
     ----------
-    new_features : {None}, optional
-        A list if features
+    new_features : {None, callable, list of callables}
+        The new features to add. The feature functions have the requirements
+        stated in ``example_feature``. If None, no features are added.
+        Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
         If ``"all"``, the uncertainties will be calculated for all
         implemented and assigned features.
-        If ``None``, or an empty list ``[]``, no features will be
+        If None, or an empty list ``[]``, no features will be
         calculated.
-        If str, only that feature ic calculated.
+        If str, only that feature is calculated.
         If list of feature names, all the listed features will be
         calculated. Default is ``"all"``.
-    new_utility_methods : {None}, optional
-    adaptive : {None}, optional
+    new_utility_methods : {None, list}, optional
+        A list of new utility methods. All methods in this class that is not in
+        the list of utility methods is considered to be a feature.
+        Default is None.
+    adaptive : {None, "all", str, list of feature names}, optional
+        Which features that are adaptive, meaning they have a varying number of
+        time points between evaluations. An interpolation is performed on
+        each adaptive feature to create regular results.
+        If ``"all"``, all features are set to adaptive.
+        If None, or an empty list, no features are adaptive.
+        If str, only that feature is adaptive.
+        If list of feature names, all listed are adaptive.
+        Default is None.
     labels : dictionary, optional
+        A dictionary with key as the feature name and the value as a list of
+        labels for each axis. The number of elements in the list corresponds
+        to the dimension of the feature. Example:
+
+        .. code-block:: Python
+
+            new_labels = {"0d_feature": ["x-axis"],
+                          "1d_feature": ["x-axis", "y-axis"],
+                          "2d_feature": ["x-axis", "y-axis", "z-axis"]
+                         }
+
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if a filename is given.
+        Default is None.
 
     Attributes
     ----------
+    features_to_run : list
+        Which features to calculate uncertainties for.
+    adaptive : list
+        A list of the adaptive features.
+    utility_methods : list
+        A list of all utility methods implemented. All methods in this class
+        that is not in the list of utility methods is considered to be a feature.
+    labels : dictionary
+        Labels for the axes of each feature, used when plotting.
+    logger : logging.Logger object
+        Logger object responsible for logging to screen or file.
 
-
+    See also
+    --------
+    uncertainpy.features.GeneralFeatures.example_feature : example_feature showing the requirements of a feature function.
     """
     def __init__(self,
                  new_features=None,
@@ -38,11 +83,11 @@ class GeneralFeatures(object):
         self.utility_methods = ["calculate_feature",
                                 "calculate_features",
                                 "calculate_all_features",
-                                "calculate",
                                 "__init__",
                                 "implemented_features",
                                 "preprocess",
-                                "add_features"]
+                                "add_features",
+                                "example_feature"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -67,10 +112,43 @@ class GeneralFeatures(object):
 
 
 
-    def preprocess(self, *args):
+    def preprocess(self, *model_results):
         """
+        Preprossesing of the time `t` and results `U` from the model, before the
+        features are calculated.
+
+        No preprocessing is performed, and the direct model results are
+        currently returned.
+        If preprocessing is needed it should follow the below format.
+
+        Parameters
+        ----------
+        *model_results
+            Variable length argument list. Is the arguments that ``model.run()``
+            returns. By default it contains `t` and `U`, and then any number of
+            optional `info` arguments.
+
+        Returns
+        -------
+        preprocess_results
+            Returns any number of arguments that are sent to each feature.
+            The arguments returned must compatible with the input arguments of
+            all features.
+
+        Notes
+        -----
+        Perform a preprossesing of the model results before the results are sent
+        to the calculation of each feature. It is used to perform common
+        calculations that each feature needs to perform, to reduce the number of
+        necessary calculations. The arguments returned must therefore be compatible with the
+        arguments to the features.
+
+
+        See also
+        --------
+        uncertainpy.models.Model.run : The model run method
         """
-        return args
+        return model_results
 
 
     @property
@@ -81,15 +159,15 @@ class GeneralFeatures(object):
         Parameters
         ----------
         new_labels : dictionary
-            A dictionary with key as the feature name and the value a list of
-            labels for each axis `
-            {"nr_spikes": ["number of spikes"],
-                              "spike_rate": ["spike rate [Hz]"],
-                              "time_before_first_spike": ["time [ms]"],
-                              "accommodation_index": ["accommodation index"],
-                              "average_AP_overshoot": ["voltage [mV]"],
-                              "average_AHP_depth": ["voltage [mV]"],
-                              "average_AP_width": ["time [ms]"]
+            A dictionary with key as the feature name and the value as a list of
+            labels for each axis. The number of elements in the list corresponds
+            to the dimension of the feature. Example:
+
+            .. code-block:: Python
+
+                new_labels = {"0d_feature": ["x-axis"],
+                              "1d_feature": ["x-axis", "y-axis"],
+                              "2d_feature": ["x-axis", "y-axis", "z-axis"]
                              }
         """
         return self._labels
@@ -110,19 +188,17 @@ class GeneralFeatures(object):
             Which features to calculate uncertainties for.
             If ``"all"``, the uncertainties will be calculated for all
             implemented and assigned features.
-            If ``None``, or an empty list , no features will be
+            If None, or an empty list , no features will be
             calculated.
-            If ``str``, only that feature is calculated.
-            If ``list`` of feature names, all listed features will be
+            If str, only that feature is calculated.
+            If list of feature names, all listed features will be
             calculated. Default is ``"all"``.
 
         Returns
         -------
         list
             A list of features to calculate uncertainties for.
-
         """
-
         return self._features_to_run
 
     @features_to_run.setter
@@ -140,6 +216,25 @@ class GeneralFeatures(object):
     @property
     def adaptive(self):
         """
+        Adaptive features.
+
+        Which features that are adaptive, meaning they have a varying number of
+        time points between evaluations. An interpolation is performed on
+        each adaptive feature to create regular results.
+
+        Parameters
+        ----------
+        new_features_to_run : {None, "all", str, list of feature names}
+            If ``"all"``, all features are set to adaptive.
+            If None, or an empty list, no features are adaptive.
+            If str, only that feature is adaptive.
+            If list of feature names, all listed are adaptive.
+            Default is None.
+
+        Returns
+        -------
+        list
+            A list of adaptive features.
         """
         return self._adaptive
 
@@ -158,6 +253,42 @@ class GeneralFeatures(object):
 
 
     def add_features(self, new_features, labels={}):
+        """
+        Add new features.
+
+        Parameters
+        ----------
+        new_features : {callable, list of callables}
+            The new features to add. The feature functions have the requirements
+            stated in ``example_feature``.
+        labels : dictionary, optional
+            A dictionary with the labels for the new features. The keys are the
+            feature function names and the values are a list of labels for each
+            axis. The number of elements in the list corresponds
+            to the dimension of the feature. Example:
+
+            .. code-block:: Python
+
+                new_labels = {"0d_feature": ["x-axis"],
+                              "1d_feature": ["x-axis", "y-axis"],
+                              "2d_feature": ["x-axis", "y-axis", "z-axis"]
+                             }
+
+        Raises
+        ------
+        TypeError
+            Raises a TypeError if `new_features`  is not callable or list of
+            callables.
+
+        Notes
+        -----
+        The features added are not added to ``features_to_run``.
+        ``features_to_run`` must be set manually afterwards.
+
+        See also
+        --------
+        uncertainpy.features.GeneralFeatures.example_feature : example_feature showing the requirements of a feature function.
+        """
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
             # self.features_to_run.append(new_features.__name__)
@@ -178,7 +309,7 @@ class GeneralFeatures(object):
                     else:
                         raise TypeError("Feature in iterable is not callable")
             except TypeError as error:
-                msg = "Added features must be a GeneralFeatures instance, callable or list of callables"
+                msg = "Added features must be a callable or list of callables"
                 if not error.args:
                     error.args = ("",)
                 error.args = error.args + (msg,)
@@ -186,34 +317,53 @@ class GeneralFeatures(object):
 
 
 
+    def calculate_feature(self, feature_name, *preprocess_results):
+        """
+        Calculate feature with `feature_name`.
 
-    # def calculate(self, feature_name=None, *args):
-    #     if feature_name is None:
-    #         return self.calculate_features(*args)
-    #     elif feature_name == "all":
-    #         return self.calculate_all_features(*args)
-    #     else:
-    #         feature_result = self.calculate_feature(feature_name, *args)
-    #         try:
-    #             feature_t, feature_U = feature_result
-    #         except ValueError as error:
-    #             msg = "feature_ {} must return t and U (return t, U | return None, U)".format(feature_name)
-    #             if not error.args:
-    #                 error.args = ("",)
-    #             error.args = error.args + (msg,)
-    #             raise
+        Parameters
+        ----------
+        feature_name : str
+            Name of feature to calculate.
+        *preprocess_results
+            The arguments returned by ``preprocess``. These arguments are sent
+            as intput arguments to each feature. By default preprocess returns
+            the arguments that ``model.run()`` returns, which contains `t` and
+            `U`, and then any number of optional `info` arguments.
+            The implemented features require that `info` is a single
+            dictionary with the information stored as key-value pairs.
+            Certain features require specific keys to be present.
 
-    #         return {feature_name: {"t": feature_t, "U": feature_U}}
+        Returns
+        -------
+        t : {None, numpy.nan, array_like}
+            Time values, or equivalent, of the feature, if no time values
+            returns None or numpy.nan.
+        U : array_like
+            The feature results, `U` must either be regular (have the same
+            number of points for different paramaters) or be able to be
+            interpolated.
+
+        Raises
+        ------
+        TypeError
+            If `feature_name` is a utility method.
+
+        Notes
+        -----
+        Checks that the feature returns two arguments.
 
 
-
-    def calculate_feature(self, feature_name, *args):
+        See also
+        --------
+        uncertainpy.models.Model.run : The model run method
+        """
         if feature_name in self.utility_methods:
             raise TypeError("{} is a utility method".format(feature_name))
 
 
         try:
-            feature_result = getattr(self, feature_name)(*args)
+            feature_result = getattr(self, feature_name)(*preprocess_results)
         except Exception as error:
             msg = "Error in calculation of feature: {}".format(feature_name)
             if not error.args:
@@ -221,7 +371,7 @@ class GeneralFeatures(object):
             error.args = error.args + (msg,)
             raise
 
-        # Check that t, and U is returned
+        # Checks that t, and U is returned
         try:
             feature_t, feature_U = feature_result
         except (ValueError, TypeError) as error:
@@ -235,10 +385,44 @@ class GeneralFeatures(object):
 
 
 
-    def calculate_features(self, *args):
+    def calculate_features(self, *preprocess_results):
+        """
+        Calculate all features in ``features_to_run``.
+
+        Parameters
+        ----------
+        *preprocess_results
+            The arguments returned by ``preprocess``. These arguments are sent
+            as intput arguments to each feature. By default preprocess returns
+            the arguments that ``model.run()`` returns, which contains `t` and
+            `U`, and then any number of optional `info` arguments.
+            The implemented features require that `info` is a single
+            dictionary with the information stored as key-value pairs.
+            Certain features require specific keys to be present.
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary where the keys are the feature names
+            and the values are a dictionary with the time values `t` and feature
+            results on `U`, on the form ``{"t": t, "U": U}``.
+
+        Raises
+        ------
+        TypeError
+            If `feature_name` is a utility method.
+
+        Notes
+        -----
+        Checks that the feature returns two arguments.
+
+        See also
+        --------
+        uncertainpy.features.GeneralFeatures.calculate_feature : Method for calculating a single feature.
+        """
         results = {}
         for feature in self.features_to_run:
-            feature_t, feature_U = self.calculate_feature(feature, *args)
+            feature_t, feature_U = self.calculate_feature(feature, *preprocess_results)
 
             results[feature] = {"t": feature_t, "U": feature_U}
 
@@ -246,6 +430,40 @@ class GeneralFeatures(object):
 
 
     def calculate_all_features(self, *args):
+        """
+        Calculate all implemented features.
+
+        Parameters
+        ----------
+        *preprocess_results
+            The arguments returned by ``preprocess``. These arguments are sent
+            as intput arguments to each feature. By default preprocess returns
+            the arguments that ``model.run()`` returns, which contains `t` and
+            `U`, and then any number of optional `info` arguments.
+            The implemented features require that `info` is a single
+            dictionary with the information stored as key-value pairs.
+            Certain features require specific keys to be present.
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary where the keys are the feature names
+            and the values are a dictionary with the time values `t` and feature
+            results on `U`, on the form ``{"t": t, "U": U}``.
+
+        Raises
+        ------
+        TypeError
+            If `feature_name` is a utility method.
+
+        Notes
+        -----
+        Checks that the feature returns two arguments.
+
+        See also
+        --------
+        uncertainpy.features.GeneralFeatures.calculate_feature : Method for calculating a single feature.
+        """
         results = {}
         for feature in self.implemented_features():
             feature_t, feature_U = self.calculate_feature(feature, *args)
@@ -257,6 +475,52 @@ class GeneralFeatures(object):
 
     def implemented_features(self):
         """
-        Return a list of all callable methods in feature
+        Return a list of all callable methods in feature, that are not utility
+        methods.
+
+        Returns
+        -------
+        list
+            A list of all callable methods in feature, that are not utility
+            methods.
         """
         return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods and method not in dir(object)]
+
+
+    def example_feature(self, *preprocess_results):
+        """
+        An example feature. Feature function have the following requirements.
+
+        Parameters
+        ----------
+        *preprocess_results
+            Variable length argument list. Is the arguments that
+            ``features.preprocess`` returns. By default ``features.preprocess``
+            returns the same arguments as ``model.run`` returns.
+
+        Returns
+        -------
+        t : {None, numpy.nan, array_like}
+            Time values, or equivalent, of the feature, if no time values
+            return None or numpy.nan.
+        U : array_like
+            The feature results, `U` must either be regular (have the same
+            number of points for different paramaters) or be able to be
+            interpolated. If there are no feature results return
+            None or numpy.nan instead of `U`` and that evaluation will be
+            disregarded.
+
+        Notes
+        -----
+        By default the feature arguments used are
+
+        See also
+        --------
+        uncertainpy.features.GeneralFeatures.preprocess : The features preprocess method.
+        uncertainpy.models.Model.run : The model run method
+        """
+        # Perform feature calculations here
+        t = None
+        U = None
+
+        return t, U

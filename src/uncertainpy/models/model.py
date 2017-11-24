@@ -21,9 +21,9 @@ class Model(object):
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
         Default is an empty list.
-    run_function : {None, function}, optional
-        A function that implements the model. See Note for requirements of the
-        function. Default is None.
+    run_function : {None, callable}, optional
+        A function that implements the model. See the ``run`` method for
+        requirements of the function. Default is None.
 
     Attributes
     ----------
@@ -34,6 +34,9 @@ class Model(object):
     adaptive : bool
         True if the model is adaptive, meaning it has a varying number of
         time values. False if not. Default is False.
+    name : str
+        Name of the model. Either the name of the class or the name of the
+        function set as run.
 
     See Also
     --------
@@ -45,6 +48,7 @@ class Model(object):
                  adaptive=False,
                  labels=[],
                  ignore=False):
+                 # TODO fix and document ignore option
 
         self.adaptive = adaptive
         self.labels = labels
@@ -80,14 +84,12 @@ class Model(object):
             Result of the model. Note that `U` myst either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
-        *info, optional
+        info, optional
             Any number of info objects that is passed on to feature calculations.
             It is recommended to use a single dictionary with the information
             stored as key-value pairs.
             This is what the implemented features requires, as well as
             require that specific keys to be present.
-
-
 
         Raises
         ------
@@ -104,12 +106,12 @@ class Model(object):
         the model, either setting them with Python, or
         assigning them to the simulator.
 
-        2. ``run(**parameters)`` must return the time values or equivalent (``t``)
-        and the model result (``U``). If the model have no time values,
-        return ``None`` instead. The first two arguments returned must be
-        ``t``, and ``U``. Additionally, any number of info objects can be
-        returned after ``t``, and ``U``. These info objects are optional and are
-        passed on to model.postprocess, feature.preprocess, and feature
+        2. ``run(**parameters)`` must return the time values (`t`) or equivalent
+        and the model result (`U`). If the model have no time values,
+        return None instead. The first two arguments returned must be
+        `t`, and `U`. Additionally, any number of info objects can be
+        returned after `t`, and `U`. These info objects are optional and are
+        passed on to ``model.postprocess``, ``features.preprocess``, and feature
         calculations.
 
         The model does not need to be implemented in Python, you can use any
@@ -117,11 +119,11 @@ class Model(object):
         the model from the run method Python and return the results from the
         model into the run method.
 
-        The model results ``t`` and ``U`` are used to calculate the features, as
-        well as the optional ``*info`` objects returned.
+        The model results `t` and `U` are used to calculate the features, as
+        well as the optional `info` objects returned.
 
-        The model results must either be regular or be able to be interpolated, or
-        be able to be postprocessed to a regular form or a form that can
+        The model results must either be regular, be able to be interpolated, or
+        be able to be postprocessed to a regular form, or a form that can
         be interpolated. This is because the uncertainty quantification methods
         needs results with the same number of points for each set of parameters
         to be able to perform the uncertainty quantification.
@@ -129,13 +131,12 @@ class Model(object):
         If you want to calculate features directly from the original model results,
         but still need to postprocess the model results to perform the
         uncertainty quantification, you can implement the postprocessing in the
-        ``postprocess(t, U, *info)`` method. The info objects are available in
-        ``postprocess``.
+        ``postprocess(t, U, *info)`` method.
 
         See also
         --------
-        uncertainpy.model.features : Features of models
-        uncertainpy.model.features.GeneralFeatures.preprocess : Preprocessing of model results before feature calculation
+        uncertainpy.features : Features of models
+        uncertainpy.features.GeneralFeatures.preprocess : Preprocessing of model results before feature calculation
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """
         return self._run
@@ -182,14 +183,14 @@ class Model(object):
         *model_result
             Variable length argument list. Is the arguments that ``run()``
             returns. It should contain `t` and `U`,
-            and then any number of optional `*info` arguments.
+            and then any number of optional `info` arguments.
 
             t : {None, numpy.nan, array_like}
                 Time values of the model. If no time values it should return None or
                 numpy.nan.
             U : array_like
                 Result of the model.
-            *info, optional
+            info, optional
                 Any number of info objects that is passed on to feature calculations.
                 It is recommended to use a single dictionary with the information
                 stored as key-value pairs.
@@ -230,7 +231,7 @@ class Model(object):
         """
         Validate the results from ``run()``.
 
-        This method ensures the results from returns ``t``, ``U``, and optional
+        This method ensures the results from returns `t`, `U`, and optional
         info objects.
 
         Returns
@@ -247,15 +248,16 @@ class Model(object):
 
         Notes
         -----
-        Tries to verify that at least, ``t`` and ``U`` are returned from ``run()``.
-        ``run()`` should return on the following format ``return t, U, *info``.
+        Tries to verify that at least, `t` and `U` are returned from ``run()``.
+        ``run()`` should return on the following format
+        ``return t, U, info_1, info_2, ...``.
 
         t : {None, numpy.nan, array_like}
             Time values of the model. If no time values it should return None or
             numpy.nan.
         U : array_like
             Result of the model.
-        *info, optional
+        info, optional
             Any number of info objects that is passed on to feature calculations.
             It is recommended to use a single dictionary with the information
             stored as key-value pairs.

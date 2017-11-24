@@ -305,9 +305,14 @@ class Data(collections.MutableMapping):
             Name of feature/model.
         data : dictionary
             Dictionary with data for `feature`.
+
+        Raises
+        ------
+        ValueError
+            If `data` is not a dictionary.
         """
         if not isinstance(data, dict):
-            raise ValueError("Value must be of type dict")
+            raise ValueError("data must be of type dict")
         self.data[feature] = data
 
 
