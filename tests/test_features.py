@@ -202,9 +202,9 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
     def test_calculate_spikes(self):
         self.features = GeneralSpikingFeatures()
 
-        self.features.calculate_spikes(self.t, self.U)
+        spikes = self.features.calculate_spikes(self.t, self.U)
 
-        self.assertEqual(self.features.spikes.nr_spikes, 12)
+        self.assertEqual(spikes.nr_spikes, 12)
 
 
     def test_preprocess(self):

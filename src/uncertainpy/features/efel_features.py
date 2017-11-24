@@ -253,8 +253,7 @@ class EfelFeatures(Features):
         Parameters
         ----------
         t : {None, numpy.nan, array_like}
-            Time values of the model. If no time values it should return None or
-            numpy.nan.
+            Time values of the model. If no time values it is None or numpy.nan.
         U : array_like
             Result of the model.
         info : dictionary

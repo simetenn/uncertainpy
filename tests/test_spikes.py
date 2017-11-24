@@ -54,7 +54,7 @@ class TestSpikes(TestCasePlot):
     def test_find_spikes_auto(self):
         self.spikes = Spikes()
 
-        self.spikes.find_spikes(self.t, self.U, thresh="auto")
+        self.spikes.find_spikes(self.t, self.U, threshold="auto")
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
@@ -68,7 +68,7 @@ class TestSpikes(TestCasePlot):
     def test_find_spikes_default_auto_extended(self):
         self.spikes = Spikes()
 
-        self.spikes.find_spikes(self.t, self.U, thresh="auto", extended_spikes=True)
+        self.spikes.find_spikes(self.t, self.U, threshold="auto", extended_spikes=True)
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 

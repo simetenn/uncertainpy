@@ -34,7 +34,7 @@ class Spike:
 
 
 class Spikes:
-    def __init__(self, t=None, U=None, thresh=-30, extended_spikes=False, xlabel="", ylabel=""):
+    def __init__(self, t=None, U=None, threshold=-30, extended_spikes=False, xlabel="", ylabel=""):
         self.spikes = []
         self.nr_spikes = 0
 
@@ -42,7 +42,7 @@ class Spikes:
         self.ylabel = ylabel
 
         if t is not None and U is not None:
-            self.find_spikes(t, U, thresh=thresh, extended_spikes=extended_spikes)
+            self.find_spikes(t, U, threshold=threshold, extended_spikes=extended_spikes)
 
 
     def __iter__(self):
@@ -58,14 +58,14 @@ class Spikes:
         return self.spikes[i]
 
 
-    def find_spikes(self, t, U, thresh=-30, extended_spikes=False):
+    def find_spikes(self, t, U, threshold=-30, extended_spikes=False):
 
         min_dist_from_peak = 1
         derivative_cutoff = 0.5
 
         self.spikes = []
-        if thresh == "auto":
-            thresh = np.sqrt(U.var())
+        if threshold == "auto":
+            threshold = np.sqrt(U.var())
 
 
         spike_start = 0
@@ -80,12 +80,12 @@ class Spikes:
         prev_spike_end = 0
 
         for i in range(len(U)):
-            if U[i] > thresh and start_flag is False:
+            if U[i] > threshold and start_flag is False:
                 spike_start = i
                 start_flag = True
                 continue
 
-            elif U[i] < thresh and start_flag is True:
+            elif U[i] < threshold and start_flag is True:
                 spike_end = i + 1
                 start_flag = False
 
