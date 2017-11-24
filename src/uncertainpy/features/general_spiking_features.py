@@ -1,5 +1,5 @@
 from .spikes import Spikes
-from .general_features import Features
+from .features import Features
 
 
 class GeneralSpikingFeatures(Features):
