@@ -508,7 +508,7 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
 
         t, spiketrains = self.features.preprocess(self.t_original, self.U)
 
-        self.assertIsNone(t)
+        self.assertEqual(t, self.t_original)
         self.assertIsInstance(spiketrains[0], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[1], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[2], neo.core.SpikeTrain)
@@ -531,10 +531,10 @@ class TestNetworkFeatures(unittest.TestCase):
         self.U = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
         self.implemented_features = ["cv", "mean_cv", "binned_isi",
-                                     "mean_isi", "lv", "mean_firing_rate",
+                                     "mean_isi", "local_variation", "mean_firing_rate",
                                      "fanofactor", "instantaneous_rate",
                                      "van_rossum_dist", "victor_purpura_dist",
-                                     "corrcoef", "covariance", "mean_lv"]
+                                     "corrcoef", "covariance", "mean_local_variation"]
 
 
 
@@ -580,7 +580,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
         t, spiketrains = self.features.preprocess(self.t_original, self.U)
 
-        self.assertIsNone(t)
+        self.assertEqual(t, self.t_original)
         self.assertIsInstance(spiketrains[0], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[1], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[2], neo.core.SpikeTrain)
@@ -631,7 +631,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
 
     def test_lv(self):
-        t, U = self.features.lv(self.t, self.spiketrains)
+        t, U = self.features.local_variation(self.t, self.spiketrains)
 
         self.assertIsNone(t)
         self.assertTrue(np.array_equal([0.16666666666666666,
@@ -639,6 +639,14 @@ class TestNetworkFeatures(unittest.TestCase):
                                         0.16666666666666666,
                                         None],
                                        U))
+
+    def test_mean_lv(self):
+        t, U = self.features.mean_local_variation(self.t, self.spiketrains)
+
+        self.assertIsNone(t)
+        mean = np.mean([0.16666666666666666, 0.16666666666666666, 0.16666666666666666])
+        self.assertEqual(mean, U)
+
 
     def test_mean_firing_rate(self):
         t, U = self.features.mean_firing_rate(self.t, self.spiketrains)

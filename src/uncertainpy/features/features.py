@@ -12,12 +12,12 @@ class Features(object):
         Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
-        If ``"all"``, the uncertainties will be calculated for all
+        If ``"all"``, the uncertainties are calculated for all
         implemented and assigned features.
-        If None, or an empty list ``[]``, no features will be
+        If None, or an empty list ``[]``, no features are
         calculated.
         If str, only that feature is calculated.
-        If list of feature names, all the listed features will be
+        If list of feature names, all the listed features are
         calculated. Default is ``"all"``.
     new_utility_methods : {None, list}, optional
         A list of new utility methods. All methods in this class that is not in
@@ -186,12 +186,12 @@ class Features(object):
         ----------
         new_features_to_run : {"all", None, str, list of feature names}
             Which features to calculate uncertainties for.
-            If ``"all"``, the uncertainties will be calculated for all
+            If ``"all"``, the uncertainties are calculated for all
             implemented and assigned features.
-            If None, or an empty list , no features will be
+            If None, or an empty list , no features are
             calculated.
             If str, only that feature is calculated.
-            If list of feature names, all listed features will be
+            If list of feature names, all listed features are
             calculated. Default is ``"all"``.
 
         Returns
@@ -495,8 +495,8 @@ class Features(object):
         ----------
         *preprocess_results
             Variable length argument list. Is the arguments that
-            ``features.preprocess`` returns. By default ``features.preprocess``
-            returns the same arguments as ``model.run`` returns.
+            ``Features.preprocess`` returns. By default ``Features.preprocess``
+            returns the same arguments as ``Model.run`` returns.
 
         Returns
         -------
@@ -507,12 +507,8 @@ class Features(object):
             The feature results, `U` must either be regular (have the same
             number of points for different paramaters) or be able to be
             interpolated. If there are no feature results return
-            None or numpy.nan instead of `U`` and that evaluation will be
+            None or numpy.nan instead of `U` and that evaluation are
             disregarded.
-
-        Notes
-        -----
-        By default the feature arguments used are
 
         See also
         --------

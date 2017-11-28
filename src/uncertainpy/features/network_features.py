@@ -32,8 +32,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
                               "mean_cv": ["Mean coefficient of variation"],
                               "mean_isi": ["Mean interspike interval [{}]".format(unit_string)],
-                              "lv": ["Neuron nr", "Local variation"],
-                              "mean_lv": ["Mean local variation"],
+                              "local_variation": ["Neuron nr", "Local variation"],
+                              "mean_local_variation": ["Mean local variation"],
                               "mean_firing_rate": ["Neuron nr", "Rate [Hz]"],
                               "instantaneous_rate": ["Time [ms]", "Neuron nr", "Rate [Hz]"],
                               "fanofactor": ["Fanofactor"],
@@ -59,7 +59,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         self.covariance_bin_size = covariance_bin_size
 
 
-    def cv(self, t, spiketrains):
+    def cv(self, t_stop, spiketrains):
         cv = []
         for spiketrain in spiketrains:
             cv.append(elephant.statistics.cv(spiketrain))
@@ -67,7 +67,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return None, np.array(cv)
 
 
-    def mean_cv(self, t, spiketrains):
+    def mean_cv(self, t_stop, spiketrains):
         cv = []
         for spiketrain in spiketrains:
             cv.append(elephant.statistics.cv(spiketrain))
@@ -76,7 +76,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
 
 
-    def binned_isi(self, t, spiketrains):
+    def binned_isi(self, t_stop, spiketrains):
         binned_isi = []
         bins = np.arange(0, spiketrains[0].t_stop.magnitude + self.isi_bin_size, self.isi_bin_size)
 
@@ -92,7 +92,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return centers, binned_isi
 
 
-    def mean_isi(self, t, spiketrains):
+    def mean_isi(self, t_stop, spiketrains):
         isi = []
         for spiketrain in spiketrains:
             if len(spiketrain) > 1:
@@ -102,35 +102,37 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return None, np.mean(isi)
 
 
-    def lv(self, t, spiketrains):
+    def local_variation(self, t_stop, spiketrains):
         """
         Calculate the measure of local variation (LV) for a sequence of time intervals between events.
         """
-        lv = []
+        local_variation = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)
             if len(isi) > 1:
-                lv.append(elephant.statistics.lv(isi))
+                local_variation.append(elephant.statistics.lv(isi))
             else:
-                lv.append(None)
+                local_variation.append(None)
 
-        return None, lv
+        return None, local_variation
 
 
 
-    def mean_lv(self, t, spiketrains):
+    def mean_local_variation(self, t_stop, spiketrains):
         """
         Calculate the mean local variation (LV) for a sequence of time intervals between events.
+
+
         """
-        lv = []
+        local_variation = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)
             if len(isi) > 1:
-                lv.append(elephant.statistics.lv(isi))
+                local_variation.append(elephant.statistics.lv(isi))
 
         return None, np.mean(lv)
 
-    def mean_firing_rate(self, t, spiketrains):
+    def mean_firing_rate(self, t_stop, spiketrains):
         mean_firing_rates = []
 
         for spiketrain in spiketrains:
@@ -141,7 +143,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return None, mean_firing_rates
 
 
-    def instantaneous_rate(self, t, spiketrains):
+    def instantaneous_rate(self, t_stop, spiketrains):
         instantaneous_rates = []
         t = None
         for spiketrain in spiketrains:
@@ -167,11 +169,11 @@ class NetworkFeatures(GeneralNetworkFeatures):
             return t.magnitude, instantaneous_rates
 
 
-    def fanofactor(self, t, spiketrains):
+    def fanofactor(self, t_stop, spiketrains):
         return None, elephant.statistics.fanofactor(spiketrains)
 
 
-    def van_rossum_dist(self, t, spiketrains):
+    def van_rossum_dist(self, t_stop, spiketrains):
         van_rossum_dist = elephant.spike_train_dissimilarity.van_rossum_dist(spiketrains)
 
         # van_rossum_dist returns 0.j imaginary parts in some cases
@@ -181,20 +183,20 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
         return None, van_rossum_dist
 
-    def victor_purpura_dist(self, t, spiketrains):
+    def victor_purpura_dist(self, t_stop, spiketrains):
         victor_purpura_dist = elephant.spike_train_dissimilarity.victor_purpura_dist(spiketrains)
 
         return None, victor_purpura_dist
 
 
-    def corrcoef(self, t, spiketrains):
+    def corrcoef(self, t_stop, spiketrains):
         binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
                                                           binsize=self.corrcoef_bin_size*self.units)
         corrcoef = elephant.spike_train_correlation.corrcoef(binned_sts)
 
         return None, corrcoef
 
-    def covariance(self, t, spiketrains):
+    def covariance(self, t_stop, spiketrains):
         binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
                                                           binsize=self.covariance_bin_size*self.units)
         covariance = elephant.spike_train_correlation.covariance(binned_sts)

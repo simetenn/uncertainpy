@@ -20,12 +20,12 @@ class EfelFeatures(Features):
         Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
-        If ``"all"``, the uncertainties will be calculated for all
+        If ``"all"``, the uncertainties are calculated for all
         implemented and assigned features.
-        If None, or an empty list ``[]``, no features will be
+        If None, or an empty list ``[]``, no features are
         calculated.
         If str, only that feature is calculated.
-        If list of feature names, all the listed features will be
+        If list of feature names, all the listed features are
         calculated. Default is ``"all"``.
     new_utility_methods : {None, list}, optional
         A list of new utility methods. All methods in this class that is not in
@@ -268,7 +268,7 @@ class EfelFeatures(Features):
             No mean Efel feature has time values, so None is returned instead.
         U : array_like
             The feature results, `U`. Returns None if there are no feature
-            results and that evaluation will be disregarded.
+            results and that evaluation are disregarded.
 
         See also
         --------
