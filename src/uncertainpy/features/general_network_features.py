@@ -21,7 +21,7 @@ class GeneralNetworkFeatures(Features):
     ----------
     new_features : {None, callable, list of callables}
         The new features to add. The feature functions have the requirements
-        stated in ``example_feature``. If None, no features are added.
+        stated in ``reference_feature``. If None, no features are added.
         Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
@@ -83,7 +83,7 @@ class GeneralNetworkFeatures(Features):
 
     See also
     --------
-    uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
+    uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
     """
     def __init__(self,
                  new_features=None,
@@ -156,7 +156,7 @@ class GeneralNetworkFeatures(Features):
 
 
 
-    def example_feature(self, t_stop, neo_spiketrains):
+    def reference_feature(self, t_stop, neo_spiketrains):
         """
         An example of an GeneralNetworkFeature. The feature functions have the
         following requirements, and the given parameters must either be

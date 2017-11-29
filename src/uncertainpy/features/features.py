@@ -8,7 +8,7 @@ class Features(object):
     ----------
     new_features : {None, callable, list of callables}
         The new features to add. The feature functions have the requirements
-        stated in ``example_feature``. If None, no features are added.
+        stated in ``reference_feature``. If None, no features are added.
         Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
@@ -69,7 +69,7 @@ class Features(object):
 
     See also
     --------
-    uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
+    uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
     """
     def __init__(self,
                  new_features=None,
@@ -87,7 +87,7 @@ class Features(object):
                                 "implemented_features",
                                 "preprocess",
                                 "add_features",
-                                "example_feature"]
+                                "reference_feature"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -260,7 +260,7 @@ class Features(object):
         ----------
         new_features : {callable, list of callables}
             The new features to add. The feature functions have the requirements
-            stated in ``example_feature``.
+            stated in ``reference_feature``.
         labels : dictionary, optional
             A dictionary with the labels for the new features. The keys are the
             feature function names and the values are a list of labels for each
@@ -287,7 +287,7 @@ class Features(object):
 
         See also
         --------
-        uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
+        uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
         """
         if callable(new_features):
             setattr(self, new_features.__name__, new_features)
@@ -487,7 +487,7 @@ class Features(object):
         return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods and method not in dir(object)]
 
 
-    def example_feature(self, *preprocess_results):
+    def reference_feature(self, *preprocess_results):
         """
         An example feature. Feature function have the following requirements.
 

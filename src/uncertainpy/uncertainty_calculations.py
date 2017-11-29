@@ -83,9 +83,12 @@ class UncertaintyCalculations(ParameterBase):
 
             parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
 
-            self.distribution = cp.J(*parameter_distributions)
+            distribution = cp.J(*parameter_distributions)
         else:
-            self.distribution = self.parameters.distribution
+            distribution = self.parameters.distribution
+
+        return distribution
+
 
     def create_mask(self, nodes, feature, weights=None):
         if feature not in self.data:
@@ -149,7 +152,7 @@ class UncertaintyCalculations(ParameterBase):
     def create_PCE_quadrature(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.create_distribution(uncertain_parameters=uncertain_parameters)
+        self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -187,7 +190,7 @@ class UncertaintyCalculations(ParameterBase):
     def create_PCE_regression(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.create_distribution(uncertain_parameters=uncertain_parameters)
+        self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
@@ -224,7 +227,7 @@ class UncertaintyCalculations(ParameterBase):
     def create_PCE_quadrature_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.create_distribution(uncertain_parameters=uncertain_parameters)
+        self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
@@ -282,7 +285,7 @@ class UncertaintyCalculations(ParameterBase):
     def create_PCE_regression_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.create_distribution(uncertain_parameters=uncertain_parameters)
+        self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
         # Create the Multivariat normal distribution
@@ -399,7 +402,7 @@ class UncertaintyCalculations(ParameterBase):
     def monte_carlo(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        self.create_distribution(uncertain_parameters=uncertain_parameters)
+        self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         nodes = self.distribution.sample(self.nr_mc_samples, "M")
 

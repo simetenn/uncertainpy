@@ -11,7 +11,7 @@ class GeneralSpikingFeatures(Features):
     ----------
     new_features : {None, callable, list of callables}
         The new features to add. The feature functions have the requirements
-        stated in ``example_feature``. If None, no features are added.
+        stated in ``reference_feature``. If None, no features are added.
         Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
@@ -87,7 +87,7 @@ class GeneralSpikingFeatures(Features):
 
     See also
     --------
-    uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
+    uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
     uncertainpy.features.Spikes : Class for finding spikes in the model result.
     """
     def __init__(self,
@@ -184,7 +184,7 @@ class GeneralSpikingFeatures(Features):
 
         See also
         --------
-        uncertainpy.features.Features.example_feature : example_feature showing the requirements of a feature function.
+        uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
         uncertainpy.features.Spikes : Class for finding spikes in the model result.
         """
         spikes = Spikes()
@@ -193,7 +193,7 @@ class GeneralSpikingFeatures(Features):
         return spikes
 
 
-    def example_feature(self, t, spikes, info):
+    def reference_feature(self, t, spikes, info):
         """
         An example of an GeneralSpikingFeature. The feature functions have the
         following requirements, and the input arguments must either be

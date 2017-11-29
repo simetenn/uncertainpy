@@ -217,28 +217,28 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         dist = cp.J(cp.Uniform())
         self.uncertainty_calculations.parameters.distribution = dist
-        self.uncertainty_calculations.create_distribution()
+        distribution = self.uncertainty_calculations.create_distribution()
 
-        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
-        self.assertEqual(self.uncertainty_calculations.distribution, dist)
+        self.assertIsInstance(distribution, cp.Dist)
+        self.assertEqual(distribution, dist)
 
     def test_create_distribution_none(self):
 
-        self.uncertainty_calculations.create_distribution()
+        distribution = self.uncertainty_calculations.create_distribution()
 
-        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Dist)
 
     def test_create_distribution_string(self):
 
-        self.uncertainty_calculations.create_distribution("a")
+        distribution = self.uncertainty_calculations.create_distribution("a")
 
-        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Dist)
 
     def test_create_distribution_list(self):
 
-        self.uncertainty_calculations.create_distribution(["a"])
+        distribution = self.uncertainty_calculations.create_distribution(["a"])
 
-        self.assertIsInstance(self.uncertainty_calculations.distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Dist)
 
 
     def test_create_mask_model(self):

@@ -16,7 +16,7 @@ class EfelFeatures(Features):
     ----------
     new_features : {None, callable, list of callables}
         The new features to add. The feature functions have the requirements
-        stated in ``example_feature``. If None, no features are added.
+        stated in ``reference_feature``. If None, no features are added.
         Default is None.
     features_to_run : {"all", None, str, list of feature names}, optional
         Which features to calculate uncertainties for.
@@ -152,7 +152,7 @@ class EfelFeatures(Features):
     See also
     --------
     https://github.com/BlueBrain/eFEL : Documentation for Efel features
-    uncertainpy.features.EfelFeatures.example_feature : example_feature showing the requirements of a Efel feature function.
+    uncertainpy.features.EfelFeatures.reference_feature : reference_feature showing the requirements of a Efel feature function.
     """
     def __init__(self,
                  new_features=None,
@@ -246,7 +246,7 @@ class EfelFeatures(Features):
 
 
 
-    def example_feature(self, t, U, info):
+    def reference_feature(self, t, U, info):
         """
         An example of an Efel feature. Efel feature functions have the following
         requirements, and the given parameters must either be returned by
