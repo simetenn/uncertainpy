@@ -130,7 +130,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
             if len(isi) > 1:
                 local_variation.append(elephant.statistics.lv(isi))
 
-        return None, np.mean(lv)
+        return None, np.mean(local_variation)
 
     def mean_firing_rate(self, t_stop, spiketrains):
         mean_firing_rates = []

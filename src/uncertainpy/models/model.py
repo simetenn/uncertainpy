@@ -108,7 +108,7 @@ class Model(object):
 
         2. ``run(**parameters)`` must return the time values (`t`) or equivalent
         and the model result (`U`). If the model have no time values,
-        return None or numpy.nan instead. The first two arguments returned must be
+        return None or numpy.nan instead. The first two values returned must be
         `t`, and `U`. Additionally, any number of info objects can be
         returned after `t`, and `U`. These info objects are optional and are
         passed on to ``model.postprocess``, ``features.preprocess``, and feature
@@ -181,9 +181,9 @@ class Model(object):
         Parameters
         ----------
         *model_result
-            Variable length argument list. Is the arguments that ``run()``
+            Variable length argument list. Is the values that ``run()``
             returns. It contains `t` and `U`,
-            and then any number of optional `info` arguments.
+            and then any number of optional `info` values.
         t : {None, numpy.nan, array_like}
             Time values of the model. If no time values it should return None or
             numpy.nan.

@@ -118,15 +118,15 @@ class GeneralNetworkFeatures(Features):
         Parameters
         ----------
         *model_results
-            Variable length argument list. Is the arguments that ``model.run()``
+            Variable length argument list. Is the values that ``model.run()``
             returns. By default it contains `t` and `U`, and then any number of
-            optional `info` arguments.
+            optional `info` values.
 
         Returns
         -------
         preprocess_results
-            Returns any number of arguments that are sent to each feature.
-            The arguments returned must compatible with the input arguments of
+            Returns any number of values that are sent to each feature.
+            The values returned must compatible with the input arguments of
             all features.
 
         Notes
@@ -134,8 +134,8 @@ class GeneralNetworkFeatures(Features):
         Perform a preprossesing of the model results before the results are sent
         to the calculation of each feature. It is used to perform common
         calculations that each feature needs to perform, to reduce the number of
-        necessary calculations. The arguments returned must therefore be compatible with the
-        arguments to the features.
+        necessary calculations. The values returned must therefore be compatible
+        with the input arguments to each features.
 
 
         See also

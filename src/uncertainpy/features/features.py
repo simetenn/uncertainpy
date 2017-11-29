@@ -124,15 +124,15 @@ class Features(object):
         Parameters
         ----------
         *model_results
-            Variable length argument list. Is the arguments that ``model.run()``
+            Variable length argument list. Is the values that ``model.run()``
             returns. By default it contains `t` and `U`, and then any number of
-            optional `info` arguments.
+            optional `info` values.
 
         Returns
         -------
         preprocess_results
-            Returns any number of arguments that are sent to each feature.
-            The arguments returned must compatible with the input arguments of
+            Returns any number of values that are sent to each feature.
+            The values returned must compatible with the input arguments of
             all features.
 
         Notes
@@ -140,8 +140,8 @@ class Features(object):
         Perform a preprossesing of the model results before the results are sent
         to the calculation of each feature. It is used to perform common
         calculations that each feature needs to perform, to reduce the number of
-        necessary calculations. The arguments returned must therefore be compatible with the
-        arguments to the features.
+        necessary calculations. The values returned must therefore be compatible
+        with the input arguments to each features.
 
 
         See also
@@ -326,10 +326,10 @@ class Features(object):
         feature_name : str
             Name of feature to calculate.
         *preprocess_results
-            The arguments returned by ``preprocess``. These arguments are sent
-            as intput arguments to each feature. By default preprocess returns
-            the arguments that ``model.run()`` returns, which contains `t` and
-            `U`, and then any number of optional `info` arguments.
+            The values returned by ``preprocess``. These values are sent
+            as input arguments to each feature. By default preprocess returns
+            the values that ``model.run()`` returns, which contains `t` and
+            `U`, and then any number of optional `info` values.
             The implemented features require that `info` is a single
             dictionary with the information stored as key-value pairs.
             Certain features require specific keys to be present.
@@ -392,10 +392,10 @@ class Features(object):
         Parameters
         ----------
         *preprocess_results
-            The arguments returned by ``preprocess``. These arguments are sent
-            as intput arguments to each feature. By default preprocess returns
-            the arguments that ``model.run()`` returns, which contains `t` and
-            `U`, and then any number of optional `info` arguments.
+            The values returned by ``preprocess``. These values are sent
+            as input arguments to each feature. By default preprocess returns
+            the values that ``model.run()`` returns, which contains `t` and
+            `U`, and then any number of optional `info` values.
             The implemented features require that `info` is a single
             dictionary with the information stored as key-value pairs.
             Certain features require specific keys to be present.
@@ -414,7 +414,7 @@ class Features(object):
 
         Notes
         -----
-        Checks that the feature returns two arguments.
+        Checks that the feature returns two values.
 
         See also
         --------
@@ -436,10 +436,10 @@ class Features(object):
         Parameters
         ----------
         *preprocess_results
-            The arguments returned by ``preprocess``. These arguments are sent
-            as intput arguments to each feature. By default preprocess returns
-            the arguments that ``model.run()`` returns, which contains `t` and
-            `U`, and then any number of optional `info` arguments.
+            The values returned by ``preprocess``. These values are sent
+            as input arguments to each feature. By default preprocess returns
+            the values that ``model.run()`` returns, which contains `t` and
+            `U`, and then any number of optional `info` values.
             The implemented features require that `info` is a single
             dictionary with the information stored as key-value pairs.
             Certain features require specific keys to be present.
@@ -458,7 +458,7 @@ class Features(object):
 
         Notes
         -----
-        Checks that the feature returns two arguments.
+        Checks that the feature returns two values.
 
         See also
         --------
@@ -494,9 +494,9 @@ class Features(object):
         Parameters
         ----------
         *preprocess_results
-            Variable length argument list. Is the arguments that
+            Variable length argument list. Is the values that
             ``Features.preprocess`` returns. By default ``Features.preprocess``
-            returns the same arguments as ``Model.run`` returns.
+            returns the same values as ``Model.run`` returns.
 
         Returns
         -------
