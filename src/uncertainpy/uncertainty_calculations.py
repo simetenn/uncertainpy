@@ -120,7 +120,7 @@ class UncertaintyCalculations(ParameterBase):
         if not np.all(mask):
             self.logger.warning("Feature: {} only yields".format(feature)
                                 + " results for {}/{}".format(sum(mask), len(mask))
-                                + " parameter combinations")
+                                + " parameter combinations.")
 
 
         if weights is None:
@@ -156,9 +156,6 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
-        if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 2
-
 
         nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
@@ -174,15 +171,16 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights, masked_U)
+            else:
+                self.logger.warning("Uncertainty quantification is not performed"
+                                    "for feature: {} ".format(feature))
+                                    "due too not all parameter combinations
+                                    "giving a result. Set allow_incomplete=True to"
+                                    "calculate the uncertainties anyway.")
 
             if not np.all(mask):
                 self.data.incomplete.append(feature)
 
-
-        # TODO perform for directComparison outside, since masking is not needed.?
-        # self.U_hat[self.model.name] = cp.fit_quadrature(self.P, nodes,
-        #                                                    masked_weights,
-        #                                                    self.data.U[feature])
 
 
 
@@ -212,15 +210,14 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
+            else:
+                self.logger.warning("Uncertainty quantification is not performed"
+                                "for feature: {} ".format(feature))
+                                "due too not all parameter combinations
+                                "giving a result. Set allow_incomplete=True to"
+                                "calculate the uncertainties anyway.")
             if not np.all(mask):
                 self.data.incomplete.append(feature)
-
-
-        # TODO perform for directComparison outside, since masking is not needed.?
-        # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes,
-        #                                                    self.data.U[self.model.name],
-        #                                                    rule="T")
-
 
 
     # TODO not tested
@@ -238,9 +235,6 @@ class UncertaintyCalculations(ParameterBase):
         dist_MvNormal = cp.J(*dist_MvNormal)
 
         self.P = cp.orth_ttr(self.M, dist_MvNormal)
-
-        if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 1
 
         # TODO fix order = 3.
         nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
@@ -265,20 +259,19 @@ class UncertaintyCalculations(ParameterBase):
                                                                       weights)
 
 
-            if (np.allany(mask) or self.allow_incomplete) and sum(mask) > 0:
+            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights,
                                                         masked_U)
+            else:
+                self.logger.warning("Uncertainty quantification is not performed"
+                                    "for feature: {} ".format(feature))
+                                    "due too not all parameter combinations
+                                    "giving a result. Set allow_incomplete=True to"
+                                    "calculate the uncertainties anyway.")
+
             if not np.all(mask):
                 self.data.incomplete.append(feature)
-
-
-
-        # # perform for directComparison outside, since masking is not needed.
-        # # self.U_hat = cp.fit_quadrature(self.P, nodes, weights, interpolated_solves)
-        # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes,
-        #                                                    self.data.U[self.model.name],
-        #                                                    rule="T")
 
 
 
@@ -322,16 +315,15 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
+            else:
+                self.logger.warning("Uncertainty quantification is not performed"
+                                    "for feature: {} ".format(feature))
+                                    "due too not all parameter combinations
+                                    "giving a result. Set allow_incomplete=True to"
+                                    "calculate the uncertainties anyway.")
+
             if not np.all(mask):
                 self.data.incomplete.append(feature)
-
-
-
-        # TODO perform for directComparison outside, since masking is not needed.
-        # self.U_hat[self.model.name] = cp.fit_regression(self.P, nodes_MvNormal,
-        #                                                    self.data.U[self.model.name],
-        #                                                    rule="T")
-
 
 
     def analyse_PCE(self):
@@ -385,7 +377,7 @@ class UncertaintyCalculations(ParameterBase):
         # TODO add support for more methods here by using
         # try:
         #     getattr(self, method)
-        # excpect AttributeError:
+        # except AttributeError:
         #     raise NotImplementedError("{} not implemented".format{method})
 
 
@@ -408,6 +400,8 @@ class UncertaintyCalculations(ParameterBase):
 
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
+
+        # TODO mask data
 
         for feature in self.data:
             self.data[feature]["E"] = np.mean(self.data[feature]["U"], 0)
