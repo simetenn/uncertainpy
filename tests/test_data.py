@@ -131,7 +131,7 @@ class TestData(unittest.TestCase):
 
         self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
                            "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t", "labels"]
+                           "sensitivity_t", "total_sensitivity_t"]
 
 
         self.data_information = ["uncertain_parameters", "model_name",
@@ -273,6 +273,7 @@ class TestData(unittest.TestCase):
         self.data.load(compare_file)
 
         for data_type in self.data_types:
+
             self.assertTrue(np.array_equal(self.data["feature1d"][data_type], [1., 2.]))
             self.assertTrue(np.array_equal(self.data["TestingModel1d"][data_type], [3., 4.]))
 

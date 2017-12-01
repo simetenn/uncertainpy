@@ -524,9 +524,9 @@ class TestUncertainty(TestCasePlot):
         folder = os.path.dirname(os.path.realpath(__file__))
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                           "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t"]
+        data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                      "sensitivity_1", "total_sensitivity_1",
+                      "sensitivity_t", "total_sensitivity_t"]
 
         for data_type in data_types:
             self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"][data_type], [1., 2.]))
