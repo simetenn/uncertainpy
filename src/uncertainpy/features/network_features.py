@@ -78,7 +78,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def binned_isi(self, simulation_end, spiketrains):
         binned_isi = []
-        bins = np.arange(0, spiketrains[0].simulation_end.magnitude + self.isi_bin_size, self.isi_bin_size)
+        bins = np.arange(0, spiketrains[0].t_stop.magnitude + self.isi_bin_size, self.isi_bin_size)
 
         for spiketrain in spiketrains:
             if len(spiketrain) > 1:
@@ -148,7 +148,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         t = None
         for spiketrain in spiketrains:
             if len(spiketrain) > 2:
-                sampling_period = spiketrain.simulation_end/self.instantaneous_rate_nr_samples
+                sampling_period = spiketrain.t_stop/self.instantaneous_rate_nr_samples
                 # try/except to solve problem with elephant
                 try:
                     instantaneous_rate = elephant.statistics.instantaneous_rate(spiketrain, sampling_period)

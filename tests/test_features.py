@@ -215,7 +215,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
         self.assertEqual(spikes.nr_spikes, 12)
 
         self.assertIsInstance(spikes, Spikes)
-        self.assertTrue(np.array_equal(self.time, t))
+        self.assertTrue(np.array_equal(self.time, time))
 
 
 
@@ -243,7 +243,7 @@ class TestSpikingFeatures(unittest.TestCase):
 
         self.features = SpikingFeatures(verbose_level="error")
 
-        self.info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
+        self.info = {"stimulus_start": time[0], "stimulus_end": time[-1]}
 
         self.time, self.spikes, info = self.features.preprocess(time, V, self.info)
 
@@ -591,7 +591,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(spiketrains[2], self.values[2]))
         self.assertTrue(np.array_equal(spiketrains[3], self.values[3]))
 
-        self.assertEqual(spiketrains[0].simulation_end, self.time_original)
+        self.assertEqual(spiketrains[0].t_stop, self.time_original)
 
 
     def test_cv(self):
@@ -602,13 +602,13 @@ class TestNetworkFeatures(unittest.TestCase):
                                         0.51207638319124049,
                                         0.51207638319124049,
                                         0],
-                                       U))
+                                       values))
 
     def test_mean_cv(self):
         time, values = self.features.mean_cv(self.time, self.spiketrains)
 
         self.assertIsNone(time)
-        self.assertEqual(0.38405728739343037, U)
+        self.assertEqual(0.38405728739343037, values)
 
 
     def test_binned_isi(self):
@@ -616,7 +616,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
         centers = np.arange(0, self.time_original + 1)[1:] - 0.5
 
-        self.assertTrue(np.array_equal(centers, t))
+        self.assertTrue(np.array_equal(centers, time))
         self.assertTrue(np.array_equal(values, [[0, 1, 2, 0, 0, 0, 0, 0],
                                            [0, 1, 2, 0, 0, 0, 0, 0],
                                            [0, 1, 2, 0, 0, 0, 0, 0],
@@ -627,7 +627,7 @@ class TestNetworkFeatures(unittest.TestCase):
         time, values = self.features.mean_isi(self.time, self.spiketrains)
 
         self.assertIsNone(time)
-        self.assertEqual(1.66666666666666667, U)
+        self.assertEqual(1.66666666666666667, values)
 
 
     def test_lv(self):
@@ -638,21 +638,21 @@ class TestNetworkFeatures(unittest.TestCase):
                                         0.16666666666666666,
                                         0.16666666666666666,
                                         None],
-                                       U))
+                                       values))
 
     def test_mean_lv(self):
         time, values = self.features.mean_local_variation(self.time, self.spiketrains)
 
         self.assertIsNone(time)
         mean = np.mean([0.16666666666666666, 0.16666666666666666, 0.16666666666666666])
-        self.assertEqual(mean, U)
+        self.assertEqual(mean, values)
 
 
     def test_mean_firing_rate(self):
         time, values = self.features.mean_firing_rate(self.time, self.spiketrains)
 
         self.assertIsNone(time)
-        self.assertTrue(np.array_equal([500, 500, 500, 125], U))
+        self.assertTrue(np.array_equal([500, 500, 500, 125], values))
 
 
     def test_instantaneous_rate(self):
@@ -688,10 +688,10 @@ class TestNetworkFeatures(unittest.TestCase):
                      np.array(rates), None]
         correct_t = np.linspace(0, 8, 51)[:-1]
 
-        self.assertTrue(np.array_equal(U[0], rates))
-        self.assertTrue(np.array_equal(U[1], rates))
-        self.assertTrue(np.array_equal(U[2], rates))
-        self.assertIsNone(U[3])
+        self.assertTrue(np.array_equal(values[0], rates))
+        self.assertTrue(np.array_equal(values[1], rates))
+        self.assertTrue(np.array_equal(values[2], rates))
+        self.assertIsNone(values[3])
         self.assertTrue(np.array_equal(time, correct_t))
 
 
@@ -714,10 +714,10 @@ class TestNetworkFeatures(unittest.TestCase):
         #              [5.9604644775390625e-08, 5.9604644775390625e-08, 0.0, 2.9980016657780828],
         #              [2.9980016657780828, 2.9980016657780828, 2.9980016657780828, 0.0]]
 
-        # self.assertTrue(np.array_equal(values, correct_U))
+        # self.assertTrue(np.array_equal(values, correct_values))
 
         diag = np.diag_indices(4)
-        self.assertTrue(np.all(U[diag] == 0))
+        self.assertTrue(np.all(values[diag] == 0))
 
     def test_victor_purpura_dist(self):
         time, values = self.features.victor_purpura_dist(self.time, self.spiketrains)
@@ -725,7 +725,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertIsNone(time)
         self.assertEqual(values.shape, (4, 4))
         diag = np.diag_indices(4)
-        self.assertTrue(np.all(U[diag] == 0))
+        self.assertTrue(np.all(values[diag] == 0))
 
 
     def test_corrcoef(self):
@@ -734,7 +734,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertIsNone(time)
         self.assertEqual(values.shape, (4, 4))
         diag = np.diag_indices(4)
-        self.assertTrue(np.all(U[diag] == 1))
+        self.assertTrue(np.all(values[diag] == 1))
 
     def test_covariance(self):
         time, values = self.features.covariance(self.time, self.spiketrains)
