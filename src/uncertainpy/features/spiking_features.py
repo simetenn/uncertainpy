@@ -156,13 +156,13 @@ class SpikingFeatures(GeneralSpikingFeatures):
         self.strict = strict
 
 
-    def nr_spikes(self, t, spikes, info):
+    def nr_spikes(self, time, spikes, info):
         """
         The number of spikes in the model result.
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -171,20 +171,20 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : int
+        time : None
+        values : int
             The number of spikes in the model result.
         """
         return None, spikes.nr_spikes
 
 
-    def time_before_first_spike(self, t, spikes, info):
+    def time_before_first_spike(self, time, spikes, info):
         """
         The time from the stimulus start to the first spike occurs.
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -194,8 +194,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : {int, float, None}
+        time : None
+        values : {int, float, None}
             The time from the stimulus start to the first spike occurs. Returns
             None if there are no spikes on the model result.
 
@@ -213,7 +213,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                     "Set 'stimulus_start', or set strict to "
                                     "False to use initial time as stimulus start")
             else:
-                info["stimulus_start"] = t[0]
+                info["stimulus_start"] = time[0]
                 self.logger.warning("time_before_first_spike features require info['stimulus_start']. "
                                     "No 'stimulus_start' found in info, "
                                     "setting stimulus start as initial time")
@@ -222,20 +222,20 @@ class SpikingFeatures(GeneralSpikingFeatures):
         if spikes.nr_spikes <= 0:
             return None, None
 
-        time = spikes.spikes[0].t_spike - info["stimulus_start"]
+        time = spikes.spikes[0].time_spike - info["stimulus_start"]
 
         return None, time
 
 
-    def spike_rate(self, t, spikes, info):
+    def spike_rate(self, time, spikes, info):
         """
         The spike rate of the model result.
 
-        Number of spikes divived by the time.
+        Number of spikes divided by the duration.
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -244,8 +244,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : {float, int}
+        time : None
+        values : {float, int}
             The spike rate of the model result.
 
         Raises
@@ -262,7 +262,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                     "Set 'stimulus_start', or set strict to "
                                     "False to use initial time as stimulus start")
             else:
-                info["stimulus_start"] = t[0]
+                info["stimulus_start"] = time[0]
                 self.logger.warning("spike_rate features require info['stimulus_start']. "
                                     "No 'stimulus_start' found in info, "
                                     "setting stimulus start as initial time")
@@ -275,7 +275,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                     "Set 'stimulus_start', or set strict to "
                                     "False to use end time as stimulus end")
             else:
-                info["stimulus_end"] = t[-1]
+                info["stimulus_end"] = time[-1]
                 self.logger.warning("spike_rate require info['stimulus_start']. "
                                     "No 'stimulus_end' found in info, "
                                     "setting stimulus end as end time")
@@ -286,7 +286,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         return None, spikes.nr_spikes/float(info["stimulus_end"] - info["stimulus_start"])
 
 
-    def average_AP_overshoot(self, t, spikes, info):
+    def average_AP_overshoot(self, time, spikes, info):
         """
         The average action potential overshoot,
 
@@ -295,7 +295,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -304,8 +304,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : {float, int, None}
+        time : None
+        values : {float, int, None}
             The average action potential overshoot. Returns None if there are
             no spikes in the model result.
         """
@@ -315,12 +315,12 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         sum_AP_overshoot = 0
         for spike in spikes:
-            sum_AP_overshoot += spike.U_spike
+            sum_AP_overshoot += spike.V_spike
 
         return None, sum_AP_overshoot/float(spikes.nr_spikes)
 
 
-    def average_AHP_depth(self, t, spikes, info):
+    def average_AHP_depth(self, time, spikes, info):
         """
         The average action potential depth.
 
@@ -329,7 +329,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -338,8 +338,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : {float, int, None}
+        time : None
+        values : {float, int, None}
             The average action potential depth. Returns None if there are
             no spikes in the model result.
         """
@@ -350,12 +350,12 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         sum_AHP_depth = 0
         for i in range(spikes.nr_spikes - 1):
-            sum_AHP_depth += min(self.U[spikes[i].global_index:spikes[i+1].global_index])
+            sum_AHP_depth += min(self.values[spikes[i].global_index:spikes[i+1].global_index])
 
         return None, sum_AHP_depth/float(spikes.nr_spikes)
 
 
-    def average_AP_width(self, t, spikes, info):
+    def average_AP_width(self, time, spikes, info):
         """
         The average action potential width.
 
@@ -364,7 +364,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -373,8 +373,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : {float, int, None}
+        time : None
+        values : {float, int, None}
             The average action potential width. Returns None if there are
             no spikes in the model result.
         """
@@ -384,22 +384,22 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         sum_AP_width = 0
         for spike in spikes:
-            U_width = (spike.U_spike + spike.U[0])/2.
+            V_width = (spike.V_spike + spike.V[0])/2.
 
-            U_interpolation = scipy.interpolate.interp1d(spike.t, spike.U - U_width)
+            V_interpolation = scipy.interpolate.interp1d(spike.time, spike.V - V_width)
 
             # root1 = scipy.optimize.fsolve(U_interpolation, (spike.t_spike - spike.t[0])/2. + spike.t[0])
             # root2 = scipy.optimize.fsolve(U_interpolation, (spike.t[-1] - spike.t_spike)/2. + spike.t_spike)
 
-            root1 = scipy.optimize.brentq(U_interpolation, spike.t[0], spike.t_spike)
-            root2 = scipy.optimize.brentq(U_interpolation, spike.t_spike, spike.t[-1])
+            root1 = scipy.optimize.brentq(V_interpolation, spike.time[0], spike.time_spike)
+            root2 = scipy.optimize.brentq(V_interpolation, spike.time_spike, spike.time[-1])
 
             sum_AP_width += abs(root2 - root1)
 
         return None, sum_AP_width/float(spikes.nr_spikes)
 
 
-    def accommodation_index(self, t, spikes, info):
+    def accommodation_index(self, time, spikes, info):
         """
         The accommodation index.
 
@@ -409,7 +409,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -418,8 +418,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         Returns
         -------
-        t : None
-        U : {float, int, None}
+        time : None
+        values : {float, int, None}
             The accommodation index. Returns None if there are
             less than two spikes in the model result.
         """
@@ -432,7 +432,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         ISIs = []
         for i in range(N-1):
-            ISIs.append(spikes[i+1].t_spike - spikes[i].t_spike)
+            ISIs.append(spikes[i+1].time_spike - spikes[i].time_spike)
 
         A = 0
         for i in range(k+1, N-1):

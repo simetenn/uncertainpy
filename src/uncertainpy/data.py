@@ -11,7 +11,7 @@ class DataFeature(collections.MutableMapping):
     def __init__(self,
                  name,
                  U=None,
-                 t=None,
+                 time=None,
                  E=None,
                  Var=None,
                  p_05=None,
@@ -23,8 +23,8 @@ class DataFeature(collections.MutableMapping):
                  labels=None):
 
         self.name = name
-        self.U = U
-        self.t = t
+        self.values = U
+        self.time = time
         self.E = E
         self.Var = Var
         self.p_05 = p_05
@@ -35,7 +35,7 @@ class DataFeature(collections.MutableMapping):
         self.total_sensitivity_t = total_sensitivity_t
         self.labels = labels
 
-        self._built_in_data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+        self._built_in_data_types = ["values", "time", "E", "Var", "p_05", "p_95",
                                     "sensitivity_1", "total_sensitivity_1",
                                     "sensitivity_t", "total_sensitivity_t", "labels"]
 
@@ -108,7 +108,7 @@ class DataFeature(collections.MutableMapping):
             The number of dimensions of the model/feature result.
         """
 
-        if self.U is not None:
+        if self.values is not None:
             return np.ndim(self.U[0])
         else:
             return None
@@ -152,9 +152,9 @@ class Data(collections.MutableMapping):
 
     Each feature and the model has the following data:
 
-    U : array_like
+    values : array_like
         Feature or model result.
-    t : array_like
+    time : array_like
         Time values for feature or model.
     E : array_like
         Mean of the feature or model results.
@@ -184,7 +184,7 @@ class Data(collections.MutableMapping):
                  verbose_level="info",
                  verbose_filename=None):
 
-        # self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+        # self.data_types = ["values", "time", "E", "Var", "p_05", "p_95",
         #                    "sensitivity_1", "total_sensitivity_1",
         #                    "sensitivity_t", "total_sensitivity_t", "labels"]
 
@@ -454,7 +454,7 @@ class Data(collections.MutableMapping):
         feature_list = self.data.keys()[:]
         for feature in feature_list:
             all_nan = True
-            for U in self[feature]["U"]:
+            for U in self[feature]["values"]:
                 if not np.all(np.isnan(U)):
                     all_nan = False
 

@@ -40,7 +40,7 @@ class TestParallel(unittest.TestCase):
         self.model_parameters = {"a": 0, "b": 1}
 
         self.t = np.arange(0, 10)
-        self.U = np.arange(0, 10) + 1
+        self.values = np.arange(0, 10) + 1
 
 
     def tearDown(self):
@@ -61,13 +61,13 @@ class TestParallel(unittest.TestCase):
 
 
     def test_feature_function(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
                 return "t", "U"
 
         self.parallel.features = feature_function
         self.assertIsInstance(self.parallel.features, Features)
 
-        t, U = self.parallel.features.feature_function(None, None)
+        time, values = self.parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
@@ -76,26 +76,26 @@ class TestParallel(unittest.TestCase):
 
 
     def test_feature_functions(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
                 return "t", "U"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
                 return "t2", "U2"
 
 
         self.parallel.features = [feature_function, feature_function2]
         self.assertIsInstance(self.parallel.features, Features)
 
-        t, U = self.parallel.features.feature_function(None, None)
+        time, values = self.parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
 
-        t, U = self.parallel.features.feature_function(None, None)
+        time, values = self.parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.parallel.features.feature_function2(None, None)
+        time, values = self.parallel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 
@@ -311,7 +311,7 @@ class TestParallel(unittest.TestCase):
         def model_function(**model_parameters):
             return 1, 2, True
 
-        def feature_function(t, U, info=False):
+        def feature_function(time, values, info=False):
             self.assertTrue(info)
 
             return "t", "U"
@@ -326,7 +326,7 @@ class TestParallel(unittest.TestCase):
         def model_function(**model_parameters):
             return 1, 2, {"1": 1, "2": 2}
 
-        def feature_function(t, U, info):
+        def feature_function(time, values, info):
             self.assertEqual(info["1"], 1)
             self.assertEqual(info["2"], 2)
 
@@ -342,7 +342,7 @@ class TestParallel(unittest.TestCase):
         def model_function(**model_parameters):
             return 1, 2, 3
 
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
         self.parallel.model = model_function
@@ -397,7 +397,7 @@ class TestParallel(unittest.TestCase):
         result = self.parallel.none_to_nan(U_irregular)
 
         result = np.array(result)
-        self.assertTrue(np.array_equal(result, U_irregular))
+        self.assertTrue(np.array_equal(resultime, values_irregular))
 
 
 
@@ -421,7 +421,7 @@ class TestParallel(unittest.TestCase):
         U_correct = np.array([np.array(1), np.array(2), np.array(3)])
 
         result = np.array(result)
-        self.assertTrue(np.array_equal(result, U_irregular))
+        self.assertTrue(np.array_equal(resultime, values_irregular))
 
 
         U_irregular = np.array([None, None, None])

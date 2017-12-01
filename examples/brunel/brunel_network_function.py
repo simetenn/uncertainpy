@@ -120,11 +120,11 @@ def brunel_network(eta=2,
     U = spiketrains
     t = simtime
 
-    return t, U
+    return time, values
 
 
 
 
 if __name__ == "__main__":
-    t, U = brunel_network()
+    time, values = brunel_network()
     print U

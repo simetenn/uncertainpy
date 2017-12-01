@@ -37,7 +37,7 @@ class izhikevich(Model):
         u[0, 1] = b*self.v0
 
 
-        self.U = [self.v0]*len(self.t)
+        self.values = [self.v0]*len(self.t)
 
 
         # Runge Kutta 4

@@ -95,10 +95,10 @@ class UncertaintyCalculations(ParameterBase):
             raise AttributeError("Error: {} is not a feature".format(feature))
 
         masked_U = []
-        mask = np.ones(len(self.data[feature]["U"]), dtype=bool)
+        mask = np.ones(len(self.data[feature]["values"]), dtype=bool)
 
         # TODO use numpy masked array
-        for i, result in enumerate(self.data[feature]["U"]):
+        for i, result in enumerate(self.data[feature]["values"]):
             if np.any(np.isnan(result)):
                 mask[i] = False
             else:
@@ -404,11 +404,11 @@ class UncertaintyCalculations(ParameterBase):
         # TODO mask data
 
         for feature in self.data:
-            self.data[feature]["E"] = np.mean(self.data[feature]["U"], 0)
-            self.data[feature]["Var"] = np.var(self.data[feature]["U"], 0)
+            self.data[feature]["E"] = np.mean(self.data[feature]["values"], 0)
+            self.data[feature]["Var"] = np.var(self.data[feature]["values"], 0)
 
-            self.data[feature]["p_05"] = np.percentile(self.data[feature]["U"], 5, 0)
-            self.data[feature]["p_95"] = np.percentile(self.data[feature]["U"], 95, 0)
+            self.data[feature]["p_05"] = np.percentile(self.data[feature]["values"], 5, 0)
+            self.data[feature]["p_95"] = np.percentile(self.data[feature]["values"], 95, 0)
 
         return self.data
 

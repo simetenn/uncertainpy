@@ -120,7 +120,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "U"  not in self.data[feature]:
+        if feature not in self.data or "values"  not in self.data[feature]:
             self.logger.warning("No {} results to plot.".format(feature))
             return
 
@@ -137,7 +137,7 @@ class PlotUncertainty(object):
                    title="{}, result".format(feature.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
-        plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
+        plt.savefig(os.path.join(save_folder, "values" + self.figureformat))
         plt.close()
 
 
@@ -148,7 +148,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "U"  not in self.data[feature]:
+        if feature not in self.data or "values"  not in self.data[feature]:
             self.logger.warning("No model results to plot.")
             return
 
@@ -163,7 +163,7 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature].U[0]))
         else:
             t = self.data[feature].t
@@ -171,7 +171,7 @@ class PlotUncertainty(object):
 
         padding = len(str(len(self.data[feature].U[0]) + 1))
         for U in self.data[feature].U:
-            prettyPlot(t, U,
+            prettyPlot(time, values,
                        xlabel=xlabel, ylabel=ylabel,
                        title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
@@ -188,7 +188,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "U"  not in self.data[feature]:
+        if feature not in self.data or "values"  not in self.data[feature]:
             self.logger.warning("No model results to plot.")
             return
 
@@ -204,7 +204,7 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature].U[0]))
         else:
             t = self.data[feature].t
@@ -256,7 +256,7 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][attribute]))
         else:
             t = self.data[feature].t
@@ -310,7 +310,7 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             extent = None
         else:
             extent=[self.data[feature].t[0], self.data[feature].t[-1],
@@ -412,7 +412,7 @@ class PlotUncertainty(object):
             self.logger.warning(msg)
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature].E))
         else:
             t = self.data[feature].t
@@ -489,7 +489,7 @@ class PlotUncertainty(object):
             return
 
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature].E))
         else:
             t = self.data[feature].t
@@ -545,7 +545,7 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
             t = self.data[feature].t
@@ -596,7 +596,7 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
             t = self.data[feature].t
@@ -684,7 +684,7 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
             t = self.data[feature].t

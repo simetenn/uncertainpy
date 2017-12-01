@@ -33,7 +33,7 @@ class TestModel(unittest.TestCase):
         model = Model(run_function=model_function)
 
         parameters = {"a": -1, "b": -1}
-        t, U = model.run(**parameters)
+        time, values = model.run(**parameters)
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
@@ -43,7 +43,7 @@ class TestModel(unittest.TestCase):
         model.run = run_function=model_function
 
         parameters = {"a": -1, "b": -1}
-        t, U = model.run(**parameters)
+        time, values = model.run(**parameters)
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
         self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
@@ -140,7 +140,7 @@ class TestTestingModel0d(unittest.TestCase):
         model = TestingModel0d()
 
         parameters = {"a": -1, "b": -1}
-        t, U = model.run(**parameters)
+        time, values = model.run(**parameters)
 
         self.assertEqual(t, 1)
         self.assertEqual(U, -1)
@@ -154,7 +154,7 @@ class TestTestingModel1d(unittest.TestCase):
         model = TestingModel1d()
 
         parameters = {"a": -1, "b": -1}
-        t, U = model.run(**parameters)
+        time, values = model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
@@ -167,7 +167,7 @@ class TestTestingModel2d(unittest.TestCase):
         model = TestingModel2d()
 
         parameters = {"a": -1, "b": -2}
-        t, U = model.run(**parameters)
+        time, values = model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(t, np.arange(0, 10)))
@@ -183,7 +183,7 @@ class TestTestingModelAdaptive(unittest.TestCase):
         model = TestingModelAdaptive()
 
         parameters = {"a": 1, "b": 2}
-        t, U = model.run(**parameters)
+        time, values = model.run(**parameters)
 
 
         self.assertTrue(np.array_equal(np.arange(0, 13), t))
@@ -243,7 +243,7 @@ class TestNestModel(unittest.TestCase):
     def test_run(self):
         model = NestModel(brunel_network)
 
-        t, U = model.run()
+        time, values = model.run()
 
         correct_U = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
                      47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
@@ -255,11 +255,11 @@ class TestNestModel(unittest.TestCase):
     def test_postprocess(self):
         model = NestModel(brunel_network)
 
-        t, U = model.run()
+        time, values = model.run()
         correct_U = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
                      47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
-        t, U = model.postprocess(t, correct_U)
+        time, values = model.postprocess(t, correct_U)
 
         binary_spike = np.zeros(len(t))
         binary_spike[np.in1d(t, correct_U)] = 1

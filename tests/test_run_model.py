@@ -105,13 +105,13 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_feature_function(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
         self.runmodel.features = feature_function
         self.assertIsInstance(self.runmodel.features, Features)
 
-        t, U = self.runmodel.features.feature_function(None, None)
+        time, values = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
@@ -121,35 +121,35 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_feature_functions(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
             return "t2", "U2"
 
 
         self.runmodel.features = [feature_function, feature_function2]
         self.assertIsInstance(self.runmodel.features, Features)
 
-        t, U = self.runmodel.features.feature_function(None, None)
+        time, values = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
 
-        t, U = self.runmodel.features.feature_function(None, None)
+        time, values = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.runmodel.features.feature_function2(None, None)
+        time, values = self.runmodel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 
 
-        t, U = self.runmodel._parallel.features.feature_function(None, None)
+        time, values = self.runmodel._parallel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.runmodel._parallel.features.feature_function2(None, None)
+        time, values = self.runmodel._parallel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 
@@ -158,10 +158,10 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_feature_functions_base(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
             return "t2", "U2"
 
         implemented_features = ["nr_spikes", "time_before_first_spike",
@@ -172,12 +172,12 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.runmodel.features, SpikingFeatures)
 
-        t, U = self.runmodel.features.feature_function(None, None)
+        time, values = self.runmodel.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
 
-        t, U = self.runmodel.features.feature_function2(None, None)
+        time, values = self.runmodel.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 

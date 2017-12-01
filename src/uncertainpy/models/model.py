@@ -9,7 +9,7 @@ class Model(object):
     If you want to calculate features directly from the original model results,
     but still need to postprocess the model results to perform the
     uncertainty quantification, you can implement the postprocessing in the
-    ``postprocess(t, U)`` method.
+    ``postprocess(time, values)`` method.
 
     Parameters
     ----------
@@ -77,11 +77,11 @@ class Model(object):
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model, if no time values returns None or
             numpy.nan.
-        U : array_like
-            Result of the model. Note that `U` myst either be regular
+        values : array_like
+            Result of the model. Note that `values` myst either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
         info, optional
@@ -106,11 +106,11 @@ class Model(object):
         the model, either setting them with Python, or
         assigning them to the simulator.
 
-        2. ``run(**parameters)`` must return the time values (`t`) or equivalent
-        and the model result (`U`). If the model have no time values,
+        2. ``run(**parameters)`` must return the time values (`time`) or equivalent
+        and the model result (`values`). If the model have no time values,
         return None or numpy.nan instead. The first two values returned must be
-        `t`, and `U`. Additionally, any number of info objects can be
-        returned after `t`, and `U`. These info objects are optional and are
+        `time`, and `values`. Additionally, any number of info objects can be
+        returned after `time`, and `values`. These info objects are optional and are
         passed on to ``model.postprocess``, ``features.preprocess``, and feature
         calculations.
 
@@ -119,7 +119,7 @@ class Model(object):
         the model from the run method Python and return the results from the
         model into the run method.
 
-        The model results `t` and `U` are used to calculate the features, as
+        The model results `time` and `values` are used to calculate the features, as
         well as the optional `info` objects returned.
 
         The model results must either be regular, be able to be interpolated, or
@@ -131,7 +131,7 @@ class Model(object):
         If you want to calculate features directly from the original model results,
         but still need to postprocess the model results to perform the
         uncertainty quantification, you can implement the postprocessing in the
-        ``postprocess(t, U, *info)`` method.
+        ``postprocess(time, values, *info)`` method.
 
         See also
         --------
@@ -182,12 +182,12 @@ class Model(object):
         ----------
         *model_result
             Variable length argument list. Is the values that ``run()``
-            returns. It contains `t` and `U`,
+            returns. It contains `time` and `values`,
             and then any number of optional `info` values.
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it should return None or
             numpy.nan.
-        U : array_like
+        values : array_like
             Result of the model.
         info, optional
             Any number of info objects that is passed on to feature calculations.
@@ -198,11 +198,11 @@ class Model(object):
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model, if no time values returns None or
             numpy.nan.
-        U : array_like
-            the postprocessed model results, `U` must either be regular
+        values : array_like
+            the postprocessed model results, `values` must either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
 
@@ -215,7 +215,7 @@ class Model(object):
         needs results with the same number of points for each set of parameters
         to be able to perform the uncertainty quantification.
 
-        ``postprocess(t, U)`` is implemented to make
+        ``postprocess(time, values)`` is implemented to make
         the model results regular, or on a form that can be interpolated.
         The results from the postprocessing is not
         used to calculate features, and is therefore used if you
@@ -230,7 +230,7 @@ class Model(object):
         """
         Validate the results from ``run()``.
 
-        This method ensures the results from returns `t`, `U`, and optional
+        This method ensures the results from returns `time`, `values`, and optional
         info objects.
 
         Returns
@@ -247,14 +247,14 @@ class Model(object):
 
         Notes
         -----
-        Tries to verify that at least, `t` and `U` are returned from ``run()``.
+        Tries to verify that at least, `time` and `values` are returned from ``run()``.
         ``run()`` should return on the following format
-        ``return t, U, info_1, info_2, ...``.
+        ``return time, values, info_1, info_2, ...``.
 
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it should return None or
             numpy.nan.
-        U : array_like
+        values : array_like
             Result of the model.
         info, optional
             Any number of info objects that is passed on to feature calculations.
@@ -267,18 +267,18 @@ class Model(object):
             raise ValueError("model.run() returns an numpy array. "
                              "This indicates only t or U is returned. "
                              "model.run() or model function must return "
-                             "t and U (return t, U | return None, U)")
+                             "t and U (return time, values | return None, U)")
 
         if isinstance(model_result, str):
             raise ValueError("model.run() returns an string. "
                              "This indicates only t or U is returned. "
                              "model.run() or model function must return "
-                             "t and U (return t, U | return None, U)")
+                             "t and U (return time, values | return None, U)")
 
         try:
-            t, U = model_result[:2]
+            time, values = model_result[:2]
         except (ValueError, TypeError) as error:
-            msg = "model.run() or model function must return t and U (return t, U | return None, U)"
+            msg = "model.run() or model function must return t and U (return time, values | return None, U)"
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)

@@ -7,7 +7,7 @@ def model_function(a=1, b=2):
     t = np.arange(0, 10)
     U = np.arange(0, 10) + a + b
 
-    return t, U
+    return time, values
 
 
 
@@ -20,7 +20,7 @@ class TestingModel0d(Model):
         t = 1
         U = b
 
-        return t, U
+        return time, values
 
 
 
@@ -33,7 +33,7 @@ class TestingModel1d(Model):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
 
 
@@ -47,7 +47,7 @@ class TestingModel2d(Model):
         t = np.arange(0, 10)
         U = np.array([np.arange(0, 10) + a, np.arange(0, 10) + b])
 
-        return t, U
+        return time, values
 
 
 
@@ -61,7 +61,7 @@ class TestingModelAdaptive(Model):
         t = np.arange(0, 10 + a + b)
         U = np.arange(0, 10 + a + b) + a + b
 
-        return t, U
+        return time, values
 
 
 
@@ -75,7 +75,7 @@ class TestingModelConstant(Model):
         t = np.arange(0, 10)
         U = np.arange(0, 10)
 
-        return t, U
+        return time, values
 
 
 
@@ -129,9 +129,9 @@ class PostprocessErrorNumpy(Model):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
-    def postprocess(self, t, U):
+    def postprocess(self, time, values):
         return np.linspace(0, 10, 100)
 
 
@@ -144,9 +144,9 @@ class PostprocessErrorOne(Model):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
-    def postprocess(self, t, U):
+    def postprocess(self, time, values):
         return 1
 
 
@@ -159,7 +159,7 @@ class PostprocessErrorValue(Model):
         t = np.arange(0, 10)
         U = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
-    def postprocess(self, t, U):
+    def postprocess(self, time, values):
         return (1, 2, 3)

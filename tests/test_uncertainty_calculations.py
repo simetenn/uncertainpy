@@ -99,13 +99,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_feature_function(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
                 return "t", "U"
 
         self.uncertainty_calculations.features = feature_function
         self.assertIsInstance(self.uncertainty_calculations.features, Features)
 
-        t, U = self.uncertainty_calculations.features.feature_function(None, None)
+        time, values = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
@@ -114,26 +114,26 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_feature_functions(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
                 return "t", "U"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
                 return "t2", "U2"
 
 
         self.uncertainty_calculations.features = [feature_function, feature_function2]
         self.assertIsInstance(self.uncertainty_calculations.features, Features)
 
-        t, U = self.uncertainty_calculations.features.feature_function(None, None)
+        time, values = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
 
-        t, U = self.uncertainty_calculations.features.feature_function(None, None)
+        time, values = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.uncertainty_calculations.features.feature_function2(None, None)
+        time, values = self.uncertainty_calculations.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 
@@ -142,10 +142,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_feature_functions_base(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
             return "t2", "U2"
 
         implemented_features = ["nr_spikes", "time_before_first_spike",
@@ -156,11 +156,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.uncertainty_calculations.features, SpikingFeatures)
 
-        t, U = self.uncertainty_calculations.features.feature_function(None, None)
+        time, values = self.uncertainty_calculations.features.feature_function(None, None)
         self.assertEqual(t, "t")
         self.assertEqual(U, "U")
 
-        t, U = self.uncertainty_calculations.features.feature_function2(None, None)
+        time, values = self.uncertainty_calculations.features.feature_function2(None, None)
         self.assertEqual(t, "t2")
         self.assertEqual(U, "U2")
 

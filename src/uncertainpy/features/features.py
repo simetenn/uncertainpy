@@ -114,7 +114,7 @@ class Features(object):
 
     def preprocess(self, *model_results):
         """
-        Preprossesing of the time `t` and results `U` from the model, before the
+        Preprossesing of the time `time` and results `values` from the model, before the
         features are calculated.
 
         No preprocessing is performed, and the direct model results are
@@ -125,7 +125,7 @@ class Features(object):
         ----------
         *model_results
             Variable length argument list. Is the values that ``model.run()``
-            returns. By default it contains `t` and `U`, and then any number of
+            returns. By default it contains `time` and `values`, and then any number of
             optional `info` values.
 
         Returns
@@ -328,19 +328,19 @@ class Features(object):
         *preprocess_results
             The values returned by ``preprocess``. These values are sent
             as input arguments to each feature. By default preprocess returns
-            the values that ``model.run()`` returns, which contains `t` and
-            `U`, and then any number of optional `info` values.
+            the values that ``model.run()`` returns, which contains `time` and
+            `values`, and then any number of optional `info` values.
             The implemented features require that `info` is a single
             dictionary with the information stored as key-value pairs.
             Certain features require specific keys to be present.
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values, or equivalent, of the feature, if no time values
             returns None or numpy.nan.
-        U : array_like
-            The feature results, `U` must either be regular (have the same
+        values : array_like
+            The feature results, `values` must either be regular (have the same
             number of points for different paramaters) or be able to be
             interpolated.
 
@@ -371,11 +371,11 @@ class Features(object):
             error.args = error.args + (msg,)
             raise
 
-        # Checks that t, and U is returned
+        # Check that time, and values is returned
         try:
-            feature_t, feature_U = feature_result
+            time_feature, values_feature = feature_result
         except (ValueError, TypeError) as error:
-            msg = "feature {} must return t and U (return t, U | return None, U)".format(feature_name)
+            msg = "feature {} must return t and U (return time, values | return None, U)".format(feature_name)
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)
@@ -394,8 +394,8 @@ class Features(object):
         *preprocess_results
             The values returned by ``preprocess``. These values are sent
             as input arguments to each feature. By default preprocess returns
-            the values that ``model.run()`` returns, which contains `t` and
-            `U`, and then any number of optional `info` values.
+            the values that ``model.run()`` returns, which contains `time` and
+            `values`, and then any number of optional `info` values.
             The implemented features require that `info` is a single
             dictionary with the information stored as key-value pairs.
             Certain features require specific keys to be present.
@@ -404,8 +404,8 @@ class Features(object):
         -------
         results : dictionary
             A dictionary where the keys are the feature names
-            and the values are a dictionary with the time values `t` and feature
-            results on `U`, on the form ``{"t": t, "U": U}``.
+            and the values are a dictionary with the time values `time` and feature
+            results on `values`, on the form ``{"time": time, "values": values}``.
 
         Raises
         ------
@@ -422,9 +422,9 @@ class Features(object):
         """
         results = {}
         for feature in self.features_to_run:
-            feature_t, feature_U = self.calculate_feature(feature, *preprocess_results)
+            time_feature, values_feature = self.calculate_feature(feature, *preprocess_results)
 
-            results[feature] = {"t": feature_t, "U": feature_U}
+            results[feature] = {"time": time_feature, "values": values_feature}
 
         return results
 
@@ -438,8 +438,8 @@ class Features(object):
         *preprocess_results
             The values returned by ``preprocess``. These values are sent
             as input arguments to each feature. By default preprocess returns
-            the values that ``model.run()`` returns, which contains `t` and
-            `U`, and then any number of optional `info` values.
+            the values that ``model.run()`` returns, which contains `time` and
+            `values`, and then any number of optional `info` values.
             The implemented features require that `info` is a single
             dictionary with the information stored as key-value pairs.
             Certain features require specific keys to be present.
@@ -448,8 +448,8 @@ class Features(object):
         -------
         results : dictionary
             A dictionary where the keys are the feature names
-            and the values are a dictionary with the time values `t` and feature
-            results on `U`, on the form ``{"t": t, "U": U}``.
+            and the values are a dictionary with the time values `time` and feature
+            results on `values`, on the form ``{"time": t, "values": U}``.
 
         Raises
         ------
@@ -466,9 +466,9 @@ class Features(object):
         """
         results = {}
         for feature in self.implemented_features():
-            feature_t, feature_U = self.calculate_feature(feature, *args)
+            time_feature, values_feature = self.calculate_feature(feature, *args)
 
-            results[feature] = {"t": feature_t, "U": feature_U}
+            results[feature] = {"time": time_feature, "values": values_feature}
 
         return results
 
@@ -500,14 +500,14 @@ class Features(object):
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values, or equivalent, of the feature, if no time values
             return None or numpy.nan.
-        U : array_like
-            The feature results, `U` must either be regular (have the same
+        values : array_like
+            The feature results, `values` must either be regular (have the same
             number of points for different paramaters) or be able to be
             interpolated. If there are no feature results return
-            None or numpy.nan instead of `U` and that evaluation are
+            None or numpy.nan instead of `values` and that evaluation are
             disregarded.
 
         See also
@@ -518,7 +518,7 @@ class Features(object):
         """
 
         # Perform feature calculations here
-        t = None
-        U = None
+        time = None
+        values = None
 
-        return t, U
+        return time, values

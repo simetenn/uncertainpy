@@ -15,8 +15,8 @@ from .testing_classes import TestingFeatures
 
 class TestFeatures(unittest.TestCase):
     def setUp(self):
-        self.t = np.arange(0, 10)
-        self.U = np.arange(0, 10) + 1
+        self.time = np.arange(0, 10)
+        self.values = np.arange(0, 10) + 1
         self.info = {"info": 1}
 
         self.features = Features()
@@ -38,30 +38,30 @@ class TestFeatures(unittest.TestCase):
 
     def test_preprocess(self):
         features = Features()
-        t, U = features.preprocess(self.t, self.U)
+        time, values = features.preprocess(self.time, self.values)
 
-        self.assertTrue(np.array_equal(t, self.t))
-        self.assertTrue(np.array_equal(U, self.U))
+        self.assertTrue(np.array_equal(time, self.time))
+        self.assertTrue(np.array_equal(values, self.values))
 
 
     def test_preprocess_args(self):
         features = Features()
-        t, U, a, b = features.preprocess(self.t, self.U, 1, 2)
+        time, values, a, b = features.preprocess(self.time, self.values, 1, 2)
 
-        self.assertTrue(np.array_equal(t, self.t))
-        self.assertTrue(np.array_equal(U, self.U))
+        self.assertTrue(np.array_equal(time, self.time))
+        self.assertTrue(np.array_equal(values, self.values))
         self.assertEqual(a, 1)
         self.assertEqual(b, 2)
 
 
     def test_calculate_featureNotImplemented(self):
         with self.assertRaises(AttributeError):
-            self.features.calculate_feature("not_in_class", self.t, self.U)
+            self.features.calculate_feature("not_in_class", self.time, self.values)
 
 
     def test_calculate_featureUtilityMethod(self):
         with self.assertRaises(TypeError):
-            self.features.calculate_feature("preprocess", self.t, self.U)
+            self.features.calculate_feature("preprocess", self.time, self.values)
 
 
     def test_implemented_features(self):
@@ -69,11 +69,11 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_calculate_all_features(self):
-        self.assertEqual(self.features.calculate_all_features(self.t, self.U), {})
+        self.assertEqual(self.features.calculate_all_features(self.time, self.values), {})
 
 
     # def test_calculate(self):
-    #     self.assertEqual(self.features.calculate(self.t, self.U), {})
+    #     self.assertEqual(self.features.calculate(self.time, self.values), {})
 
 
     def test_intitFeatureList(self):
@@ -89,10 +89,10 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_intitNewFeatures(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
             return "t2", "U2"
 
         features = Features(new_features=[feature_function, feature_function2],
@@ -100,13 +100,13 @@ class TestFeatures(unittest.TestCase):
 
 
 
-        t, U = features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = features.feature_function(None, None)
+        self.assertEqual(time, "t")
+        self.assertEqual(values, "U")
 
-        t, U = features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = features.feature_function2(None, None)
+        self.assertEqual(time, "t2")
+        self.assertEqual(values, "U2")
 
         self.assertEqual(features.implemented_features(),
                          ["feature_function", "feature_function2"])
@@ -132,7 +132,7 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_add_feature(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
                 return "t", "U"
 
         features = Features()
@@ -140,9 +140,9 @@ class TestFeatures(unittest.TestCase):
         features.add_features(feature_function,
                               labels={"feature_function": ["x", "y"]})
 
-        t, U = features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = features.feature_function(None, None)
+        self.assertEqual(time, "t")
+        self.assertEqual(values, "U")
 
         features.features_to_run = "all"
         self.assertEqual(features.features_to_run,
@@ -151,11 +151,11 @@ class TestFeatures(unittest.TestCase):
         self.assertEqual(features.labels, {"feature_function": ["x", "y"]})
 
     def test_add_features(self):
-        def feature_function(t, U):
+        def feature_function(time, values):
             return "t", "U"
 
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
             return "t2", "U2"
 
         features = Features()
@@ -163,13 +163,13 @@ class TestFeatures(unittest.TestCase):
         features.add_features([feature_function, feature_function2],
                               labels={"feature_function": ["x", "y"]})
 
-        t, U = features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = features.feature_function(None, None)
+        self.assertEqual(time, "t")
+        self.assertEqual(values, "U")
 
-        t, U = features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = features.feature_function2(None, None)
+        self.assertEqual(time, "t2")
+        self.assertEqual(values, "U2")
 
 
         self.assertEqual(features.implemented_features(),
@@ -186,8 +186,8 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.t = np.load(os.path.join(folder, "data/t_test.npy"))
-        self.U = np.load(os.path.join(folder, "data/U_test.npy"))
+        self.time = np.load(os.path.join(folder, "data/t_test.npy"))
+        self.values = np.load(os.path.join(folder, "data/U_test.npy"))
         self.info = {"info": 1}
 
 
@@ -202,7 +202,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
     def test_calculate_spikes(self):
         self.features = GeneralSpikingFeatures()
 
-        spikes = self.features.calculate_spikes(self.t, self.U)
+        spikes = self.features.calculate_spikes(self.time, self.values)
 
         self.assertEqual(spikes.nr_spikes, 12)
 
@@ -210,12 +210,12 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
     def test_preprocess(self):
         self.features = GeneralSpikingFeatures()
 
-        t, spikes, info = self.features.preprocess(self.t, self.U, self.info)
+        time, spikes, info = self.features.preprocess(self.time, self.values, self.info)
 
         self.assertEqual(spikes.nr_spikes, 12)
 
         self.assertIsInstance(spikes, Spikes)
-        self.assertTrue(np.array_equal(self.t, t))
+        self.assertTrue(np.array_equal(self.time, t))
 
 
 
@@ -224,8 +224,8 @@ class TestSpikingFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        t = np.load(os.path.join(folder, "data/t_test.npy"))
-        U = np.load(os.path.join(folder, "data/U_test.npy"))
+        time = np.load(os.path.join(folder, "data/t_test.npy"))
+        V = np.load(os.path.join(folder, "data/U_test.npy"))
 
         self.implemented_features = ["nr_spikes", "time_before_first_spike",
                                      "spike_rate", "average_AP_overshoot",
@@ -245,7 +245,7 @@ class TestSpikingFeatures(unittest.TestCase):
 
         self.info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
 
-        self.t, self.spikes, info = self.features.preprocess(t, U, self.info)
+        self.time, self.spikes, info = self.features.preprocess(time, V, self.info)
 
 
     def test_initNone(self):
@@ -292,92 +292,92 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_nr_spikes(self):
-        self.assertEqual(self.features.nr_spikes(self.t, self.spikes, self.info), (None, 12))
+        self.assertEqual(self.features.nr_spikes(self.time, self.spikes, self.info), (None, 12))
 
 
     def test_time_before_first_spike(self):
-        self.assertGreater(self.features.time_before_first_spike(self.t, self.spikes, self.info)[1], 10)
+        self.assertGreater(self.features.time_before_first_spike(self.time, self.spikes, self.info)[1], 10)
 
 
     def test_time_before_first_spikeNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, self.info), (None, None))
+        self.assertEqual(self.features.time_before_first_spike(self.time, self.spikes, self.info), (None, None))
 
 
     def test_time_before_first_spike_no_strict(self):
         self.features.strict = False
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.time_before_first_spike(self.t, self.spikes, {}), (None, None))
+        self.assertEqual(self.features.time_before_first_spike(self.time, self.spikes, {}), (None, None))
 
 
     def test_time_before_first_spike_error(self):
         with self.assertRaises(RuntimeError):
-            self.features.time_before_first_spike(self.t, self.spikes, {})
-            self.features.time_before_first_spike(self.t, self.spikes, {"stimulus_end": 1})
+            self.features.time_before_first_spike(self.time, self.spikes, {})
+            self.features.time_before_first_spike(self.time, self.spikes, {"stimulus_end": 1})
 
 
     def test_spike_rate(self):
-        self.assertEqual(self.features.spike_rate(self.t, self.spikes, self.info), (None, 0.12))
+        self.assertEqual(self.features.spike_rate(self.time, self.spikes, self.info), (None, 0.12))
 
 
     def test_spike_rate_no_strict(self):
         self.features.strict = False
-        self.assertEqual(self.features.spike_rate(self.t, self.spikes, {}), (None, 0.12))
+        self.assertEqual(self.features.spike_rate(self.time, self.spikes, {}), (None, 0.12))
 
 
     def test_spike_rateNone(self):
         self.features.spikes.nr_spikes = -1
-        self.assertEqual(self.features.spike_rate(self.t, self.spikes, self.info), (None, None))
+        self.assertEqual(self.features.spike_rate(self.time, self.spikes, self.info), (None, None))
 
 
     def test_spike_rate_error(self):
         with self.assertRaises(RuntimeError):
-            self.features.spike_rate(self.t, self.spikes, {})
-            self.features.spike_rate(self.t, self.spikes, {"stimulus_start": 1})
-            self.features.spike_rate(self.t, self.spikes, {"stimulus_end": 1})
+            self.features.spike_rate(self.time, self.spikes, {})
+            self.features.spike_rate(self.time, self.spikes, {"stimulus_start": 1})
+            self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1})
 
 
     def test_average_AP_overshoot(self):
-        self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes, self.info), (None, 30))
+        self.assertEqual(self.features.average_AP_overshoot(self.time, self.spikes, self.info), (None, 30))
 
 
     def test_average_AP_overshootNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.average_AP_overshoot(self.t, self.spikes, self.info), (None, None))
+        self.assertEqual(self.features.average_AP_overshoot(self.time, self.spikes, self.info), (None, None))
 
 
-    # TODO Find correct test, this is a rough bound only
+    # TODO Find correct testime, this is a rough bound only
     def test_average_AHP_depth(self):
-        self.features.average_AHP_depth(self.t, self.spikes, self.info)
-        self.assertLess(self.features.average_AHP_depth(self.t, self.spikes, self.info)[1], 0)
+        self.features.average_AHP_depth(self.time, self.spikes, self.info)
+        self.assertLess(self.features.average_AHP_depth(self.time, self.spikes, self.info)[1], 0)
 
 
     def test_average_AHP_depthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.average_AHP_depth(self.t, self.spikes, self.info), (None, None))
+        self.assertEqual(self.features.average_AHP_depth(self.time, self.spikes, self.info), (None, None))
 
-    # TODO Find correct test, this is a rough bound only
+    # TODO Find correct testime, this is a rough bound only
     def test_average_AP_width(self):
-        self.assertLess(self.features.average_AP_width(self.t, self.spikes, self.info)[1], 5)
+        self.assertLess(self.features.average_AP_width(self.time, self.spikes, self.info)[1], 5)
 
 
     def test_average_AP_widthNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.average_AP_width(self.t, self.spikes, self.info), (None, None))
+        self.assertEqual(self.features.average_AP_width(self.time, self.spikes, self.info), (None, None))
 
 
-    # TODO Find correct test, this is a rough bound only
+    # TODO Find correct testime, this is a rough bound only
     def test_accommodation_index(self):
-        self.assertIsNotNone(self.features.accommodation_index(self.t, self.spikes, self.info)[1])
+        self.assertIsNotNone(self.features.accommodation_index(self.time, self.spikes, self.info)[1])
 
 
     def test_accommodation_indexNone(self):
         self.features.spikes.nr_spikes = 0
-        self.assertEqual(self.features.accommodation_index(self.t, self.spikes, self.info), (None, None))
+        self.assertEqual(self.features.accommodation_index(self.time, self.spikes, self.info), (None, None))
 
 
     def test_calculate_all_features(self):
-        result = self.features.calculate_all_features(self.t, self.spikes, self.info)
+        result = self.features.calculate_all_features(self.time, self.spikes, self.info)
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 
@@ -388,8 +388,8 @@ class TestEfelFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.t = np.load(os.path.join(folder, "data/t_test.npy"))
-        self.U = np.load(os.path.join(folder, "data/U_test.npy"))
+        self.time = np.load(os.path.join(folder, "data/t_test.npy"))
+        self.values = np.load(os.path.join(folder, "data/U_test.npy"))
 
         self.implemented_features = efel.getFeatureNames()
 
@@ -405,10 +405,10 @@ class TestEfelFeatures(unittest.TestCase):
         self.features = EfelFeatures()
 
         self.info = {}
-        self.info["stimulus_start"] = self.t[0]
-        self.info["stimulus_end"] = self.t[-10]
+        self.info["stimulus_start"] = self.time[0]
+        self.info["stimulus_end"] = self.time[-10]
 
-        # self.t, self.spikes = self.features.preprocess(t, U)
+        # self.time, self.spikes = self.features.preprocess(time, values)
 
 
     # def test_initNone(self):
@@ -447,14 +447,14 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_spikecount(self):
-        t, U = self.features.Spikecount(self.t, self.U, self.info)
+        time, values = self.features.Spikecount(self.time, self.values, self.info)
 
-        self.assertIsNone(t)
-        self.assertEqual(U, 12)
+        self.assertIsNone(time)
+        self.assertEqual(values, 12)
 
 
     def test_calculate_all_features(self):
-        result = self.features.calculate_all_features(self.t, self.U, self.info)
+        result = self.features.calculate_all_features(self.time, self.values, self.info)
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 
@@ -462,9 +462,9 @@ class TestEfelFeatures(unittest.TestCase):
 
     def test_spikecount_error(self):
         with self.assertRaises(RuntimeError):
-            self.features.Spikecount(self.t, self.U, {})
-            self.features.Spikecount(self.t, self.U, {"stimulus_start": self.t[0]})
-            self.features.Spikecount(self.t, self.U, {"stimulus_end": self.t[-1]})
+            self.features.Spikecount(self.time, self.values, {})
+            self.features.Spikecount(self.time, self.values, {"stimulus_start": self.time[0]})
+            self.features.Spikecount(self.time, self.values, {"stimulus_end": self.time[-1]})
 
 
 
@@ -472,9 +472,9 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.t_original = 8
+        self.time_original = 8
         spiketrain = np.array([1, 3, 5, 6])
-        self.U = [spiketrain, spiketrain, spiketrain, np.array([1])]
+        self.values = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
 
         self.features = NetworkFeatures()
@@ -486,7 +486,7 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
 
 
     def test_init(self):
-        def feature(t, U):
+        def feature(time, values):
             return "t", "U"
 
         features = GeneralNetworkFeatures(new_features=feature,
@@ -506,29 +506,29 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
     def test_preprocess(self):
         self.features = GeneralNetworkFeatures()
 
-        t, spiketrains = self.features.preprocess(self.t_original, self.U)
+        time, spiketrains = self.features.preprocess(self.time_original, self.values)
 
-        self.assertEqual(t, self.t_original)
+        self.assertEqual(time, self.time_original)
         self.assertIsInstance(spiketrains[0], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[1], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[2], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[3], neo.core.SpikeTrain)
 
-        self.assertTrue(np.array_equal(spiketrains[0], self.U[0]))
-        self.assertTrue(np.array_equal(spiketrains[1], self.U[1]))
-        self.assertTrue(np.array_equal(spiketrains[2], self.U[2]))
-        self.assertTrue(np.array_equal(spiketrains[3], self.U[3]))
+        self.assertTrue(np.array_equal(spiketrains[0], self.values[0]))
+        self.assertTrue(np.array_equal(spiketrains[1], self.values[1]))
+        self.assertTrue(np.array_equal(spiketrains[2], self.values[2]))
+        self.assertTrue(np.array_equal(spiketrains[3], self.values[3]))
 
-        self.assertEqual(spiketrains[0].t_stop, self.t_original)
+        self.assertEqual(spiketrains[0].simulation_end, self.time_original)
 
 
 class TestNetworkFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        self.t_original = 8
+        self.time_original = 8
         spiketrain = np.array([1, 3, 5, 6])
-        self.U = [spiketrain, spiketrain, spiketrain, np.array([1])]
+        self.values = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
         self.implemented_features = ["cv", "mean_cv", "binned_isi",
                                      "mean_isi", "local_variation", "mean_firing_rate",
@@ -540,7 +540,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
         self.features = NetworkFeatures()
 
-        self.t, self.spiketrains = self.features.preprocess(self.t_original, self.U)
+        self.time, self.spiketrains = self.features.preprocess(self.time_original, self.values)
 
 
     def test_initNone(self):
@@ -550,7 +550,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
 
     def test_init(self):
-        def feature(t, U):
+        def feature(time, values):
             return "t", "U"
 
         features = NetworkFeatures(new_features=feature,
@@ -578,26 +578,26 @@ class TestNetworkFeatures(unittest.TestCase):
     def test_preprocess(self):
         self.features = NetworkFeatures()
 
-        t, spiketrains = self.features.preprocess(self.t_original, self.U)
+        time, spiketrains = self.features.preprocess(self.time_original, self.values)
 
-        self.assertEqual(t, self.t_original)
+        self.assertEqual(time, self.time_original)
         self.assertIsInstance(spiketrains[0], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[1], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[2], neo.core.SpikeTrain)
         self.assertIsInstance(spiketrains[3], neo.core.SpikeTrain)
 
-        self.assertTrue(np.array_equal(spiketrains[0], self.U[0]))
-        self.assertTrue(np.array_equal(spiketrains[1], self.U[1]))
-        self.assertTrue(np.array_equal(spiketrains[2], self.U[2]))
-        self.assertTrue(np.array_equal(spiketrains[3], self.U[3]))
+        self.assertTrue(np.array_equal(spiketrains[0], self.values[0]))
+        self.assertTrue(np.array_equal(spiketrains[1], self.values[1]))
+        self.assertTrue(np.array_equal(spiketrains[2], self.values[2]))
+        self.assertTrue(np.array_equal(spiketrains[3], self.values[3]))
 
-        self.assertEqual(spiketrains[0].t_stop, self.t_original)
+        self.assertEqual(spiketrains[0].simulation_end, self.time_original)
 
 
     def test_cv(self):
-        t, U = self.features.cv(self.t, self.spiketrains)
+        time, values = self.features.cv(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
+        self.assertIsNone(time)
         self.assertTrue(np.array_equal([0.51207638319124049,
                                         0.51207638319124049,
                                         0.51207638319124049,
@@ -605,35 +605,35 @@ class TestNetworkFeatures(unittest.TestCase):
                                        U))
 
     def test_mean_cv(self):
-        t, U = self.features.mean_cv(self.t, self.spiketrains)
+        time, values = self.features.mean_cv(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
+        self.assertIsNone(time)
         self.assertEqual(0.38405728739343037, U)
 
 
     def test_binned_isi(self):
-        t, U = self.features.binned_isi(self.t, self.spiketrains)
+        time, values = self.features.binned_isi(self.time, self.spiketrains)
 
-        centers = np.arange(0, self.t_original + 1)[1:] - 0.5
+        centers = np.arange(0, self.time_original + 1)[1:] - 0.5
 
         self.assertTrue(np.array_equal(centers, t))
-        self.assertTrue(np.array_equal(U, [[0, 1, 2, 0, 0, 0, 0, 0],
+        self.assertTrue(np.array_equal(values, [[0, 1, 2, 0, 0, 0, 0, 0],
                                            [0, 1, 2, 0, 0, 0, 0, 0],
                                            [0, 1, 2, 0, 0, 0, 0, 0],
                                            [0, 0, 0, 0, 0, 0, 0, 0]]))
 
 
     def test_mean_isi(self):
-        t, U = self.features.mean_isi(self.t, self.spiketrains)
+        time, values = self.features.mean_isi(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
+        self.assertIsNone(time)
         self.assertEqual(1.66666666666666667, U)
 
 
     def test_lv(self):
-        t, U = self.features.local_variation(self.t, self.spiketrains)
+        time, values = self.features.local_variation(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
+        self.assertIsNone(time)
         self.assertTrue(np.array_equal([0.16666666666666666,
                                         0.16666666666666666,
                                         0.16666666666666666,
@@ -641,22 +641,22 @@ class TestNetworkFeatures(unittest.TestCase):
                                        U))
 
     def test_mean_lv(self):
-        t, U = self.features.mean_local_variation(self.t, self.spiketrains)
+        time, values = self.features.mean_local_variation(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
+        self.assertIsNone(time)
         mean = np.mean([0.16666666666666666, 0.16666666666666666, 0.16666666666666666])
         self.assertEqual(mean, U)
 
 
     def test_mean_firing_rate(self):
-        t, U = self.features.mean_firing_rate(self.t, self.spiketrains)
+        time, values = self.features.mean_firing_rate(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
+        self.assertIsNone(time)
         self.assertTrue(np.array_equal([500, 500, 500, 125], U))
 
 
     def test_instantaneous_rate(self):
-        t, U = self.features.instantaneous_rate(self.t, self.spiketrains)
+        time, values = self.features.instantaneous_rate(self.time, self.spiketrains)
 
         rates = [201.7976071573258992, 270.7685498293570845,
                  345.7639606392203859, 420.3430010464927022,
@@ -692,55 +692,55 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(U[1], rates))
         self.assertTrue(np.array_equal(U[2], rates))
         self.assertIsNone(U[3])
-        self.assertTrue(np.array_equal(t, correct_t))
+        self.assertTrue(np.array_equal(time, correct_t))
 
 
 
     def test_fanofactor(self):
-        t, U = self.features.fanofactor(self.t, self.spiketrains)
+        time, values = self.features.fanofactor(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
-        self.assertEqual(U, 0.51923076923076927)
+        self.assertIsNone(time)
+        self.assertEqual(values, 0.51923076923076927)
 
 
     def test_van_rossum_dist(self):
-        t, U = self.features.van_rossum_dist(self.t, self.spiketrains)
+        time, values = self.features.van_rossum_dist(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
-        self.assertEqual(U.shape, (4, 4))
+        self.assertIsNone(time)
+        self.assertEqual(values.shape, (4, 4))
 
         # correct_U = [[0.0, 5.9604644775390625e-08, 5.9604644775390625e-08, 2.9980016657780828],
         #              [5.9604644775390625e-08, 0.0, 5.9604644775390625e-08, 2.9980016657780828],
         #              [5.9604644775390625e-08, 5.9604644775390625e-08, 0.0, 2.9980016657780828],
         #              [2.9980016657780828, 2.9980016657780828, 2.9980016657780828, 0.0]]
 
-        # self.assertTrue(np.array_equal(U, correct_U))
+        # self.assertTrue(np.array_equal(values, correct_U))
 
         diag = np.diag_indices(4)
         self.assertTrue(np.all(U[diag] == 0))
 
     def test_victor_purpura_dist(self):
-        t, U = self.features.victor_purpura_dist(self.t, self.spiketrains)
+        time, values = self.features.victor_purpura_dist(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
-        self.assertEqual(U.shape, (4, 4))
+        self.assertIsNone(time)
+        self.assertEqual(values.shape, (4, 4))
         diag = np.diag_indices(4)
         self.assertTrue(np.all(U[diag] == 0))
 
 
     def test_corrcoef(self):
-        t, U = self.features.corrcoef(self.t, self.spiketrains)
+        time, values = self.features.corrcoef(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
-        self.assertEqual(U.shape, (4, 4))
+        self.assertIsNone(time)
+        self.assertEqual(values.shape, (4, 4))
         diag = np.diag_indices(4)
         self.assertTrue(np.all(U[diag] == 1))
 
     def test_covariance(self):
-        t, U = self.features.covariance(self.t, self.spiketrains)
+        time, values = self.features.covariance(self.time, self.spiketrains)
 
-        self.assertIsNone(t)
-        self.assertEqual(U.shape, (4, 4))
+        self.assertIsNone(time)
+        self.assertEqual(values.shape, (4, 4))
 
 
 
@@ -814,7 +814,7 @@ class TestTestingFeatures(unittest.TestCase):
 
 
     def test_calculate_feature_info(self):
-        t, U,= self.features.feature_info(1, 2, "info")
+        time, values,= self.features.feature_info(1, 2, "info")
 
         self.assertEqual(self.features.info, "info")
 

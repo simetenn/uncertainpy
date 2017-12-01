@@ -75,7 +75,7 @@ class NestModel(Model):
 
         Returns
         -------
-        t_stop : {int, float}
+        simulation_end : {int, float}
             The final simulation time.
         spiketrains : list
             A list of spike trains for each neuron.
@@ -94,10 +94,10 @@ class NestModel(Model):
         the parameters to the model. These parameters must be assigned to
         the Nest model.
 
-        2. ``run(**parameters)`` must return final simulation time  (`t_stop`)
+        2. ``run(**parameters)`` must return final simulation time  (`simulation_end`)
         and a list of spike trains (`spiketrains`).
 
-        The model results `t_stop` and `spiketrains` is used to calculate
+        The model results `simulation_end` and `spiketrains` is used to calculate
         the features.
         The model result is postprocessed to create a regular result before
         the calculating the uncertainties of the model.
@@ -109,7 +109,7 @@ class NestModel(Model):
         return self._run
 
 
-    def postprocess(self, t_stop, spiketrains):
+    def postprocess(self, simulation_end, spiketrains):
         """
         Postprocessing of the spiketrains from a Nest model.
 
@@ -120,14 +120,14 @@ class NestModel(Model):
 
         Parameters
         ----------
-        t_stop : {int, float}
+        simulation_end : {int, float}
             The final simulation time.
         spiketrains : list
             A list of spike trains for each neuron.
 
         Returns
         -------
-        t : array
+        time : array
             A time array of all time points in the Nest simulation.
         spiketrains : list
             A list of the probability for a spike at each timestep, for each
@@ -142,7 +142,7 @@ class NestModel(Model):
         """
 
         dt = nest.GetKernelStatus()["resolution"]
-        t = np.arange(0, t_stop, dt)
+        t = np.arange(0, simulation_end, dt)
 
         expanded_spiketrains = []
         for spiketrain in spiketrains:
@@ -153,4 +153,4 @@ class NestModel(Model):
 
         U = np.array(expanded_spiketrains)
 
-        return t, U
+        return time, values

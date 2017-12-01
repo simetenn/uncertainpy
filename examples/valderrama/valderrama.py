@@ -111,7 +111,7 @@ class Valderrama(Model):
         # Add info needed by certain spiking features and efel features
         info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
 
-        return t, U, info
+        return time, values, info
 
 if __name__ == "__main__":
     model = Valderrama()

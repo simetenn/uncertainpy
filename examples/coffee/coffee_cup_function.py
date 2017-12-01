@@ -9,4 +9,4 @@ def coffee_cup(kappa=-0.05, T_env=20, T_0=95):
 
     U = odeint(f, T_0, t, args=(kappa, T_env))[:, 0]
 
-    return t, U
+    return time, values

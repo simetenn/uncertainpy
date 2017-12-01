@@ -5,13 +5,13 @@ import numpy as np
 
 
 class Spike:
-    def __init__(self, t, U, t_spike, U_spike, global_index,
+    def __init__(self, time, V, time_spike, V_spike, global_index,
                  xlabel="", ylabel=""):
-        self.t = t
-        self.U = U
+        self.time = time
+        self.V = V
 
-        self.U_spike = U_spike
-        self.t_spike = t_spike
+        self.V_spike = V
+        self.time_spike = time_spike
 
         self.global_index = global_index
 
@@ -20,7 +20,7 @@ class Spike:
 
 
     def plot(self, save_name=None):
-        prettyPlot(self.t, self.U,
+        prettyPlot(self.time, self.V,
                    title="Spike",
                    xlabel=self.xlabel,
                    ylabel=self.ylabel)
@@ -34,15 +34,22 @@ class Spike:
 
 
 class Spikes:
-    def __init__(self, t=None, U=None, threshold=-30, extended_spikes=False, xlabel="", ylabel=""):
+    def __init__(self,
+                 time=None,
+                 V=None,
+                 threshold=-30,
+                 extended_spikes=False,
+                 xlabel="",
+
+                 ylabel=""):
         self.spikes = []
         self.nr_spikes = 0
 
         self.xlabel = xlabel
         self.ylabel = ylabel
 
-        if t is not None and U is not None:
-            self.find_spikes(t, U, threshold=threshold, extended_spikes=extended_spikes)
+        if time is not None and V is not None:
+            self.find_spikes(time, V, threshold=threshold, extended_spikes=extended_spikes)
 
 
     def __iter__(self):
@@ -58,44 +65,44 @@ class Spikes:
         return self.spikes[i]
 
 
-    def find_spikes(self, t, U, threshold=-30, extended_spikes=False):
+    def find_spikes(self, time, V, threshold=-30, extended_spikes=False):
 
         min_dist_from_peak = 1
         derivative_cutoff = 0.5
 
         self.spikes = []
         if threshold == "auto":
-            threshold = np.sqrt(U.var())
+            threshold = np.sqrt(V.var())
 
 
         spike_start = 0
         start_flag = False
 
         if extended_spikes:
-            dUdt = np.gradient(U)
+            dVdt = np.gradient(V)
 
-            gt_derivative = np.where(dUdt >= derivative_cutoff)[0]
-            lt_derivative = np.where(dUdt <= -derivative_cutoff)[0]
+            gt_derivative = np.where(dVdt >= derivative_cutoff)[0]
+            lt_derivative = np.where(dVdt <= -derivative_cutoff)[0]
 
         prev_spike_end = 0
 
-        for i in range(len(U)):
-            if U[i] > threshold and start_flag is False:
+        for i in range(len(V)):
+            if V[i] > threshold and start_flag is False:
                 spike_start = i
                 start_flag = True
                 continue
 
-            elif U[i] < threshold and start_flag is True:
+            elif V[i] < threshold and start_flag is True:
                 spike_end = i + 1
                 start_flag = False
 
-                t_spike = t[spike_start:spike_end]
-                U_spike = U[spike_start:spike_end]
+                time_spike = time[spike_start:spike_end]
+                V_spike = V[spike_start:spike_end]
 
-                spike_index = np.argmax(U_spike)
+                spike_index = np.argmax(V_spike)
                 global_index = spike_index + spike_start
-                t_max = t[global_index]
-                U_max = U[global_index]
+                time_max = time[global_index]
+                V_max = V[global_index]
 
                 if extended_spikes:
                     spike_start = gt_derivative[(gt_derivative > prev_spike_end) & (gt_derivative < global_index)][0]
@@ -108,11 +115,11 @@ class Spikes:
                     if global_index + min_dist_from_peak + 1 > spike_end:
                         spike_end = global_index + min_dist_from_peak + 1
 
-                t_spike = t[spike_start:spike_end]
-                U_spike = U[spike_start:spike_end]
+                time_spike = time[spike_start:spike_end]
+                V_spike = V[spike_start:spike_end]
 
 
-                self.spikes.append(Spike(t_spike, U_spike, t_max, U_max, global_index))
+                self.spikes.append(Spike(time_spike, V_spike, time_max, V_max, global_index))
                 prev_spike_end = spike_end
 
         self.nr_spikes = len(self.spikes)
@@ -131,25 +138,24 @@ class Spikes:
 
 
     def plot(self, save_name=None):
-        u_max = []
-        u_min = []
-        t_max = []
+        V_max = []
+        V_min = []
+        time_max = []
         labels = []
 
         i = 1
 
         if self.nr_spikes == 0:
             raise RuntimeWarning("No spikes to plot")
-            return
 
         create_figure(nr_colors=self.nr_spikes)
 
         for spike in self.spikes:
-            u_max.append(max(spike.U))
-            u_min.append(min(spike.U))
-            t_max.append(len(spike.t))
+            V_max.append(max(spike.V))
+            V_min.append(min(spike.V))
+            time_max.append(len(spike.time))
 
-            prettyPlot(range(len(spike.t)), spike.U,
+            prettyPlot(range(len(spike.time)), spike.V,
                        title="Spikes",
                        xlabel="index",
                        ylabel=self.ylabel,
@@ -160,8 +166,8 @@ class Spikes:
             i += 1
 
 
-        plt.ylim([min(u_min), max(u_max)])
-        plt.xlim([0, max(t_max)*1.25])
+        plt.ylim([min(V_min), max(V_max)])
+        plt.xlim([0, max(time_max)*1.25])
         plt.legend(labels)
 
         if save_name is None:

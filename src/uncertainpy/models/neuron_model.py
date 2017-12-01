@@ -155,7 +155,7 @@ class NeuronModel(Model):
         """
         Record time values
         """
-        self.t = self._record("_ref_t")
+        self.time = self._record("_ref_t")
 
 
     def run(self, **parameters):
@@ -169,10 +169,10 @@ class NeuronModel(Model):
 
         Returns
         -------
-        t : array
+        time : array
             Time values of the model.
-        U : array
-            Voltage of the neuron. Note that `U` must either be regular
+        values : array
+            Voltage of the neuron. Note that `values` must either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
         info : dictionary
@@ -193,7 +193,7 @@ class NeuronModel(Model):
         U = self._to_array(self.V)
         t = self._to_array(self.t)
 
-        return t, U, self.info
+        return time, values, self.info
 
 
 
@@ -211,7 +211,7 @@ class NeuronModel(Model):
             self.h(parameter + " = " + str(parameters[parameter]))
 
 
-    def postprocess(self, t, U, info):
+    def postprocess(self, time, values, info):
         """
         Postprocessing of the time and results from the Neuron model is
         generally not needed. The direct model result except the info
@@ -219,18 +219,18 @@ class NeuronModel(Model):
 
         Parameters
         ----------
-        t : array_like
+        time : array_like
             Time values of the Neuron model.
-        U : array_like
+        values : array_like
             Voltage of the neuron.
         info : dict
             Dictionary with information needed by features.
 
         Returns
         -------
-        t : array_like
+        time : array_like
             Time values of the Neuron model.
-        U : array_like
+        values : array_like
             Voltage of the neuron.
         """
-        return t, U
+        return time, values

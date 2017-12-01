@@ -6,22 +6,22 @@ import scipy.interpolate as scpi
 from .base import Base
 
 """
-result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                       "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature0d": {"U": 1,
-                        "t": np.nan},
-          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+result = {model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                       "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature0d": {"values": 1,
+                        "time": np.nan},
+          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                "interpolation": <scipy.interpolate.fitpack2.\
                                                 InterpolatedUnivariateSpline\
                                                 object at 0x7f1c78f0d4d0>},
-          "feature_invalid": {"U": np.nan,
-                              "t": np.nan}}
+          "feature_invalid": {"values": np.nan,
+                              "time": np.nan}}
 """
 
 # TODO test what happens with inherited docstring
@@ -75,25 +75,25 @@ class Parallel(Base):
         ----------
         result : dict
             The model and feature results. The model and each feature each has
-            a dictionary with the time values, ``"t"``,  and model/feature
-            results, ``"U"``.
+            a dictionary with the time values, ``"time"``,  and model/feature
+            results, ``"values"``.
             An example:
 
             .. code-block:: Python
 
-                result = {model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                       "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                      "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature0d": {"U": 1,
-                                      "t": np.nan},
-                        "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                       "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                        "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                      "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                        "feature0d": {"values": 1,
+                                      "time": np.nan},
+                        "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                      "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature_invalid": {"U": np.nan,
-                                            "t": np.nan}}
+                                      "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                        "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                        "feature_invalid": {"values": np.nan,
+                                            "time": np.nan}}
 
         Returns
         -------
@@ -105,20 +105,20 @@ class Parallel(Base):
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                        "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                              "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                              "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
 
         Notes
@@ -132,26 +132,26 @@ class Parallel(Base):
         """
 
         for feature in result:
-            if np.ndim(result[feature]["U"]) == 0:
+            if np.ndim(result[feature]["values"]) == 0:
                 if feature in self.features.adaptive or \
                         (feature == self.model.name and self.model.adaptive):
                     raise AttributeError("{} is 0D,".format(feature)
                                          + " interpolation makes no sense.")
 
-            if np.ndim(result[feature]["U"]) == 1:
+            if np.ndim(result[feature]["values"]) == 1:
                 if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
-                    if np.any(np.isnan(result[feature]["t"])):
+                    if np.any(np.isnan(result[feature]["time"])):
                         raise AttributeError("{} does not return any t values.".format(feature)
                                              + " Unable to perform interpolation.")
 
-                    interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["t"],
-                                                                      result[feature]["U"],
+                    interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
+                                                                      result[feature]["values"],
                                                                       k=3)
                     result[feature]["interpolation"] = interpolation
 
 
-            if np.ndim(result[feature]["U"]) >= 2:
+            if np.ndim(result[feature]["values"]) >= 2:
                 # TODO implement interpolation of >= 2d data, part 1
                 if feature in self.features.adaptive or \
                         (feature == self.model.name and self.model.adaptive):
@@ -168,7 +168,7 @@ class Parallel(Base):
         return the results.
 
         The model is run and each feature of the model is calculated from the model output,
-        `t` (time values) and `U` (model result).
+        `time` (time values) and `values` (model result).
         The results are interpolated if they are adaptive, meaning they return a varying number of steps,
         An interpolation is created and added to results for the model/features that are adaptive.
         Each instance of None is converted to an
@@ -184,33 +184,33 @@ class Parallel(Base):
         -------
         result : dictionary
             The model and feature results. The model and each feature each has
-            a dictionary with the time values, ``"t"``,  and model/feature results, ``"U"``.
+            a dictionary with the time values, ``"time"``,  and model/feature results, ``"values"``.
             If an interpolation has been created, those features/model also has
             ``"interpolation"`` added. An example:
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                         "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                         "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                         "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                             "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                              "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                             "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                             "time": np.nan}}
 
         Notes
         -----
-        Time `t` and result `U` are calculated from the model. Then sent to
+        Time `time` and result `values` are calculated from the model. Then sent to
         model.postprocess, and the postprocessed result from model.postprocess
         is added to result.
-        `t` and `U` are sent to features.preprocess and the preprocessed results
+        `time` and `values` are sent to features.preprocess and the preprocessed results
         is used to calculate each feature.
 
         See also
@@ -233,7 +233,7 @@ class Parallel(Base):
                 try:
                     t_postprocess, U_postprocess = postprocess_result
                 except (ValueError, TypeError) as error:
-                    msg = "model.postprocess() must return t and U (return t, U | return None, U)"
+                    msg = "model.postprocess() must return t and U (return time, values | return None, U)"
                     if not error.args:
                         error.args = ("",)
                     error.args = error.args + (msg,)
@@ -242,8 +242,8 @@ class Parallel(Base):
                 U_postprocess = self.none_to_nan(U_postprocess)
                 t_postprocess = self.none_to_nan(t_postprocess)
 
-                results[self.model.name] = {"t": t_postprocess,
-                                            "U": U_postprocess}
+                results[self.model.name] = {"time": t_postprocess,
+                                            "values": U_postprocess}
 
 
             # Calculate features from the model results
@@ -251,14 +251,14 @@ class Parallel(Base):
             feature_results = self.features.calculate_features(*feature_preprocess)
 
             for feature in feature_results:
-                t_feature = feature_results[feature]["t"]
-                U_feature = feature_results[feature]["U"]
+                t_feature = feature_results[feature]["time"]
+                U_feature = feature_results[feature]["values"]
 
                 t_feature = self.none_to_nan(t_feature)
                 U_feature = self.none_to_nan(U_feature)
 
-                results[feature] = {"U": U_feature,
-                                    "t": t_feature}
+                results[feature] = {"values": U_feature,
+                                    "time": t_feature}
 
             # Create interpolations
             results = self.create_interpolations(results)
@@ -276,15 +276,15 @@ class Parallel(Base):
 
     def none_to_nan(self, U):
         """
-        Converts None values in `U` to a arrays of numpy.nan.
+        Converts None values in `values` to a arrays of numpy.nan.
 
-        If `U` is a 2 dimensional or above array, each instance of None is converted to an
+        If `values` is a 2 dimensional or above array, each instance of None is converted to an
         array of numpy.nan of the correct shape, which makes the array regular.
 
 
         Parameters
         ----------
-        U : array_like
+        values : array_like
             Result from model or features. Can be of any dimensions.
 
         Returns

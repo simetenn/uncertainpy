@@ -13,11 +13,11 @@ class CoffeeCupDependent(Model):
 
     def run(self, kappa=-0.05, u_env=20, alpha=1):
         u0 = 95
-        t = np.linspace(0, 200, 150)
+        time = np.linspace(0, 200, 150)
 
-        def f(u, t, kappa, u_env, alpha):
+        def f(u, time, kappa, u_env, alpha):
             return alpha*kappa*(u - u_env)
 
-        U = odeint(f, u0, t, args=(kappa, u_env, alpha))[:, 0]
+        values = odeint(f, u0, time, args=(kappa, u_env, alpha))[:, 0]
 
-        return t, U
+        return time, values

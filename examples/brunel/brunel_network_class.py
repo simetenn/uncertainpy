@@ -113,4 +113,4 @@ class BrunelNetwork(NestModel):
         U = spiketrains
         t = self.simtime
 
-        return t, U
+        return time, values

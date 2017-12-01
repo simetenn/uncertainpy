@@ -86,7 +86,7 @@ def generate_plots_compare():
 #     U = np.load(os.path.join(test_data_dir, "U_test.npy"))
 #     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
-#     prettyPlot(t, U, ,title=,  xlabel="", ylabel="")
+#     prettyPlot(time, values, ,title=,  xlabel="", ylabel="")
 
 #     plt.savefig(os.path.join(output_test_dir, "U.png"))
 
@@ -106,7 +106,7 @@ def generate_spike_plot():
     t = np.arange(0, 10)
     U = np.arange(0, 10) + 10
 
-    prettyPlot(t, U, title="Spike",
+    prettyPlot(time, values, title="Spike",
                xlabel="time", ylabel="voltage")
 
 
@@ -118,11 +118,11 @@ def generate_spikes_plot():
     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
 
-    spikes = Spikes(t, U, xlabel="xlabel", ylabel="ylabel")
+    spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel")
 
     spikes.plot(os.path.join(output_test_dir, "spikes.png"))
 
-    spikes = Spikes(t, U, xlabel="xlabel", ylabel="ylabel", extended_spikes=True)
+    spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel", extended_spikes=True)
 
     spikes.plot(os.path.join(output_test_dir, "spikes_extended.png"))
 

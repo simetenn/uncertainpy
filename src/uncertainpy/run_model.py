@@ -119,7 +119,7 @@ class RunModel(ParameterBase):
 
         Returns
         -------
-        t : array
+        time : array
             The time array with the highest number of time steps.
         interpolated_results : array
             An array containing all interpolated model/features results.
@@ -166,20 +166,20 @@ class RunModel(ParameterBase):
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                        "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                              "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
 
@@ -225,52 +225,52 @@ class RunModel(ParameterBase):
             if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                 # TODO implement interpolation of >= 2d data, part2
-                if np.ndim(results[0][feature]["U"]) >= 2:
+                if np.ndim(results[0][feature]["values"]) >= 2:
                     raise NotImplementedError("Feature: {feature},".format(feature=feature)
                                               + " no support for >= 2D interpolation")
 
-                elif np.ndim(results[0][feature]["U"]) == 1:
+                elif np.ndim(results[0][feature]["values"]) == 1:
                     t_interpolate = []
                     interpolations = []
                     for result in results:
-                        # if "t" in result[feature]:
-                        if not np.all(np.isnan(result[feature]["t"])):
-                            t_interpolate.append(result[feature]["t"])
-                        elif not np.all(np.isnan(result[self.model.name]["t"])):
-                            t_interpolate.append(result[self.model.name]["t"])
+                        # if "time" in result[feature]:
+                        if not np.all(np.isnan(result[feature]["time"])):
+                            t_interpolate.append(result[feature]["time"])
+                        elif not np.all(np.isnan(result[self.model.name]["time"])):
+                            t_interpolate.append(result[self.model.name]["time"])
                         else:
                             raise ValueError("Neither {} or model has t values to use in interpolation".format(feature))
 
                         interpolations.append(result[feature]["interpolation"])
 
-                    data[feature]["t"], data[feature]["U"] = self.apply_interpolation(t_interpolate, interpolations)
+                    data[feature]["time"], data[feature]["values"] = self.apply_interpolation(t_interpolate, interpolations)
 
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
-                elif np.ndim(results[0][feature]["U"]) == 0:
+                elif np.ndim(results[0][feature]["values"]) == 0:
                     self.logger.warning("Feature: {feature}, ".format(feature=feature) +
                                         "is a 0D result. No interpolation is performed")
 
-                    data[feature]["t"] = results[0][feature]["t"]
+                    data[feature]["time"] = results[0][feature]["time"]
 
-                    data[feature]["U"] = []
+                    data[feature]["values"] = []
                     for result in results:
-                        data[feature]["U"].append(result[feature]["U"])
+                        data[feature]["values"].append(result[feature]["values"])
 
             else:
                 # Store data from results in a Data object
-                data[feature]["t"] = results[0][feature]["t"]
+                data[feature]["time"] = results[0][feature]["time"]
 
-                data[feature]["U"] = []
+                data[feature]["values"] = []
                 for result in results:
-                    data[feature]["U"].append(result[feature]["U"])
+                    data[feature]["values"].append(result[feature]["values"])
 
         # TODO is this necessary to ensure all results are arrays?
         for feature in data:
-            if "t" in data[feature]:
-                data[feature]["t"] = np.array(data[feature]["t"])
+            if "time" in data[feature]:
+                data[feature]["time"] = np.array(data[feature]["time"])
 
-            data[feature]["U"] = np.array(data[feature]["U"])
+            data[feature]["values"] = np.array(data[feature]["values"])
 
         # data.remove_only_invalid_features()
 
@@ -301,20 +301,20 @@ class RunModel(ParameterBase):
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                        "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                              "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
 
@@ -404,20 +404,20 @@ class RunModel(ParameterBase):
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                        "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                              "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
 
@@ -435,13 +435,13 @@ class RunModel(ParameterBase):
         # Find first array with none values
         i = 0
         for result in results:
-            if not np.all(np.isnan(result[feature]["U"])):
-                u_prev = result[feature]["U"]
+            if not np.all(np.isnan(result[feature]["values"])):
+                u_prev = result[feature]["values"]
                 break
             i += 1
 
         for result in results[i:]:
-            u = result[feature]["U"]
+            u = result[feature]["values"]
             if not np.all(np.isnan(u)):
                 if np.shape(u_prev) != np.shape(u):
                     return True
@@ -503,20 +503,20 @@ class RunModel(ParameterBase):
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                        "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                              "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
 
@@ -528,20 +528,20 @@ class RunModel(ParameterBase):
 
             .. code-block:: Python
 
-                result = {self.model.name: {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                            "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature1d": {"U": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature0d": {"U": 1,
-                                        "t": np.nan},
-                          "feature2d": {"U": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                        "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                          "feature_adaptive": {"U": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                               "t": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                "interpolation": scipy interpolation object},
-                          "feature_invalid": {"U": np.nan,
-                                              "t": np.nan}}
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
                 results = [result 1, result 2, ..., result N]
 
@@ -552,7 +552,7 @@ class RunModel(ParameterBase):
             """
             Parameters
             ---------
-            data : {"U", "t"}
+            data : {"values", "time"}
             """
             features = results[0].keys()
             for feature in features:
@@ -573,7 +573,7 @@ class RunModel(ParameterBase):
 
             return results
 
-        results = regularize(results, "U")
-        results = regularize(results, "t")
+        results = regularize(results, "values")
+        results = regularize(results, "time")
 
         return results

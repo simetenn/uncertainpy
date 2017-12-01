@@ -10,4 +10,4 @@ def coffee_cup_dependent(beta=-0.05, T_env=20, alpha=1):
 
     U = odeint(f, T_0, t, args=(alpha, beta, T_env))[:, 0]
 
-    return t, U
+    return time, values
