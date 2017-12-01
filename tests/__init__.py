@@ -26,6 +26,7 @@ __all__ = ["TestDistribution",
            "TestUncertainty",
            "TestUseCases",
            "TestData",
+           "TestDataFeature",
            "TestUncertaintyCalculations",
            "TestExamples",
            "TestBase",
@@ -50,7 +51,7 @@ from .test_spike import TestSpike
 from .test_spikes import TestSpikes
 from .test_uncertainty import TestUncertainty
 from .test_usecase import TestUseCases
-from .test_data import TestData
+from .test_data import TestData, TestDataFeature
 from .test_run_model import TestRunModel
 from .test_uncertainty_calculations import TestUncertaintyCalculations
 from .test_parallel import TestParallel

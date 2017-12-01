@@ -33,7 +33,9 @@ class TestPlotUncertainpy(TestCasePlot):
                                     verbose_level="warning",
                                     figureformat=self.figureformat)
 
-
+        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                           "sensitivity_1", "total_sensitivity_1",
+                           "sensitivity_t", "total_sensitivity_t"]
 
 
     def tearDown(self):
@@ -105,7 +107,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data = Data()
 
         self.plot.data.add_features("TestingModel1d")
-        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
         U = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
@@ -129,7 +131,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.results_0d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
-        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
         U = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
@@ -164,7 +166,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.results_2d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
-        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
         U = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
@@ -180,7 +182,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
         self.plot.data.add_features("TestingModel1d")
-        self.plot.data["TestingModel1d"] = {"labels": ["x", "y"]}
+        self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
         U = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
@@ -375,12 +377,11 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
     def assert_data(self):
-        for data_type in self.plot.data.data_types:
-            if data_type == "labels":
-                continue
-            else:
-                self.assertTrue(np.array_equal(self.plot.data["feature1d"][data_type], [1., 2.]))
-                self.assertTrue(np.array_equal(self.plot.data["TestingModel1d"][data_type], [3., 4.]))
+
+
+        for data_type in self.data_types:
+            self.assertTrue(np.array_equal(self.plot.data["feature1d"][data_type], [1., 2.]))
+            self.assertTrue(np.array_equal(self.plot.data["TestingModel1d"][data_type], [3., 4.]))
 
         self.assertEqual(self.plot.data.uncertain_parameters, ["a", "b"])
 
@@ -1022,7 +1023,6 @@ class TestPlotUncertainpy(TestCasePlot):
 
 # TODO test combined features 0 for many features
 
-# TODO test plot_allFromExploration
 # TODO test plot_folder
 
 

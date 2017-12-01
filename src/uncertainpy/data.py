@@ -7,11 +7,12 @@ import numpy as np
 from .utils import create_logger
 
 
-class Result(collections.MutableMapping):
+class DataFeature(collections.MutableMapping):
     def __init__(self,
                  name,
                  U=None,
                  t=None,
+                 E=None,
                  Var=None,
                  p_05=None,
                  p_95=None,
@@ -19,11 +20,12 @@ class Result(collections.MutableMapping):
                  total_sensitivity_1=None,
                  sensitivity_t=None,
                  total_sensitivity_t=None,
-                 labels=[]):
+                 labels=None):
 
         self.name = name
         self.U = U
         self.t = t
+        self.E = E
         self.Var = Var
         self.p_05 = p_05
         self.p_95 = p_95
@@ -33,12 +35,16 @@ class Result(collections.MutableMapping):
         self.total_sensitivity_t = total_sensitivity_t
         self.labels = labels
 
-        self.built_in_data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+        self._built_in_data_types = ["U", "t", "E", "Var", "p_05", "p_95",
                                     "sensitivity_1", "total_sensitivity_1",
                                     "sensitivity_t", "total_sensitivity_t", "labels"]
 
+        self._information = ["name", "labels"]
 
     def __getitem__(self, data_type):
+        # if data_type not in self.built_in_data_types:
+        #     raise AttributeError("{} is not a supported attribute".format(data_type))
+
         return getattr(self, data_type)
 
 
@@ -46,28 +52,32 @@ class Result(collections.MutableMapping):
         data_types = []
 
         for data_type in dir(self):
-            if data_type.startswith('__') and not callable(self[data_type]) and self[data_type] is not None:
+            if not data_type.startswith('_') and not callable(self[data_type]) \
+                and self[data_type] is not None and data_type not in self._information:
                 data_types.append(data_type)
 
         return data_types
 
 
     def __setitem__(self, data_type, value):
-        if data_type not in self.built_in_data_types:
-            raise AttributeError("{} is not a supported attribute".format(data_type))
+        # if data_type not in self.built_in_data_types:
+        #     raise AttributeError("{} is not a supported attribute".format(data_type))
 
         setattr(self, data_type, value)
 
 
     def __iter__(self):
-        for data_type in self.built_in_data_types:
-            if self[data_type] is not None:
-                yield self[data_type]
+        for data_type in self.get_data_types():
+            yield data_type
+
+        # for data_type in self.get_data_types():
+        #     if self[data_type] is not None:
+        #         yield self[data_type]
 
 
     def __delitem__(self, data_type):
-        if data_type not in self.built_in_data_types:
-            raise AttributeError("{} is not a supported attribute".format(data_type))
+        # if data_type not in self.built_in_data_types:
+        #     raise AttributeError("{} is not a supported attribute".format(data_type))
 
         setattr(self, data_type, None)
 
@@ -76,7 +86,32 @@ class Result(collections.MutableMapping):
         return len(self.get_data_types())
 
 
+    def __contains__(self, data_type):
+        if data_type not in self.get_data_types() or self[data_type] is None:
+            return False
+        else:
+            return True
 
+
+    def ndim(self):
+        """
+        Get the number of dimensions of a `feature`.
+
+        Parameters
+        ----------
+        feature : str
+            Name of the model or a feature.
+
+        Returns
+        -------
+        int
+            The number of dimensions of the model/feature result.
+        """
+
+        if self.U is not None:
+            return np.ndim(self.U[0])
+        else:
+            return None
 
 
 # TODO instead of a data object, could just a  h5py file have been used ?
@@ -149,9 +184,9 @@ class Data(collections.MutableMapping):
                  verbose_level="info",
                  verbose_filename=None):
 
-        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                           "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t", "labels"]
+        # self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+        #                    "sensitivity_1", "total_sensitivity_1",
+        #                    "sensitivity_t", "total_sensitivity_t", "labels"]
 
 
         self.data_information = ["uncertain_parameters", "model_name",
@@ -201,6 +236,9 @@ class Data(collections.MutableMapping):
 
         for feature in self:
             output_str += border(feature)
+            output_str += "=== labels ===\n"
+            output_str += "{data}\n\n".format(data=self[feature].labels)
+
             for data_type in self[feature]:
                 output_str += "=== {data_type} ===\n".format(data_type=data_type)
                 output_str += "{data}\n\n".format(data=self[feature][data_type])
@@ -234,9 +272,8 @@ class Data(collections.MutableMapping):
         int
             The number of dimensions of the model/feature result.
         """
-    #     if "U" in self[feature]:
-    #         ndim = np.ndim(self[feature]["U"])
-        return np.ndim(self[feature]["U"][0])
+
+        return self[feature].ndim()
 
 
 
@@ -257,26 +294,15 @@ class Data(collections.MutableMapping):
             If no labels are defined,
             returns a list with the correct number of empty strings.
         """
-        if "labels" in self[feature]:
-            return self[feature]["labels"]
+        if self[feature].labels is not None:
+            return self[feature].labels
 
-        elif self.ndim(feature) == 2:
-            if self.ndim(self.model_name) == 2 and "labels" in self[self.model_name]:
-                return self[self.model_name]["labels"]
-            else:
-                return ["", "", ""]
+        elif self[self.model_name].labels is not None and self[self.model_name].ndim() == self[feature].ndim():
+            return self[self.model_name].labels
 
-        elif self.ndim(feature) == 1:
-            if self.ndim(self.model_name) == 1 and "labels" in self[self.model_name]:
-                return self[self.model_name]["labels"]
-            else:
-                return ["", ""]
+        else:
+            return [""]*(self[feature].ndim() + 1)
 
-        elif self.ndim(feature) == 0:
-            if self.ndim(self.model_name) == 0 and "labels" in self[self.model_name]:
-                return self[self.model_name]["labels"]
-            else:
-                return [""]
 
 
     def __getitem__(self, feature):
@@ -311,8 +337,8 @@ class Data(collections.MutableMapping):
         ValueError
             If `data` is not a dictionary.
         """
-        if not isinstance(data, dict):
-            raise ValueError("data must be of type dict")
+        if not isinstance(data, DataFeature):
+            raise ValueError("data must be of type DataFeature")
         self.data[feature] = data
 
 
@@ -366,7 +392,7 @@ class Data(collections.MutableMapping):
             features = [features]
 
         for feature in features:
-            self.data[feature] = {}
+            self.data[feature] = DataFeature(feature)
 
 
     def save(self, filename):
@@ -390,6 +416,9 @@ class Data(collections.MutableMapping):
 
                 for data_type in self[feature]:
                     group.create_dataset(data_type, data=self[feature][data_type])
+
+                group.create_dataset("labels", data=self[feature].labels)
+
 
 
     def load(self, filename):

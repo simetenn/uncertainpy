@@ -171,10 +171,10 @@ class UncertaintyCalculations(ParameterBase):
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights, masked_U)
             else:
-                self.logger.warning("Uncertainty quantification is not performed" +
-                                    "for feature: {} ".format(feature)) +
-                                    "due too not all parameter combinations "+
-                                    "giving a result. Set allow_incomplete=True to " +
+                self.logger.warning("Uncertainty quantification is not performed " +\
+                                    "for feature: {} ".format(feature) +\
+                                    "due too not all parameter combinations " +\
+                                    "giving a result. Set allow_incomplete=True to " +\
                                     "calculate the uncertainties anyway.")
 
             if not np.all(mask):
@@ -210,11 +210,12 @@ class UncertaintyCalculations(ParameterBase):
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
             else:
-                self.logger.warning("Uncertainty quantification is not performed" +
-                                    "for feature: {} ".format(feature)) +
-                                    "due too not all parameter combinations "+
+                self.logger.warning("Uncertainty quantification is not performed " +
+                                    "for feature: {} ".format(feature) +
+                                    "due too not all parameter combinations " +
                                     "giving a result. Set allow_incomplete=True to " +
                                     "calculate the uncertainties anyway.")
+
 
             if not np.all(mask):
                 self.data.incomplete.append(feature)
@@ -241,7 +242,6 @@ class UncertaintyCalculations(ParameterBase):
                                                                   rule="J", sparse=True)
         # TODO Is this correct, copy pasted from below.
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
-
         weights = weights_MvNormal*self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
 
         self.distribution = dist_MvNormal
@@ -264,9 +264,9 @@ class UncertaintyCalculations(ParameterBase):
                                                         masked_weights,
                                                         masked_U)
             else:
-                self.logger.warning("Uncertainty quantification is not performed" +
-                                    "for feature: {} ".format(feature)) +
-                                    "due too not all parameter combinations "+
+                self.logger.warning("Uncertainty quantification is not performed " +
+                                    "for feature: {} ".format(feature) +
+                                    "due too not all parameter combinations " +
                                     "giving a result. Set allow_incomplete=True to " +
                                     "calculate the uncertainties anyway.")
 
@@ -316,12 +316,11 @@ class UncertaintyCalculations(ParameterBase):
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
             else:
-                self.logger.warning("Uncertainty quantification is not performed" +
-                                    "for feature: {} ".format(feature)) +
-                                    "due too not all parameter combinations "+
+                self.logger.warning("Uncertainty quantification is not performed " +
+                                    "for feature: {} ".format(feature) +
+                                    "due too not all parameter combinations " +
                                     "giving a result. Set allow_incomplete=True to " +
                                     "calculate the uncertainties anyway.")
-
 
             if not np.all(mask):
                 self.data.incomplete.append(feature)

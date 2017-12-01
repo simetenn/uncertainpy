@@ -131,7 +131,7 @@ class PlotUncertainty(object):
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        prettyPlot(self.data[feature]["U"],
+        prettyPlot(self.data[feature].U,
                    xlabel=r"simulator run \#number",
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, result".format(feature.replace("_", " ")),
@@ -163,14 +163,14 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
-            t = np.arange(0, len(self.data[feature]["U"][0]))
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+            t = np.arange(0, len(self.data[feature].U[0]))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
 
-        padding = len(str(len(self.data[feature]["U"][0]) + 1))
-        for U in self.data[feature]["U"]:
+        padding = len(str(len(self.data[feature].U[0]) + 1))
+        for U in self.data[feature].U:
             prettyPlot(t, U,
                        xlabel=xlabel, ylabel=ylabel,
                        title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
@@ -204,13 +204,13 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
-            t = np.arange(0, len(self.data[feature]["U"][0]))
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+            t = np.arange(0, len(self.data[feature].U[0]))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
-        padding = len(str(len(self.data[feature]["U"]) + 1))
-        for i, U in enumerate(self.data[feature]["U"]):
+        padding = len(str(len(self.data[feature].U) + 1))
+        for i, U in enumerate(self.data[feature].U):
             fig = plt.figure()
             ax = fig.add_subplot(111)
             ax.set_title("{}, result {:d}".format(feature.replace("_", " "), i))
@@ -256,10 +256,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][attribute]))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
 
         labels = self.data.get_labels(feature)
@@ -310,10 +310,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
             extent = None
         else:
-            extent=[self.data[feature]["t"][0], self.data[feature]["t"][-1],
+            extent=[self.data[feature].t[0], self.data[feature].t[-1],
                     0, self.data[feature][attribute].shape[0]]
 
 
@@ -412,17 +412,17 @@ class PlotUncertainty(object):
             self.logger.warning(msg)
             return
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
-            t = np.arange(0, len(self.data[feature]["E"]))
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+            t = np.arange(0, len(self.data[feature].E))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature + ", mean and variance"
-        ax = prettyPlot(t, self.data[feature]["E"],
+        ax = prettyPlot(t, self.data[feature].E,
                         title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style, **plot_kwargs)
 
@@ -439,7 +439,7 @@ class PlotUncertainty(object):
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
         # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
 
-        ax2.plot(t, self.data[feature]["Var"],
+        ax2.plot(t, self.data[feature].Var,
                  color=colors[color+2], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -489,24 +489,24 @@ class PlotUncertainty(object):
             return
 
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
-            t = np.arange(0, len(self.data[feature]["E"]))
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+            t = np.arange(0, len(self.data[feature].E))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature.replace("_", " ") + ", 90\\% confidence interval"
-        prettyPlot(t, self.data[feature]["E"], title=title,
+        prettyPlot(t, self.data[feature].E, title=title,
                    xlabel=xlabel, ylabel=ylabel, color=0,
                    **plot_kwargs)
 
         colors = get_current_colormap()
         plt.fill_between(t,
-                         self.data[feature]["p_05"],
-                         self.data[feature]["p_95"],
+                         self.data[feature].p_05,
+                         self.data[feature].p_95,
                          alpha=0.5, color=colors[0])
 
 
@@ -545,10 +545,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
@@ -596,10 +596,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
         parameter_names = self.data.uncertain_parameters
 
@@ -684,10 +684,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if "t" not in self.data[feature] or np.all(np.isnan(self.data[feature]["t"])):
+        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
             t = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
-            t = self.data[feature]["t"]
+            t = self.data[feature].t
 
 
         labels = self.data.get_labels(feature)
@@ -782,8 +782,8 @@ class PlotUncertainty(object):
         xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
-        values = [self.data[feature]["E"], self.data[feature]["Var"],
-                  self.data[feature]["p_05"], self.data[feature]["p_95"]]
+        values = [self.data[feature].E, self.data[feature].Var,
+                  self.data[feature].p_05, self.data[feature].p_95]
 
         ylabel = self.data.get_labels(feature)[0]
 

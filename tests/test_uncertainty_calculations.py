@@ -648,8 +648,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_calculate_total_sensitivity_1(self):
         self.uncertainty_calculations.data = Data()
 
-        self.uncertainty_calculations.data["test2D"] = {"sensitivity_1": [[4, 6], [8, 12]]}
-        self.uncertainty_calculations.data["test1D"] ={"sensitivity_1": [1, 2]}
+        self.uncertainty_calculations.data.add_features(["test2D", "test1D"])
+        self.uncertainty_calculations.data["test2D"].sensitivity_1 = [[4, 6], [8, 12]]
+        self.uncertainty_calculations.data["test1D"].sensitivity_1 =  [1, 2]
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.calculate_total_sensitivity(sensitivity="sensitivity_1")
@@ -662,8 +663,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_calculate_total_sensitivity_t(self):
         self.uncertainty_calculations.data = Data()
-        self.uncertainty_calculations.data["test2D"] = {"sensitivity_t": [[4, 6], [8, 12]]}
-        self.uncertainty_calculations.data["test1D"] ={"sensitivity_t": [1, 2]}
+
+        self.uncertainty_calculations.data.add_features(["test2D", "test1D"])
+        self.uncertainty_calculations.data["test2D"].sensitivity_t = [[4, 6], [8, 12]]
+        self.uncertainty_calculations.data["test1D"].sensitivity_t = [1, 2]
         self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
 
         self.uncertainty_calculations.calculate_total_sensitivity(sensitivity="sensitivity_t")
@@ -713,7 +716,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # Test if all calculated properties actually exists
         data = self.uncertainty_calculations.data
-        for data_type in data.data_types:
+
+        data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                      "sensitivity_1", "total_sensitivity_1",
+                      "sensitivity_t", "total_sensitivity_t", "labels"]
+
+        for data_type in data_types:
             if data_type not in ["U", "t", "labels"]:
                 for feature in data:
                     self.assertIsInstance(data[feature][data_type], np.ndarray)

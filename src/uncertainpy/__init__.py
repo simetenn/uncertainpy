@@ -1,4 +1,4 @@
-from .data import Data
+from .data import Data, DataFeature
 from .distribution import uniform, normal
 from .parameters import Parameter, Parameters
 from .uncertainty import UncertaintyEstimation

@@ -127,7 +127,8 @@ test_model.addTest(test_runModel)
 test_parameters = create_test_suite([TestParameter, TestParameters])
 
 
-test_data = create_test_suite([TestData])
+test_data = create_test_suite([TestData, TestDataFeature])
+
 
 test_plotUncertainty = create_test_suite_parameter(TestPlotUncertainpy, parameter=args.exact)
 

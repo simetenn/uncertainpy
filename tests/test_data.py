@@ -5,7 +5,117 @@ import subprocess
 
 import numpy as np
 
-from uncertainpy import Data
+from uncertainpy import Data, DataFeature
+
+
+
+
+class TestDataFeature(unittest.TestCase):
+    def setUp(self):
+        self.output_test_dir = ".tests/"
+        self.seed = 10
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+        os.makedirs(self.output_test_dir)
+
+
+        self.data_feature = DataFeature("test")
+
+        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
+                           "sensitivity_1", "total_sensitivity_1",
+                           "sensitivity_t", "total_sensitivity_t"]
+
+
+    def tearDown(self):
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+
+    def test_getitem(self):
+        for data_type in self.data_types:
+            self.assertIsNone(self.data_feature[data_type])
+
+        self.assertIsNone(self.data_feature["labels"])
+
+
+    def test_getitem_error(self):
+        with self.assertRaises(AttributeError):
+            self.data_feature["error"]
+
+
+    def test_setitem(self):
+        for data_type in self.data_types:
+            self.data_feature[data_type] = 2
+
+        for data_type in self.data_types:
+            self.assertEqual(self.data_feature[data_type], 2)
+
+
+    def test_get_data_types(self):
+        for data_type in self.data_types:
+            self.data_feature[data_type] = 2
+
+        self.assertEqual(set(self.data_types), set(self.data_feature.get_data_types()))
+
+        self.data_feature.x = 2
+
+        self.assertEqual(set(self.data_types + ["x"]), set(self.data_feature.get_data_types()))
+
+
+    def test_delitem(self):
+        for data_type in self.data_types:
+            self.data_feature[data_type] = 2
+
+        for data_type in self.data_types:
+            del self.data_feature[data_type]
+
+        self.assertEqual(self.data_feature.get_data_types(), [])
+
+
+    def test_iter(self):
+        for data_type in self.data_types:
+            self.data_feature[data_type] = 2
+
+        result = []
+        for data_type in self.data_feature:
+            result.append(data_type)
+
+        self.assertEqual(set(self.data_feature.get_data_types()), set(self.data_types))
+
+
+    def test_len(self):
+        for data_type in self.data_types:
+            self.data_feature[data_type] = 2
+
+        self.assertEqual(len(self.data_feature), len(self.data_types))
+
+
+    def test_ndim(self):
+        self.data_feature.U = [[[1, 2, 3], [1, 2, 3]]]
+
+        self.assertEqual(self.data_feature.ndim(), 2)
+
+        self.data_feature.U = [1]
+
+        self.assertEqual(self.data_feature.ndim(), 0)
+
+        self.data_feature.U = [np.arange(0, 10)]
+        self.assertEqual(self.data_feature.ndim(), 1)
+
+        self.data_feature.U =[np.array([np.arange(0, 10),
+                                        np.arange(0, 10)])]
+
+        self.assertEqual(self.data_feature.ndim(), 2)
+
+
+    def test_contains(self):
+        self.assertFalse("error" in self.data_feature)
+
+        self.data_feature.U = 2
+
+        self.assertTrue("U" in self.data_feature)
 
 class TestData(unittest.TestCase):
     def setUp(self):
@@ -49,11 +159,13 @@ class TestData(unittest.TestCase):
     def test_add_features(self):
         self.data.add_features("feature1")
 
-        self.assertEqual(self.data.data, {"feature1": {}})
+        self.assertEqual(self.data.data, {"feature1": DataFeature("feature1")})
 
         self.data.add_features(["feature2", "feature3"])
 
-        self.assertEqual(self.data.data, {"feature1": {}, "feature2": {}, "feature3": {}})
+        self.assertEqual(self.data.data, {"feature1": DataFeature("feature1"),
+                                          "feature2": DataFeature("feature2"),
+                                          "feature3": DataFeature("feature3")})
 
     # def test_nan_to_none(self):
     #     a = np.array([0, 1, 2, None, 4, None, None])
@@ -161,11 +273,8 @@ class TestData(unittest.TestCase):
         self.data.load(compare_file)
 
         for data_type in self.data_types:
-            if data_type == "labels":
-                continue
-            else:
-                self.assertTrue(np.array_equal(self.data["feature1d"][data_type], [1., 2.]))
-                self.assertTrue(np.array_equal(self.data["TestingModel1d"][data_type], [3., 4.]))
+            self.assertTrue(np.array_equal(self.data["feature1d"][data_type], [1., 2.]))
+            self.assertTrue(np.array_equal(self.data["TestingModel1d"][data_type], [3., 4.]))
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
 
@@ -191,18 +300,18 @@ class TestData(unittest.TestCase):
     def test_get_labels(self):
         self.data.add_features(["model_name", "feature", "feature2"])
 
-        self.data["model_name"]["labels"] = ["x", "y"]
-        self.data["feature"]["labels"] = ["x", "y"]
-        self.data["model_name"]["U"] = [[1, 2], [1, 2]]
-        self.data["feature"]["U"] = [[1, 2], [1, 2]]
-        self.data["feature2"]["U"] = [[1, 2], [1, 2]]
+        self.data["model_name"].labels = ["x", "y"]
+        self.data["feature"].labels = ["x", "y"]
+        self.data["model_name"].U = [[1, 2], [1, 2]]
+        self.data["feature"].U = [[1, 2], [1, 2]]
+        self.data["feature2"].U = [[1, 2], [1, 2]]
 
         self.data.model_name = "model_name"
 
         self.assertEqual(self.data.get_labels("feature"), ["x", "y"])
         self.assertEqual(self.data.get_labels("feature2"), ["x", "y"])
 
-        self.data["feature2"]["U"] = [[[1], [2]], [[1], [2]]]
+        self.data["feature2"].U = [[[1], [2]], [[1], [2]]]
         self.assertEqual(self.data.get_labels("feature2"), ["", "", ""])
 
         self.data["feature"]["labels"] = ["x"]
@@ -308,15 +417,14 @@ class TestData(unittest.TestCase):
 
 
     def test_ndim(self):
-        self.data["feature0d"] = {"U": [1],
-                                  "t": [np.nan]}
-        self.data["feature1d"] = {"U": [np.arange(0, 10)],
-                                  "t": [np.arange(0, 10)]}
-        self.data["feature2d"] = {"U": [np.array([np.arange(0, 10),
-                                                  np.arange(0, 10)])],
-                                  "t": [np.arange(0, 10)]}
-        self.data["feature_invalid"] = {"U": [np.nan],
-                                        "t": [np.nan]}
+
+        self.data.add_features(["feature0d", "feature1d", "feature2d", "feature_invalid"])
+
+        self.data["feature0d"].U = [1]
+        self.data["feature1d"].U = [np.arange(0, 10)]
+        self.data["feature2d"].U = [np.array([np.arange(0, 10),
+                                              np.arange(0, 10)])]
+        self.data["feature_invalid"].U = [np.nan]
 
         self.assertEqual(self.data.ndim("feature0d"), 0)
         self.assertEqual(self.data.ndim("feature1d"), 1)
