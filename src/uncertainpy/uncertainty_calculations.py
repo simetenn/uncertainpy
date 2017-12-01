@@ -118,9 +118,9 @@ class UncertaintyCalculations(ParameterBase):
                 masked_weights = weights[mask]
 
         if not np.all(mask):
-            self.logger.warning("Feature: {} only yields".format(feature)
-                                + " results for {}/{}".format(sum(mask), len(mask))
-                                + " parameter combinations.")
+            self.logger.warning("Feature: {} only yields ".format(feature) +
+                                "results for {}/{} ".format(sum(mask), len(mask)) +
+                                "parameter combinations.")
 
 
         if weights is None:
@@ -139,7 +139,7 @@ class UncertaintyCalculations(ParameterBase):
             elif sorted(uncertain_parameters) != sorted(self.parameters.get("name")):
                  raise ValueError("A common multivariate distribution is given, " +
                                   "and all uncertain parameters must be used. " +
-                                  "Set uncertain_parameters to None or a list of all "
+                                  "Set uncertain_parameters to None or a list of all " +
                                   "uncertain parameters.")
         else:
             if uncertain_parameters is None:
@@ -156,7 +156,6 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(self.M, self.distribution)
 
-
         nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
         # Running the model
@@ -172,10 +171,10 @@ class UncertaintyCalculations(ParameterBase):
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights, masked_U)
             else:
-                self.logger.warning("Uncertainty quantification is not performed"
-                                    "for feature: {} ".format(feature))
-                                    "due too not all parameter combinations
-                                    "giving a result. Set allow_incomplete=True to"
+                self.logger.warning("Uncertainty quantification is not performed" +
+                                    "for feature: {} ".format(feature)) +
+                                    "due too not all parameter combinations "+
+                                    "giving a result. Set allow_incomplete=True to " +
                                     "calculate the uncertainties anyway.")
 
             if not np.all(mask):
@@ -193,7 +192,7 @@ class UncertaintyCalculations(ParameterBase):
         self.P = cp.orth_ttr(self.M, self.distribution)
 
         if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 2
+            self.nr_pc_samples = 2*len(self.P) + 1
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
 
@@ -211,11 +210,12 @@ class UncertaintyCalculations(ParameterBase):
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
             else:
-                self.logger.warning("Uncertainty quantification is not performed"
-                                "for feature: {} ".format(feature))
-                                "due too not all parameter combinations
-                                "giving a result. Set allow_incomplete=True to"
-                                "calculate the uncertainties anyway.")
+                self.logger.warning("Uncertainty quantification is not performed" +
+                                    "for feature: {} ".format(feature)) +
+                                    "due too not all parameter combinations "+
+                                    "giving a result. Set allow_incomplete=True to " +
+                                    "calculate the uncertainties anyway.")
+
             if not np.all(mask):
                 self.data.incomplete.append(feature)
 
@@ -264,10 +264,10 @@ class UncertaintyCalculations(ParameterBase):
                                                         masked_weights,
                                                         masked_U)
             else:
-                self.logger.warning("Uncertainty quantification is not performed"
-                                    "for feature: {} ".format(feature))
-                                    "due too not all parameter combinations
-                                    "giving a result. Set allow_incomplete=True to"
+                self.logger.warning("Uncertainty quantification is not performed" +
+                                    "for feature: {} ".format(feature)) +
+                                    "due too not all parameter combinations "+
+                                    "giving a result. Set allow_incomplete=True to " +
                                     "calculate the uncertainties anyway.")
 
             if not np.all(mask):
@@ -316,11 +316,12 @@ class UncertaintyCalculations(ParameterBase):
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_U, rule="T")
             else:
-                self.logger.warning("Uncertainty quantification is not performed"
-                                    "for feature: {} ".format(feature))
-                                    "due too not all parameter combinations
-                                    "giving a result. Set allow_incomplete=True to"
+                self.logger.warning("Uncertainty quantification is not performed" +
+                                    "for feature: {} ".format(feature)) +
+                                    "due too not all parameter combinations "+
+                                    "giving a result. Set allow_incomplete=True to " +
                                     "calculate the uncertainties anyway.")
+
 
             if not np.all(mask):
                 self.data.incomplete.append(feature)
@@ -335,7 +336,7 @@ class UncertaintyCalculations(ParameterBase):
                 self.data[feature]["E"] = cp.E(self.U_hat[feature], self.distribution)
                 self.data[feature]["Var"] = cp.Var(self.U_hat[feature], self.distribution)
 
-                samples = self.distribution.sample(self.nr_pc_mc_samples, "R")
+                samples = self.distribution.sample(self.nr_pc_mc_samples, "H")
 
                 if len(self.data.uncertain_parameters) > 1:
                     self.U_mc[feature] = self.U_hat[feature](*samples)
