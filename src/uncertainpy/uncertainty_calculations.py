@@ -3,7 +3,7 @@ import multiprocess as mp
 from tqdm import tqdm
 import chaospy as cp
 
-# from .models.run_model import RunModel
+from .run_model import RunModel
 from .base import ParameterBase
 
 # Model is now potentially set two places, is that a problem?
@@ -102,7 +102,7 @@ class UncertaintyCalculations(ParameterBase):
             if np.any(np.isnan(result)):
                 mask[i] = False
             else:
-                masked_U.append(result)
+                masked_values.append(result)
 
 
         if len(nodes.shape) > 1:
@@ -124,9 +124,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
         if weights is None:
-            return np.array(masked_nodes), np.array(masked_U), mask
+            return np.array(masked_nodes), np.array(masked_values), mask
         else:
-            return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights), mask
+            return np.array(masked_nodes), np.array(masked_values), np.array(masked_weights), mask
 
 
     def convert_uncertain_parameters(self, uncertain_parameters):
@@ -165,11 +165,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, masked_weights, mask = self.create_mask(nodes, feature, weights)
+            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes, feature, weights)
 
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
-                                                        masked_weights, masked_U)
+                                                        masked_weights, masked_values)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +\
                                     "for feature: {} ".format(feature) +\
@@ -204,11 +204,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, mask = self.create_mask(nodes, feature)
+            masked_nodes, masked_values, mask = self.create_mask(nodes, feature)
 
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                        masked_U, rule="T")
+                                                        masked_values, rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -254,7 +254,7 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, masked_weights, mask = self.create_mask(nodes_MvNormal,
+            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_MvNormal,
                                                                       feature,
                                                                       weights)
 
@@ -262,7 +262,7 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights,
-                                                        masked_U)
+                                                        masked_values)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -307,14 +307,14 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, mask = self.create_mask(nodes_MvNormal, feature)
+            masked_nodes, masked_values, mask = self.create_mask(nodes_MvNormal, feature)
 
 
 
 
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                        masked_U, rule="T")
+                                                        masked_values, rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +

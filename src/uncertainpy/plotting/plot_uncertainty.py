@@ -234,7 +234,7 @@ class PlotUncertainty(object):
 
     def attribute_feature_1d(self,
                              feature=None,
-                             attribute="E",
+                             attribute="mean",
                              attribute_name="mean",
                              hardcopy=True,
                              show=False,
@@ -248,7 +248,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        if attribute not in ["E", "Var"]:
+        if attribute not in ["mean", "variance"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
         if attribute not in self.data[feature]:
@@ -286,7 +286,7 @@ class PlotUncertainty(object):
 
     def attribute_feature_2d(self,
                              feature=None,
-                             attribute="E",
+                             attribute="mean",
                              attribute_name="mean",
                              hardcopy=True,
                              show=False,
@@ -301,7 +301,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 2:
             raise ValueError("{} is not a 2D feature".format(feature))
 
-        if attribute not in ["E", "Var"]:
+        if attribute not in ["mean", "variance"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
@@ -354,7 +354,7 @@ class PlotUncertainty(object):
 
     def mean_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_1d(feature,
-                                  attribute="E",
+                                  attribute="mean",
                                   attribute_name="mean",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -363,7 +363,7 @@ class PlotUncertainty(object):
 
     def variance_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_1d(feature,
-                                  attribute="Var",
+                                  attribute="variance",
                                   attribute_name="variance",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -371,7 +371,7 @@ class PlotUncertainty(object):
 
     def mean_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_2d(feature,
-                                  attribute="E",
+                                  attribute="mean",
                                   attribute_name="mean",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -380,7 +380,7 @@ class PlotUncertainty(object):
 
     def variance_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_2d(feature,
-                                  attribute="Var",
+                                  attribute="variance",
                                   attribute_name="variance",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -406,7 +406,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        if "E" not in self.data[feature] or "Var" not in self.data[feature]:
+        if "mean" not in self.data[feature] or "variance" not in self.data[feature]:
             msg = "Mean and/or variance of {feature} does not exist. ".format(feature=feature) \
                     + "Unable to plot mean and variance"
             self.logger.warning(msg)
@@ -437,9 +437,9 @@ class PlotUncertainty(object):
         ax2.set_ylabel(ylabel + ', variance', color=colors[color+2], fontsize=labelsize)
 
         # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
-        # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
+        # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
-        ax2.plot(t, self.data[feature].Var,
+        ax2.plot(t, self.data[feature].variance,
                  color=colors[color+2], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -481,10 +481,10 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        if "E" not in self.data[feature] \
-            or "p_05" not in self.data[feature] \
-                or "p_95" not in self.data[feature]:
-            msg = "E, p_05  and/or p_95 of {feature} does not exist. Unable to plot confidence interval"
+        if "mean" not in self.data[feature] \
+            or "percentile_5" not in self.data[feature] \
+                or "percentile_95" not in self.data[feature]:
+            msg = "E, percentile_5  and/or percentile_95 of {feature} does not exist. Unable to plot confidence interval"
             self.logger.warning(msg.format(feature=feature))
             return
 
@@ -505,8 +505,8 @@ class PlotUncertainty(object):
 
         colors = get_current_colormap()
         plt.fill_between(t,
-                         self.data[feature].p_05,
-                         self.data[feature].p_95,
+                         self.data[feature].percentile_5,
+                         self.data[feature].percentile_95,
                          alpha=0.5, color=colors[0])
 
 
@@ -763,7 +763,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 0:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        for data_type in ["E", "Var", "p_05", "p_95"]:
+        for data_type in ["mean", "variance", "percentile_5", "percentile_95"]:
             if data_type not in self.data[feature]:
                 msg = "{data_type} for {feature} does not exist. Unable to plot"
                 self.logger.warning(msg.format(data_type=data_type,feature=feature))
@@ -782,8 +782,8 @@ class PlotUncertainty(object):
         xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
-        values = [self.data[feature].E, self.data[feature].Var,
-                  self.data[feature].p_05, self.data[feature].p_95]
+        values = [self.data[feature].E, self.data[feature].variance,
+                  self.data[feature].percentile_5, self.data[feature].percentile_95]
 
         ylabel = self.data.get_labels(feature)[0]
 

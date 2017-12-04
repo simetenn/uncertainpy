@@ -200,14 +200,14 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
                                  "mc_100": {"adaptive_feature": np.zeros(10),
                                             "constant_feature": np.zeros(10)}}
 
-        self.plot.p_05_compare = {"pc": {"adaptive_feature": np.zeros(10),
+        self.plot.percentile_5_compare = {"pc": {"adaptive_feature": np.zeros(10),
                                          "constant_feature": np.zeros(10)},
                                   "mc_10": {"adaptive_feature": np.zeros(100),
                                             "constant_feature": np.zeros(10)},
                                   "mc_100": {"adaptive_feature": np.zeros(10),
                                              "constant_feature": np.zeros(10)}}
 
-        self.plot.p_95_compare = {"pc": {"adaptive_feature": np.zeros(10),
+        self.plot.percentile_95_compare = {"pc": {"adaptive_feature": np.zeros(10),
                                          "constant_feature": np.zeros(10)},
                                   "mc_10": {"adaptive_feature": np.zeros(100),
                                             "constant_feature": np.zeros(10)},
@@ -240,8 +240,8 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_data(self.plot.E_compare)
         self.compare_data(self.plot.Var_compare)
-        self.compare_data(self.plot.p_05_compare)
-        self.compare_data(self.plot.p_95_compare)
+        self.compare_data(self.plot.percentile_5_compare)
+        self.compare_data(self.plot.percentile_95_compare)
 
 
         self.assertEqual(self.plot.sensitivity_compare, {"pc": {"adaptive_feature": None,
@@ -277,11 +277,11 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.assertTrue(np.allclose(self.plot.Var_compare["pc"]["feature1d"], np.zeros(10), atol=0.001))
 
 
-        self.assertTrue(np.all(np.less(self.plot.p_05_compare["pc"]["directComparison"], U)))
-        self.assertTrue(np.allclose(self.plot.p_05_compare["pc"]["feature1d"], feature.feature1d(), atol=0.001))
+        self.assertTrue(np.all(np.less(self.plot.percentile_5_compare["pc"]["directComparison"], U)))
+        self.assertTrue(np.allclose(self.plot.percentile_5_compare["pc"]["feature1d"], feature.feature1d(), atol=0.001))
 
-        self.assertTrue(np.all(np.greater(self.plot.p_95_compare["pc"]["directComparison"], U)))
-        self.assertTrue(np.allclose(self.plot.p_95_compare["pc"]["feature1d"], feature.feature1d(), atol=0.001))
+        self.assertTrue(np.all(np.greater(self.plot.percentile_95_compare["pc"]["directComparison"], U)))
+        self.assertTrue(np.allclose(self.plot.percentile_95_compare["pc"]["feature1d"], feature.feature1d(), atol=0.001))
 
         self.assertTrue(self.plot.sensitivity_compare["pc"]["directComparison"].shape, (10, 2))
         self.assertTrue(self.plot.sensitivity_compare["pc"]["feature1d"].shape, (10, 2))
@@ -296,8 +296,8 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.assertEqual(self.plot.t_compare.keys(), ["pc", 'mc_10', 'mc_100'])
         self.assertEqual(self.plot.E_compare.keys(), ["pc", 'mc_10', 'mc_100'])
         self.assertEqual(self.plot.Var_compare.keys(), ["pc", 'mc_10', 'mc_100'])
-        self.assertEqual(self.plot.p_05_compare.keys(), ["pc", 'mc_10', 'mc_100'])
-        self.assertEqual(self.plot.p_95_compare.keys(), ["pc", 'mc_10', 'mc_100'])
+        self.assertEqual(self.plot.percentile_5_compare.keys(), ["pc", 'mc_10', 'mc_100'])
+        self.assertEqual(self.plot.percentile_95_compare.keys(), ["pc", 'mc_10', 'mc_100'])
         self.assertEqual(self.plot.sensitivity_compare.keys(), ["pc", 'mc_10', 'mc_100'])
 
 
@@ -394,7 +394,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.plot.loadCompareData("TestingModel1d",
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
-        self.plot.plotCompareAttributeFeature0d(feature="feature0d", attribute="E",
+        self.plot.plotCompareAttributeFeature0d(feature="feature0d", attribute="mean",
                                                 attribute_name="mean")
 
         self.compare_plot("feature0d_mean_compare")
@@ -457,7 +457,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareAttributeFeature1dFractional(feature="directComparison",
-                                                          attribute="E", attribute_name="mean")
+                                                          attribute="mean", attribute_name="mean")
 
         self.compare_plot("directComparison_mean_compare_fractional")
 
@@ -512,7 +512,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareFractionalAttributeFeature0d(feature="feature0d",
-                                                          attribute="E",
+                                                          attribute="mean",
                                                           attribute_name="mean")
         self.compare_plot("feature0d_mean_compare_fractional")
 

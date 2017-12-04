@@ -248,12 +248,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
-        self.assertEqual(len(masked_U), 3)
-        self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
-        self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10) + 3))
-        self.assertTrue(np.array_equal(masked_U[2], np.arange(0, 10) + 5))
+        self.assertEqual(len(masked_values), 3)
+        self.assertTrue(np.array_equal(masked_values[0], np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(masked_values[1], np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(masked_values[2], np.arange(0, 10) + 5))
         self.assertTrue(np.array_equal(nodes, masked_nodes))
         self.assertTrue(np.all(mask))
 
@@ -272,12 +272,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.data["TestingModel1d"]["U"] = np.array([U_0, np.nan, U_2])
 
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d")
 
 
-        self.assertEqual(len(masked_U), 2)
-        self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10) + 1))
-        self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10) + 5))
+        self.assertEqual(len(masked_values), 2)
+        self.assertTrue(np.array_equal(masked_values[0], np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(masked_values[1], np.arange(0, 10) + 5))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
         self.assertTrue(np.array_equal(mask, np.array([True, False, True])))
 
@@ -330,11 +330,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.data = \
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature0d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature0d")
 
-        self.assertEqual(masked_U[0], 1)
-        self.assertEqual(masked_U[1], 1)
-        self.assertEqual(masked_U[2], 1)
+        self.assertEqual(masked_values[0], 1)
+        self.assertEqual(masked_values[1], 1)
+        self.assertEqual(masked_values[2], 1)
         self.assertTrue(np.array_equal(nodes, masked_nodes))
         self.assertTrue(np.all(mask))
 
@@ -348,9 +348,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
         self.uncertainty_calculations.data["feature0d"]["U"] = np.array([1, np.nan, 1])
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature0d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature0d")
 
-        self.assertTrue(np.array_equal(masked_U, np.array([1, 1])))
+        self.assertTrue(np.array_equal(masked_values, np.array([1, 1])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
         self.assertTrue(np.array_equal(mask, np.array([True, False, True])))
 
@@ -364,10 +364,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
         # feature1d
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature1d")
-        self.assertTrue(np.array_equal(masked_U[0], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(masked_U[1], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(masked_U[2], np.arange(0, 10)))
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature1d")
+        self.assertTrue(np.array_equal(masked_values[0], np.arange(0, 10)))
+        self.assertTrue(np.array_equal(masked_values[1], np.arange(0, 10)))
+        self.assertTrue(np.array_equal(masked_values[2], np.arange(0, 10)))
         self.assertTrue(np.array_equal(nodes, masked_nodes))
         self.assertTrue(np.all(mask))
 
@@ -382,9 +382,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
         self.uncertainty_calculations.data["feature1d"]["U"] = np.array([np.arange(0, 10), np.nan, np.arange(0, 10)])
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature1d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature1d")
 
-        self.assertTrue(np.array_equal(masked_U, np.array([np.arange(0, 10), np.arange(0, 10)])))
+        self.assertTrue(np.array_equal(masked_values, np.array([np.arange(0, 10), np.arange(0, 10)])))
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
         self.assertTrue(np.array_equal(mask, np.array([True, False, True])))
 
@@ -398,14 +398,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
 
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature2d")
-        self.assertTrue(np.array_equal(masked_U[0],
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature2d")
+        self.assertTrue(np.array_equal(masked_values[0],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(masked_U[1],
+        self.assertTrue(np.array_equal(masked_values[1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(masked_U[2],
+        self.assertTrue(np.array_equal(masked_values[2],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
         self.assertTrue(np.array_equal(nodes, masked_nodes))
@@ -423,16 +423,16 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_2 = self.uncertainty_calculations.data["feature2d"]["U"][2]
         self.uncertainty_calculations.data["feature2d"]["U"] = np.array([U_0, np.nan, U_2])
 
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature2d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([[0, 2], [1, 3]])))
 
 
-        self.assertEqual(len(masked_U), 2)
-        self.assertTrue(np.array_equal(masked_U[0],
+        self.assertEqual(len(masked_values), 2)
+        self.assertTrue(np.array_equal(masked_values[0],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(masked_U[1],
+        self.assertTrue(np.array_equal(masked_values[1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
 
@@ -451,15 +451,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations.data["feature2d"]["U"] = np.array([U_0, np.nan, U_2])
 
-        masked_nodes, masked_U, mask = self.uncertainty_calculations.create_mask(nodes, "feature2d")
+        masked_nodes, masked_values, mask = self.uncertainty_calculations.create_mask(nodes, "feature2d")
 
         self.assertTrue(np.array_equal(masked_nodes, np.array([0, 2])))
 
-        self.assertEqual(len(masked_U), 2)
-        self.assertTrue(np.array_equal(masked_U[0],
+        self.assertEqual(len(masked_values), 2)
+        self.assertTrue(np.array_equal(masked_values[0],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(masked_U[1],
+        self.assertTrue(np.array_equal(masked_values[1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
 

@@ -33,9 +33,9 @@ class TestPlotUncertainpy(TestCasePlot):
                                     verbose_level="warning",
                                     figureformat=self.figureformat)
 
-        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                           "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t"]
+        self.data_types = ["U", "t", "mean", "variance", "percentile_5", "percentile_95",
+                           "sensitivity_1", "sensitivity_1_sum",
+                           "sensitivity_t", "sensitivity_t_sum"]
 
 
     def tearDown(self):
@@ -60,7 +60,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("total-sensitivity_t_grid")
 
 
-    def test_total_sensitivity_1(self):
+    def test_sensitivity_1_sum(self):
         self.plot.load(self.data_file_path)
 
         self.plot.total_sensitivity(feature="feature1d",
@@ -70,7 +70,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_total-sensitivity_1")
 
 
-    def test_total_sensitivity_t(self):
+    def test_sensitivity_t_sum(self):
         self.plot.load(self.data_file_path)
 
         self.plot.total_sensitivity(feature="feature1d",
@@ -421,7 +421,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_1d(feature="TestingModel1d",
-                                       attribute="E",
+                                       attribute="mean",
                                        attribute_name="mean")
 
         self.compare_plot("TestingModel1d_mean")
@@ -431,7 +431,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_1d(feature="TestingModel1d",
-                                       attribute="Var",
+                                       attribute="variance",
                                        attribute_name="variance")
 
         self.compare_plot("TestingModel1d_variance")
@@ -442,7 +442,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_2d(feature="feature2d",
-                                       attribute="E",
+                                       attribute="mean",
                                        attribute_name="mean")
 
         self.compare_plot("feature2d_mean")
@@ -452,7 +452,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_2d(feature="feature2d",
-                                       attribute="Var",
+                                       attribute="variance",
                                        attribute_name="variance")
 
         self.compare_plot("feature2d_variance")

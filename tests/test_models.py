@@ -35,8 +35,8 @@ class TestModel(unittest.TestCase):
         parameters = {"a": -1, "b": -1}
         time, values = model.run(**parameters)
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(values, np.arange(0, 10) - 2))
         self.assertEqual(model.name, "model_function")
 
         model = Model()
@@ -45,8 +45,8 @@ class TestModel(unittest.TestCase):
         parameters = {"a": -1, "b": -1}
         time, values = model.run(**parameters)
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(values, np.arange(0, 10) - 2))
         self.assertEqual(model.name, "model_function")
 
         with self.assertRaises(TypeError):
@@ -142,8 +142,8 @@ class TestTestingModel0d(unittest.TestCase):
         parameters = {"a": -1, "b": -1}
         time, values = model.run(**parameters)
 
-        self.assertEqual(t, 1)
-        self.assertEqual(U, -1)
+        self.assertEqual(time, 1)
+        self.assertEqual(values, -1)
 
 
 
@@ -157,8 +157,8 @@ class TestTestingModel1d(unittest.TestCase):
         time, values = model.run(**parameters)
 
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(U, np.arange(0, 10) - 2))
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(values, np.arange(0, 10) - 2))
 
 
 
@@ -170,8 +170,8 @@ class TestTestingModel2d(unittest.TestCase):
         time, values = model.run(**parameters)
 
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
-        self.assertTrue(np.array_equal(U,
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(values,
                                        np.array([np.arange(0, 10) -1,
                                                  np.arange(0, 10) -2])))
 
@@ -186,8 +186,8 @@ class TestTestingModelAdaptive(unittest.TestCase):
         time, values = model.run(**parameters)
 
 
-        self.assertTrue(np.array_equal(np.arange(0, 13), t))
-        self.assertTrue(np.array_equal(np.arange(0, 13) + 3, U))
+        self.assertTrue(np.array_equal(np.arange(0, 13), time))
+        self.assertTrue(np.array_equal(np.arange(0, 13) + 3, values))
 
 
 
@@ -248,8 +248,8 @@ class TestNestModel(unittest.TestCase):
         correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
                      47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
-        self.assertIsNone(t)
-        self.assertEqual(U[0], correct_U)
+        self.assertIsNone(time)
+        self.assertEqual(values[0], correct_values)
 
 
     def test_postprocess(self):
@@ -259,13 +259,13 @@ class TestNestModel(unittest.TestCase):
         correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
                      47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
-        time, values = model.postprocess(t, correct_U)
+        time, values = model.postprocess(time, correct_values)
 
-        binary_spike = np.zeros(len(t))
-        binary_spike[np.in1d(t, correct_U)] = 1
+        binary_spike = np.zeros(len(time))
+        binary_spike[np.in1d(time, correct_values)] = 1
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 100.1, 0.1)))
-        self.assertTrue(np.array_equal(U, binary_spike))
+        self.assertTrue(np.array_equal(time, np.arange(0, 100.1, 0.1)))
+        self.assertTrue(np.array_equal(values, binary_spike))
 
 
 if __name__ == "__main__":
