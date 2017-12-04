@@ -91,7 +91,7 @@ class EfelFeatures(Features):
 
     Notes
     -----
-    Efel features take the parameters ``(t, U, info)`` and require
+    Efel features take the parameters ``(time, values, info)`` and require
     info["stimulus_start"] and info["stimulus_end"] to be set.
 
     Implemented Efel features are:
@@ -180,7 +180,7 @@ class EfelFeatures(Features):
         implemented_labels = {}
 
         def efel_wrapper(feature_name):
-            def feature_function(t, U, info):
+            def feature_function(time, values, info):
                 disable = False
 
                 if "stimulus_start" not in info:
@@ -208,8 +208,8 @@ class EfelFeatures(Features):
                                             "setting stimulus end as end time")
 
                 trace = {}
-                trace["T"] = t
-                trace["V"] = U
+                trace["T"] = time
+                trace["V"] = values
                 trace["stim_start"] = [info["stimulus_start"]]
                 trace["stim_end"] = [info["stimulus_end"]]
 
@@ -218,7 +218,7 @@ class EfelFeatures(Features):
                 # in simulation after stimulation has ended.
                 # Otherwise it thros an error
                 if feature_name == "decay_time_constant_after_stim":
-                    if info["stimulus_end"] >= t[-1]:
+                    if info["stimulus_end"] >= time[-1]:
                         return None, None
 
                 result = efel.getMeanFeatureValues([trace], [feature_name], raise_warnings=False)
@@ -246,7 +246,7 @@ class EfelFeatures(Features):
 
 
 
-    def reference_feature(self, t, U, info):
+    def reference_feature(self, time, values, info):
         """
         An example of an Efel feature. Efel feature functions have the following
         requirements, and the given parameters must either be returned by
@@ -254,9 +254,9 @@ class EfelFeatures(Features):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
-        U : array_like
+        values : array_like
             Result of the model.
         info : dictionary
             A dictionary with info["stimulus_start"] and info["stimulus_end"]
@@ -264,10 +264,10 @@ class EfelFeatures(Features):
 
         Returns
         -------
-        t : None
+        time : None
             No mean Efel feature has time values, so None is returned instead.
-        U : array_like
-            The feature results, `U`. Returns None if there are no feature
+        values : array_like
+            The feature results, `values`. Returns None if there are no feature
             results and that evaluation are disregarded.
 
         See also
@@ -277,7 +277,7 @@ class EfelFeatures(Features):
         """
 
         # Perform feature calculations here
-        t = None
-        U = None
+        time = None
+        values = None
 
-        return t, U
+        return time, values

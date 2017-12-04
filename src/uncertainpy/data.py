@@ -10,34 +10,35 @@ from .utils import create_logger
 class DataFeature(collections.MutableMapping):
     def __init__(self,
                  name,
-                 U=None,
-                 t=None,
-                 E=None,
-                 Var=None,
-                 p_05=None,
-                 p_95=None,
+                 values=None,
+                 time=None,
+                 mean=None,
+                 variance=None,
+                 percentile_5=None,
+                 percentile_95=None,
                  sensitivity_1=None,
-                 total_sensitivity_1=None,
+                 sensitivity_1_sum=None,
                  sensitivity_t=None,
-                 total_sensitivity_t=None,
+                 sensitivity_t_sum=None,
                  labels=None):
 
         self.name = name
-        self.U = U
-        self.t = t
-        self.E = E
-        self.Var = Var
-        self.p_05 = p_05
-        self.p_95 = p_95
+        self.values = values
+        self.time = time
+        self.mean = mean
+        self.variance = variance
+        self.percentile_5 = percentile_5
+        self.percentile_95 = percentile_95
         self.sensitivity_1 = sensitivity_1
-        self.total_sensitivity_1 = total_sensitivity_1
+        self.sensitivity_1_sum = sensitivity_1_sum
         self.sensitivity_t = sensitivity_t
-        self.total_sensitivity_t = total_sensitivity_t
+        self.sensitivity_t_sum = sensitivity_t_sum
         self.labels = labels
 
-        self._built_in_data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                                    "sensitivity_1", "total_sensitivity_1",
-                                    "sensitivity_t", "total_sensitivity_t", "labels"]
+        self._built_in_data_types = ["values", "time", "mean", "variance",
+                                    "percentile_5", "percentile_95",
+                                    "sensitivity_1", "sensitivity_1_sum",
+                                    "sensitivity_t", "sensitivity_t_sum"]
 
         self._information = ["name", "labels"]
 
@@ -108,8 +109,8 @@ class DataFeature(collections.MutableMapping):
             The number of dimensions of the model/feature result.
         """
 
-        if self.U is not None:
-            return np.ndim(self.U[0])
+        if self.values is not None:
+            return np.ndim(self.values[0])
         else:
             return None
 
@@ -152,25 +153,25 @@ class Data(collections.MutableMapping):
 
     Each feature and the model has the following data:
 
-    U : array_like
+    values : array_like
         Feature or model result.
-    t : array_like
+    time : array_like
         Time values for feature or model.
-    E : array_like
+    mean : array_like
         Mean of the feature or model results.
-    Var : array_like
+    variance : array_like
         Variance of the feature or model results.
-    p_05 : array_like
+    percentile_5 : array_like
         5 percentile of the feature or model results.
-    p_95 : array_like
+    percentile_95 : array_like
         95 percentile of the feature or model results.
     sensitivity_1 : array_like
         First order sensitivity of the feature or model results.
-    total_sensitivity_1 : array_like
+    sensitivity_1_sum : array_like
         First order sensitivity of the feature or model results.
     sensitivity_t : array_like
         Total effect sensitivity of the feature or model results.
-    total_sensitivity_t : array_like
+    sensitivity_t_sum : array_like
         Normalized sum of total effect sensitivity of
         the feature or model results.
     labels : list
@@ -184,9 +185,9 @@ class Data(collections.MutableMapping):
                  verbose_level="info",
                  verbose_filename=None):
 
-        # self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-        #                    "sensitivity_1", "total_sensitivity_1",
-        #                    "sensitivity_t", "total_sensitivity_t", "labels"]
+        # self.data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+        #                    "sensitivity_1", "sensitivity_1_sum",
+        #                    "sensitivity_t", "sensitivity_t_sum", "labels"]
 
 
         self.data_information = ["uncertain_parameters", "model_name",
@@ -454,7 +455,7 @@ class Data(collections.MutableMapping):
         feature_list = self.data.keys()[:]
         for feature in feature_list:
             all_nan = True
-            for U in self[feature]["U"]:
+            for U in self[feature]["values"]:
                 if not np.all(np.isnan(U)):
                     all_nan = False
 

@@ -9,8 +9,8 @@ from prettyplot import prettyPlot, prettyBar
 
 class TestPrettyPlot(unittest.TestCase):
     def setUp(self):
-        self.t = np.arange(0, 10)
-        self.U = np.arange(0, 10) + 1
+        self.time= np.arange(0, 10)
+        self.values = np.arange(0, 10) + 1
 
 
     def test_prettyPlotX(self):
@@ -21,29 +21,29 @@ class TestPrettyPlot(unittest.TestCase):
 
 
     def test_prettyPlotXY(self):
-        prettyPlot(self.t, self.U)
+        prettyPlot(self.time, self.U)
         plt.close()
 
 
     def test_prettyPlotXYColor(self):
-        prettyPlot(self.t, self.U)
+        prettyPlot(self.time, self.U)
         plt.close()
 
 
     def test_prettyPlotFalseNewFigure(self):
         prettyPlot(self.U)
-        prettyPlot(self.t, self.U, new_figure=False)
+        prettyPlot(self.time, self.U, new_figure=False)
         plt.close()
 
 
     def test_prettyPlotFalseNewFigure2(self):
-        prettyPlot(self.t, self.U, new_figure=False)
+        prettyPlot(self.time, self.U, new_figure=False)
         plt.close()
 
 
 class TestPrettyBar(unittest.TestCase):
     def setUp(self):
-        self.U = np.arange(2, 7)
+        self.values = np.arange(2, 7)
         self.error = np.arange(2, 7)*0.1
         self.labels = ["1", "2", "3", "4", "5"]
 

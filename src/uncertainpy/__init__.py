@@ -3,9 +3,7 @@ from .distribution import uniform, normal
 from .parameters import Parameter, Parameters
 from .uncertainty import UncertaintyEstimation
 
-from .run_model import RunModel
 from .uncertainty_calculations import UncertaintyCalculations
-from .parallel import Parallel
 
 from .plotting import PlotUncertainty
 from .features import Features, NetworkFeatures, EfelFeatures

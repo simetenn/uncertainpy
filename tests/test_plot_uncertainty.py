@@ -33,9 +33,9 @@ class TestPlotUncertainpy(TestCasePlot):
                                     verbose_level="warning",
                                     figureformat=self.figureformat)
 
-        self.data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                           "sensitivity_1", "total_sensitivity_1",
-                           "sensitivity_t", "total_sensitivity_t"]
+        self.data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+                           "sensitivity_1", "sensitivity_1_sum",
+                           "sensitivity_t", "sensitivity_t_sum"]
 
 
     def tearDown(self):
@@ -44,62 +44,62 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
 
-    def test_total_sensitivity_grid_1(self):
+    def test_sensitivity_sum_grid_1(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.total_sensitivity_grid(hardcopy=True, sensitivity="sensitivity_1")
+        self.plot.sensitivity_sum_grid(hardcopy=True, sensitivity="sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
-    def test_total_sensitivity_grid_t(self):
+    def test_sensitivity_sum_grid_t(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.total_sensitivity_grid(hardcopy=True, sensitivity="sensitivity_t")
+        self.plot.sensitivity_sum_grid(hardcopy=True, sensitivity="sensitivity_t")
 
-        self.compare_plot("total-sensitivity_t_grid")
+        self.compare_plot("sensitivity_t_sum_grid")
 
 
-    def test_total_sensitivity_1(self):
+    def test_sensitivity_1_sum(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.total_sensitivity(feature="feature1d",
+        self.plot.sensitivity_sum(feature="feature1d",
                                     sensitivity="sensitivity_1",
                                     hardcopy=True)
 
-        self.compare_plot("feature1d_total-sensitivity_1")
+        self.compare_plot("feature1d_sensitivity_1_sum")
 
 
-    def test_total_sensitivity_t(self):
+    def test_sensitivity_t_sum(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.total_sensitivity(feature="feature1d",
+        self.plot.sensitivity_sum(feature="feature1d",
                                     sensitivity="sensitivity_t",
                                     hardcopy=True)
 
-        self.compare_plot("feature1d_total-sensitivity_t")
+        self.compare_plot("feature1d_sensitivity_t_sum")
 
 
-    def test_total_sensitivity_all_1(self):
+    def test_sensitivity_sum_all_1(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.total_sensitivity_all(hardcopy=True, sensitivity="sensitivity_1")
+        self.plot.sensitivity_sum_all(hardcopy=True, sensitivity="sensitivity_1")
 
-        self.compare_plot("TestingModel1d_total-sensitivity_1")
-        self.compare_plot("feature0d_total-sensitivity_1")
-        self.compare_plot("feature1d_total-sensitivity_1")
-        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_sum")
+        self.compare_plot("feature0d_sensitivity_1_sum")
+        self.compare_plot("feature1d_sensitivity_1_sum")
+        self.compare_plot("feature2d_sensitivity_1_sum")
 
 
-    def test_total_sensitivity_all_t(self):
+    def test_sensitivity_sum_all_t(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.total_sensitivity_all(hardcopy=True, sensitivity="sensitivity_t")
+        self.plot.sensitivity_sum_all(hardcopy=True, sensitivity="sensitivity_t")
 
-        self.compare_plot("TestingModel1d_total-sensitivity_t")
-        self.compare_plot("feature0d_total-sensitivity_t")
-        self.compare_plot("feature1d_total-sensitivity_t")
-        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_sum")
+        self.compare_plot("feature0d_sensitivity_t_sum")
+        self.compare_plot("feature1d_sensitivity_t_sum")
+        self.compare_plot("feature2d_sensitivity_t_sum")
 
 
     def test_results_1d(self):
@@ -108,9 +108,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
+        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         self.plot.results_1d(feature="TestingModel1d")
@@ -132,9 +132,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
+        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
@@ -150,7 +150,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.results_1d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
-        self.plot.data["TestingModel1d"]["U"] = [1, 1, 1, 1, 1]
+        self.plot.data["TestingModel1d"]["values"] = [1, 1, 1, 1, 1]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
@@ -167,9 +167,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
+        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
@@ -183,9 +183,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
+        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         self.plot.results(feature="TestingModel1d")
@@ -318,9 +318,9 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.results_0d(feature="TestingModel0d")
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "results", "U" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "results", "values" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_results", "U" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_results", "values" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -335,9 +335,9 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.results(feature="TestingModel0d")
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "results", "U" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "results", "values" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_results", "U" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_results", "values" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -421,7 +421,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_1d(feature="TestingModel1d",
-                                       attribute="E",
+                                       attribute="mean",
                                        attribute_name="mean")
 
         self.compare_plot("TestingModel1d_mean")
@@ -431,7 +431,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_1d(feature="TestingModel1d",
-                                       attribute="Var",
+                                       attribute="variance",
                                        attribute_name="variance")
 
         self.compare_plot("TestingModel1d_variance")
@@ -442,7 +442,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_2d(feature="feature2d",
-                                       attribute="E",
+                                       attribute="mean",
                                        attribute_name="mean")
 
         self.compare_plot("feature2d_mean")
@@ -452,7 +452,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.load(self.data_file_path)
 
         self.plot.attribute_feature_2d(feature="feature2d",
-                                       attribute="Var",
+                                       attribute="variance",
                                        attribute_name="variance")
 
         self.compare_plot("feature2d_variance")
@@ -695,7 +695,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
     def test_features_1d_no_t(self):
         self.plot.load(self.data_file_path)
-        del self.plot.data["feature1d"]["t"]
+        del self.plot.data["feature1d"]["time"]
 
         self.plot.features_1d(sensitivity="sensitivity_1")
 
@@ -758,7 +758,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
@@ -791,16 +791,16 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
         self.compare_plot("feature1d_sensitivity_1_grid")
-        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature0d_sensitivity_1_sum")
 
 
-        self.compare_plot("TestingModel1d_total-sensitivity_1")
-        self.compare_plot("feature0d_total-sensitivity_1")
-        self.compare_plot("feature1d_total-sensitivity_1")
-        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_sum")
+        self.compare_plot("feature0d_sensitivity_1_sum")
+        self.compare_plot("feature1d_sensitivity_1_sum")
+        self.compare_plot("feature2d_sensitivity_1_sum")
 
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
         self.compare_plot("feature2d_mean")
@@ -825,16 +825,16 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_sensitivity_t")
         self.compare_plot("TestingModel1d_sensitivity_t_grid")
 
-        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature0d_sensitivity_t_sum")
 
 
-        self.compare_plot("TestingModel1d_total-sensitivity_t")
-        self.compare_plot("feature0d_total-sensitivity_t")
-        self.compare_plot("feature1d_total-sensitivity_t")
-        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_sum")
+        self.compare_plot("feature0d_sensitivity_t_sum")
+        self.compare_plot("feature1d_sensitivity_t_sum")
+        self.compare_plot("feature2d_sensitivity_t_sum")
 
 
-        self.compare_plot("total-sensitivity_t_grid")
+        self.compare_plot("sensitivity_t_sum_grid")
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
@@ -865,14 +865,14 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
         self.compare_plot("feature1d_sensitivity_1_grid")
-        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature0d_sensitivity_1_sum")
 
-        self.compare_plot("TestingModel1d_total-sensitivity_1")
-        self.compare_plot("feature0d_total-sensitivity_1")
-        self.compare_plot("feature1d_total-sensitivity_1")
-        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_sum")
+        self.compare_plot("feature0d_sensitivity_1_sum")
+        self.compare_plot("feature1d_sensitivity_1_sum")
+        self.compare_plot("feature2d_sensitivity_1_sum")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
         self.compare_plot("feature1d_sensitivity_t_a")
@@ -887,15 +887,15 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_sensitivity_t")
         self.compare_plot("TestingModel1d_sensitivity_t_grid")
 
-        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature0d_sensitivity_t_sum")
 
 
-        self.compare_plot("TestingModel1d_total-sensitivity_t")
-        self.compare_plot("feature0d_total-sensitivity_t")
-        self.compare_plot("feature1d_total-sensitivity_t")
-        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_sum")
+        self.compare_plot("feature0d_sensitivity_t_sum")
+        self.compare_plot("feature1d_sensitivity_t_sum")
+        self.compare_plot("feature2d_sensitivity_t_sum")
 
-        self.compare_plot("total-sensitivity_t_grid")
+        self.compare_plot("sensitivity_t_sum_grid")
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
@@ -916,7 +916,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
@@ -987,12 +987,12 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_sensitivity_1")
         self.compare_plot("feature1d_sensitivity_1_grid")
 
-        self.compare_plot("TestingModel1d_total-sensitivity_1")
-        self.compare_plot("feature0d_total-sensitivity_1")
-        self.compare_plot("feature1d_total-sensitivity_1")
-        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_sum")
+        self.compare_plot("feature0d_sensitivity_1_sum")
+        self.compare_plot("feature1d_sensitivity_1_sum")
+        self.compare_plot("feature2d_sensitivity_1_sum")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
         self.compare_plot("feature1d_sensitivity_t_a")
@@ -1007,15 +1007,15 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_sensitivity_t")
         self.compare_plot("TestingModel1d_sensitivity_t_grid")
 
-        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature0d_sensitivity_t_sum")
 
 
-        self.compare_plot("TestingModel1d_total-sensitivity_t")
-        self.compare_plot("feature0d_total-sensitivity_t")
-        self.compare_plot("feature1d_total-sensitivity_t")
-        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_sum")
+        self.compare_plot("feature0d_sensitivity_t_sum")
+        self.compare_plot("feature1d_sensitivity_t_sum")
+        self.compare_plot("feature2d_sensitivity_t_sum")
 
-        self.compare_plot("total-sensitivity_t_grid")
+        self.compare_plot("sensitivity_t_sum_grid")
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")

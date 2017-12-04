@@ -5,7 +5,8 @@ import scipy.interpolate
 
 import numpy as np
 
-from uncertainpy import RunModel, Parameters
+from uncertainpy import Parameters
+from uncertainpy.run_model import RunModel
 from uncertainpy.models import NeuronModel, Model
 from uncertainpy.features import Features, SpikingFeatures
 
@@ -105,15 +106,15 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_feature_function(self):
-        def feature_function(t, U):
-            return "t", "U"
+        def feature_function(time, values):
+            return "time", "values"
 
         self.runmodel.features = feature_function
         self.assertIsInstance(self.runmodel.features, Features)
 
-        t, U = self.runmodel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
 
         self.assertEqual(self.runmodel.features.features_to_run,
@@ -121,48 +122,48 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_feature_functions(self):
-        def feature_function(t, U):
-            return "t", "U"
+        def feature_function(time, values):
+            return "time", "values"
 
-        def feature_function2(t, U):
-            return "t2", "U2"
+        def feature_function2(time, values):
+            return "time2", "values2"
 
 
         self.runmodel.features = [feature_function, feature_function2]
         self.assertIsInstance(self.runmodel.features, Features)
 
-        t, U = self.runmodel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
 
-        t, U = self.runmodel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
-        t, U = self.runmodel.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = self.runmodel.features.feature_function2(None, None)
+        self.assertEqual(time, "time2")
+        self.assertEqual(values, "values2")
 
 
-        t, U = self.runmodel._parallel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.runmodel._parallel.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
-        t, U = self.runmodel._parallel.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = self.runmodel._parallel.features.feature_function2(None, None)
+        self.assertEqual(time, "time2")
+        self.assertEqual(values, "values2")
 
         self.assertEqual(self.runmodel.features.features_to_run,
                          ["feature_function", "feature_function2"])
 
 
     def test_feature_functions_base(self):
-        def feature_function(t, U):
-            return "t", "U"
+        def feature_function(time, values):
+            return "time", "values"
 
-        def feature_function2(t, U):
-            return "t2", "U2"
+        def feature_function2(time, values):
+            return "time2", "values2"
 
         implemented_features = ["nr_spikes", "time_before_first_spike",
                                 "spike_rate", "average_AP_overshoot",
@@ -172,14 +173,14 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.runmodel.features, SpikingFeatures)
 
-        t, U = self.runmodel.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.runmodel.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
 
-        t, U = self.runmodel.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = self.runmodel.features.feature_function2(None, None)
+        self.assertEqual(time, "time2")
+        self.assertEqual(values, "values2")
 
         self.assertEqual(set(self.runmodel.features.features_to_run),
                          set(["feature_function", "feature_function2"] + implemented_features))
@@ -367,8 +368,8 @@ class TestRunModel(unittest.TestCase):
 
         self.assertIn("feature_invalid", data)
 
-        self.assertTrue(np.isnan(data["feature_invalid"]["t"]))
-        self.assertTrue(np.all(np.isnan(data["feature_invalid"]["U"])))
+        self.assertTrue(np.isnan(data["feature_invalid"]["time"]))
+        self.assertTrue(np.all(np.isnan(data["feature_invalid"]["values"])))
 
 
 
@@ -400,23 +401,23 @@ class TestRunModel(unittest.TestCase):
 
         self.assertIn("TestingModelAdaptive", data)
 
-        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["t"],
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"],
                                        np.arange(0, 15)))
-        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["U"][0],
+        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["values"][0],
                                     np.arange(0, 15) + 1))
-        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["U"][1],
+        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["values"][1],
                                     np.arange(0, 15) + 3))
-        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["U"][2],
+        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["values"][2],
                                     np.arange(0, 15) + 5))
 
 
-        self.assertTrue(np.array_equal(data["feature_adaptive"]["t"],
+        self.assertTrue(np.array_equal(data["feature_adaptive"]["time"],
                                        np.arange(0, 15)))
-        self.assertTrue(np.allclose(data["feature_adaptive"]["U"][0],
+        self.assertTrue(np.allclose(data["feature_adaptive"]["values"][0],
                                     np.arange(0, 15) + 1))
-        self.assertTrue(np.allclose(data["feature_adaptive"]["U"][1],
+        self.assertTrue(np.allclose(data["feature_adaptive"]["values"][1],
                                     np.arange(0, 15) + 3))
-        self.assertTrue(np.allclose(data["feature_adaptive"]["U"][2],
+        self.assertTrue(np.allclose(data["feature_adaptive"]["values"][2],
                                     np.arange(0, 15) + 5))
 
 
@@ -473,21 +474,21 @@ class TestRunModel(unittest.TestCase):
     def assert_feature_0d(self, data):
         self.assertIn("feature0d", data)
 
-        self.assertTrue(np.isnan(data["feature0d"]["t"]))
-        self.assertTrue(np.array_equal(data["feature0d"]["U"], [1, 1, 1]))
+        self.assertTrue(np.isnan(data["feature0d"]["time"]))
+        self.assertTrue(np.array_equal(data["feature0d"]["values"], [1, 1, 1]))
         self.assertEqual(data["feature0d"]["labels"], ["feature0d"])
 
 
     def assert_feature_1d(self, data):
         self.assertIn("feature1d", data)
 
-        self.assertTrue(np.array_equal(data["feature1d"]["t"],
+        self.assertTrue(np.array_equal(data["feature1d"]["time"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(data["feature1d"]["U"][0],
+        self.assertTrue(np.array_equal(data["feature1d"]["values"][0],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(data["feature1d"]["U"][1],
+        self.assertTrue(np.array_equal(data["feature1d"]["values"][1],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(data["feature1d"]["U"][2],
+        self.assertTrue(np.array_equal(data["feature1d"]["values"][2],
                                        np.arange(0, 10)))
         self.assertEqual(data["feature1d"]["labels"], ["feature1d x", "feature1d y"])
 
@@ -495,15 +496,15 @@ class TestRunModel(unittest.TestCase):
 
     def assert_feature_2d(self, data):
         self.assertIn("feature2d", data)
-        self.assertTrue(np.array_equal(data["feature2d"]["t"],
+        self.assertTrue(np.array_equal(data["feature2d"]["time"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(data["feature2d"]["U"][0],
+        self.assertTrue(np.array_equal(data["feature2d"]["values"][0],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(data["feature2d"]["U"][1],
+        self.assertTrue(np.array_equal(data["feature2d"]["values"][1],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
-        self.assertTrue(np.array_equal(data["feature2d"]["U"][2],
+        self.assertTrue(np.array_equal(data["feature2d"]["values"][2],
                                        np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])))
         self.assertEqual(data["feature2d"]["labels"], ["feature2d x",
@@ -513,13 +514,13 @@ class TestRunModel(unittest.TestCase):
 
     def assert_testingmodel1d(self, data):
         self.assertIn("TestingModel1d", data)
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["t"],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["time"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["U"][0],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["values"][0],
                                        np.arange(0, 10) + 1))
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["U"][1],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["values"][1],
                                        np.arange(0, 10) + 3))
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["U"][2],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["values"][2],
                                        np.arange(0, 10) + 5))
         self.assertEqual(data["TestingModel1d"]["labels"], ["x", "y"])
 
@@ -533,24 +534,24 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_is_adaptive_false(self):
-        results = [{"TestingModel1d": {"U": np.arange(0, 10)},
-                    "feature2d": {"U": np.array([np.arange(0, 10),
+        results = [{"TestingModel1d": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
-                    "feature1d": {"U": np.arange(0, 10)},
-                    "feature0d": {"U": 1},
-                    "feature_invalid": {"U": None}},
-                   {"TestingModel1d": {"U": np.arange(0, 10)},
-                    "feature2d": {"U": np.array([np.arange(0, 10),
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModel1d": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
-                    "feature1d": {"U": np.arange(0, 10)},
-                    "feature0d": {"U": 1},
-                    "feature_invalid": {"U": None}},
-                   {"TestingModel1d": {"U": np.arange(0, 10)},
-                    "feature2d": {"U": np.array([np.arange(0, 10),
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModel1d": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
-                    "feature1d": {"U": np.arange(0, 10)},
-                    "feature0d": {"U": 1},
-                    "feature_invalid": {"U": None}}]
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}}]
 
         self.assertFalse(self.runmodel.is_adaptive(results, "feature2d"))
         self.assertFalse(self.runmodel.is_adaptive(results, "feature1d"))
@@ -570,24 +571,24 @@ class TestRunModel(unittest.TestCase):
 
 
 
-        results = [{"TestingModelAdaptive": {"U": np.arange(0, 10)},
-                    "feature2d": {"U": np.array([np.arange(0, 10),
+        results = [{"TestingModelAdaptive": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
-                    "feature1d": {"U": np.arange(0, 10)},
-                    "feature0d": {"U": 1},
-                    "feature_invalid": {"U": None}},
-                   {"TestingModelAdaptive": {"U": np.arange(0, 15)},
-                    "feature2d": {"U": np.array([np.arange(0, 10),
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModelAdaptive": {"values": np.arange(0, 15)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
-                    "feature1d": {"U": np.arange(0, 10)},
-                    "feature0d": {"U": 1},
-                    "feature_invalid": {"U": None}},
-                   {"TestingModelAdaptive": {"U": np.arange(0, 10)},
-                    "feature2d": {"U": np.array([np.arange(0, 10),
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModelAdaptive": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
-                    "feature1d": {"U": np.arange(0, 15)},
-                    "feature0d": {"U": 1},
-                    "feature_invalid": {"U": None}}]
+                    "feature1d": {"values": np.arange(0, 15)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}}]
 
 
         self.assertFalse(self.runmodel.is_adaptive(results, "feature2d"))
@@ -604,7 +605,7 @@ class TestRunModel(unittest.TestCase):
         interpolation = []
 
         for solved in results:
-            ts.append(solved["TestingModel1d"]["t"])
+            ts.append(solved["TestingModel1d"]["time"])
             interpolation.append(solved["TestingModel1d"]["interpolation"])
 
         self.assertTrue(np.array_equal(ts[0], ts[1]))
@@ -617,9 +618,9 @@ class TestRunModel(unittest.TestCase):
         self.assertIsInstance(interpolation[2],
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
-        t, interpolated_solves = self.runmodel.apply_interpolation(ts, interpolation)
+        time, interpolated_solves = self.runmodel.apply_interpolation(ts, interpolation)
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
         self.assertTrue(np.allclose(interpolated_solves[0],
                                     np.arange(0, 10) + 1))
         self.assertTrue(np.allclose(interpolated_solves[1],
@@ -629,9 +630,9 @@ class TestRunModel(unittest.TestCase):
 
         ts[1] = np.arange(0, 20)
 
-        t, interpolated_solves = self.runmodel.apply_interpolation(ts, interpolation)
+        time, interpolated_solves = self.runmodel.apply_interpolation(ts, interpolation)
 
-        self.assertTrue(np.array_equal(t, np.arange(0, 20)))
+        self.assertTrue(np.array_equal(time, np.arange(0, 20)))
         self.assertTrue(np.allclose(interpolated_solves[0],
                                     np.arange(0, 20) + 1))
         self.assertTrue(np.allclose(interpolated_solves[1],
@@ -677,13 +678,13 @@ class TestRunModel(unittest.TestCase):
         data = self.runmodel.run(nodes, uncertain_parameters)
 
         self.assertIn("TestingModel1d", data)
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["t"],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["time"],
                                        np.arange(0, 10)))
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["U"][0],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["values"][0],
                                        np.arange(0, 10) + 2))
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["U"][1],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["values"][1],
                                        np.arange(0, 10) + 3))
-        self.assertTrue(np.array_equal(data["TestingModel1d"]["U"][2],
+        self.assertTrue(np.array_equal(data["TestingModel1d"]["values"][2],
                                        np.arange(0, 10) + 4))
 
 
@@ -702,56 +703,56 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_regularize_nan_results(self):
-        results = [{"a": {"U": np.full(3, np.nan),
-                          "t": np.full(3, np.nan)}},
-                   {"a": {"U": np.full((3, 3, 3), 2),
-                          "t": np.full((3, 3, 3), 2)}},
-                   {"a": {"U": np.full(3, np.nan),
-                          "t": np.full(3, np.nan)}}]
+        results = [{"a": {"values": np.full(3, np.nan),
+                          "time": np.full(3, np.nan)}},
+                   {"a": {"values": np.full((3, 3, 3), 2),
+                          "time": np.full((3, 3, 3), 2)}},
+                   {"a": {"values": np.full(3, np.nan),
+                          "time": np.full(3, np.nan)}}]
 
 
         new_results = self.runmodel.regularize_nan_results(results)
 
-        correct_results = [{"a": {"U": np.full((3, 3, 3), np.nan),
-                                  "t": np.full((3, 3, 3), np.nan)}},
-                           {"a": {"U": np.full((3, 3, 3), 2),
-                                  "t": np.full((3, 3, 3), 2)}},
-                           {"a": {"U": np.full((3, 3, 3), np.nan),
-                                  "t": np.full((3, 3, 3), np.nan)}}]
+        correct_results = [{"a": {"values": np.full((3, 3, 3), np.nan),
+                                  "time": np.full((3, 3, 3), np.nan)}},
+                           {"a": {"values": np.full((3, 3, 3), 2),
+                                  "time": np.full((3, 3, 3), 2)}},
+                           {"a": {"values": np.full((3, 3, 3), np.nan),
+                                  "time": np.full((3, 3, 3), np.nan)}}]
 
-        self.assertEqual(correct_results[0]["a"]["U"].shape, new_results[0]["a"]["U"].shape)
-        self.assertEqual(correct_results[1]["a"]["U"].shape, new_results[1]["a"]["U"].shape)
-        self.assertEqual(correct_results[2]["a"]["U"].shape, new_results[2]["a"]["U"].shape)
+        self.assertEqual(correct_results[0]["a"]["values"].shape, new_results[0]["a"]["values"].shape)
+        self.assertEqual(correct_results[1]["a"]["values"].shape, new_results[1]["a"]["values"].shape)
+        self.assertEqual(correct_results[2]["a"]["values"].shape, new_results[2]["a"]["values"].shape)
 
-        self.assertEqual(correct_results[0]["a"]["t"].shape, new_results[0]["a"]["t"].shape)
-        self.assertEqual(correct_results[1]["a"]["t"].shape, new_results[1]["a"]["t"].shape)
-        self.assertEqual(correct_results[2]["a"]["t"].shape, new_results[2]["a"]["t"].shape)
-
-
+        self.assertEqual(correct_results[0]["a"]["time"].shape, new_results[0]["a"]["time"].shape)
+        self.assertEqual(correct_results[1]["a"]["time"].shape, new_results[1]["a"]["time"].shape)
+        self.assertEqual(correct_results[2]["a"]["time"].shape, new_results[2]["a"]["time"].shape)
 
 
 
-        results = [{"a": {"U": np.full(3, np.nan),
-                          "t": np.nan}},
-                   {"a": {"U": np.full((3, 3, 3), 2),
-                          "t": np.nan}},
-                   {"a": {"U": np.full(3, np.nan),
-                          "t": np.nan}}]
+
+
+        results = [{"a": {"values": np.full(3, np.nan),
+                          "time": np.nan}},
+                   {"a": {"values": np.full((3, 3, 3), 2),
+                          "time": np.nan}},
+                   {"a": {"values": np.full(3, np.nan),
+                          "time": np.nan}}]
 
 
         new_results = self.runmodel.regularize_nan_results(results)
 
-        correct_results = [{"a": {"U": np.full((3, 3, 3), np.nan),
-                                  "t": np.nan}},
-                           {"a": {"U": np.full((3, 3, 3), 2),
-                                  "t": np.nan}},
-                           {"a": {"U": np.full((3, 3, 3), np.nan),
-                                  "t": np.nan}}]
+        correct_results = [{"a": {"values": np.full((3, 3, 3), np.nan),
+                                  "time": np.nan}},
+                           {"a": {"values": np.full((3, 3, 3), 2),
+                                  "time": np.nan}},
+                           {"a": {"values": np.full((3, 3, 3), np.nan),
+                                  "time": np.nan}}]
 
-        self.assertEqual(correct_results[0]["a"]["U"].shape, new_results[0]["a"]["U"].shape)
-        self.assertEqual(correct_results[1]["a"]["U"].shape, new_results[1]["a"]["U"].shape)
-        self.assertEqual(correct_results[2]["a"]["U"].shape, new_results[2]["a"]["U"].shape)
+        self.assertEqual(correct_results[0]["a"]["values"].shape, new_results[0]["a"]["values"].shape)
+        self.assertEqual(correct_results[1]["a"]["values"].shape, new_results[1]["a"]["values"].shape)
+        self.assertEqual(correct_results[2]["a"]["values"].shape, new_results[2]["a"]["values"].shape)
 
-        self.assertEqual(np.shape(correct_results[0]["a"]["t"]), np.shape(new_results[0]["a"]["t"]))
-        self.assertEqual(np.shape(correct_results[1]["a"]["t"]), np.shape(new_results[1]["a"]["t"]))
-        self.assertEqual(np.shape(correct_results[2]["a"]["t"]), np.shape(new_results[2]["a"]["t"]))
+        self.assertEqual(np.shape(correct_results[0]["a"]["time"]), np.shape(new_results[0]["a"]["time"]))
+        self.assertEqual(np.shape(correct_results[1]["a"]["time"]), np.shape(new_results[1]["a"]["time"]))
+        self.assertEqual(np.shape(correct_results[2]["a"]["time"]), np.shape(new_results[2]["a"]["time"]))

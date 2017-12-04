@@ -82,7 +82,7 @@ data = {"model_cmds": model_cmds
                 raise RuntimeError(err)
 
 
-            U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+            values = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
             t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
             os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
@@ -106,7 +106,7 @@ data = {"model_cmds": model_cmds
 
         sys.path.insert(0, features_cmds["filedir"])
         module = __import__(features_cmds["filename"].split(".")[0])
-        features = getattr(module, features_cmds["feature_name"])(t=t, U=U, **features_kwargs)
+        features = getattr(module, features_cmds["feature_name"])(t=time, values=U, **features_kwargs)
 
         feature_results = features.calculate_features()
 
@@ -151,8 +151,8 @@ data = {"model_cmds": model_cmds
                 if np.all(np.isnan(t)):
                     raise AttributeError("Model does not return any t values. Unable to perform interpolation")
 
-                interpolation = scipy.interpolate.InterpolatedUnivariateSpline(t, U, k=3)
-                results["directComparison"] = (t, U, interpolation)
+                interpolation = scipy.interpolate.InterpolatedUnivariateSpline(time, values, k=3)
+                results["directComparison"] = (time, values, interpolation)
 
             else:
                 raise NotImplementedError("No support yet for >= 2D interpolation")
@@ -162,7 +162,7 @@ data = {"model_cmds": model_cmds
             if np.all(np.isnan(t)):
                 results["directComparison"] = (None, U, None)
             else:
-                results["directComparison"] = (t, U, None)
+                results["directComparison"] = (time, values, None)
 
         # All results are saved as {feature: (x, U, interpolation)} as appropriate.
 

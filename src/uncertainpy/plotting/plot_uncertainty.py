@@ -120,7 +120,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "U"  not in self.data[feature]:
+        if feature not in self.data or "values"  not in self.data[feature]:
             self.logger.warning("No {} results to plot.".format(feature))
             return
 
@@ -131,13 +131,13 @@ class PlotUncertainty(object):
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        prettyPlot(self.data[feature].U,
+        prettyPlot(self.data[feature].values,
                    xlabel=r"simulator run \#number",
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, result".format(feature.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
-        plt.savefig(os.path.join(save_folder, "U" + self.figureformat))
+        plt.savefig(os.path.join(save_folder, "values" + self.figureformat))
         plt.close()
 
 
@@ -148,7 +148,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "U"  not in self.data[feature]:
+        if feature not in self.data or "values"  not in self.data[feature]:
             self.logger.warning("No model results to plot.")
             return
 
@@ -163,19 +163,19 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature].U[0]))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature].values[0]))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
 
-        padding = len(str(len(self.data[feature].U[0]) + 1))
-        for U in self.data[feature].U:
-            prettyPlot(t, U,
+        padding = len(str(len(self.data[feature].values[0]) + 1))
+        for values in self.data[feature].values:
+            prettyPlot(time, values,
                        xlabel=xlabel, ylabel=ylabel,
                        title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
             plt.savefig(os.path.join(save_folder,
-                                     "U_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "values_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
             i += 1
 
@@ -188,7 +188,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "U"  not in self.data[feature]:
+        if feature not in self.data or "values"  not in self.data[feature]:
             self.logger.warning("No model results to plot.")
             return
 
@@ -204,21 +204,21 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature].U[0]))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature].values[0]))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
-        padding = len(str(len(self.data[feature].U) + 1))
-        for i, U in enumerate(self.data[feature].U):
+        padding = len(str(len(self.data[feature].values) + 1))
+        for i, values in enumerate(self.data[feature].values):
             fig = plt.figure()
             ax = fig.add_subplot(111)
             ax.set_title("{}, result {:d}".format(feature.replace("_", " "), i))
 
-            iax = ax.imshow(U, cmap="viridis", aspect="auto",
-                            extent=[t[0],
-                                    t[-1],
-                                    0, U.shape[0]],
+            iax = ax.imshow(values, cmap="viridis", aspect="auto",
+                            extent=[time[0],
+                                    time[-1],
+                                    0, values.shape[0]],
                             **plot_kwargs)
 
             cbar = fig.colorbar(iax)
@@ -226,7 +226,7 @@ class PlotUncertainty(object):
             ax.set_xlabel(xlabel)
             ax.set_ylabel(ylabel)
             plt.savefig(os.path.join(save_folder,
-                                     "U_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "values_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
 
 
@@ -234,7 +234,7 @@ class PlotUncertainty(object):
 
     def attribute_feature_1d(self,
                              feature=None,
-                             attribute="E",
+                             attribute="mean",
                              attribute_name="mean",
                              hardcopy=True,
                              show=False,
@@ -248,7 +248,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        if attribute not in ["E", "Var"]:
+        if attribute not in ["mean", "variance"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
         if attribute not in self.data[feature]:
@@ -256,17 +256,17 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature][attribute]))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature][attribute]))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature + ", " + attribute_name
-        prettyPlot(t, self.data[feature][attribute],
+        prettyPlot(time, self.data[feature][attribute],
                    title.replace("_", " "), xlabel, ylabel, **plot_kwargs)
 
 
@@ -286,7 +286,7 @@ class PlotUncertainty(object):
 
     def attribute_feature_2d(self,
                              feature=None,
-                             attribute="E",
+                             attribute="mean",
                              attribute_name="mean",
                              hardcopy=True,
                              show=False,
@@ -301,7 +301,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 2:
             raise ValueError("{} is not a 2D feature".format(feature))
 
-        if attribute not in ["E", "Var"]:
+        if attribute not in ["mean", "variance"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
 
@@ -310,10 +310,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
             extent = None
         else:
-            extent=[self.data[feature].t[0], self.data[feature].t[-1],
+            extent=[self.data[feature].time[0], self.data[feature].time[-1],
                     0, self.data[feature][attribute].shape[0]]
 
 
@@ -354,7 +354,7 @@ class PlotUncertainty(object):
 
     def mean_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_1d(feature,
-                                  attribute="E",
+                                  attribute="mean",
                                   attribute_name="mean",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -363,7 +363,7 @@ class PlotUncertainty(object):
 
     def variance_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_1d(feature,
-                                  attribute="Var",
+                                  attribute="variance",
                                   attribute_name="variance",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -371,7 +371,7 @@ class PlotUncertainty(object):
 
     def mean_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_2d(feature,
-                                  attribute="E",
+                                  attribute="mean",
                                   attribute_name="mean",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -380,7 +380,7 @@ class PlotUncertainty(object):
 
     def variance_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         self.attribute_feature_2d(feature,
-                                  attribute="Var",
+                                  attribute="variance",
                                   attribute_name="variance",
                                   hardcopy=hardcopy,
                                   show=show,
@@ -406,23 +406,23 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        if "E" not in self.data[feature] or "Var" not in self.data[feature]:
+        if "mean" not in self.data[feature] or "variance" not in self.data[feature]:
             msg = "Mean and/or variance of {feature} does not exist. ".format(feature=feature) \
                     + "Unable to plot mean and variance"
             self.logger.warning(msg)
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature].E))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature].mean))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature + ", mean and variance"
-        ax = prettyPlot(t, self.data[feature].E,
+        ax = prettyPlot(time, self.data[feature].mean,
                         title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style, **plot_kwargs)
 
@@ -436,10 +436,10 @@ class PlotUncertainty(object):
                         color=colors[color+2], labelcolor=colors[color+2], labelsize=labelsize)
         ax2.set_ylabel(ylabel + ', variance', color=colors[color+2], fontsize=labelsize)
 
-        # ax2.set_xlim([min(self.data.t[feature]), max(self.data.t[feature])])
-        # ax2.set_ylim([min(self.data.Var[feature]), max(self.data.Var[feature])])
+        # ax2.set_xlim([min(self.data.time[feature]), max(self.data.time[feature])])
+        # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
-        ax2.plot(t, self.data[feature].Var,
+        ax2.plot(time, self.data[feature].variance,
                  color=colors[color+2], linewidth=2, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(16)
@@ -481,32 +481,32 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        if "E" not in self.data[feature] \
-            or "p_05" not in self.data[feature] \
-                or "p_95" not in self.data[feature]:
-            msg = "E, p_05  and/or p_95 of {feature} does not exist. Unable to plot confidence interval"
+        if "mean" not in self.data[feature] \
+            or "percentile_5" not in self.data[feature] \
+                or "percentile_95" not in self.data[feature]:
+            msg = "E, percentile_5  and/or percentile_95 of {feature} does not exist. Unable to plot confidence interval"
             self.logger.warning(msg.format(feature=feature))
             return
 
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature].E))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature].mean))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         title = feature.replace("_", " ") + ", 90\\% confidence interval"
-        prettyPlot(t, self.data[feature].E, title=title,
+        prettyPlot(time, self.data[feature].mean, title=title,
                    xlabel=xlabel, ylabel=ylabel, color=0,
                    **plot_kwargs)
 
         colors = get_current_colormap()
-        plt.fill_between(t,
-                         self.data[feature].p_05,
-                         self.data[feature].p_95,
+        plt.fill_between(time,
+                         self.data[feature].percentile_5,
+                         self.data[feature].percentile_95,
                          alpha=0.5, color=colors[0])
 
 
@@ -545,16 +545,16 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature][sensitivity][0]))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         for i in range(len(self.data[feature][sensitivity])):
-            prettyPlot(t, self.data[feature][sensitivity][i],
+            prettyPlot(time, self.data[feature][sensitivity][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=xlabel, ylabel="sensitivity",
                        color=i,
@@ -596,10 +596,10 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature][sensitivity][0]))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
         parameter_names = self.data.uncertain_parameters
 
@@ -631,7 +631,7 @@ class PlotUncertainty(object):
             ax = axes[ny][nx]
 
             if i < nr_plots:
-                prettyPlot(t, self.data[feature][sensitivity][i],
+                prettyPlot(time, self.data[feature][sensitivity][i],
                            title=self.str_to_latex(parameter_names[i]), color=i,
                            nr_colors=nr_plots, ax=ax,
                            **plot_kwargs)
@@ -684,17 +684,17 @@ class PlotUncertainty(object):
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
-        if self.data[feature].t is None or np.all(np.isnan(self.data[feature].t)):
-            t = np.arange(0, len(self.data[feature][sensitivity][0]))
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature][sensitivity][0]))
         else:
-            t = self.data[feature].t
+            time = self.data[feature].time
 
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         for i in range(len(self.data[feature][sensitivity])):
-            prettyPlot(t,
+            prettyPlot(time,
                        self.data[feature][sensitivity][i],
                        title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " "),
                        xlabel=xlabel,
@@ -707,7 +707,7 @@ class PlotUncertainty(object):
 
         plt.ylim([0, 1.05])
         if len(self.data[feature][sensitivity]) > 4:
-            plt.xlim([t[0], 1.3*t[-1]])
+            plt.xlim([time[0], 1.3*time[-1]])
 
         plt.legend()
 
@@ -763,7 +763,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 0:
             raise ValueError("{} is not a 1D feature".format(feature))
 
-        for data_type in ["E", "Var", "p_05", "p_95"]:
+        for data_type in ["mean", "variance", "percentile_5", "percentile_95"]:
             if data_type not in self.data[feature]:
                 msg = "{data_type} for {feature} does not exist. Unable to plot"
                 self.logger.warning(msg.format(data_type=data_type,feature=feature))
@@ -782,8 +782,8 @@ class PlotUncertainty(object):
         xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
-        values = [self.data[feature].E, self.data[feature].Var,
-                  self.data[feature].p_05, self.data[feature].p_95]
+        values = [self.data[feature].mean, self.data[feature].variance,
+                  self.data[feature].percentile_5, self.data[feature].percentile_95]
 
         ylabel = self.data.get_labels(feature)[0]
 
@@ -863,7 +863,7 @@ class PlotUncertainty(object):
         return ax
 
 
-    def total_sensitivity(self,
+    def sensitivity_sum(self,
                           feature,
                           sensitivity="sensitivity_1",
                           hardcopy=True,
@@ -874,8 +874,8 @@ class PlotUncertainty(object):
         if feature not in self.data:
             raise ValueError("{} is not a feature".format(feature))
 
-        if "total_" + sensitivity not in self.data[feature]:
-            msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
+        if sensitivity + "_sum" not in self.data[feature]:
+            msg = "{sensitivity}_sum of {feature} does not exist. Unable to plot {sensitivity}_sum."
             self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
@@ -884,18 +884,18 @@ class PlotUncertainty(object):
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
 
-        prettyBar(self.data[feature]["total_" + sensitivity],
-                  title="total " + sensitivity.replace("_", " ")
+        prettyBar(self.data[feature][sensitivity + "_sum"],
+                  title=sensitivity.replace("_", " ") + "normalized sum"
                   + ", " + feature.replace("_", " "),
                   xlabels=self.list_to_latex(self.data.uncertain_parameters),
-                  ylabel="\% total sensitivity",
+                  ylabel="\% sensitivity sum",
                   nr_colors=len(self.data.uncertain_parameters),
                   index=index)
 
 
         plt.ylim([0, 1])
 
-        save_name = feature + "_total-" + sensitivity + self.figureformat
+        save_name = feature + "_" + sensitivity + "_sum" + self.figureformat
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir, save_name))
@@ -906,7 +906,7 @@ class PlotUncertainty(object):
             plt.close()
 
 
-    def total_sensitivity_all(self,
+    def sensitivity_sum_all(self,
                               sensitivity="sensitivity_1",
                               hardcopy=True,
                               show=False):
@@ -914,8 +914,8 @@ class PlotUncertainty(object):
             raise ValueError("Datafile must be loaded.")
 
         for feature in self.data:
-            if "total_" + sensitivity in self.data[feature]:
-                self.total_sensitivity(feature=feature,
+            if sensitivity + "_sum" in self.data[feature]:
+                self.sensitivity_sum(feature=feature,
                                     sensitivity=sensitivity,
                                     hardcopy=hardcopy,
                                     show=show)
@@ -960,8 +960,8 @@ class PlotUncertainty(object):
         self.features_0d(sensitivity=sensitivity)
 
         if sensitivity is not None:
-            self.total_sensitivity_all(sensitivity=sensitivity)
-            self.total_sensitivity_grid(sensitivity=sensitivity)
+            self.sensitivity_sum_all(sensitivity=sensitivity)
+            self.sensitivity_sum_grid(sensitivity=sensitivity)
 
 
 
@@ -981,8 +981,8 @@ class PlotUncertainty(object):
 
         self.features_0d(sensitivity="sensitivity_t")
 
-        self.total_sensitivity_all(sensitivity="sensitivity_t")
-        self.total_sensitivity_grid(sensitivity="sensitivity_t")
+        self.sensitivity_sum_all(sensitivity="sensitivity_t")
+        self.sensitivity_sum_grid(sensitivity="sensitivity_t")
 
 
     def plot_condensed(self, sensitivity="sensitivity_1"):
@@ -998,7 +998,7 @@ class PlotUncertainty(object):
         self.features_2d()
 
         if sensitivity is not None:
-            self.total_sensitivity_grid(sensitivity=sensitivity)
+            self.sensitivity_sum_grid(sensitivity=sensitivity)
 
 
 
@@ -1036,7 +1036,7 @@ class PlotUncertainty(object):
 
 
 
-    def total_sensitivity_grid(self,
+    def sensitivity_sum_grid(self,
                                sensitivity="sensitivity_1",
                                hardcopy=True,
                                show=False,
@@ -1046,11 +1046,11 @@ class PlotUncertainty(object):
 
         no_sensitivity = True
         for feature in self.data:
-            if "total_" + sensitivity in self.data[feature]:
+            if sensitivity + "_sum" in self.data[feature]:
                 no_sensitivity = False
 
         if no_sensitivity:
-            msg = "All total_{sensitivity}s are missing. Unable to plot total_{sensitivity}_grid"
+            msg = "All {sensitivity}_sums are missing. Unable to plot {sensitivity}_sum_grid"
             self.logger.warning(msg.format(sensitivity=sensitivity))
             return
 
@@ -1075,7 +1075,7 @@ class PlotUncertainty(object):
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         # ax.set_xlabel(self.data.xlabel)
-        ax.set_ylabel('\% total ' + sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
+        ax.set_ylabel('\% ' + sensitivity.split("_")[0] + " sum " + sensitivity.split("_")[1])
 
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
@@ -1088,14 +1088,14 @@ class PlotUncertainty(object):
             ax = axes[ny][nx]
 
             if i < nr_plots:
-                if "total_" + sensitivity not in self.data[self.data.keys()[i]]:
-                    msg = " Unable to plot total_{sensitivity}_grid. total_{sensitivity} of {feature} does not exist."
+                if sensitivity + "_sum" not in self.data[self.data.keys()[i]]:
+                    msg = " Unable to plot {sensitivity}_sum_grid. {sensitivity}_sum of {feature} does not exist."
                     self.logger.warning(msg.format(sensitivity=sensitivity,
                                                    feature=self.data.keys()[i]))
                     ax.axis("off")
                     continue
 
-                prettyBar(self.data[self.data.keys()[i]]["total_" + sensitivity],
+                prettyBar(self.data[self.data.keys()[i]][sensitivity + "_sum"],
                           title=self.data.keys()[i].replace("_", " "),
                           xlabels=self.list_to_latex(self.data.uncertain_parameters),
                           nr_colors=len(self.data.uncertain_parameters),
@@ -1113,7 +1113,7 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = "total " + sensitivity.replace("_", " ")
+        title = sensitivity.replace("_", " ") + "normalized sum"
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
@@ -1121,14 +1121,13 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir,
-                                     "total-" + sensitivity + "_grid" + self.figureformat),
+                                     sensitivity + "_sum_grid" + self.figureformat),
                         bbox_inches="tight")
 
         if show:
             plt.show()
         else:
             plt.close()
-
 
 
 # if __name__ == "__main__":

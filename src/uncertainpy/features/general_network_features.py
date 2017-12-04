@@ -106,9 +106,9 @@ class GeneralNetworkFeatures(Features):
 
         self.units = units
 
-    def preprocess(self, t_stop, spiketrains):
+    def preprocess(self, simulation_end, spiketrains):
         """
-        Preprossesing of the time `t` and results `U` from the model, before the
+        Preprossesing of the time `time` and results `values` from the model, before the
         features are calculated.
 
         No preprocessing is performed, and the direct model results are
@@ -119,7 +119,7 @@ class GeneralNetworkFeatures(Features):
         ----------
         *model_results
             Variable length argument list. Is the values that ``model.run()``
-            returns. By default it contains `t` and `U`, and then any number of
+            returns. By default it contains `time` and `values`, and then any number of
             optional `info` values.
 
         Returns
@@ -144,19 +144,19 @@ class GeneralNetworkFeatures(Features):
         """
 
 
-        if t_stop is None or np.isnan(t_stop):
-            raise ValueError("t_stop is NaN or None. t_stop must be the time when the simulation ends.")
+        if simulation_end is None or np.isnan(simulation_end):
+            raise ValueError("simulation_end is NaN or None. simulation_end must be the time when the simulation ends.")
 
         neo_spiketrains = []
         for spiketrain in spiketrains:
-            neo_spiketrain = neo.core.SpikeTrain(spiketrain, t_stop=t_stop, units=self.units)
+            neo_spiketrain = neo.core.SpikeTrain(spiketrain, t_stop=simulation_end, units=self.units)
             neo_spiketrains.append(neo_spiketrain)
 
-        return t_stop, neo_spiketrains
+        return simulation_end, neo_spiketrains
 
 
 
-    def reference_feature(self, t_stop, neo_spiketrains):
+    def reference_feature(self, simulation_end, neo_spiketrains):
         """
         An example of an GeneralNetworkFeature. The feature functions have the
         following requirements, and the given parameters must either be
@@ -164,7 +164,7 @@ class GeneralNetworkFeatures(Features):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -174,11 +174,11 @@ class GeneralNetworkFeatures(Features):
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values, or equivalent, of the feature, if no time values
             return None or numpy.nan.
-        U : array_like
-            The feature results, `U`. Returns None if there are no feature
+        values : array_like
+            The feature results, `values`. Returns None if there are no feature
             results and that evaluation are disregarded.
 
         See also
@@ -188,7 +188,7 @@ class GeneralNetworkFeatures(Features):
         """
 
         # Perform feature calculations here
-        t = None
-        U = None
+        time = None
+        values = None
 
-        return t, U
+        return time, values

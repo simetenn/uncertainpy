@@ -4,10 +4,10 @@ import numpy as np
 
 
 def model_function(a=1, b=2):
-    t = np.arange(0, 10)
-    U = np.arange(0, 10) + a + b
+    time = np.arange(0, 10)
+    values = np.arange(0, 10) + a + b
 
-    return t, U
+    return time, values
 
 
 
@@ -17,10 +17,10 @@ class TestingModel0d(Model):
 
 
     def run(self, a=1, b=2):
-        t = 1
-        U = b
+        time = 1
+        values = b
 
-        return t, U
+        return time, values
 
 
 
@@ -30,10 +30,10 @@ class TestingModel1d(Model):
 
     def run(self, a=1, b=2):
 
-        t = np.arange(0, 10)
-        U = np.arange(0, 10) + a + b
+        time = np.arange(0, 10)
+        values = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
 
 
@@ -44,10 +44,10 @@ class TestingModel2d(Model):
 
 
     def run(self, a=1, b=2):
-        t = np.arange(0, 10)
-        U = np.array([np.arange(0, 10) + a, np.arange(0, 10) + b])
+        time = np.arange(0, 10)
+        values = np.array([np.arange(0, 10) + a, np.arange(0, 10) + b])
 
-        return t, U
+        return time, values
 
 
 
@@ -58,10 +58,10 @@ class TestingModelAdaptive(Model):
 
     def run(self, a=1, b=2):
 
-        t = np.arange(0, 10 + a + b)
-        U = np.arange(0, 10 + a + b) + a + b
+        time = np.arange(0, 10 + a + b)
+        values = np.arange(0, 10 + a + b) + a + b
 
-        return t, U
+        return time, values
 
 
 
@@ -72,10 +72,10 @@ class TestingModelConstant(Model):
 
     def run(self, a=1, b=2):
 
-        t = np.arange(0, 10)
-        U = np.arange(0, 10)
+        time = np.arange(0, 10)
+        values = np.arange(0, 10)
 
-        return t, U
+        return time, values
 
 
 
@@ -86,9 +86,9 @@ class TestingModelNoTime(Model):
 
     def run(self, a=1, b=2):
 
-        U = np.arange(0, 10) + a + b
+        values = np.arange(0, 10) + a + b
 
-        return U
+        return values
 
 
 
@@ -126,12 +126,12 @@ class PostprocessErrorNumpy(Model):
 
     def run(self, a=1, b=2):
 
-        t = np.arange(0, 10)
-        U = np.arange(0, 10) + a + b
+        time = np.arange(0, 10)
+        values = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
-    def postprocess(self, t, U):
+    def postprocess(self, time, values):
         return np.linspace(0, 10, 100)
 
 
@@ -141,12 +141,12 @@ class PostprocessErrorOne(Model):
 
     def run(self, a=1, b=2):
 
-        t = np.arange(0, 10)
-        U = np.arange(0, 10) + a + b
+        time = np.arange(0, 10)
+        values = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
-    def postprocess(self, t, U):
+    def postprocess(self, time, values):
         return 1
 
 
@@ -156,10 +156,10 @@ class PostprocessErrorValue(Model):
 
     def run(self, a=1, b=2):
 
-        t = np.arange(0, 10)
-        U = np.arange(0, 10) + a + b
+        time = np.arange(0, 10)
+        values = np.arange(0, 10) + a + b
 
-        return t, U
+        return time, values
 
-    def postprocess(self, t, U):
+    def postprocess(self, time, values):
         return (1, 2, 3)

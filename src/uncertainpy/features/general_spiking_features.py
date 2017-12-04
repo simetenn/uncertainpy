@@ -117,54 +117,54 @@ class GeneralSpikingFeatures(Features):
 
 
 
-    def preprocess(self, t, U, info):
+    def preprocess(self, time, values, info):
         """
         Calculating spikes from the model result.
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
-        U : array_like
+        values : array_like
             Result of the model.
         info : dictionary
             A dictionary with info["stimulus_start"] and info["stimulus_end"].
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it returns None or numpy.nan.
-        U : Spikes
+        values : Spikes
             The spikes found in the model results.
         info : dictionary
             A dictionary with info["stimulus_start"] and info["stimulus_end"].
 
         Notes
         -----
-        Also sets self.U = U, so features have access to self.U if necessary.
+        Also sets self.values = values, so features have access to self.values if necessary.
 
         See also
         --------
         uncertainpy.models.Model.run : The model run method
         uncertainpy.features.Spikes : Class for finding spikes in the model result.
         """
-        self.U = U
+        self.values = values
 
-        self.spikes = self.calculate_spikes(t, U, threshold=self.threshold, extended_spikes=self.extended_spikes)
+        self.spikes = self.calculate_spikes(time, values, threshold=self.threshold, extended_spikes=self.extended_spikes)
 
-        return t, self.spikes, info
+        return time, self.spikes, info
 
 
-    def calculate_spikes(self, t, U, threshold=-30, extended_spikes=False):
+    def calculate_spikes(self, time, values, threshold=-30, extended_spikes=False):
         """
         Calculating spikes of a model result, works with single neuron models and
         voltage traces.
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
-        U : array_like
+        values : array_like
             Result of the model.
         threshold : {float, int, "auto"}, optional
             The threshold where the model result is considered to have a spike.
@@ -177,9 +177,9 @@ class GeneralSpikingFeatures(Features):
 
         Returns
         ------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it returns None or numpy.nan.
-        U : Spikes
+        values : Spikes
             The spikes found in the model results.
 
         See also
@@ -188,12 +188,12 @@ class GeneralSpikingFeatures(Features):
         uncertainpy.features.Spikes : Class for finding spikes in the model result.
         """
         spikes = Spikes()
-        spikes.find_spikes(t, U, threshold=threshold, extended_spikes=extended_spikes)
+        spikes.find_spikes(time, values, threshold=threshold, extended_spikes=extended_spikes)
 
         return spikes
 
 
-    def reference_feature(self, t, spikes, info):
+    def reference_feature(self, time, spikes, info):
         """
         An example of an GeneralSpikingFeature. The feature functions have the
         following requirements, and the input arguments must either be
@@ -201,7 +201,7 @@ class GeneralSpikingFeatures(Features):
 
         Parameters
         ----------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values of the model. If no time values it is None or numpy.nan.
         spikes : Spikes
             Spikes found in the model result.
@@ -211,11 +211,11 @@ class GeneralSpikingFeatures(Features):
 
         Returns
         -------
-        t : {None, numpy.nan, array_like}
+        time : {None, numpy.nan, array_like}
             Time values, or equivalent, of the feature, if no time values
             return None or numpy.nan.
-        U : array_like
-            The feature results, `U`. Returns None if there are no feature
+        values : array_like
+            The feature results, `values`. Returns None if there are no feature
             results and that evaluation are disregarded.
 
         See also
@@ -225,7 +225,7 @@ class GeneralSpikingFeatures(Features):
         """
 
         # Perform feature calculations here
-        t = None
-        U = None
+        time = None
+        values = None
 
-        return t, U
+        return time, values

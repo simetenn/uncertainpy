@@ -30,7 +30,7 @@ class HodgkinHuxley(Model):
         self.I_value = 150
         T = 15    # ms
         dt = 0.025  # ms
-        self.t = np.arange(0, T + dt, dt)
+        self.time = np.arange(0, T + dt, dt)
 
 
 
@@ -104,10 +104,10 @@ class HodgkinHuxley(Model):
 
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
-        X = odeint(self.dXdt, initial_conditions, self.t)
-        U = X[:, 0]
+        X = odeint(self.dXdt, initial_conditions, self.time)
+        V = X[:, 0]
 
          # Add info needed by certain spiking features and efel features
-        info = {"stimulus_start": self.t[0], "stimulus_end": self.t[-1]}
+        info = {"stimulus_start": self.time[0], "stimulus_end": self.time[-1]}
 
-        return self.t, U, info
+        return self.time, V, info

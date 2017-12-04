@@ -166,43 +166,43 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_feature_function(self):
-        def feature_function(t, U):
-            return "t", "U"
+        def feature_function(time, values):
+            return "time", "values"
 
         self.uncertainty.features = feature_function
         self.assertIsInstance(self.uncertainty.features, Features)
 
-        t, U = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
         self.assertEqual(self.uncertainty.features.features_to_run,
                          ["feature_function"])
 
 
     def test_feature_functions(self):
-        def feature_function(t, U):
-            return "t", "U"
+        def feature_function(time, values):
+            return "time", "values"
 
-        def feature_function2(t, U):
+        def feature_function2(time, values):
             return "t2", "U2"
 
 
         self.uncertainty.features = [feature_function, feature_function2]
         self.assertIsInstance(self.uncertainty.features, Features)
 
-        t, U = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
 
-        t, U = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
-        t, U = self.uncertainty.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = self.uncertainty.features.feature_function2(None, None)
+        self.assertEqual(time, "t2")
+        self.assertEqual(values, "U2")
 
         self.assertEqual(self.uncertainty.features.features_to_run,
                          ["feature_function", "feature_function2"])
@@ -210,11 +210,11 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_feature_functions_base(self):
-        def feature_function(t, U):
-            return "t", "U"
+        def feature_function(time, values):
+            return "time", "values"
 
-        def feature_function2(t, U):
-            return "t2", "U2"
+        def feature_function2(time, values):
+            return "time2", "values2"
 
         implemented_features = ["nr_spikes", "time_before_first_spike",
                                 "spike_rate", "average_AP_overshoot",
@@ -224,13 +224,13 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty.features = SpikingFeatures([feature_function, feature_function2])
         self.assertIsInstance(self.uncertainty.features, SpikingFeatures)
 
-        t, U = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        time, values = self.uncertainty.features.feature_function(None, None)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
-        t, U = self.uncertainty.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        time, values = self.uncertainty.features.feature_function2(None, None)
+        self.assertEqual(time, "time2")
+        self.assertEqual(values, "values2")
 
         self.assertEqual(set(self.uncertainty.features.features_to_run),
                          set(["feature_function", "feature_function2"] + implemented_features))
@@ -392,7 +392,7 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
     def test_polynomial_chaos_single_plot(self):
@@ -524,9 +524,9 @@ class TestUncertainty(TestCasePlot):
         folder = os.path.dirname(os.path.realpath(__file__))
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                      "sensitivity_1", "total_sensitivity_1",
-                      "sensitivity_t", "total_sensitivity_t"]
+        data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+                      "sensitivity_1", "sensitivity_1_sum",
+                      "sensitivity_t", "sensitivity_t_sum"]
 
         for data_type in data_types:
             self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"][data_type], [1., 2.]))
@@ -564,12 +564,12 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
         self.compare_plot("feature1d_sensitivity_1_grid")
-        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature0d_sensitivity_1_sum")
 
-        self.compare_plot("TestingModel1d_total-sensitivity_1")
-        self.compare_plot("feature0d_total-sensitivity_1")
-        self.compare_plot("feature1d_total-sensitivity_1")
-        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_sum")
+        self.compare_plot("feature0d_sensitivity_1_sum")
+        self.compare_plot("feature1d_sensitivity_1_sum")
+        self.compare_plot("feature2d_sensitivity_1_sum")
 
         self.compare_plot("feature1d_sensitivity_t_a")
         self.compare_plot("feature1d_sensitivity_t_b")
@@ -583,18 +583,18 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_sensitivity_t")
         self.compare_plot("TestingModel1d_sensitivity_t_grid")
 
-        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature0d_sensitivity_t_sum")
 
 
-        self.compare_plot("TestingModel1d_total-sensitivity_t")
-        self.compare_plot("feature0d_total-sensitivity_t")
-        self.compare_plot("feature1d_total-sensitivity_t")
-        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_sum")
+        self.compare_plot("feature0d_sensitivity_t_sum")
+        self.compare_plot("feature1d_sensitivity_t_sum")
+        self.compare_plot("feature2d_sensitivity_t_sum")
 
 
 
-        self.compare_plot("total-sensitivity_t_grid")
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_t_sum_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
     def test_plot_condensed(self):
@@ -611,7 +611,7 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
 

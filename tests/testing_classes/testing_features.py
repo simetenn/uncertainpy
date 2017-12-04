@@ -21,31 +21,31 @@ class TestingFeatures(Features):
 
         self.is_preprocess_run = False
 
-    def feature0d(self, t, U):
+    def feature0d(self, time, values):
         return None, 1
 
-    def feature1d(self, t, U):
+    def feature1d(self, time, values):
         return np.arange(0, 10), np.arange(0, 10)
 
-    def feature2d(self, t, U):
+    def feature2d(self, time, values):
         return np.arange(0, 10), np.array([np.arange(0, 10), np.arange(0, 10)])
 
-    def feature_invalid(self, t, U):
+    def feature_invalid(self, time, values):
         return None, None
 
-    def feature_adaptive(self, t, U):
-        return t, U
+    def feature_adaptive(self, time, values):
+        return time, values
 
-    def feature_no_time(self, t, U):
+    def feature_no_time(self, time, values):
         return np.arange(0, 10)
 
-    def preprocess(self, t, U):
+    def preprocess(self, time, values):
         self.is_preprocess_run = True
-        return t, U
+        return time, values
 
-    def feature_info(self, t, U, info):
+    def feature_info(self, time, values, info):
         self.info = info
-        return t, U
+        return time, values
 
     def feature_error_one(self):
         return 1

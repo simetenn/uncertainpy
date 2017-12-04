@@ -250,9 +250,9 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
 def generate_data_data():  # pragma: no cover
     data = un.Data()
-    data_types = ["U", "t", "E", "Var", "p_05", "p_95",
-                  "sensitivity_1", "total_sensitivity_1",
-                  "sensitivity_t", "total_sensitivity_t", "labels"]
+    data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+                  "sensitivity_1", "sensitivity_1_sum",
+                  "sensitivity_t", "sensitivity_t_sum"]
 
     data.add_features(["feature1d", "TestingModel1d"])
 

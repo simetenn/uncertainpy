@@ -94,15 +94,15 @@ class UncertaintyCalculations(ParameterBase):
         if feature not in self.data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
-        masked_U = []
-        mask = np.ones(len(self.data[feature]["U"]), dtype=bool)
+        masked_values = []
+        mask = np.ones(len(self.data[feature]["values"]), dtype=bool)
 
         # TODO use numpy masked array
-        for i, result in enumerate(self.data[feature]["U"]):
+        for i, result in enumerate(self.data[feature]["values"]):
             if np.any(np.isnan(result)):
                 mask[i] = False
             else:
-                masked_U.append(result)
+                masked_values.append(result)
 
 
         if len(nodes.shape) > 1:
@@ -124,9 +124,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
         if weights is None:
-            return np.array(masked_nodes), np.array(masked_U), mask
+            return np.array(masked_nodes), np.array(masked_values), mask
         else:
-            return np.array(masked_nodes), np.array(masked_U), np.array(masked_weights), mask
+            return np.array(masked_nodes), np.array(masked_values), np.array(masked_weights), mask
 
 
     def convert_uncertain_parameters(self, uncertain_parameters):
@@ -165,11 +165,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, masked_weights, mask = self.create_mask(nodes, feature, weights)
+            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes, feature, weights)
 
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
-                                                        masked_weights, masked_U)
+                                                        masked_weights, masked_values)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +\
                                     "for feature: {} ".format(feature) +\
@@ -204,11 +204,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, mask = self.create_mask(nodes, feature)
+            masked_nodes, masked_values, mask = self.create_mask(nodes, feature)
 
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                        masked_U, rule="T")
+                                                        masked_values, rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -254,7 +254,7 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, masked_weights, mask = self.create_mask(nodes_MvNormal,
+            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_MvNormal,
                                                                       feature,
                                                                       weights)
 
@@ -262,7 +262,7 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights,
-                                                        masked_U)
+                                                        masked_values)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -307,14 +307,14 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_U, mask = self.create_mask(nodes_MvNormal, feature)
+            masked_nodes, masked_values, mask = self.create_mask(nodes_MvNormal, feature)
 
 
 
 
             if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                        masked_U, rule="T")
+                                                        masked_values, rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -332,8 +332,8 @@ class UncertaintyCalculations(ParameterBase):
 
         for feature in self.data:
             if feature in self.U_hat:
-                self.data[feature]["E"] = cp.E(self.U_hat[feature], self.distribution)
-                self.data[feature]["Var"] = cp.Var(self.U_hat[feature], self.distribution)
+                self.data[feature]["mean"] = cp.E(self.U_hat[feature], self.distribution)
+                self.data[feature]["variance"] = cp.Var(self.U_hat[feature], self.distribution)
 
                 samples = self.distribution.sample(self.nr_pc_mc_samples, "H")
 
@@ -342,14 +342,14 @@ class UncertaintyCalculations(ParameterBase):
 
                     self.data[feature]["sensitivity_1"] = cp.Sens_m(self.U_hat[feature], self.distribution)
                     self.data[feature]["sensitivity_t"] = cp.Sens_t(self.U_hat[feature], self.distribution)
-                    self.calculate_total_sensitivity(sensitivity="sensitivity_1")
-                    self.calculate_total_sensitivity(sensitivity="sensitivity_t")
+                    self.calculate_sensitivity_sum(sensitivity="sensitivity_1")
+                    self.calculate_sensitivity_sum(sensitivity="sensitivity_t")
 
                 else:
                     self.U_mc[feature] = self.U_hat[feature](samples)
 
-                self.data[feature]["p_05"] = np.percentile(self.U_mc[feature], 5, -1)
-                self.data[feature]["p_95"] = np.percentile(self.U_mc[feature], 95, -1)
+                self.data[feature]["percentile_5"] = np.percentile(self.U_mc[feature], 5, -1)
+                self.data[feature]["percentile_95"] = np.percentile(self.U_mc[feature], 95, -1)
 
 
 
@@ -404,16 +404,25 @@ class UncertaintyCalculations(ParameterBase):
         # TODO mask data
 
         for feature in self.data:
-            self.data[feature]["E"] = np.mean(self.data[feature]["U"], 0)
-            self.data[feature]["Var"] = np.var(self.data[feature]["U"], 0)
+            self.data[feature]["mean"] = np.mean(self.data[feature]["values"], 0)
+            self.data[feature]["variance"] = np.var(self.data[feature]["values"], 0)
 
-            self.data[feature]["p_05"] = np.percentile(self.data[feature]["U"], 5, 0)
-            self.data[feature]["p_95"] = np.percentile(self.data[feature]["U"], 95, 0)
+            self.data[feature]["percentile_5"] = np.percentile(self.data[feature]["values"], 5, 0)
+            self.data[feature]["percentile_95"] = np.percentile(self.data[feature]["values"], 95, 0)
 
         return self.data
 
 
-    def calculate_total_sensitivity(self, sensitivity="sensitivity_1"):
+    def calculate_sensitivity_sum(self, sensitivity="sensitivity_1"):
+        if sensitivity not in ["sensitivity_1", "sensitivity_t", "1", "t"]:
+            raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t.")
+
+        if sensitivity == "1":
+            sensitivity = "sensitivity_1"
+
+        if sensitivity == "t":
+            sensitivity = "sensitivity_t"
+
         for feature in self.data:
             if sensitivity in self.data[feature]:
                 total_sensitivity = 0
@@ -428,4 +437,4 @@ class UncertaintyCalculations(ParameterBase):
                     if total_sensitivity != 0:
                         total_sense[i] /= float(total_sensitivity)
 
-                self.data[feature]["total_" + sensitivity] = np.array(total_sense)
+                self.data[feature][sensitivity + "_sum"] = np.array(total_sense)

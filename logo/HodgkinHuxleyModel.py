@@ -125,4 +125,4 @@ class HodgkinHuxleyModel(Model):
         X, t = solver.solve(self.t)
 
         self.t = t
-        self.U = X[:, 0]
+        self.values = X[:, 0]
