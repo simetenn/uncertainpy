@@ -116,15 +116,12 @@ def brunel_network(eta=2,
     #     spiketrain = events_I["times"][events_I["senders"] == sender]
     #     spiketrains.append(spiketrain)
 
-    # U must be a list/array of spiketrains
-    U = spiketrains
-    t = simtime
 
-    return time, values
+    return time, spiketrains
 
 
 
 
 if __name__ == "__main__":
     time, values = brunel_network()
-    print U
+    print values

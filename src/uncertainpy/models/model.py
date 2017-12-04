@@ -267,18 +267,20 @@ class Model(object):
             raise ValueError("model.run() returns an numpy array. "
                              "This indicates only t or U is returned. "
                              "model.run() or model function must return "
-                             "t and U (return time, values | return None, U)")
+                             "time and values "
+                             "(return time, values | return None, values)")
 
         if isinstance(model_result, str):
             raise ValueError("model.run() returns an string. "
                              "This indicates only t or U is returned. "
                              "model.run() or model function must return "
-                             "t and U (return time, values | return None, U)")
+                             "time and values "
+                             " (return time, values | return None, values)")
 
         try:
             time, values = model_result[:2]
         except (ValueError, TypeError) as error:
-            msg = "model.run() or model function must return t and U (return time, values | return None, U)"
+            msg = "model.run() or model function must return time and values (return time, values | return None, values)"
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)

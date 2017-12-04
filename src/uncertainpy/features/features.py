@@ -375,7 +375,7 @@ class Features(object):
         try:
             time_feature, values_feature = feature_result
         except (ValueError, TypeError) as error:
-            msg = "feature {} must return t and U (return time, values | return None, U)".format(feature_name)
+            msg = "feature {} must return time and values (return time, values | return None, U)".format(feature_name)
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)

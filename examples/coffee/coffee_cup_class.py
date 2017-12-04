@@ -17,6 +17,6 @@ class CoffeeCup(Model):
         def f(T, t, kappa, T_env):
             return kappa*(T - T_env)
 
-        U = odeint(f, T_0, t, args=(kappa, T_env))[:, 0]
+        values = odeint(f, T_0, t, args=(kappa, T_env))[:, 0]
 
         return time, values

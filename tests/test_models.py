@@ -245,7 +245,7 @@ class TestNestModel(unittest.TestCase):
 
         time, values = model.run()
 
-        correct_U = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
+        correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
                      47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
         self.assertIsNone(t)
@@ -256,7 +256,7 @@ class TestNestModel(unittest.TestCase):
         model = NestModel(brunel_network)
 
         time, values = model.run()
-        correct_U = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
+        correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
                      47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
         time, values = model.postprocess(t, correct_U)

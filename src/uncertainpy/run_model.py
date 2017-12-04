@@ -104,14 +104,14 @@ class RunModel(ParameterBase):
         self._parallel.model = self.model
 
 
-    def apply_interpolation(self, t_interpolate, interpolation):
+    def apply_interpolation(self, time_interpolate, interpolation):
         """
         Perform interpolation of one model/feature using the interpolation
         objects created by Parallel.
 
         Parameters
         ----------
-        t_interpolate : list
+        time_interpolate : list
             A list of time arrays from all runs of the model/features.
         interpolation : list
             A list of scipy interpolation objects from all runs of
@@ -134,19 +134,19 @@ class RunModel(ParameterBase):
         """
 
         lengths = []
-        for t_tmp in t_interpolate:
-            lengths.append(len(t_tmp))
+        for time_tmp in time_interpolate:
+            lengths.append(len(time_tmp))
 
         index_max_len = np.argmax(lengths)
-        t = t_interpolate[index_max_len]
+        time = time_interpolate[index_max_len]
 
         interpolated_results = []
         for inter in interpolation:
-            interpolated_results.append(inter(t))
+            interpolated_results.append(inter(time))
 
         interpolated_results = np.array(interpolated_results)
 
-        return t, interpolated_results
+        return time, interpolated_results
 
 
     def results_to_data(self, results):
@@ -230,20 +230,20 @@ class RunModel(ParameterBase):
                                               + " no support for >= 2D interpolation")
 
                 elif np.ndim(results[0][feature]["values"]) == 1:
-                    t_interpolate = []
+                    time_interpolate = []
                     interpolations = []
                     for result in results:
                         # if "time" in result[feature]:
                         if not np.all(np.isnan(result[feature]["time"])):
-                            t_interpolate.append(result[feature]["time"])
+                            time_interpolate.append(result[feature]["time"])
                         elif not np.all(np.isnan(result[self.model.name]["time"])):
-                            t_interpolate.append(result[self.model.name]["time"])
+                            time_interpolate.append(result[self.model.name]["time"])
                         else:
                             raise ValueError("Neither {} or model has t values to use in interpolation".format(feature))
 
                         interpolations.append(result[feature]["interpolation"])
 
-                    data[feature]["time"], data[feature]["values"] = self.apply_interpolation(t_interpolate, interpolations)
+                    data[feature]["time"], data[feature]["values"] = self.apply_interpolation(time_interpolate, interpolations)
 
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
@@ -436,16 +436,16 @@ class RunModel(ParameterBase):
         i = 0
         for result in results:
             if not np.all(np.isnan(result[feature]["values"])):
-                u_prev = result[feature]["values"]
+                values_prev = result[feature]["values"]
                 break
             i += 1
 
         for result in results[i:]:
-            u = result[feature]["values"]
-            if not np.all(np.isnan(u)):
-                if np.shape(u_prev) != np.shape(u):
+            values = result[feature]["values"]
+            if not np.all(np.isnan(values)):
+                if np.shape(values_prev) != np.shape(values):
                     return True
-                u_prev = u
+                values_prev = values
 
         return False
 
@@ -559,16 +559,16 @@ class RunModel(ParameterBase):
                 # Find shape of the first result that is not only nan values
                 shape = np.shape(results[0][feature][data])
                 for i in range(len(results)):
-                    U = results[i][feature][data]
-                    if not np.all(np.isnan(U)):
-                        shape = np.shape(U)
+                    values = results[i][feature][data]
+                    if not np.all(np.isnan(values)):
+                        shape = np.shape(values)
                         break
 
                 # Find all results that is only nan, and change their shape if
                 # the shape is wrong
                 for i in range(len(results)):
-                    U = results[i][feature][data]
-                    if np.all(np.isnan(U)) and np.shape(U) != shape:
+                    values = results[i][feature][data]
+                    if np.all(np.isnan(values)) and np.shape(values) != shape:
                         results[i][feature][data] = np.full(shape, np.nan, dtype=float)
 
             return results

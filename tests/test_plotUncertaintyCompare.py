@@ -262,7 +262,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         model = TestingModel1d()
         model.run()
         t = model.t
-        U = model.U
+        values = model.U
 
         feature = TestingFeatures()
 

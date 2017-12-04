@@ -684,7 +684,7 @@ class TestNetworkFeatures(unittest.TestCase):
                  89.9202782005130530, 56.5991363488668640,
                  33.9579695054921231, 19.4106207950416447]
 
-        correct_U = [np.array(rates), np.array(rates),
+        correct_values = [np.array(rates), np.array(rates),
                      np.array(rates), None]
         correct_t = np.linspace(0, 8, 51)[:-1]
 
@@ -709,7 +709,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertIsNone(time)
         self.assertEqual(values.shape, (4, 4))
 
-        # correct_U = [[0.0, 5.9604644775390625e-08, 5.9604644775390625e-08, 2.9980016657780828],
+        # correct_values = [[0.0, 5.9604644775390625e-08, 5.9604644775390625e-08, 2.9980016657780828],
         #              [5.9604644775390625e-08, 0.0, 5.9604644775390625e-08, 2.9980016657780828],
         #              [5.9604644775390625e-08, 5.9604644775390625e-08, 0.0, 2.9980016657780828],
         #              [2.9980016657780828, 2.9980016657780828, 2.9980016657780828, 0.0]]

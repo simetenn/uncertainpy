@@ -109,8 +109,7 @@ class BrunelNetwork(NestModel):
             spiketrain = events["times"][events["senders"] == sender]
             spiketrains.append(spiketrain)
 
-        # U must be a list/array of spiketrains
-        U = spiketrains
-        t = self.simtime
+        # values must be a list/array of spiketrains
+        time = self.simtime
 
-        return time, values
+        return time, spiketrains

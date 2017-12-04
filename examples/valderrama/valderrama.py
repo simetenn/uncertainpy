@@ -100,12 +100,12 @@ class Valderrama(Model):
         initial_conditions = [self.V_0, self.h_0, self.m_0, self.n_0]
 
         X = odeint(self.dXdt, initial_conditions, self.t)
-        U = X[:, 0]
+        values = X[:, 0]
 
         t = self.t
-        U = X[:, 0]
+        values = X[:, 0]
 
-        U = U[t > 5]
+        values = U[t > 5]
         t = t[t > 5]
 
         # Add info needed by certain spiking features and efel features

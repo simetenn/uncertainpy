@@ -94,7 +94,7 @@ class UncertaintyCalculations(ParameterBase):
         if feature not in self.data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
-        masked_U = []
+        masked_values = []
         mask = np.ones(len(self.data[feature]["values"]), dtype=bool)
 
         # TODO use numpy masked array

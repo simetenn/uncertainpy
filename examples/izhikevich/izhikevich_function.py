@@ -34,7 +34,7 @@ def izhikevich(a=0.02, b=0.2, c=-50, d=2):
     u[0, 1] = b*v0
 
 
-    U = [v0]*len(t)
+    values = [v0]*len(t)
 
 
     # Runge Kutta 4

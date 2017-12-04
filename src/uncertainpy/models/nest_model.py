@@ -142,15 +142,15 @@ class NestModel(Model):
         """
 
         dt = nest.GetKernelStatus()["resolution"]
-        t = np.arange(0, simulation_end, dt)
+        time = np.arange(0, simulation_end, dt)
 
         expanded_spiketrains = []
         for spiketrain in spiketrains:
-            binary_spike = np.zeros(len(t))
-            binary_spike[np.in1d(t, spiketrain)] = 1
+            binary_spike = np.zeros(len(time))
+            binary_spike[np.in1d(time, spiketrain)] = 1
 
             expanded_spiketrains.append(binary_spike)
 
-        U = np.array(expanded_spiketrains)
+        values = np.array(expanded_spiketrains)
 
         return time, values

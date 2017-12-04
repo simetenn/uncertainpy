@@ -109,7 +109,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
 
@@ -133,7 +133,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
 
@@ -168,7 +168,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
 
@@ -184,7 +184,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
         self.plot.data["TestingModel1d"]["t"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
-        U = np.load(os.path.join(self.folder, "data/U_test.npy"))
+        values = np.load(os.path.join(self.folder, "data/U_test.npy"))
         self.plot.data["TestingModel1d"]["U"] = [U, U, U, U, U]
         self.plot.data.model_name = "TestingModel1d"
 

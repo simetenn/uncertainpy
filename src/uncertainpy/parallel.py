@@ -5,26 +5,6 @@ import scipy.interpolate as scpi
 
 from .base import Base
 
-"""
-result = {model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                       "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature0d": {"values": 1,
-                        "time": np.nan},
-          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                               "interpolation": <scipy.interpolate.fitpack2.\
-                                                InterpolatedUnivariateSpline\
-                                                object at 0x7f1c78f0d4d0>},
-          "feature_invalid": {"values": np.nan,
-                              "time": np.nan}}
-"""
-
-# TODO test what happens with inherited docstring
 class Parallel(Base):
     """
     Calculate model and features in parallel for one instance of model parameters.
@@ -231,19 +211,19 @@ class Parallel(Base):
                 postprocess_result = self.model.postprocess(*model_result)
 
                 try:
-                    t_postprocess, U_postprocess = postprocess_result
+                    time_postprocess, values_postprocess = postprocess_result
                 except (ValueError, TypeError) as error:
-                    msg = "model.postprocess() must return t and U (return time, values | return None, U)"
+                    msg = "model.postprocess() must return time and values (return time, values | return None, values)"
                     if not error.args:
                         error.args = ("",)
                     error.args = error.args + (msg,)
                     raise
 
-                U_postprocess = self.none_to_nan(U_postprocess)
-                t_postprocess = self.none_to_nan(t_postprocess)
+                values_postprocess = self.none_to_nan(values_postprocess)
+                time_postprocess = self.none_to_nan(time_postprocess)
 
-                results[self.model.name] = {"time": t_postprocess,
-                                            "values": U_postprocess}
+                results[self.model.name] = {"time": time_postprocess,
+                                            "values": values_postprocess}
 
 
             # Calculate features from the model results
@@ -251,14 +231,14 @@ class Parallel(Base):
             feature_results = self.features.calculate_features(*feature_preprocess)
 
             for feature in feature_results:
-                t_feature = feature_results[feature]["time"]
-                U_feature = feature_results[feature]["values"]
+                time_feature = feature_results[feature]["time"]
+                values_feature = feature_results[feature]["values"]
 
-                t_feature = self.none_to_nan(t_feature)
-                U_feature = self.none_to_nan(U_feature)
+                time_feature = self.none_to_nan(time_feature)
+                values_feature = self.none_to_nan(values_feature)
 
-                results[feature] = {"values": U_feature,
-                                    "time": t_feature}
+                results[feature] = {"values": values_feature,
+                                    "time": time_feature}
 
             # Create interpolations
             results = self.create_interpolations(results)
@@ -274,7 +254,7 @@ class Parallel(Base):
             raise error
 
 
-    def none_to_nan(self, U):
+    def none_to_nan(self, values):
         """
         Converts None values in `values` to a arrays of numpy.nan.
 
@@ -308,33 +288,33 @@ class Parallel(Base):
                     [ nan,  nan,  nan],
                     [  1.,   2.,   3.]]])
         """
-        U_list = np.array(U).tolist()
+        values_list = np.array(values).tolist()
 
-        if U is None:
-            U_list = np.nan
-        elif hasattr(U, "__iter__") and len(U) == 0:
-            U_list = np.nan
+        if values is None:
+            values_list = np.nan
+        elif hasattr(values, "__iter__") and len(values) == 0:
+            values_list = np.nan
         else:
             # To handle the special case of 0d arrays,
             # which have an __iter__, but cannot be iterated over
             try:
-                for i, u in enumerate(U):
+                for i, u in enumerate(values):
                     if hasattr(u, "__iter__"):
-                        U_list[i] = self.none_to_nan(u)
+                        values_list[i] = self.none_to_nan(u)
 
                 fill = np.nan
-                for i, u in enumerate(U):
+                for i, u in enumerate(values):
                     if u is not None:
-                        fill = np.full(np.shape(U_list[i]), np.nan, dtype=float).tolist()
+                        fill = np.full(np.shape(values_list[i]), np.nan, dtype=float).tolist()
                         break
 
-                for i, u in enumerate(U):
+                for i, u in enumerate(values):
                     if u is None:
-                        U_list[i] = fill
+                        values_list[i] = fill
 
             except TypeError:
-                return U_list
+                return values_list
 
 
-        return np.array(U_list)
+        return np.array(values_list)
 

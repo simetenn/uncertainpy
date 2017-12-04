@@ -93,18 +93,18 @@ class TestDataFeature(unittest.TestCase):
 
 
     def test_ndim(self):
-        self.data_feature.U = [[[1, 2, 3], [1, 2, 3]]]
+        self.data_feature.values = [[[1, 2, 3], [1, 2, 3]]]
 
         self.assertEqual(self.data_feature.ndim(), 2)
 
-        self.data_feature.U = [1]
+        self.data_feature.values = [1]
 
         self.assertEqual(self.data_feature.ndim(), 0)
 
-        self.data_feature.U = [np.arange(0, 10)]
+        self.data_feature.values = [np.arange(0, 10)]
         self.assertEqual(self.data_feature.ndim(), 1)
 
-        self.data_feature.U =[np.array([np.arange(0, 10),
+        self.data_feature.values =[np.array([np.arange(0, 10),
                                         np.arange(0, 10)])]
 
         self.assertEqual(self.data_feature.ndim(), 2)
@@ -113,7 +113,7 @@ class TestDataFeature(unittest.TestCase):
     def test_contains(self):
         self.assertFalse("error" in self.data_feature)
 
-        self.data_feature.U = 2
+        self.data_feature.values = 2
 
         self.assertTrue("U" in self.data_feature)
 
@@ -202,7 +202,7 @@ class TestData(unittest.TestCase):
 
 
     # def test_is_adaptive_false(self):
-    #     self.data.U = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
+    #     self.data.values = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
     #                    "TestingModel1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
     #     self.data.features_1d = ["feature1d", "TestingModel1d"]
@@ -211,7 +211,7 @@ class TestData(unittest.TestCase):
 
 
     # def test_is_adaptive_true(self):
-    #     self.data.U = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
+    #     self.data.values = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
     #                    "TestingModel1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
 
     #     self.data.features_1d = ["feature1d", "TestingModel1d"]
@@ -303,16 +303,16 @@ class TestData(unittest.TestCase):
 
         self.data["model_name"].labels = ["x", "y"]
         self.data["feature"].labels = ["x", "y"]
-        self.data["model_name"].U = [[1, 2], [1, 2]]
-        self.data["feature"].U = [[1, 2], [1, 2]]
-        self.data["feature2"].U = [[1, 2], [1, 2]]
+        self.data["model_name"].values = [[1, 2], [1, 2]]
+        self.data["feature"].values = [[1, 2], [1, 2]]
+        self.data["feature2"].values = [[1, 2], [1, 2]]
 
         self.data.model_name = "model_name"
 
         self.assertEqual(self.data.get_labels("feature"), ["x", "y"])
         self.assertEqual(self.data.get_labels("feature2"), ["x", "y"])
 
-        self.data["feature2"].U = [[[1], [2]], [[1], [2]]]
+        self.data["feature2"].values = [[[1], [2]], [[1], [2]]]
         self.assertEqual(self.data.get_labels("feature2"), ["", "", ""])
 
         self.data["feature"]["labels"] = ["x"]
@@ -421,11 +421,11 @@ class TestData(unittest.TestCase):
 
         self.data.add_features(["feature0d", "feature1d", "feature2d", "feature_invalid"])
 
-        self.data["feature0d"].U = [1]
-        self.data["feature1d"].U = [np.arange(0, 10)]
-        self.data["feature2d"].U = [np.array([np.arange(0, 10),
+        self.data["feature0d"].values = [1]
+        self.data["feature1d"].values = [np.arange(0, 10)]
+        self.data["feature2d"].values = [np.array([np.arange(0, 10),
                                               np.arange(0, 10)])]
-        self.data["feature_invalid"].U = [np.nan]
+        self.data["feature_invalid"].values = [np.nan]
 
         self.assertEqual(self.data.ndim("feature0d"), 0)
         self.assertEqual(self.data.ndim("feature1d"), 1)

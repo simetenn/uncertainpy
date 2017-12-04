@@ -82,7 +82,7 @@ data = {"model_cmds": model_cmds
                 raise RuntimeError(err)
 
 
-            U = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
+            values = np.load(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))
             t = np.load(os.path.join(filedir, ".tmp_t_%s.npy" % current_process))
 
             os.remove(os.path.join(filedir, ".tmp_U_%s.npy" % current_process))

@@ -190,8 +190,8 @@ class NeuronModel(Model):
 
         self.h.run()
 
-        U = self._to_array(self.V)
-        t = self._to_array(self.t)
+        values = self._to_array(self.V)
+        time = self._to_array(self.time)
 
         return time, values, self.info
 
