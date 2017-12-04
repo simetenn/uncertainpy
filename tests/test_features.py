@@ -519,7 +519,7 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(spiketrains[2], self.values[2]))
         self.assertTrue(np.array_equal(spiketrains[3], self.values[3]))
 
-        self.assertEqual(spiketrains[0].simulation_end, self.time_original)
+        self.assertEqual(spiketrains[0].t_stop, self.time_original)
 
 
 class TestNetworkFeatures(unittest.TestCase):

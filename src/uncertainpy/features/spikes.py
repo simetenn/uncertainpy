@@ -10,7 +10,7 @@ class Spike:
         self.time = time
         self.V = V
 
-        self.V_spike = V
+        self.V_spike = V_spike
         self.time_spike = time_spike
 
         self.global_index = global_index
