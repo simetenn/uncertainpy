@@ -167,14 +167,14 @@ class TestUncertainty(TestCasePlot):
 
     def test_feature_function(self):
         def feature_function(time, values):
-            return "t", "U"
+            return "time", "values"
 
         self.uncertainty.features = feature_function
         self.assertIsInstance(self.uncertainty.features, Features)
 
         time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
         self.assertEqual(self.uncertainty.features.features_to_run,
                          ["feature_function"])
@@ -182,7 +182,7 @@ class TestUncertainty(TestCasePlot):
 
     def test_feature_functions(self):
         def feature_function(time, values):
-            return "t", "U"
+            return "time", "values"
 
         def feature_function2(time, values):
             return "t2", "U2"
@@ -192,17 +192,17 @@ class TestUncertainty(TestCasePlot):
         self.assertIsInstance(self.uncertainty.features, Features)
 
         time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
 
         time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
         time, values = self.uncertainty.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        self.assertEqual(time, "t2")
+        self.assertEqual(values, "U2")
 
         self.assertEqual(self.uncertainty.features.features_to_run,
                          ["feature_function", "feature_function2"])
@@ -211,10 +211,10 @@ class TestUncertainty(TestCasePlot):
 
     def test_feature_functions_base(self):
         def feature_function(time, values):
-            return "t", "U"
+            return "time", "values"
 
         def feature_function2(time, values):
-            return "t2", "U2"
+            return "time2", "values2"
 
         implemented_features = ["nr_spikes", "time_before_first_spike",
                                 "spike_rate", "average_AP_overshoot",
@@ -225,12 +225,12 @@ class TestUncertainty(TestCasePlot):
         self.assertIsInstance(self.uncertainty.features, SpikingFeatures)
 
         time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(t, "t")
-        self.assertEqual(U, "U")
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
         time, values = self.uncertainty.features.feature_function2(None, None)
-        self.assertEqual(t, "t2")
-        self.assertEqual(U, "U2")
+        self.assertEqual(time, "time2")
+        self.assertEqual(values, "values2")
 
         self.assertEqual(set(self.uncertainty.features.features_to_run),
                          set(["feature_function", "feature_function2"] + implemented_features))
@@ -524,7 +524,7 @@ class TestUncertainty(TestCasePlot):
         folder = os.path.dirname(os.path.realpath(__file__))
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        data_types = ["U", "t", "mean", "variance", "percentile_5", "percentile_95",
+        data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
                       "sensitivity_1", "sensitivity_1_sum",
                       "sensitivity_t", "sensitivity_t_sum"]
 
