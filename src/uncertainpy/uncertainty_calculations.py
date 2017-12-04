@@ -3,7 +3,7 @@ import multiprocess as mp
 from tqdm import tqdm
 import chaospy as cp
 
-from .run_model import RunModel
+from .model.run_model import RunModel
 from .base import ParameterBase
 
 # Model is now potentially set two places, is that a problem?

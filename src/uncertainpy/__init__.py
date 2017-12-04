@@ -3,12 +3,10 @@ from .distribution import uniform, normal
 from .parameters import Parameter, Parameters
 from .uncertainty import UncertaintyEstimation
 
-from .run_model import RunModel
 from .uncertainty_calculations import UncertaintyCalculations
-from .parallel import Parallel
 
 from .plotting import PlotUncertainty
 from .features import Features, NetworkFeatures, EfelFeatures
 from .features import GeneralSpikingFeatures, SpikingFeatures, Spike, Spikes
-from .models import Model, NeuronModel, NestModel
+from .models import Model, NeuronModel, NestModel, RunModel, Parallel
 from .utils import create_logger
