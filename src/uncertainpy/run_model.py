@@ -5,8 +5,8 @@ import numpy as np
 import multiprocess as mp
 
 from .data import Data
-from .parallel import Parallel
 from .base import ParameterBase
+from .parallel import Parallel
 
 
 class RunModel(ParameterBase):

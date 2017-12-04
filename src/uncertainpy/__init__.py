@@ -8,5 +8,6 @@ from .uncertainty_calculations import UncertaintyCalculations
 from .plotting import PlotUncertainty
 from .features import Features, NetworkFeatures, EfelFeatures
 from .features import GeneralSpikingFeatures, SpikingFeatures, Spike, Spikes
-from .models import Model, NeuronModel, NestModel, RunModel, Parallel
+from .models import Model, NeuronModel, NestModel
 from .utils import create_logger
+
