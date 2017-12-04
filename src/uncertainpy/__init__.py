@@ -10,4 +10,3 @@ from .features import Features, NetworkFeatures, EfelFeatures
 from .features import GeneralSpikingFeatures, SpikingFeatures, Spike, Spikes
 from .models import Model, NeuronModel, NestModel
 from .utils import create_logger
-

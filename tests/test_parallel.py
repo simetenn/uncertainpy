@@ -6,7 +6,7 @@ import scipy.interpolate
 import numpy as np
 
 from xvfbwrapper import Xvfb
-from uncertainpy import Parallel
+from uncertainpy.parallel import Parallel
 from uncertainpy.models import NeuronModel, Model
 from uncertainpy.features import Features
 
