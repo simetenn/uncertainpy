@@ -392,7 +392,7 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
     def test_polynomial_chaos_single_plot(self):
@@ -564,12 +564,12 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
         self.compare_plot("feature1d_sensitivity_1_grid")
-        self.compare_plot("feature0d_total-sensitivity_1")
+        self.compare_plot("feature0d_sensitivity_1_sum")
 
-        self.compare_plot("TestingModel1d_total-sensitivity_1")
-        self.compare_plot("feature0d_total-sensitivity_1")
-        self.compare_plot("feature1d_total-sensitivity_1")
-        self.compare_plot("feature2d_total-sensitivity_1")
+        self.compare_plot("TestingModel1d_sensitivity_1_sum")
+        self.compare_plot("feature0d_sensitivity_1_sum")
+        self.compare_plot("feature1d_sensitivity_1_sum")
+        self.compare_plot("feature2d_sensitivity_1_sum")
 
         self.compare_plot("feature1d_sensitivity_t_a")
         self.compare_plot("feature1d_sensitivity_t_b")
@@ -583,18 +583,18 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_sensitivity_t")
         self.compare_plot("TestingModel1d_sensitivity_t_grid")
 
-        self.compare_plot("feature0d_total-sensitivity_t")
+        self.compare_plot("feature0d_sensitivity_t_sum")
 
 
-        self.compare_plot("TestingModel1d_total-sensitivity_t")
-        self.compare_plot("feature0d_total-sensitivity_t")
-        self.compare_plot("feature1d_total-sensitivity_t")
-        self.compare_plot("feature2d_total-sensitivity_t")
+        self.compare_plot("TestingModel1d_sensitivity_t_sum")
+        self.compare_plot("feature0d_sensitivity_t_sum")
+        self.compare_plot("feature1d_sensitivity_t_sum")
+        self.compare_plot("feature2d_sensitivity_t_sum")
 
 
 
-        self.compare_plot("total-sensitivity_t_grid")
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_t_sum_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
     def test_plot_condensed(self):
@@ -611,7 +611,7 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("feature0d_sensitivity_1")
 
-        self.compare_plot("total-sensitivity_1_grid")
+        self.compare_plot("sensitivity_1_sum_grid")
 
 
 
