@@ -467,7 +467,7 @@ class PlotUncertainty(object):
 
 
 
-    def confidence_interval_1d(self,
+    def prediction_interval_1d(self,
                                feature=None,
                                hardcopy=True,
                                show=False,
@@ -484,7 +484,7 @@ class PlotUncertainty(object):
         if "mean" not in self.data[feature] \
             or "percentile_5" not in self.data[feature] \
                 or "percentile_95" not in self.data[feature]:
-            msg = "E, percentile_5  and/or percentile_95 of {feature} does not exist. Unable to plot confidence interval"
+            msg = "E, percentile_5  and/or percentile_95 of {feature} does not exist. Unable to plot prediction interval"
             self.logger.warning(msg.format(feature=feature))
             return
 
@@ -498,7 +498,7 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        title = feature.replace("_", " ") + ", 90\\% confidence interval"
+        title = feature.replace("_", " ") + ", 90\\% prediction interval"
         prettyPlot(time, self.data[feature].mean, title=title,
                    xlabel=xlabel, ylabel=ylabel, color=0,
                    **plot_kwargs)
@@ -510,12 +510,12 @@ class PlotUncertainty(object):
                          alpha=0.5, color=colors[0])
 
 
-        plt.legend(["mean", "90\% confidence interval"])
+        plt.legend(["mean", "90\% prediction interval"])
 
 
         if hardcopy:
             plt.savefig(os.path.join(self.output_dir,
-                                     feature + "_confidence-interval" + self.figureformat),
+                                     feature + "_prediction-interval" + self.figureformat),
                         bbox_inches="tight")
 
         if show:
@@ -731,7 +731,7 @@ class PlotUncertainty(object):
                 self.mean_1d(feature=feature)
                 self.variance_1d(feature=feature)
                 self.mean_variance_1d(feature=feature)
-                self.confidence_interval_1d(feature=feature)
+                self.prediction_interval_1d(feature=feature)
 
                 if sensitivity in self.data[feature]:
                     self.sensitivity_1d(feature=feature, sensitivity=sensitivity)
@@ -989,7 +989,7 @@ class PlotUncertainty(object):
         for feature in self.data:
             if self.data.ndim(feature) == 1:
                 self.mean_variance_1d(feature=feature)
-                self.confidence_interval_1d(feature=feature)
+                self.prediction_interval_1d(feature=feature)
 
                 if sensitivity in self.data[feature]:
                     self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)

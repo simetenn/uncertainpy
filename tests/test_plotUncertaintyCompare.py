@@ -364,7 +364,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.plot.plotCompareConfidenceInterval(feature="directComparison")
 
-        self.compare_plot("directComparison_confidence-interval_compare")
+        self.compare_plot("directComparison_prediction-interval_compare")
 
 
 
@@ -374,7 +374,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.plot.plotCompareConfidenceInterval(feature="feature1d")
 
-        self.compare_plot("feature1d_confidence-interval_compare")
+        self.compare_plot("feature1d_prediction-interval_compare")
 
 
 
@@ -446,7 +446,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.plot.plotCompareConfidenceIntervalFeature0d(feature="feature0d")
 
-        self.compare_plot("feature0d_confidence-interval_compare")
+        self.compare_plot("feature0d_prediction-interval_compare")
 
 
 
@@ -498,7 +498,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareFractionalConfidenceInterval("directComparison")
-        self.compare_plot("directComparison_confidence-interval_compare_fractional")
+        self.compare_plot("directComparison_prediction-interval_compare_fractional")
 
 
     def test_fractional_difference(self):
@@ -550,7 +550,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
                                   compare_folders=["pc", "mc_10", "mc_100"])
 
         self.plot.plotCompareFractionalConfidenceIntervalFeature0d(feature="feature0d")
-        self.compare_plot("feature0d_confidence-interval_compare_fractional")
+        self.compare_plot("feature0d_prediction-interval_compare_fractional")
 
 
 
@@ -564,12 +564,12 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         self.compare_plot("directComparison_mean_compare")
         self.compare_plot("directComparison_variance_compare")
         self.compare_plot("directComparison_mean-variance_compare")
-        self.compare_plot("directComparison_confidence-interval_compare")
+        self.compare_plot("directComparison_prediction-interval_compare")
 
         self.compare_plot("feature1d_mean_compare")
         self.compare_plot("feature1d_variance_compare")
         self.compare_plot("feature1d_mean-variance_compare")
-        self.compare_plot("feature1d_confidence-interval_compare")
+        self.compare_plot("feature1d_prediction-interval_compare")
 
 
     def test_plotCompareFractional1dFeatures(self):
@@ -580,11 +580,11 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_plot("directComparison_mean_compare_fractional")
         self.compare_plot("directComparison_variance_compare_fractional")
-        self.compare_plot("directComparison_confidence-interval_compare_fractional")
+        self.compare_plot("directComparison_prediction-interval_compare_fractional")
 
         self.compare_plot("feature1d_mean_compare_fractional")
         self.compare_plot("feature1d_variance_compare_fractional")
-        self.compare_plot("feature1d_confidence-interval_compare_fractional")
+        self.compare_plot("feature1d_prediction-interval_compare_fractional")
 
 
     def test_Compare0dFeatures(self):
@@ -595,7 +595,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_plot("feature0d_mean_compare")
         self.compare_plot("feature0d_variance_compare")
-        self.compare_plot("feature0d_confidence-interval_compare")
+        self.compare_plot("feature0d_prediction-interval_compare")
 
 
     def test_plotCompareFractional0dFeatures(self):
@@ -606,7 +606,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_plot("feature0d_mean_compare_fractional")
         self.compare_plot("feature0d_variance_compare_fractional")
-        self.compare_plot("feature0d_confidence-interval_compare_fractional")
+        self.compare_plot("feature0d_prediction-interval_compare_fractional")
 
 
     def test_plotCompareFractional(self):
@@ -617,15 +617,15 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_plot("feature0d_mean_compare_fractional")
         self.compare_plot("feature0d_variance_compare_fractional")
-        self.compare_plot("feature0d_confidence-interval_compare_fractional")
+        self.compare_plot("feature0d_prediction-interval_compare_fractional")
 
         self.compare_plot("directComparison_mean_compare_fractional")
         self.compare_plot("directComparison_variance_compare_fractional")
-        self.compare_plot("directComparison_confidence-interval_compare_fractional")
+        self.compare_plot("directComparison_prediction-interval_compare_fractional")
 
         self.compare_plot("feature1d_mean_compare_fractional")
         self.compare_plot("feature1d_variance_compare_fractional")
-        self.compare_plot("feature1d_confidence-interval_compare_fractional")
+        self.compare_plot("feature1d_prediction-interval_compare_fractional")
 
 
     def test_plotCompare(self):
@@ -636,17 +636,17 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_plot("feature0d_mean_compare")
         self.compare_plot("feature0d_variance_compare")
-        self.compare_plot("feature0d_confidence-interval_compare")
+        self.compare_plot("feature0d_prediction-interval_compare")
 
         self.compare_plot("directComparison_mean_compare")
         self.compare_plot("directComparison_variance_compare")
         self.compare_plot("directComparison_mean-variance_compare")
-        self.compare_plot("directComparison_confidence-interval_compare")
+        self.compare_plot("directComparison_prediction-interval_compare")
 
         self.compare_plot("feature1d_mean_compare")
         self.compare_plot("feature1d_variance_compare")
         self.compare_plot("feature1d_mean-variance_compare")
-        self.compare_plot("feature1d_confidence-interval_compare")
+        self.compare_plot("feature1d_prediction-interval_compare")
 
 
 
@@ -659,30 +659,30 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
 
         self.compare_plot("feature0d_mean_compare")
         self.compare_plot("feature0d_variance_compare")
-        self.compare_plot("feature0d_confidence-interval_compare")
+        self.compare_plot("feature0d_prediction-interval_compare")
 
         self.compare_plot("directComparison_mean_compare")
         self.compare_plot("directComparison_variance_compare")
         self.compare_plot("directComparison_mean-variance_compare")
-        self.compare_plot("directComparison_confidence-interval_compare")
+        self.compare_plot("directComparison_prediction-interval_compare")
 
         self.compare_plot("feature1d_mean_compare")
         self.compare_plot("feature1d_variance_compare")
         self.compare_plot("feature1d_mean-variance_compare")
-        self.compare_plot("feature1d_confidence-interval_compare")
+        self.compare_plot("feature1d_prediction-interval_compare")
 
 
         self.compare_plot("feature0d_mean_compare_fractional")
         self.compare_plot("feature0d_variance_compare_fractional")
-        self.compare_plot("feature0d_confidence-interval_compare_fractional")
+        self.compare_plot("feature0d_prediction-interval_compare_fractional")
 
         self.compare_plot("directComparison_mean_compare_fractional")
         self.compare_plot("directComparison_variance_compare_fractional")
-        self.compare_plot("directComparison_confidence-interval_compare_fractional")
+        self.compare_plot("directComparison_prediction-interval_compare_fractional")
 
         self.compare_plot("feature1d_mean_compare_fractional")
         self.compare_plot("feature1d_variance_compare_fractional")
-        self.compare_plot("feature1d_confidence-interval_compare_fractional")
+        self.compare_plot("feature1d_prediction-interval_compare_fractional")
 
 
 

@@ -553,30 +553,30 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
 
-    def test_confidence_interval_model_result(self):
+    def test_prediction_interval_model_result(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.confidence_interval_1d(feature="TestingModel1d")
+        self.plot.prediction_interval_1d(feature="TestingModel1d")
 
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
 
-    def test_confidence_interval_feature1d(self):
+    def test_prediction_interval_feature1d(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.confidence_interval_1d(feature="feature1d")
+        self.plot.prediction_interval_1d(feature="feature1d")
 
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
 
-    def test_confidence_interval_error(self):
+    def test_prediction_interval_error(self):
         self.plot.load(self.data_file_path)
 
         with self.assertRaises(ValueError):
-            self.plot.confidence_interval_1d(feature="feature0d")
+            self.plot.prediction_interval_1d(feature="feature0d")
 
         with self.assertRaises(ValueError):
-            self.plot.confidence_interval_1d(feature="feature2d")
+            self.plot.prediction_interval_1d(feature="feature2d")
 
 
     def test_sensitivity_1_model_result(self):
@@ -678,7 +678,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
         self.compare_plot("feature1d_sensitivity_1_a")
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
@@ -702,7 +702,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
         self.compare_plot("feature1d_sensitivity_1_a")
         self.compare_plot("feature1d_sensitivity_1_b")
         self.compare_plot("feature1d_sensitivity_1")
@@ -749,11 +749,11 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.plot_condensed(sensitivity="sensitivity_1")
 
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
         self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
         self.compare_plot("feature1d_sensitivity_1_grid")
 
         self.compare_plot("feature0d_sensitivity_1")
@@ -773,7 +773,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_sensitivity_1_a")
         self.compare_plot("TestingModel1d_sensitivity_1_b")
@@ -785,7 +785,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
         self.compare_plot("feature1d_sensitivity_1_a")
         self.compare_plot("feature1d_sensitivity_1_b")
@@ -848,7 +848,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_sensitivity_1_a")
         self.compare_plot("TestingModel1d_sensitivity_1_b")
@@ -859,7 +859,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
         self.compare_plot("feature1d_sensitivity_1_a")
         self.compare_plot("feature1d_sensitivity_1_b")
@@ -907,11 +907,11 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.plot(condensed=True, sensitivity="sensitivity_1")
 
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
         self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
         self.compare_plot("feature1d_sensitivity_1_grid")
 
         self.compare_plot("feature0d_sensitivity_1")
@@ -928,10 +928,10 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.plot(condensed=True, sensitivity=None)
 
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
         self.compare_plot("feature0d")
 
@@ -948,13 +948,13 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
 
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
@@ -969,7 +969,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_sensitivity_1_a")
         self.compare_plot("TestingModel1d_sensitivity_1_b")
@@ -980,7 +980,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
         self.compare_plot("feature1d_sensitivity_1_a")
         self.compare_plot("feature1d_sensitivity_1_b")

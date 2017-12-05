@@ -383,11 +383,11 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty.polynomial_chaos()
 
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
         self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
         self.compare_plot("feature1d_sensitivity_1_grid")
 
         self.compare_plot("feature0d_sensitivity_1")
@@ -422,16 +422,16 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty.polynomial_chaos_single()
 
         self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_single-parameter-b/feature1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_confidence-interval")
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_prediction-interval")
 
 
     def test_monte_carlo_single(self):
@@ -547,7 +547,7 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
         self.compare_plot("TestingModel1d_sensitivity_1_a")
         self.compare_plot("TestingModel1d_sensitivity_1_b")
@@ -558,7 +558,7 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
         self.compare_plot("feature1d_sensitivity_1_a")
         self.compare_plot("feature1d_sensitivity_1_b")
@@ -602,11 +602,11 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty.plot()
 
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
         self.compare_plot("TestingModel1d_sensitivity_1_grid")
 
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
         self.compare_plot("feature1d_sensitivity_1_grid")
 
         self.compare_plot("feature0d_sensitivity_1")
@@ -622,13 +622,13 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_confidence-interval")
+        self.compare_plot("TestingModel1d_prediction-interval")
 
 
         self.compare_plot("feature1d_mean")
         self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_confidence-interval")
+        self.compare_plot("feature1d_prediction-interval")
 
 
     def test_results(self):

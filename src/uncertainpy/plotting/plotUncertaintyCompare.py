@@ -393,7 +393,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
     def plotCompareConfidenceInterval(self, feature="directComparison",
                                       hardcopy=True, show=False, **kwargs):
 
-        self.logger.debug("plotting: {}, confidence-interval, compare".format(feature))
+        self.logger.debug("plotting: {}, prediction-interval, compare".format(feature))
 
         if not self.loaded_compare_flag:
             raise ValueError("Datafiles must be loaded")
@@ -444,7 +444,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             new_figure = False
             color += 1
 
-        save_name = feature + "_confidence-interval_compare"
+        save_name = feature + "_prediction-interval_compare"
 
         plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
         plt.legend(ncol=2)
@@ -577,7 +577,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
     def plotCompareConfidenceIntervalFeature0d(self, feature, hardcopy=True,
                                                show=False, **kwargs):
 
-        self.logger.debug("plotting: {}, confidence-interval, compare".format(feature))
+        self.logger.debug("plotting: {}, prediction-interval, compare".format(feature))
 
 
         if not self.loaded_compare_flag:
@@ -640,9 +640,9 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
         plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
 
-        plt.title(feature + ", 90 \% confidence interval")
+        plt.title(feature + ", 90 \% prediction interval")
 
-        save_name = feature + "_confidence-interval_compare"
+        save_name = feature + "_prediction-interval_compare"
 
         if hardcopy:
             plt.savefig(os.path.join(self.compare_output_dir_figures,
@@ -775,7 +775,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             min_values.append(fractional_difference_95.min())
             max_values.append(fractional_difference_95.max())
 
-            title = feature + ", 90\% confidence interval, $\\frac{{|{0} - {1}|}}{{{0}}}$".format(reference_name, compare.split("_")[0])
+            title = feature + ", 90\% prediction interval, $\\frac{{|{0} - {1}|}}{{{0}}}$".format(reference_name, compare.split("_")[0])
 
             if new_figure:
                 ax = prettyPlot(self.t_compare[compare][feature], fractional_difference_mean, title=title,
@@ -797,7 +797,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
             new_figure = False
             color += 1
 
-        save_name = feature + "_confidence-interval_compare_fractional"
+        save_name = feature + "_prediction-interval_compare_fractional"
 
         plt.legend(ncol=2)
         plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
@@ -974,7 +974,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
         plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
 
-        save_name = feature + "_confidence-interval_compare_fractional"
+        save_name = feature + "_prediction-interval_compare_fractional"
 
         if hardcopy:
             plt.savefig(os.path.join(self.compare_output_dir_figures,
