@@ -2,11 +2,11 @@ import uncertainpy as un
 
 from coffee_cup_dependent_class import CoffeeCupDependent
 
-parameterlist = [["kappa", -0.05, None],
+parameter_list = [["kappa", -0.05, None],
                  ["u_env", 20, None],
                  ["alpha", 1, None]]
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.5))
 
 model = CoffeeCupDependent()

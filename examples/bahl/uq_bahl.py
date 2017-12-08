@@ -3,7 +3,7 @@ import chaospy as cp
 
 from .bahl import NeuronModelBahl
 
-parameterlist = [["e_pas", -80, cp.Uniform(-60, -85)],
+parameter_list = [["e_pas", -80, cp.Uniform(-60, -85)],
                  ["apical Ra", 261, cp.Uniform(150, 300)]]
 
 model = NeuronModelBahl(stimulus_start=100, stimulus_end=600)
@@ -12,7 +12,7 @@ model = NeuronModelBahl(stimulus_start=100, stimulus_end=600)
 features = un.SpikingFeatures()
 
 uncertainty = un.UncertaintyEstimation(model=model,
-                                       parameters=parameterlist,
+                                       parameters=parameter_list,
                                        features=features,
                                        save_figures=True)
 

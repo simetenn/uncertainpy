@@ -3,7 +3,7 @@ import uncertainpy as un
 path = "dLGN_modelDB/"
 
 
-parameterlist = [["cap", 1.1, None],
+parameter_list = [["cap", 1.1, None],
                  ["Rm", 22000, None],
                  ["Vrest", -63, None],
                  ["Epas", -67, None],
@@ -16,7 +16,7 @@ parameterlist = [["cap", 1.1, None],
 
 
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.05))
 
 model = un.NeuronModel(path=path, adaptive=True,

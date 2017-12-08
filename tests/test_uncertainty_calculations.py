@@ -30,10 +30,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-        self.parameterlist = [["a", 1, None],
+        self.parameter_list = [["a", 1, None],
                               ["b", 2, None]]
 
-        self.parameters = Parameters(self.parameterlist)
+        self.parameters = Parameters(self.parameter_list)
         self.parameters.set_all_distributions(uniform(0.5))
 
         self.model = TestingModel1d()
@@ -185,7 +185,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                            verbose_level="error",
                                                            seed=self.seed)
 
-        uncertainty_calculations.parameters = self.parameterlist
+        uncertainty_calculations.parameters = self.parameter_list
 
         self.assertIsInstance(uncertainty_calculations.parameters, Parameters)
         self.assertIsInstance(uncertainty_calculations.runmodel.parameters,
@@ -285,10 +285,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_create_mask_warning(self):
         logfile = os.path.join(self.output_test_dir, "test.log")
 
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -483,10 +483,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_convert_uncertain_parameters_error(self):
-        self.parameterlist = [["a", 1, None],
+        self.parameter_list = [["a", 1, None],
                               ["b", 2, None]]
 
-        self.parameters = Parameters(self.parameterlist)
+        self.parameters = Parameters(self.parameter_list)
 
         self.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
 
@@ -507,10 +507,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_convert_uncertain_parameters_distribution(self):
-        self.parameterlist = [["a", 1, None],
+        self.parameter_list = [["a", 1, None],
                               ["b", 2, None]]
 
-        self.parameters = Parameters(self.parameterlist)
+        self.parameters = Parameters(self.parameter_list)
 
         self.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
 
@@ -533,10 +533,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_convert_uncertain_parameters_distribution_list(self):
-        self.parameterlist = [["a", 1, None],
+        self.parameter_list = [["a", 1, None],
                               ["b", 2, None]]
 
-        self.parameters = Parameters(self.parameterlist)
+        self.parameters = Parameters(self.parameter_list)
 
         self.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
 
@@ -590,10 +590,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
     #
 
     def test_create_PCE_regression_adaptive_error(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(1))
 
         model = TestingModelAdaptive()
@@ -678,10 +678,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_analyse_PCE(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -848,10 +848,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_monte_carlo(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -896,10 +896,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_monte_carlo_feature0d(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -925,10 +925,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_monte_carlo_feature1d(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -956,10 +956,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_monte_carlo_feature2d(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -985,10 +985,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_create_PCE_regression_incomplete(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModelIncomplete()
@@ -1013,10 +1013,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_create_PCE_regression_incomplete(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModelIncomplete()
@@ -1056,10 +1056,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_create_PCE_regression_rosenblatt_incomplete(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModelIncomplete()

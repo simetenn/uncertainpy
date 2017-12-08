@@ -34,10 +34,10 @@ class TestUncertainty(TestCasePlot):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-        self.parameterlist = [["a", 1, None],
+        self.parameter_list = [["a", 1, None],
                               ["b", 2, None]]
 
-        self.parameters = Parameters(self.parameterlist)
+        self.parameters = Parameters(self.parameter_list)
         self.parameters.set_all_distributions(uniform(0.5))
 
         self.model = TestingModel1d()
@@ -72,8 +72,8 @@ class TestUncertainty(TestCasePlot):
         self.assertIsInstance(uncertainty.parameters, Parameters)
 
 
-    def test_init_parameterlist(self):
-        uncertainty = UncertaintyEstimation(self.model, self.parameterlist)
+    def test_init_parameter_list(self):
+        uncertainty = UncertaintyEstimation(self.model, self.parameter_list)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -135,7 +135,7 @@ class TestUncertainty(TestCasePlot):
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
-        uncertainty.parameters = self.parameterlist
+        uncertainty.parameters = self.parameter_list
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
         self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
@@ -356,10 +356,10 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_PC_plot(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -396,10 +396,10 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_polynomial_chaos_single_plot(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -435,10 +435,10 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_monte_carlo_single(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -484,10 +484,10 @@ class TestUncertainty(TestCasePlot):
 
     def test_monte_carlo(self):
 
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()
@@ -667,10 +667,10 @@ class TestUncertainty(TestCasePlot):
 
 
     def set_up_test_calculations(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
 
         model = TestingModel1d()

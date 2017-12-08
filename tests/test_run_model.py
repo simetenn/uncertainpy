@@ -31,10 +31,10 @@ class TestRunModel(unittest.TestCase):
                                                          "feature_invalid",
                                                          "feature_adaptive"])
 
-        self.parameterlist = [["a", 1, None],
+        self.parameter_list = [["a", 1, None],
                               ["b", 2, None]]
 
-        self.parameters = Parameters(self.parameterlist)
+        self.parameters = Parameters(self.parameter_list)
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
@@ -77,7 +77,7 @@ class TestRunModel(unittest.TestCase):
     def test_set_parameter_list(self):
         runmodel = RunModel(TestingModel2d(), None)
 
-        runmodel.parameters = self.parameterlist
+        runmodel.parameters = self.parameter_list
 
         self.assertIsInstance(runmodel.parameters, Parameters)
 

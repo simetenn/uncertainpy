@@ -168,11 +168,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_init_list_none(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         self.assertIsInstance(parameters, Parameters)
         self.assertIsInstance(parameters["gbar_Na"], Parameter)
@@ -185,11 +185,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_init_list_chaospy(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
 
         self.assertIsInstance(parameters, Parameters)
@@ -203,11 +203,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_init_object(self):
-        parameterlist = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
+        parameter_list = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
                          Parameter("gbar_K", 36),
                          Parameter("gbar_l", 10.3)]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         self.assertIsInstance(parameters, Parameters)
         self.assertIsInstance(parameters["gbar_Na"], Parameter)
@@ -216,11 +216,11 @@ class TestParameters(unittest.TestCase):
         self.assertIsNone(parameters.distribution)
 
     def test_init_object_dist(self):
-        parameterlist = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
+        parameter_list = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
                          Parameter("gbar_K", 36),
                          Parameter("gbar_l", 10.3)]
 
-        parameters = Parameters(parameterlist, distribution=cp.Uniform(110, 130))
+        parameters = Parameters(parameter_list, distribution=cp.Uniform(110, 130))
 
         self.assertIsInstance(parameters, Parameters)
         self.assertIsInstance(parameters["gbar_Na"], Parameter)
@@ -230,11 +230,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_ordered(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         uncertain_parameters = parameters.get_from_uncertain("name")
         self.assertEqual(uncertain_parameters, ["gbar_Na", "gbar_K", "gbar_l"])
@@ -243,11 +243,11 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(uncertain_parameters, ["gbar_Na", "gbar_K", "gbar_l"])
 
 
-        parameterlist = [["gbar_K", 36, cp.Normal(36, 1)],
+        parameter_list = [["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         uncertain_parameters = parameters.get_from_uncertain("name")
         self.assertEqual(uncertain_parameters, ["gbar_K", "gbar_Na", "gbar_l"])
@@ -260,34 +260,34 @@ class TestParameters(unittest.TestCase):
 
 
     def test_init_list_to_long(self):
-        parameterlist = [["gbar_Na", 120, None, 1]]
+        parameter_list = [["gbar_Na", 120, None, 1]]
 
         with self.assertRaises(TypeError):
-            Parameters(parameterlist)
+            Parameters(parameter_list)
 
 
     def test_init_no_list(self):
-        parameterlist = 1
+        parameter_list = 1
 
         with self.assertRaises(TypeError):
-            Parameters(parameterlist)
+            Parameters(parameter_list)
 
     def test_getitem(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         self.assertIsInstance(self.parameters["gbar_Na"], Parameter)
 
 
     def test_iter(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         result = [parameter for parameter in parameters]
 
@@ -299,11 +299,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_delitem(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         del parameters["gbar_Na"]
 
@@ -322,11 +322,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_set_distribution(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         def distribution_function(x):
             return cp.Uniform(x - 10, x + 10)
@@ -337,11 +337,11 @@ class TestParameters(unittest.TestCase):
 
 
     def set_all_distributions(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
 
         def distribution_function(x):
@@ -355,11 +355,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_from_uncertain_name(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
         result = self.parameters.get_from_uncertain()
 
         self.assertIn("gbar_Na", result)
@@ -368,11 +368,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_from_uncertain_value(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
         result = self.parameters.get_from_uncertain("value")
 
 
@@ -382,11 +382,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_from_uncertain_distribution(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
         result = self.parameters.get_from_uncertain("distribution")
 
         self.assertEqual(len(result), 2)
@@ -395,11 +395,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_name(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         result = self.parameters.get()
 
@@ -409,10 +409,10 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_value(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         result = self.parameters.get("value")
 
@@ -423,10 +423,10 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_value_list(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         result = self.parameters.get("value", ["gbar_Na", "gbar_K"])
 
@@ -436,22 +436,22 @@ class TestParameters(unittest.TestCase):
 
 
     def test_get_error(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         with self.assertRaises(AttributeError):
             self.parameters.get("not_a_parameter")
 
 
     def test_get_distribution(self):
-        parameterlist = [["gbar_Na", 120, cp.Uniform(110, 130)],
+        parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                          ["gbar_K", 36, cp.Normal(36, 1)],
                          ["gbar_l", 0.3, cp.Chi(1, 1, 0.3)]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
         result = self.parameters.get("distribution")
 
         self.assertEqual(len(result), 3)
@@ -469,11 +469,11 @@ class TestParameters(unittest.TestCase):
 
         parameter_change = {"soma gbar_nat": 10, "basal gbar_ih": 10, "iseg vshift2_nat": 10}
 
-        parameterlist = [["soma gbar_nat", 284.546493, None],
+        parameter_list = [["soma gbar_nat", 284.546493, None],
                          ["basal gbar_ih", 15.709707, None],
                          ["iseg vshift2_nat", -9.802976, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         self.parameters.set_parameters_file(parameter_file, parameter_change)
 
@@ -489,11 +489,11 @@ class TestParameters(unittest.TestCase):
         shutil.copy(os.path.join(self.test_data_dir, self.parameter_filename),
                     parameter_file)
 
-        parameterlist = [["soma gbar_nat", 10, None],
+        parameter_list = [["soma gbar_nat", 10, None],
                          ["basal gbar_ih", 10, None],
                          ["iseg vshift2_nat", 10, None]]
 
-        self.parameters = Parameters(parameterlist)
+        self.parameters = Parameters(parameter_list)
 
         self.parameters.reset_parameter_file(parameter_file)
 
@@ -504,11 +504,11 @@ class TestParameters(unittest.TestCase):
 
 
     def test_str(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, cp.Uniform(0.1, 0.5)]]
 
-        parameters = Parameters(parameterlist)
+        parameters = Parameters(parameter_list)
 
         result = str(parameters)
 

@@ -36,11 +36,11 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_CoffeeCupPointModelExploreParameters(self):
-        parameterlist = [["kappa", -0.05, None],
+        parameter_list = [["kappa", -0.05, None],
                          ["u_env", 20, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.CoffeeCupPointModel(parameters)
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -74,11 +74,11 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_CoffeeCupPointModelComparemonte_carlo(self):
-        parameterlist = [["kappa", -0.05, None],
+        parameter_list = [["kappa", -0.05, None],
                          ["u_env", 20, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.CoffeeCupPointModel(parameters)
         model.set_all_distributions(uncertainpy.Distribution(0.5).uniform)
 
@@ -106,12 +106,12 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_HodkinHuxleyModelExploreParameters(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.HodkinHuxleyModel(parameters)
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -146,12 +146,12 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_HodkinHuxleyModelComparemonte_carlo(self):
-        parameterlist = [["gbar_Na", 120, None],
+        parameter_list = [["gbar_Na", 120, None],
                          ["gbar_K", 36, None],
                          ["gbar_l", 0.3, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.HodkinHuxleyModel(parameters)
         model.set_all_distributions(uncertainpy.Distribution(0.5).uniform)
 
@@ -179,13 +179,13 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_IzhikevichModelExploreParameters(self):
-        parameterlist = [["a", 0.02, None],
+        parameter_list = [["a", 0.02, None],
                          ["b", 0.2, None],
                          ["c", -65, None],
                          ["d", 8, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.IzhikevichModel(parameters)
 
         exploration = uncertainpy.UncertaintyEstimations(model,
@@ -223,13 +223,13 @@ class TestUseCases(unittest.TestCase):
 
 
     def test_IzhikevichModelComparemonte_carlo(self):
-        parameterlist = [["a", 0.02, None],
+        parameter_list = [["a", 0.02, None],
                          ["b", 0.2, None],
                          ["c", -65, None],
                          ["d", 8, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.IzhikevichModel(parameters)
         model.set_all_distributions(uncertainpy.Distribution(0.5).uniform)
 
@@ -262,7 +262,7 @@ class TestUseCases(unittest.TestCase):
 
         full_path = os.path.join(self.folder, path)
 
-        # parameterlist = [["cap", 1.1, None],
+        # parameter_list = [["cap", 1.1, None],
         #                  ["Rm", 22000, None],
         #                  ["Vrest", -63, None],
         #                  ["Epas", -67, None],
@@ -273,10 +273,10 @@ class TestUseCases(unittest.TestCase):
         #                  ["gahp", 6.4e-5, None],
         #                  ["gcat", 1.17e-5, None]]
 
-        parameterlist = [["cap", 1.1, None],
+        parameter_list = [["cap", 1.1, None],
                          ["Rm", 22000, None]]
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.NeuronModel(parameters=parameters,
                                         file=file,
                                         path=full_path,
@@ -304,7 +304,7 @@ class TestUseCases(unittest.TestCase):
 
         full_path = os.path.join(self.folder, path)
 
-        # parameterlist = [["cap", 1.1, None],
+        # parameter_list = [["cap", 1.1, None],
         #                  ["Rm", 22000, None],
         #                  ["Vrest", -63, None],
         #                  ["Epas", -67, None],
@@ -315,11 +315,11 @@ class TestUseCases(unittest.TestCase):
         #                  ["gahp", 6.4e-5, None],
         #                  ["gcat", 1.17e-5, None]]
 
-        parameterlist = [["cap", 1.1, None],
+        parameter_list = [["cap", 1.1, None],
                          ["Rm", 22000, None]]
 
 
-        parameters = uncertainpy.Parameters(parameterlist)
+        parameters = uncertainpy.Parameters(parameter_list)
         model = uncertainpy.NeuronModel(parameters=parameters,
                                         file=file,
                                         path=full_path,

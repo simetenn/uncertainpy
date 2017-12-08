@@ -192,7 +192,7 @@ class UncertaintyCalculations(ParameterBase):
         self.P = cp.orth_ttr(self.p, self.distribution)
 
         if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 1
+            self.nr_pc_samples = 2*len(self.P) + 2
 
         nodes = self.distribution.sample(self.nr_pc_samples, "M")
 
@@ -293,7 +293,7 @@ class UncertaintyCalculations(ParameterBase):
         self.P = cp.orth_ttr(self.p, dist_MvNormal)
 
         if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 1
+            self.nr_pc_samples = 2*len(self.P) + 2
 
         nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))

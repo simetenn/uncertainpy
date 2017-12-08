@@ -2,10 +2,10 @@ import uncertainpy as un
 
 from brunel_network_class import BrunelNetwork
 
-parameterlist = [["J_E", 4, None],
+parameter_list = [["J_E", 4, None],
                  ["g", 4, None]]
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.1))
 
 model = BrunelNetwork()

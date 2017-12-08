@@ -26,10 +26,10 @@ import shutil
 #         self.seed = 10
 
 
-#         parameterlist = [["a", 1, None],
+#         parameter_list = [["a", 1, None],
 #                          ["b", 2, None]]
 
-#         parameters = Parameters(parameterlist)
+#         parameters = Parameters(parameter_list)
 #         model = TestingModel1d(parameters)
 #         model.set_all_distributions(Distribution(0.5).uniform)
 

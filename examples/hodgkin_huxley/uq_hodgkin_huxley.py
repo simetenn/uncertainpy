@@ -4,7 +4,7 @@ import chaospy as cp
 from hodgkin_huxley import HodgkinHuxley
 
 
-parameterlist = [["V_rest", -65, None],
+parameter_list = [["V_rest", -65, None],
                  ["Cm", 1, cp.Uniform(0.8, 1.5)],
                  ["gbar_Na", 120, cp.Uniform(80, 160)],
                  ["gbar_K", 36, cp.Uniform(26, 49)],
@@ -14,7 +14,7 @@ parameterlist = [["V_rest", -65, None],
                  ["E_l", -50.613, cp.Uniform(-61, -43)]]
 
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.5))
 
 

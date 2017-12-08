@@ -2,12 +2,12 @@ import uncertainpy
 from izhikevich import izhikevich
 
 
-parameterlist = [["a", 0.02, None],
+parameter_list = [["a", 0.02, None],
                  ["b", 0.2, None],
                  ["c", -65, None],
                  ["d", 8, None]]
 
-parameters = uncertainpy.Parameters(parameterlist)
+parameters = uncertainpy.Parameters(parameter_list)
 model = izhikevich(parameters)
 model.set_all_distributions(uncertainpy.Distribution(1).uniform)
 

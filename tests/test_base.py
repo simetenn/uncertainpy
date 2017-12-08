@@ -69,10 +69,10 @@ class TestBase(unittest.TestCase):
 
 class TestParameterBase(unittest.TestCase):
     def test_init(self):
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        base = ParameterBase(parameters=parameterlist,
+        base = ParameterBase(parameters=parameter_list,
                              model=model_function,
                              features=model_function,)
 
@@ -90,20 +90,20 @@ class TestParameterBase(unittest.TestCase):
     def test_set_parameters(self):
         base = ParameterBase()
 
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
-        base.parameters = parameterlist
+        base.parameters = parameter_list
 
         self.assertIsInstance(base.parameters, Parameters)
         self.assertEqual(base.parameters["a"].value, 1)
         self.assertEqual(base.parameters["b"].value, 2)
 
-        parameterlist = [["a", 1, None],
+        parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
 
-        base.parameters = Parameters(parameterlist)
+        base.parameters = Parameters(parameter_list)
 
         self.assertIsInstance(base.parameters, Parameters)
         self.assertEqual(base.parameters["a"].value, 1)

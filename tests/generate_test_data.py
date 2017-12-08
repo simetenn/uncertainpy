@@ -12,10 +12,10 @@ seed = 10
 
 
 def generate_data_polynomial_chaos():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
@@ -39,10 +39,10 @@ def generate_data_polynomial_chaos():  # pragma: no cover
 
 
 def generate_data_PC_model_function():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
 
@@ -66,10 +66,10 @@ def generate_data_PC_model_function():  # pragma: no cover
 
 
 def generate_data_PC_0D():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel0d()
@@ -91,10 +91,10 @@ def generate_data_PC_0D():  # pragma: no cover
 
 
 def generate_data_PC_2D():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel2d()
@@ -116,10 +116,10 @@ def generate_data_PC_2D():  # pragma: no cover
 
 
 def generate_data_PC_rosenblatt():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
@@ -146,10 +146,10 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
 
 
 def generate_data_polynomial_chaos_single():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
@@ -173,10 +173,10 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
 
 
 def generate_data_monte_carlo():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
@@ -198,10 +198,10 @@ def generate_data_monte_carlo():  # pragma: no cover
 
 
 def generate_data_monte_carlo_single():  # pragma: no cover
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()
@@ -226,10 +226,10 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
 
 # def generate_data_comparemonte_carlo():  # pragma: no cover
-#     parameterlist = [["a", 1, None],
+#     parameter_list = [["a", 1, None],
 #                      ["b", 2, None]]
 #
-#     parameters = un.Parameters(parameterlist)
+#     parameters = un.Parameters(parameter_list)
 #     model = TestingModel1d(parameters)
 #     model.set_all_distributions(un.uniform(0.5))
 #
@@ -278,10 +278,10 @@ def generate_data_empty():  # pragma: no cover
 def generate_data_uncertainty_calculations():  # pragma: no cover
     np.random.seed(seed)
 
-    parameterlist = [["a", 1, None],
+    parameter_list = [["a", 1, None],
                      ["b", 2, None]]
 
-    parameters = un.Parameters(parameterlist)
+    parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
     model = TestingModel1d()

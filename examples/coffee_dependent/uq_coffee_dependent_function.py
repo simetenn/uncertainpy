@@ -13,11 +13,11 @@ T_env_dist = cp.Uniform(15, 25)
 # # T_env_dist = un.uniform(percentage)(20)
 # # beta_dist = un.uniform(percentage)(-0.22)*alpha_dist
 
-parameterlist = [["alpha", 1, alpha_dist]
+parameter_list = [["alpha", 1, alpha_dist]
                  ["beta", -0.05, beta_dist],
                  ["T_env", 20, T_env_dist],]
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 
 model = un.Model(coffee_cup_dependent, labels=["time [s]", "Temperature [C]"])
 
@@ -108,11 +108,11 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # alpha_dist = un.uniform(percentage)(0.22)
 # T_env_dist = un.uniform(percentage)(20)
 
-# parameterlist = [["kappa", -0.05, beta_dist],
+# parameter_list = [["kappa", -0.05, beta_dist],
 #                  ["u_env", 20, T_env_dist],
 #                  ["a", 1, alpha_dist]]
 
-# parameters = un.Parameters(parameterlist)
+# parameters = un.Parameters(parameter_list)
 
 # uncertainty.parameters = parameters
 # uncertainty.uncertainty_quantification(rosenblatt=True,
@@ -123,7 +123,7 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_no_correlation",
 #                                        filename="coffee_dependent_no_correlation")
 
-# parameterlist = [["a", 1, None],
+# parameter_list = [["a", 1, None],
 #                  ["u_env", 20, None],
 #                  ["kappa", -0.05, None]]
 
@@ -139,7 +139,7 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # mu = [-0.22, 20, 0.22]
 # dist = cp.MvNormal(mu, C)
 
-# parameters = un.Parameters(parameterlist)
+# parameters = un.Parameters(parameter_list)
 # parameters.distribution = dist
 
 # uncertainty.parameters = parameters
@@ -150,7 +150,7 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 #                                        filename="coffee_dependent_reverse_order")
 
 
-parameterlist = [["T_env", 20, None],
+parameter_list = [["T_env", 20, None],
                  ["alpha", 1, None],
                  ["beta", -0.05, None]]
 
@@ -172,7 +172,7 @@ dist = cp.MvNormal(mu, C)
 # mu = [20, 1, -0.05]
 # dist = cp.MvNormal(mu, C)
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 parameters.distribution = dist
 
 # uncertainty.parameters = parameters
@@ -187,7 +187,7 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
                                        sensitivity="sensitivity_t")
 
 
-parameterlist = [["T_env", 20, None],
+parameter_list = [["T_env", 20, None],
                  ["beta", -0.05, None],
                  ["alpha", 1, None]]
 
@@ -204,7 +204,7 @@ dist = cp.MvNormal(mu, C)
 # dist = cp.MvNormal(mu, C)
 
 
-parameters = un.Parameters(parameterlist)
+parameters = un.Parameters(parameter_list)
 parameters.distribution = dist
 
 # uncertainty.parameters = parameters
