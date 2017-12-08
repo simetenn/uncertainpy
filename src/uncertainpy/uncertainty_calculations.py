@@ -14,7 +14,7 @@ class UncertaintyCalculations(ParameterBase):
                  features=None,
                  CPUs=mp.cpu_count(),
                  suppress_model_graphics=True,
-                 M=3,
+                 p=3,
                  nr_pc_samples=None,
                  nr_mc_samples=10*3,
                  nr_pc_mc_samples=10*5,
@@ -41,7 +41,7 @@ class UncertaintyCalculations(ParameterBase):
         self.nr_pc_samples = nr_pc_samples
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
-        self.M = M
+        self.p = p
 
         self.P = None
         self.distribution = None
@@ -154,7 +154,7 @@ class UncertaintyCalculations(ParameterBase):
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        self.P = cp.orth_ttr(self.M, self.distribution)
+        self.P = cp.orth_ttr(self.p, self.distribution)
 
         nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
 
@@ -189,7 +189,7 @@ class UncertaintyCalculations(ParameterBase):
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        self.P = cp.orth_ttr(self.M, self.distribution)
+        self.P = cp.orth_ttr(self.p, self.distribution)
 
         if self.nr_pc_samples is None:
             self.nr_pc_samples = 2*len(self.P) + 1
@@ -235,7 +235,7 @@ class UncertaintyCalculations(ParameterBase):
 
         dist_MvNormal = cp.J(*dist_MvNormal)
 
-        self.P = cp.orth_ttr(self.M, dist_MvNormal)
+        self.P = cp.orth_ttr(self.p, dist_MvNormal)
 
         # TODO fix order = 3.
         nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
@@ -290,7 +290,7 @@ class UncertaintyCalculations(ParameterBase):
         dist_MvNormal = cp.J(*dist_MvNormal)
 
 
-        self.P = cp.orth_ttr(self.M, dist_MvNormal)
+        self.P = cp.orth_ttr(self.p, dist_MvNormal)
 
         if self.nr_pc_samples is None:
             self.nr_pc_samples = 2*len(self.P) + 1

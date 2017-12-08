@@ -36,7 +36,7 @@ class Parameter(object):
         if it has a distribution.
     """
 
-    def __init__(self, name, value, distribution=None):
+    def __init__(self, name, value=None, distribution=None):
         """
         Parameter object, contains name of parameter, value of parameter and distribution of parameter.
 
@@ -44,7 +44,7 @@ class Parameter(object):
         ----------
         name: str
             Name of the parameter.
-        value: float, int, None
+        value: float, int, None, optional
             The fixed value of the parameter. If you give a parameter a distribution,
             in most cases you do not need to give it a fixed value.
         distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
