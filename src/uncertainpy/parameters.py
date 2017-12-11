@@ -90,6 +90,9 @@ class Parameter(object):
         elif isinstance(new_distribution, cp.Dist):
             self._distribution = new_distribution
         elif hasattr(new_distribution, '__call__'):
+            if self.value is None:
+                raise ValueError("The value of this parameter is None. A function cannot be created with new_distribution(self.value).")
+
             self._distribution = new_distribution(self.value)
             if not isinstance(self._distribution, cp.Dist):
                 raise TypeError("Function new_distribution does not return a Chaospy distribution")
@@ -128,6 +131,10 @@ class Parameter(object):
         filename: str
             Name of file.
         """
+        if self.value is None:
+            raise ValueError("The value of this parameter is None. The parameter file cannot be reset.")
+
+
         self.set_parameter_file(filename, self.value)
 
 
@@ -159,10 +166,10 @@ class Parameters(collections.MutableMapping):
 
     Parameters
     ----------
-    parameterlist: {list of Parameter instances, list [[name, value, distribution],...]}
+    parameter_list: {list of Parameter instances, list [[name, value, distribution],...]}
         List the parameters that should be created.
-        On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
-        Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
+        On the form: ``parameter_list = [ParameterObject1, ParameterObject2, ...]``
+        Or: ``parameter_list = [[name1, value1, distribution1], ...]``, where
         the arguments are similar to the arguments given to Parameter().
     distribution: {None, multivariate Chaospy distribution}, optional
         A multivariate distribution of all parameters, if it exists, it is used
@@ -184,7 +191,7 @@ class Parameters(collections.MutableMapping):
     uncertainpy.Parameter : Parameter class
     """
 
-    def __init__(self, parameterlist=[], distribution=None):
+    def __init__(self, parameter_list=[], distribution=None):
         """
         A collection of parameters.
 
@@ -192,10 +199,10 @@ class Parameters(collections.MutableMapping):
 
         Parameters
         ----------
-        parameterlist: {list of Parameter instances, list [[name, value, distribution],...]}, optional
+        parameter_list: {list of Parameter instances, list [[name, value, distribution],...]}, optional
             List the parameters that should be created.
-            On the form: ``parameterlist = [ParameterObject1, ParameterObject2, ...]``
-            Or: ``parameterlist = [[name1, value1, distribution1], ...]``, where
+            On the form: ``parameter_list = [ParameterObject1, ParameterObject2, ...]``
+            Or: ``parameter_list = [[name1, value1, distribution1], ...]``, where
             the arguments are similar to the arguments given to Parameter().
             Default is an empty list.
 
@@ -207,7 +214,7 @@ class Parameters(collections.MutableMapping):
         self.distribution = distribution
 
         try:
-            for i in parameterlist:
+            for i in parameter_list:
                 if isinstance(i, Parameter):
                     self.parameters[i.name] = i
                 else:

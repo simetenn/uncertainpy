@@ -4,18 +4,19 @@ import numpy as np
 
 from coffee_cup_dependent_function import coffee_cup_dependent
 
-alpha_dist = cp.Uniform(0.5, 1.5)
-beta_dist = cp.Uniform(-0.075, -0.025)/alpha_dist
 T_env_dist = cp.Uniform(15, 25)
+alpha_dist = cp.Uniform(0.5, 1.5)
+kappa_hat_dist = cp.Uniform(-0.075, -0.025)/alpha_dist
+
 
 # # percentage = 0.2
 # # alpha_dist = un.uniform(percentage)(0.22)
 # # T_env_dist = un.uniform(percentage)(20)
 # # beta_dist = un.uniform(percentage)(-0.22)*alpha_dist
 
-parameter_list = [["alpha", 1, alpha_dist]
-                 ["beta", -0.05, beta_dist],
-                 ["T_env", 20, T_env_dist],]
+parameter_list = [["alpha", None, alpha_dist],
+                  ["kappa_hat", None, kappa_hat_dist],
+                  ["T_env", None, T_env_dist]]
 
 parameters = un.Parameters(parameter_list)
 
@@ -150,69 +151,69 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 #                                        filename="coffee_dependent_reverse_order")
 
 
-parameter_list = [["T_env", 20, None],
-                 ["alpha", 1, None],
-                 ["beta", -0.05, None]]
+# parameter_list = [["T_env", 20, None],
+#                  ["alpha", 1, None],
+#                  ["beta", -0.05, None]]
 
-# C = [[.01, 0, 0.0005],
-#      [0, 5, 0],
-#      [0.0005, 0, .0001]]
-# mu = [1, 20, -0.05]
-# dist = cp.MvNormal(mu, C)
-
-C = [[1, 0, 0],
-     [0, .001, .00099],
-     [0, .00099, .001]]
-mu = [20, -0.22, 0.22]
-dist = cp.MvNormal(mu, C)
+# # C = [[.01, 0, 0.0005],
+# #      [0, 5, 0],
+# #      [0.0005, 0, .0001]]
+# # mu = [1, 20, -0.05]
+# # dist = cp.MvNormal(mu, C)
 
 # C = [[1, 0, 0],
-#      [0, 0.01, 0.0009],
-#      [0, 0.0009, .0001]]
-# mu = [20, 1, -0.05]
+#      [0, .001, .00099],
+#      [0, .00099, .001]]
+# mu = [20, -0.22, 0.22]
 # dist = cp.MvNormal(mu, C)
 
-parameters = un.Parameters(parameter_list)
-parameters.distribution = dist
+# # C = [[1, 0, 0],
+# #      [0, 0.01, 0.0009],
+# #      [0, 0.0009, .0001]]
+# # mu = [20, 1, -0.05]
+# # dist = cp.MvNormal(mu, C)
 
-# uncertainty.parameters = parameters
-uncertainty = un.UncertaintyEstimation(model=model,
-                                       parameters=parameters,
-                                       seed=10)
+# parameters = un.Parameters(parameter_list)
+# parameters.distribution = dist
+
+# # uncertainty.parameters = parameters
+# uncertainty = un.UncertaintyEstimation(model=model,
+#                                        parameters=parameters,
+#                                        seed=10)
 
 
-uncertainty.uncertainty_quantification(rosenblatt=True,
-                                       output_dir_figures="figures_coffee_dependent_reverse_order_2",
-                                       filename="coffee_dependent_reverse_order_2",
-                                       sensitivity="sensitivity_t")
+# uncertainty.uncertainty_quantification(rosenblatt=True,
+#                                        output_dir_figures="figures_coffee_dependent_reverse_order_2",
+#                                        filename="coffee_dependent_reverse_order_2",
+#                                        sensitivity="sensitivity_t")
 
 
-parameter_list = [["T_env", 20, None],
-                 ["beta", -0.05, None],
-                 ["alpha", 1, None]]
-
-C = [[1, 0, 0],
-     [0, .001, .00099],
-     [0, .00099, .001]]
-mu = [20, 0.22, -0.22]
-dist = cp.MvNormal(mu, C)
+# parameter_list = [["T_env", 20, None],
+#                  ["beta", -0.05, None],
+#                  ["alpha", 1, None]]
 
 # C = [[1, 0, 0],
-#      [0, .0001, 0.0009],
-#      [0, 0.0009, .01]]
-# mu = [20, -0.05, 1]
+#      [0, .001, .00099],
+#      [0, .00099, .001]]
+# mu = [20, 0.22, -0.22]
 # dist = cp.MvNormal(mu, C)
 
+# # C = [[1, 0, 0],
+# #      [0, .0001, 0.0009],
+# #      [0, 0.0009, .01]]
+# # mu = [20, -0.05, 1]
+# # dist = cp.MvNormal(mu, C)
 
-parameters = un.Parameters(parameter_list)
-parameters.distribution = dist
 
-# uncertainty.parameters = parameters
-uncertainty = un.UncertaintyEstimation(model=model,
-                                       parameters=parameters,
-                                       seed=10)
+# parameters = un.Parameters(parameter_list)
+# parameters.distribution = dist
 
-uncertainty.uncertainty_quantification(rosenblatt=True,
-                                       output_dir_figures="figures_coffee_dependent_reverse_order_3",
-                                       filename="coffee_dependent_reverse_order_3",
-                                       sensitivity="sensitivity_t")
+# # uncertainty.parameters = parameters
+# uncertainty = un.UncertaintyEstimation(model=model,
+#                                        parameters=parameters,
+#                                        seed=10)
+
+# uncertainty.uncertainty_quantification(rosenblatt=True,
+#                                        output_dir_figures="figures_coffee_dependent_reverse_order_3",
+#                                        filename="coffee_dependent_reverse_order_3",
+#                                        sensitivity="sensitivity_t")

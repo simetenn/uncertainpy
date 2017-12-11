@@ -30,7 +30,7 @@ class Valderrama(Model):
         self.I_value = 150     # mA
         T = 15                 # ms
         dt = 0.025             # ms
-        self.t = np.arange(0, T + dt, dt)
+        self.time = np.arange(0, T + dt, dt)
 
 
     def I(self, t):
@@ -99,17 +99,18 @@ class Valderrama(Model):
 
         initial_conditions = [self.V_0, self.h_0, self.m_0, self.n_0]
 
-        X = odeint(self.dXdt, initial_conditions, self.t)
+        X = odeint(self.dXdt, initial_conditions, self.time)
         values = X[:, 0]
 
-        t = self.t
+        time = self.time
         values = X[:, 0]
 
-        values = U[t > 5]
-        t = t[t > 5]
+        # Only return from 5 seconds onwards, as in valderamma
+        values = values[time > 5]
+        time = time[time > 5]
 
         # Add info needed by certain spiking features and efel features
-        info = {"stimulus_start": t[0], "stimulus_end": t[-1]}
+        info = {"stimulus_start": time[0], "stimulus_end": time[-1]}
 
         return time, values, info
 

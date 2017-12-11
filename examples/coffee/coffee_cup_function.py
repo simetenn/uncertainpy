@@ -2,6 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 
 def coffee_cup(kappa, T_env):
+    # Initial temperature and time
     time = np.linspace(0, 200, 150)
     T_0 = 95
 

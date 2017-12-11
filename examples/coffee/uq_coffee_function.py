@@ -6,8 +6,8 @@ from coffee_cup_function import coffee_cup
 kappa_dist = cp.Uniform(-0.075, -0.025)
 T_env_dist = cp.Uniform(15, 25)
 
-parameter_list = [["kappa", -0.05, kappa_dist],
-                 ["T_env", 20, T_env_dist]]
+parameter_list = [["kappa", None, kappa_dist],
+                  ["T_env", None, T_env_dist]]
 
 parameters = un.Parameters(parameter_list)
 

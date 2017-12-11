@@ -117,7 +117,7 @@ def brunel_network(eta=2,
     #     spiketrains.append(spiketrain)
 
 
-    return time, spiketrains
+    return simtime, spiketrains
 
 
 
