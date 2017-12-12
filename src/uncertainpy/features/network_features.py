@@ -41,8 +41,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
                               "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
                               "binned_isi": ["Interspike interval [{}]".format(unit_string),
                                              "Neuron nr", "Count"],
-                              "corrcoef": ["Neuron nr", "Neuron nr", ""],
-                              "covariance": ["Neuron nr", "Neuron nr", ""]
+                              "corrcoef": ["Neuron nr", "Neuron nr", "Correlation coefficient"],
+                              "covariance": ["Neuron nr", "Neuron nr", "Covariance"]
                              }
 
         implemented_labels.update(labels)

@@ -222,7 +222,9 @@ class PlotUncertainty(object):
                             **plot_kwargs)
 
             cbar = fig.colorbar(iax)
-            cbar.ax.set_title(zlabel)
+            # cbar.ax.set_title(zlabel)
+            cbar.ax.set_ylabel(zlabel)
+
             ax.set_xlabel(xlabel)
             ax.set_ylabel(ylabel)
             plt.savefig(os.path.join(save_folder,
@@ -334,7 +336,9 @@ class PlotUncertainty(object):
                         **plot_kwargs)
 
         cbar = fig.colorbar(iax)
-        cbar.ax.set_title(zlabel)
+        # cbar.ax.set_title(zlabel)
+        cbar.ax.set_ylabel(zlabel)
+
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
 
