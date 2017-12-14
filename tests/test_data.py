@@ -5,9 +5,8 @@ import subprocess
 
 import numpy as np
 
-from uncertainpy import Data, DataFeature
-
-
+from uncertainpy import Data
+from uncertainpy.data import DataFeature
 
 
 class TestDataFeature(unittest.TestCase):

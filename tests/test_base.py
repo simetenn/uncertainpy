@@ -3,7 +3,7 @@ import shutil
 import unittest
 from logging import Logger
 
-from uncertainpy.base import Base, ParameterBase
+from uncertainpy.core.base import Base, ParameterBase
 from uncertainpy import Model, Features, Parameters
 
 from .testing_classes import TestingFeatures, model_function

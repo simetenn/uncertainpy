@@ -12,7 +12,7 @@ from uncertainpy import UncertaintyQuantification
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import Features
 from uncertainpy import uniform, normal
-from uncertainpy import UncertaintyCalculations
+from uncertainpy.core import UncertaintyCalculations
 from uncertainpy import Data
 from uncertainpy import Model
 from uncertainpy import SpikingFeatures

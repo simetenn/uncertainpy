@@ -4,7 +4,7 @@ from xvfbwrapper import Xvfb
 import numpy as np
 import multiprocess as mp
 
-from .data import Data
+from ..data import Data
 from .base import ParameterBase
 from .parallel import Parallel
 

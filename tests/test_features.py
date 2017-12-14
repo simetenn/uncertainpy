@@ -10,7 +10,7 @@ import quantities as pq
 from uncertainpy.features import Features, GeneralSpikingFeatures
 from uncertainpy.features import SpikingFeatures, NetworkFeatures, GeneralNetworkFeatures
 from uncertainpy.features import EfelFeatures
-from uncertainpy import Spikes
+from uncertainpy.features import Spikes
 from .testing_classes import TestingFeatures
 
 class TestFeatures(unittest.TestCase):

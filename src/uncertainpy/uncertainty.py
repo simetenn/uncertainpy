@@ -2,11 +2,11 @@ import os
 import types
 import multiprocess as mp
 
-from .uncertainty_calculations import UncertaintyCalculations
+from .core.uncertainty_calculations import UncertaintyCalculations
 from .plotting.plot_uncertainty import PlotUncertainty
 from .utils import create_logger
 from .data import Data
-from .base import ParameterBase
+from .core.base import ParameterBase
 
 
 #  Figures are always saved on the format:

@@ -6,7 +6,7 @@ import subprocess
 import numpy as np
 import chaospy as cp
 
-from uncertainpy import UncertaintyCalculations
+from uncertainpy.core import UncertaintyCalculations
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import Features
 from uncertainpy import uniform, normal

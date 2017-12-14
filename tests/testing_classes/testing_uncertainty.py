@@ -1,4 +1,4 @@
-from uncertainpy import UncertaintyCalculations
+from uncertainpy.core import UncertaintyCalculations
 
 class TestingUncertaintyCalculations(UncertaintyCalculations):
     def polynomial_chaos(self, uncertain_parameters=None, method="regression", rosenblatt=False, plot_condensed=True):

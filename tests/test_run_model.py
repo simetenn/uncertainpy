@@ -6,7 +6,7 @@ import scipy.interpolate
 import numpy as np
 
 from uncertainpy import Parameters
-from uncertainpy.run_model import RunModel
+from uncertainpy.core import RunModel
 from uncertainpy.models import NeuronModel, Model
 from uncertainpy.features import Features, SpikingFeatures
 
