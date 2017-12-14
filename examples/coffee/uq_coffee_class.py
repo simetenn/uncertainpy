@@ -16,4 +16,4 @@ uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameters,
                                        features=None)
 
-uncertainty.uncertainty_quantification(plot_condensed=False)
+uncertainty.quantify(plot_condensed=False)

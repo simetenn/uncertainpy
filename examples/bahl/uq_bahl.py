@@ -11,12 +11,12 @@ model = NeuronModelBahl(stimulus_start=100, stimulus_end=600)
 
 features = un.SpikingFeatures()
 
-uncertainty = un.UncertaintyQuantification(model=model,
-                                       parameters=parameter_list,
-                                       features=features,
-                                       save_figures=True)
+UQ = un.UncertaintyQuantification(model=model,
+                                  parameters=parameter_list,
+                                  features=features,
+                                  save_figures=True)
 
-uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_results=True)
-uncertainty.uncertainty_quantification(single=True,
-                                       plot_results=False)
+UQ.quantify(plot_condensed=False,
+            plot_results=True)
+UQ.quantify(single=True,
+            plot_results=False)

@@ -21,9 +21,9 @@ parameters.set_all_distributions(un.uniform(0.5))
 model = HodgkinHuxley()
 features = un.SpikingFeatures(features_to_run="all")
 
-uncertainty = un.UncertaintyQuantification(model=model,
-                                       parameters=parameters,
-                                       features=features,
-                                       CPUs=1)
+UQ = un.UncertaintyQuantification(model=model,
+                                  parameters=parameters,
+                                  features=features,
+                                  CPUs=1)
 
-uncertainty.uncertainty_quantification()
+UQ.quantify()

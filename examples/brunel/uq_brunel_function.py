@@ -24,16 +24,16 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 3.5)],
 
 parameters = un.Parameters(parameter_list)
 
-uncertainty = un.UncertaintyQuantification(model,
-                                       parameters=parameters,
-                                       features=features,
-                                       output_dir_figures="figures_brunel_function_SR",
-                                       CPUs=7,
-                                       allow_incomplete=True)
+UQ = un.UncertaintyQuantification(model,
+                                  parameters=parameters,
+                                  features=features,
+                                  output_dir_figures="figures_brunel_function_SR",
+                                  CPUs=7,
+                                  allow_incomplete=True)
 
-uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=False,
-                                       filename="brunel_function_SR")
+UQ.quantify(plot_condensed=True,
+            plot_results=False,
+            filename="brunel_function_SR")
 
 
 
@@ -50,16 +50,16 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
 
 parameters = un.Parameters(parameter_list)
 
-uncertainty = un.UncertaintyQuantification(model,
-                                       parameters=parameters,
-                                       features=features,
-                                       output_dir_figures="figures_brunel_function_AI",
-                                       CPUs=7,
-                                       allow_incomplete=True)
+UQ = un.UncertaintyQuantification(model,
+                                  parameters=parameters,
+                                  features=features,
+                                  output_dir_figures="figures_brunel_function_AI",
+                                  CPUs=7,
+                                  allow_incomplete=True)
 
-uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=False,
-                                       filename="brunel_function_AI")
+UQ.quantify(plot_condensed=True,
+            plot_results=False,
+            filename="brunel_function_AI")
 
 
 # the border between SR and AI parameter set
@@ -70,13 +70,13 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
 
 parameters = un.Parameters(parameter_list)
 
-uncertainty = un.UncertaintyQuantification(model,
-                                       parameters=parameters,
-                                       features=features,
-                                       output_dir_figures="figures_brunel_function_border",
-                                       CPUs=7,
-                                       allow_incomplete=True)
+UQ = un.UncertaintyQuantification(model,
+                                  parameters=parameters,
+                                  features=features,
+                                  output_dir_figures="figures_brunel_function_border",
+                                  CPUs=7,
+                                  allow_incomplete=True)
 
-uncertainty.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=False,
-                                       filename="brunel_function_border")
+UQ.quantify(plot_condensed=True,
+            plot_results=False,
+            filename="brunel_function_border")

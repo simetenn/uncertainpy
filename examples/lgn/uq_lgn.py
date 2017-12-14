@@ -24,10 +24,10 @@ model = un.NeuronModel(path=path, adaptive=True,
 features = un.SpikingFeatures(features_to_run="all")
 # features = un.EfelFeatures(features_to_run="all")
 
-uncertainty = un.UncertaintyQuantification(model,
-                                       parameters=parameters,
-                                       features=features,
-                                       CPUs=7,
-                                       allow_incomplete=True)
+UQ = un.UncertaintyQuantification(model,
+                                  parameters=parameters,
+                                  features=features,
+                                  CPUs=7,
+                                  allow_incomplete=True)
 
-uncertainty.uncertainty_quantification()
+UQ.quantify()

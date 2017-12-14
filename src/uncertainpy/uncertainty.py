@@ -122,7 +122,7 @@ class UncertaintyQuantification(ParameterBase):
 
 
     # TODO add features_to_run as argument to this function
-    def uncertainty_quantification(self,
+    def quantify(self,
                                    uncertain_parameters=None,
                                    method="pc",
                                    single=False,

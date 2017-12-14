@@ -689,10 +689,10 @@ class TestUncertainty(TestCasePlot):
 
 
 
-    def test_uncertainty_quantificationPCAll(self):
+    def test_quantifyPCAll(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.uncertainty_quantification(method="pc", plot_condensed=False)
+        self.uncertainty.quantify(method="pc", plot_condensed=False)
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
@@ -700,10 +700,10 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(self.uncertainty.data["rosenblatt"], False)
 
 
-    def test_uncertainty_quantification_PC_single_rosenblatt(self):
+    def test_quantify_PC_single_rosenblatt(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.uncertainty_quantification(method="pc",
+        self.uncertainty.quantify(method="pc",
                                                     pc_method="regression",
                                                     plot_condensed=True,
                                                     single=True,
@@ -715,29 +715,29 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(self.uncertainty.data["rosenblatt"], True)
 
 
-    def test_uncertainty_quantification_monte_carlo(self):
+    def test_quantify_monte_carlo(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.uncertainty_quantification(method="mc", plot_condensed=False)
+        self.uncertainty.quantify(method="mc", plot_condensed=False)
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
 
 
-    def test_uncertainty_quantification_monte_carlo_single(self):
+    def test_quantify_monte_carlo_single(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.uncertainty_quantification(method="mc", plot_condensed=False, single=True)
+        self.uncertainty.quantify(method="mc", plot_condensed=False, single=True)
 
         self.assertEqual(self.uncertainty.data["function"], "MC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
 
 
 
-    def test_uncertainty_quantification_custom(self):
+    def test_quantify_custom(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.uncertainty_quantification(method="custom", custom_keyword="value")
+        self.uncertainty.quantify(method="custom", custom_keyword="value")
 
         self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data["custom_keyword"], "value")

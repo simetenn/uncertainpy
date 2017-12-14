@@ -22,12 +22,12 @@ parameters = un.Parameters(parameter_list)
 
 model = un.Model(coffee_cup_dependent, labels=["time [s]", "Temperature [C]"])
 
-uncertainty = un.UncertaintyQuantification(model=model,
-                                       parameters=parameters)
+UQ = un.UncertaintyQuantification(model=model,
+                                  parameters=parameters)
 
-uncertainty.uncertainty_quantification(rosenblatt=True,
-                                       output_dir_figures="figures_coffee_dependent",
-                                       filename="coffee_dependent")
+UQ.quantify(rosenblatt=True,
+            output_dir_figures="figures_coffee_dependent",
+            filename="coffee_dependent")
 
 # # C = [[.0001, 0, 0.0005],
 # #      [0, 5, 0],
@@ -40,8 +40,8 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # mu = [-0.22, 20, 0.22]
 # dist = cp.MvNormal(mu, C)
 
-# uncertainty.parameters.distribution = dist
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.parameters.distribution = dist
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_small_correlation",
 #                                        filename="coffee_dependent_small_correlation")
 
@@ -53,8 +53,8 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # mu = [-0.22, 20, 0.22]
 # dist = cp.MvNormal(mu, C)
 
-# uncertainty.parameters.distribution = dist
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.parameters.distribution = dist
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_medium_correlation",
 #                                        filename="coffee_dependent_medium_correlation")
 
@@ -77,8 +77,8 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # mu = [-0.22, 20, 0.22]
 # dist = cp.MvNormal(mu, C)
 
-# uncertainty.parameters.distribution = dist
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.parameters.distribution = dist
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_large_correlation",
 #                                        filename="coffee_dependent_large_correlation")
 
@@ -95,8 +95,8 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # mu = [-0.22, 20, 0.22]
 # dist = cp.MvNormal(mu, C)
 
-# uncertainty.parameters.distribution = dist
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.parameters.distribution = dist
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_large_reverse_correlation",
 #                                        filename="coffee_dependent_large_reverse_correlation")
 
@@ -115,12 +115,12 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 
 # parameters = un.Parameters(parameter_list)
 
-# uncertainty.parameters = parameters
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.parameters = parameters
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_no_correlation_rosenblatt",
 #                                        filename="coffee_dependent_no_correlation_rosenblatt")
 
-# uncertainty.uncertainty_quantification(rosenblatt=False,
+# UQ.quantify(rosenblatt=False,
 #                                        output_dir_figures="figures_coffee_dependent_no_correlation",
 #                                        filename="coffee_dependent_no_correlation")
 
@@ -143,10 +143,10 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # parameters = un.Parameters(parameter_list)
 # parameters.distribution = dist
 
-# uncertainty.parameters = parameters
+# UQ.parameters = parameters
 
 
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_reverse_order",
 #                                        filename="coffee_dependent_reverse_order")
 
@@ -176,13 +176,13 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # parameters = un.Parameters(parameter_list)
 # parameters.distribution = dist
 
-# # uncertainty.parameters = parameters
-# uncertainty = un.UncertaintyQuantification(model=model,
+# # UQ.parameters = parameters
+# UQ = un.UncertaintyQuantification(model=model,
 #                                        parameters=parameters,
 #                                        seed=10)
 
 
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_reverse_order_2",
 #                                        filename="coffee_dependent_reverse_order_2",
 #                                        sensitivity="sensitivity_t")
@@ -208,12 +208,12 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # parameters = un.Parameters(parameter_list)
 # parameters.distribution = dist
 
-# # uncertainty.parameters = parameters
-# uncertainty = un.UncertaintyQuantification(model=model,
+# # UQ.parameters = parameters
+# UQ = un.UncertaintyQuantification(model=model,
 #                                        parameters=parameters,
 #                                        seed=10)
 
-# uncertainty.uncertainty_quantification(rosenblatt=True,
+# UQ.quantify(rosenblatt=True,
 #                                        output_dir_figures="figures_coffee_dependent_reverse_order_3",
 #                                        filename="coffee_dependent_reverse_order_3",
 #                                        sensitivity="sensitivity_t")

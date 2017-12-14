@@ -12,12 +12,12 @@ model = BrunelNetwork()
 
 features = un.NetworkFeatures(features_to_run="all")
 
-uncertainty = un.UncertaintyQuantification(model,
-                                       parameters=parameters,
-                                       features=features,
-                                       output_dir_figures="figures_brunel_class",
-                                       CPUs=1)
+UQ = un.UncertaintyQuantification(model,
+                                  parameters=parameters,
+                                  features=features,
+                                  output_dir_figures="figures_brunel_class",
+                                  CPUs=1)
 
 
-uncertainty.uncertainty_quantification(plot_condensed=False,
-                                       plot_results=True)
+UQ.quantify(plot_condensed=False,
+            plot_results=True)

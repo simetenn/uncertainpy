@@ -22,10 +22,10 @@ model = Valderrama()
 
 features = un.SpikingFeatures(threshold="auto")
 # features = un.EfelFeatures()
-exploration = un.UncertaintyQuantification(model,
-                                       parameters=parameters,
-                                       features=features,
-                                       allow_incomplete=True)
+UQ = un.UncertaintyQuantification(model,
+                                  parameters=parameters,
+                                  features=features,
+                                  allow_incomplete=True)
 
-exploration.uncertainty_quantification(plot_condensed=True,
-                                       plot_results=False)
+UQ.quantify(plot_condensed=True,
+            plot_results=False)

@@ -11,8 +11,8 @@ parameters.set_all_distributions(un.uniform(0.5))
 
 model = CoffeeCupDependent()
 
-uncertainty = un.UncertaintyQuantification(model=model,
-                                       parameters=parameters,
-                                       features=None)
+UQ = un.UncertaintyQuantification(model=model,
+                                  parameters=parameters,
+                                  features=None)
 
-uncertainty.uncertainty_quantification(plot_condensed=False, rosenblatt=True)
+UQ.quantify(plot_condensed=False, rosenblatt=True)
