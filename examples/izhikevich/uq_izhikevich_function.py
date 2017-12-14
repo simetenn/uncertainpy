@@ -14,7 +14,7 @@ model = un.Model(izhikevich, labels=["time [ms]", "voltage [mv]"])
 
 features = un.SpikingFeatures(features_to_run="all")
 
-uncertainty = un.UncertaintyEstimation(model=model,
+uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameters,
                                        features=features)
 

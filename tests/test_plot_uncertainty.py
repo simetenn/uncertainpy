@@ -207,13 +207,13 @@ class TestPlotUncertainpy(TestCasePlot):
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature1d_results/*.png")))
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature2d_results/*.png")))
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/TestingModel1d_results/*.png")))
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
     def test_results_2d_feature(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
@@ -224,7 +224,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_results/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
 
     def test_results_feature_2d(self):
@@ -236,7 +236,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_results/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
 
     def test_results_0d_feature(self):
@@ -272,7 +272,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_results/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
 
     def test_results_feature_1d(self):
@@ -284,7 +284,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_results/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
 
     def test_results_2d_model(self):
@@ -296,7 +296,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_results/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
 
     def test_results_2d(self):
@@ -308,7 +308,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_results/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 21)
+        self.assertEqual(plot_count, 22)
 
 
 

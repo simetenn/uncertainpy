@@ -24,7 +24,7 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 3.5)],
 
 parameters = un.Parameters(parameter_list)
 
-uncertainty = un.UncertaintyEstimation(model,
+uncertainty = un.UncertaintyQuantification(model,
                                        parameters=parameters,
                                        features=features,
                                        output_dir_figures="figures_brunel_function_SR",
@@ -50,7 +50,7 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
 
 parameters = un.Parameters(parameter_list)
 
-uncertainty = un.UncertaintyEstimation(model,
+uncertainty = un.UncertaintyQuantification(model,
                                        parameters=parameters,
                                        features=features,
                                        output_dir_figures="figures_brunel_function_AI",
@@ -70,7 +70,7 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
 
 parameters = un.Parameters(parameter_list)
 
-uncertainty = un.UncertaintyEstimation(model,
+uncertainty = un.UncertaintyQuantification(model,
                                        parameters=parameters,
                                        features=features,
                                        output_dir_figures="figures_brunel_function_border",

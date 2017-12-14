@@ -13,7 +13,7 @@ parameters = un.Parameters(parameter_list)
 
 model = un.Model(coffee_cup, labels=["Time [s]", "Temperature [C]"])
 
-uncertainty = un.UncertaintyEstimation(model=model,
+uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameters,
                                        features=None,)
 

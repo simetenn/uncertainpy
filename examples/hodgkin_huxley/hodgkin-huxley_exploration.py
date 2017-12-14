@@ -20,7 +20,7 @@ model.set_all_distributions(uncertainpy.Distribution(0.2).uniform)
 
 features = uncertainpy.SpikingFeatures(features_to_run="all")
 
-exploration = uncertainpy.UncertaintyEstimations(model,
+exploration = uncertainpy.UncertaintyQuantifications(model,
                                                  supress_model_output=False,
                                                  features=features,
                                                  save_figures=True)

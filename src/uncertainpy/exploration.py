@@ -8,7 +8,7 @@ from .utils import create_logger
 from .data import Data
 
 
-from .uncertainty import UncertaintyEstimation
+from .uncertainty import UncertaintyQuantification
 from .distribution import uniform, normal
 from uncertainpy.plotting import PlotUncertaintyCompare
 from uncertainpy.utils import create_logger
@@ -17,7 +17,7 @@ from uncertainpy.utils import create_logger
 
 # TODO DOES NOT WORK YET!
 
-class UncertaintyEstimations():
+class UncertaintyQuantifications():
     def __init__(self, model,
                  features=None,
                  uncertainty_calculations=None,
@@ -116,7 +116,7 @@ class UncertaintyEstimations():
                                  distribution_function + "_%g" % interval)
 
                 self.uncertainty_estimations =\
-                    UncertaintyEstimation(self.model,
+                    UncertaintyQuantification(self.model,
                                           features=self.features,
                                           save_figures=self.save_figures,
                                           output_dir_figures=current_output_dir_figures,
@@ -156,7 +156,7 @@ class UncertaintyEstimations():
         compare_folders = [name]
 
         self.uncertainty_estimations =\
-            UncertaintyEstimation(self.model,
+            UncertaintyQuantification(self.model,
                                   features=self.features,
                                   save_figures=self.save_figures,
                                   output_dir_figures=output_dir_figures,
@@ -198,7 +198,7 @@ class UncertaintyEstimations():
             compare_folders.append(name)
 
             self.uncertainty_estimations =\
-                UncertaintyEstimation(self.model,
+                UncertaintyQuantification(self.model,
                                       features=self.features,
                                       save_figures=self.save_figures,
                                       output_dir_figures=current_output_dir_figures,

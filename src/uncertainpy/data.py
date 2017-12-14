@@ -115,7 +115,6 @@ class DataFeature(collections.MutableMapping):
             return None
 
 
-# TODO instead of a data object, could just a  h5py file have been used ?
 class Data(collections.MutableMapping):
     """
     Store data calculated from the uncertainty quantification.

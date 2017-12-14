@@ -22,7 +22,7 @@ model = Valderrama()
 
 features = un.SpikingFeatures(threshold="auto")
 # features = un.EfelFeatures()
-exploration = un.UncertaintyEstimation(model,
+exploration = un.UncertaintyQuantification(model,
                                        parameters=parameters,
                                        features=features,
                                        allow_incomplete=True)

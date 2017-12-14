@@ -12,7 +12,7 @@ parameter_list = [["kappa", -0.05, kappa_dist],
 parameters = un.Parameters(parameter_list)
 model = CoffeeCup()
 
-uncertainty = un.UncertaintyEstimation(model=model,
+uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameters,
                                        features=None)
 

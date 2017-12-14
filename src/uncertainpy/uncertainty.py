@@ -12,7 +12,7 @@ from .base import ParameterBase
 #  Figures are always saved on the format:
 #  output_dir_figures/parameter_value-that-is-plotted.figure-extension
 
-class UncertaintyEstimation(ParameterBase):
+class UncertaintyQuantification(ParameterBase):
     def __init__(self,
                  model,
                  parameters,
@@ -55,7 +55,7 @@ class UncertaintyEstimation(ParameterBase):
         else:
             self._uncertainty_calculations = uncertainty_calculations
 
-        super(UncertaintyEstimation, self).__init__(parameters=parameters,
+        super(UncertaintyQuantification, self).__init__(parameters=parameters,
                                                     model=model,
                                                     features=features,
                                                     verbose_level=verbose_level,

@@ -1,7 +1,7 @@
-UncertaintyEstimation
+UncertaintyQuantification
 =====================
 
-.. autoclass:: uncertainpy.UncertaintyEstimation
+.. autoclass:: uncertainpy.UncertaintyQuantification
    :members:
    :special-members:
    :inherited-members:

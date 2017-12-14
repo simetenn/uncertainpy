@@ -22,7 +22,7 @@ parameters = un.Parameters(parameter_list)
 
 model = un.Model(coffee_cup_dependent, labels=["time [s]", "Temperature [C]"])
 
-uncertainty = un.UncertaintyEstimation(model=model,
+uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameters)
 
 uncertainty.uncertainty_quantification(rosenblatt=True,
@@ -177,7 +177,7 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # parameters.distribution = dist
 
 # # uncertainty.parameters = parameters
-# uncertainty = un.UncertaintyEstimation(model=model,
+# uncertainty = un.UncertaintyQuantification(model=model,
 #                                        parameters=parameters,
 #                                        seed=10)
 
@@ -209,7 +209,7 @@ uncertainty.uncertainty_quantification(rosenblatt=True,
 # parameters.distribution = dist
 
 # # uncertainty.parameters = parameters
-# uncertainty = un.UncertaintyEstimation(model=model,
+# uncertainty = un.UncertaintyQuantification(model=model,
 #                                        parameters=parameters,
 #                                        seed=10)
 

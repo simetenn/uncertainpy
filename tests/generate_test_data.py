@@ -25,7 +25,7 @@ def generate_data_polynomial_chaos():  # pragma: no cover
                                                 "feature2d"])
 
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -51,7 +51,7 @@ def generate_data_PC_model_function():  # pragma: no cover
                                                 "feature2d"])
 
 
-    test = un.UncertaintyEstimation(model_function,
+    test = un.UncertaintyQuantification(model_function,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -77,7 +77,7 @@ def generate_data_PC_0D():  # pragma: no cover
     features = TestingFeatures(features_to_run=None)
 
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -102,7 +102,7 @@ def generate_data_PC_2D():  # pragma: no cover
     features = TestingFeatures(features_to_run=None)
 
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -129,7 +129,7 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
                                                 "feature2d"])
 
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -158,7 +158,7 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
                                                 "feature1d",
                                                 "feature2d"])
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -185,7 +185,7 @@ def generate_data_monte_carlo():  # pragma: no cover
                                                 "feature1d",
                                                 "feature2d"])
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -211,7 +211,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
                                                 "feature2d"])
 
 
-    test = un.UncertaintyEstimation(model,
+    test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
                                     output_dir_data=test_data_dir,
@@ -234,7 +234,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 #     model.set_all_distributions(un.uniform(0.5))
 #
 #
-#     uncertainty = un.UncertaintyEstimations(model,
+#     uncertainty = un.UncertaintyQuantifications(model,
 #                                             features=TestingFeatures(),
 #                                             verbose_level="error",
 #                                             output_dir_data=test_data_dir,

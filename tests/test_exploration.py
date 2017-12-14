@@ -4,7 +4,7 @@ import subprocess
 import shutil
 
 
-# from uncertainpy import UncertaintyEstimations, Parameters, Distribution
+# from uncertainpy import UncertaintyQuantifications, Parameters, Distribution
 # from testing_classes import TestingFeatures
 # from testing_classes import TestingModel1d
 
@@ -33,7 +33,7 @@ import shutil
 #         model = TestingModel1d(parameters)
 #         model.set_all_distributions(Distribution(0.5).uniform)
 
-#         self.uncertainty = UncertaintyEstimations(model,
+#         self.uncertainty = UncertaintyQuantifications(model,
 #                                                   features=TestingFeatures(),
 #                                                   verbose_level="error",
 #                                                   output_dir_data=self.output_test_dir,
@@ -47,7 +47,7 @@ import shutil
 
 
 #     def test_init(self):
-#         self.uncertainty = UncertaintyEstimations(TestingModel1d(),
+#         self.uncertainty = UncertaintyQuantifications(TestingModel1d(),
 #                                                   features=TestingFeatures(),
 #                                                   verbose_level="error",
 #                                                   output_dir_data=self.output_test_dir,
@@ -57,7 +57,7 @@ import shutil
 
 
 
-#         self.assertIsInstance(self.uncertainty, UncertaintyEstimations)
+#         self.assertIsInstance(self.uncertainty, UncertaintyQuantifications)
 
 
 #     def test_exploreParameters(self):

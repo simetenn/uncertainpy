@@ -12,7 +12,7 @@ model = BrunelNetwork()
 
 features = un.NetworkFeatures(features_to_run="all")
 
-uncertainty = un.UncertaintyEstimation(model,
+uncertainty = un.UncertaintyQuantification(model,
                                        parameters=parameters,
                                        features=features,
                                        output_dir_figures="figures_brunel_class",

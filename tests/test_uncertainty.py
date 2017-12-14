@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 
-from uncertainpy import UncertaintyEstimation
+from uncertainpy import UncertaintyQuantification
 from uncertainpy.parameters import Parameters
 from uncertainpy.features import Features
 from uncertainpy import uniform, normal
@@ -46,7 +46,7 @@ class TestUncertainty(TestCasePlot):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty = UncertaintyEstimation(self.model,
+        self.uncertainty = UncertaintyQuantification(self.model,
                                                  parameters=self.parameters,
                                                  features=features,
                                                  save_data=True,
@@ -66,14 +66,14 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_init(self):
-        uncertainty = UncertaintyEstimation(self.model, self.parameters)
+        uncertainty = UncertaintyQuantification(self.model, self.parameters)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.parameters, Parameters)
 
 
     def test_init_parameter_list(self):
-        uncertainty = UncertaintyEstimation(self.model, self.parameter_list)
+        uncertainty = UncertaintyQuantification(self.model, self.parameter_list)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -81,16 +81,16 @@ class TestUncertainty(TestCasePlot):
     def test_init_parameter_error(self):
 
         with self.assertRaises(TypeError):
-            UncertaintyEstimation(self.model, 2)
+            UncertaintyQuantification(self.model, 2)
 
 
     def test_intit_features(self):
-        uncertainty = UncertaintyEstimation(self.model,
+        uncertainty = UncertaintyQuantification(self.model,
                                             self.parameters,
                                             verbose_level="error")
         self.assertIsInstance(uncertainty.features, Features)
 
-        uncertainty = UncertaintyEstimation(self.model,
+        uncertainty = UncertaintyQuantification(self.model,
                                             self.parameters,
                                             features=TestingFeatures(),
                                             verbose_level="error")
@@ -105,7 +105,7 @@ class TestUncertainty(TestCasePlot):
             def create_PCE_custom(self):
                 "custom PCE method"
 
-        uncertainty = UncertaintyEstimation(
+        uncertainty = UncertaintyQuantification(
             self.model,
             self.parameters,
             uncertainty_calculations=TempUncertaintyCalculations(self.model),
@@ -118,7 +118,7 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_set_parameters(self):
-        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
@@ -131,7 +131,7 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_set_parameter_list(self):
-        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
@@ -144,7 +144,7 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_set_parameter_error(self):
-        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
@@ -153,7 +153,7 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_set_features(self):
-        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
@@ -237,7 +237,7 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_set_model(self):
-        uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
@@ -250,7 +250,7 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_set_model_function(self):
-        uncertainty = UncertaintyEstimation(model=model_function,
+        uncertainty = UncertaintyQuantification(model=model_function,
                                             parameters=None,
                                             verbose_level="error",
                                             seed=self.seed)
@@ -263,7 +263,7 @@ class TestUncertainty(TestCasePlot):
 
 
     # def test_label(self):
-    #     uncertainty = UncertaintyEstimation(model=TestingModel1d(),
+    #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
     #                                         parameters=None,
     #                                         verbose_level="error",
     #                                         seed=self.seed)
@@ -276,7 +276,7 @@ class TestUncertainty(TestCasePlot):
             self.data = Data()
             self.test_value = "custom PCE method"
 
-        uncertainty = UncertaintyEstimation(
+        uncertainty = UncertaintyQuantification(
             self.model,
             self.parameters,
             create_PCE_custom=create_PCE_custom,
@@ -368,7 +368,7 @@ class TestUncertainty(TestCasePlot):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty = UncertaintyEstimation(model,
+        self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
                                                  save_data=False,
@@ -408,7 +408,7 @@ class TestUncertainty(TestCasePlot):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty = UncertaintyEstimation(model,
+        self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
                                                  save_data=False,
@@ -447,7 +447,7 @@ class TestUncertainty(TestCasePlot):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty = UncertaintyEstimation(model,
+        self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
                                                  save_data=True,
@@ -496,7 +496,7 @@ class TestUncertainty(TestCasePlot):
                                                     "feature1d",
                                                     "feature2d"])
 
-        self.uncertainty = UncertaintyEstimation(model,
+        self.uncertainty = UncertaintyQuantification(model,
                                                  parameters=parameters,
                                                  features=features,
                                                  save_data=True,
@@ -677,7 +677,7 @@ class TestUncertainty(TestCasePlot):
 
         features = TestingFeatures(features_to_run=None)
 
-        self.uncertainty = UncertaintyEstimation(model,
+        self.uncertainty = UncertaintyQuantification(model,
                                                  parameters=parameters,
                                                  features=features,
                                                  uncertainty_calculations=TestingUncertaintyCalculations(model),

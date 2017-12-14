@@ -11,7 +11,7 @@ parameters.set_all_distributions(un.uniform(0.5))
 
 model = CoffeeCupDependent()
 
-uncertainty = un.UncertaintyEstimation(model=model,
+uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameters,
                                        features=None)
 

@@ -1,7 +1,7 @@
 from .data import Data, DataFeature
 from .distribution import uniform, normal
 from .parameters import Parameter, Parameters
-from .uncertainty import UncertaintyEstimation
+from .uncertainty import UncertaintyQuantification
 
 from .uncertainty_calculations import UncertaintyCalculations
 

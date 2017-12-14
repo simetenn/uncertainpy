@@ -13,7 +13,7 @@ model.set_all_distributions(uncertainpy.Distribution(1).uniform)
 
 features = uncertainpy.SpikingFeatures(features_to_run="all")
 
-exploration = uncertainpy.UncertaintyEstimations(model,
+exploration = uncertainpy.UncertaintyQuantifications(model,
                                                  CPUs=7,
                                                  seed=10,
                                                  features=features,

@@ -11,7 +11,7 @@ model = NeuronModelBahl(stimulus_start=100, stimulus_end=600)
 
 features = un.SpikingFeatures()
 
-uncertainty = un.UncertaintyEstimation(model=model,
+uncertainty = un.UncertaintyQuantification(model=model,
                                        parameters=parameter_list,
                                        features=features,
                                        save_figures=True)

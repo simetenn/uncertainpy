@@ -53,7 +53,7 @@ parser.add_argument("-e", "--exact",
 
 
 parser.add_argument("--uncertainpy", help="Uncertainpy tests", action="store_true")
-# parser.add_argument("--exploration", help="UncertaintyEstimations (explorations) test",
+# parser.add_argument("--exploration", help="UncertaintyQuantifications (explorations) test",
 #                     action="store_true")
 parser.add_argument("--parameters", help="Parameter tests", action="store_true")
 parser.add_argument("--distribution", help="Distribution tests", action="store_true")
