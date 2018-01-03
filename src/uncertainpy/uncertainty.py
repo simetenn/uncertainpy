@@ -122,19 +122,21 @@ class UncertaintyQuantification(ParameterBase):
 
 
     # TODO add features_to_run as argument to this function
+    # TODO make sure which arguments are sent to this function and wich arguments
+    #  to UncertaintyQuantification makes sense
     def quantify(self,
-                                   uncertain_parameters=None,
-                                   method="pc",
-                                   single=False,
-                                   pc_method="regression",
-                                   rosenblatt=False,
-                                   plot_condensed=True,
-                                   plot_results=False,
-                                   output_dir_figures=None,
-                                   output_dir_data=None,
-                                   filename=None,
-                                   sensitivity="sensitivity_1",
-                                   **custom_kwargs):
+                 method="pc",
+                 pc_method="regression",
+                 rosenblatt=False,
+                 uncertain_parameters=None,
+                 single=False,
+                 plot_condensed=True,
+                 plot_results=False,
+                 output_dir_figures=None,
+                 output_dir_data=None,
+                 filename=None,
+                 sensitivity="sensitivity_1",
+                 **custom_kwargs):
         """
 method: pc, mc
 pc_method: "regression"

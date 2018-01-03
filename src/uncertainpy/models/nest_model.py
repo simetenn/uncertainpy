@@ -90,12 +90,21 @@ class NestModel(Model):
         The ``run(**parameters)`` method must either be implemented or set to a
         function. Both options have the following requirements:
 
-        1. ``run(**parameters)`` takes a number of named arguments which are
-        the parameters to the model. These parameters must be assigned to
-        the Nest model.
+        1. **Receive parameters as input**.
+            The run function takes a number of named arguments that are the
+            parameters of the model.
+        2. **Set the parameters of the model**.
+            The arguments received as input (the model parameters) must be
+            assigned to the Nest model.
+        3. **Run the model**.
+            The Nest model must then be run.
+        4. **Return the model results**.
+            Lastly we need to return the model results.
 
-        2. ``run(**parameters)`` must return final simulation time  (`simulation_end`)
-        and a list of spike trains (`spiketrains`).
+            1. **Time**.
+                The first object is the final simulation time (`simulation_end`).
+            2. **Model results**.
+                The second object is a list of spike trains (`spiketrains`).
 
         The model results `simulation_end` and `spiketrains` is used to calculate
         the features.

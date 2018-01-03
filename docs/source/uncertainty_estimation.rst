@@ -1,5 +1,5 @@
 UncertaintyQuantification
-=====================
+=========================
 
 .. autoclass:: uncertainpy.UncertaintyQuantification
    :members:
