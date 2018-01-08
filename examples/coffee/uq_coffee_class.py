@@ -1,19 +1,46 @@
 import uncertainpy as un
 import chaospy as cp
+from uncertainpy import Model
+from scipy.integrate import odeint
+import numpy as np
 
-from coffee_cup_class import CoffeeCup
 
-T_env_dist = cp.Uniform(15, 25)
-kappa_dist = cp.Uniform(-0.075, -0.025)
+# Create the coffee cup Model
+class CoffeeCup(Model):
+    # Add labels to the model
+    def __init__(self):
+        Model.__init__(self,
+                       labels=["Time [s]", "Temperature [C]"])
 
-parameter_list = [["kappa", -0.05, kappa_dist],
-                  ["T_env", 20, T_env_dist]]
+    # Define the run function
+    def run(self, kappa=-0.05, T_env=20):
+        # Initial temperature and time
+        T_0 = 95
+        time = np.linspace(0, 200, 100)
 
-parameters = un.Parameters(parameter_list)
+        # The equation describing the model
+        def f(T, time, kappa, T_env):
+            return kappa*(T - T_env)
+
+        # Solving the equation by integration.
+        temperature = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
+
+        return time, temperature
+
+
+# Initialize the model
 model = CoffeeCup()
 
-uncertainty = un.UncertaintyQuantification(model=model,
-                                       parameters=parameters,
-                                       features=None)
+# Create the distributions
+kappa_dist = cp.Uniform(-0.075, -0.025)
+T_env_dist = cp.Uniform(15, 25)
 
-uncertainty.quantify(plot_condensed=False)
+# Define a parameter list and use it to create the Parameters
+parameter_list = [["kappa", None, kappa_dist],
+                  ["T_env", None, T_env_dist]]
+parameters = un.Parameters(parameter_list)
+
+# Perform the uncertainty quantification
+uncertainty = un.UncertaintyQuantification(model=model,
+                                           parameters=parameters)
+uncertainty.quantify()

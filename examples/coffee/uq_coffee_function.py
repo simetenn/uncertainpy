@@ -1,7 +1,25 @@
 import uncertainpy as un
 import chaospy as cp
+import numpy as np
+from scipy.integrate import odeint
 
-from coffee_cup_function import coffee_cup
+
+# Create the coffee cup run function
+def coffee_cup(kappa, T_env):
+    # Initial temperature and time
+    time = np.linspace(0, 200, 150)
+    T_0 = 95
+
+    # The equation describing the model
+    def f(T, time, kappa, T_env):
+        return kappa*(T - T_env)
+
+    # Solving the equation by integration.
+    temperature = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
+
+    # Return time and model results
+    return time, temperature
+
 
 # Create a model from coffee_cup function and add labels
 model = un.Model(run_function=coffee_cup,
@@ -20,4 +38,3 @@ parameters = un.Parameters(parameter_list)
 uncertainty = un.UncertaintyQuantification(model=model,
                                            parameters=parameters)
 uncertainty.quantify()
-sett
