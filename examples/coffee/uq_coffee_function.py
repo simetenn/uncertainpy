@@ -37,4 +37,4 @@ parameters = un.Parameters(parameter_list)
 # Perform the uncertainty quantification
 uncertainty = un.UncertaintyQuantification(model=model,
                                            parameters=parameters)
-uncertainty.quantify()
+uncertainty.quantify(rosenblatt=True, pc_method="spectral")

@@ -15,13 +15,14 @@ class UncertaintyCalculations(ParameterBase):
                  CPUs=mp.cpu_count(),
                  suppress_model_graphics=True,
                  p=3,
-                 nr_pc_samples=None,
+                 nr_collocation_nodes=None,
+                 quadrature_order=4,
                  nr_mc_samples=10*3,
                  nr_pc_mc_samples=10*5,
                  seed=None,
+                 allow_incomplete=False
                  verbose_level="info",
-                 verbose_filename=None,
-                 allow_incomplete=False):
+                 verbose_filename=None,):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
@@ -38,7 +39,8 @@ class UncertaintyCalculations(ParameterBase):
                                                       verbose_level=verbose_level,
                                                       verbose_filename=verbose_filename)
 
-        self.nr_pc_samples = nr_pc_samples
+        self.nr_collocation_nodes = nr_collocation_nodes
+        self.quadrature_order = quadrature_order
         self.nr_mc_samples = nr_mc_samples
         self.nr_pc_mc_samples = nr_pc_mc_samples
         self.p = p
@@ -77,6 +79,7 @@ class UncertaintyCalculations(ParameterBase):
         self.runmodel.parameters = self.parameters
 
 
+
     def create_distribution(self, uncertain_parameters=None):
         if self.parameters.distribution is None:
             uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -88,6 +91,7 @@ class UncertaintyCalculations(ParameterBase):
             distribution = self.parameters.distribution
 
         return distribution
+
 
 
     def create_mask(self, nodes, feature, weights=None):
@@ -129,6 +133,7 @@ class UncertaintyCalculations(ParameterBase):
             return np.array(masked_nodes), np.array(masked_values), np.array(masked_weights), mask
 
 
+
     def convert_uncertain_parameters(self, uncertain_parameters):
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
@@ -148,6 +153,7 @@ class UncertaintyCalculations(ParameterBase):
         return uncertain_parameters
 
 
+
     # TODO not tested
     def create_PCE_spectral(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -156,7 +162,7 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(self.p, self.distribution)
 
-        nodes, weights = cp.generate_quadrature(3, self.distribution, rule="J", sparse=True)
+        nodes, weights = cp.generate_quadrature(self.quadrature_order, self.distribution, rule="J", sparse=True)
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -182,8 +188,6 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-
-
     def create_PCE_collocation(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -191,10 +195,10 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(self.p, self.distribution)
 
-        if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 2
+        if self.nr_collocation_nodes is None:
+            self.nr_collocation_nodes = 2*len(self.P) + 2
 
-        nodes = self.distribution.sample(self.nr_pc_samples, "M")
+        nodes = self.distribution.sample(self.nr_collocation_nodes, "M")
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -221,6 +225,7 @@ class UncertaintyCalculations(ParameterBase):
                 self.data.incomplete.append(feature)
 
 
+
     # TODO not tested
     def create_PCE_spectral_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -237,8 +242,7 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(self.p, dist_MvNormal)
 
-        # TODO fix order = 3.
-        nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(3, dist_MvNormal,
+        nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(self.quadrature_order, dist_MvNormal,
                                                                   rule="J", sparse=True)
         # TODO Is this correct, copy pasted from below.
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
@@ -292,10 +296,10 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(self.p, dist_MvNormal)
 
-        if self.nr_pc_samples is None:
-            self.nr_pc_samples = 2*len(self.P) + 2
+        if self.nr_collocation_nodes is None:
+            self.nr_collocation_nodes = 2*len(self.P) + 2
 
-        nodes_MvNormal = dist_MvNormal.sample(self.nr_pc_samples, "M")
+        nodes_MvNormal = dist_MvNormal.sample(self.nr_collocation_nodes, "M")
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
 
         self.distribution = dist_MvNormal
@@ -391,7 +395,7 @@ class UncertaintyCalculations(ParameterBase):
         #     raise NotImplementedError("{} not implemented".format{method})
 
         else:
-            raise ValueError("No method with name {}".format(method))
+            raise ValueError("No polynomial chaos method with name {}".format(method))
 
         self.analyse_PCE()
 

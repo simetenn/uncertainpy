@@ -29,7 +29,8 @@ class UncertaintyQuantification(ParameterBase):
                  CPUs=mp.cpu_count(),
                  suppress_model_graphics=True,
                  p=3,
-                 nr_pc_samples=None,
+                 nr_collocation_nodes=None,
+                 quadrature_order=4,
                  nr_mc_samples=10*3,
                  nr_pc_mc_samples=10*5,
                  seed=None,
@@ -44,7 +45,8 @@ class UncertaintyQuantification(ParameterBase):
                 CPUs=CPUs,
                 suppress_model_graphics=suppress_model_graphics,
                 p=p,
-                nr_pc_samples=nr_pc_samples,
+                nr_collocation_nodes=nr_collocation_nodes,
+                quadrature_order=quadrature_order,
                 nr_mc_samples=nr_mc_samples,
                 nr_pc_mc_samples=nr_pc_mc_samples,
                 seed=seed,
@@ -187,6 +189,11 @@ pc_method: "collocation"
                                                    output_dir_data=output_dir_data,
                                                    filename=filename,
                                                    **custom_kwargs)
+
+        else:
+            raise ValueError("No method with name {}".format(method))
+
+
 
 
 

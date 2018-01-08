@@ -889,7 +889,7 @@ class PlotUncertainty(object):
 
 
         prettyBar(self.data[feature][sensitivity + "_sum"],
-                  title=sensitivity.replace("_", " ") + "normalized sum"
+                  title="normalized sum " + sensitivity.replace("_", " ")
                   + ", " + feature.replace("_", " "),
                   xlabels=self.list_to_latex(self.data.uncertain_parameters),
                   ylabel="\% sensitivity sum",
@@ -1117,7 +1117,7 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = sensitivity.replace("_", " ") + "normalized sum"
+        title = "normalized sum " + sensitivity.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)

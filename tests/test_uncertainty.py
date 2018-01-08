@@ -640,13 +640,13 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_pc_samples)
+        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature2d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_pc_samples)
+        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/TestingModel1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_pc_samples)
+        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
 
 
 
@@ -657,13 +657,13 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_pc_samples)
+        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature2d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_pc_samples)
+        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/TestingModel1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_pc_samples)
+        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
 
 
     def set_up_test_calculations(self):

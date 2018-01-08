@@ -23,6 +23,8 @@ UQ = un.UncertaintyQuantification(model=model,
                                   parameters=parameters)
 
 UQ.quantify(rosenblatt=True,
+            pc_method="spectral",
+            quadrature_order=6,
             output_dir_figures="figures_coffee_dependent",
             filename="coffee_dependent")
 
