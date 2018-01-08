@@ -13,4 +13,5 @@ def coffee_cup(kappa, T_env):
     # Solving the equation by integration.
     temperature = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
 
+    # Return time and model results
     return time, temperature
