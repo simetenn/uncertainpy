@@ -149,7 +149,7 @@ class UncertaintyCalculations(ParameterBase):
 
 
     # TODO not tested
-    def create_PCE_quadrature(self, uncertain_parameters=None):
+    def create_PCE_spectral(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -184,7 +184,7 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    def create_PCE_regression(self, uncertain_parameters=None):
+    def create_PCE_collocation(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -222,7 +222,7 @@ class UncertaintyCalculations(ParameterBase):
 
 
     # TODO not tested
-    def create_PCE_quadrature_rosenblatt(self, uncertain_parameters=None):
+    def create_PCE_spectral_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -275,7 +275,7 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    def create_PCE_regression_rosenblatt(self, uncertain_parameters=None):
+    def create_PCE_collocation_rosenblatt(self, uncertain_parameters=None):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -363,14 +363,24 @@ class UncertaintyCalculations(ParameterBase):
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 
-    def polynomial_chaos(self, uncertain_parameters=None, method="regression", rosenblatt=False):
+    def polynomial_chaos(self,
+                         uncertain_parameters=None,
+                         method="collocation",
+                         rosenblatt=False):
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
-        if method == "regression":
+        if method == "collocation":
             if rosenblatt:
-                self.create_PCE_regression_rosenblatt(uncertain_parameters)
+                self.create_PCE_collocation_rosenblatt(uncertain_parameters)
             else:
-                self.create_PCE_regression(uncertain_parameters)
+                self.create_PCE_collocation(uncertain_parameters)
+
+        elif method == "spectral":
+            if rosenblatt:
+                self.create_PCE_spectral_rosenblatt(uncertain_parameters)
+            else:
+                self.create_PCE_spectral(uncertain_parameters)
+
         elif method == "custom":
             self.create_PCE_custom(uncertain_parameters)
 
@@ -380,11 +390,8 @@ class UncertaintyCalculations(ParameterBase):
         # except AttributeError:
         #     raise NotImplementedError("{} not implemented".format{method})
 
-
-
         else:
             raise ValueError("No method with name {}".format(method))
-
 
         self.analyse_PCE()
 

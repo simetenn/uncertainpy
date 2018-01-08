@@ -696,7 +696,7 @@ class TestUncertainty(TestCasePlot):
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(self.uncertainty.data["method"], "regression")
+        self.assertEqual(self.uncertainty.data["method"], "collocation")
         self.assertEqual(self.uncertainty.data["rosenblatt"], False)
 
 
@@ -704,14 +704,14 @@ class TestUncertainty(TestCasePlot):
         self.set_up_test_calculations()
 
         self.uncertainty.quantify(method="pc",
-                                                    pc_method="regression",
-                                                    plot_condensed=True,
-                                                    single=True,
-                                                    rosenblatt=True)
+                                  pc_method="collocation",
+                                  plot_condensed=True,
+                                  single=True,
+                                  rosenblatt=True)
 
         self.assertEqual(self.uncertainty.data["function"], "PC")
         self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
-        self.assertEqual(self.uncertainty.data["method"], "regression")
+        self.assertEqual(self.uncertainty.data["method"], "collocation")
         self.assertEqual(self.uncertainty.data["rosenblatt"], True)
 
 

@@ -20,3 +20,4 @@ parameters = un.Parameters(parameter_list)
 uncertainty = un.UncertaintyQuantification(model=model,
                                            parameters=parameters)
 uncertainty.quantify()
+sett

@@ -126,7 +126,7 @@ class UncertaintyQuantification(ParameterBase):
     #  to UncertaintyQuantification makes sense
     def quantify(self,
                  method="pc",
-                 pc_method="regression",
+                 pc_method="collocation",
                  rosenblatt=False,
                  uncertain_parameters=None,
                  single=False,
@@ -139,7 +139,7 @@ class UncertaintyQuantification(ParameterBase):
                  **custom_kwargs):
         """
 method: pc, mc
-pc_method: "regression"
+pc_method: "collocation"
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -220,7 +220,7 @@ pc_method: "regression"
 
     def polynomial_chaos(self,
                          uncertain_parameters=None,
-                         method="regression",
+                         method="collocation",
                          rosenblatt=False,
                          plot_condensed=True,
                          plot_results=False,
@@ -249,7 +249,9 @@ pc_method: "regression"
             self.save(filename, output_dir=output_dir_data)
 
         if self.save_figures:
-            self.plot(condensed=plot_condensed, output_dir=output_dir_figures, sensitivity=sensitivity)
+            self.plot(condensed=plot_condensed,
+                      output_dir=output_dir_figures,
+                      sensitivity=sensitivity)
 
         if plot_results:
             self.plot(results=True, output_dir=output_dir_figures)
@@ -289,7 +291,7 @@ pc_method: "regression"
 
     def polynomial_chaos_single(self,
                                 uncertain_parameters=None,
-                                method="regression",
+                                method="collocation",
                                 rosenblatt=False,
                                 plot_condensed=True,
                                 plot_results=False,
@@ -392,7 +394,6 @@ pc_method: "regression"
 
         self.logger.info("Saving data as: {}".format(save_path))
 
-        ### TODO expand the save funcition to also save parameters and model information
         self.data.save(save_path)
 
 
@@ -419,14 +420,3 @@ pc_method: "regression"
         else:
             self.plotting.plot(condensed=condensed,
                                sensitivity=sensitivity)
-
-
-
-    # def convert_uncertain_parameters(self, uncertain_parameters):
-    #     if uncertain_parameters is None:
-    #         uncertain_parameters = self.parameters.get_from_uncertain("name")
-
-    #     if isinstance(uncertain_parameters, str):
-    #         uncertain_parameters = [uncertain_parameters]
-
-    #     return uncertain_parameters

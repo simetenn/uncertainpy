@@ -57,7 +57,8 @@ class GeneralNetworkFeatures(Features):
                           "2d_feature": ["x-axis", "y-axis", "z-axis"]
                          }
     units : Quantities unit
-        todo here
+        The Quantities unit of the time in the model.
+        The default is ms.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.

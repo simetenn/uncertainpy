@@ -566,9 +566,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.uncertainty_calculations.custom_uncertainty_quantification()
 
-    def test_create_PCE_regression_all(self):
+    def test_create_PCE_collocation_all(self):
 
-        self.uncertainty_calculations.create_PCE_regression()
+        self.uncertainty_calculations.create_PCE_collocation()
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -577,9 +577,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
 
 
-    def test_create_PCE_regression_one(self):
+    def test_create_PCE_collocation_one(self):
 
-        self.uncertainty_calculations.create_PCE_regression("a")
+        self.uncertainty_calculations.create_PCE_collocation("a")
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -589,7 +589,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     #
 
-    def test_create_PCE_regression_adaptive_error(self):
+    def test_create_PCE_collocation_adaptive_error(self):
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -606,13 +606,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 verbose_level="debug")
 
         with self.assertRaises(ValueError):
-            self.uncertainty_calculations.create_PCE_regression()
+            self.uncertainty_calculations.create_PCE_collocation()
 
 
 
-    def test_create_PCE_regression_rosenblatt_all(self):
+    def test_create_PCE_collocation_rosenblatt_all(self):
 
-        self.uncertainty_calculations.create_PCE_regression_rosenblatt()
+        self.uncertainty_calculations.create_PCE_collocation_rosenblatt()
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -622,9 +622,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_create_PCE_regression_rosenblatt_one(self):
+    def test_create_PCE_collocation_rosenblatt_one(self):
 
-        self.uncertainty_calculations.create_PCE_regression_rosenblatt("a")
+        self.uncertainty_calculations.create_PCE_collocation_rosenblatt("a")
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
@@ -632,9 +632,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
         self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
 
-    # # def test_PCERquadrature(self):
+    # # def test_PCERspectral(self):
     # #
-    # #     self.uncertainty_calculations.create_PCE_quadrature()
+    # #     self.uncertainty_calculations.create_PCE_spectral()
     # #
     # #     print self.uncertainty_calculations.U_hat
     # #     self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
@@ -984,7 +984,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                        features.feature2d(None, None)[1]))
 
 
-    def test_create_PCE_regression_incomplete(self):
+    def test_create_PCE_collocation_incomplete(self):
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -1002,7 +1002,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 seed=self.seed,
                                                                 allow_incomplete=False)
 
-        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+        self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,
@@ -1012,7 +1012,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_create_PCE_regression_incomplete(self):
+    def test_create_PCE_collocation_incomplete(self):
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -1030,7 +1030,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 seed=self.seed,
                                                                 allow_incomplete=False)
 
-        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+        self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,
@@ -1046,7 +1046,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         #                                                         seed=self.seed,
         #                                                         allow_incomplete=True)
 
-        # self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+        # self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
 
         # self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
         # self.assertEqual(self.uncertainty_calculations.data.incomplete,
@@ -1055,7 +1055,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_create_PCE_regression_rosenblatt_incomplete(self):
+    def test_create_PCE_collocation_rosenblatt_incomplete(self):
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -1073,7 +1073,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 seed=self.seed,
                                                                 allow_incomplete=False)
 
-        self.uncertainty_calculations.create_PCE_regression(["a", "b"])
+        self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,
@@ -1087,7 +1087,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         #                                                         seed=self.seed,
         #                                                         allow_incomplete=True)
 
-        # self.uncertainty_calculations.create_PCE_regression_rosenblatt(["a", "b"])
+        # self.uncertainty_calculations.create_PCE_collocation_rosenblatt(["a", "b"])
 
         # self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
         # self.assertEqual(self.uncertainty_calculations.data.incomplete,
