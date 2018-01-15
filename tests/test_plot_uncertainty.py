@@ -29,7 +29,7 @@ class TestPlotUncertainpy(TestCasePlot):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
-        self.plot = PlotUncertainty(output_dir=self.output_test_dir,
+        self.plot = PlotUncertainty(folder=self.output_test_dir,
                                     verbose_level="warning",
                                     figureformat=self.figureformat)
 
@@ -102,7 +102,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature2d_sensitivity_t_sum")
 
 
-    def test_results_1d(self):
+    def test_evaluations_1d(self):
 
         self.plot.data = Data()
 
@@ -113,22 +113,22 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
-        self.plot.results_1d(feature="TestingModel1d")
+        self.plot.evaluations_1d(feature="TestingModel1d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel1d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel1d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 5)
 
 
-    def test_results_0d_error(self):
+    def test_evaluations_0d_error(self):
         with self.assertRaises(ValueError):
-            self.plot.results_0d(feature="TestingModel1d")
+            self.plot.evaluations_0d(feature="TestingModel1d")
 
         self.plot.data = Data()
 
-        self.plot.results_0d(feature="TestingModel1d")
+        self.plot.evaluations_0d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
@@ -138,32 +138,32 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
-            self.plot.results_0d(feature="TestingModel1d")
+            self.plot.evaluations_0d(feature="TestingModel1d")
 
 
-    def test_results_1d_error(self):
+    def test_evaluations_1d_error(self):
         with self.assertRaises(ValueError):
-            self.plot.results_1d(feature="TestingModel1d")
+            self.plot.evaluations_1d(feature="TestingModel1d")
 
         self.plot.data = Data()
 
-        self.plot.results_1d(feature="TestingModel1d")
+        self.plot.evaluations_1d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"]["values"] = [1, 1, 1, 1, 1]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
-            self.plot.results_1d(feature="TestingModel1d")
+            self.plot.evaluations_1d(feature="TestingModel1d")
 
 
-    def test_results_2d_error(self):
+    def test_evaluations_2d_error(self):
         with self.assertRaises(ValueError):
-            self.plot.results_2d(feature="TestingModel1d")
+            self.plot.evaluations_2d(feature="TestingModel1d")
 
         self.plot.data = Data()
 
-        self.plot.results_2d(feature="TestingModel1d")
+        self.plot.evaluations_2d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
@@ -173,10 +173,10 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
-            self.plot.results_2d(feature="TestingModel1d")
+            self.plot.evaluations_2d(feature="TestingModel1d")
 
 
-    def test_results_1d_model(self):
+    def test_evaluations_1d_model(self):
 
         self.plot.data = Data()
 
@@ -188,139 +188,139 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
-        self.plot.results(feature="TestingModel1d")
+        self.plot.evaluations(feature="TestingModel1d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel1d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel1d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 5)
 
 
 
-    def test_results(self):
+    def test_evaluations(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
-        self.plot.all_results()
+        self.plot.all_evaluations()
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature0d_results/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
         self.assertEqual(plot_count, 1)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature1d_results/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
         self.assertEqual(plot_count, 22)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature2d_results/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
         self.assertEqual(plot_count, 22)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/TestingModel1d_results/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
         self.assertEqual(plot_count, 22)
 
-    def test_results_2d_feature(self):
+    def test_evaluations_2d_feature(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
-        self.plot.results_2d(feature="feature2d")
+        self.plot.evaluations_2d(feature="feature2d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
-    def test_results_feature_2d(self):
+    def test_evaluations_feature_2d(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
-        self.plot.results(feature="feature2d")
+        self.plot.evaluations(feature="feature2d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
-    def test_results_0d_feature(self):
+    def test_evaluations_0d_feature(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
-        self.plot.results_0d(feature="feature0d")
+        self.plot.evaluations_0d(feature="feature0d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "feature0d_results/*.png")):
-            plot_count += 1
-
-        self.assertEqual(plot_count, 1)
-
-
-    def test_results_feature_0d(self):
-        self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
-
-        self.plot.results(feature="feature0d")
-
-        plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "feature0d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "feature0d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 1)
 
 
-    def test_results_1d_feature(self):
+    def test_evaluations_feature_0d(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
-        self.plot.results_1d(feature="feature1d")
+        self.plot.evaluations(feature="feature0d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "feature0d_evaluations/*.png")):
+            plot_count += 1
+
+        self.assertEqual(plot_count, 1)
+
+
+    def test_evaluations_1d_feature(self):
+        self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
+
+        self.plot.evaluations_1d(feature="feature1d")
+
+        plot_count = 0
+        for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
-    def test_results_feature_1d(self):
+    def test_evaluations_feature_1d(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 
-        self.plot.results(feature="feature1d")
+        self.plot.evaluations(feature="feature1d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
-    def test_results_2d_model(self):
+    def test_evaluations_2d_model(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel2d.h5"))
 
-        self.plot.results_2d(feature="TestingModel2d")
+        self.plot.evaluations_2d(feature="TestingModel2d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
-    def test_results_2d(self):
+    def test_evaluations_2d(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel2d.h5"))
 
-        self.plot.results(feature="TestingModel2d")
+        self.plot.evaluations(feature="TestingModel2d")
 
         plot_count = 0
-        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_results/*.png")):
+        for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_evaluations/*.png")):
             plot_count += 1
 
         self.assertEqual(plot_count, 22)
 
 
 
-    def test_results_0d_model(self):
+    def test_evaluations_0d_model(self):
         self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
 
-        self.plot.results_0d(feature="TestingModel0d")
+        self.plot.evaluations_0d(feature="TestingModel0d")
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "results", "values" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "evaluations", "values" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_results", "values" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_evaluations", "values" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -329,15 +329,15 @@ class TestPlotUncertainpy(TestCasePlot):
             self.assertTrue(os.path.isfile(plot_file))
 
 
-    def test_results_0d(self):
+    def test_evaluations_0d(self):
         self.plot.load(os.path.join(self.test_data_dir, "TestingModel0d.h5"))
 
-        self.plot.results(feature="TestingModel0d")
+        self.plot.evaluations(feature="TestingModel0d")
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "results", "values" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "evaluations", "values" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_results", "values" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_evaluations", "values" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -348,7 +348,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
     def test_init(self):
-        plot = PlotUncertainty(output_dir=self.output_test_dir,
+        plot = PlotUncertainty(folder=self.output_test_dir,
                                verbose_level="error")
 
         self.assertIsInstance(plot, PlotUncertainty)
@@ -369,9 +369,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.assert_data()
 
-    def test_set_output_dir(self):
+    def test_set_folder(self):
         test_dir = os.path.join(self.output_test_dir, "testing")
-        self.plot.output_dir = test_dir
+        self.plot.folder = test_dir
 
         self.assertTrue(os.path.isdir)
 

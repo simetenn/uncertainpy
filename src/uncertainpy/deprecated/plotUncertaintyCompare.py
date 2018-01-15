@@ -25,7 +25,7 @@ from prettyplot import axis_grey, labelsize, fontsize  # , titlesize
 
 class PlotUncertaintyCompare(PlotUncertainty):
     def __init__(self, data_dir="data/",
-                 output_dir_figures="figures/",
+                 figure_folder="figures/",
                  figureformat=".png",
                  verbose_level="info",
                  verbose_filename=None,
@@ -33,7 +33,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
                  ylabel="y"):
 
         PlotUncertainty.__init__(self, data_dir=data_dir,
-                                 output_dir_figures=output_dir_figures,
+                                 figure_folder=figure_folder,
                                  figureformat=figureformat,
                                  verbose_level=verbose_level,
                                  verbose_filename=verbose_filename)
@@ -73,10 +73,10 @@ class PlotUncertaintyCompare(PlotUncertainty):
             self.sensitivity_compare[name] = self.data.sensitivity_1.copy()
 
 
-        self.compare_output_dir_figures = os.path.join(self.output_dir_figures, "compare")
+        self.compare_figure_folder = os.path.join(self.figure_folder, "compare")
 
-        if not os.path.isdir(self.compare_output_dir_figures):
-            os.makedirs(self.compare_output_dir_figures)
+        if not os.path.isdir(self.compare_figure_folder):
+            os.makedirs(self.compare_figure_folder)
 
         self.loaded_compare_flag = True
 
@@ -231,7 +231,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         plt.legend(legend)
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -282,7 +282,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         plt.legend(legend)
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat), nr_hues=len(self.compare_folders))
             if not show:
                 plt.close()
@@ -380,7 +380,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -450,7 +450,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         plt.legend(ncol=2)
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -498,7 +498,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
 
 
             if hardcopy:
-                plt.savefig(os.path.join(self.full_output_dir_figures,
+                plt.savefig(os.path.join(self.full_figure_folder,
                                          feature + "_sensitivity_" + parameter_names[i] + "_compare" + self.figureformat),
                             bbox_inches="tight")
                 if not show:
@@ -548,7 +548,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         save_name = feature + "_" + attribute_name + "_compare"
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -645,7 +645,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         save_name = feature + "_prediction-interval_compare"
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -706,7 +706,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -803,7 +803,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         plt.ylim([min(min_values)*0.99, max(max_values)*1.3])
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -867,7 +867,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         save_name = feature + "_" + attribute_name + "_compare_fractional"
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -977,7 +977,7 @@ class PlotUncertaintyCompare(PlotUncertainty):
         save_name = feature + "_prediction-interval_compare_fractional"
 
         if hardcopy:
-            plt.savefig(os.path.join(self.compare_output_dir_figures,
+            plt.savefig(os.path.join(self.compare_figure_folder,
                                      save_name + self.figureformat))
             if not show:
                 plt.close()
@@ -1060,11 +1060,11 @@ if __name__ == "__main__":
     figureformat = ".png"
 
     plot = PlotUncertaintyCompare(data_dir=args.data_dir,
-                                  output_dir_figures=args.output_dir,
+                                  figure_folder=args.output_dir,
                                   figureformat=figureformat)
 
 
 
     plot.plotCompareAll(args.filename, args.compare_folders)
 
-    # sortByParameters(path=output_dir_figures, outputpath=output_dir_figures)
+    # sortByParameters(path=figure_folder, outputpath=figure_folder)

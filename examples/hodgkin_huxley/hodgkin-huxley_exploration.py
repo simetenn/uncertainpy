@@ -23,7 +23,7 @@ features = uncertainpy.SpikingFeatures(features_to_run="all")
 exploration = uncertainpy.UncertaintyQuantifications(model,
                                                  supress_model_output=False,
                                                  features=features,
-                                                 save_figures=True)
+                                                 plot=True)
 
 percentages = [0.01, 0.03]
 test_distributions = {"uniform": percentages}

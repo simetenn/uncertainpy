@@ -4,14 +4,13 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
 from .prettyplot import get_colormap_tableu20, set_style
 from .prettyplot import axis_grey, labelsize, fontsize, titlesize
 
 from ..data import Data
-from ..utils import create_logger
+from ..utils import create_logger, str_to_latex, list_to_latex
 
 
 # TODO find a good way to find the directory where the data files are
@@ -26,14 +25,14 @@ from ..utils import create_logger
 class PlotUncertainty(object):
     def __init__(self,
                  filename=None,
-                 output_dir="figures/",
+                 folder="figures/",
                  figureformat=".png",
                  verbose_level="info",
                  verbose_filename=None):
 
-        self._output_dir = None
+        self._folder = None
 
-        self.output_dir = output_dir
+        self.folder = folder
         self.figureformat = figureformat
 
         self.features_in_combined_plot = 3
@@ -55,64 +54,51 @@ class PlotUncertainty(object):
 
 
     @property
-    def output_dir(self):
-        return self._output_dir
+    def folder(self):
+        return self._folder
 
 
-    @output_dir.setter
-    def output_dir(self, new_output_dir):
-        self._output_dir = new_output_dir
+    @folder.setter
+    def folder(self, new_folder):
+        self._folder = new_folder
 
-        if not os.path.isdir(new_output_dir):
-            os.makedirs(new_output_dir)
-
-
-    def str_to_latex(self, text):
-        if "_" in text:
-            txt = text.split("_")
-            return "$" + txt[0] + "_{\mathrm{" + "-".join(txt[1:]) + "}}$"
-        else:
-            return text
+        if not os.path.isdir(new_folder):
+            os.makedirs(new_folder)
 
 
-    def list_to_latex(self, texts):
-        tmp = []
-        for txt in texts:
-            tmp.append(self.str_to_latex(txt))
-
-        return tmp
 
 
-    def all_results(self, foldername="results"):
+    def all_evaluations(self, foldername="evaluations"):
         for feature in self.data:
-            self.results(feature=feature, foldername=foldername)
+            self.evaluations(feature=feature, foldername=foldername)
 
 
-    def results(self, feature=None, foldername=""):
+    def evaluations(self, feature=None, foldername=""):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
         if feature is None:
             feature = self.data.model_name
 
-        save_folder = os.path.join(self.output_dir, foldername)
+        save_folder = os.path.join(self.folder, foldername)
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
 
         if self.data.ndim(feature) == 0:
-            self.results_0d(feature=feature, foldername=foldername)
+            self.evaluations_0d(feature=feature, foldername=foldername)
 
         elif self.data.ndim(feature) == 1:
-            self.results_1d(feature=feature, foldername=foldername)
+            self.evaluations_1d(feature=feature, foldername=foldername)
 
         elif self.data.ndim(feature) == 2:
-            self.results_2d(feature=feature, foldername=foldername)
+            self.evaluations_2d(feature=feature, foldername=foldername)
         else:
             raise NotImplementedError(">2D plots not implemented.")
 
 
-    def results_0d(self, feature=None, foldername="", **plot_kwargs):
+
+    def evaluations_0d(self, feature=None, foldername="", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -120,13 +106,13 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if feature not in self.data or "values"  not in self.data[feature]:
-            self.logger.warning("No {} results to plot.".format(feature))
+            self.logger.warning("No {} evaluations to plot.".format(feature))
             return
 
         if self.data.ndim(feature) != 0:
             raise ValueError("{} is not a 0D feature".format(self.data.model_name))
 
-        save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
+        save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
@@ -140,7 +126,7 @@ class PlotUncertainty(object):
         plt.close()
 
 
-    def results_1d(self, feature=None, foldername="", **plot_kwargs):
+    def evaluations_1d(self, feature=None, foldername="", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -148,14 +134,14 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if feature not in self.data or "values"  not in self.data[feature]:
-            self.logger.warning("No model results to plot.")
+            self.logger.warning("No model evaluations to plot.")
             return
 
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1D feature".format(feature))
 
         i = 1
-        save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
+        save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
@@ -180,7 +166,7 @@ class PlotUncertainty(object):
 
 
 
-    def results_2d(self, feature=None, foldername="", **plot_kwargs):
+    def evaluations_2d(self, feature=None, foldername="", **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -188,7 +174,7 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if feature not in self.data or "values"  not in self.data[feature]:
-            self.logger.warning("No model results to plot.")
+            self.logger.warning("No model evaluations to plot.")
             return
 
         if self.data.ndim(feature) != 2:
@@ -196,7 +182,7 @@ class PlotUncertainty(object):
 
         set_style("seaborn-dark")
 
-        save_folder = os.path.join(self.output_dir, foldername, feature + "_results")
+        save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
@@ -274,7 +260,7 @@ class PlotUncertainty(object):
         save_name = feature + "_" + attribute_name
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      save_name + self.figureformat),
                         bbox_inches="tight")
 
@@ -344,7 +330,7 @@ class PlotUncertainty(object):
         save_name = feature + "_" + attribute_name
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      save_name + self.figureformat),
                         bbox_inches="tight")
 
@@ -457,7 +443,7 @@ class PlotUncertainty(object):
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      feature + "_mean-variance" + self.figureformat),
                         bbox_inches="tight")
 
@@ -518,7 +504,7 @@ class PlotUncertainty(object):
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      feature + "_prediction-interval" + self.figureformat),
                         bbox_inches="tight")
 
@@ -559,7 +545,7 @@ class PlotUncertainty(object):
 
         for i in range(len(self.data[feature][sensitivity])):
             prettyPlot(time, self.data[feature][sensitivity][i],
-                       title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + self.str_to_latex(self.data.uncertain_parameters[i]),
+                       title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + str_to_latex(self.data.uncertain_parameters[i]),
                        xlabel=xlabel, ylabel="sensitivity",
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
@@ -567,7 +553,7 @@ class PlotUncertainty(object):
 
 
             if hardcopy:
-                plt.savefig(os.path.join(self.output_dir,
+                plt.savefig(os.path.join(self.folder,
                                          feature + "_" + sensitivity + "_"
                                          + self.data.uncertain_parameters[i] + self.figureformat),
                             bbox_inches="tight")
@@ -636,7 +622,7 @@ class PlotUncertainty(object):
 
             if i < nr_plots:
                 prettyPlot(time, self.data[feature][sensitivity][i],
-                           title=self.str_to_latex(parameter_names[i]), color=i,
+                           title=str_to_latex(parameter_names[i]), color=i,
                            nr_colors=nr_plots, ax=ax,
                            **plot_kwargs)
 
@@ -656,7 +642,7 @@ class PlotUncertainty(object):
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      feature + "_" + sensitivity + "_grid" + self.figureformat),
                         bbox_inches="tight")
 
@@ -706,7 +692,7 @@ class PlotUncertainty(object):
                        new_figure=False,
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters),
-                       label=self.str_to_latex(self.data.uncertain_parameters[i]),
+                       label=str_to_latex(self.data.uncertain_parameters[i]),
                        **plot_kwargs)
 
         plt.ylim([0, 1.05])
@@ -716,7 +702,7 @@ class PlotUncertainty(object):
         plt.legend()
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      feature + "_" + sensitivity + self.figureformat),
                         bbox_inches="tight")
 
@@ -829,7 +815,7 @@ class PlotUncertainty(object):
 
             location = (0.5, 1.01 + legend_width*0.095)
             plt.legend(legend_bars,
-                       self.list_to_latex(self.data.uncertain_parameters),
+                       list_to_latex(self.data.uncertain_parameters),
                        loc='upper center',
                        bbox_to_anchor=location,
                        ncol=legend_size)
@@ -856,7 +842,7 @@ class PlotUncertainty(object):
             save_name = feature + "_" + sensitivity + self.figureformat
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir, save_name))
+            plt.savefig(os.path.join(self.folder, save_name))
 
         if show:
             plt.show()
@@ -891,7 +877,7 @@ class PlotUncertainty(object):
         prettyBar(self.data[feature][sensitivity + "_sum"],
                   title="normalized sum " + sensitivity.replace("_", " ")
                   + ", " + feature.replace("_", " "),
-                  xlabels=self.list_to_latex(self.data.uncertain_parameters),
+                  xlabels=list_to_latex(self.data.uncertain_parameters),
                   ylabel="\% sensitivity sum",
                   nr_colors=len(self.data.uncertain_parameters),
                   index=index)
@@ -902,7 +888,7 @@ class PlotUncertainty(object):
         save_name = feature + "_" + sensitivity + "_sum" + self.figureformat
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir, save_name))
+            plt.savefig(os.path.join(self.folder, save_name))
 
         if show:
             plt.show()
@@ -911,9 +897,9 @@ class PlotUncertainty(object):
 
 
     def sensitivity_sum_all(self,
-                              sensitivity="sensitivity_1",
-                              hardcopy=True,
-                              show=False):
+                            sensitivity="sensitivity_1",
+                            hardcopy=True,
+                            show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -974,7 +960,6 @@ class PlotUncertainty(object):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
-
         self.plot_all(sensitivity="sensitivity_1")
 
         for feature in self.data:
@@ -1008,23 +993,24 @@ class PlotUncertainty(object):
 
 
     def plot(self, condensed=True, sensitivity="sensitivity_1"):
+
         if condensed:
             self.plot_condensed(sensitivity=sensitivity)
         else:
-            if sensitivity is None:
-                self.plot_all(sensitivity)
-            else:
+            if sensitivity is "all":
                 self.plot_all_sensitivities()
+            else:
+                self.plot_all(sensitivity)
 
     # def plot_allFromExploration(self, exploration_folder):
     #     self.logger.info("Plotting all data")
     #
     #     original_data_dir = self.data_dir
-    #     original_output_dir = self.output_dir
+    #     original_folder = self.folder
     #
     #     for folder in glob.glob(os.path.join(self.data_dir, "*")):
     #         self.data_dir = os.path.join(original_data_dir, folder.split("/")[-1])
-    #         self.output_dir = os.path.join(original_output_dir,
+    #         self.folder = os.path.join(original_folder,
     #                                                folder.split("/")[-1])
     #
     #         for filename in glob.glob(os.path.join(folder, "*")):
@@ -1034,17 +1020,14 @@ class PlotUncertainty(object):
     #         self.plot_all()
     #
     #     self.data_dir = original_data_dir
-    #     self.output_dir = original_output_dir
-    #
-
-
+    #     self.folder = original_folder
 
 
     def sensitivity_sum_grid(self,
-                               sensitivity="sensitivity_1",
-                               hardcopy=True,
-                               show=False,
-                               **plot_kwargs):
+                             sensitivity="sensitivity_1",
+                             hardcopy=True,
+                             show=False,
+                             **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -1101,7 +1084,7 @@ class PlotUncertainty(object):
 
                 prettyBar(self.data[self.data.keys()[i]][sensitivity + "_sum"],
                           title=self.data.keys()[i].replace("_", " "),
-                          xlabels=self.list_to_latex(self.data.uncertain_parameters),
+                          xlabels=list_to_latex(self.data.uncertain_parameters),
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
                           ax=ax,
@@ -1124,7 +1107,7 @@ class PlotUncertainty(object):
 
 
         if hardcopy:
-            plt.savefig(os.path.join(self.output_dir,
+            plt.savefig(os.path.join(self.folder,
                                      sensitivity + "_sum_grid" + self.figureformat),
                         bbox_inches="tight")
 
@@ -1138,7 +1121,7 @@ class PlotUncertainty(object):
 #     parser = argparse.ArgumentParser(description="Plot data")
 #     parser.add_argument("-d", "--data_dir",
 #                         help="Directory the data is stored in", default="data")
-#     parser.add_argument("-o", "--output_dir",
+#     parser.add_argument("-o", "--folder",
 #                         help="Folders to find compare files", default="figures")
 
 #     args = parser.parse_args()
@@ -1147,10 +1130,10 @@ class PlotUncertainty(object):
 
 
     # plot = PlotUncertainty(data_dir=args.data_dir,
-    #                        output_dir=args.output_dir,
+    #                        folder=args.folder,
     #                        figureformat=figureformat)
     #
     # # plot.plot_all()
     # plot.plot_allFromExploration()
 
-    # sortByParameters(path=output_dir, outputpath=output_dir)
+    # sortByParameters(path=folder, outputpath=folder)

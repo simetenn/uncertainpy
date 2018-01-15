@@ -11,7 +11,7 @@ from .core.base import ParameterBase
 
 
 #  Figures are always saved on the format:
-#  output_dir_figures/parameter_value-that-is-plotted.figure-extension
+#  figure_folder/parameter_value-that-is-plotted.figure-extension
 
 class UncertaintyQuantification(ParameterBase):
     def __init__(self,
@@ -110,19 +110,16 @@ class UncertaintyQuantification(ParameterBase):
                  nr_mc_samples=10**3,
                  allow_incomplete=False,
                  seed=None,
-                 plot_condensed=True,
-                 plot_results=False,
-                 output_dir_figures="figures",
-                 output_dir_data="data",
+                 plot="condensed_sensitivity_1",
+                 figure_folder="figures",
+                 data_folder="data",
                  filename=None,
-                 sensitivity="sensitivity_1",
                  **custom_kwargs):
         """
 method: pc, mc
 pc_method: "collocation, spectral"
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
-
 
         if method.lower() == "pc":
             if single:
@@ -135,10 +132,9 @@ pc_method: "collocation, spectral"
                                              nr_pc_mc_samples=nr_pc_mc_samples,
                                              allow_incomplete=allow_incomplete,
                                              seed=seed,
-                                             plot_condensed=plot_condensed,
-                                             plot_results=plot_results,
-                                             output_dir_figures=output_dir_figures,
-                                             output_dir_data=output_dir_data,
+                                             plot=plot,
+                                             figure_folder=figure_folder,
+                                             data_folder=data_folder,
                                              filename=filename,
                                              **custom_kwargs)
             else:
@@ -151,38 +147,33 @@ pc_method: "collocation, spectral"
                                       nr_pc_mc_samples=nr_pc_mc_samples,
                                       allow_incomplete=allow_incomplete,
                                       seed=seed,
-                                      plot_condensed=plot_condensed,
-                                      plot_results=plot_results,
-                                      output_dir_figures=output_dir_figures,
-                                      output_dir_data=output_dir_data,
+                                      plot=plot,
+                                      figure_folder=figure_folder,
+                                      data_folder=data_folder,
                                       filename=filename,
-                                      sensitivity=sensitivity,
                                       **custom_kwargs)
         elif method.lower() == "mc":
             if single:
                 self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
                                         nr_samples=nr_mc_samples,
-                                        plot_condensed=plot_condensed,
-                                        plot_results=plot_results,
-                                        output_dir_figures=output_dir_figures,
-                                        output_dir_data=output_dir_data,
+                                        plot=plot,
+                                        figure_folder=figure_folder,
+                                        data_folder=data_folder,
                                         filename=filename,
                                         seed=seed)
             else:
                 self.monte_carlo(uncertain_parameters=uncertain_parameters,
                                  nr_samples=nr_mc_samples,
-                                 plot_condensed=plot_condensed,
-                                 plot_results=plot_results,
-                                 output_dir_figures=output_dir_figures,
-                                 output_dir_data=output_dir_data,
+                                 plot=plot,
+                                 figure_folder=figure_folder,
+                                 data_folder=data_folder,
                                  filename=filename,
                                  seed=seed)
 
         elif method.lower() == "custom":
-            self.custom_uncertainty_quantification(plot_condensed=plot_condensed,
-                                                   plot_results=plot_results,
-                                                   output_dir_figures=output_dir_figures,
-                                                   output_dir_data=output_dir_data,
+            self.custom_uncertainty_quantification(plot=plot,
+                                                   figure_folder=figure_folder,
+                                                   data_folder=data_folder,
                                                    filename=filename,
                                                    **custom_kwargs)
 
@@ -192,11 +183,9 @@ pc_method: "collocation, spectral"
 
 
     def custom_uncertainty_quantification(self,
-                                          save_figures=True,
-                                          plot_condensed=True,
-                                          plot_results=False,
-                                          output_dir_figures="figures",
-                                          output_dir_data="data",
+                                          plot="condensed_sensitivity_1",
+                                          figure_folder="figures",
+                                          data_folder="data",
                                           filename=None,
                                           **custom_kwargs):
 
@@ -206,17 +195,8 @@ pc_method: "collocation, spectral"
         if filename is None:
             filename = self.model.name
 
-        self.save(filename, output_dir=output_dir_data)
-
-
-        if save_figures:
-            self.plot(condensed=plot_condensed,
-                      sensitivity=None,
-                      output_dir=output_dir_figures)
-
-        if plot_results:
-            self.plot(results=True, output_dir=output_dir_figures)
-
+        self.save(filename, folder=data_folder)
+        self.plot(type=plot, folder=figure_folder)
 
 
     def polynomial_chaos(self,
@@ -229,12 +209,9 @@ pc_method: "collocation, spectral"
                          nr_pc_mc_samples=10**4,
                          allow_incomplete=False,
                          seed=None,
-                         plot_condensed=True,
-                         plot_results=False,
-                         save_figures=True,
-                         output_dir_figures="figures",
-                         output_dir_data="data",
-                         sensitivity="sensitivity_1",
+                         plot="condensed_sensitivity_1",
+                         figure_folder="figures",
+                         data_folder="data",
                          filename=None,
                          **custom_kwargs):
 
@@ -261,27 +238,17 @@ pc_method: "collocation, spectral"
         if filename is None:
             filename = self.model.name
 
-        self.save(filename, output_dir=output_dir_data)
-
-
-        if save_figures:
-            self.plot(condensed=plot_condensed,
-                      output_dir=output_dir_figures,
-                      sensitivity=sensitivity)
-
-        if plot_results:
-            self.plot(results=True, output_dir=output_dir_figures)
+        self.save(filename, folder=data_folder)
+        self.plot(type=plot, folder=figure_folder)
 
 
     def monte_carlo(self,
                     uncertain_parameters=None,
                     nr_samples=10**3,
-                    plot_condensed=True,
-                    plot_results=False,
-                    output_dir_figures="figures",
-                    output_dir_data="data",
+                    plot="condensed_sensitivity_1",
+                    figure_folder="figures",
+                    data_folder="data",
                     filename=None,
-                    save_figures=True,
                     seed=None):
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
@@ -294,16 +261,10 @@ pc_method: "collocation, spectral"
         if filename is None:
            filename = self.model.name
 
-        self.save(filename, output_dir=output_dir_data)
+        self.save(filename, folder=data_folder)
 
+        self.plot(type=plot, folder=figure_folder)
 
-        if save_figures:
-            self.plot(condensed=plot_condensed,
-                      sensitivity=None,
-                      output_dir=output_dir_figures)
-
-        if plot_results:
-            self.plot(results=True, output_dir=output_dir_figures)
 
 
 
@@ -317,12 +278,10 @@ pc_method: "collocation, spectral"
                                 nr_pc_mc_samples=10**4,
                                 allow_incomplete=False,
                                 seed=None,
-                                plot_condensed=True,
-                                plot_results=False,
-                                output_dir_data="figures",
-                                output_dir_figures="data",
-                                filename=None,
-                                save_figures=True):
+                                plot="condensed_sensitivity_1",
+                                data_folder="figures",
+                                figure_folder="data",
+                                filename=None,):
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -356,28 +315,18 @@ pc_method: "collocation, spectral"
                 uncertain_parameter
             )
 
-            self.save(tmp_filename, output_dir=output_dir_data)
+            self.save(tmp_filename, folder=data_folder)
 
-            tmp_output_dir_figures = os.path.join(output_dir_figures, tmp_filename)
-
-            if save_figures:
-                self.plot(condensed=plot_condensed,
-                          sensitivity=None,
-                          output_dir=tmp_output_dir_figures)
-
-            if plot_results:
-                self.plot(results=True,
-                          output_dir=tmp_output_dir_figures)
+            tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
+            self.plot(type=plot, folder=tmp_figure_folder)
 
 
     def monte_carlo_single(self,
                            uncertain_parameters=None,
                            nr_samples=10**3,
-                           plot_condensed=True,
-                           plot_results=False,
-                           output_dir_data="data",
-                           output_dir_figures="figures",
-                           save_figures=True,
+                           plot="condensed_sensitivity_1",
+                           data_folder="data",
+                           figure_folder="figures",
                            filename=None,
                            seed=None):
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
@@ -399,24 +348,21 @@ pc_method: "collocation, spectral"
                 uncertain_parameter
             )
 
-            self.save(tmp_filename, output_dir=output_dir_data)
+            self.save(tmp_filename, folder=data_folder)
 
-            tmp_output_dir_figures = os.path.join(output_dir_figures, tmp_filename)
+            tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
 
-            if save_figures:
-                self.plot(condensed=plot_condensed, output_dir=tmp_output_dir_figures)
-
-            if plot_results:
-                self.plot(results=True, output_dir=tmp_output_dir_figures)
+            self.plot(type=plot, folder=tmp_figure_folder)
 
 
 
-    def save(self, filename, output_dir="data"):
 
-        if not os.path.isdir(output_dir):
-            os.makedirs(output_dir)
+    def save(self, filename, folder="data"):
 
-        save_path = os.path.join(output_dir, filename + ".h5")
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+
+        save_path = os.path.join(folder, filename + ".h5")
 
         self.logger.info("Saving data as: {}".format(save_path))
 
@@ -429,18 +375,36 @@ pc_method: "collocation, spectral"
 
 
     def plot(self,
-             condensed=True,
-             sensitivity="sensitivity_1",
-             results=False,
-             output_dir="figures",
+             type="condensed_sensitivity_1",
+             folder="figures",
              figureformat=".png"):
 
+        '{"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}'
+
         self.plotting.data = self.data
-        self.plotting.output_dir = output_dir
+        self.plotting.folder = folder
         self.plotting.figureformat = ".png"
 
-        if results:
-            self.plotting.all_results()
+        if type is None:
+            return
+
+        elif type.lower() == "condensed_sensitivity_1":
+            self.plotting.plot_condensed(sensitivity="sensitivity_t")
+
+        elif type.lower() == "condensed_sensitivity_t":
+            self.plotting.plot_condensed(sensitivity="sensitivity_t")
+
+        elif type.lower() == "condensed_no_sensitivity":
+            self.plotting.plot_condensed(sensitivity=None)
+
+        elif type.lower() == "all":
+            self.plotting.plot_all_sensitivities()
+            self.plotting.all_evaluations()
+
+        elif type.lower() == "evaluations":
+            self.plotting.all_evaluations()
+
         else:
-            self.plotting.plot(condensed=condensed,
-                               sensitivity=sensitivity)
+            raise ValueError('plot must one of: "condensed_sensitivity_1", '
+                             '"condensed_sensitivity_t", "condensed_no_sensitivity" "all", "evaluations", None}')
+

@@ -36,8 +36,8 @@ import shutil
 #         self.uncertainty = UncertaintyQuantifications(model,
 #                                                   features=TestingFeatures(),
 #                                                   verbose_level="error",
-#                                                   output_dir_data=self.output_test_dir,
-#                                                   output_dir_figures=self.output_test_dir,
+#                                                   data_folder=self.output_test_dir,
+#                                                   figure_folder=self.output_test_dir,
 #                                                   nr_mc_samples=10**1,
 #                                                   seed=self.seed)
 
@@ -50,8 +50,8 @@ import shutil
 #         self.uncertainty = UncertaintyQuantifications(TestingModel1d(),
 #                                                   features=TestingFeatures(),
 #                                                   verbose_level="error",
-#                                                   output_dir_data=self.output_test_dir,
-#                                                   output_dir_figures=self.output_test_dir,
+#                                                   data_folder=self.output_test_dir,
+#                                                   figure_folder=self.output_test_dir,
 #                                                   nr_mc_samples=10**1,
 #                                                   seed=self.seed)
 

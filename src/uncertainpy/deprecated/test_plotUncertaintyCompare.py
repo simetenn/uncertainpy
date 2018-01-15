@@ -26,7 +26,7 @@ class TestPlotUncertainpyCompare(unittest.TestCase):
         os.makedirs(self.output_test_dir)
 
         self.plot = PlotUncertaintyCompare(data_dir=self.test_data_dir,
-                                           output_dir_figures=self.output_test_dir,
+                                           figure_folder=self.output_test_dir,
                                            verbose_level="error")
 
 

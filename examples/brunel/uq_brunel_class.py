@@ -15,9 +15,9 @@ features = un.NetworkFeatures(features_to_run="all")
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  output_dir_figures="figures_brunel_class",
+                                  figure_folder="figures_brunel_class",
                                   CPUs=1)
 
 
 UQ.quantify(plot_condensed=False,
-            plot_results=True)
+            plot_model=True)

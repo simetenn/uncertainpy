@@ -27,12 +27,12 @@ parameters = un.Parameters(parameter_list)
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  output_dir_figures="figures_brunel_function_SR",
+                                  figure_folder="figures_brunel_function_SR",
                                   CPUs=7,
                                   allow_incomplete=True)
 
 UQ.quantify(plot_condensed=True,
-            plot_results=False,
+            plot_model=False,
             filename="brunel_function_SR")
 
 
@@ -53,12 +53,12 @@ parameters = un.Parameters(parameter_list)
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  output_dir_figures="figures_brunel_function_AI",
+                                  figure_folder="figures_brunel_function_AI",
                                   CPUs=7,
                                   allow_incomplete=True)
 
 UQ.quantify(plot_condensed=True,
-            plot_results=False,
+            plot_model=False,
             filename="brunel_function_AI")
 
 
@@ -73,10 +73,10 @@ parameters = un.Parameters(parameter_list)
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  output_dir_figures="figures_brunel_function_border",
+                                  figure_folder="figures_brunel_function_border",
                                   CPUs=7,
                                   allow_incomplete=True)
 
 UQ.quantify(plot_condensed=True,
-            plot_results=False,
+            plot_model=False,
             filename="brunel_function_border")

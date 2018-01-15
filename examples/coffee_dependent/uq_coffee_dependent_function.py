@@ -43,7 +43,7 @@ UQ = un.UncertaintyQuantification(model=model,
 
 UQ.quantify(rosenblatt=True,
             pc_method="collocation",
-            output_dir_figures="figures_coffee_dependent",
+            figure_folder="figures_coffee_dependent",
             filename="coffee_dependent")
 
 
@@ -60,7 +60,7 @@ UQ.quantify(rosenblatt=True,
 # UQ.quantify(rosenblatt=True,
 #             pc_method="spectral",
 #             quadrature_order=6,
-#             output_dir_figures="figures_coffee_dependent",
+#             figure_folder="figures_coffee_dependent",
 #             filename="coffee_dependent")
 
 # # C = [[.0001, 0, 0.0005],
@@ -76,7 +76,7 @@ UQ.quantify(rosenblatt=True,
 
 # UQ.parameters.distribution = dist
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_small_correlation",
+#                                        figure_folder="figures_coffee_dependent_small_correlation",
 #                                        filename="coffee_dependent_small_correlation")
 
 
@@ -89,7 +89,7 @@ UQ.quantify(rosenblatt=True,
 
 # UQ.parameters.distribution = dist
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_medium_correlation",
+#                                        figure_folder="figures_coffee_dependent_medium_correlation",
 #                                        filename="coffee_dependent_medium_correlation")
 
 
@@ -113,7 +113,7 @@ UQ.quantify(rosenblatt=True,
 
 # UQ.parameters.distribution = dist
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_large_correlation",
+#                                        figure_folder="figures_coffee_dependent_large_correlation",
 #                                        filename="coffee_dependent_large_correlation")
 
 
@@ -131,7 +131,7 @@ UQ.quantify(rosenblatt=True,
 
 # UQ.parameters.distribution = dist
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_large_reverse_correlation",
+#                                        figure_folder="figures_coffee_dependent_large_reverse_correlation",
 #                                        filename="coffee_dependent_large_reverse_correlation")
 
 # T_env_dist = cp.Uniform(18, 22)
@@ -151,11 +151,11 @@ UQ.quantify(rosenblatt=True,
 
 # UQ.parameters = parameters
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_no_correlation_rosenblatt",
+#                                        figure_folder="figures_coffee_dependent_no_correlation_rosenblatt",
 #                                        filename="coffee_dependent_no_correlation_rosenblatt")
 
 # UQ.quantify(rosenblatt=False,
-#                                        output_dir_figures="figures_coffee_dependent_no_correlation",
+#                                        figure_folder="figures_coffee_dependent_no_correlation",
 #                                        filename="coffee_dependent_no_correlation")
 
 # parameter_list = [["a", 1, None],
@@ -181,7 +181,7 @@ UQ.quantify(rosenblatt=True,
 
 
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_reverse_order",
+#                                        figure_folder="figures_coffee_dependent_reverse_order",
 #                                        filename="coffee_dependent_reverse_order")
 
 
@@ -217,7 +217,7 @@ UQ.quantify(rosenblatt=True,
 
 
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_reverse_order_2",
+#                                        figure_folder="figures_coffee_dependent_reverse_order_2",
 #                                        filename="coffee_dependent_reverse_order_2",
 #                                        sensitivity="sensitivity_t")
 
@@ -248,6 +248,6 @@ UQ.quantify(rosenblatt=True,
 #                                        seed=10)
 
 # UQ.quantify(rosenblatt=True,
-#                                        output_dir_figures="figures_coffee_dependent_reverse_order_3",
+#                                        figure_folder="figures_coffee_dependent_reverse_order_3",
 #                                        filename="coffee_dependent_reverse_order_3",
 #                                        sensitivity="sensitivity_t")

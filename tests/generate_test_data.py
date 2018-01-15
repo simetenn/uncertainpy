@@ -31,9 +31,9 @@ def generate_data_polynomial_chaos():  # pragma: no cover
                                     verbose_level="error")
 
 
-    test.polynomial_chaos(output_dir_data=test_data_dir,
+    test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          save_figures=False)
+                          plot=False)
 
 
 def generate_data_PC_model_function():  # pragma: no cover
@@ -52,9 +52,9 @@ def generate_data_PC_model_function():  # pragma: no cover
                                         parameters=parameters,
                                         verbose_level="error")
 
-    test.polynomial_chaos(output_dir_data=test_data_dir,
+    test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          save_figures=False)
+                          plot=False)
 
 
 
@@ -76,9 +76,9 @@ def generate_data_PC_0D():  # pragma: no cover
                                         verbose_level="error")
 
 
-    test.polynomial_chaos(output_dir_data=test_data_dir,
+    test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          save_figures=False)
+                          plot=False)
 
 
 def generate_data_PC_2D():  # pragma: no cover
@@ -99,9 +99,9 @@ def generate_data_PC_2D():  # pragma: no cover
                                         verbose_level="error")
 
 
-    test.polynomial_chaos(output_dir_data=test_data_dir,
+    test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          save_figures=False)
+                          plot=False)
 
 
 def generate_data_PC_rosenblatt():  # pragma: no cover
@@ -126,8 +126,8 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
 
     test.polynomial_chaos(rosenblatt=True,
                           filename="TestingModel1d_Rosenblatt",
-                          output_dir_data=test_data_dir,
-                          save_figures=False)
+                          data_folder=test_data_dir,
+                          plot=False)
 
 
 
@@ -153,9 +153,9 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
 
 
 
-    test.polynomial_chaos_single(output_dir_data=test_data_dir,
+    test.polynomial_chaos_single(data_folder=test_data_dir,
                                  seed=seed,
-                                 save_figures=False)
+                                 plot=False)
 
 
 def generate_data_monte_carlo():  # pragma: no cover
@@ -177,10 +177,10 @@ def generate_data_monte_carlo():  # pragma: no cover
                                         verbose_level="error")
 
     test.monte_carlo(filename="TestingModel1d_MC",
-                     output_dir_data=test_data_dir,
+                     data_folder=test_data_dir,
                      seed=seed,
                      nr_samples=10,
-                     save_figures=False)
+                     plot=False)
 
 
 def generate_data_monte_carlo_single():  # pragma: no cover
@@ -204,10 +204,10 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
 
     test.monte_carlo_single(filename="TestingModel1d_MC",
-                            output_dir_data=test_data_dir,
+                            data_folder=test_data_dir,
                             seed=seed,
                             nr_samples=10,
-                            save_figures=False)
+                            plot=False)
 
 
 
@@ -223,8 +223,8 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 #     uncertainty = un.UncertaintyQuantifications(model,
 #                                             features=TestingFeatures(),
 #                                             verbose_level="error",
-#                                             output_dir_data=test_data_dir,
-#                                             save_figures=False,
+#                                             data_folder=test_data_dir,
+#                                             plot=False,
 #                                             nr_mc_samples=10**1,
 #                                             seed=seed)
 #

@@ -12,15 +12,14 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
                          quadrature_order=4,
                          nr_pc_mc_samples=10**4,
                          allow_incomplete=False,
-                         seed=None,
-                         plot_condensed=True):
+                         seed=None):
+
         arguments = {}
 
         arguments["function"] = "PC"
         arguments["uncertain_parameters"] = uncertain_parameters
         arguments["method"] = method
         arguments["rosenblatt"] = rosenblatt
-        arguments["plot_condensed"] = plot_condensed
         arguments["polynomial_order"] = polynomial_order
         arguments["nr_collocation_nodes"] = nr_collocation_nodes
         arguments["quadrature_order"] = quadrature_order
@@ -38,13 +37,11 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
     def monte_carlo(self,
                     uncertain_parameters=None,
                     nr_samples=10**3,
-                    seed=None,
-                    plot_condensed=True):
+                    seed=None):
         arguments = {}
 
         arguments["function"] = "MC"
         arguments["uncertain_parameters"] = uncertain_parameters
-        arguments["plot_condensed"] = plot_condensed
         arguments["seed"] = seed
         arguments["nr_samples"] = nr_samples
 

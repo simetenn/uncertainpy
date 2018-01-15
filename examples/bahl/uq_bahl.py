@@ -14,9 +14,9 @@ features = un.SpikingFeatures()
 UQ = un.UncertaintyQuantification(model=model,
                                   parameters=parameter_list,
                                   features=features,
-                                  save_figures=True)
+                                  plot=True)
 
 UQ.quantify(plot_condensed=False,
-            plot_results=True)
+            plot_model=True)
 UQ.quantify(single=True,
-            plot_results=False)
+            plot_model=False)

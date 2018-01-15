@@ -17,7 +17,7 @@ exploration = uncertainpy.UncertaintyQuantifications(model,
                                                  CPUs=7,
                                                  seed=10,
                                                  features=features,
-                                                 save_figures=True,
+                                                 plot=True,
                                                  single_parameter_runs=True,
                                                  rosenblatt=False)
 

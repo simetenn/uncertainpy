@@ -45,8 +45,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list=None,
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -85,8 +85,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -116,8 +116,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -158,8 +158,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -190,8 +190,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -236,8 +236,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -285,8 +285,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")
@@ -329,8 +329,8 @@ class TestUseCases(unittest.TestCase):
 
         exploration = uncertainpy.UncertaintyQuantifications(model,
                                                          feature_list="all",
-                                                         output_dir_data=self.output_test_dir,
-                                                         output_dir_figures=self.output_test_dir,
+                                                         data_folder=self.output_test_dir,
+                                                         figure_folder=self.output_test_dir,
                                                          nr_mc_samples=10**1,
                                                          nr_pc_mc_samples=10**2,
                                                          verbose_level="Error")

@@ -21,13 +21,13 @@ class UncertaintyQuantifications():
     def __init__(self, model,
                  features=None,
                  uncertainty_calculations=None,
-                 save_figures=False,
+                 plot=False,
                  plot_type="results",
-                 plot_results=False,
-                 output_dir_figures="figures/",
+                 plot_model=False,
+                 figure_folder="figures/",
                  figureformat=".png",
                  save_data=True,
-                 output_dir_data="data/",
+                 data_folder="data/",
                  output_data_filename=None,
                  verbose_level="info",
                  verbose_filename=None,
@@ -39,7 +39,7 @@ class UncertaintyQuantifications():
         """
 
         # Figures are always saved on the format:
-        # output_dir_figures/distribution_interval/parameter_value-that-is-plotted.figure-format
+        # figure_folder/distribution_interval/parameter_value-that-is-plotted.figure-format
 
         self.data = None
 
@@ -48,11 +48,11 @@ class UncertaintyQuantifications():
         else:
             self.features = features
 
-        self.save_figures = save_figures
+        self.plot = plot
         self.save_data = save_data
-        self.output_dir_data = output_dir_data
-        self.output_dir_figures = output_dir_figures
-        self.plot_results = plot_results
+        self.data_folder = data_folder
+        self.figure_folder = figure_folder
+        self.plot_model = plot_model
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -81,7 +81,7 @@ class UncertaintyQuantifications():
 
         self.plot_type = plot_type
 
-        self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
+        self.plotting = PlotUncertainty(output_dir=self.figure_folder,
                                         figureformat=figureformat,
                                         verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
@@ -101,7 +101,7 @@ class UncertaintyQuantifications():
     def exploreParameters(self, distributions):
         for distribution_function in distributions:
             for interval in distributions[distribution_function]:
-                current_output_dir_figures = os.path.join(self.output_dir_figures,
+                current_figure_folder = os.path.join(self.figure_folder,
                                                           distribution_function + "_%g" % interval)
 
                 # distribution = getattr(Distribution(interval), distribution_function)
@@ -111,18 +111,18 @@ class UncertaintyQuantifications():
                 message = "Running for: " + distribution_function + " " + str(interval)
                 self.logger.info(message)
 
-                tmp_output_dir_data = \
-                    os.path.join(self.output_dir_data,
+                tmp_data_folder = \
+                    os.path.join(self.data_folder,
                                  distribution_function + "_%g" % interval)
 
                 self.uncertainty_estimations =\
                     UncertaintyQuantification(self.model,
                                           features=self.features,
-                                          save_figures=self.save_figures,
-                                          output_dir_figures=current_output_dir_figures,
+                                          plot=self.plot,
+                                          figure_folder=current_figure_folder,
                                           figureformat=self.figureformat,
                                           save_data=self.save_data,
-                                          output_dir_data=tmp_output_dir_data,
+                                          data_folder=tmp_data_folder,
                                           output_data_filename=self.model.__class__.__name__,
                                           suppress_model_graphics=self.suppress_model_graphics,
                                           supress_model_output=self.supress_model_output,
@@ -139,7 +139,7 @@ class UncertaintyQuantifications():
                     self.uncertainty_estimations.singleParameters()
                 self.uncertainty_estimations.allParameters()
 
-                if self.plot_results:
+                if self.plot_model:
                     self.uncertainty_estimations.results()
 
                 del self.uncertainty_estimations
@@ -150,19 +150,19 @@ class UncertaintyQuantifications():
         run_times = []
 
         name = "pc"
-        output_dir_figures = os.path.join(self.output_dir_figures, name)
-        output_dir_data = os.path.join(self.output_dir_data, name)
+        figure_folder = os.path.join(self.figure_folder, name)
+        data_folder = os.path.join(self.data_folder, name)
 
         compare_folders = [name]
 
         self.uncertainty_estimations =\
             UncertaintyQuantification(self.model,
                                   features=self.features,
-                                  save_figures=self.save_figures,
-                                  output_dir_figures=output_dir_figures,
+                                  plot=self.plot,
+                                  figure_folder=figure_folder,
                                   figureformat=self.figureformat,
                                   save_data=self.save_data,
-                                  output_dir_data=output_dir_data,
+                                  data_folder=data_folder,
                                   output_data_filename=self.model.__class__.__name__,
                                   suppress_model_graphics=self.suppress_model_graphics,
                                   supress_model_output=self.supress_model_output,
@@ -178,7 +178,7 @@ class UncertaintyQuantifications():
 
         self.uncertainty_estimations.allParameters()
 
-        if self.plot_results:
+        if self.plot_model:
             self.uncertainty_estimations.results()
 
 
@@ -192,19 +192,19 @@ class UncertaintyQuantifications():
             self.logger.info(message)
 
             name = "mc_" + str(nr_mc_sample)
-            current_output_dir_figures = os.path.join(self.output_dir_figures, name)
-            tmp_output_dir_data = os.path.join(self.output_dir_data, name)
+            current_figure_folder = os.path.join(self.figure_folder, name)
+            tmp_data_folder = os.path.join(self.data_folder, name)
 
             compare_folders.append(name)
 
             self.uncertainty_estimations =\
                 UncertaintyQuantification(self.model,
                                       features=self.features,
-                                      save_figures=self.save_figures,
-                                      output_dir_figures=current_output_dir_figures,
+                                      plot=self.plot,
+                                      figure_folder=current_figure_folder,
                                       figureformat=self.figureformat,
                                       save_data=self.save_data,
-                                      output_dir_data=tmp_output_dir_data,
+                                      data_folder=tmp_data_folder,
                                       output_data_filename=self.model.__class__.__name__,
                                       suppress_model_graphics=self.suppress_model_graphics,
                                       supress_model_output=self.supress_model_output,
@@ -221,7 +221,7 @@ class UncertaintyQuantifications():
             time_1 = time.time()
 
             self.uncertainty_estimations.allParametersmonte_carlo()
-            if self.plot_results:
+            if self.plot_model:
                 self.uncertainty_estimations.results()
 
             # self.mc_var[nr_mc_sample] = self.uncertainty_estimations.Var
@@ -231,9 +231,9 @@ class UncertaintyQuantifications():
             run_times.append(time.time() - time_1)
 
 
-        if self.save_figures:
-            plot = PlotUncertaintyCompare(data_dir=self.output_dir_data,
-                                          output_dir_figures=self.output_dir_figures,
+        if self.plot:
+            plot = PlotUncertaintyCompare(data_dir=self.data_folder,
+                                          figure_folder=self.figure_folder,
                                           figureformat=self.figureformat,
                                           verbose_level=self.verbose_level,
                                           verbose_filename=self.verbose_filename,
