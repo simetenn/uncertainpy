@@ -13,7 +13,6 @@ parameter_list = [["cap", 1.1, None],
                   ["gahp", 6.4e-5, None],
                   ["gcat", 1.17e-5, None]]
 
-
 parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.05))
 
@@ -21,13 +20,13 @@ parameters.set_all_distributions(un.uniform(0.05))
 model = un.NeuronModel(path=path, adaptive=True,
                        stimulus_start=1000, stimulus_end=1900)
 
+
 features = un.SpikingFeatures(features_to_run="all")
-# features = un.EfelFeatures(features_to_run="all")
+
 
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  CPUs=7,
-                                  allow_incomplete=True)
+                                  CPUs=7)
 
-UQ.quantify()
+UQ.quantify(allow_incomplete=True)

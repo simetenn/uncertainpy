@@ -1,6 +1,7 @@
 import os
 import types
 import multiprocess as mp
+import numpy as np
 
 from .core.uncertainty_calculations import UncertaintyCalculations
 from .plotting.plot_uncertainty import PlotUncertainty
@@ -18,23 +19,11 @@ class UncertaintyQuantification(ParameterBase):
                  parameters,
                  features=None,
                  uncertainty_calculations=None,
-                 save_figures=True,
-                 output_dir_figures="figures/",
-                 figureformat=".png",
-                 save_data=True,
-                 output_dir_data="data/",
                  verbose_level="info",
                  verbose_filename=None,
                  create_PCE_custom=None,
                  CPUs=mp.cpu_count(),
-                 suppress_model_graphics=True,
-                 p=3,
-                 nr_collocation_nodes=None,
-                 quadrature_order=4,
-                 nr_mc_samples=10*3,
-                 nr_pc_mc_samples=10*5,
-                 seed=None,
-                 allow_incomplete=False):
+                 suppress_model_graphics=True):
 
 
         if uncertainty_calculations is None:
@@ -44,33 +33,21 @@ class UncertaintyQuantification(ParameterBase):
                 features=features,
                 CPUs=CPUs,
                 suppress_model_graphics=suppress_model_graphics,
-                p=p,
-                nr_collocation_nodes=nr_collocation_nodes,
-                quadrature_order=quadrature_order,
-                nr_mc_samples=nr_mc_samples,
-                nr_pc_mc_samples=nr_pc_mc_samples,
-                seed=seed,
                 verbose_level=verbose_level,
-                verbose_filename=verbose_filename,
-                allow_incomplete=allow_incomplete
+                verbose_filename=verbose_filename
             )
         else:
             self._uncertainty_calculations = uncertainty_calculations
 
         super(UncertaintyQuantification, self).__init__(parameters=parameters,
-                                                    model=model,
-                                                    features=features,
-                                                    verbose_level=verbose_level,
-                                                    verbose_filename=verbose_filename)
+                                                        model=model,
+                                                        features=features,
+                                                        verbose_level=verbose_level,
+                                                        verbose_filename=verbose_filename)
 
 
 
         self.data = None
-
-        self.save_figures = save_figures
-        self.save_data = save_data
-        self.output_dir_data = output_dir_data
-        self.output_dir_figures = output_dir_figures
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -81,11 +58,7 @@ class UncertaintyQuantification(ParameterBase):
                                                                                self.uncertainty_calculations)
 
 
-
-
-        self.plotting = PlotUncertainty(output_dir=self.output_dir_figures,
-                                        figureformat=figureformat,
-                                        verbose_level=verbose_level,
+        self.plotting = PlotUncertainty(verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
 
 
@@ -124,24 +97,29 @@ class UncertaintyQuantification(ParameterBase):
 
 
     # TODO add features_to_run as argument to this function
-    # TODO make sure which arguments are sent to this function and wich arguments
-    #  to UncertaintyQuantification makes sense
     def quantify(self,
                  method="pc",
                  pc_method="collocation",
                  rosenblatt=False,
                  uncertain_parameters=None,
                  single=False,
+                 polynomial_order=3,
+                 nr_collocation_nodes=None,
+                 quadrature_order=4,
+                 nr_pc_mc_samples=10**4,
+                 nr_mc_samples=10**3,
+                 allow_incomplete=False,
+                 seed=None,
                  plot_condensed=True,
                  plot_results=False,
-                 output_dir_figures=None,
-                 output_dir_data=None,
+                 output_dir_figures="figures",
+                 output_dir_data="data",
                  filename=None,
                  sensitivity="sensitivity_1",
                  **custom_kwargs):
         """
 method: pc, mc
-pc_method: "collocation"
+pc_method: "collocation, spectral"
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -151,36 +129,54 @@ pc_method: "collocation"
                 self.polynomial_chaos_single(uncertain_parameters=uncertain_parameters,
                                              method=pc_method,
                                              rosenblatt=rosenblatt,
+                                             polynomial_order=polynomial_order,
+                                             nr_collocation_nodes=nr_collocation_nodes,
+                                             quadrature_order=quadrature_order,
+                                             nr_pc_mc_samples=nr_pc_mc_samples,
+                                             allow_incomplete=allow_incomplete,
+                                             seed=seed,
                                              plot_condensed=plot_condensed,
                                              plot_results=plot_results,
                                              output_dir_figures=output_dir_figures,
                                              output_dir_data=output_dir_data,
-                                             filename=filename)
+                                             filename=filename,
+                                             **custom_kwargs)
             else:
                 self.polynomial_chaos(uncertain_parameters=uncertain_parameters,
                                       method=pc_method,
                                       rosenblatt=rosenblatt,
+                                      polynomial_order=polynomial_order,
+                                      nr_collocation_nodes=nr_collocation_nodes,
+                                      quadrature_order=quadrature_order,
+                                      nr_pc_mc_samples=nr_pc_mc_samples,
+                                      allow_incomplete=allow_incomplete,
+                                      seed=seed,
                                       plot_condensed=plot_condensed,
                                       plot_results=plot_results,
                                       output_dir_figures=output_dir_figures,
                                       output_dir_data=output_dir_data,
                                       filename=filename,
-                                      sensitivity=sensitivity)
+                                      sensitivity=sensitivity,
+                                      **custom_kwargs)
         elif method.lower() == "mc":
             if single:
                 self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
+                                        nr_samples=nr_mc_samples,
                                         plot_condensed=plot_condensed,
                                         plot_results=plot_results,
                                         output_dir_figures=output_dir_figures,
                                         output_dir_data=output_dir_data,
-                                        filename=filename)
+                                        filename=filename,
+                                        seed=seed)
             else:
                 self.monte_carlo(uncertain_parameters=uncertain_parameters,
+                                 nr_samples=nr_mc_samples,
                                  plot_condensed=plot_condensed,
                                  plot_results=plot_results,
                                  output_dir_figures=output_dir_figures,
                                  output_dir_data=output_dir_data,
-                                 filename=filename)
+                                 filename=filename,
+                                 seed=seed)
 
         elif method.lower() == "custom":
             self.custom_uncertainty_quantification(plot_condensed=plot_condensed,
@@ -195,27 +191,25 @@ pc_method: "collocation"
 
 
 
-
-
     def custom_uncertainty_quantification(self,
+                                          save_figures=True,
                                           plot_condensed=True,
                                           plot_results=False,
-                                          output_dir_figures=None,
-                                          output_dir_data=None,
+                                          output_dir_figures="figures",
+                                          output_dir_data="data",
                                           filename=None,
                                           **custom_kwargs):
 
 
         self.data = self.uncertainty_calculations.custom_uncertainty_quantification(**custom_kwargs)
 
-        if self.save_data:
-            if filename is None:
-                filename = self.model.name
+        if filename is None:
+            filename = self.model.name
 
-            self.save(filename, output_dir=output_dir_data)
+        self.save(filename, output_dir=output_dir_data)
 
 
-        if self.save_figures:
+        if save_figures:
             self.plot(condensed=plot_condensed,
                       sensitivity=None,
                       output_dir=output_dir_figures)
@@ -229,33 +223,48 @@ pc_method: "collocation"
                          uncertain_parameters=None,
                          method="collocation",
                          rosenblatt=False,
+                         polynomial_order=3,
+                         nr_collocation_nodes=None,
+                         quadrature_order=4,
+                         nr_pc_mc_samples=10**4,
+                         allow_incomplete=False,
+                         seed=None,
                          plot_condensed=True,
                          plot_results=False,
-                         output_dir_figures=None,
-                         output_dir_data=None,
+                         save_figures=True,
+                         output_dir_figures="figures",
+                         output_dir_data="data",
                          sensitivity="sensitivity_1",
-                         filename=None):
+                         filename=None,
+                         **custom_kwargs):
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high."
-                                 + "A Monte-Carlo method _might_ be faster.")
+                                 + "The Monte-Carlo method might be faster.")
 
 
         self.data = self.uncertainty_calculations.polynomial_chaos(
             uncertain_parameters=uncertain_parameters,
             method=method,
-            rosenblatt=rosenblatt
+            rosenblatt=rosenblatt,
+            polynomial_order=polynomial_order,
+            nr_collocation_nodes=nr_collocation_nodes,
+            quadrature_order=quadrature_order,
+            nr_pc_mc_samples=nr_pc_mc_samples,
+            allow_incomplete=allow_incomplete,
+            seed=seed,
+            **custom_kwargs
         )
 
-        if self.save_data:
-            if filename is None:
-                filename = self.model.name
+        if filename is None:
+            filename = self.model.name
 
-            self.save(filename, output_dir=output_dir_data)
+        self.save(filename, output_dir=output_dir_data)
 
-        if self.save_figures:
+
+        if save_figures:
             self.plot(condensed=plot_condensed,
                       output_dir=output_dir_figures,
                       sensitivity=sensitivity)
@@ -264,27 +273,31 @@ pc_method: "collocation"
             self.plot(results=True, output_dir=output_dir_figures)
 
 
-
     def monte_carlo(self,
                     uncertain_parameters=None,
+                    nr_samples=10**3,
                     plot_condensed=True,
                     plot_results=False,
-                    output_dir_figures=None,
-                    output_dir_data=None,
-                    filename=None):
+                    output_dir_figures="figures",
+                    output_dir_data="data",
+                    filename=None,
+                    save_figures=True,
+                    seed=None):
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
-        self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameters)
-
-        if self.save_data:
-            if filename is None:
-                filename = self.model.name
-
-            self.save(filename, output_dir=output_dir_data)
+        self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameters,
+                                                              nr_samples=nr_samples,
+                                                              seed=seed)
 
 
-        if self.save_figures:
+        if filename is None:
+           filename = self.model.name
+
+        self.save(filename, output_dir=output_dir_data)
+
+
+        if save_figures:
             self.plot(condensed=plot_condensed,
                       sensitivity=None,
                       output_dir=output_dir_figures)
@@ -294,26 +307,34 @@ pc_method: "collocation"
 
 
 
-
-
     def polynomial_chaos_single(self,
                                 uncertain_parameters=None,
                                 method="collocation",
                                 rosenblatt=False,
+                                polynomial_order=3,
+                                nr_collocation_nodes=None,
+                                quadrature_order=4,
+                                nr_pc_mc_samples=10**4,
+                                allow_incomplete=False,
+                                seed=None,
                                 plot_condensed=True,
                                 plot_results=False,
-                                output_dir_data=None,
-                                output_dir_figures=None,
-                                filename=None):
+                                output_dir_data="figures",
+                                output_dir_figures="data",
+                                filename=None,
+                                save_figures=True):
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
             raise RuntimeWarning("The number of uncertain parameters is high. "
-                                 + "A Monte-Carlo method might be faster.")
+                                 + "A Monte Carlo method might be faster.")
 
         if filename is None:
             filename = self.model.name
+
+        if seed is not None:
+            np.random.seed(seed)
 
 
         for uncertain_parameter in uncertain_parameters:
@@ -322,7 +343,12 @@ pc_method: "collocation"
             self.data = self.uncertainty_calculations.polynomial_chaos(
                 uncertain_parameters=uncertain_parameter,
                 method=method,
-                rosenblatt=rosenblatt
+                rosenblatt=rosenblatt,
+                polynomial_order=polynomial_order,
+                nr_collocation_nodes=nr_collocation_nodes,
+                quadrature_order=quadrature_order,
+                nr_pc_mc_samples=nr_pc_mc_samples,
+                allow_incomplete=allow_incomplete,
             )
 
             tmp_filename = "{}_single-parameter-{}".format(
@@ -330,17 +356,11 @@ pc_method: "collocation"
                 uncertain_parameter
             )
 
-            if self.save_data:
-                self.save(tmp_filename, output_dir=output_dir_data)
+            self.save(tmp_filename, output_dir=output_dir_data)
 
+            tmp_output_dir_figures = os.path.join(output_dir_figures, tmp_filename)
 
-            if output_dir_figures is None:
-                tmp_output_dir_figures = os.path.join(self.output_dir_figures, tmp_filename)
-            else:
-                tmp_output_dir_figures = os.path.join(output_dir_figures, tmp_filename)
-
-
-            if self.save_figures:
+            if save_figures:
                 self.plot(condensed=plot_condensed,
                           sensitivity=None,
                           output_dir=tmp_output_dir_figures)
@@ -352,37 +372,38 @@ pc_method: "collocation"
 
     def monte_carlo_single(self,
                            uncertain_parameters=None,
+                           nr_samples=10**3,
                            plot_condensed=True,
                            plot_results=False,
-                           output_dir_data=None,
-                           output_dir_figures=None,
-                           filename=None):
+                           output_dir_data="data",
+                           output_dir_figures="figures",
+                           save_figures=True,
+                           filename=None,
+                           seed=None):
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
             filename = self.model.name
 
+        if seed is not None:
+            np.random.seed(seed)
 
         for uncertain_parameter in uncertain_parameters:
             self.logger.info("Running MC for " + uncertain_parameter)
 
-            self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameter)
+            self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameter,
+                                                                  nr_samples=nr_samples)
 
             tmp_filename = "{}_single-parameter-{}".format(
                 filename,
                 uncertain_parameter
             )
 
-            if self.save_data:
-                self.save(tmp_filename, output_dir=output_dir_data)
+            self.save(tmp_filename, output_dir=output_dir_data)
 
+            tmp_output_dir_figures = os.path.join(output_dir_figures, tmp_filename)
 
-            if output_dir_figures is None:
-                tmp_output_dir_figures = os.path.join(self.output_dir_figures, tmp_filename)
-            else:
-                tmp_output_dir_figures = os.path.join(output_dir_figures, tmp_filename)
-
-            if self.save_figures:
+            if save_figures:
                 self.plot(condensed=plot_condensed, output_dir=tmp_output_dir_figures)
 
             if plot_results:
@@ -390,9 +411,7 @@ pc_method: "collocation"
 
 
 
-    def save(self, filename, output_dir=None):
-        if output_dir is None:
-            output_dir = self.output_dir_data
+    def save(self, filename, output_dir="data"):
 
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir)
@@ -413,14 +432,12 @@ pc_method: "collocation"
              condensed=True,
              sensitivity="sensitivity_1",
              results=False,
-             output_dir=None):
-
-        if output_dir is None:
-            output_dir = self.output_dir_figures
-
+             output_dir="figures",
+             figureformat=".png"):
 
         self.plotting.data = self.data
         self.plotting.output_dir = output_dir
+        self.plotting.figureformat = ".png"
 
         if results:
             self.plotting.all_results()

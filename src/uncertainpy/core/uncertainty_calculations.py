@@ -14,15 +14,8 @@ class UncertaintyCalculations(ParameterBase):
                  features=None,
                  CPUs=mp.cpu_count(),
                  suppress_model_graphics=True,
-                 p=3,
-                 nr_collocation_nodes=None,
-                 quadrature_order=4,
-                 nr_mc_samples=10*3,
-                 nr_pc_mc_samples=10*5,
-                 seed=None,
-                 allow_incomplete=False
                  verbose_level="info",
-                 verbose_filename=None,):
+                 verbose_filename=None):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
@@ -38,24 +31,11 @@ class UncertaintyCalculations(ParameterBase):
                                                       features=features,
                                                       verbose_level=verbose_level,
                                                       verbose_filename=verbose_filename)
-
-        self.nr_collocation_nodes = nr_collocation_nodes
-        self.quadrature_order = quadrature_order
-        self.nr_mc_samples = nr_mc_samples
-        self.nr_pc_mc_samples = nr_pc_mc_samples
-        self.p = p
-
         self.P = None
         self.distribution = None
         self.data = None
         self.U_hat = {}
         self.U_mc = {}
-
-        self.allow_incomplete = allow_incomplete
-
-
-        if seed is not None:
-            np.random.seed(seed)
 
 
     @ParameterBase.features.setter
@@ -155,14 +135,19 @@ class UncertaintyCalculations(ParameterBase):
 
 
     # TODO not tested
-    def create_PCE_spectral(self, uncertain_parameters=None):
+    def create_PCE_spectral(self,
+                            uncertain_parameters=None,
+                            polynomial_order=3,
+                            quadrature_order=4,
+                            allow_incomplete=False):
+
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        self.P = cp.orth_ttr(self.p, self.distribution)
+        self.P = cp.orth_ttr(polynomial_order, self.distribution)
 
-        nodes, weights = cp.generate_quadrature(self.quadrature_order, self.distribution, rule="J", sparse=True)
+        nodes, weights = cp.generate_quadrature(quadrature_order, self.distribution, rule="J", sparse=True)
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -173,7 +158,7 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data)):
             masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes, feature, weights)
 
-            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
+            if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights, masked_values)
             else:
@@ -188,17 +173,22 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    def create_PCE_collocation(self, uncertain_parameters=None):
+    def create_PCE_collocation(self,
+                               uncertain_parameters=None,
+                               polynomial_order=3,
+                               nr_collocation_nodes=None,
+                               allow_incomplete=False):
+
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        self.P = cp.orth_ttr(self.p, self.distribution)
+        self.P = cp.orth_ttr(polynomial_order, self.distribution)
 
-        if self.nr_collocation_nodes is None:
-            self.nr_collocation_nodes = 2*len(self.P) + 2
+        if nr_collocation_nodes is None:
+            nr_collocation_nodes = 2*len(self.P) + 2
 
-        nodes = self.distribution.sample(self.nr_collocation_nodes, "M")
+        nodes = self.distribution.sample(nr_collocation_nodes, "M")
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -210,7 +200,7 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data)):
             masked_nodes, masked_values, mask = self.create_mask(nodes, feature)
 
-            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
+            if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_values, rule="T")
             else:
@@ -227,22 +217,27 @@ class UncertaintyCalculations(ParameterBase):
 
 
     # TODO not tested
-    def create_PCE_spectral_rosenblatt(self, uncertain_parameters=None):
+    def create_PCE_spectral_rosenblatt(self,
+                                       uncertain_parameters=None,
+                                       polynomial_order=3,
+                                       quadrature_order=4,
+                                       allow_incomplete=False):
+
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
-        # Create the Multivariat normal distribution
+        # Create the Multivariate normal distribution
         dist_MvNormal = []
         for parameter in uncertain_parameters:
             dist_MvNormal.append(cp.Normal())
 
         dist_MvNormal = cp.J(*dist_MvNormal)
 
-        self.P = cp.orth_ttr(self.p, dist_MvNormal)
+        self.P = cp.orth_ttr(polynomial_order, dist_MvNormal)
 
-        nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(self.quadrature_order, dist_MvNormal,
+        nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(quadrature_order, dist_MvNormal,
                                                                   rule="J", sparse=True)
         # TODO Is this correct, copy pasted from below.
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
@@ -263,7 +258,7 @@ class UncertaintyCalculations(ParameterBase):
                                                                       weights)
 
 
-            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
+            if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
                                                         masked_weights,
                                                         masked_values)
@@ -279,13 +274,18 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    def create_PCE_collocation_rosenblatt(self, uncertain_parameters=None):
+    def create_PCE_collocation_rosenblatt(self,
+                                          uncertain_parameters=None,
+                                          polynomial_order=3,
+                                          nr_collocation_nodes=None,
+                                          allow_incomplete=False):
+
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
 
-        # Create the Multivariat normal distribution
+        # Create the Multivariate normal distribution
         # dist_MvNormal = cp.Iid(cp.Normal(), len(uncertain_parameters))
         dist_MvNormal = []
         for parameter in uncertain_parameters:
@@ -294,12 +294,12 @@ class UncertaintyCalculations(ParameterBase):
         dist_MvNormal = cp.J(*dist_MvNormal)
 
 
-        self.P = cp.orth_ttr(self.p, dist_MvNormal)
+        self.P = cp.orth_ttr(polynomial_order, dist_MvNormal)
 
-        if self.nr_collocation_nodes is None:
-            self.nr_collocation_nodes = 2*len(self.P) + 2
+        if nr_collocation_nodes is None:
+            nr_collocation_nodes = 2*len(self.P) + 2
 
-        nodes_MvNormal = dist_MvNormal.sample(self.nr_collocation_nodes, "M")
+        nodes_MvNormal = dist_MvNormal.sample(nr_collocation_nodes, "M")
         nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
 
         self.distribution = dist_MvNormal
@@ -316,7 +316,7 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-            if (np.all(mask) or self.allow_incomplete) and sum(mask) > 0:
+            if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
                                                         masked_values, rule="T")
             else:
@@ -330,7 +330,9 @@ class UncertaintyCalculations(ParameterBase):
                 self.data.incomplete.append(feature)
 
 
-    def analyse_PCE(self):
+    def analyse_PCE(self,
+                    nr_samples=10**4):
+
         if len(self.data.uncertain_parameters) == 1:
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
 
@@ -339,7 +341,7 @@ class UncertaintyCalculations(ParameterBase):
                 self.data[feature]["mean"] = cp.E(self.U_hat[feature], self.distribution)
                 self.data[feature]["variance"] = cp.Var(self.U_hat[feature], self.distribution)
 
-                samples = self.distribution.sample(self.nr_pc_mc_samples, "H")
+                samples = self.distribution.sample(nr_samples, "H")
 
                 if len(self.data.uncertain_parameters) > 1:
                     self.U_mc[feature] = self.U_hat[feature](*samples)
@@ -370,23 +372,46 @@ class UncertaintyCalculations(ParameterBase):
     def polynomial_chaos(self,
                          uncertain_parameters=None,
                          method="collocation",
-                         rosenblatt=False):
+                         rosenblatt=False,
+                         polynomial_order=3,
+                         nr_collocation_nodes=None,
+                         quadrature_order=4,
+                         nr_pc_mc_samples=10**4,
+                         allow_incomplete=False,
+                         seed=None,
+                         **custom_kwargs):
+
+        if seed is not None:
+            np.random.seed(seed)
+
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         if method == "collocation":
             if rosenblatt:
-                self.create_PCE_collocation_rosenblatt(uncertain_parameters)
+                self.create_PCE_collocation_rosenblatt(uncertain_parameters=uncertain_parameters,
+                                                       polynomial_order=polynomial_order,
+                                                       nr_collocation_nodes=nr_collocation_nodes,
+                                                       allow_incomplete=allow_incomplete)
             else:
-                self.create_PCE_collocation(uncertain_parameters)
+                self.create_PCE_collocation(uncertain_parameters=uncertain_parameters,
+                                            polynomial_order=polynomial_order,
+                                            nr_collocation_nodes=nr_collocation_nodes,
+                                            allow_incomplete=allow_incomplete)
 
         elif method == "spectral":
             if rosenblatt:
-                self.create_PCE_spectral_rosenblatt(uncertain_parameters)
+                self.create_PCE_spectral_rosenblatt(uncertain_parameters=uncertain_parameters,
+                                                    polynomial_order=polynomial_order,
+                                                    quadrature_order=quadrature_order,
+                                                    allow_incomplete=allow_incomplete)
             else:
-                self.create_PCE_spectral(uncertain_parameters)
+                self.create_PCE_spectral(uncertain_parameters=uncertain_parameters,
+                                         polynomial_order=polynomial_order,
+                                         quadrature_order=quadrature_order,
+                                         allow_incomplete=allow_incomplete)
 
         elif method == "custom":
-            self.create_PCE_custom(uncertain_parameters)
+            self.create_PCE_custom(uncertain_parameters, **custom_kwargs)
 
         # TODO add support for more methods here by using
         # try:
@@ -397,23 +422,29 @@ class UncertaintyCalculations(ParameterBase):
         else:
             raise ValueError("No polynomial chaos method with name {}".format(method))
 
-        self.analyse_PCE()
+        self.analyse_PCE(nr_samples=nr_pc_mc_samples)
 
         return self.data
 
 
-    def monte_carlo(self, uncertain_parameters=None):
+    def monte_carlo(self,
+                    uncertain_parameters=None,
+                    nr_samples=10**3,
+                    seed=None):
+
+        if seed is not None:
+            np.random.seed(seed)
+
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        nodes = self.distribution.sample(self.nr_mc_samples, "M")
+        nodes = self.distribution.sample(nr_samples, "M")
 
         self.data = self.runmodel.run(nodes, uncertain_parameters)
 
 
         # TODO mask data
-
         for feature in self.data:
             self.data[feature]["mean"] = np.mean(self.data[feature]["values"], 0)
             self.data[feature]["variance"] = np.var(self.data[feature]["values"], 0)
@@ -426,7 +457,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def calculate_sensitivity_sum(self, sensitivity="sensitivity_1"):
         if sensitivity not in ["sensitivity_1", "sensitivity_t", "1", "t"]:
-            raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t.")
+            raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t, not {}".format(sensitivity))
 
         if sensitivity == "1":
             sensitivity = "sensitivity_1"

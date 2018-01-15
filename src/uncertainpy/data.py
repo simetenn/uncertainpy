@@ -20,7 +20,7 @@ class DataFeature(collections.MutableMapping):
                  sensitivity_1_sum=None,
                  sensitivity_t=None,
                  sensitivity_t_sum=None,
-                 labels=None):
+                 labels=[]):
 
         self.name = name
         self.values = values
@@ -291,13 +291,13 @@ class Data(collections.MutableMapping):
         -------
         list
             A list of labels for plotting, ``[x-axis, y-axis, z-axis]``.
-            If no labels are defined,
+            If no labels are defined (labels = []),
             returns a list with the correct number of empty strings.
         """
-        if self[feature].labels is not None:
+        if self[feature].labels != []:
             return self[feature].labels
 
-        elif self[self.model_name].labels is not None and self[self.model_name].ndim() == self[feature].ndim():
+        elif self[self.model_name].labels != [] and self[self.model_name].ndim() == self[feature].ndim():
             return self[self.model_name].labels
 
         else:

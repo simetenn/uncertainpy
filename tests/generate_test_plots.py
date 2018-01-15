@@ -103,7 +103,7 @@ def generate_simulator_plot_0d():
 
 
 def generate_spike_plot():
-    t = np.arange(0, 10)
+    time = np.arange(0, 10)
     values = np.arange(0, 10) + 10
 
     prettyPlot(time, values, title="Spike",
@@ -115,7 +115,7 @@ def generate_spike_plot():
 
 def generate_spikes_plot():
     values = np.load(os.path.join(test_data_dir, "U_test.npy"))
-    t = np.load(os.path.join(test_data_dir, "t_test.npy"))
+    time = np.load(os.path.join(test_data_dir, "t_test.npy"))
 
 
     spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel")

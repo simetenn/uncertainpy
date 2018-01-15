@@ -13,7 +13,7 @@ seed = 10
 
 def generate_data_polynomial_chaos():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -28,46 +28,39 @@ def generate_data_polynomial_chaos():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                    verbose_level="error")
 
 
-    test.polynomial_chaos()
+    test.polynomial_chaos(output_dir_data=test_data_dir,
+                          seed=seed,
+                          save_figures=False)
 
 
 def generate_data_PC_model_function():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
-
 
     features = TestingFeatures(features_to_run=["feature0d",
                                                 "feature1d",
                                                 "feature2d"])
 
-
     test = un.UncertaintyQuantification(model_function,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
-
-    test.polynomial_chaos()
+    test.polynomial_chaos(output_dir_data=test_data_dir,
+                          seed=seed,
+                          save_figures=False)
 
 
 
 def generate_data_PC_0D():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -78,21 +71,19 @@ def generate_data_PC_0D():  # pragma: no cover
 
 
     test = un.UncertaintyQuantification(model,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
 
-    test.polynomial_chaos()
+    test.polynomial_chaos(output_dir_data=test_data_dir,
+                          seed=seed,
+                          save_figures=False)
 
 
 def generate_data_PC_2D():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -103,21 +94,19 @@ def generate_data_PC_2D():  # pragma: no cover
 
 
     test = un.UncertaintyQuantification(model,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
 
-    test.polynomial_chaos()
+    test.polynomial_chaos(output_dir_data=test_data_dir,
+                          seed=seed,
+                          save_figures=False)
 
 
 def generate_data_PC_rosenblatt():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -130,16 +119,15 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
 
 
     test = un.UncertaintyQuantification(model,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
 
-    test.polynomial_chaos(rosenblatt=True, filename="TestingModel1d_Rosenblatt")
+    test.polynomial_chaos(rosenblatt=True,
+                          filename="TestingModel1d_Rosenblatt",
+                          output_dir_data=test_data_dir,
+                          save_figures=False)
 
 
 
@@ -147,7 +135,7 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
 
 def generate_data_polynomial_chaos_single():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -159,22 +147,20 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
                                                 "feature2d"])
 
     test = un.UncertaintyQuantification(model,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
 
 
-    test.polynomial_chaos_single()
+    test.polynomial_chaos_single(output_dir_data=test_data_dir,
+                                 seed=seed,
+                                 save_figures=False)
 
 
 def generate_data_monte_carlo():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -186,20 +172,20 @@ def generate_data_monte_carlo():  # pragma: no cover
                                                 "feature2d"])
 
     test = un.UncertaintyQuantification(model,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
-    test.monte_carlo(filename="TestingModel1d_MC",)
+    test.monte_carlo(filename="TestingModel1d_MC",
+                     output_dir_data=test_data_dir,
+                     seed=seed,
+                     nr_samples=10,
+                     save_figures=False)
 
 
 def generate_data_monte_carlo_single():  # pragma: no cover
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -212,16 +198,16 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
 
     test = un.UncertaintyQuantification(model,
-                                    features=features,
-                                    parameters=parameters,
-                                    output_dir_data=test_data_dir,
-                                    save_figures=False,
-                                    verbose_level="error",
-                                    seed=seed,
-                                    nr_mc_samples=10)
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
 
 
-    test.monte_carlo_single(filename="TestingModel1d_MC")
+    test.monte_carlo_single(filename="TestingModel1d_MC",
+                            output_dir_data=test_data_dir,
+                            seed=seed,
+                            nr_samples=10,
+                            save_figures=False)
 
 
 
@@ -279,7 +265,7 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
     np.random.seed(seed)
 
     parameter_list = [["a", 1, None],
-                     ["b", 2, None]]
+                      ["b", 2, None]]
 
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
@@ -290,19 +276,17 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
                                                 "feature1d",
                                                 "feature2d"])
 
-    uncertainty_calculations = un.UncertaintyCalculations(model=model,
-                                                          features=features,
-                                                          parameters=parameters,
-                                                          seed=seed,
-                                                          nr_mc_samples=10)
+    uncertainty_calculations = un.core.UncertaintyCalculations(model=model,
+                                                               features=features,
+                                                               parameters=parameters)
 
 
-    data = uncertainty_calculations.polynomial_chaos("a")
+    data = uncertainty_calculations.polynomial_chaos("a", seed=seed)
     data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-a.h5"))
 
     np.random.seed(seed)
 
-    data = uncertainty_calculations.polynomial_chaos("b")
+    data = uncertainty_calculations.polynomial_chaos("b", seed=seed)
     data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-b.h5"))
 
 

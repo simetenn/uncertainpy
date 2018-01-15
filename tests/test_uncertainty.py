@@ -47,17 +47,13 @@ class TestUncertainty(TestCasePlot):
                                                     "feature2d"])
 
         self.uncertainty = UncertaintyQuantification(self.model,
-                                                 parameters=self.parameters,
-                                                 features=features,
-                                                 save_data=True,
-                                                 save_figures=False,
-                                                 output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error",
-                                                 seed=self.seed,
-                                                 nr_mc_samples=10)
+                                                     parameters=self.parameters,
+                                                     features=features,
+                                                     verbose_level="error")
 
         self.figureformat = ".png"
+        self.nr_mc_samples = 10**1
+
 
 
     def tearDown(self):
@@ -84,16 +80,16 @@ class TestUncertainty(TestCasePlot):
             UncertaintyQuantification(self.model, 2)
 
 
-    def test_intit_features(self):
+    def test_init_features(self):
         uncertainty = UncertaintyQuantification(self.model,
-                                            self.parameters,
-                                            verbose_level="error")
+                                                self.parameters,
+                                                verbose_level="error")
         self.assertIsInstance(uncertainty.features, Features)
 
         uncertainty = UncertaintyQuantification(self.model,
-                                            self.parameters,
-                                            features=TestingFeatures(),
-                                            verbose_level="error")
+                                                self.parameters,
+                                                features=TestingFeatures(),
+                                                verbose_level="error")
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
@@ -109,9 +105,7 @@ class TestUncertainty(TestCasePlot):
             self.model,
             self.parameters,
             uncertainty_calculations=TempUncertaintyCalculations(self.model),
-            verbose_level="error",
-            output_dir_data=self.output_test_dir,
-            output_dir_figures=self.output_test_dir
+            verbose_level="error"
         )
 
         self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
@@ -119,9 +113,8 @@ class TestUncertainty(TestCasePlot):
 
     def test_set_parameters(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                            parameters=None,
-                                            verbose_level="error",
-                                            seed=self.seed)
+                                                parameters=None,
+                                                verbose_level="error")
         uncertainty.parameters = Parameters()
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -132,9 +125,8 @@ class TestUncertainty(TestCasePlot):
 
     def test_set_parameter_list(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                            parameters=None,
-                                            verbose_level="error",
-                                            seed=self.seed)
+                                                parameters=None,
+                                                verbose_level="error")
         uncertainty.parameters = self.parameter_list
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -145,18 +137,16 @@ class TestUncertainty(TestCasePlot):
 
     def test_set_parameter_error(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                            parameters=None,
-                                            verbose_level="error",
-                                            seed=self.seed)
+                                                parameters=None,
+                                                verbose_level="error")
         with self.assertRaises(TypeError):
             uncertainty.parameters = 2
 
 
     def test_set_features(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                            parameters=None,
-                                            verbose_level="error",
-                                            seed=self.seed)
+                                                parameters=None,
+                                                verbose_level="error")
         uncertainty.features = TestingFeatures()
 
         self.assertIsInstance(uncertainty.features, TestingFeatures)
@@ -238,9 +228,8 @@ class TestUncertainty(TestCasePlot):
 
     def test_set_model(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                            parameters=None,
-                                            verbose_level="error",
-                                            seed=self.seed)
+                                                parameters=None,
+                                                verbose_level="error")
         uncertainty.model = TestingModel1d()
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
@@ -251,9 +240,8 @@ class TestUncertainty(TestCasePlot):
 
     def test_set_model_function(self):
         uncertainty = UncertaintyQuantification(model=model_function,
-                                            parameters=None,
-                                            verbose_level="error",
-                                            seed=self.seed)
+                                                parameters=None,
+                                                verbose_level="error")
 
         self.assertIsInstance(uncertainty.model, Model)
         self.assertIsInstance(uncertainty.uncertainty_calculations.model, Model)
@@ -280,9 +268,7 @@ class TestUncertainty(TestCasePlot):
             self.model,
             self.parameters,
             create_PCE_custom=create_PCE_custom,
-            verbose_level="error",
-            output_dir_data=self.output_test_dir,
-            output_dir_figures=self.output_test_dir
+            verbose_level="error"
         )
 
 
@@ -308,7 +294,9 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_polynomial_chaos_single(self):
-        self.uncertainty.polynomial_chaos_single()
+        self.uncertainty.polynomial_chaos_single(output_dir_data=self.output_test_dir,
+                                                 output_dir_figures=self.output_test_dir,
+                                                 seed=self.seed)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
@@ -328,7 +316,9 @@ class TestUncertainty(TestCasePlot):
 
     def test_PC_model_function(self):
         self.uncertainty.model = model_function
-        self.uncertainty.polynomial_chaos()
+        self.uncertainty.polynomial_chaos(output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/model_function.h5")
@@ -343,7 +333,9 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_polynomial_chaos(self):
-        self.uncertainty.polynomial_chaos()
+        self.uncertainty.polynomial_chaos(output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
@@ -371,16 +363,13 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
-                                                 save_data=False,
-                                                 save_figures=True,
-                                                 output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error",
-                                                 seed=self.seed,
-                                                 nr_mc_samples=10)
+                                                 verbose_level="error")
 
 
-        self.uncertainty.polynomial_chaos()
+        self.uncertainty.polynomial_chaos(save_figures=True,
+                                          output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
 
         self.compare_plot("TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_prediction-interval")
@@ -409,17 +398,14 @@ class TestUncertainty(TestCasePlot):
                                                     "feature2d"])
 
         self.uncertainty = UncertaintyQuantification(model,
-                                                 features=features,
-                                                 parameters=parameters,
-                                                 save_data=False,
-                                                 save_figures=True,
+                                                     features=features,
+                                                     parameters=parameters,
+                                                     verbose_level="error")
+
+        self.uncertainty.polynomial_chaos_single(save_figures=True,
                                                  output_dir_data=self.output_test_dir,
                                                  output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error",
-                                                 seed=self.seed,
-                                                 nr_mc_samples=10)
-
-        self.uncertainty.polynomial_chaos_single()
+                                                 seed=self.seed)
 
         self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_prediction-interval")
@@ -436,7 +422,7 @@ class TestUncertainty(TestCasePlot):
 
     def test_monte_carlo_single(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -450,15 +436,14 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
-                                                 save_data=True,
-                                                 save_figures=False,
-                                                 output_dir_data=self.output_test_dir,
-                                                 verbose_level="error",
-                                                 seed=self.seed,
-                                                 nr_mc_samples=10)
+                                                 verbose_level="error")
 
 
-        self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC")
+        self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
+                                            save_figures=False,
+                                            output_dir_data=self.output_test_dir,
+                                            seed=self.seed,
+                                            nr_samples=self.nr_mc_samples)
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -497,17 +482,16 @@ class TestUncertainty(TestCasePlot):
                                                     "feature2d"])
 
         self.uncertainty = UncertaintyQuantification(model,
-                                                 parameters=parameters,
-                                                 features=features,
-                                                 save_data=True,
-                                                 save_figures=False,
-                                                 output_dir_data=self.output_test_dir,
-                                                 verbose_level="error",
-                                                 seed=self.seed,
-                                                 nr_mc_samples=10**1)
+                                                     parameters=parameters,
+                                                     features=features,
+                                                     verbose_level="error")
 
 
-        self.uncertainty.monte_carlo(filename="TestingModel1d_MC")
+        self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
+                                     save_figures=False,
+                                     output_dir_data=self.output_test_dir,
+                                     seed=self.seed,
+                                     nr_samples=self.nr_mc_samples)
 
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -540,7 +524,11 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_plot_all(self):
-        self.uncertainty.polynomial_chaos()
+        self.uncertainty.polynomial_chaos(save_figures=False,
+                                          output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
+
         self.uncertainty.plot(condensed=False, sensitivity="sensitivity_1")
 
 
@@ -598,7 +586,10 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_plot_condensed(self):
-        self.uncertainty.polynomial_chaos()
+        self.uncertainty.polynomial_chaos(save_figures=False,
+                                          output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
         self.uncertainty.plot()
 
         self.compare_plot("TestingModel1d_mean-variance")
@@ -616,7 +607,11 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_plotNoSensitivity(self):
-        self.uncertainty.polynomial_chaos()
+        self.uncertainty.polynomial_chaos(save_figures=False,
+                                          output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
+
         self.uncertainty.plot(condensed=False, sensitivity=None)
 
         self.compare_plot("TestingModel1d_mean")
@@ -632,38 +627,45 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_results(self):
-        self.uncertainty.polynomial_chaos()
-        self.uncertainty.plot(results=True)
+        self.uncertainty.polynomial_chaos(save_figures=False,
+                                          output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
 
+        self.uncertainty.plot(results=True, output_dir=self.output_test_dir)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature0d_results/*.png")))
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
+        self.assertEqual(plot_count, 22)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature2d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
+        self.assertEqual(plot_count, 22)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/TestingModel1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
+        self.assertEqual(plot_count, 22)
 
 
 
     def test_PCresults(self):
-        self.uncertainty.polynomial_chaos(plot_results=True)
+        self.uncertainty.polynomial_chaos(nr_collocation_nodes=12,
+                                          plot_results=True,
+                                          output_dir_data=self.output_test_dir,
+                                          output_dir_figures=self.output_test_dir,
+                                          seed=self.seed)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature0d_results/*.png")))
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
+        self.assertEqual(plot_count, 12)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/feature2d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
+        self.assertEqual(plot_count, 12)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "results/TestingModel1d_results/*.png")))
-        self.assertEqual(plot_count, self.uncertainty.uncertainty_calculations.nr_collocation_nodes)
+        self.assertEqual(plot_count, 12)
 
 
     def set_up_test_calculations(self):
@@ -678,26 +680,42 @@ class TestUncertainty(TestCasePlot):
         features = TestingFeatures(features_to_run=None)
 
         self.uncertainty = UncertaintyQuantification(model,
-                                                 parameters=parameters,
-                                                 features=features,
-                                                 uncertainty_calculations=TestingUncertaintyCalculations(model),
-                                                 save_data=False,
-                                                 save_figures=False,
-                                                 output_dir_data=self.output_test_dir,
-                                                 output_dir_figures=self.output_test_dir,
-                                                 verbose_level="error")
+                                                     parameters=parameters,
+                                                     features=features,
+                                                     uncertainty_calculations=TestingUncertaintyCalculations(model),
+                                                     verbose_level="error")
 
 
 
     def test_quantifyPCAll(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="pc", plot_condensed=False)
+        self.uncertainty.quantify(method="pc",
+                                  plot_condensed=False,
+                                  output_dir_data=self.output_test_dir,
+                                  output_dir_figures=self.output_test_dir,
+                                  seed=self.seed,
+                                  uncertain_parameters=None,
+                                  pc_method="collocation",
+                                  rosenblatt=False,
+                                  polynomial_order=2,
+                                  nr_collocation_nodes=50,
+                                  quadrature_order=3,
+                                  nr_pc_mc_samples=10**3,
+                                  allow_incomplete=False)
 
-        self.assertEqual(self.uncertainty.data["function"], "PC")
-        self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(self.uncertainty.data["method"], "collocation")
-        self.assertEqual(self.uncertainty.data["rosenblatt"], False)
+        self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
+        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
+        self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
+        self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], False)
+        self.assertEqual(self.uncertainty.data.arguments["polynomial_order"], 2)
+        self.assertEqual(self.uncertainty.data.arguments["nr_collocation_nodes"], 50)
+        self.assertEqual(self.uncertainty.data.arguments["quadrature_order"], 3)
+        self.assertEqual(self.uncertainty.data.arguments["nr_pc_mc_samples"],10**3)
+        self.assertEqual(self.uncertainty.data.arguments["plot_condensed"], True)
+        self.assertEqual(self.uncertainty.data.arguments["allow_incomplete"], False)
+        self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
+
 
 
     def test_quantify_PC_single_rosenblatt(self):
@@ -707,30 +725,46 @@ class TestUncertainty(TestCasePlot):
                                   pc_method="collocation",
                                   plot_condensed=True,
                                   single=True,
-                                  rosenblatt=True)
+                                  rosenblatt=True,
+                                  output_dir_data=self.output_test_dir,
+                                  output_dir_figures=self.output_test_dir,
+                                  seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data["function"], "PC")
-        self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
-        self.assertEqual(self.uncertainty.data["method"], "collocation")
-        self.assertEqual(self.uncertainty.data["rosenblatt"], True)
+        self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
+        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
+        self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
+        self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], True)
 
 
     def test_quantify_monte_carlo(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="mc", plot_condensed=False)
+        self.uncertainty.quantify(method="mc",
+                                  plot_condensed=False,
+                                  nr_mc_samples=self.nr_mc_samples,
+                                  output_dir_data=self.output_test_dir,
+                                  output_dir_figures=self.output_test_dir,
+                                  seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data["function"], "MC")
-        self.assertEqual(self.uncertainty.data["uncertain_parameters"], ["a", "b"])
+        self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
+        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
+        self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
+        self.assertEqual(self.uncertainty.data.arguments["nr_samples"], self.nr_mc_samples)
 
 
     def test_quantify_monte_carlo_single(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="mc", plot_condensed=False, single=True)
+        self.uncertainty.quantify(method="mc",
+                                  plot_condensed=False,
+                                  single=True,
+                                  nr_mc_samples=self.nr_mc_samples,
+                                  output_dir_data=self.output_test_dir,
+                                  output_dir_figures=self.output_test_dir,
+                                  seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data["function"], "MC")
-        self.assertEqual(self.uncertainty.data["uncertain_parameters"], "b")
+        self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
+        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
 
 
 
@@ -739,8 +773,8 @@ class TestUncertainty(TestCasePlot):
 
         self.uncertainty.quantify(method="custom", custom_keyword="value")
 
-        self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
-        self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
+        self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
+        self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
 
 
     def test_custom_uncertainty_quantification(self):
@@ -748,8 +782,8 @@ class TestUncertainty(TestCasePlot):
 
         self.uncertainty.custom_uncertainty_quantification(custom_keyword="value")
 
-        self.assertEqual(self.uncertainty.data["function"], "custom_uncertainty_quantification")
-        self.assertEqual(self.uncertainty.data["custom_keyword"], "value")
+        self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
+        self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
 
 
 

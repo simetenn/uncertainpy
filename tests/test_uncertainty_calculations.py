@@ -45,8 +45,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
 
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
@@ -77,8 +76,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_model(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
 
 
         self.uncertainty_calculations.model = self.model
@@ -90,8 +88,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_features(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
         self.uncertainty_calculations.features = TestingFeatures()
 
         self.assertIsInstance(self.uncertainty_calculations.features, TestingFeatures)
@@ -171,8 +168,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_parameters(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
         self.uncertainty_calculations.parameters = Parameters()
 
         self.assertIsInstance(self.uncertainty_calculations.parameters, Parameters)
@@ -182,8 +178,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_parameter_list(self):
         uncertainty_calculations = UncertaintyCalculations(model=None,
                                                            parameters=None,
-                                                           verbose_level="error",
-                                                           seed=self.seed)
+                                                           verbose_level="error")
 
         uncertainty_calculations.parameters = self.parameter_list
 
@@ -195,17 +190,16 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_parameter_error(self):
         uncertainty_calculations = UncertaintyCalculations(model=None,
                                                            parameters=None,
-                                                           verbose_level="error",
-                                                           seed=self.seed)
+                                                           verbose_level="error")
 
         with self.assertRaises(TypeError):
                 uncertainty_calculations.parameters = 2
 
+
     def test_set_model_function(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
 
         self.uncertainty_calculations.model = model_function
 
@@ -302,8 +296,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 parameters=parameters,
                                                                 features=features,
                                                                 verbose_level="warning",
-                                                                verbose_filename=logfile,
-                                                                seed=self.seed)
+                                                                verbose_filename=logfile)
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
@@ -499,8 +492,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
 
         with self.assertRaises(ValueError):
             result = self.uncertainty_calculations.convert_uncertain_parameters(["a"])
@@ -523,8 +515,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
 
 
         result = self.uncertainty_calculations.convert_uncertain_parameters(None)
@@ -549,8 +540,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                seed=self.seed)
+                                                                verbose_level="error")
 
 
         result = self.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
@@ -566,8 +556,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.uncertainty_calculations.custom_uncertainty_quantification()
 
-    def test_create_PCE_collocation_all(self):
 
+    def test_create_PCE_collocation_all(self):
         self.uncertainty_calculations.create_PCE_collocation()
 
         self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
@@ -575,6 +565,18 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
         self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
+
+    def test_create_PCE_collocation_all_parameters(self):
+        self.uncertainty_calculations.create_PCE_collocation(polynomial_order=5,
+                                                             nr_collocation_nodes=22)
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
 
 
     def test_create_PCE_collocation_one(self):
@@ -776,7 +778,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_polynomial_chaos(self):
-        data = self.uncertainty_calculations.polynomial_chaos()
+        data = self.uncertainty_calculations.polynomial_chaos(seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
         data.save(filename)
@@ -791,7 +793,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PC_rosenblatt(self):
-        data = self.uncertainty_calculations.polynomial_chaos(rosenblatt=True)
+        data = self.uncertainty_calculations.polynomial_chaos(rosenblatt=True, seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d_Rosenblatt.h5")
         data.save(filename)
@@ -807,17 +809,20 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_PC_custom(self):
         with self.assertRaises(NotImplementedError):
-            self.uncertainty_calculations.polynomial_chaos(method="custom")
+            self.uncertainty_calculations.polynomial_chaos(method="custom",
+                                                           seed=self.seed)
 
 
 
     def test_PC_error(self):
         with self.assertRaises(ValueError):
-            self.uncertainty_calculations.polynomial_chaos(method="not implemented")
+            self.uncertainty_calculations.polynomial_chaos(method="not implemented",
+                                                           seed=self.seed)
 
 
     def test_PC_parameter_a(self):
-        data = self.uncertainty_calculations.polynomial_chaos("a")
+        data = self.uncertainty_calculations.polynomial_chaos("a",
+                                                              seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
         data.save(filename)
@@ -832,7 +837,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PC_parameter_b(self):
-        data = self.uncertainty_calculations.polynomial_chaos("b")
+        data = self.uncertainty_calculations.polynomial_chaos("b",
+                                                              seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "UncertaintyCalculations_single-parameter-b.h5")
         data.save(filename)
@@ -849,7 +855,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_monte_carlo(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -863,12 +869,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                nr_mc_samples=10**1,
                                                                 verbose_level="error")
 
 
-
-        data = self.uncertainty_calculations.monte_carlo()
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
 
         # Rough tests
         self.assertTrue(np.allclose(self.uncertainty_calculations.data["TestingModel1d"]["mean"],
@@ -908,12 +912,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                nr_mc_samples=10**1,
                                                                 verbose_level="error")
 
 
 
-        self.uncertainty_calculations.monte_carlo()
+        self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature0d"]["mean"],
                                        features.feature0d(None, None)[1]))
@@ -937,12 +940,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                nr_mc_samples=10**1,
                                                                 verbose_level="error")
 
 
 
-        self.uncertainty_calculations.monte_carlo()
+        self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature1d"]["mean"],
                                        features.feature1d(None, None)[1]))
@@ -968,11 +970,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                nr_mc_samples=10**1,
                                                                 verbose_level="error")
 
 
-        self.uncertainty_calculations.monte_carlo()
+        self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
 
         self.assertTrue(np.array_equal(self.uncertainty_calculations.data["feature2d"]["mean"],
                                        features.feature2d(None, None)[1]))
@@ -999,10 +1000,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 parameters=parameters,
                                                                 features=features,
                                                                 verbose_level="error",
-                                                                seed=self.seed,
                                                                 allow_incomplete=False)
 
-        self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
+        self.uncertainty_calculations.create_PCE_collocation(["a", "b"],
+                                                             seed=self.seed)
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,
@@ -1013,6 +1014,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_create_PCE_collocation_incomplete(self):
+        np.random.seed(self.seed)
+
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -1026,11 +1029,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                seed=self.seed,
-                                                                allow_incomplete=False)
+                                                                verbose_level="error")
 
-        self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
+        self.uncertainty_calculations.create_PCE_collocation(["a", "b"],
+                                                             allow_incomplete=False)
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,
@@ -1056,6 +1058,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_create_PCE_collocation_rosenblatt_incomplete(self):
+        np.random.seed(self.seed)
+
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]
 
@@ -1069,11 +1073,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                seed=self.seed,
-                                                                allow_incomplete=False)
+                                                                verbose_level="error")
 
-        self.uncertainty_calculations.create_PCE_collocation(["a", "b"])
+        self.uncertainty_calculations.create_PCE_collocation(["a", "b"],
+                                                             allow_incomplete=False)
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,

@@ -21,11 +21,8 @@ parameters.set_all_distributions(un.uniform(0.2))
 model = Valderrama()
 
 features = un.SpikingFeatures(threshold="auto")
-# features = un.EfelFeatures()
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
-                                  features=features,
-                                  allow_incomplete=True)
+                                  features=features)
 
-UQ.quantify(plot_condensed=True,
-            plot_results=False)
+UQ.quantify()

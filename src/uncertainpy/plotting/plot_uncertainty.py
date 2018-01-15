@@ -38,7 +38,6 @@ class PlotUncertainty(object):
 
         self.features_in_combined_plot = 3
 
-
         self.data = None
 
         if filename is not None:
@@ -424,6 +423,7 @@ class PlotUncertainty(object):
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
+
 
         title = feature + ", mean and variance"
         ax = prettyPlot(time, self.data[feature].mean,

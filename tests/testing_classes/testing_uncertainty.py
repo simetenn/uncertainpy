@@ -1,7 +1,19 @@
 from uncertainpy.core import UncertaintyCalculations
+from uncertainpy.core import UncertaintyCalculations
+from uncertainpy.data import Data
 
 class TestingUncertaintyCalculations(UncertaintyCalculations):
-    def polynomial_chaos(self, uncertain_parameters=None, method="collocation", rosenblatt=False, plot_condensed=True):
+    def polynomial_chaos(self,
+                         uncertain_parameters=None,
+                         method="collocation",
+                         rosenblatt=False,
+                         polynomial_order=3,
+                         nr_collocation_nodes=None,
+                         quadrature_order=4,
+                         nr_pc_mc_samples=10**4,
+                         allow_incomplete=False,
+                         seed=None,
+                         plot_condensed=True):
         arguments = {}
 
         arguments["function"] = "PC"
@@ -9,19 +21,37 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
         arguments["method"] = method
         arguments["rosenblatt"] = rosenblatt
         arguments["plot_condensed"] = plot_condensed
+        arguments["polynomial_order"] = polynomial_order
+        arguments["nr_collocation_nodes"] = nr_collocation_nodes
+        arguments["quadrature_order"] = quadrature_order
+        arguments["nr_pc_mc_samples"] = nr_pc_mc_samples
+        arguments["seed"] = seed
+        arguments["allow_incomplete"] = allow_incomplete
 
-        return arguments
+
+        data = Data()
+        data.arguments = arguments
+
+        return data
 
 
-    def monte_carlo(self, uncertain_parameters=None, plot_condensed=True):
+    def monte_carlo(self,
+                    uncertain_parameters=None,
+                    nr_samples=10**3,
+                    seed=None,
+                    plot_condensed=True):
         arguments = {}
 
         arguments["function"] = "MC"
         arguments["uncertain_parameters"] = uncertain_parameters
         arguments["plot_condensed"] = plot_condensed
+        arguments["seed"] = seed
+        arguments["nr_samples"] = nr_samples
 
+        data = Data()
+        data.arguments = arguments
 
-        return arguments
+        return data
 
 
 
@@ -31,4 +61,7 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
         arguments["function"] = "custom_uncertainty_quantification"
         arguments["custom_keyword"] = custom_keyword
 
-        return arguments
+        data = Data()
+        data.arguments = arguments
+
+        return data

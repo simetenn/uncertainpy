@@ -37,7 +37,7 @@ class TestDataFeature(unittest.TestCase):
         for data_type in self.data_types:
             self.assertIsNone(self.data_feature[data_type])
 
-        self.assertIsNone(self.data_feature["labels"])
+        self.assertEqual(self.data_feature["labels"], [])
 
 
     def test_getitem_error(self):

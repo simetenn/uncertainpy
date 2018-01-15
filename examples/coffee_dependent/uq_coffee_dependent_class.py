@@ -1,18 +1,49 @@
 import uncertainpy as un
+import numpy as np
+from scipy.integrate import odeint
+import chaospy as cp
 
-from coffee_cup_dependent_class import CoffeeCupDependent
 
-parameter_list = [["kappa", -0.05, None],
-                 ["u_env", 20, None],
-                 ["alpha", 1, None]]
+class CoffeeCupDependent(un.Model):
+    def __init__(self):
+         # Add labels to the model
+        super(CoffeeCupDependent, self).__init__(self,
+                                                 labels=["Time [s]", "Temperature [C]"])
 
+
+    # Define the run function
+    def run(self, kappa_hat, T_env, alpha):
+        # Initial temperature and time
+        time = np.linspace(0, 200, 150)
+        T_0 = 95
+
+        # The equation describing the model
+        def f(T, time, alpha, kappa_hat, T_env):
+            return -alpha*kappa_hat*(T - T_env)
+
+        # Solving the equation by integration.
+        values = odeint(f, T_0, time, args=(alpha, kappa_hat, T_env))[:, 0]
+
+        # Return time and model results
+        return time, values
+
+
+# Create the distributions
+T_env_dist = cp.Uniform(15, 25)
+alpha_dist = cp.Uniform(0.5, 1.5)
+kappa_hat_dist = cp.Uniform(0.025, 0.075)/alpha_dist
+
+# Define a parameter list and use it to create the Parameters
+parameter_list = [["alpha", None, alpha_dist],
+                  ["kappa_hat", None, kappa_hat_dist],
+                  ["T_env", None, T_env_dist]]
 parameters = un.Parameters(parameter_list)
-parameters.set_all_distributions(un.uniform(0.5))
 
+# Initialize the model
 model = CoffeeCupDependent()
 
 UQ = un.UncertaintyQuantification(model=model,
-                                  parameters=parameters,
-                                  features=None)
+                                  parameters=parameters)
 
+# Perform the uncertainty quantification using the Rosenblatt transformation
 UQ.quantify(plot_condensed=False, rosenblatt=True)
