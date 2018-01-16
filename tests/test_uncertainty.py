@@ -700,8 +700,12 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      parameters=parameters,
                                                      features=features,
-                                                     uncertainty_calculations=TestingUncertaintyCalculations(model),
                                                      verbose_level="error")
+
+        self.uncertainty.uncertainty_calculations = TestingUncertaintyCalculations()
+
+        self.assertIsInstance(self.uncertainty.uncertainty_calculations.model, TestingModel1d)
+        self.assertIsInstance(self.uncertainty.uncertainty_calculations.features, TestingFeatures)
 
 
     def test_quantifyPCAll(self):

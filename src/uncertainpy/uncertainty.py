@@ -285,10 +285,6 @@ pc_method: "collocation, spectral"
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
-        if len(uncertain_parameters) > 20:
-            raise RuntimeWarning("The number of uncertain parameters is high. "
-                                 + "A Monte Carlo method might be faster.")
-
         if filename is None:
             filename = self.model.name
 
