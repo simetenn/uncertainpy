@@ -24,14 +24,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
         self.seed = 10
-        self.difference_treshold = 1e-10
+        self.difference_threshold = 1e-10
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
         os.makedirs(self.output_test_dir)
 
         self.parameter_list = [["a", 1, None],
-                              ["b", 2, None]]
+                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameter_list)
         self.parameters.set_all_distributions(uniform(0.5))
@@ -193,7 +193,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                            verbose_level="error")
 
         with self.assertRaises(TypeError):
-                uncertainty_calculations.parameters = 2
+            uncertainty_calculations.parameters = 2
 
 
     def test_set_model_function(self):
@@ -280,7 +280,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         logfile = os.path.join(self.output_test_dir, "test.log")
 
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -477,7 +477,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_convert_uncertain_parameters_error(self):
         self.parameter_list = [["a", 1, None],
-                              ["b", 2, None]]
+                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameter_list)
 
@@ -500,7 +500,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_convert_uncertain_parameters_distribution(self):
         self.parameter_list = [["a", 1, None],
-                              ["b", 2, None]]
+                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameter_list)
 
@@ -525,7 +525,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_convert_uncertain_parameters_distribution_list(self):
         self.parameter_list = [["a", 1, None],
-                              ["b", 2, None]]
+                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameter_list)
 
@@ -593,7 +593,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_create_PCE_collocation_adaptive_error(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(1))
@@ -634,16 +634,82 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
         self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
 
-    # # def test_PCERspectral(self):
-    # #
-    # #     self.uncertainty_calculations.create_PCE_spectral()
-    # #
-    # #     print self.uncertainty_calculations.U_hat
-    # #     self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
-    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
-    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
-    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
-    # #     self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
+    def test_create_PCE_spectral_all(self):
+        self.uncertainty_calculations.create_PCE_spectral()
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
+
+    def test_create_PCE_spectral_all_parameters(self):
+        self.uncertainty_calculations.create_PCE_spectral(polynomial_order=4,
+                                                          quadrature_order=6)
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
+
+
+    def test_create_PCE_spectral_one(self):
+
+        self.uncertainty_calculations.create_PCE_spectral("a")
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
+
+    def test_create_PCE_collocation_adaptive_error(self):
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
+
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(1))
+
+        model = TestingModelAdaptive()
+        model.adaptive=False
+
+        features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
+        self.uncertainty_calculations = UncertaintyCalculations(model=model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="debug")
+
+        with self.assertRaises(ValueError):
+            self.uncertainty_calculations.create_PCE_spectral()
+
+
+
+    def test_create_PCE_spectral_rosenblatt_all(self):
+
+        self.uncertainty_calculations.create_PCE_spectral_rosenblatt()
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
+
+
+
+    def test_create_PCE_spectral_rosenblatt_one(self):
+
+        self.uncertainty_calculations.create_PCE_spectral_rosenblatt("a")
+
+        self.assertEqual(self.uncertainty_calculations.data.uncertain_parameters, ["a"])
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(self.uncertainty_calculations.U_hat["TestingModel1d"], cp.Poly)
 
 
 
@@ -677,6 +743,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data["test2D"]["sensitivity_t_sum"][1], 2/3.)
         self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_t_sum"][0], 1/3.)
         self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_t_sum"][1], 2/3.)
+
 
 
     def test_analyse_PCE(self):
@@ -777,30 +844,66 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(self.uncertainty_calculations.U_mc["feature2d"], np.ndarray)
 
 
-    def test_polynomial_chaos(self):
-        data = self.uncertainty_calculations.polynomial_chaos(seed=self.seed)
+    def test_polynomial_chaos_collocation(self):
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
         data.save(filename)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
                                   filename, compare_file])
 
         self.assertEqual(result, 0)
 
 
 
-    def test_PC_rosenblatt(self):
-        data = self.uncertainty_calculations.polynomial_chaos(rosenblatt=True, seed=self.seed)
+    def test_PC_collocation_rosenblatt(self):
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt=True,
+                                                              seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d_Rosenblatt.h5")
         data.save(filename)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
+                                  filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+
+    def test_polynomial_chaos_spectral(self):
+        data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
+                                                              seed=self.seed)
+
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_spectral.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d_spectral.h5")
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
+                                  filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+
+    def test_PC_collocation_spectral(self):
+        data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
+                                                              rosenblatt=True,
+                                                              seed=self.seed)
+
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_Rosenblatt_spectral.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
                                   filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -830,7 +933,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
                                   filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -846,7 +949,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         compare_file = os.path.join(folder, "data/UncertaintyCalculations_single-parameter-b.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
                                   filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -891,7 +994,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+        result = subprocess.call(["h5diff", "-d", str(self.difference_threshold),
                                   filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -929,7 +1032,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_monte_carlo_feature1d(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -959,7 +1062,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_monte_carlo_feature2d(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -987,7 +1090,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_create_PCE_collocation_incomplete(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -1057,7 +1160,73 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_create_PCE_collocation_rosenblatt_incomplete(self):
+    def test_create_PCE_spectral_rosenblatt_incomplete(self):
+        np.random.seed(self.seed)
+
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
+
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModelIncomplete()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error")
+
+        self.uncertainty_calculations.create_PCE_spectral(["a", "b"],
+                                                             allow_incomplete=False)
+
+        self.assertEqual(self.uncertainty_calculations.U_hat, {})
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])
+
+        # TODO Find a good way to test this case when not all runs contains None
+        # self.uncertainty_calculations = UncertaintyCalculations(model,
+        #                                                         parameters=parameters,
+        #                                                         features=features,
+        #                                                         verbose_level="error",
+        #                                                         seed=self.seed,
+        #                                                         allow_incomplete=True)
+
+        # self.uncertainty_calculations.create_PCE_spectral_rosenblatt(["a", "b"])
+
+        # self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
+        # self.assertEqual(self.uncertainty_calculations.data.incomplete,
+        #                  ["TestingModelIncomplete"])
+
+
+
+    def test_create_PCE_spectral_incomplete(self):
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
+
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModelIncomplete()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error",
+                                                                allow_incomplete=False)
+
+        self.uncertainty_calculations.create_PCE_spectral(["a", "b"],
+                                                           seed=self.seed)
+
+        self.assertEqual(self.uncertainty_calculations.U_hat, {})
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])
+
+
+    def test_create_PCE_spectral_incomplete(self):
         np.random.seed(self.seed)
 
         parameter_list = [["a", 1, None],
@@ -1075,23 +1244,35 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 features=features,
                                                                 verbose_level="error")
 
-        self.uncertainty_calculations.create_PCE_collocation(["a", "b"],
-                                                             allow_incomplete=False)
+        self.uncertainty_calculations.create_PCE_spectral(["a", "b"],
+                                                          allow_incomplete=False)
 
         self.assertEqual(self.uncertainty_calculations.U_hat, {})
         self.assertEqual(self.uncertainty_calculations.data.incomplete,
                          ["TestingModelIncomplete"])
 
-        # TODO Find a good way to test this case when not all runs contains None
-        # self.uncertainty_calculations = UncertaintyCalculations(model,
-        #                                                         parameters=parameters,
-        #                                                         features=features,
-        #                                                         verbose_level="error",
-        #                                                         seed=self.seed,
-        #                                                         allow_incomplete=True)
 
-        # self.uncertainty_calculations.create_PCE_collocation_rosenblatt(["a", "b"])
+    def test_create_PCE_spectral_rosenblatt_incomplete(self):
+        np.random.seed(self.seed)
 
-        # self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
-        # self.assertEqual(self.uncertainty_calculations.data.incomplete,
-        #                  ["TestingModelIncomplete"])
+        parameter_list = [["a", 1, None],
+                         ["b", 2, None]]
+
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModelIncomplete()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                verbose_level="error")
+
+        self.uncertainty_calculations.create_PCE_spectral(["a", "b"],
+                                                           allow_incomplete=False)
+
+        self.assertEqual(self.uncertainty_calculations.U_hat, {})
+        self.assertEqual(self.uncertainty_calculations.data.incomplete,
+                         ["TestingModelIncomplete"])

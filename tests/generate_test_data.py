@@ -33,7 +33,33 @@ def generate_data_polynomial_chaos():  # pragma: no cover
 
     test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          plot=False)
+                          plot=None)
+
+
+def generate_data_PC_spectral():  # pragma: no cover
+    parameter_list = [["a", 1, None],
+                      ["b", 2, None]]
+
+    parameters = un.Parameters(parameter_list)
+    parameters.set_all_distributions(un.uniform(0.5))
+
+    model = TestingModel1d()
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+
+    test = un.UncertaintyQuantification(model,
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
+
+
+    test.polynomial_chaos(method="spectral",
+                          filename="TestingModel1d_spectral",
+                          data_folder=test_data_dir,
+                          plot=None)
 
 
 def generate_data_PC_model_function():  # pragma: no cover
@@ -54,7 +80,7 @@ def generate_data_PC_model_function():  # pragma: no cover
 
     test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          plot=False)
+                          plot=None)
 
 
 
@@ -78,7 +104,7 @@ def generate_data_PC_0D():  # pragma: no cover
 
     test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          plot=False)
+                          plot=None)
 
 
 def generate_data_PC_2D():  # pragma: no cover
@@ -101,7 +127,7 @@ def generate_data_PC_2D():  # pragma: no cover
 
     test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
-                          plot=False)
+                          plot=None)
 
 
 def generate_data_PC_rosenblatt():  # pragma: no cover
@@ -127,9 +153,35 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
     test.polynomial_chaos(rosenblatt=True,
                           filename="TestingModel1d_Rosenblatt",
                           data_folder=test_data_dir,
-                          plot=False)
+                          plot=None)
 
 
+
+def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
+    parameter_list = [["a", 1, None],
+                      ["b", 2, None]]
+
+    parameters = un.Parameters(parameter_list)
+    parameters.set_all_distributions(un.uniform(0.5))
+
+    model = TestingModel1d()
+
+    features = TestingFeatures(features_to_run=["feature0d",
+                                                "feature1d",
+                                                "feature2d"])
+
+
+    test = un.UncertaintyQuantification(model,
+                                        features=features,
+                                        parameters=parameters,
+                                        verbose_level="error")
+
+
+    test.polynomial_chaos(rosenblatt=True,
+                          method="spectral",
+                          filename="TestingModel1d_Rosenblatt_spectral",
+                          data_folder=test_data_dir,
+                          plot=None)
 
 
 
@@ -155,7 +207,7 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
 
     test.polynomial_chaos_single(data_folder=test_data_dir,
                                  seed=seed,
-                                 plot=False)
+                                 plot=None)
 
 
 def generate_data_monte_carlo():  # pragma: no cover
@@ -180,7 +232,7 @@ def generate_data_monte_carlo():  # pragma: no cover
                      data_folder=test_data_dir,
                      seed=seed,
                      nr_samples=10,
-                     plot=False)
+                     plot=None)
 
 
 def generate_data_monte_carlo_single():  # pragma: no cover
@@ -207,31 +259,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
                             data_folder=test_data_dir,
                             seed=seed,
                             nr_samples=10,
-                            plot=False)
-
-
-
-# def generate_data_comparemonte_carlo():  # pragma: no cover
-#     parameter_list = [["a", 1, None],
-#                      ["b", 2, None]]
-#
-#     parameters = un.Parameters(parameter_list)
-#     model = TestingModel1d(parameters)
-#     model.set_all_distributions(un.uniform(0.5))
-#
-#
-#     uncertainty = un.UncertaintyQuantifications(model,
-#                                             features=TestingFeatures(),
-#                                             verbose_level="error",
-#                                             data_folder=test_data_dir,
-#                                             plot=False,
-#                                             nr_mc_samples=10**1,
-#                                             seed=seed)
-#
-#
-#     mc_samples = [10, 100]
-#     uncertainty.comparemonte_carlo(mc_samples)
-
+                            plot=None)
 
 
 def generate_data_data():  # pragma: no cover
@@ -297,10 +325,11 @@ if __name__ == "__main__":  # pragma: no cover
     generate_data_PC_0D()
     generate_data_PC_2D()
     generate_data_polynomial_chaos_single()
+    generate_data_PC_spectral()
+    generate_data_PC_rosenblatt_spectral()
 
     generate_data_monte_carlo()
     generate_data_monte_carlo_single()
-    # generate_data_comparemonte_carlo()
     generate_data_PC_rosenblatt()
     generate_data_uncertainty_calculations()
     generate_data_data()
