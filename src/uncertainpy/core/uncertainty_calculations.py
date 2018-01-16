@@ -58,16 +58,16 @@ class UncertaintyCalculations(ParameterBase):
         Runmodel object responsible for evaluating the model and calculating features.
     logger : logging.Logger
         Logger object responsible for logging to screen or file.
-    P : chaospy.Poly object
-        Polynomial to use when approximating the model U.
     distribution : chaospy.Dist
         Distribution of the uncertain parameters.
     data : uncertainpy.Data
         Stored data calculated in the uncertainty quantification.
-    U_hat : chaospy.Poly
-        Polynomial chaos approximation of the model.
-    U_mc : array
-        Monte Carlo evaluations of the polynomial chaos approximation of the model.
+    U_hat : dict
+        A dictionary for each feature and model that contain the Polynomial
+        chaos approximations as chaospy.Poly objects.
+    U_mc : dict
+        A dictionary for each feature and model that contain the corresponding
+        Monte Carlo evaluations.
 
     See Also
     --------
@@ -100,7 +100,6 @@ class UncertaintyCalculations(ParameterBase):
                                                       features=features,
                                                       verbose_level=verbose_level,
                                                       verbose_filename=verbose_filename)
-        self.P = None
         self.distribution = None
         self.data = None
         self.U_hat = {}
@@ -129,6 +128,52 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
+
+    def convert_uncertain_parameters(self, uncertain_parameters=None):
+        """
+        Converts uncertain_parameter(s) to a list of uncertain parameter(s), and
+        checks if it is a legal set of uncertain parameter(s).
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The name(s) of the uncertain parameters to use. If None, a list of
+            all uncertain parameters are returned.
+            Default is None.
+
+        Returns
+        -------
+        uncertain_parameters : list
+            A list with the name of all uncertain parameters.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        See Also
+        --------
+        uncertainpy.Parameters : Parameters class
+        """
+        if isinstance(uncertain_parameters, str):
+            uncertain_parameters = [uncertain_parameters]
+
+        if self.parameters.distribution is not None:
+            if uncertain_parameters is None:
+                uncertain_parameters = self.parameters.get("name")
+            elif sorted(uncertain_parameters) != sorted(self.parameters.get("name")):
+                 raise ValueError("A common multivariate distribution is given, " +
+                                  "and all uncertain parameters must be used. " +
+                                  "Set uncertain_parameters to None or a list of all " +
+                                  "uncertain parameters.")
+        else:
+            if uncertain_parameters is None:
+                uncertain_parameters = self.parameters.get_from_uncertain("name")
+
+        return uncertain_parameters
+
+
     def create_distribution(self, uncertain_parameters=None):
         """
         Create a joint multivariate distribution for the selected parameters from
@@ -137,24 +182,40 @@ class UncertaintyCalculations(ParameterBase):
         Parameters
         ----------
         uncertain_parameters : {None, list}, optional
-            If a multivariate distribution is defined in the Parameters, return
-            that multivariate distribution. Otherwise create the joint
-            multivariate distribution for the selected parameters from their
-            univariate distributions. If uncertain_parameters is None, the
-            joint multivariate distribution for all parameters is returned.
+            The uncertain parameter(s) to use when creating the joint multivariate
+            distribution. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
             Default is None.
 
         Returns
         -------
-        """
-        if self.parameters.distribution is None:
-            uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        distribution : chaospy.Dist
+            The joint multivariate distribution for the given parameters.
 
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        If a multivariate distribution is defined in the Parameters.distribution,
+        that multivariate distribution is returned. Otherwise the joint
+        multivariate distribution for the selected parameters is created from
+        the univariate distributions.
+
+        See Also
+        --------
+        uncertainpy.Parameters : Parameters class
+        """
+        uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+
+        if self.parameters.distribution is None:
             parameter_distributions = self.parameters.get("distribution", uncertain_parameters)
 
             distribution = cp.J(*parameter_distributions)
         else:
-            self.logger.warning("A multivariate distribution is defined. Returns that distribution.")
             distribution = self.parameters.distribution
 
         return distribution
@@ -162,6 +223,32 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def create_mask(self, nodes, feature, weights=None):
+        """
+        Mask all nodes and the corresponding model and feature evaluations that
+        do not give results (anything but np.nan).
+
+        Parameters
+        ----------
+        nodes : array_like
+            The nodes used to evaluate the model.
+        feature : str
+            Name of the feature or model to mask.
+        weights : array_like, optional
+            Weights corresponding to each node.
+            Default is None.
+
+        Returns
+        -------
+        masked_nodes : array_like
+            The nodes that correspond to the evaluations with results.
+        masked_values : array_like
+            The values which have results.
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        masked_weights : array_like, optional
+            Masked weights that correspond to evaluations with results,
+            only returned when weights are given.
+        """
         if feature not in self.data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
@@ -197,27 +284,7 @@ class UncertaintyCalculations(ParameterBase):
         if weights is None:
             return np.array(masked_nodes), np.array(masked_values), mask
         else:
-            return np.array(masked_nodes), np.array(masked_values), np.array(masked_weights), mask
-
-
-
-    def convert_uncertain_parameters(self, uncertain_parameters):
-        if isinstance(uncertain_parameters, str):
-            uncertain_parameters = [uncertain_parameters]
-
-        if self.parameters.distribution is not None:
-            if uncertain_parameters is None:
-                uncertain_parameters = self.parameters.get("name")
-            elif sorted(uncertain_parameters) != sorted(self.parameters.get("name")):
-                 raise ValueError("A common multivariate distribution is given, " +
-                                  "and all uncertain parameters must be used. " +
-                                  "Set uncertain_parameters to None or a list of all " +
-                                  "uncertain parameters.")
-        else:
-            if uncertain_parameters is None:
-                uncertain_parameters = self.parameters.get_from_uncertain("name")
-
-        return uncertain_parameters
+            return np.array(masked_nodes), np.array(masked_values), mask, np.array(masked_weights)
 
 
 
@@ -226,12 +293,83 @@ class UncertaintyCalculations(ParameterBase):
                             polynomial_order=3,
                             quadrature_order=None,
                             allow_incomplete=False):
+        """
+        Create the polynomial approximation `U_hat` using pseudo-spectral
+        projection.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        quadrature_order : {int, None}, optional
+            The order of the Leja quadrature method. If None,
+            `quadrature_order = polynomial_order + 2`.
+            Default is None.
+        allow_incomplete : bool
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+
+        Attributes
+        ----------
+        distribution : chaospy.Dist
+            Sets the multivariate distribution of the uncertain parameters.
+        data : uncertainpy.Data
+            Updates the stored data with the values from the model evaluation
+            and feature calculations.
+        U_hat : dict
+            Sets the Polynomial chaos approximations for feature and model as
+            chaospy.Poly objects.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        We create a polynomial approximation for the model and each feature,
+        stored in `U_hat`. The corresponding multivariate distribution is stored
+        in `distribution`.
+
+        The polynomial chaos expansion method for uncertainty quantification
+        approximates the model with a polynomial that follows specific
+        requirements. This polynomial can be used to quickly calculate the
+        uncertainty and sensitivity of the model.
+
+        To create the polynomial chaos expansion we first find the polynomials
+        using the three-therm recurrence relation. Then we use the
+        pseudo-spectral projection to find the expansion coefficients for the
+        model and each feature of the model.
+
+        Pseudo-spectral projection is based on least squares
+        minimization and finds the expansion coefficients through numerical
+        integration. The integration uses a quadrature scheme with weights
+        and nodes. We use Leja quadrature with Smolyak sparse grids to reduce the
+        number of nodes required.
+        For each of the nodes we evaluate the model and calculate the features,
+        and the polynomial approximation is created from these results.
+
+        The model and feature do not necessarily give results for each
+        node. The pseudo-spectral methods is sensitive to missing values, so
+        `allow_incomplete` should be used with care.
+        """
+
+        if allow_incomplete:
+            self.logger.warning("The pseudo-spectral methods is sensitive to missing values, so `allow_incomplete` should be used with care.")
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        self.P = cp.orth_ttr(polynomial_order, self.distribution)
+        P = cp.orth_ttr(polynomial_order, self.distribution)
 
         if quadrature_order is None:
             quadrature_order = polynomial_order + 2
@@ -248,10 +386,10 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes, feature, weights)
+            masked_nodes, masked_values, mask, masked_weights = self.create_mask(nodes, feature, weights)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
+                self.U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
                                                         masked_weights, masked_values)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +\
@@ -270,15 +408,83 @@ class UncertaintyCalculations(ParameterBase):
                                polynomial_order=3,
                                nr_collocation_nodes=None,
                                allow_incomplete=False):
+        """
+        Create the polynomial approximation `U_hat` using pseudo-spectral
+        projection.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        nr_collocation_nodes : {int, None}, optional
+            The number of collocation nodes to choose. If None,
+            `nr_collocation_nodes` = number of expansion factors + 2.
+            Default is None.
+        allow_incomplete : bool
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+
+        Attributes
+        ----------
+        distribution : chaospy.Dist
+            Sets the multivariate distribution of the uncertain parameters.
+        data : uncertainpy.Data
+            Updates the stored data with the values from the model evaluation
+            and feature calculations.
+        U_hat : dict
+            Sets the Polynomial chaos approximations for feature and model as
+            chaospy.Poly objects.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        We create a polynomial approximation for the model and each feature,
+        stored in `U_hat`. The corresponding multivariate distribution is stored
+        in `distribution`.
+
+        The polynomial chaos expansion method for uncertainty quantification
+        approximates the model with a polynomial that follows specific
+        requirements. This polynomial can be used to quickly calculate the
+        uncertainty and sensitivity of the model.
+
+        To create the polynomial chaos expansion we first find the polynomials
+        using the three-therm recurrence relation. Then we use point collocation
+        to find the expansion coefficients for the model and each feature of the
+        model.
+
+        In point collocation we require the polynomial approximation to be equal
+        the model at a set of collocation nodes. This results in a set of linear
+        equations for the polynomial coefficients we can solve. We choose
+        `nr_collocation_nodes` collocation nodes with Hammersley sampling from
+        the `distribution`. We evaluate the model and each feature in parallel,
+        and solve the resulting set of linear equations with Tikhonov
+        regularization.
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method is robust towards missing values as long as
+        the number of results that remain is high enough.
+        """
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        self.P = cp.orth_ttr(polynomial_order, self.distribution)
+        P = cp.orth_ttr(polynomial_order, self.distribution)
 
         if nr_collocation_nodes is None:
-            nr_collocation_nodes = 2*len(self.P) + 2
+            nr_collocation_nodes = 2*len(P) + 2
 
         nodes = self.distribution.sample(nr_collocation_nodes, "M")
 
@@ -293,7 +499,7 @@ class UncertaintyCalculations(ParameterBase):
             masked_nodes, masked_values, mask = self.create_mask(nodes, feature)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
+                self.U_hat[feature] = cp.fit_regression(P, masked_nodes,
                                                         masked_values, rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
@@ -313,6 +519,82 @@ class UncertaintyCalculations(ParameterBase):
                                        polynomial_order=3,
                                        quadrature_order=None,
                                        allow_incomplete=False):
+        """
+        Create the polynomial approximation `U_hat` using pseudo-spectral
+        projection and the Rosenblatt transformation. Works for dependend
+        uncertain parameters.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        quadrature_order : {int, None}, optional
+            The order of the Leja quadrature method. If None,
+            `quadrature_order = polynomial_order + 2`.
+            Default is None.
+        allow_incomplete : bool
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+
+        Attributes
+        ----------
+        distribution : chaospy.Dist
+            Sets the multivariate distribution of the uncertain parameters.
+        data : uncertainpy.Data
+            Updates the stored data with the values from the model evaluation
+            and feature calculations.
+        U_hat : dict
+            Sets the Polynomial chaos approximations for feature and model as
+            chaospy.Poly objects.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        We create a polynomial approximation for the model and each feature,
+        stored in `U_hat`. The corresponding multivariate distribution is stored
+        in `distribution`.
+
+        The polynomial chaos expansion method for uncertainty quantification
+        approximates the model with a polynomial that follows specific
+        requirements. This polynomial can be used to quickly calculate the
+        uncertainty and sensitivity of the model.
+
+        We use the Rosenblatt transformation to transform from dependent to
+        independent variables before we create the polynomial chaos expansion.
+        We first find the polynomials using the three-therm recurrence relation
+        from the independent distributions. Then we use the
+        pseudo-spectral projection with the Rosenblatt transformation to find
+        the expansion coefficients for the model and each feature of the model.
+
+        Pseudo-spectral projection is based on least squares
+        minimization and finds the expansion coefficients through numerical
+        integration. The integration uses a quadrature scheme with weights
+        and nodes. We use Leja quadrature with Smolyak sparse grids to reduce the
+        number of nodes required.
+        We use the Rosenblatt transformation to transform the quadrature nodes
+        before they are sent to the model evaluation.
+        For each of the nodes we evaluate the model and calculate the features,
+        and the polynomial approximation is created from these results.
+
+        The model and feature do not necessarily give results for each
+        node. The pseudo-spectral methods is sensitive to missing values, so
+        `allow_incomplete` should be used with care.
+        """
+
+        if allow_incomplete:
+            self.logger.warning("The pseudo-spectral methods is sensitive to missing values, so `allow_incomplete` should be used with care.")
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -326,7 +608,7 @@ class UncertaintyCalculations(ParameterBase):
 
         dist_R = cp.J(*dist_R)
 
-        self.P = cp.orth_ttr(polynomial_order, dist_R)
+        P = cp.orth_ttr(polynomial_order, dist_R)
 
         if quadrature_order is None:
             quadrature_order = polynomial_order + 2
@@ -352,17 +634,17 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(self.data)):
 
             # The tutorial version
-            # masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_R,
+            # masked_nodes, masked_values, mask, masked_weights = self.create_mask(nodes_R,
             #                                                           feature,
             #                                                           weights)
 
             # The version thats seems to be working
-            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_R,
+            masked_nodes, masked_values, mask, masked_weights = self.create_mask(nodes_R,
                                                                       feature,
                                                                       weights_R)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                self.U_hat[feature] = cp.fit_quadrature(self.P,
+                self.U_hat[feature] = cp.fit_quadrature(P,
                                                         masked_nodes,
                                                         masked_weights,
                                                         masked_values)
@@ -383,7 +665,78 @@ class UncertaintyCalculations(ParameterBase):
                                           polynomial_order=3,
                                           nr_collocation_nodes=None,
                                           allow_incomplete=False):
+        """
+        Create the polynomial approximation `U_hat` using pseudo-spectral
+        projection and the Rosenblatt transformation. Works for dependend
+        uncertain parameters.
 
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        nr_collocation_nodes : {int, None}, optional
+            The number of collocation nodes to choose. If None,
+            `nr_collocation_nodes` = number of expansion factors + 2.
+            Default is None.
+        allow_incomplete : bool
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+
+        Attributes
+        ----------
+        distribution : chaospy.Dist
+            Sets the multivariate distribution of the uncertain parameters.
+        data : uncertainpy.Data
+            Updates the stored data with the values from the model evaluation
+            and feature calculations.
+        U_hat : dict
+            Sets the Polynomial chaos approximations for feature and model as
+            chaospy.Poly objects.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        We create a polynomial approximation for the model and each feature,
+        stored in `U_hat`. The corresponding multivariate distribution is stored
+        in `distribution`.
+
+        The polynomial chaos expansion method for uncertainty quantification
+        approximates the model with a polynomial that follows specific
+        requirements. This polynomial can be used to quickly calculate the
+        uncertainty and sensitivity of the model.
+
+        We use the Rosenblatt transformation to transform from dependent to
+        independent variables before we create the polynomial chaos expansion.
+        We first find the polynomials using the three-therm recurrence relation
+        from the independent distributions. Then we use the
+        point collocation with the Rosenblatt transformation to find
+        the expansion coefficients for the model and each feature of the model.
+
+        In point collocation we require the polynomial approximation to be equal
+        the model at a set of collocation nodes. This results in a set of linear
+        equations for the polynomial coefficients we can solve. We choose
+        `nr_collocation_nodes` collocation nodes with Hammersley sampling from
+        the independent distribution. We then transform the nodes using the
+        Rosneblatte transformation and evaluate the model and each
+        feature in parallel. We solve the resulting set of linear equations
+        with Tikhonov regularization.
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method is robust towards missing values as long as
+        the number of results that remain is high enough.
+        """
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         self.distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -397,11 +750,10 @@ class UncertaintyCalculations(ParameterBase):
 
         dist_R = cp.J(*dist_R)
 
-
-        self.P = cp.orth_ttr(polynomial_order, dist_R)
+        P = cp.orth_ttr(polynomial_order, dist_R)
 
         if nr_collocation_nodes is None:
-            nr_collocation_nodes = 2*len(self.P) + 2
+            nr_collocation_nodes = 2*len(P) + 2
 
         nodes_R = dist_R.sample(nr_collocation_nodes, "M")
         nodes = self.distribution.inv(dist_R.fwd(nodes_R))
@@ -415,12 +767,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            # masked_nodes, masked_values, mask = self.create_mask(nodes_R, feature)
             masked_nodes, masked_values, mask = self.create_mask(nodes_R, feature)
 
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                self.U_hat[feature] = cp.fit_regression(self.P,
+                self.U_hat[feature] = cp.fit_regression(P,
                                                         masked_nodes,
                                                         masked_values,
                                                         rule="T")

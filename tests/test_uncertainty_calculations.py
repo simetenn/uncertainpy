@@ -209,12 +209,21 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_create_distribution_dist(self):
 
-        dist = cp.J(cp.Uniform())
+        dist = cp.J(cp.Uniform(), cp.Uniform())
         self.uncertainty_calculations.parameters.distribution = dist
         distribution = self.uncertainty_calculations.create_distribution()
 
         self.assertIsInstance(distribution, cp.Dist)
         self.assertEqual(distribution, dist)
+
+    def test_create_distribution_dist_error(self):
+
+        dist = cp.J(cp.Uniform(), cp.Uniform())
+        self.uncertainty_calculations.parameters.distribution = dist
+
+        with self.assertRaises(ValueError):
+            self.uncertainty_calculations.create_distribution("a")
+
 
     def test_create_distribution_none(self):
 
@@ -249,6 +258,26 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(masked_values[1], np.arange(0, 10) + 3))
         self.assertTrue(np.array_equal(masked_values[2], np.arange(0, 10) + 5))
         self.assertTrue(np.array_equal(nodes, masked_nodes))
+        self.assertTrue(np.all(mask))
+
+
+
+    def test_create_mask_model_weights(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        uncertain_parameters = ["a", "b"]
+        weights = np.array([0, 1, 2])
+
+        self.uncertainty_calculations.data = \
+            self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
+
+        masked_nodes, masked_values, mask, masked_weights = self.uncertainty_calculations.create_mask(nodes, "TestingModel1d", weights=weights)
+
+        self.assertEqual(len(masked_values), 3)
+        self.assertTrue(np.array_equal(masked_values[0], np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(masked_values[1], np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(masked_values[2], np.arange(0, 10) + 5))
+        self.assertTrue(np.array_equal(nodes, masked_nodes))
+        self.assertTrue(np.array_equal(weights, masked_weights))
         self.assertTrue(np.all(mask))
 
 
