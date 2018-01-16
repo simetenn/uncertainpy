@@ -37,5 +37,4 @@ parameters = un.Parameters(parameter_list)
 # Perform the uncertainty quantification
 uncertainty = un.UncertaintyQuantification(model=model,
                                            parameters=parameters)
-# uncertainty.quantify(rosenblatt=True, pc_method="spectral")
-uncertainty.monte_carlo(nr_samples=10**2)
+uncertainty.quantify()

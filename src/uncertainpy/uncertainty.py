@@ -369,7 +369,6 @@ pc_method: "collocation, spectral"
         self.data.save(save_path)
 
 
-
     def load(self, filename):
         self.data = Data(filename)
 

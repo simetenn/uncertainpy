@@ -138,7 +138,7 @@ class UncertaintyCalculations(ParameterBase):
     def create_PCE_spectral(self,
                             uncertain_parameters=None,
                             polynomial_order=3,
-                            quadrature_order=4,
+                            quadrature_order=None,
                             allow_incomplete=False):
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -147,7 +147,13 @@ class UncertaintyCalculations(ParameterBase):
 
         self.P = cp.orth_ttr(polynomial_order, self.distribution)
 
-        nodes, weights = cp.generate_quadrature(quadrature_order, self.distribution, rule="J", sparse=True)
+        if quadrature_order is None:
+            quadrature_order = polynomial_order + 2
+
+        nodes, weights = cp.generate_quadrature(quadrature_order,
+                                                self.distribution,
+                                                rule="J",
+                                                sparse=True)
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -220,7 +226,7 @@ class UncertaintyCalculations(ParameterBase):
     def create_PCE_spectral_rosenblatt(self,
                                        uncertain_parameters=None,
                                        polynomial_order=3,
-                                       quadrature_order=4,
+                                       quadrature_order=None,
                                        allow_incomplete=False):
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -229,21 +235,27 @@ class UncertaintyCalculations(ParameterBase):
 
 
         # Create the Multivariate normal distribution
-        dist_MvNormal = []
+        dist_R = []
         for parameter in uncertain_parameters:
-            dist_MvNormal.append(cp.Normal())
+            dist_R.append(cp.Normal())
 
-        dist_MvNormal = cp.J(*dist_MvNormal)
+        dist_R = cp.J(*dist_R)
 
-        self.P = cp.orth_ttr(polynomial_order, dist_MvNormal)
+        self.P = cp.orth_ttr(polynomial_order, dist_R)
 
-        nodes_MvNormal, weights_MvNormal = cp.generate_quadrature(quadrature_order, dist_MvNormal,
-                                                                  rule="J", sparse=True)
+        if quadrature_order is None:
+            quadrature_order = polynomial_order + 2
+
+        nodes_R, weights_R = cp.generate_quadrature(quadrature_order,
+                                                    dist_R,
+                                                    rule="J",
+                                                    sparse=True)
+
         # TODO Is this correct, copy pasted from below.
-        nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
-        weights = weights_MvNormal*self.distribution.pdf(nodes)/dist_MvNormal.pdf(nodes_MvNormal)
+        nodes = self.distribution.inv(dist_R.fwd(nodes_R))
+        weights = weights_R*self.distribution.pdf(nodes)/dist_R.pdf(nodes_R)
 
-        self.distribution = dist_MvNormal
+        self.distribution = dist_R
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -253,16 +265,23 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_MvNormal,
-                                                                      feature,
-                                                                      weights)
 
+            # The tutorial version
+            # masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_R,
+            #                                                           feature,
+            #                                                           weights)
+
+            # The version thats seems to be working
+            masked_nodes, masked_values, masked_weights, mask = self.create_mask(nodes_R,
+                                                                      feature,
+                                                                      weights_R)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                self.U_hat[feature] = cp.fit_quadrature(self.P, masked_nodes,
+                self.U_hat[feature] = cp.fit_quadrature(self.P,
+                                                        masked_nodes,
                                                         masked_weights,
                                                         masked_values)
-            else:
+
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
                                     "due too not all parameter combinations " +
@@ -286,23 +305,23 @@ class UncertaintyCalculations(ParameterBase):
 
 
         # Create the Multivariate normal distribution
-        # dist_MvNormal = cp.Iid(cp.Normal(), len(uncertain_parameters))
-        dist_MvNormal = []
+        # dist_R = cp.Iid(cp.Normal(), len(uncertain_parameters))
+        dist_R = []
         for parameter in uncertain_parameters:
-            dist_MvNormal.append(cp.Normal())
+            dist_R.append(cp.Normal())
 
-        dist_MvNormal = cp.J(*dist_MvNormal)
+        dist_R = cp.J(*dist_R)
 
 
-        self.P = cp.orth_ttr(polynomial_order, dist_MvNormal)
+        self.P = cp.orth_ttr(polynomial_order, dist_R)
 
         if nr_collocation_nodes is None:
             nr_collocation_nodes = 2*len(self.P) + 2
 
-        nodes_MvNormal = dist_MvNormal.sample(nr_collocation_nodes, "M")
-        nodes = self.distribution.inv(dist_MvNormal.fwd(nodes_MvNormal))
+        nodes_R = dist_R.sample(nr_collocation_nodes, "M")
+        nodes = self.distribution.inv(dist_R.fwd(nodes_R))
 
-        self.distribution = dist_MvNormal
+        self.distribution = dist_R
 
         # Running the model
         self.data = self.runmodel.run(nodes, uncertain_parameters)
@@ -311,14 +330,15 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(self.data,
                             desc="Calculating PC for each feature",
                             total=len(self.data)):
-            masked_nodes, masked_values, mask = self.create_mask(nodes_MvNormal, feature)
-
-
+            # masked_nodes, masked_values, mask = self.create_mask(nodes_R, feature)
+            masked_nodes, masked_values, mask = self.create_mask(nodes_R, feature)
 
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                self.U_hat[feature] = cp.fit_regression(self.P, masked_nodes,
-                                                        masked_values, rule="T")
+                self.U_hat[feature] = cp.fit_regression(self.P,
+                                                        masked_nodes,
+                                                        masked_values,
+                                                        rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +

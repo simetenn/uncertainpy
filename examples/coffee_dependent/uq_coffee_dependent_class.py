@@ -46,4 +46,4 @@ UQ = un.UncertaintyQuantification(model=model,
                                   parameters=parameters)
 
 # Perform the uncertainty quantification using the Rosenblatt transformation
-UQ.quantify(plot_condensed=False, rosenblatt=True)
+UQ.quantify(rosenblatt=True)

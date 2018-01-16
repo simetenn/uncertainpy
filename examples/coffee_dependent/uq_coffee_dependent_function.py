@@ -25,10 +25,11 @@ T_env_dist = cp.Uniform(15, 25)
 alpha_dist = cp.Uniform(0.5, 1.5)
 kappa_hat_dist = cp.Uniform(0.025, 0.075)/alpha_dist
 
-# Define a parameter list and use it to create the Parameters
+# Define a parameter list and use it to create the parameters
 parameter_list = [["alpha", None, alpha_dist],
                   ["kappa_hat", None, kappa_hat_dist],
                   ["T_env", None, T_env_dist]]
+
 parameters = un.Parameters(parameter_list)
 
 
@@ -42,17 +43,10 @@ UQ = un.UncertaintyQuantification(model=model,
                                   parameters=parameters)
 
 UQ.quantify(rosenblatt=True,
-            pc_method="collocation",
+            pc_method="spectral",
+            allow_incomplete=True,
             figure_folder="figures_coffee_dependent",
             filename="coffee_dependent")
-
-
-
-
-
-
-
-
 
 
 

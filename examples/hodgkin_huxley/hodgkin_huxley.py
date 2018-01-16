@@ -5,11 +5,6 @@ from scipy.integrate import odeint
 
 
 class HodgkinHuxley(Model):
-    """
-    The model must be able to handle these calls
-
-    simulation.run()
-    """
     def __init__(self):
         Model.__init__(self,
                        adaptive=False,

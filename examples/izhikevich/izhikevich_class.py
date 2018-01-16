@@ -2,10 +2,10 @@ from uncertainpy import Model
 
 import numpy as np
 
-class izhikevich(Model):
+class Izhikevich(Model):
     def __init__(self):
         Model.__init__(self,
-                       labels=["time [ms]", "voltage [mv]"])
+                       labels=["Time [ms]", "Voltage [mV]"])
 
         time_end = 100
         self.dt = 0.25
