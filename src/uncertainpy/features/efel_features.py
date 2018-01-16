@@ -190,7 +190,7 @@ class EfelFeatures(Features):
                                            "Set 'stimulus_start', or set strict to "
                                            "False to use initial time as stimulus start")
                     else:
-                        info["stimulus_start"] = t[0]
+                        info["stimulus_start"] = time[0]
                         self.logger.warning("Efel features require info['stimulus_start']. "
                                             "No 'stimulus_start' found in info, "
                                             "setting stimulus start as initial time")
@@ -202,7 +202,7 @@ class EfelFeatures(Features):
                                            "Set 'stimulus_start', or set strict to "
                                            "False to use end time as stimulus end")
                     else:
-                        info["stimulus_end"] = t[-1]
+                        info["stimulus_end"] = time[-1]
                         self.logger.warning("Efel features require info['stimulus_start']. "
                                             "No 'stimulus_end' found in info, "
                                             "setting stimulus end as end time")

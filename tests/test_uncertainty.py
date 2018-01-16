@@ -686,6 +686,23 @@ class TestUncertainty(TestCasePlot):
                                                      verbose_level="error")
 
 
+    def test_set_uncertainty_calculations(self):
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
+
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModel1d()
+
+        features = TestingFeatures(features_to_run=None)
+
+        self.uncertainty = UncertaintyQuantification(model,
+                                                     parameters=parameters,
+                                                     features=features,
+                                                     uncertainty_calculations=TestingUncertaintyCalculations(model),
+                                                     verbose_level="error")
+
 
     def test_quantifyPCAll(self):
         self.set_up_test_calculations()

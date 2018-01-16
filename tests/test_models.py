@@ -201,7 +201,16 @@ class TestNeuronModel(unittest.TestCase):
         filedir = os.path.dirname(filepath)
 
         model = NeuronModel(file=file,
-                            path=os.path.join(filedir, path))
+                            path=os.path.join(filedir, path),
+                            name="lgn",
+                            stimulus_end=1000,
+                            stimulus_start=1900,
+                            test=12)
+
+        self.assertEqual(model.info["test"], 12)
+        self.assertEqual(model.info["stimulus_end"], 1000)
+        self.assertEqual(model.info["stimulus_start"], 1900)
+        self.assertEqual(model.name, "lgn")
 
 
     def test_run(self):

@@ -19,7 +19,7 @@ class TestFeatures(unittest.TestCase):
         self.values = np.arange(0, 10) + 1
         self.info = {"info": 1}
 
-        self.features = Features()
+        self.features = Features(verbose_level="error")
 
     def test_initNone(self):
         features = Features()
@@ -150,6 +150,7 @@ class TestFeatures(unittest.TestCase):
 
         self.assertEqual(features.labels, {"feature_function": ["x", "y"]})
 
+
     def test_add_features(self):
         def feature_function(time, values):
             return "t", "U"
@@ -179,6 +180,21 @@ class TestFeatures(unittest.TestCase):
                          [])
 
         self.assertEqual(features.labels, {"feature_function": ["x", "y"]})
+
+
+    def test_add_features_error(self):
+        with self.assertRaises(TypeError):
+            self.features.add_features({"test": 1})
+            self.features.add_features([{"test": 1}])
+
+
+
+    def test_reference_feature(self):
+        time, values = self.features.reference_feature(self.time, self.values, self.info)
+
+        self.assertIsNone(time)
+        self.assertIsNone(values)
+
 
 
 
@@ -218,6 +234,12 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(self.time, time))
 
 
+    def test_reference_feature(self):
+        self.features = GeneralSpikingFeatures()
+        time, values = self.features.reference_feature(1, 1, 1)
+
+        self.assertIsNone(time)
+        self.assertIsNone(values)
 
 
 class TestSpikingFeatures(unittest.TestCase):
@@ -382,6 +404,11 @@ class TestSpikingFeatures(unittest.TestCase):
                          set(self.implemented_features))
 
 
+    def test_reference_feature(self):
+        time, values = self.features.reference_feature(1, 1, 1)
+
+        self.assertIsNone(time)
+        self.assertIsNone(values)
 
 
 class TestEfelFeatures(unittest.TestCase):
@@ -402,7 +429,7 @@ class TestEfelFeatures(unittest.TestCase):
         #                            "average_AP_width": ["time [ms]"]
         #                           }
 
-        self.features = EfelFeatures()
+        self.features = EfelFeatures(verbose_level="error")
 
         self.info = {}
         self.info["stimulus_start"] = self.time[0]
@@ -438,7 +465,7 @@ class TestEfelFeatures(unittest.TestCase):
     #     self.assertEqual(features.labels, labels)
 
     def test_features_to_run_all(self):
-        features = EfelFeatures(features_to_run="all")
+        features = EfelFeatures(features_to_run="all", verbose_level="error")
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
@@ -459,12 +486,34 @@ class TestEfelFeatures(unittest.TestCase):
                          set(self.implemented_features))
 
 
+    def test_reference_feature(self):
+        time, values = self.features.reference_feature(self.time, self.values, self.info)
+
+        self.assertIsNone(time)
+        self.assertIsNone(values)
+
 
     def test_spikecount_error(self):
         with self.assertRaises(RuntimeError):
             self.features.Spikecount(self.time, self.values, {})
             self.features.Spikecount(self.time, self.values, {"stimulus_start": self.time[0]})
             self.features.Spikecount(self.time, self.values, {"stimulus_end": self.time[-1]})
+
+
+    def test_spikecount_no_strict(self):
+        self.features = EfelFeatures(strict=False, verbose_level="error")
+
+        time, values = self.features.Spikecount(self.time, self.values, {})
+        self.assertIsNone(time)
+        self.assertEqual(values, 12)
+
+        time, values = self.features.Spikecount(self.time, self.values, {"stimulus_start": self.time[0]})
+        self.assertIsNone(time)
+        self.assertEqual(values, 12)
+
+        time, values = self.features.Spikecount(self.time, self.values, {"stimulus_end": self.time[-1]})
+        self.assertIsNone(time)
+        self.assertEqual(values, 12)
 
 
 
@@ -741,6 +790,13 @@ class TestNetworkFeatures(unittest.TestCase):
 
         self.assertIsNone(time)
         self.assertEqual(values.shape, (4, 4))
+
+
+    def test_reference_feature(self):
+        time, values = self.features.reference_feature(1, 1)
+
+        self.assertIsNone(time)
+        self.assertIsNone(values)
 
 
 

@@ -426,47 +426,137 @@ class TestRunModel(unittest.TestCase):
         self.assert_feature_2d(data)
 
 
+    def test_results_to_data_feature_0d(self):
 
-    # # def test_results_to_dataAdaptiveError(self):
-    # #     self.runmodel = RunModel(TestingModelAdaptive(adaptive=True),
-    # #                              features=TestingFeatures(),
-    # #                              supress_model_output=True,
-    # #                              suppress_model_graphics=True)
-    # #
-    # #
-    # #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    # #     self.runmodel.data.uncertain_parameters = ["a", "b"]
-    # #
-    # #
-    # #     results = self.runmodel.evaluate_nodes(nodes)
-    # #     self.runmodel.results_to_data(results)
-    # #
-    # #     self.assertEqual(set(self.runmodel.data.U.keys()),
-    # #                      set(["feature0d", "feature1d", "feature2d",
-    # #                           "TestingModelAdaptive", "feature_invalid"]))
-    # #
-    # #     self.assertEqual(set(self.runmodel.data.t.keys()),
-    # #                      set(["feature0d", "feature1d", "feature2d",
-    # #                           "TestingModelAdaptive", "feature_invalid"]))
-    # #
-    # #     self.assertEqual(set(self.runmodel.data.feature_list),
-    # #                      set(["feature0d", "feature1d", "feature2d",
-    # #                           "TestingModelAdaptive", "feature_invalid"]))
-    # #
-    # #     self.assertIn("TestingModelAdaptive", self.runmodel.data.U.keys())
-    # #     self.assertTrue(np.array_equal(self.runmodel.data.t["TestingModelAdaptive"],
-    # #                                    np.arange(0, 10)))
-    # #     self.assertTrue(np.allclose(self.runmodel.data.U["TestingModelAdaptive"][0],
-    # #                                 np.arange(0, 10) + 1))
-    # #     self.assertTrue(np.allclose(self.runmodel.data.U["TestingModelAdaptive"][1],
-    # #                                 np.arange(0, 10) + 3))
-    # #     self.assertTrue(np.allclose(self.runmodel.data.U["TestingModelAdaptive"][2],
-    # #                                 np.arange(0, 10) + 5))
-    # #
-    # #     self.assert_feature_0d(self.runmodel.data)
-    # #     self.assert_feature_1d(self.runmodel.data)
-    # #     self.assert_feature_2d(self.runmodel.data)
-    # #     self.assert_feature_invalid(self.runmodel.data)
+        features = TestingFeatures(features_to_run=["feature0d",],
+                                   adaptive="feature0d")
+
+        self.runmodel = RunModel(model=TestingModelAdaptive(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 suppress_model_graphics=True)
+
+        results = [{"feature0d": {"values": 1, "time": np.nan}},
+                   {"feature0d": {"values": 1, "time": np.nan}},
+                   {"feature0d": {"values": 1, "time": np.nan}}]
+        data = self.runmodel.results_to_data(results)
+
+        self.assert_feature_0d(data)
+
+
+
+
+    def test_results_to_data_no_time(self):
+
+        features = TestingFeatures(features_to_run=["feature_adaptive"],
+                                   adaptive="feature_adaptive")
+
+        self.runmodel = RunModel(model=TestingModelAdaptive(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 suppress_model_graphics=True)
+
+
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        # Remove time from feature_adaptive results
+        for result in results:
+            result["feature_adaptive"]["time"] = np.nan
+
+        data = self.runmodel.results_to_data(results)
+
+        features = data.keys()
+        features.sort()
+
+        self.assertEqual(features,
+                         ["TestingModelAdaptive", "feature_adaptive"])
+
+        self.assertIn("TestingModelAdaptive", data)
+
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"],
+                                       np.arange(0, 15)))
+        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["values"][0],
+                                    np.arange(0, 15) + 1))
+        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["values"][1],
+                                    np.arange(0, 15) + 3))
+        self.assertTrue(np.allclose(data["TestingModelAdaptive"]["values"][2],
+                                    np.arange(0, 15) + 5))
+
+
+        self.assertTrue(np.array_equal(data["feature_adaptive"]["time"],
+                                       np.arange(0, 15)))
+        self.assertTrue(np.allclose(data["feature_adaptive"]["values"][0],
+                                    np.arange(0, 15) + 1))
+        self.assertTrue(np.allclose(data["feature_adaptive"]["values"][1],
+                                    np.arange(0, 15) + 3))
+        self.assertTrue(np.allclose(data["feature_adaptive"]["values"][2],
+                                    np.arange(0, 15) + 5))
+
+
+    def test_results_to_data_no_time_error(self):
+
+        features = TestingFeatures(features_to_run=["feature_adaptive"],
+                                   adaptive="feature_adaptive")
+
+        self.runmodel = RunModel(model=TestingModelAdaptive(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 suppress_model_graphics=True)
+
+
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        # Remove time from feature_adaptive and model results
+        for result in results:
+            result["feature_adaptive"]["time"] = np.nan
+            result["TestingModelAdaptive"]["time"] = np.nan
+
+        with self.assertRaises(ValueError):
+            self.runmodel.results_to_data(results)
+
+
+    # def test_results_to_dataAdaptiveError(self):
+    #     self.runmodel = RunModel(TestingModelAdaptive(adaptive=True),
+    #                              features=TestingFeatures(),
+    #                              supress_model_output=True,
+    #                              suppress_model_graphics=True)
+    #
+    #
+    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
+    #     self.runmodel.data.uncertain_parameters = ["a", "b"]
+    #
+    #
+    #     results = self.runmodel.evaluate_nodes(nodes)
+    #     self.runmodel.results_to_data(results)
+    #
+    #     self.assertEqual(set(self.runmodel.data.U.keys()),
+    #                      set(["feature0d", "feature1d", "feature2d",
+    #                           "TestingModelAdaptive", "feature_invalid"]))
+    #
+    #     self.assertEqual(set(self.runmodel.data.t.keys()),
+    #                      set(["feature0d", "feature1d", "feature2d",
+    #                           "TestingModelAdaptive", "feature_invalid"]))
+    #
+    #     self.assertEqual(set(self.runmodel.data.feature_list),
+    #                      set(["feature0d", "feature1d", "feature2d",
+    #                           "TestingModelAdaptive", "feature_invalid"]))
+    #
+    #     self.assertIn("TestingModelAdaptive", self.runmodel.data.U.keys())
+    #     self.assertTrue(np.array_equal(self.runmodel.data.t["TestingModelAdaptive"],
+    #                                    np.arange(0, 10)))
+    #     self.assertTrue(np.allclose(self.runmodel.data.U["TestingModelAdaptive"][0],
+    #                                 np.arange(0, 10) + 1))
+    #     self.assertTrue(np.allclose(self.runmodel.data.U["TestingModelAdaptive"][1],
+    #                                 np.arange(0, 10) + 3))
+    #     self.assertTrue(np.allclose(self.runmodel.data.U["TestingModelAdaptive"][2],
+    #                                 np.arange(0, 10) + 5))
+    #
+    #     self.assert_feature_0d(self.runmodel.data)
+    #     self.assert_feature_1d(self.runmodel.data)
+    #     self.assert_feature_2d(self.runmodel.data)
+    #     self.assert_feature_invalid(self.runmodel.data)
 
 
 

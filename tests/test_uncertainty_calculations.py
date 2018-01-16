@@ -729,6 +729,37 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_1_sum"][1], 2/3.)
 
 
+    def test_calculate_1_sum(self):
+        self.uncertainty_calculations.data = Data()
+
+        self.uncertainty_calculations.data.add_features(["test2D", "test1D"])
+        self.uncertainty_calculations.data["test2D"].sensitivity_1 = [[4, 6], [8, 12]]
+        self.uncertainty_calculations.data["test1D"].sensitivity_1 =  [1, 2]
+        self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
+
+        self.uncertainty_calculations.calculate_sensitivity_sum(sensitivity="1")
+
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["sensitivity_1_sum"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["sensitivity_1_sum"][1], 2/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_1_sum"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_1_sum"][1], 2/3.)
+
+    def test_calculate_t_sum(self):
+        self.uncertainty_calculations.data = Data()
+
+        self.uncertainty_calculations.data.add_features(["test2D", "test1D"])
+        self.uncertainty_calculations.data["test2D"].sensitivity_t = [[4, 6], [8, 12]]
+        self.uncertainty_calculations.data["test1D"].sensitivity_t =  [1, 2]
+        self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
+
+        self.uncertainty_calculations.calculate_sensitivity_sum(sensitivity="t")
+
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["sensitivity_t_sum"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test2D"]["sensitivity_t_sum"][1], 2/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_t_sum"][0], 1/3.)
+        self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_t_sum"][1], 2/3.)
+
+
     def test_calculate_sensitivity_t_sum(self):
         self.uncertainty_calculations.data = Data()
 
@@ -744,6 +775,17 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_t_sum"][0], 1/3.)
         self.assertEqual(self.uncertainty_calculations.data["test1D"]["sensitivity_t_sum"][1], 2/3.)
 
+
+    def test_calculate_sensitivity_sum_error(self):
+        self.uncertainty_calculations.data = Data()
+
+        self.uncertainty_calculations.data.add_features(["test2D", "test1D"])
+        self.uncertainty_calculations.data["test2D"].sensitivity_t = [[4, 6], [8, 12]]
+        self.uncertainty_calculations.data["test1D"].sensitivity_t = [1, 2]
+        self.uncertainty_calculations.data.uncertain_parameters = ["a", "b"]
+
+        with self.assertRaises(ValueError):
+            self.uncertainty_calculations.calculate_sensitivity_sum(sensitivity="not_existing")
 
 
     def test_analyse_PCE(self):

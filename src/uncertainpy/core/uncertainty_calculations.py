@@ -481,8 +481,7 @@ class UncertaintyCalculations(ParameterBase):
 
         if sensitivity == "1":
             sensitivity = "sensitivity_1"
-
-        if sensitivity == "t":
+        elif sensitivity == "t":
             sensitivity = "sensitivity_t"
 
         for feature in self.data:

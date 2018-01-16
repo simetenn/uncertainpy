@@ -177,11 +177,11 @@ class Parallel(Base):
                           "feature0d": {"values": 1,
                                          "time": np.nan},
                           "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
                                          "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                             "interpolation": scipy interpolation object},
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                               "interpolation": scipy interpolation object},
                           "feature_invalid": {"values": np.nan,
                                              "time": np.nan}}
 
