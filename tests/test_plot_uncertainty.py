@@ -1023,6 +1023,8 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
     def test_data_none(self):
+        self.plot.data = None
+
         with self.assertRaises(ValueError):
             self.plot.evaluations()
             self.plot.evaluations_0d()

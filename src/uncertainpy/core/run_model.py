@@ -11,7 +11,7 @@ from .parallel import Parallel
 
 class RunModel(ParameterBase):
     """
-    Calculate model and feature results for a series if different model parameters,
+    Calculate model and feature results for a series of different model parameters,
     and store them in a Data object.
 
     Parameters
@@ -45,10 +45,13 @@ class RunModel(ParameterBase):
 
     Attributes
     ----------
-    model : uncertainpy.RunModel.model
-    parameters : uncertainpy.RunModel.parameters
-    features : uncertainpy.RunModel.features
-    logger : logging.Logger object
+    model : uncertainpy.Model or subclass of uncertainpy.Model
+        The model to perform uncertainty quantification on.
+    parameters : uncertainpy.Parameters
+        The uncertain parameters.
+    features : uncertainpy.Features or subclass of uncertainpy.Features
+        The features of the model to perform uncertainty quantification on.
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
     CPUs : int
         The number of CPUs used when calculating the model and features.

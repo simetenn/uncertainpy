@@ -14,6 +14,46 @@ from .core.base import ParameterBase
 #  figure_folder/parameter_value-that-is-plotted.figure-extension
 
 class UncertaintyQuantification(ParameterBase):
+    """
+    Set and update features, model and parameters.
+
+    Parameters
+    ----------
+    model : {None, Model or Model subclass instance, model function}, optional
+        Model to perform uncertainty quantification on.
+        Default is None.
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
+        Either None, a Parameters instance or a list the parameters that should be created.
+        The two lists are similar to the arguments sent to Parameters.
+        Default is None.
+    features : {None, Features or Features subclass instance, list of feature functions}, optional
+        Features to calculate from the model result.
+        If None, no features are calculated.
+        If list of feature functions, all will be calculated.
+        Default is None.
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+    create_PCE_custom :
+
+    Attributes
+    ----------
+    model
+    parameters
+    features
+    logger : logging.Logger object
+        Logger object responsible for logging to screen or file.
+
+
+    See Also
+    --------
+    uncertainpy.features.Features : General features class
+    uncertainpy.models.Model : Model class
+    """
     def __init__(self,
                  model,
                  parameters,

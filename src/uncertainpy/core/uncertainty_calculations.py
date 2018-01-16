@@ -6,8 +6,77 @@ import chaospy as cp
 from .run_model import RunModel
 from .base import ParameterBase
 
-# Model is now potentially set two places, is that a problem?
+
 class UncertaintyCalculations(ParameterBase):
+    """
+    Class for performing the uncertainty calculations.
+
+    This is the class that performs the uncertainty quantifications and
+    sensitivity analysis of the model and features. It implements both
+    quasi-Monte Carlo methods as well as polynomial chaos expansions using
+    point collocation and the pseudo-spectral method. Both of the polynomial
+    chaos expansion methods have support for the rosenblatt transformation to
+    handle dependent variables.
+
+    Parameters
+    ----------
+    model : {None, Model or Model subclass instance, model function}, optional
+        Model to perform uncertainty quantification on.
+        Default is None.
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
+        Either None, a Parameters instance or a list the parameters that should be created.
+        The two lists are similar to the arguments sent to Parameters.
+        Default is None.
+    features : {None, Features or Features subclass instance, list of feature functions}, optional
+        Features to calculate from the model result.
+        If None, no features are calculated.
+        If list of feature functions, all will be calculated.
+        Default is None.
+    CPUs : int
+        The number of CPUs used when calculating the model and features.
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+    suppress_model_graphics : bool, optional
+        Suppress all model graphics created by the model.
+        Default is True.
+
+
+    Attributes
+    ----------
+    model : uncertainpy.Model or subclass of uncertainpy.Model
+        The model to perform uncertainty quantification on.
+    parameters : uncertainpy.Parameters
+        The uncertain parameters.
+    features : uncertainpy.Features or subclass of uncertainpy.Features
+        The features of the model to perform uncertainty quantification on.
+    runmodel : uncertainpy.core.RunModel
+        Runmodel object responsible for evaluating the model and calculating features.
+    logger : logging.Logger
+        Logger object responsible for logging to screen or file.
+    P : chaospy.Poly object
+        Polynomial to use when approximating the model U.
+    distribution : chaospy.Dist
+        Distribution of the uncertain parameters.
+    data : uncertainpy.Data
+        Stored data calculated in the uncertainty quantification.
+    U_hat : chaospy.Poly
+        Polynomial chaos approximation of the model.
+    U_mc : array
+        Monte Carlo evaluations of the polynomial chaos approximation of the model.
+
+    See Also
+    --------
+    uncertainpy.features.Features : General features class
+    uncertainpy.Parameter : Parameter class
+    uncertainpy.Parameters : Parameters collection class
+    uncertainpy.models.Model : Model class
+    uncertainpy.core.RunModel : RunModel class
+    """
     def __init__(self,
                  model=None,
                  parameters=None,
@@ -61,6 +130,23 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def create_distribution(self, uncertain_parameters=None):
+        """
+        Create a joint multivariate distribution for the selected parameters from
+        univariate distributions.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, list}, optional
+            If a multivariate distribution is defined in the Parameters, return
+            that multivariate distribution. Otherwise create the joint
+            multivariate distribution for the selected parameters from their
+            univariate distributions. If uncertain_parameters is None, the
+            joint multivariate distribution for all parameters is returned.
+            Default is None.
+
+        Returns
+        -------
+        """
         if self.parameters.distribution is None:
             uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -68,6 +154,7 @@ class UncertaintyCalculations(ParameterBase):
 
             distribution = cp.J(*parameter_distributions)
         else:
+            self.logger.warning("A multivariate distribution is defined. Returns that distribution.")
             distribution = self.parameters.distribution
 
         return distribution
@@ -134,7 +221,6 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    # TODO not tested
     def create_PCE_spectral(self,
                             uncertain_parameters=None,
                             polynomial_order=3,
@@ -222,7 +308,6 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    # TODO not tested
     def create_PCE_spectral_rosenblatt(self,
                                        uncertain_parameters=None,
                                        polynomial_order=3,

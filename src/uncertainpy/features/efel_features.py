@@ -80,7 +80,7 @@ class EfelFeatures(Features):
         Labels for the axes of each feature, used when plotting.
     strict : bool
         If missing info values should raise an error.
-    logger : logging.Logger object
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     Raises

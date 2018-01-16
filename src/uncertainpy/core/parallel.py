@@ -32,7 +32,7 @@ class Parallel(Base):
     ----------
     model : uncertainpy.Parallel.model
     features : uncertainpy.Parallel.features
-    logger : logging.Logger object
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     See Also

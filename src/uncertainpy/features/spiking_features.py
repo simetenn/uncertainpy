@@ -77,7 +77,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
     Attributes
     ----------
-    spikes : Spikes object
+    spikes : Spikes
         A Spikes object that contain all spikes.
     threshold : {float, int}
         The threshold where the model result is considered to have a spike.
@@ -95,7 +95,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Labels for the axes of each feature, used when plotting.
     strict : bool
         If missing info values should raise an error.
-    logger : logging.Logger object
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     Notes

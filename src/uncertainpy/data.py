@@ -144,7 +144,7 @@ class Data(collections.MutableMapping):
         Name of the model.
     data : dictionary
         A dictionary with all data stored.
-    logger : logging.Logger object
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     Notes

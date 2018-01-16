@@ -28,9 +28,11 @@ class Base(object):
 
     Attributes
     ----------
-    model
-    features
-    logger : logging.Logger object
+    model : uncertainpy.Model or subclass of uncertainpy.Model
+        The model to perform uncertainty quantification on.
+    features : uncertainpy.Features or subclass of uncertainpy.Features
+        The features of the model to perform uncertainty quantification on.
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     See Also
@@ -155,10 +157,13 @@ class ParameterBase(Base):
 
     Attributes
     ----------
-    model
-    parameters
-    features
-    logger : logging.Logger object
+    model : uncertainpy.Model or subclass of uncertainpy.Model
+        The model to perform uncertainty quantification on.
+    parameters : uncertainpy.Parameters
+        The uncertain parameters.
+    features : uncertainpy.Features or subclass of uncertainpy.Features
+        The features of the model to perform uncertainty quantification on.
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
 

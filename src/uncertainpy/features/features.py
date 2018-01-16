@@ -64,7 +64,7 @@ class Features(object):
         that is not in the list of utility methods is considered to be a feature.
     labels : dictionary
         Labels for the axes of each feature, used when plotting.
-    logger : logging.Logger object
+    logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     See also
