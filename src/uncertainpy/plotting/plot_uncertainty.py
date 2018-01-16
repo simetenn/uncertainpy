@@ -84,17 +84,20 @@ class PlotUncertainty(object):
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-
-        if self.data.ndim(feature) == 0:
+        dimension = self.data.ndim(feature)
+        if dimension == 0:
             self.evaluations_0d(feature=feature, foldername=foldername)
 
-        elif self.data.ndim(feature) == 1:
+        elif dimension == 1:
             self.evaluations_1d(feature=feature, foldername=foldername)
 
-        elif self.data.ndim(feature) == 2:
+        elif dimension == 2:
             self.evaluations_2d(feature=feature, foldername=foldername)
-        else:
+
+        elif dimension > 2:
             raise NotImplementedError(">2D plots not implemented.")
+        else:
+            raise AttributeError("Dimension of evaluations is not valid: dim {}".format(dimension))
 
 
 
@@ -751,7 +754,7 @@ class PlotUncertainty(object):
             raise ValueError("Datafile must be loaded.")
 
         if self.data.ndim(feature) != 0:
-            raise ValueError("{} is not a 1D feature".format(feature))
+            raise ValueError("{} is not a 0D feature".format(feature))
 
         for data_type in ["mean", "variance", "percentile_5", "percentile_95"]:
             if data_type not in self.data[feature]:

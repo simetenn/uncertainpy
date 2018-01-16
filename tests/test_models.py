@@ -257,9 +257,9 @@ class TestNestModel(unittest.TestCase):
 
         time, values = model.run()
         correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
-                     47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
+                          47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
-        time, values = model.postprocess(time, correct_values)
+        time, values = NestModel.postprocess(time, correct_values)
 
         binary_spike = np.zeros(len(time))
         binary_spike[np.in1d(time, correct_values)] = 1

@@ -30,7 +30,7 @@ class TestPlotUncertainpy(TestCasePlot):
         os.makedirs(self.output_test_dir)
 
         self.plot = PlotUncertainty(folder=self.output_test_dir,
-                                    verbose_level="warning",
+                                    verbose_level="error",
                                     figureformat=self.figureformat)
 
         self.data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
@@ -1019,6 +1019,62 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.compare_plot("feature2d_mean")
         self.compare_plot("feature2d_variance")
+
+
+
+    def test_data_none(self):
+        with self.assertRaises(ValueError):
+            self.plot.evaluations()
+            self.plot.evaluations_0d()
+            self.plot.evaluations_1d()
+            self.plot.evaluations_2d()
+            self.plot.attribute_feature_1d()
+            self.plot.attribute_feature_2d()
+            self.plot.mean_variance_1d()
+            self.plot.prediction_interval_1d()
+            self.plot.sensitivity_1d()
+            self.plot.sensitivity_1d_grid()
+            self.plot.sensitivity_1d_combined()
+            self.plot.features_1d()
+            self.plot.features_2d()
+            self.plot.features_0d()
+            self.plot.feature_0d("not_existing")
+            self.plot.sensitivity_sum("not_existing")
+            self.plot.sensitivity_sum_all()
+            self.plot.features_0d()
+            self.plot.plot_all()
+            self.plot.plot_all_sensitivities()
+            self.plot.sensitivity_sum_grid()
+
+
+    def test_empty_data(self):
+        self.plot.data = Data()
+        self.plot.data.model_name = "1D"
+        self.plot.data.add_features("0D")
+        self.plot.data.add_features("1D")
+        self.plot.data.add_features("2D")
+
+        with self.assertRaises(AttributeError):
+            self.plot.evaluations()
+
+        self.plot.data["0D"].values = [1, 2, 3]
+        self.plot.data["1D"].values = [[1], [2], [3]]
+        self.plot.data["2D"].values = [[[1]], [[2]], [[3]]]
+
+        self.assertIsNone(self.plot.attribute_feature_1d("1D"))
+        self.assertIsNone(self.plot.attribute_feature_2d("2D"))
+        self.assertIsNone(self.plot.mean_variance_1d("1D"))
+        self.assertIsNone(self.plot.prediction_interval_1d("1D"))
+        self.assertIsNone(self.plot.sensitivity_1d("1D"))
+        self.assertIsNone(self.plot.sensitivity_1d_grid("1D"))
+        self.assertIsNone(self.plot.sensitivity_1d_combined("1D"))
+        self.assertIsNone(self.plot.feature_0d("0D"))
+        self.assertIsNone(self.plot.sensitivity_sum("1D"))
+        self.assertIsNone(self.plot.sensitivity_sum_grid("1D"))
+
+        with self.assertRaises(ValueError):
+            self.plot.attribute_feature_1d(attribute="not_existing")
+
 
 
 # TODO test combined features 0 for many features
