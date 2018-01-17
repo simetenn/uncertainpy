@@ -339,6 +339,10 @@ class UncertaintyCalculations(ParameterBase):
         stored in `U_hat`. The corresponding multivariate distribution is stored
         in `distribution`.
 
+        The model and feature do not necessarily give results for each
+        node. The pseudo-spectral methods is sensitive to missing values, so
+        `allow_incomplete` should be used with care.
+
         The polynomial chaos expansion method for uncertainty quantification
         approximates the model with a polynomial that follows specific
         requirements. This polynomial can be used to quickly calculate the
@@ -356,10 +360,6 @@ class UncertaintyCalculations(ParameterBase):
         number of nodes required.
         For each of the nodes we evaluate the model and calculate the features,
         and the polynomial approximation is created from these results.
-
-        The model and feature do not necessarily give results for each
-        node. The pseudo-spectral methods is sensitive to missing values, so
-        `allow_incomplete` should be used with care.
         """
 
         if allow_incomplete:
@@ -436,8 +436,8 @@ class UncertaintyCalculations(ParameterBase):
         distribution : chaospy.Dist
             Sets the multivariate distribution of the uncertain parameters.
         data : uncertainpy.Data
-            Updates the stored data with the values from the model evaluation
-            and feature calculations.
+            Set data with the values from the model evaluation and feature
+            calculations.
         U_hat : dict
             Sets the Polynomial chaos approximations for feature and model as
             chaospy.Poly objects.
@@ -453,6 +453,10 @@ class UncertaintyCalculations(ParameterBase):
         We create a polynomial approximation for the model and each feature,
         stored in `U_hat`. The corresponding multivariate distribution is stored
         in `distribution`.
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method is robust towards missing values as long as
+        the number of results that remain is high enough.
 
         The polynomial chaos expansion method for uncertainty quantification
         approximates the model with a polynomial that follows specific
@@ -471,10 +475,6 @@ class UncertaintyCalculations(ParameterBase):
         the `distribution`. We evaluate the model and each feature in parallel,
         and solve the resulting set of linear equations with Tikhonov
         regularization.
-
-        The model and feature do not necessarily give results for each
-        node. The collocation method is robust towards missing values as long as
-        the number of results that remain is high enough.
         """
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -548,8 +548,8 @@ class UncertaintyCalculations(ParameterBase):
         distribution : chaospy.Dist
             Sets the multivariate distribution of the uncertain parameters.
         data : uncertainpy.Data
-            Updates the stored data with the values from the model evaluation
-            and feature calculations.
+            Set data with the values from the model evaluation and feature
+            calculations.
         U_hat : dict
             Sets the Polynomial chaos approximations for feature and model as
             chaospy.Poly objects.
@@ -565,6 +565,10 @@ class UncertaintyCalculations(ParameterBase):
         We create a polynomial approximation for the model and each feature,
         stored in `U_hat`. The corresponding multivariate distribution is stored
         in `distribution`.
+
+        The model and feature do not necessarily give results for each
+        node. The pseudo-spectral methods is sensitive to missing values, so
+        `allow_incomplete` should be used with care.
 
         The polynomial chaos expansion method for uncertainty quantification
         approximates the model with a polynomial that follows specific
@@ -587,10 +591,6 @@ class UncertaintyCalculations(ParameterBase):
         before they are sent to the model evaluation.
         For each of the nodes we evaluate the model and calculate the features,
         and the polynomial approximation is created from these results.
-
-        The model and feature do not necessarily give results for each
-        node. The pseudo-spectral methods is sensitive to missing values, so
-        `allow_incomplete` should be used with care.
         """
 
         if allow_incomplete:
@@ -694,8 +694,8 @@ class UncertaintyCalculations(ParameterBase):
         distribution : chaospy.Dist
             Sets the multivariate distribution of the uncertain parameters.
         data : uncertainpy.Data
-            Updates the stored data with the values from the model evaluation
-            and feature calculations.
+            Set data with the values from the model evaluation and feature
+            calculations.
         U_hat : dict
             Sets the Polynomial chaos approximations for feature and model as
             chaospy.Poly objects.
@@ -711,6 +711,10 @@ class UncertaintyCalculations(ParameterBase):
         We create a polynomial approximation for the model and each feature,
         stored in `U_hat`. The corresponding multivariate distribution is stored
         in `distribution`.
+
+        The model and feature do not necessarily give results for each node. The
+        collocation method is robust towards missing values as long as the number
+        of results that remain is high enough.
 
         The polynomial chaos expansion method for uncertainty quantification
         approximates the model with a polynomial that follows specific
@@ -732,10 +736,6 @@ class UncertaintyCalculations(ParameterBase):
         Rosneblatte transformation and evaluate the model and each
         feature in parallel. We solve the resulting set of linear equations
         with Tikhonov regularization.
-
-        The model and feature do not necessarily give results for each
-        node. The collocation method is robust towards missing values as long as
-        the number of results that remain is high enough.
         """
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -788,6 +788,21 @@ class UncertaintyCalculations(ParameterBase):
 
     def analyse_PCE(self,
                     nr_samples=10**4):
+        """
+        Calculate the statistical metrics from the polynomial chaos
+        approximation.
+
+        Notes
+        -----
+        Requires the following attributes to be set by when creating of the polynomial
+        chaos expansion.
+
+        1. distribution - The multivariate distribution of the uncertain parameters, as a chaospy.Dist object.
+        2. data - That a data object exists.
+        3. U_hat - Dictionary with the the Polynomial chaos approximations for
+           feature and model as chaospy.Poly objects.
+
+        """
 
         if len(self.data.uncertain_parameters) == 1:
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
@@ -817,11 +832,109 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
-    def create_PCE_custom(self, uncertain_parameters=None):
+    def create_PCE_custom(self, uncertain_parameters=None, **kwargs):
+        """
+        Create a custom polynomial chaos expansion method.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        **kwargs
+            Any number of optional arguments.
+
+
+        Attributes
+        ----------
+        distribution : chaospy.Dist
+            Sets the multivariate distribution of the uncertain parameters.
+        data : uncertainpy.Data
+            Set data with the values from the model evaluation and feature
+            calculations, the labels of each feature and model, the uncertain
+            parameters, the model name,
+        U_hat : dict
+            Sets the Polynomial chaos approximations for feature and model as
+            chaospy.Poly objects.
+
+        Notes
+        -----
+        This method can be implemented to create a custom method to calculate
+        the polynomial chaos expansion.
+
+        The method must calculate and set the attributes described above:
+
+        1. `self.distribution` - The multivariate distribution of the
+           uncertain parameters.
+        2. `self.data` - A Data object with the values from the model evaluation
+           and feature calculations. `data` should contain (but not necessarily) the following, if
+           applicable:
+
+            1. `data["model/features"].values`
+            2. `data["model/features"].time`
+            3. `data["model/features"].labels`
+            4. `data.model_name`
+            5. `data.incomplete`
+
+        3. `self.U_hat` - A dictionary with the polynomial approximations for the
+            model and each feature.
+
+        The method `analyse_PCE` is called after the polynomial approximation
+        has been created.
+
+        Usefull methods in Uncertainpy are:
+
+        1. uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters
+        2. uncertainpy.core.Uncertaintycalculations.create_distribution
+        3. uncertainpy.core.RunModel.run
+
+        See also
+        --------
+        uncertainpy.Parameters : Parameters class
+
+        uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to allowed list
+        uncertainpy.core.Uncertaintycalculations.create_distribution : Creates the uncertain parameter distribution
+        uncertainpy.core.RunModel.run : Runs the model
+        """
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
 
     def custom_uncertainty_quantification(self, **kwargs):
+        """
+        Create a custom uncertainty quantification method.
+
+        Parameters
+        ----------
+        **kwargs
+            Any number of optional arguments.
+
+
+        Returns
+        -------
+        data : Data object
+            A Data object with calculated uncertainties.
+
+        Notes
+        -----
+        Usefull methods in Uncertainpy are:
+
+        1. uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters
+           - Converts uncertain parameters to an allowed list.
+        2. uncertainpy.core.Uncertaintycalculations.create_distribution
+           - Creates the uncertain parameter distribution
+        3. uncertainpy.core.RunModel.run - Runs the model and all features.
+
+        See also
+        --------
+        uncertainpy.Parameters : Parameters class
+
+        uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to list
+        uncertainpy.core.Uncertaintycalculations.create_distribution : Create uncertain parameter distribution
+        uncertainpy.core.RunModel.run : Runs the model
+        uncertainpy.Data : Data class
+        """
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
 

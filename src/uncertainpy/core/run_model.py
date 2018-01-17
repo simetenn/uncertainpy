@@ -189,8 +189,16 @@ class RunModel(ParameterBase):
         Returns
         -------
         data : Data object
-            A Data object with time and (interpolated) results for
-            the model and each feature.
+            A Data object with time and (interpolated) results for the model and
+            each feature.
+
+        Notes
+        -----
+        Sets the following in data, if applicable:
+        1. `data["model/features"].values`
+        2. `data["model/features"].time`
+        3. `data["model/features"].labels`
+        4. `data.model_name`
 
         See Also
         --------
