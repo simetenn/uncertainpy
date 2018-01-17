@@ -157,11 +157,11 @@ class ParameterBase(Base):
 
     Attributes
     ----------
-    model : uncertainpy.Model or subclass of uncertainpy.Model
+    model : Model or Model subclass
         The model to perform uncertainty quantification on.
-    parameters : uncertainpy.Parameters
+    parameters : Parameters
         The uncertain parameters.
-    features : uncertainpy.Features or subclass of uncertainpy.Features
+    features : Features or subclass of Features
         The features of the model to perform uncertainty quantification on.
     logger : logging.Logger
         Logger object responsible for logging to screen or file.
@@ -202,7 +202,7 @@ class ParameterBase(Base):
 
         Returns
         -------
-        parameters: {None, Parameters object}
+        parameters: {None, Parameters}
             Parameters of the model.
             If None, no parameters have been set.
 

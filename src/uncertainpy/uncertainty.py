@@ -15,14 +15,22 @@ from .core.base import ParameterBase
 
 class UncertaintyQuantification(ParameterBase):
     """
-    Set and update features, model and parameters.
+    Performing an uncertainty quantification and sensitivity analysis of a model
+    and features of the model.
+
+    This class performs the uncertainty quantification and sensitivity analysis
+    of the model and features of the model. It implements both quasi-Monte Carlo
+    methods and polynomial chaos expansions using either point collocation
+    or the pseudo-spectral method. Both of the polynomial chaos expansion
+    methods have support for the rosenblatt transformation to handle dependent
+    variables.
 
     Parameters
     ----------
-    model : {None, Model or Model subclass instance, model function}, optional
+    model : {None, Model or Model subclass instance, model function}
         Model to perform uncertainty quantification on.
         Default is None.
-    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
+    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
         Either None, a Parameters instance or a list the parameters that should be created.
         The two lists are similar to the arguments sent to Parameters.
         Default is None.
@@ -31,6 +39,14 @@ class UncertaintyQuantification(ParameterBase):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
+    uncertainty_calculations : UncertaintyCalculations or UncertaintyCalculations subclass instance, optional
+        An UncertaintyCalculations class or subclass that implements (custom)
+        uncertainty quantification and sensitivity analysis methods.
+    create_PCE_custom : callable
+        Create a custom method for calculating the polynomial chaos approximation.
+        For the requirements of the function see ``UncertaintyCalculations.create_PCE_custom``
+    CPUs : int
+        The number of CPUs used when calculating the model and features.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
@@ -38,20 +54,36 @@ class UncertaintyQuantification(ParameterBase):
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.
         No logging to screen if set. Default is None.
-    create_PCE_custom :
+    suppress_model_graphics : bool, optional
+        Suppress all model graphics created by the model.
+        Default is True.
 
     Attributes
     ----------
-    model
-    parameters
-    features
+    model : Model or Model subclass
+        The model to perform uncertainty quantification on.
+    parameters : Parameters
+        The uncertain parameters.
+    features : Features or Features subclass
+        The features of the model to perform uncertainty quantification on.
+    uncertainty_calculations : UncertaintyCalculations or UncertaintyCalculations subclass
+        UncertaintyCalculations object responsible for performing the uncertainty
+        quantification calculations.
+    data : Data
+        A data object that contains the results from the uncertainty quantification.
+        Contains all model and feature values, as well as all calculated
+        statistical metrics.
     logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
     See Also
     --------
     uncertainpy.features.Features : General features class
+    uncertainpy.Parameter : Parameter class
+    uncertainpy.Parameters : Parameters collection class
     uncertainpy.models.Model : Model class
+    uncertainpy.core.UncertaintyCalculations : UncertaintyCalculations class
+    uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
     """
     def __init__(self,
                  model,
@@ -124,6 +156,26 @@ class UncertaintyQuantification(ParameterBase):
 
     @property
     def uncertainty_calculations(self):
+        """
+        The class for performing the calculations for the uncertainty
+        quantification and sensitivity analysis.
+
+        Parameters
+        ----------
+        new_uncertainty_calculations : UncertaintyCalculations or UncertaintyCalculations subclass instance
+            New UncertaintyCalculations object responsible for performing the uncertainty
+            quantification calculations.
+
+        Returns
+        -------
+        uncertainty_calculations : UncertaintyCalculations or UncertaintyCalculations subclass instance
+            UncertaintyCalculations object responsible for performing the uncertainty
+            quantification calculations.
+
+        See Also
+        --------
+        uncertainpy.core.UncertaintyCalculations : UncertaintyCalculations class
+        """
         return self._uncertainty_calculations
 
 
@@ -141,7 +193,6 @@ class UncertaintyQuantification(ParameterBase):
                  pc_method="collocation",
                  rosenblatt=False,
                  uncertain_parameters=None,
-                 single=False,
                  polynomial_order=3,
                  nr_collocation_nodes=None,
                  quadrature_order=4,
@@ -149,14 +200,146 @@ class UncertaintyQuantification(ParameterBase):
                  nr_mc_samples=10**3,
                  allow_incomplete=False,
                  seed=None,
+                 single=False,
                  plot="condensed_sensitivity_1",
                  figure_folder="figures",
+                 figureformat=".png",
                  data_folder="data",
                  filename=None,
                  **custom_kwargs):
         """
-method: pc, mc
-pc_method: "collocation, spectral"
+        Perform an uncertainty quantification and sensitivity analysis
+        using polynomial chaos expansions or quasi-Monte Carlo methods.
+
+        Parameters
+        ----------
+        method : {"pc", "mc", "custom"}, optional
+            The method to use when performing the uncertainty quantification and
+            sensitivity analysis.
+            "pc" is polynomial chaos method, "mc" is the quasi-Monte Carlo
+            method and "custom" are custom uncertainty quantification methods.
+            Default is "pc".
+        pc_method : {"collocation", "spectral", "custom"}, optional
+            The method to use when creating the polynomial chaos approximation,
+            if the polynomial chaos method is chosen. "collocation" is the
+            point collocation method "spectral" is pseudo-spectral projection,
+            and "custom" is the custom polynomial method.
+            Default is "collocation".
+        rosenblatt : bool, optional
+            If the Rosenblatt transformation should be used. The Rosenblatt
+            transformation must be used if the uncertain parameters have
+            dependent variables.
+            Default is False.
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when performing the uncertainty
+            quantification. If None, all uncertain parameters are used.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        nr_collocation_nodes : {int, None}, optional
+            The number of collocation nodes to choose, if polynomial chaos with
+            point collocation is used. If None,
+            ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            Default is None.
+        quadrature_order : {int, None}, optional
+            The order of the Leja quadrature method, if polynomial chaos with
+            pseudo-spectral projection is used. If None,
+            ``quadrature_order = polynomial_order + 2``.
+            Default is None.
+        nr_pc_mc_samples : int, optional
+            Number of samples for the Monte Carlo sampling of the polynomial
+            chaos approximation, if the polynomial chaos method is chosen.
+        nr_mc_samples : int, optional
+            Number of samples for the Monte Carlo sampling, if the quasi-Monte
+            Carlo method is chosen.
+            Default is 10**3.
+        allow_incomplete : bool, optional
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+        single : bool
+            If an uncertainty quantification should be performed with only one
+            uncertain parameter at the time.
+        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        figure_folder : str, optional
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+        data_folder : str, optional
+            Name of the folder where to save the data.
+            Default is "data".
+        filename : {None, str}, optional
+            Name of the data file. If None the model name is used.
+            Default is None.
+        **custom_kwargs
+            Any number of arguments for either the custom polynomial chaos method,
+            ``create_PCE_custom``, or the custom uncertainty quantification,
+            ``custom_uncertainty_quantification``.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+        ValueError
+            If `method` not one of "pc", "mc" or "custom".
+        ValueError
+            If `pc_method` not one of "collocation", "spectral" or "custom".
+        NotImplementedError
+            If custom method or custom pc method is chosen and have not been
+            implemented.
+
+        Notes
+        -----
+        Which method to choose is problem dependent, but as long as the number of
+        uncertain parameters is low (less than around 20 uncertain parameters)
+        polynomial chaos methods are much faster than Monte Carlo methods.
+        Above this Monte Carlo methods are the best.
+
+        For polynomial chaos, the pseudo-spectral method is faster than point
+        collocation, but has lower stability. We therefore generally recommend
+        the point collocation method.
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method and quasi-Monte Carlo methods are robust
+        towards missing values as long as the number of results that remain is
+        high enough. The pseudo-spectral method on the other hand, is sensitive
+        to missing values, so `allow_incomplete` should be used with care in
+        that case.
+
+        The plots created are intended as quick way to get an overview of the
+        results, and not to create publication ready plots. Custom plots of the
+        data can easily be created by retrieving the data from the Data class.
+
+        Changing the parameters of the polynomial chaos methods should be done
+        with care, and implementing custom methods is only recommended for
+        experts.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.core.UncertaintyCalculations.polynomial_chaos : Uncertainty quantification using polynomial chaos expansions
+        uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
+        uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
+        uncertainpy.core.UncertaintyCalculations.custom_uncertainty_quantification : Requirements for custom_uncertainty_quantification
+        uncertainpy.Parameters : Parameters class
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -173,6 +356,7 @@ pc_method: "collocation, spectral"
                                              seed=seed,
                                              plot=plot,
                                              figure_folder=figure_folder,
+                                             figureformat=figureformat,
                                              data_folder=data_folder,
                                              filename=filename,
                                              **custom_kwargs)
@@ -188,6 +372,7 @@ pc_method: "collocation, spectral"
                                       seed=seed,
                                       plot=plot,
                                       figure_folder=figure_folder,
+                                      figureformat=figureformat,
                                       data_folder=data_folder,
                                       filename=filename,
                                       **custom_kwargs)
@@ -197,6 +382,7 @@ pc_method: "collocation, spectral"
                                         nr_samples=nr_mc_samples,
                                         plot=plot,
                                         figure_folder=figure_folder,
+                                        figureformat=figureformat,
                                         data_folder=data_folder,
                                         filename=filename,
                                         seed=seed)
@@ -205,6 +391,7 @@ pc_method: "collocation, spectral"
                                  nr_samples=nr_mc_samples,
                                  plot=plot,
                                  figure_folder=figure_folder,
+                                 figureformat=figureformat,
                                  data_folder=data_folder,
                                  filename=filename,
                                  seed=seed)
@@ -212,6 +399,7 @@ pc_method: "collocation, spectral"
         elif method.lower() == "custom":
             self.custom_uncertainty_quantification(plot=plot,
                                                    figure_folder=figure_folder,
+                                                   figureformat=figureformat,
                                                    data_folder=data_folder,
                                                    filename=filename,
                                                    **custom_kwargs)
@@ -224,10 +412,63 @@ pc_method: "collocation, spectral"
     def custom_uncertainty_quantification(self,
                                           plot="condensed_sensitivity_1",
                                           figure_folder="figures",
+                                          figureformat=".png",
                                           data_folder="data",
                                           filename=None,
                                           **custom_kwargs):
+        """
+        Perform a custom  uncertainty quantification and sensitivity analysis,
+        implemented by the user.
 
+        Parameters
+        ----------
+        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        figure_folder : str, optional
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+        data_folder : str, optional
+            Name of the folder where to save the data.
+            Default is "data".
+        filename : {None, str}, optional
+            Name of the data file. If None the model name is used.
+            Default is None.
+        **custom_kwargs
+            Any number of arguments for the custom uncertainty quantification.
+
+        Raises
+        ------
+        NotImplementedError
+            If the custom uncertainty quantification method have not been
+            implemented.
+
+        Notes
+        -----
+        For details on how to implement the custom uncertainty quantification
+        method see UncertaintyCalculations.custom_uncertainty_quantification.
+
+        The plots created are intended as quick way to get an overview of the
+        results, and not to create publication ready plots. Custom plots of the
+        data can easily be created by retrieving the data from the Data class.
+
+        See also
+        --------
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.core.UncertaintyCalculations.custom_uncertainty_quantification : Requirements for custom_uncertainty_quantification
+        uncertainpy.Parameters : Parameters class
+        """
 
         self.data = self.uncertainty_calculations.custom_uncertainty_quantification(**custom_kwargs)
 
@@ -235,25 +476,141 @@ pc_method: "collocation, spectral"
             filename = self.model.name
 
         self.save(filename, folder=data_folder)
-        self.plot(type=plot, folder=figure_folder)
+        self.plot(type=plot,
+                  folder=figure_folder,
+                  figureformat=figureformat)
 
 
     def polynomial_chaos(self,
-                         uncertain_parameters=None,
                          method="collocation",
                          rosenblatt=False,
+                         uncertain_parameters=None,
                          polynomial_order=3,
                          nr_collocation_nodes=None,
-                         quadrature_order=4,
+                         quadrature_order=None,
                          nr_pc_mc_samples=10**4,
                          allow_incomplete=False,
                          seed=None,
                          plot="condensed_sensitivity_1",
                          figure_folder="figures",
+                         figureformat=".png",
                          data_folder="data",
                          filename=None,
                          **custom_kwargs):
+        """
+        Perform an uncertainty quantification and sensitivity analysis
+        using polynomial chaos expansions.
 
+        Parameters
+        ----------
+        method : {"collocation", "spectral", "custom"}, optional
+            The method to use when creating the polynomial chaos approximation,
+            if the polynomial chaos method is chosen. "collocation" is the
+            point collocation method "spectral" is pseudo-spectral projection,
+            and "custom" is the custom polynomial method.
+            Default is "collocation".
+        rosenblatt : bool, optional
+            If the Rosenblatt transformation should be used. The Rosenblatt
+            transformation must be used if the uncertain parameters have
+            dependent variables.
+            Default is False.
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when performing the uncertainty
+            quantification. If None, all uncertain parameters are used.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        nr_collocation_nodes : {int, None}, optional
+            The number of collocation nodes to choose, if polynomial chaos with
+            point collocation is used. If None,
+            ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            Default is None.
+        quadrature_order : {int, None}, optional
+            The order of the Leja quadrature method, if polynomial chaos with
+            pseudo-spectral projection is used. If None,
+            ``quadrature_order = polynomial_order + 2``.
+            Default is None.
+        nr_pc_mc_samples : int, optional
+            Number of samples for the Monte Carlo sampling of the polynomial
+            chaos approximation, if the polynomial chaos method is chosen.
+        allow_incomplete : bool, optional
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        figure_folder : str, optional
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+        data_folder : str, optional
+            Name of the folder where to save the data.
+            Default is "data".
+        filename : {None, str}, optional
+            Name of the data file. If None the model name is used.
+            Default is None.
+        **custom_kwargs
+            Any number of arguments for the custom polynomial chaos method,
+            ``create_PCE_custom``.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+        ValueError
+            If `method` not one of "collocation", "spectral" or "custom".
+        NotImplementedError
+            If custom pc method is chosen and have not been implemented.
+
+        Notes
+        -----
+        Which method to choose is problem dependent, but as long as the number of
+        uncertain parameters is low (less than around 20 uncertain parameters)
+        polynomial chaos methods are much faster than Monte Carlo methods.
+        Above this Monte Carlo methods are the best.
+
+        For polynomial chaos, the pseudo-spectral method is faster than point
+        collocation, but has lower stability. We therefore generally recommend
+        the point collocation method.
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method are robust towards missing values as long
+        as the number of results that remain is high enough. The pseudo-spectral
+        method on the other hand, is sensitive to missing values, so
+        `allow_incomplete` should be used with care in that case.
+
+        The plots created are intended as quick way to get an overview of the
+        results, and not to create publication ready plots. Custom plots of the
+        data can easily be created by retrieving the data from the Data class.
+
+        Changing the parameters of the polynomial chaos methods should be done
+        with care, and implementing custom methods is only recommended for
+        experts.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.core.UncertaintyCalculations.polynomial_chaos : Uncertainty quantification using polynomial chaos expansions
+        uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
+        uncertainpy.Parameters : Parameters class
+        """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if len(uncertain_parameters) > 20:
@@ -278,50 +635,234 @@ pc_method: "collocation, spectral"
             filename = self.model.name
 
         self.save(filename, folder=data_folder)
-        self.plot(type=plot, folder=figure_folder)
+        self.plot(type=plot,
+                  folder=figure_folder,
+                  figureformat=figureformat)
 
 
     def monte_carlo(self,
                     uncertain_parameters=None,
                     nr_samples=10**3,
+                    seed=None,
                     plot="condensed_sensitivity_1",
                     figure_folder="figures",
+                    figureformat=".png",
                     data_folder="data",
-                    filename=None,
-                    seed=None):
+                    filename=None):
+        """
+        Perform an uncertainty quantification using the quasi-Monte Carlo method.
 
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when performing the uncertainty
+            quantification. If None, all uncertain parameters are used.
+            Default is None.
+        nr_samples : int, optional
+            Number of samples for the Monte Carlo sampling, if the quasi-Monte
+            Carlo method is chosen.
+            Default is 10**3.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        figure_folder : str, optional
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+        data_folder : str, optional
+            Name of the folder where to save the data.
+            Default is "data".
+        filename : {None, str}, optional
+            Name of the data file. If None the model name is used.
+            Default is None.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        Which method to choose is problem dependent, but as long as the number of
+        uncertain parameters is low (less than around 20 uncertain parameters)
+        polynomial chaos methods are much faster than Monte Carlo methods.
+        Above this Monte Carlo methods are the best.
+
+        The plots created are intended as quick way to get an overview of the
+        results, and not to create publication ready plots. Custom plots of the
+        data can easily be created by retrieving the data from the Data class.
+
+        Sensitivity analysis is currently not yet available for the quasi-Monte
+        Carlo method.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
+        uncertainpy.Parameters : Parameters class
+        """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameters,
                                                               nr_samples=nr_samples,
                                                               seed=seed)
 
-
         if filename is None:
            filename = self.model.name
 
         self.save(filename, folder=data_folder)
 
-        self.plot(type=plot, folder=figure_folder)
+        self.plot(type=plot,
+                  folder=figure_folder,
+                  figureformat=figureformat)
 
 
 
 
     def polynomial_chaos_single(self,
-                                uncertain_parameters=None,
                                 method="collocation",
                                 rosenblatt=False,
                                 polynomial_order=3,
+                                uncertain_parameters=None,
                                 nr_collocation_nodes=None,
-                                quadrature_order=4,
+                                quadrature_order=None,
                                 nr_pc_mc_samples=10**4,
                                 allow_incomplete=False,
                                 seed=None,
                                 plot="condensed_sensitivity_1",
-                                data_folder="figures",
-                                figure_folder="data",
-                                filename=None,):
+                                figure_folder="figures",
+                                figureformat=".png",
+                                data_folder="data",
+                                filename=None):
+        """
+        Perform an uncertainty quantification and sensitivity analysis for a
+        single parameter at the time using polynomial chaos expansions.
 
+        Parameters
+        ----------
+        method : {"collocation", "spectral", "custom"}, optional
+            The method to use when creating the polynomial chaos approximation,
+            if the polynomial chaos method is chosen. "collocation" is the
+            point collocation method "spectral" is pseudo-spectral projection,
+            and "custom" is the custom polynomial method.
+            Default is "collocation".
+        rosenblatt : bool, optional
+            If the Rosenblatt transformation should be used. The Rosenblatt
+            transformation must be used if the uncertain parameters have
+            dependent variables.
+            Default is False.
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to performing the uncertainty
+            quantification for. If None, all uncertain parameters are used.
+            Default is None.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        nr_collocation_nodes : {int, None}, optional
+            The number of collocation nodes to choose, if polynomial chaos with
+            point collocation is used. If None,
+            ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            Default is None.
+        quadrature_order : {int, None}, optional
+            The order of the Leja quadrature method, if polynomial chaos with
+            pseudo-spectral projection is used. If None,
+            ``quadrature_order = polynomial_order + 2``.
+            Default is None.
+        nr_pc_mc_samples : int, optional
+            Number of samples for the Monte Carlo sampling of the polynomial
+            chaos approximation, if the polynomial chaos method is chosen.
+        allow_incomplete : bool, optional
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        figure_folder : str, optional
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+        data_folder : str, optional
+            Name of the folder where to save the data.
+            Default is "data".
+        filename : {None, str}, optional
+            Name of the data file. If None the model name is used.
+            Default is None.
+        **custom_kwargs
+            Any number of arguments for the custom polynomial chaos method,
+            ``create_PCE_custom``.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+        ValueError
+            If `method` not one of "collocation", "spectral" or "custom".
+        NotImplementedError
+            If custom pc method is chosen and have not been implemented.
+
+        Notes
+        -----
+        Which method to choose is problem dependent, but as long as the number of
+        uncertain parameters is low (less than around 20 uncertain parameters)
+        polynomial chaos methods are much faster than Monte Carlo methods.
+        Above this Monte Carlo methods are the best.
+
+        For polynomial chaos, the pseudo-spectral method is faster than point
+        collocation, but has lower stability. We therefore generally recommend
+        the point collocation method.
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method are robust towards missing values as long
+        as the number of results that remain is high enough. The pseudo-spectral
+        method on the other hand, is sensitive to missing values, so
+        `allow_incomplete` should be used with care in that case.
+
+        The plots created are intended as quick way to get an overview of the
+        results, and not to create publication ready plots. Custom plots of the
+        data can easily be created by retrieving the data from the Data class.
+
+        Changing the parameters of the polynomial chaos methods should be done
+        with care, and implementing custom methods is only recommended for
+        experts.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.core.UncertaintyCalculations.polynomial_chaos : Uncertainty quantification using polynomial chaos expansions
+        uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
+        uncertainpy.Parameters : Parameters class
+        """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
@@ -353,17 +894,88 @@ pc_method: "collocation, spectral"
             self.save(tmp_filename, folder=data_folder)
 
             tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
-            self.plot(type=plot, folder=tmp_figure_folder)
+            self.plot(type=plot,
+                      folder=tmp_figure_folder,
+                      figureformat=figureformat)
 
 
     def monte_carlo_single(self,
                            uncertain_parameters=None,
                            nr_samples=10**3,
+                           seed=None,
                            plot="condensed_sensitivity_1",
                            data_folder="data",
                            figure_folder="figures",
-                           filename=None,
-                           seed=None):
+                           figureformat=".png",
+                           filename=None):
+        """
+        Perform an uncertainty quantification for a single parameter at the time
+        using the quasi-Monte Carlo method.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when performing the uncertainty
+            quantification. If None, all uncertain parameters are used.
+            Default is None.
+        nr_samples : int, optional
+            Number of samples for the Monte Carlo sampling, if the quasi-Monte
+            Carlo method is chosen.
+            Default is 10**3.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        figure_folder : str, optional
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+        data_folder : str, optional
+            Name of the folder where to save the data.
+            Default is "data".
+        filename : {None, str}, optional
+            Name of the data file. If None the model name is used.
+            Default is None.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        Which method to choose is problem dependent, but as long as the number of
+        uncertain parameters is low (less than around 20 uncertain parameters)
+        polynomial chaos methods are much faster than Monte Carlo methods.
+        Above this Monte Carlo methods are the best.
+
+        The plots created are intended as quick way to get an overview of the
+        results, and not to create publication ready plots. Custom plots of the
+        data can easily be created by retrieving the data from the Data class.
+
+        Sensitivity analysis is currently not yet available for the quasi-Monte
+        Carlo method.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
+        uncertainpy.Parameters : Parameters class
+        """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
@@ -387,13 +999,30 @@ pc_method: "collocation, spectral"
 
             tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
 
-            self.plot(type=plot, folder=tmp_figure_folder)
+            self.plot(type=plot,
+                      folder=tmp_figure_folder,
+                      figureformat=figureformat)
 
 
 
 
     def save(self, filename, folder="data"):
+        """
+        Save ``data`` to disk.
 
+        Parameters
+        ----------
+        filename : str
+            Name of the data file.
+        folder : str, optional
+            The folder to store the data in. Creates the folder if it does not
+            exist.
+            Default is "data".
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        """
         if not os.path.isdir(folder):
             os.makedirs(folder)
 
@@ -405,6 +1034,18 @@ pc_method: "collocation, spectral"
 
 
     def load(self, filename):
+        """
+        Load data from disk.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the stored data file.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        """
         self.data = Data(filename)
 
 
@@ -412,8 +1053,41 @@ pc_method: "collocation, spectral"
              type="condensed_sensitivity_1",
              folder="figures",
              figureformat=".png"):
+        """
+        Create plots for the results of the uncertainty quantification and
+        sensitivity analysis. ``self.data`` must exist and contain the results.
 
-        '{"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}'
+        Parameters
+        ----------
+        type : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+            Type of plots to be created.
+            "condensed_sensitivity_1" is a subset of the most important plots and
+            only plots each result once, and contains plots of the first order
+            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            total order Sobol indices, and "condensed_no_sensitivity" is the
+            same without any Sobol indices plotted. "all" creates every plot.
+            "evaluations" plots the model and feature evaluations. None plots
+            nothing.
+            Default is "condensed_sensitivity_1".
+        folder : str
+            Name of the folder where to save all figures.
+            Default is "figures".
+        figureformat : str
+            The figure format to save the plots in. Supports all formats in
+            matplolib.
+            Default is ".png".
+
+        Notes
+        -----
+        These plots are intended as quick way to get an overview of the results,
+        and not to create publication ready plots. Custom plots of the data can
+        easily be created by retrieving the data from the Data class.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.plotting.PlotUncertainty : Plotting class
+        """
 
         self.plotting.data = self.data
         self.plotting.folder = folder

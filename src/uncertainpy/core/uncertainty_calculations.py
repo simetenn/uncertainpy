@@ -9,14 +9,15 @@ from .base import ParameterBase
 
 class UncertaintyCalculations(ParameterBase):
     """
-    Class for performing the uncertainty calculations.
+    Performing the calculations for the uncertainty quantification and
+    sensitivity analysis.
 
-    This is the class that performs the uncertainty quantifications and
+    This class performs the calculations for the uncertainty quantification and
     sensitivity analysis of the model and features. It implements both
-    quasi-Monte Carlo methods as well as polynomial chaos expansions using
-    point collocation and the pseudo-spectral method. Both of the polynomial
-    chaos expansion methods have support for the rosenblatt transformation to
-    handle dependent variables.
+    quasi-Monte Carlo methods and polynomial chaos expansions using either
+    point collocation or pseudo-spectral method. Both of the polynomial chaos
+    expansion methods have support for the rosenblatt transformation to handle
+    dependent variables.
 
     Parameters
     ----------
@@ -45,16 +46,15 @@ class UncertaintyCalculations(ParameterBase):
         Suppress all model graphics created by the model.
         Default is True.
 
-
     Attributes
     ----------
-    model : uncertainpy.Model or subclass of uncertainpy.Model
+    model : Model or Model subclass
         The model to perform uncertainty quantification on.
-    parameters : uncertainpy.Parameters
+    parameters : Parameters
         The uncertain parameters.
-    features : uncertainpy.Features or subclass of uncertainpy.Features
+    features : Features or Features subclass
         The features of the model to perform uncertainty quantification on.
-    runmodel : uncertainpy.core.RunModel
+    runmodel : RunModel
         Runmodel object responsible for evaluating the model and calculating features.
     logger : logging.Logger
         Logger object responsible for logging to screen or file.
@@ -166,7 +166,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Parameters
         ----------
-        uncertain_parameters : {None, list}, optional
+        uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the joint multivariate
             distribution. If None, the joint multivariate distribution for all
             uncertain parameters is created.
@@ -190,7 +190,7 @@ class UncertaintyCalculations(ParameterBase):
         multivariate distribution for the selected parameters is created from
         the univariate distributions.
 
-        See Also
+        See also
         --------
         uncertainpy.Parameters : Parameters class
         """
@@ -214,7 +214,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Parameters
         ----------
-        data : Data object
+        data : Data
             A Data object with values for the model and each feature.
             Must contain `data[feature].values`.
         nodes : array_like
@@ -289,8 +289,7 @@ class UncertaintyCalculations(ParameterBase):
         ----------
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
+            approximation. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
@@ -311,7 +310,7 @@ class UncertaintyCalculations(ParameterBase):
             model and each feature as chaospy.Poly objects.
         distribution : chaospy.Dist
             The multivariate distribution for the uncertain parameters.
-        data : Data object
+        data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
 
@@ -352,8 +351,12 @@ class UncertaintyCalculations(ParameterBase):
         quadrature with Smolyak sparse grids to reduce the number of nodes
         required. For each of the nodes we evaluate the model and calculate the
         features, and the polynomial approximation is created from these results.
-        """
 
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.Parameters : Parameters class
+        """
         if allow_incomplete:
             self.logger.warning("The pseudo-spectral methods is sensitive to missing values, so `allow_incomplete` should be used with care.")
 
@@ -410,15 +413,14 @@ class UncertaintyCalculations(ParameterBase):
         ----------
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
+            approximation. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
             Default is 3.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose. If None,
-            `nr_collocation_nodes` = number of expansion factors + 2.
+            `nr_collocation_nodes` = 2* number of expansion factors + 2.
             Default is None.
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
@@ -432,7 +434,7 @@ class UncertaintyCalculations(ParameterBase):
             model and each feature as chaospy.Poly objects.
         distribution : chaospy.Dist
             The multivariate distribution for the uncertain parameters.
-        data : Data object
+        data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
 
@@ -473,6 +475,11 @@ class UncertaintyCalculations(ParameterBase):
         the `distribution`. We evaluate the model and each feature in parallel,
         and solve the resulting set of linear equations with Tikhonov
         regularization.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.Parameters : Parameters class
         """
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -527,8 +534,7 @@ class UncertaintyCalculations(ParameterBase):
         ----------
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
+            approximation. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
@@ -549,7 +555,7 @@ class UncertaintyCalculations(ParameterBase):
             model and each feature as chaospy.Poly objects.
         distribution : chaospy.Dist
             The multivariate distribution for the uncertain parameters.
-        data : Data object
+        data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
 
@@ -595,6 +601,11 @@ class UncertaintyCalculations(ParameterBase):
         before they are sent to the model evaluation.
         For each of the nodes we evaluate the model and calculate the features,
         and the polynomial approximation is created from these results.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.Parameters : Parameters class
         """
 
         if allow_incomplete:
@@ -679,15 +690,14 @@ class UncertaintyCalculations(ParameterBase):
         ----------
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
+            approximation. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
             Default is 3.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose. If None,
-            `nr_collocation_nodes` = number of expansion factors + 2.
+            `nr_collocation_nodes` = 2* number of expansion factors + 2.
             Default is None.
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
@@ -701,7 +711,7 @@ class UncertaintyCalculations(ParameterBase):
             model and each feature as chaospy.Poly objects.
         distribution : chaospy.Dist
             The multivariate distribution for the uncertain parameters.
-        data : Data object
+        data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
 
@@ -745,6 +755,11 @@ class UncertaintyCalculations(ParameterBase):
         Rosenblatte transformation and evaluate the model and each
         feature in parallel. We solve the resulting set of linear equations
         with Tikhonov regularization.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.Parameters : Parameters class
         """
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -808,7 +823,7 @@ class UncertaintyCalculations(ParameterBase):
             model and each feature as chaospy.Poly objects.
         distribution : chaospy.Dist
             The multivariate distribution for the uncertain parameters.
-        data : Data object
+        data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
         nr_samples : int, optional
@@ -818,7 +833,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Returns
         -------
-        data : Data object
+        data : Data
             The `data` parameter given as input with the statistical metrics added.
 
         Notes
@@ -841,6 +856,10 @@ class UncertaintyCalculations(ParameterBase):
             11. ``data["model/features"].sensitivity_t``, if more than 1 parameter
             12. ``data["model/features"].sensitivity_1_sum``, if more than 1 parameter
             13. ``data["model/features"].sensitivity_t_sum``, if more than 1 parameter
+
+        See also
+        --------
+        uncertainpy.Data : Data class
         """
 
         if len(data.uncertain_parameters) == 1:
@@ -874,14 +893,13 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_custom(self, uncertain_parameters=None, **kwargs):
         """
-        Create a custom polynomial chaos expansion method.
+        Create a custom method for calculating the polynomial chaos approximation.
 
         Parameters
         ----------
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
+            approximation. If None, all uncertain parameters are used.
             Default is None.
         **kwargs
             Any number of optional arguments.
@@ -893,7 +911,7 @@ class UncertaintyCalculations(ParameterBase):
             model and each feature as chaospy.Poly objects.
         distribution : chaospy.Dist
             The multivariate distribution for the uncertain parameters.
-        data : Data object
+        data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
 
@@ -928,11 +946,11 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Parameters : Parameters class
-
+        uncertainpy.Data : Data class
         uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to allowed list
         uncertainpy.core.Uncertaintycalculations.create_distribution : Creates the uncertain parameter distribution
         uncertainpy.core.RunModel.run : Runs the model
+        uncertainpy.Parameters : Parameters class
         """
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
@@ -946,10 +964,9 @@ class UncertaintyCalculations(ParameterBase):
         **kwargs
             Any number of optional arguments.
 
-
         Returns
         -------
-        data : Data object
+        data : Data
             A Data object with calculated uncertainties.
 
         Notes
@@ -964,8 +981,6 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Parameters : Parameters class
-
         uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to list
         uncertainpy.core.Uncertaintycalculations.create_distribution : Create uncertain parameter distribution
         uncertainpy.core.RunModel.run : Runs the model
@@ -975,12 +990,12 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def polynomial_chaos(self,
-                         uncertain_parameters=None,
                          method="collocation",
                          rosenblatt=False,
+                         uncertain_parameters=None,
                          polynomial_order=3,
                          nr_collocation_nodes=None,
-                         quadrature_order=4,
+                         quadrature_order=None,
                          nr_pc_mc_samples=10**4,
                          allow_incomplete=False,
                          seed=None,
@@ -991,14 +1006,9 @@ class UncertaintyCalculations(ParameterBase):
 
         Parameters
         ----------
-        uncertain_parameters : {None, str, list}, optional
-            The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
-            Default is None.
         method : {"collocation", "spectral", "custom"}, optional
-            The method to use when creating the polyomial chaos approximation.
-            "collocation" is the point collocation methodl "spectral" is
+            The method to use when creating the polynomial chaos approximation.
+            "collocation" is the point collocation method "spectral" is
             pseudo-spectral projection, and "custom" is the custom polynomial
             method.
             Default is "collocation".
@@ -1007,12 +1017,16 @@ class UncertaintyCalculations(ParameterBase):
             transformation must be used if the uncertain parameters have
             dependent variables.
             Default is False.
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, all uncertain parameters are used.
+            Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
             Default is 3.
         nr_collocation_nodes : {int, None}, optional
-            The number of collocation nodes to choose. If point collocation is
-            used. If None, ``nr_collocation_nodes` = number of expansion factors + 2`.
+            The number of collocation nodes to choose, if point collocation is
+            used. If None, ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
             Default is None.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method, if pseudo-spectral
@@ -1031,7 +1045,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Returns
         -------
-        data : Data object
+        data : Data
             A data object with all model and feature values, as well as all
             calculated statistical metrics.
 
@@ -1041,7 +1055,7 @@ class UncertaintyCalculations(ParameterBase):
             If a common multivariate distribution is given in
             Parameters.distribution and not all uncertain parameters are used.
         ValueError
-            If no `method` not one of "collocation", "spectral" or "custom".
+            If `method` not one of "collocation", "spectral" or "custom".
         NotImplementedError
             If "custom" is chosen and have not been implemented.
 
@@ -1104,8 +1118,12 @@ class UncertaintyCalculations(ParameterBase):
         the independent distribution, the only difference is that we use the
         Rosenblatt transformation to transform the nodes from the independent
         distribution to the dependent distribution.
-        """
 
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.Parameters : Parameters class
+        """
         if seed is not None:
             np.random.seed(seed)
 
@@ -1168,8 +1186,7 @@ class UncertaintyCalculations(ParameterBase):
         ----------
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
-            approximation. If None, the joint multivariate distribution for all
-            uncertain parameters is created.
+            approximation. If None, all uncertain parameters are used.
             Default is None.
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling.
@@ -1180,7 +1197,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Returns
         -------
-        data : Data object
+        data : Data
             A data object with all model and feature values, as well as all
             calculated statistical metrics.
 
@@ -1203,7 +1220,6 @@ class UncertaintyCalculations(ParameterBase):
             8. ``data["model/features"].percentile_5``
             9. ``data["model/features"].percentile_95``
 
-
         In the quasi-Monte Carlo method we quasi-randomly draw 10**3 (by default)
         parameter samples using the Hammersley sequence. We evaluate the model
         for each of these parameter samples and calculate the features from each
@@ -1214,6 +1230,11 @@ class UncertaintyCalculations(ParameterBase):
 
         Sensitivity analysis is currently not yet available for the quasi-Monte
         Carlo method.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
+        uncertainpy.Parameters : Parameters class
         """
 
         if seed is not None:
@@ -1246,7 +1267,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Parameters
         ----------
-        data : Data object
+        data : Data
             A data object with all model and feature values, as well as all
             calculated statistical metrics.
         sensitivity : {"sensitivity_1", "1", "sensitivity_t", "t"}, optional
@@ -1257,9 +1278,13 @@ class UncertaintyCalculations(ParameterBase):
 
         Returns
         ----------
-        data : Data object
+        data : Data
             The `data` object with the normalized sum of the sensitivities for
             the model and all features added.
+
+        See also
+        --------
+        uncertainpy.Data : Data class
         """
         if sensitivity not in ["sensitivity_1", "sensitivity_t", "1", "t"]:
             raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t, not {}".format(sensitivity))
