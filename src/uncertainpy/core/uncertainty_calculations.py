@@ -58,16 +58,6 @@ class UncertaintyCalculations(ParameterBase):
         Runmodel object responsible for evaluating the model and calculating features.
     logger : logging.Logger
         Logger object responsible for logging to screen or file.
-    distribution : chaospy.Dist
-        Distribution of the uncertain parameters.
-    data : uncertainpy.Data
-        Stored data calculated in the uncertainty quantification.
-    U_hat : dict
-        A dictionary for each feature and model that contain the Polynomial
-        chaos approximations as chaospy.Poly objects.
-    U_mc : dict
-        A dictionary for each feature and model that contain the corresponding
-        Monte Carlo evaluations.
 
     See Also
     --------
@@ -219,11 +209,14 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_mask(self, data, nodes, feature, weights=None):
         """
-        Mask all nodes and the corresponding model and feature evaluations that
-        do not give results (anything but np.nan).
+        Mask all model and feature evaluations that do not give results
+        (anything but np.nan) and the corresponding nodes.
 
         Parameters
         ----------
+        data : Data object
+            A Data object with values for the model and each feature.
+            Must contain `data[feature].values`.
         nodes : array_like
             The nodes used to evaluate the model.
         feature : str
@@ -304,23 +297,24 @@ class UncertaintyCalculations(ParameterBase):
             Default is 3.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method. If None,
-            `quadrature_order = polynomial_order + 2`.
+            ``quadrature_order = polynomial_order + 2``.
             Default is None.
-        allow_incomplete : bool
+        allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
             Default is False.
 
-        Attributes
-        ----------
-        distribution : chaospy.Dist
-            Sets the multivariate distribution of the uncertain parameters.
-        data : uncertainpy.Data
-            Updates the stored data with the values from the model evaluation
-            and feature calculations.
+        Returns
+        -------
         U_hat : dict
-            Sets the Polynomial chaos approximations for feature and model as
-            chaospy.Poly objects.
+            A dictionary containing the polynomial approximations for the
+            model and each feature as chaospy.Poly objects.
+        distribution : chaospy.Dist
+            The multivariate distribution for the uncertain parameters.
+        data : Data object
+            A data object containing the values from the model evaluation
+            and feature calculations.
+
 
         Raises
         ------
@@ -330,9 +324,13 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        We create a polynomial approximation for the model and each feature,
-        stored in `U_hat`. The corresponding multivariate distribution is stored
-        in `distribution`.
+        The returned `data` should contain (but not necessarily) the following:
+
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -348,13 +346,12 @@ class UncertaintyCalculations(ParameterBase):
         pseudo-spectral projection to find the expansion coefficients for the
         model and each feature of the model.
 
-        Pseudo-spectral projection is based on least squares
-        minimization and finds the expansion coefficients through numerical
-        integration. The integration uses a quadrature scheme with weights
-        and nodes. We use Leja quadrature with Smolyak sparse grids to reduce the
-        number of nodes required.
-        For each of the nodes we evaluate the model and calculate the features,
-        and the polynomial approximation is created from these results.
+        Pseudo-spectral projection is based on least squares minimization and
+        finds the expansion coefficients through numerical integration. The
+        integration uses a quadrature scheme with weights and nodes. We use Leja
+        quadrature with Smolyak sparse grids to reduce the number of nodes
+        required. For each of the nodes we evaluate the model and calculate the
+        features, and the polynomial approximation is created from these results.
         """
 
         if allow_incomplete:
@@ -423,21 +420,21 @@ class UncertaintyCalculations(ParameterBase):
             The number of collocation nodes to choose. If None,
             `nr_collocation_nodes` = number of expansion factors + 2.
             Default is None.
-        allow_incomplete : bool
+        allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
             Default is False.
 
-        Attributes
-        ----------
-        distribution : chaospy.Dist
-            Sets the multivariate distribution of the uncertain parameters.
-        data : uncertainpy.Data
-            Set data with the values from the model evaluation and feature
-            calculations.
+        Returns
+        -------
         U_hat : dict
-            Sets the Polynomial chaos approximations for feature and model as
-            chaospy.Poly objects.
+            A dictionary containing the polynomial approximations for the
+            model and each feature as chaospy.Poly objects.
+        distribution : chaospy.Dist
+            The multivariate distribution for the uncertain parameters.
+        data : Data object
+            A data object containing the values from the model evaluation
+            and feature calculations.
 
         Raises
         ------
@@ -447,9 +444,13 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        We create a polynomial approximation for the model and each feature,
-        stored in `U_hat`. The corresponding multivariate distribution is stored
-        in `distribution`.
+        The returned `data` should contain (but not necessarily) the following:
+
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -534,23 +535,23 @@ class UncertaintyCalculations(ParameterBase):
             Default is 3.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method. If None,
-            `quadrature_order = polynomial_order + 2`.
+            ``quadrature_order = polynomial_order + 2``.
             Default is None.
-        allow_incomplete : bool
+        allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
             Default is False.
 
-        Attributes
-        ----------
-        distribution : chaospy.Dist
-            Sets the multivariate distribution of the uncertain parameters.
-        data : uncertainpy.Data
-            Set data with the values from the model evaluation and feature
-            calculations.
+        Returns
+        -------
         U_hat : dict
-            Sets the Polynomial chaos approximations for feature and model as
-            chaospy.Poly objects.
+            A dictionary containing the polynomial approximations for the
+            model and each feature as chaospy.Poly objects.
+        distribution : chaospy.Dist
+            The multivariate distribution for the uncertain parameters.
+        data : Data object
+            A data object containing the values from the model evaluation
+            and feature calculations.
 
         Raises
         ------
@@ -560,9 +561,14 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        We create a polynomial approximation for the model and each feature,
-        stored in `U_hat`. The corresponding multivariate distribution is stored
-        in `distribution`.
+        `data` should contain (but not necessarily) the following, if
+           applicable:
+
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -683,21 +689,21 @@ class UncertaintyCalculations(ParameterBase):
             The number of collocation nodes to choose. If None,
             `nr_collocation_nodes` = number of expansion factors + 2.
             Default is None.
-        allow_incomplete : bool
+        allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
             Default is False.
 
-        Attributes
-        ----------
-        distribution : chaospy.Dist
-            Sets the multivariate distribution of the uncertain parameters.
-        data : uncertainpy.Data
-            Set data with the values from the model evaluation and feature
-            calculations.
+        Returns
+        -------
         U_hat : dict
-            Sets the Polynomial chaos approximations for feature and model as
-            chaospy.Poly objects.
+            A dictionary containing the polynomial approximations for the
+            model and each feature as chaospy.Poly objects.
+        distribution : chaospy.Dist
+            The multivariate distribution for the uncertain parameters.
+        data : Data object
+            A data object containing the values from the model evaluation
+            and feature calculations.
 
         Raises
         ------
@@ -707,9 +713,13 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        We create a polynomial approximation for the model and each feature,
-        stored in `U_hat`. The corresponding multivariate distribution is stored
-        in `distribution`.
+        The returned `data` should contain (but not necessarily) the following:
+
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
 
         The model and feature do not necessarily give results for each node. The
         collocation method is robust towards missing values as long as the number
@@ -732,7 +742,7 @@ class UncertaintyCalculations(ParameterBase):
         equations for the polynomial coefficients we can solve. We choose
         `nr_collocation_nodes` collocation nodes with Hammersley sampling from
         the independent distribution. We then transform the nodes using the
-        Rosneblatte transformation and evaluate the model and each
+        Rosenblatte transformation and evaluate the model and each
         feature in parallel. We solve the resulting set of linear equations
         with Tikhonov regularization.
         """
@@ -786,25 +796,51 @@ class UncertaintyCalculations(ParameterBase):
         return U_hat, dist_R, data
 
 
-    def analyse_PCE(self,
-                    U_hat,
-                    distribution,
-                    data,
-                    nr_samples=10**4):
+    def analyse_PCE(self, U_hat, distribution, data, nr_samples=10**4):
         """
         Calculate the statistical metrics from the polynomial chaos
         approximation.
 
+        Parameters
+        ----------
+        U_hat : dict
+            A dictionary containing the polynomial approximations for the
+            model and each feature as chaospy.Poly objects.
+        distribution : chaospy.Dist
+            The multivariate distribution for the uncertain parameters.
+        data : Data object
+            A data object containing the values from the model evaluation
+            and feature calculations.
+        nr_samples : int, optional
+            Number of samples for the Monte Carlo sampling of the polynomial
+            chaos approximation.
+            Default is 10**4.
+
+        Returns
+        -------
+        data : Data object
+            The `data` parameter given as input with the statistical metrics added.
+
         Notes
         -----
-        Requires the following attributes to be set by when creating of the polynomial
-        chaos expansion.
+        The `data` parameter should contain (but not necessarily) the following:
 
-        1. distribution - The multivariate distribution of the uncertain parameters, as a chaospy.Dist object.
-        2. data - That a data object exists.
-        3. U_hat - Dictionary with the the Polynomial chaos approximations for
-           feature and model as chaospy.Poly objects.
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
 
+        When returned `data` additionally contains:
+
+            6. ``data["model/features"].mean``
+            7. ``data["model/features"].variance``
+            8. ``data["model/features"].percentile_5``
+            9. ``data["model/features"].percentile_95``
+            10. ``data["model/features"].sensitivity_1``, if more than 1 parameter
+            11. ``data["model/features"].sensitivity_t``, if more than 1 parameter
+            12. ``data["model/features"].sensitivity_1_sum``, if more than 1 parameter
+            13. ``data["model/features"].sensitivity_t_sum``, if more than 1 parameter
         """
 
         if len(data.uncertain_parameters) == 1:
@@ -813,24 +849,24 @@ class UncertaintyCalculations(ParameterBase):
         U_mc = {}
         for feature in data:
             if feature in U_hat:
-                data[feature]["mean"] = cp.E(U_hat[feature], distribution)
-                data[feature]["variance"] = cp.Var(U_hat[feature], distribution)
+                data[feature].mean = cp.E(U_hat[feature], distribution)
+                data[feature].variance = cp.Var(U_hat[feature], distribution)
 
                 samples = distribution.sample(nr_samples, "H")
 
                 if len(data.uncertain_parameters) > 1:
                     U_mc[feature] = U_hat[feature](*samples)
 
-                    data[feature]["sensitivity_1"] = cp.Sens_m(U_hat[feature], distribution)
-                    data[feature]["sensitivity_t"] = cp.Sens_t(U_hat[feature], distribution)
+                    data[feature].sensitivity_1 = cp.Sens_m(U_hat[feature], distribution)
+                    data[feature].sensitivity_t = cp.Sens_t(U_hat[feature], distribution)
                     self.sensitivity_sum(data, sensitivity="sensitivity_1")
                     self.sensitivity_sum(data, sensitivity="sensitivity_t")
 
                 else:
                     U_mc[feature] = U_hat[feature](samples)
 
-                data[feature]["percentile_5"] = np.percentile(U_mc[feature], 5, -1)
-                data[feature]["percentile_95"] = np.percentile(U_mc[feature], 95, -1)
+                data[feature].percentile_5 = np.percentile(U_mc[feature], 5, -1)
+                data[feature].percentile_95 = np.percentile(U_mc[feature], 95, -1)
 
         return data
 
@@ -850,40 +886,36 @@ class UncertaintyCalculations(ParameterBase):
         **kwargs
             Any number of optional arguments.
 
-
-        Attributes
-        ----------
-        distribution : chaospy.Dist
-            Sets the multivariate distribution of the uncertain parameters.
-        data : uncertainpy.Data
-            Set data with the values from the model evaluation and feature
-            calculations, the labels of each feature and model, the uncertain
-            parameters, the model name,
+        Returns
+        -------
         U_hat : dict
-            Sets the Polynomial chaos approximations for feature and model as
-            chaospy.Poly objects.
+            A dictionary containing the polynomial approximations for the
+            model and each feature as chaospy.Poly objects.
+        distribution : chaospy.Dist
+            The multivariate distribution for the uncertain parameters.
+        data : Data object
+            A data object containing the values from the model evaluation
+            and feature calculations.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
 
         Notes
         -----
         This method can be implemented to create a custom method to calculate
-        the polynomial chaos expansion.
+        the polynomial chaos expansion. The method must calculate and return
+        the return arguments described above.
 
-        The method must calculate and set the attributes described above:
+        The returned `data` should contain (but not necessarily) the following:
 
-        1. `self.distribution` - The multivariate distribution of the
-           uncertain parameters.
-        2. `self.data` - A Data object with the values from the model evaluation
-           and feature calculations. `data` should contain (but not necessarily) the following, if
-           applicable:
-
-            1. `data["model/features"].values`
-            2. `data["model/features"].time`
-            3. `data["model/features"].labels`
-            4. `data.model_name`
-            5. `data.incomplete`
-
-        3. `self.U_hat` - A dictionary with the polynomial approximations for the
-            model and each feature.
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
 
         The method `analyse_PCE` is called after the polynomial approximation
         has been created.
@@ -953,6 +985,126 @@ class UncertaintyCalculations(ParameterBase):
                          allow_incomplete=False,
                          seed=None,
                          **custom_kwargs):
+        """
+        Perform an uncertainty quantification and sensitivity analysis
+        using polynomial chaos expansions.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        method : {"collocation", "spectral", "custom"}, optional
+            The method to use when creating the polyomial chaos approximation.
+            "collocation" is the point collocation methodl "spectral" is
+            pseudo-spectral projection, and "custom" is the custom polynomial
+            method.
+            Default is "collocation".
+        rosenblatt : bool, optional
+            If the Rosenblatt transformation should be used. The Rosenblatt
+            transformation must be used if the uncertain parameters have
+            dependent variables.
+            Default is False.
+        polynomial_order : int, optional
+            The polynomial order of the polynomial approximation.
+            Default is 3.
+        nr_collocation_nodes : {int, None}, optional
+            The number of collocation nodes to choose. If point collocation is
+            used. If None, ``nr_collocation_nodes` = number of expansion factors + 2`.
+            Default is None.
+        quadrature_order : {int, None}, optional
+            The order of the Leja quadrature method, if pseudo-spectral
+            projection is used. If None, ``quadrature_order = polynomial_order + 2``.
+            Default is None.
+        nr_pc_mc_samples : int, optional
+            Number of samples for the Monte Carlo sampling of the polynomial
+            chaos approximation.
+        allow_incomplete : bool, optional
+            If the polynomial approximation should be performed for features or
+            models with incomplete evaluations.
+            Default is False.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+
+        Returns
+        -------
+        data : Data object
+            A data object with all model and feature values, as well as all
+            calculated statistical metrics.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+        ValueError
+            If no `method` not one of "collocation", "spectral" or "custom".
+        NotImplementedError
+            If "custom" is chosen and have not been implemented.
+
+        Notes
+        -----
+        The `data` parameter contains the following:
+
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            5. ``data.incomplete``
+            6. ``data["model/features"].mean``
+            7. ``data["model/features"].variance``
+            8. ``data["model/features"].percentile_5``
+            9. ``data["model/features"].percentile_95``
+            10. ``data["model/features"].sensitivity_1``, if more than 1 parameter
+            11. ``data["model/features"].sensitivity_t``, if more than 1 parameter
+            12. ``data["model/features"].sensitivity_1_sum``, if more than 1 parameter
+            13. ``data["model/features"].sensitivity_t_sum``, if more than 1 parameter
+
+        The model and feature do not necessarily give results for each
+        node. The collocation method is robust towards missing values as long as
+        the number of results that remain is high enough. The pseudo-spectral
+        method on the other hand, is sensitive to missing values, so
+        `allow_incomplete` should be used with care in that case.
+
+        The polynomial chaos expansion method for uncertainty quantification
+        approximates the model with a polynomial that follows specific
+        requirements. This polynomial can be used to quickly calculate the
+        uncertainty and sensitivity of the model.
+
+        To create the polynomial chaos expansion we first find the polynomials
+        using the three-therm recurrence relation. Then we use point collocation
+        or pseudo-spectral projection to find the expansion coefficients for the
+        model and each feature of the model.
+
+        In point collocation we require the polynomial approximation to be equal
+        the model at a set of collocation nodes. This results in a set of linear
+        equations for the polynomial coefficients we can solve. We choose
+        `nr_collocation_nodes` collocation nodes with Hammersley sampling from
+        the `distribution`. We evaluate the model and each feature in parallel,
+        and solve the resulting set of linear equations with Tikhonov
+        regularization.
+
+        Pseudo-spectral projection is based on least squares minimization and
+        finds the expansion coefficients through numerical integration. The
+        integration uses a quadrature scheme with weights and nodes. We use Leja
+        quadrature with Smolyak sparse grids to reduce the number of nodes
+        required. For each of the nodes we evaluate the model and calculate the
+        features, and the polynomial approximation is created from these results.
+
+        If we have dependent uncertain parameters we must use the Rosenblatt
+        transformation. We use the Rosenblatt transformation to transform from
+        dependent to independent variables before we create the polynomial chaos
+        expansion. We first find the polynomials using the three-therm
+        recurrence relation from the independent distributions.
+
+        Both pseudo-spectral projection and point collocation is performed using
+        the independent distribution, the only difference is that we use the
+        Rosenblatt transformation to transform the nodes from the independent
+        distribution to the dependent distribution.
+        """
 
         if seed is not None:
             np.random.seed(seed)
@@ -1009,6 +1161,60 @@ class UncertaintyCalculations(ParameterBase):
                     uncertain_parameters=None,
                     nr_samples=10**3,
                     seed=None):
+        """
+        Perform an uncertainty quantification using the quasi-Monte Carlo method.
+
+        Parameters
+        ----------
+        uncertain_parameters : {None, str, list}, optional
+            The uncertain parameter(s) to use when creating the polynomial
+            approximation. If None, the joint multivariate distribution for all
+            uncertain parameters is created.
+            Default is None.
+        nr_samples : int, optional
+            Number of samples for the Monte Carlo sampling.
+            Default is 10**3.
+        seed : int, optional
+            Set a random seed. If None, no seed is set.
+            Default is None.
+
+        Returns
+        -------
+        data : Data object
+            A data object with all model and feature values, as well as all
+            calculated statistical metrics.
+
+        Raises
+        ------
+        ValueError
+            If a common multivariate distribution is given in
+            Parameters.distribution and not all uncertain parameters are used.
+
+        Notes
+        -----
+        The `data` parameter contains the following:
+
+            1. ``data["model/features"].values``
+            2. ``data["model/features"].time``
+            3. ``data["model/features"].labels``
+            4. ``data.model_name``
+            6. ``data["model/features"].mean``
+            7. ``data["model/features"].variance``
+            8. ``data["model/features"].percentile_5``
+            9. ``data["model/features"].percentile_95``
+
+
+        In the quasi-Monte Carlo method we quasi-randomly draw 10**3 (by default)
+        parameter samples using the Hammersley sequence. We evaluate the model
+        for each of these parameter samples and calculate the features from each
+        of the model results. This step is performed in parallel to speed up the
+        calculations. Lastly we use the model and feature results to calculate
+        the mean, variance, and 5th and 95th percentile for the model and each
+        feature.
+
+        Sensitivity analysis is currently not yet available for the quasi-Monte
+        Carlo method.
+        """
 
         if seed is not None:
             np.random.seed(seed)
@@ -1034,11 +1240,32 @@ class UncertaintyCalculations(ParameterBase):
 
 
     def sensitivity_sum(self, data, sensitivity="sensitivity_1"):
+        """
+        Calculate the normalized sum of the sensitivities for the model and all
+        features and add them to `data`.
+
+        Parameters
+        ----------
+        data : Data object
+            A data object with all model and feature values, as well as all
+            calculated statistical metrics.
+        sensitivity : {"sensitivity_1", "1", "sensitivity_t", "t"}, optional
+            The sensitivity to normalize and sum. "sensitivity_1" and "1" are
+            for the first order Sobol indice while "sensitivity_t" and "t" is
+            for the total order Sobol indices.
+            Default is "sensitivity_1".
+
+        Returns
+        ----------
+        data : Data object
+            The `data` object with the normalized sum of the sensitivities for
+            the model and all features added.
+        """
         if sensitivity not in ["sensitivity_1", "sensitivity_t", "1", "t"]:
             raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t, not {}".format(sensitivity))
 
         if sensitivity == "1":
-            sensitivity = "sensitivity_1"
+            sensitivity = "sensitivity"
         elif sensitivity == "t":
             sensitivity = "sensitivity_t"
 

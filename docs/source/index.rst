@@ -18,8 +18,9 @@ Welcome to UncertainPy's documentation!
     parameters
     models
     features
-    uncertainty_estimation
 
+    uncertainty_calculations
+    uncertainty_estimation
 
     data
     plotting
