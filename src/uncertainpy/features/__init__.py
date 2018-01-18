@@ -1,6 +1,15 @@
 """
-Test
+A module for calculating features of the model output.  The main class is
+``Features``. This class does not implement any specific models itself, but
+contain all common methods used by features. Then there are two general classes
+for spiking (``GeneralSpikingFeatures``) and network features
+(``GeneralNetworkFeatures``) that implements the common methods used the two
+classes of features respectively. Lastly there are three classes that implements
+actual features; ``SpikingFeatures`` and ``EfelFeatures`` for models with
+spiking behavour (for example models of neurons that contain voltage traces),
+and ``NetworkFeatures`` for network models that return spiketrains.
 """
+
 __all__ = ["Features",
            "GeneralSpikingFeatures",
            "SpikingFeatures",
