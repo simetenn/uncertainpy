@@ -25,7 +25,8 @@ class UncertaintyQuantification(ParameterBase):
     Parameters
     ----------
     model : {None, Model or Model subclass instance, model function}
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
         Default is None.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
         Either None, a Parameters instance or a list the parameters that should be created.
@@ -75,12 +76,13 @@ class UncertaintyQuantification(ParameterBase):
 
     See Also
     --------
-    uncertainpy.features.Features : General features class
-    uncertainpy.Parameter : Parameter class
-    uncertainpy.Parameters : Parameters collection class
-    uncertainpy.models.Model : Model class
-    uncertainpy.core.UncertaintyCalculations : UncertaintyCalculations class
+    uncertainpy.features
+    uncertainpy.Parameter
+    uncertainpy.Parameters
+    uncertainpy.models
+    uncertainpy.core.UncertaintyCalculations
     uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
+    uncertainpy.models.Model.run : Requirements for the model run function.
     """
     def __init__(self,
                  model,
@@ -171,7 +173,7 @@ class UncertaintyQuantification(ParameterBase):
 
         See Also
         --------
-        uncertainpy.core.UncertaintyCalculations : UncertaintyCalculations class
+        uncertainpy.core.UncertaintyCalculations
         """
         return self._uncertainty_calculations
 
@@ -330,13 +332,14 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.Parameters
+        uncertainpy.Data
+        uncertainpy.plotting.PlotUncertainty
         uncertainpy.core.UncertaintyCalculations.polynomial_chaos : Uncertainty quantification using polynomial chaos expansions
         uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
         uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
         uncertainpy.core.UncertaintyCalculations.custom_uncertainty_quantification : Requirements for custom_uncertainty_quantification
-        uncertainpy.Parameters : Parameters class
+
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -462,9 +465,9 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.plotting.PlotUncertainty
+        uncertainpy.Parameters
         uncertainpy.core.UncertaintyCalculations.custom_uncertainty_quantification : Requirements for custom_uncertainty_quantification
-        uncertainpy.Parameters : Parameters class
         """
 
         self.data = self.uncertainty_calculations.custom_uncertainty_quantification(**custom_kwargs)
@@ -602,11 +605,11 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.Data
+        uncertainpy.Parameters
+        uncertainpy.plotting.PlotUncertainty
         uncertainpy.core.UncertaintyCalculations.polynomial_chaos : Uncertainty quantification using polynomial chaos expansions
         uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
-        uncertainpy.Parameters : Parameters class
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -708,10 +711,10 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.Data
+        uncertainpy.Parameters
+        uncertainpy.plotting.PlotUncertainty
         uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
-        uncertainpy.Parameters : Parameters class
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -854,11 +857,12 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.Data
+        uncertainpy.Parameters
+        uncertainpy.plotting.PlotUncertainty
         uncertainpy.core.UncertaintyCalculations.polynomial_chaos : Uncertainty quantification using polynomial chaos expansions
         uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
-        uncertainpy.Parameters : Parameters class
+
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -968,10 +972,10 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.plotting.PlotUncertainty : Plotting class
-        uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.plotting.PlotUncertainty
+        uncertainpy.Parameters
+       uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
@@ -1082,8 +1086,8 @@ class UncertaintyQuantification(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.plotting.PlotUncertainty : Plotting class
+        uncertainpy.Data
+        uncertainpy.plotting.PlotUncertainty
         """
 
         self.plotting.data = self.data

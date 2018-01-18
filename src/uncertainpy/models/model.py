@@ -41,8 +41,8 @@ class Model(object):
 
     See Also
     --------
-    uncertainpy.models.Model.run : The run method.
-    uncertainpy.models.Model.postprocess : The postprocessing method.
+    uncertainpy.models.Model.run
+    uncertainpy.models.Model.postprocess
     """
     def __init__(self,
                  run_function=None,
@@ -169,7 +169,7 @@ class Model(object):
 
         See also
         --------
-        uncertainpy.features : Features of models
+        uncertainpy.features
         uncertainpy.features.Features.preprocess : Preprocessing of model results before feature calculation
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """

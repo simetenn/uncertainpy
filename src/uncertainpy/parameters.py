@@ -37,22 +37,6 @@ class Parameter(object):
     """
 
     def __init__(self, name, value=None, distribution=None):
-        """
-        Parameter object, contains name of parameter, value of parameter and distribution of parameter.
-
-        Parameters
-        ----------
-        name: str
-            Name of the parameter.
-        value: float, int, None, optional
-            The fixed value of the parameter. If you give a parameter a distribution,
-            in most cases you do not need to give it a fixed value.
-        distribution: {None, Chaospy distribution, Function that returns a Chaospy distribution}, optional
-            The distribution of the parameter. A parameter is considered uncertain
-            if it has a distribution.
-            Defaults to None.
-        """
-
         self.name = name
         self.value = value
 
@@ -188,28 +172,10 @@ class Parameters(collections.MutableMapping):
 
     See Also
     --------
-    uncertainpy.Parameter : Parameter class
+    uncertainpy.Parameter
     """
-
     def __init__(self, parameter_list=[], distribution=None):
-        """
-        A collection of parameters.
 
-        Implements collections.MutableMapping, and have all dictionary methods.
-
-        Parameters
-        ----------
-        parameter_list: {list of Parameter instances, list [[name, value, distribution],...]}, optional
-            List the parameters that should be created.
-            On the form: ``parameter_list = [ParameterObject1, ParameterObject2, ...]``
-            Or: ``parameter_list = [[name1, value1, distribution1], ...]``, where
-            the arguments are similar to the arguments given to Parameter().
-            Default is an empty list.
-
-        See Also
-        --------
-        uncertainpy.Parameter : Parameter object
-        """
         self.parameters = collections.OrderedDict()
         self.distribution = distribution
 

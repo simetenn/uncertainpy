@@ -10,7 +10,8 @@ class Base(object):
     Parameters
     ----------
     model : {None, Model or Model subclass instance, model function}, optional
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
         Default is None.
     features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
@@ -37,8 +38,9 @@ class Base(object):
 
     See Also
     --------
-    uncertainpy.features.Features : General features class
-    uncertainpy.models.Model : Model class
+    uncertainpy.features.Features
+    uncertainpy.models.Model
+    uncertainpy.models.Model.run : Requirements for the model run function.
     """
     def __init__(self,
                  model=None,
@@ -78,11 +80,11 @@ class Base(object):
 
         See Also
         --------
-        uncertainpy.features.Features : General features class
-        uncertainpy.features.GeneralSpikingFeatures : General spiking features class
-        uncertainpy.features.SpikingFeatures : Implemented spiking features class
-        uncertainpy.features.GeneralNetworkFeatures : General network features class
-        uncertainpy.features.NetworkFeatures : Implemented network features class
+        uncertainpy.features.Features
+        uncertainpy.features.GeneralSpikingFeatures
+        uncertainpy.features.SpikingFeatures
+        uncertainpy.features.GeneralNetworkFeatures
+        uncertainpy.features.NetworkFeatures
         """
         return self._features
 
@@ -98,7 +100,8 @@ class Base(object):
     @property
     def model(self):
         """
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
 
         Parameters
         ----------
@@ -112,9 +115,10 @@ class Base(object):
 
         See Also
         --------
-        uncertainpy.models.Model : Model class
-        uncertainpy.models.NestModel : Nest simulator model class
-        uncertainpy.models.NeuronModel : Neuron simulator model class
+        uncertainpy.models.Model
+        uncertainpy.models.Model.run
+        uncertainpy.models.NestModel
+        uncertainpy.models.NeuronModel
         """
         return self._model
 
@@ -136,7 +140,8 @@ class ParameterBase(Base):
     Parameters
     ----------
     model : {None, Model or Model subclass instance, model function}, optional
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
         Default is None.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
         Either None, a Parameters instance or a list the parameters that should be created.
@@ -169,8 +174,9 @@ class ParameterBase(Base):
 
     See Also
     --------
-    uncertainpy.features.Features : General features class
-    uncertainpy.models.Model : Model class
+    uncertainpy.features.Features
+    uncertainpy.models.Model
+    uncertainpy.models.Model.run : Requirements for the model run function.
     """
     def __init__(self,
                  model=None,
@@ -208,8 +214,8 @@ class ParameterBase(Base):
 
         See Also
         --------
-        uncertainpy.Parameter : Parameter class
-        uncertainpy.Parameters : Parameters collection class
+        uncertainpy.Parameter
+        uncertainpy.Parameters
         """
         return self._parameters
 

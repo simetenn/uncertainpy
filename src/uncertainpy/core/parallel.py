@@ -12,7 +12,8 @@ class Parallel(Base):
     Parameters
     ----------
     model : {None, Model or Model subclass instance, model function}, optional
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
         Default is None.
     features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
@@ -37,8 +38,9 @@ class Parallel(Base):
 
     See Also
     --------
-    uncertainpy.features.Features : General features class
-    uncertainpy.models.Model : Model class
+    uncertainpy.features.Features
+    uncertainpy.models.Model
+    uncertainpy.models.Model.run : Requirements for the model run function.
     """
     def create_interpolations(self, result):
         """
@@ -108,7 +110,6 @@ class Parallel(Base):
         to be able to create the polynomial approximation.
         For 1D results this is done with scipy:
         ``InterpolatedUnivariateSpline(time, U, k=3)``.
-
         """
 
         for feature in result:

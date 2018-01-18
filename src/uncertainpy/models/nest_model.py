@@ -42,7 +42,7 @@ class NestModel(Model):
 
     See Also
     --------
-    uncertainpy.models.NestModel.run : The run method.
+    uncertainpy.models.NestModel.run
     """
     def __init__(self,
                  run_function=None,
@@ -113,7 +113,7 @@ class NestModel(Model):
 
         See also
         --------
-        uncertainpy.model.Model.postprocess : Postprocessing of model result.
+        uncertainpy.model.Model.postprocess
         """
         return self._run
 

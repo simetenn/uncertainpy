@@ -17,7 +17,8 @@ class RunModel(ParameterBase):
     Parameters
     ----------
     model : {None, Model or Model subclass instance, model function}, optional
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
         Default is None.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
         Either None, a Parameters instance or a list the parameters that should be created.
@@ -61,10 +62,11 @@ class RunModel(ParameterBase):
 
     See Also
     --------
-    uncertainpy.features.Features : General features class
-    uncertainpy.Parameter : Parameter class
-    uncertainpy.Parameters : Parameters collection class
-    uncertainpy.models.Model : Model class
+    uncertainpy.features.Features
+    uncertainpy.Parameter
+    uncertainpy.Parameters
+    uncertainpy.models.Model
+    uncertainpy.models.Model.run : Requirements for the model run function.
     """
 
     def __init__(self,
@@ -202,7 +204,7 @@ class RunModel(ParameterBase):
 
         See Also
         --------
-        uncertainpy.Data : Data class
+        uncertainpy.Data
         """
 
         data = Data()
@@ -484,7 +486,7 @@ class RunModel(ParameterBase):
 
         See Also
         --------
-        uncertainpy.Data : Data class
+        uncertainpy.Data
         """
 
         if isinstance(uncertain_parameters, str):

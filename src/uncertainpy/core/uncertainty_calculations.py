@@ -22,7 +22,8 @@ class UncertaintyCalculations(ParameterBase):
     Parameters
     ----------
     model : {None, Model or Model subclass instance, model function}, optional
-        Model to perform uncertainty quantification on.
+        Model to perform uncertainty quantification on. For requirements see
+        Model.run.
         Default is None.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
         Either None, a Parameters instance or a list the parameters that should be created.
@@ -61,11 +62,12 @@ class UncertaintyCalculations(ParameterBase):
 
     See Also
     --------
-    uncertainpy.features.Features : General features class
-    uncertainpy.Parameter : Parameter class
-    uncertainpy.Parameters : Parameters collection class
-    uncertainpy.models.Model : Model class
-    uncertainpy.core.RunModel : RunModel class
+    uncertainpy.features.Features
+    uncertainpy.Parameter
+    uncertainpy.Parameters
+    uncertainpy.models.Model
+    uncertainpy.core.RunModel
+    uncertainpy.models.Model.run : Requirements for the model run function.
     """
     def __init__(self,
                  model=None,
@@ -139,7 +141,7 @@ class UncertaintyCalculations(ParameterBase):
 
         See Also
         --------
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Parameters
         """
         if isinstance(uncertain_parameters, str):
             uncertain_parameters = [uncertain_parameters]
@@ -192,7 +194,7 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Parameters
         """
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -354,8 +356,8 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.Parameters
         """
         if allow_incomplete:
             self.logger.warning("The pseudo-spectral methods is sensitive to missing values, so `allow_incomplete` should be used with care.")
@@ -478,8 +480,8 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.Parameters
         """
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
@@ -604,8 +606,8 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.Parameters
         """
 
         if allow_incomplete:
@@ -758,8 +760,8 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.Parameters
         """
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -859,7 +861,7 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
+        uncertainpy.Data
         """
 
         if len(data.uncertain_parameters) == 1:
@@ -946,11 +948,12 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
+        uncertainpy.Data
+        uncertainpy.Parameters
         uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to allowed list
         uncertainpy.core.Uncertaintycalculations.create_distribution : Creates the uncertain parameter distribution
         uncertainpy.core.RunModel.run : Runs the model
-        uncertainpy.Parameters : Parameters class
+
         """
         raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
 
@@ -981,10 +984,10 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
+        uncertainpy.Data
         uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to list
         uncertainpy.core.Uncertaintycalculations.create_distribution : Create uncertain parameter distribution
         uncertainpy.core.RunModel.run : Runs the model
-        uncertainpy.Data : Data class
         """
         raise NotImplementedError("Custom uncertainty calculation method not implemented")
 
@@ -1121,8 +1124,8 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.Parameters
         """
         if seed is not None:
             np.random.seed(seed)
@@ -1233,8 +1236,8 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
-        uncertainpy.Parameters : Parameters class
+        uncertainpy.Data
+        uncertainpy.Parameters
         """
 
         if seed is not None:
@@ -1284,7 +1287,7 @@ class UncertaintyCalculations(ParameterBase):
 
         See also
         --------
-        uncertainpy.Data : Data class
+        uncertainpy.Data
         """
         if sensitivity not in ["sensitivity_1", "sensitivity_t", "1", "t"]:
             raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t, not {}".format(sensitivity))

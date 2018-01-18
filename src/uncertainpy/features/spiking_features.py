@@ -119,7 +119,6 @@ class SpikingFeatures(GeneralSpikingFeatures):
     --------
     uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
     uncertainpy.features.Spikes : Class for finding spikes in the model result.
-    uncertainpy.features.Features.reference_feature :
     """
     def __init__(self,
                  new_features=None,
