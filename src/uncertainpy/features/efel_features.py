@@ -151,7 +151,6 @@ class EfelFeatures(Features):
 
     See also
     --------
-    https://github.com/BlueBrain/eFEL : Documentation for Efel features
     uncertainpy.features.EfelFeatures.reference_feature : reference_feature showing the requirements of a Efel feature function.
     """
     def __init__(self,

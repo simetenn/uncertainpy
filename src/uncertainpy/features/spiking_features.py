@@ -172,7 +172,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : int
+        nr_spikes : int
             The number of spikes in the model result.
         """
         return None, spikes.nr_spikes
@@ -195,7 +195,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : {int, float, None}
+        time_before_first_spike : {float, None}
             The time from the stimulus start to the first spike occurs. Returns
             None if there are no spikes on the model result.
 
@@ -245,7 +245,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : {float, int}
+        spike_rate : float
             The spike rate of the model result.
 
         Raises
@@ -305,7 +305,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : {float, int, None}
+        average_AP_overshoot : {float, None}
             The average action potential overshoot. Returns None if there are
             no spikes in the model result.
         """
@@ -339,7 +339,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : {float, int, None}
+        average_AHP_depth : {float, None}
             The average action potential depth. Returns None if there are
             no spikes in the model result.
         """
@@ -374,7 +374,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : {float, int, None}
+        average_AP_width : {float, None}
             The average action potential width. Returns None if there are
             no spikes in the model result.
         """
@@ -400,7 +400,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
 
     def accommodation_index(self, time, spikes, info):
-        """
+        r"""
         The accommodation index.
 
         The accommodation index is the average of the difference in length of
@@ -419,9 +419,24 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Returns
         -------
         time : None
-        values : {float, int, None}
+        accommodation_index : {float, None}
             The accommodation index. Returns None if there are
             less than two spikes in the model result.
+
+        Notes
+        -----
+        The accommodation index is defined as:
+
+        .. math::
+
+            A = \frac{1}{N-k-1} \sum_{i=k}^N \frac{\text{ISI}_i - \text{ISI}_{i-1}}{\text{ISI}_i + \text{ISI}_{i-1}},
+
+        where ISI is the interspike interval, N the number of spikes, and
+        k is defined as:
+
+        .. math::
+
+            k = \min \left\{4, \frac{\text{Number of ISIs}}{5}\right\}.
         """
 
         N = spikes.nr_spikes

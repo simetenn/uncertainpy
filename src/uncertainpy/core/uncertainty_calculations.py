@@ -1026,7 +1026,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is 3.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if point collocation is
-            used. If None, ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            used. If None, `nr_collocation_nodes` = 2* number of expansion factors + 2.
             Default is None.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method, if pseudo-spectral
@@ -1215,10 +1215,10 @@ class UncertaintyCalculations(ParameterBase):
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
-            6. ``data["model/features"].mean``
-            7. ``data["model/features"].variance``
-            8. ``data["model/features"].percentile_5``
-            9. ``data["model/features"].percentile_95``
+            5. ``data["model/features"].mean``
+            6. ``data["model/features"].variance``
+            7. ``data["model/features"].percentile_5``
+            8. ``data["model/features"].percentile_95``
 
         In the quasi-Monte Carlo method we quasi-randomly draw 10**3 (by default)
         parameter samples using the Hammersley sequence. We evaluate the model

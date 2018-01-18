@@ -5,6 +5,43 @@ import numpy as np
 
 
 class Spike:
+    """
+    A single spike found in a voltage trace.
+
+    Parameters
+    ----------
+    time : array_like
+        The time array of the spike.
+    V : array_like
+        The voltage array of the spike.
+    time_spike : {float, int}
+        The timing of the peak of the spike.
+    V_spike : {float, int}
+        The voltage at the peak of the spike.
+    global_index : int
+        Index of the spike peak in the simulation.
+    xlabel : str, optional
+        Label for the x-axis.
+    ylabel : str, optional
+        Label for the y-axis.
+
+    Attributes
+    ----------
+    time : array_like
+        The time array of the spike.
+    V : array_like
+        The voltage array of the spike.
+    time_spike : {float, int}
+        The timing of the peak of the spike.
+    V_spike : {float, int}
+        The voltage at the peak of the spike.
+    global_index : int
+        Index of the spike peak in the simulation.
+    xlabel : str, optional
+        Label for the x-axis.
+    ylabel : str, optional
+        Label for the y-axis.
+    """
     def __init__(self, time, V, time_spike, V_spike, global_index,
                  xlabel="", ylabel=""):
         self.time = time
@@ -20,6 +57,16 @@ class Spike:
 
 
     def plot(self, save_name=None):
+        """
+        Plot the spike.
+
+        Parameters
+        ----------
+        save_name : {str, None}
+            Name of the plot file. If None, the plot is shown instead of saved
+            to disk.
+            Default is None.
+        """
         prettyPlot(self.time, self.V,
                    title="Spike",
                    xlabel=self.xlabel,
@@ -34,13 +81,62 @@ class Spike:
 
 
 class Spikes:
+    """
+    Finds spikes in the given voltage trace and is a container for the resulting
+    Spike objects.
+
+    Parameters
+    ----------
+    time : array_like
+        The time of the voltage trace.
+    V : array_like
+        The voltage trace.
+    threshold : {int, "auto"}
+        The threshold for what is considered a spike. If the voltage trace rise
+        above and then fall below this threshold it is considered a spike. If
+        "auto" the threshold is set to the standard deviation of the voltage trace.
+        Default is -30.
+    extended_spikes : bool
+        If the spikes should be extended past the threshold, until the
+        derivative of the voltage trace is below 0.5.
+        Default is False.
+    xlabel : str, optional
+        Label for the x-axis.
+    ylabel : str, optional
+        Label for the y-axis.
+
+    Attributes
+    ----------
+    spikes : list
+        A list of Spike objects.
+    nr_spikes : int
+        The number of spikes.
+    xlabel : str, optional
+        Label for the x-axis.
+    ylabel : str, optional
+        Label for the y-axis.
+
+    Notes
+    -----
+    The spikes are found by finding where the voltage trace goes above the
+    threshold, and then later falls below this threshold. The spike is
+    considered to be everything within this interval.
+
+    The spike can be extended. If `extended_spikes` is True, the spike is
+    extended around the above area until the derivative of the voltage trace
+    falls below 0.5.
+
+    See also
+    --------
+    Spike : The class for a single spike.
+    find_spikes : Finding spikes in the voltage trace.
+    """
     def __init__(self,
                  time=None,
                  V=None,
                  threshold=-30,
                  extended_spikes=False,
                  xlabel="",
-
                  ylabel=""):
         self.spikes = []
         self.nr_spikes = 0
@@ -53,20 +149,80 @@ class Spikes:
 
 
     def __iter__(self):
+        """
+        Iterate over all spikes.
+
+        Yields
+        ------
+        Spike object
+            A spike object.
+        """
         for spike in self.spikes:
             yield spike
 
 
     def __len__(self):
+        """
+        Find the number of spikes.
+
+        Returns
+        -------
+        int
+            The number of spikes.
+        """
         return self.nr_spikes
 
 
     def __getitem__(self, i):
+        """
+        Return spike number `i`.
+
+        Parameters
+        ----------
+        i: int
+         Spike number `i`.
+
+        Returns
+        -------
+        Spike object
+            The spike object number `i`.
+        """
         return self.spikes[i]
 
 
     def find_spikes(self, time, V, threshold=-30, extended_spikes=False):
+        """
+        Finds spikes in the given voltage trace.
 
+        Parameters
+        ----------
+        time : array_like
+            The time of the voltage trace.
+        V : array_like
+            The voltage trace.
+        threshold : {int, "auto"}
+            The threshold for what is considered a spike. If the voltage trace rise
+            above and then fall below this threshold it is considered a spike. If
+            "auto" the threshold is set to the standard deviation of the voltage trace.
+            Default is -30.
+        extended_spikes : bool
+            If the spikes should be extended past the threshold, until the
+            derivative of the voltage trace is below 0.5.
+            Default is False.
+
+        Notes
+        -----
+        The spikes are added to ``self.spikes`` and ``self.nr_spikes`` is
+        updated.
+
+        The spikes are found by finding where the voltage trace goes above the
+        threshold, and then later falls below this threshold. The spike is
+        considered to be everything within this interval.
+
+        The spike can be extended. If `extended_spikes` is True, the spike is
+        extended around the above area until the derivative of the voltage trace
+        falls below 0.5.
+        """
         min_dist_from_peak = 1
         derivative_cutoff = 0.5
 
@@ -127,6 +283,20 @@ class Spikes:
 
 
     def consecutive(self, data):
+        """
+        Returns the first consecutive array, from a discontinuous index array
+        such as [2, 3, 4, 5, 12, 13, 14], which returns [2, 3, 4, 5]
+
+        Parameters
+        ----------
+        data : array_like
+
+        Returns
+        -------
+        array_like
+            The first consecutive array
+        """
+
         result = [data[0]]
         d_prev = data[0]
         for d in data[1:]:
@@ -138,6 +308,16 @@ class Spikes:
 
 
     def plot(self, save_name=None):
+        """
+        Plot all spikes.
+
+        Parameters
+        ----------
+        save_name : {str, None}
+            Name of the plot file. If None, the plot is shown instead of saved
+            to disk.
+            Default is None.
+        """
         V_max = []
         V_min = []
         time_max = []

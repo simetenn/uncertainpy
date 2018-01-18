@@ -84,7 +84,7 @@ class GeneralNetworkFeatures(Features):
 
     See also
     --------
-    uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
+    GeneralNetworkFeatures.reference_feature : reference_feature showing the requirements of a feature function.
     """
     def __init__(self,
                  new_features=None,
@@ -106,6 +106,7 @@ class GeneralNetworkFeatures(Features):
                                                      verbose_filename=verbose_filename)
 
         self.units = units
+
 
     def preprocess(self, simulation_end, spiketrains):
         """
@@ -165,13 +166,10 @@ class GeneralNetworkFeatures(Features):
 
         Parameters
         ----------
-        time : {None, numpy.nan, array_like}
-            Time values of the model. If no time values it is None or numpy.nan.
-        spikes : Spikes
-            Spikes found in the model result.
-        info : dictionary
-            A dictionary with info["stimulus_start"] and
-            info["stimulus_end"] set.
+        simulation_end : float
+            The simulation end time
+        neo_spiketrains : list
+            A list of Neo spiketrains.
 
         Returns
         -------

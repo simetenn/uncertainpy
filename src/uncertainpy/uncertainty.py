@@ -10,9 +10,6 @@ from .data import Data
 from .core.base import ParameterBase
 
 
-#  Figures are always saved on the format:
-#  figure_folder/parameter_value-that-is-plotted.figure-extension
-
 class UncertaintyQuantification(ParameterBase):
     """
     Performing an uncertainty quantification and sensitivity analysis of a model
@@ -240,7 +237,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
-            ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            `nr_collocation_nodes` = 2* number of expansion factors + 2.
             Default is None.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method, if polynomial chaos with
@@ -524,7 +521,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
-            ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            `nr_collocation_nodes` = 2* number of expansion factors + 2.
             Default is None.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method, if polynomial chaos with
@@ -776,7 +773,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
-            ``nr_collocation_nodes` = 2* number of expansion factors + 2`.
+            `nr_collocation_nodes` = 2* number of expansion factors + 2.
             Default is None.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method, if polynomial chaos with
@@ -1114,5 +1111,6 @@ class UncertaintyQuantification(ParameterBase):
 
         else:
             raise ValueError('plot must one of: "condensed_sensitivity_1", '
-                             '"condensed_sensitivity_t", "condensed_no_sensitivity" "all", "evaluations", None}')
+                             '"condensed_sensitivity_t", "condensed_no_sensitivity" '
+                             '"all", "evaluations", None}')
 
