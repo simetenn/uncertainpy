@@ -23,6 +23,10 @@ from ..utils import create_logger, str_to_latex, list_to_latex
 
 
 class PlotUncertainty(object):
+    """
+    Plotting the results from the uncertainty quantification and sensitivity
+    analysis.
+    """
     def __init__(self,
                  filename=None,
                  folder="figures/",

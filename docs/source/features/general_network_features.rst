@@ -1,5 +1,3 @@
-.. _features:
-
 General network features
 ========================
 

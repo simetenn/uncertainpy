@@ -1,5 +1,3 @@
-.. _features:
-
 Features, main class
 ====================
 

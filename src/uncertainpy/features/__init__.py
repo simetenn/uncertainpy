@@ -1,3 +1,6 @@
+"""
+Test
+"""
 __all__ = ["Features",
            "GeneralSpikingFeatures",
            "SpikingFeatures",

@@ -14,7 +14,7 @@ class NestModel(Model):
     """
     Class for Nest simulator models.
 
-    The ``run(**parameters)`` method must either be implemented or set to a
+    The ``run`` method must either be implemented or set to a
     function, and is responsible for running the Nest model.
 
     Parameters
@@ -87,7 +87,7 @@ class NestModel(Model):
 
         Notes
         -----
-        The ``run(**parameters)`` method must either be implemented or set to a
+        The ``run`` method must either be implemented or set to a
         function. Both options have the following requirements:
 
         1. **Receive parameters as input**.

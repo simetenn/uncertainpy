@@ -1,6 +1,8 @@
 Core
 ====
 
+.. automodule:: uncertainpy.core
+
 .. toctree::
     :maxdepth: 1
 

@@ -1,14 +1,17 @@
-.. _parameters:
+
+Parameters
+==========
+
 
 Parameter
-=========
+---------
 
 .. autoclass:: uncertainpy.Parameter
     :members:
     :special-members: __str__
 
 Parameters
-==========
+----------
 
 .. autoclass:: uncertainpy.Parameters
     :members:

@@ -9,7 +9,7 @@ class NeuronModel(Model):
     """
     Class for Neuron simulator models.
 
-    Loads a Neuron simulation, run it, and measures the voltage in the soma.
+    Loads a Neuron simulation, runs it, and measures the voltage in the soma.
 
     Parameters
     ----------

@@ -1,5 +1,3 @@
-.. _features:
-
 Electrophys Feature Extraction Library (eFEL)
 =============================================
 

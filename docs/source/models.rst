@@ -1,17 +1,11 @@
 Models
 ======
 
-.. autoclass:: uncertainpy.models.Model
-   :members:
-   :inherited-members:
-   :undoc-members:
+.. automodule:: uncertainpy.models
 
-.. autoclass:: uncertainpy.models.NeuronModel
-   :members:
-   :inherited-members:
-   :undoc-members:
+.. toctree::
+    :maxdepth: 1
 
-.. autoclass:: uncertainpy.models.NestModel
-   :members:
-   :inherited-members:
-   :undoc-members:
+    models/main_model
+    models/neuron_model
+    models/nest_model

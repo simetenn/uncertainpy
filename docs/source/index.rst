@@ -8,6 +8,8 @@ Welcome to Uncertainpy's documentation!
     installation
     quickstart
 
+    examples
+
     uncertainty_estimation
 
     models

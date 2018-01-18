@@ -2,9 +2,10 @@ import numpy as np
 
 class Model(object):
     """
-    Class for storing the model to perform uncertainty quantification on.
+    Class for storing the model to perform uncertainty quantification and
+    sensitivity analysis on.
 
-    The ``run(**parameters)`` method must either be implemented or set to a
+    The ``run`` method must either be implemented or set to a
     function, and is responsible for running the model.
     If you want to calculate features directly from the original model results,
     but still need to postprocess the model results to perform the
@@ -98,7 +99,7 @@ class Model(object):
 
         Notes
         -----
-        The ``run(**parameters)`` method must either be implemented or set to a
+        The ``run`` method must either be implemented or set to a
         function. Both options have the following requirements:
 
         1. **Receive parameters as input**.
@@ -173,34 +174,6 @@ class Model(object):
         uncertainpy.model.Model.postprocess : Postprocessing of model result.
         """
         return self._run
-
-# Old docstring
-# 1. ``run(**parameters)`` takes a number of named arguments which are
-# the parameters to the model. These parameters must be assigned to
-# the model, either setting them with Python, or
-# assigning them to the simulator.
-
-# 2. ``run(**parameters)`` must return the time values (`time`) or equivalent
-# and the model result (`values`). If the model have no time values,
-# return None or numpy.nan instead. The first two values returned must be
-# `time`, and `values`. Additionally, any number of info objects can be
-# returned after `time`, and `values`. These info objects are optional and are
-# passed on to ``model.postprocess``, ``features.preprocess``, and feature
-# calculations.
-
-# The model does not need to be implemented in Python, you can use any
-# model/simulator as long as you are able to set the model parameters of
-# the model from the run method Python and return the results from the
-# model into the run method.
-
-# The model results `time` and `values` are used to calculate the features,
-# as well as the optional `info` objects returned.
-
-# The model results must either be regular, be able to be interpolated, or
-# be able to be postprocessed to a regular form, or a form that can
-# be interpolated. This is because the uncertainty quantification methods
-# needs results with the same number of points for each set of parameters
-# to be able to perform the uncertainty quantification.
 
 
     @run.setter
