@@ -45,8 +45,8 @@ class UncertaintyQuantification(ParameterBase):
     CPUs : int
         The number of CPUs used when calculating the model and features.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored.
         Default is `"info"`.
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.

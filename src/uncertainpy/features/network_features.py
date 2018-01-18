@@ -8,7 +8,6 @@ try:
 except ImportError:
     prerequisites = False
 
-
 from .general_network_features import GeneralNetworkFeatures
 
 
@@ -456,7 +455,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def corrcoef(self, simulation_end, spiketrains):
         """
-        Calculate the pairwise Pearson’s correlation coefficients.
+        Calculate the pairwise Pearson's correlation coefficients.
 
         Parameters
         ----------
@@ -469,7 +468,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         -------
         time : None
         values : 2D array
-            The pairwise Pearson’s correlation coefficients.
+            The pairwise Pearson's correlation coefficients.
         """
         binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
                                                           binsize=self.corrcoef_bin_size*self.units)

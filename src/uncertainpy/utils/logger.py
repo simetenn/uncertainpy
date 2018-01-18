@@ -4,7 +4,9 @@ import sys
 
 
 class MyFormatter(logging.Formatter):
-
+    """
+    The logging formater.
+    """
     debug_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
     info_format = "%(message)s"
     warning_format = "%(levelname)s - %(message)s"
@@ -32,17 +34,40 @@ class MyFormatter(logging.Formatter):
 
 
 class TqdmLoggingHandler(logging.StreamHandler):
+    """
+    Set logging so logging to  stream works with Tqdm,
+    logging now uses tqdm.write.
+    """
     def emit(self, record):
         msg = self.format(record)
         tqdm.tqdm.write(msg)
 
 
-def create_logger(logger_level, logger_filename=None, logger_name="logger"):
-    numeric_level = getattr(logging, logger_level.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError('Invalid log level: %s' % logger_level)
+def create_logger(level, filename=None, name="logger"):
+    """
+    Create a logger object.
 
-    logger = logging.getLogger(logger_name)
+    Parameters
+    ----------
+    level : {"info", "debug", "warning", "error", "critical"}
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored.
+    filename : str
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+    name : str
+        Name of the logger.
+
+    Returns
+    -------
+    logger : Logger object
+        The logger object.
+    """
+    numeric_level = getattr(logging, level.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: %s' % level)
+
+    logger = logging.getLogger(name)
     logger.setLevel(numeric_level)
 
     logging.captureWarnings(True)
@@ -50,7 +75,7 @@ def create_logger(logger_level, logger_filename=None, logger_name="logger"):
     # Delete possible handlers already existing
     logger.handlers = []
 
-    if logger_filename is None:
+    if filename is None:
         # console = logging.StreamHandler(stream=sys.stdout)
         console = TqdmLoggingHandler()
         console.setLevel(numeric_level)
@@ -58,7 +83,7 @@ def create_logger(logger_level, logger_filename=None, logger_name="logger"):
 
         logger.addHandler(console)
     else:
-        handler = logging.FileHandler(filename=logger_filename, mode='w')
+        handler = logging.FileHandler(filename=filename, mode='w')
         handler.setLevel(numeric_level)
         handler.setFormatter(MyFormatter())
 
