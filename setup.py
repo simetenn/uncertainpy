@@ -9,9 +9,9 @@ except ImportError:
 import platform
 
 if not platform.system() == "Linux":
-    print("Warning: UncertainPy not tested for current operating system")
+    print("Warning: Uncertainpy not tested for current operating system")
 
-name = "testme1"
+name = "testme2"
 
 uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                    "multiprocess", "numpy", "scipy", "seaborn"]
@@ -33,7 +33,7 @@ long_description = "\n".join(long_description.split("\n")[4:])
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name=name,
-      version="0.9.4",
+      version="0.9.0",
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
     #   description='Uncertainty quantification and sensitivity analysis',

@@ -9,8 +9,8 @@ from .features import Features
 
 class EfelFeatures(Features):
     """
-    Class for calculating the mean value of each feature in the Efel feature
-    library, see: https://github.com/BlueBrain/eFEL.
+    Calculating the mean value of each feature in the Electrophys Feature
+    Extraction Library (eFEL), see: https://github.com/BlueBrain/eFEL.
 
     Parameters
     ----------

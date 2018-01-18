@@ -9,7 +9,7 @@ from .base import ParameterBase
 
 class UncertaintyCalculations(ParameterBase):
     """
-    Performing the calculations for the uncertainty quantification and
+    Perform the calculations for the uncertainty quantification and
     sensitivity analysis.
 
     This class performs the calculations for the uncertainty quantification and
