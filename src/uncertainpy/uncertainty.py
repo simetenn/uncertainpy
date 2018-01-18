@@ -975,7 +975,7 @@ class UncertaintyQuantification(ParameterBase):
         uncertainpy.Data
         uncertainpy.plotting.PlotUncertainty
         uncertainpy.Parameters
-       uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
+        uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
