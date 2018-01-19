@@ -45,8 +45,8 @@ The following external simulators are required for specific models:
 
 And following Python packages are required for specific features:
 
-* eFEL features: efel
-* Network features: elephant, neo, quantities
+* `uncertainpy.EfelFeatures`: efel
+* `uncertainpy.NetworkFeatures`: elephant, neo, quantities
 
 ## Example of Uncertainpy in use
 
