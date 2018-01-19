@@ -18,7 +18,7 @@ class UncertaintyQuantification(ParameterBase):
     It implements both quasi-Monte Carlo methods and polynomial chaos expansions
     using either point collocation or the pseudo-spectral method. Both of the
     polynomial chaos expansion methods have support for the rosenblatt
-    transformation to handle dependent variables.
+    transformation to handle dependent input parameters.
 
     Parameters
     ----------

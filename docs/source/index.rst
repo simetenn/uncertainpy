@@ -1,6 +1,8 @@
 Welcome to Uncertainpy's documentation!
 =======================================
 
+.. automodule:: uncertainpy
+
 .. toctree::
     :maxdepth: 1
     :caption: Content:
