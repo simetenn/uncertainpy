@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.com/simetenn/uncertainpy.svg?token=aSp3vyuQyzq8iEpgpnpb&branch=master)](https://travis-ci.com/simetenn/uncertainpy)
 [![codecov](https://codecov.io/gh/simetenn/uncertainpy/branch/master/graph/badge.svg?token=BFXnBcPbMA)](https://codecov.io/gh/simetenn/uncertainpy)
 
+![img](https://github.com/simetenn/uncertainpy/blob/master/logo/logo.svg)
+
 # Uncertainty quantification and sensitivity analysis
 
 Uncertainpy is a library for performing uncertainty quantification and sensitivity
@@ -49,8 +51,8 @@ And following Python packages are required for specific features:
 ## Example of Uncertainpy in use
 
 Examples for how to use Uncertainpy can be found in the [examples](https://github.com/simetenn/uncertainpy/tree/master/examples) folder as well as in the [documentation]().
-
-Here is an example that shows how to perform uncertainty quantification and sensitivity analysis of a cooling coffee cup.
+Here is an example that shows how to perform uncertainty quantification and
+sensitivity analysis of a cooling coffee cup.
 It follows Newtons law of cooling
 
 This example is found in [examples/coffee_cup](https://github.com/simetenn/uncertainpy/tree/master/examples/coffee_cup) .
@@ -62,7 +64,8 @@ follows Newton’s law of cooling:
 
 This equation tells how the temperature ![img](http://latex.codecogs.com/svg.latex?T)
 of the coffee cup changes with time ![img](http://latex.codecogs.com/svg.latex?t),
-when it is in an environment with temperature ![img](http://latex.codecogs.com/svg.latex?T_{env}).
+when it is in an environment with temperature
+![img](http://latex.codecogs.com/svg.latex?T_{env}).
 ![img](http://latex.codecogs.com/svg.latex?\kappa}) is a proportionality
 constant that is characteristic of the system and regulates how fast the coffee
 cup radiates heat to the environment.
