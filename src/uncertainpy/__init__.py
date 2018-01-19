@@ -1,3 +1,8 @@
+"""
+Uncertainpy is a a library for easily and quickly performing uncertainty
+quantifications and sensitivity analysis
+"""
+
 from .data import Data, DataFeature
 from .distribution import uniform, normal
 from .parameters import Parameter, Parameters

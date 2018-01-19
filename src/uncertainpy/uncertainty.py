@@ -12,15 +12,13 @@ from .core.base import ParameterBase
 
 class UncertaintyQuantification(ParameterBase):
     """
-    Performing an uncertainty quantification and sensitivity analysis of a model
+    Perform an uncertainty quantification and sensitivity analysis of a model
     and features of the model.
 
-    This class performs the uncertainty quantification and sensitivity analysis
-    of the model and features of the model. It implements both quasi-Monte Carlo
-    methods and polynomial chaos expansions using either point collocation
-    or the pseudo-spectral method. Both of the polynomial chaos expansion
-    methods have support for the rosenblatt transformation to handle dependent
-    variables.
+    It implements both quasi-Monte Carlo methods and polynomial chaos expansions
+    using either point collocation or the pseudo-spectral method. Both of the
+    polynomial chaos expansion methods have support for the rosenblatt
+    transformation to handle dependent variables.
 
     Parameters
     ----------
@@ -29,7 +27,7 @@ class UncertaintyQuantification(ParameterBase):
         Model.run.
         Default is None.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}
-        Either None, a Parameters instance or a list the parameters that should be created.
+        Either None, a Parameters instance or a list of the parameters that should be created.
         The two lists are similar to the arguments sent to Parameters.
         Default is None.
     features : {None, Features or Features subclass instance, list of feature functions}, optional

@@ -21,7 +21,7 @@ class RunModel(ParameterBase):
         Model.run.
         Default is None.
     parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
-        Either None, a Parameters instance or a list the parameters that should be created.
+        Either None, a Parameters instance or a list of the parameters that should be created.
         The two lists are similar to the arguments sent to Parameters.
         Default is None.
     features : {None, Features or Features subclass instance, list of feature functions}, optional
