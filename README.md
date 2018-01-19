@@ -60,11 +60,12 @@ follows Newton’s law of cooling:
 <!-- \frac{dT(t)}{dt} = -\kappa(T(t) - T_{env}) -->
 ![img](http://latex.codecogs.com/svg.latex?\frac{dT(t)}{dt}%3D-\kappa(T(t)-T_{env}))
 
-This equation tells how the temperature $T$ of the coffee cup changes
-with time ![img](http://latex.codecogs.com/svg.latex?t), when it is in an environment with temperature ![img](http://latex.codecogs.com/svg.latex?T_{env}).
-![img](http://latex.codecogs.com/svg.latex?\kappa}) is a proportionality constant that is characteristic
-of the system and regulates how fast the coffee cup radiates heat to the
-environment.
+This equation tells how the temperature ![img](http://latex.codecogs.com/svg.latex?T)
+of the coffee cup changes with time ![img](http://latex.codecogs.com/svg.latex?t),
+when it is in an environment with temperature ![img](http://latex.codecogs.com/svg.latex?T_{env}).
+![img](http://latex.codecogs.com/svg.latex?\kappa}) is a proportionality
+constant that is characteristic of the system and regulates how fast the coffee
+cup radiates heat to the environment.
 For simplicity we set the initial temperature to a fixed value, ![img](http://latex.codecogs.com/svg.latex?%24T_0%3D95^\circ\text{C}%24),
 and let ![img](http://latex.codecogs.com/svg.latex?\kappa}) and ![img](http://latex.codecogs.com/svg.latex?T_{env}) be uncertain input parameters.
 
@@ -117,7 +118,6 @@ distributions:
 ![img](http://latex.codecogs.com/svg.latex?\begin{align*}%0D%0A\kappa%26%3D\mathrm{Uniform}(0.025%2C0.075)%2C\\\\%0D%0AT_{env}%26%3D\mathrm{Uniform}(15%2C25).%0D%0A\end{align*})
 
 
-
 We use Chaospy to create the distributions.
 
     # Create the distributions
@@ -143,48 +143,6 @@ which is the default option of `quantify`:
     uncertainty.quantify()
 
 
-Complete version here
-
-    import uncertainpy as un
-    import chaospy as cp
-    import numpy as np
-    from scipy.integrate import odeint
-
-    # Create the coffee cup run function
-    def coffee_cup(kappa, T_env):
-        # Initial temperature and time
-        time = np.linspace(0, 200, 150)
-        T_0 = 95
-
-        # The equation describing the model
-        def f(T, time, kappa, T_env):
-            return -kappa*(T - T_env)
-
-        # Solving the equation by integration.
-        temperature = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
-
-        # Return time and model results
-        return time, temperature
-
-
-    # Create a model from coffee_cup function and add labels
-    model = un.Model(run_function=coffee_cup,
-                     labels=["Time [s]", "Temperature [C]"])
-
-    # Create the distributions
-    kappa_dist = cp.Uniform(0.025, 0.075)
-    T_env_dist = cp.Uniform(15, 25)
-
-    # Define a parameter list and use it to create the Parameters
-    parameter_list = [["kappa", None, kappa_dist],
-                      ["T_env", None, T_env_dist]]
-    parameters = un.Parameters(parameter_list)
-
-    # Perform the uncertainty quantification
-    uncertainty = un.UncertaintyQuantification(model=model,
-                                               parameters=parameters)
-    uncertainty.quantify()
-
 ## Documentation
 
 The documentation for Uncertainpy can be found [here](),
@@ -192,4 +150,4 @@ and an article on Uncertainpy can be found [here]().
 
 ## Citation
 
-If you use Uncertainpy in you work, please cite this paper.
+If you use Uncertainpy in you work, please cite the [Uncertainpy paper]().
