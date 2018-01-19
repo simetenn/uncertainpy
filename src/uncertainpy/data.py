@@ -9,13 +9,14 @@ from .utils import create_logger
 
 class DataFeature(collections.MutableMapping):
     """
-    Store data calculated from the uncertainty quantification and sensitivity
-    analysis for a single model/feature.
+    Store the results of each statistical metric calculated from the uncertainty
+    quantification and sensitivity analysis for a single model/feature.
 
-    The data types can be retrieved as attributes. Additionally, DataFeature
+    The statistical metrics can be retrieved as attributes. Additionally, DataFeature
     implements all standard dictionary methods, such as items, value, contains
     and so implemented. This means it can be indexed as a regular dictionary
-    with the data type names as keys and returns the values for that data type.
+    with the statistical metric names as keys and returns the values for that
+    statistical metric.
 
     Parameters
     ----------
@@ -82,7 +83,26 @@ class DataFeature(collections.MutableMapping):
         Normalized sum of total effect sensitivity of
         the feature or model results.
     labels : list
-        A list of labels for plotting, ``[x-axis, y-axis, z-axis]``
+        A list of labels for plotting, ``[x-axis, y-axis, z-axis]``.
+
+    Notes
+    -----
+    The statistical metrics calculated in Uncertainpy are:
+
+        * ``"values"`` - the results from the model/feature evaluations.
+        * ``"time"`` - the time of the model/feature.
+        * ``"mean"`` - the mean of the model/feature.
+        * ``"variance"``. - the variance of the model/feature.
+        * ``"percentile_5"`` - the 5th percentile of the model/feature.
+        * ``"percentile_95"`` - the 95th percentile of the model/feature.
+        * ``"sensitivity_1"`` - the first order Sobol indices (sensitivity) of
+          the model/feature.
+        * ``"sensitivity_1_sum"`` - the total order Sobol indices (sensitivity)
+          of the model/feature.
+        * ``"sensitivity_t"`` - the normalized sum of the first order Sobol
+          indices (sensitivity) of the model/feature.
+        * ``"sensitivity_t_sum"`` - the normalized sum of the total order Sobol
+          indices (sensitivity) of the model/feature.
     """
     def __init__(self,
                  name,
@@ -111,87 +131,87 @@ class DataFeature(collections.MutableMapping):
         self.sensitivity_t_sum = sensitivity_t_sum
         self.labels = labels
 
-        self._built_in_data_types = ["values", "time", "mean", "variance",
+        self._built_in_statistical_metrics = ["values", "time", "mean", "variance",
                                      "percentile_5", "percentile_95",
                                      "sensitivity_1", "sensitivity_1_sum",
                                      "sensitivity_t", "sensitivity_t_sum"]
 
         self._information = ["name", "labels"]
 
-    def __getitem__(self, data_type):
+    def __getitem__(self, statistical_metric):
         """
-        Get the data for `data_type`.
+        Get the data for `statistical_metric`.
 
         Parameters
         ----------
-        data_type: str
-            Name of data_type.
+        statistical_metric: str
+            Name of the statistical metric.
 
         Returns
         -------
         {array_like, None}
-            The data for `data_type`.
+            The data for `statistical_metric`.
         """
-        return getattr(self, data_type)
+        return getattr(self, statistical_metric)
 
 
-    def get_data_types(self):
+    def get_metrics(self):
         """
-        Get the all data types that contain data (not None).
+        Get the names of all statistical metrics that contain data (not None).
 
         Returns
         -------
         list
-           List of all data types that contain data.
+           List of the names of all statistical metric that contain data.
         """
-        data_types = []
+        statistical_metrics = []
 
-        for data_type in dir(self):
-            if not data_type.startswith('_') and not callable(self[data_type]) \
-                and self[data_type] is not None and data_type not in self._information:
-                data_types.append(data_type)
+        for statistical_metric in dir(self):
+            if not statistical_metric.startswith('_') and not callable(self[statistical_metric]) \
+                and self[statistical_metric] is not None and statistical_metric not in self._information:
+                statistical_metrics.append(statistical_metric)
 
-        return data_types
+        return statistical_metrics
 
 
-    def __setitem__(self, data_type, data):
+    def __setitem__(self, statistical_metric, data):
         """
-        Set the data for `data_type`.
+        Set the data for the statistical metric.
 
         Parameters
         ----------
-        data_type: str
-            Name of data_type.
+        statistical_metric: str
+            Name of the statistical metric.
         data : {array_like, None}
-            The data for `data_type`.
+            The data for the statistical metric.
         """
-        setattr(self, data_type, data)
+        setattr(self, statistical_metric, data)
 
 
     def __iter__(self):
         """
-        Iterate over each data type with data.
+        Iterate over each statistical metric with data.
 
         Yields
         ------
         str
-            Name of data type.
+            Name of the statistical metric.
         """
-        for data_type in self.get_data_types():
-            yield data_type
+        for statistical_metric in self.get_metrics():
+            yield statistical_metric
 
 
 
-    def __delitem__(self, data_type):
+    def __delitem__(self, statistical_metric):
         """
-        Delete data for `data_type` (set to None).
+        Delete data for `statistical_metric` (set to None).
 
         Parameters
         ----------
-        data_type: str
-            Name of data type.
+        statistical_metric: str
+            Name of the statistical metric.
         """
-        setattr(self, data_type, None)
+        setattr(self, statistical_metric, None)
 
 
     def __len__(self):
@@ -203,24 +223,24 @@ class DataFeature(collections.MutableMapping):
         int
             The number of data types with data.
         """
-        return len(self.get_data_types())
+        return len(self.get_metrics())
 
 
-    def __contains__(self, data_type):
+    def __contains__(self, statistical_metric):
         """
-        Check if `data_type` exists and contains data (not None).
+        Check if `statistical_metric` exists and contains data (not None).
 
         Parameters
         ----------
-        data_type: str
-            Name of data type.
+        statistical_metric: str
+            Name of the statistical metric.
 
         Returns
         -------
         bool
-            If `data_type` exists and contains data (not None)
+            If `statistical_metric` exists and contains data (not None)
         """
-        if data_type not in self.get_data_types() or self[data_type] is None:
+        if statistical_metric not in self.get_metrics() or self[statistical_metric] is None:
             return False
         else:
             return True
@@ -249,13 +269,13 @@ class DataFeature(collections.MutableMapping):
 
 class Data(collections.MutableMapping):
     """
-    Store data calculated from the uncertainty quantification and sensitivity
-    analysis for each model/features.
+    Store the results of each statistical metric calculated from the uncertainty
+    quantification and sensitivity analysis for each model/features.
 
     Has all standard dictionary methods, such as items, value, contains
     and so implemented. Can be indexed as a regular dictionary with
     model/feature names as keys and returns a DataFeature object that contains
-    the data for all data types for that model/feature.
+    the data for all statistical metrics for that model/feature.
 
     Parameters
     ----------
@@ -281,6 +301,27 @@ class Data(collections.MutableMapping):
         Logger object responsible for logging to screen or file.
     data_information : list
         List of attributes containing additional information.
+
+
+    Notes
+    -----
+    The statistical metrics calculated for each feature and model in Uncertainpy
+    are:
+
+        * ``"values"`` - the results from the model/feature evaluations.
+        * ``"time"`` - the time of the model/feature.
+        * ``"mean"`` - the mean of the model/feature.
+        * ``"variance"``. - the variance of the model/feature.
+        * ``"percentile_5"`` - the 5th percentile of the model/feature.
+        * ``"percentile_95"`` - the 95th percentile of the model/feature.
+        * ``"sensitivity_1"`` - the first order Sobol indices (sensitivity) of
+          the model/feature.
+        * ``"sensitivity_1_sum"`` - the total order Sobol indices (sensitivity)
+          of the model/feature.
+        * ``"sensitivity_t"`` - the normalized sum of the first order Sobol
+          indices (sensitivity) of the model/feature.
+        * ``"sensitivity_t_sum"`` - the normalized sum of the total order Sobol
+          indices (sensitivity) of the model/feature.
 
     See also
     --------
@@ -317,7 +358,7 @@ class Data(collections.MutableMapping):
         Returns
         -------
         str
-           A readable string of all parameter objects.
+           A human readable string of all parameter objects.
         """
 
         def border(msg):
@@ -341,9 +382,9 @@ class Data(collections.MutableMapping):
             output_str += "=== labels ===\n"
             output_str += "{data}\n\n".format(data=self[feature].labels)
 
-            for data_type in self[feature]:
-                output_str += "=== {data_type} ===\n".format(data_type=data_type)
-                output_str += "{data}\n\n".format(data=self[feature][data_type])
+            for statistical_metric in self[feature]:
+                output_str += "=== {statistical_metric} ===\n".format(statistical_metric=statistical_metric)
+                output_str += "{data}\n\n".format(data=self[feature][statistical_metric])
 
 
         return output_str.strip()
@@ -515,8 +556,8 @@ class Data(collections.MutableMapping):
             for feature in self:
                 group = f.create_group(feature)
 
-                for data_type in self[feature]:
-                    group.create_dataset(data_type, data=self[feature][data_type])
+                for statistical_metric in self[feature]:
+                    group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
                 group.create_dataset("labels", data=self[feature].labels)
 
@@ -544,8 +585,8 @@ class Data(collections.MutableMapping):
 
             for feature in f:
                 self.add_features(str(feature))
-                for data_type in f[feature]:
-                    self[feature][data_type] = f[feature][data_type][()]
+                for statistical_metric in f[feature]:
+                    self[feature][statistical_metric] = f[feature][statistical_metric][()]
 
 
     def remove_only_invalid_features(self):

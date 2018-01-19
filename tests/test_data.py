@@ -21,7 +21,7 @@ class TestDataFeature(unittest.TestCase):
 
         self.data_feature = DataFeature("test")
 
-        self.data_types = ["values", "time", "mean", "variance",
+        self.statistical_metrics = ["values", "time", "mean", "variance",
                            "percentile_5", "percentile_95",
                            "sensitivity_1", "sensitivity_1_sum",
                            "sensitivity_t", "sensitivity_t_sum"]
@@ -34,8 +34,8 @@ class TestDataFeature(unittest.TestCase):
 
 
     def test_getitem(self):
-        for data_type in self.data_types:
-            self.assertIsNone(self.data_feature[data_type])
+        for statistical_metric in self.statistical_metrics:
+            self.assertIsNone(self.data_feature[statistical_metric])
 
         self.assertEqual(self.data_feature["labels"], [])
 
@@ -46,50 +46,50 @@ class TestDataFeature(unittest.TestCase):
 
 
     def test_setitem(self):
-        for data_type in self.data_types:
-            self.data_feature[data_type] = 2
+        for statistical_metric in self.statistical_metrics:
+            self.data_feature[statistical_metric] = 2
 
-        for data_type in self.data_types:
-            self.assertEqual(self.data_feature[data_type], 2)
+        for statistical_metric in self.statistical_metrics:
+            self.assertEqual(self.data_feature[statistical_metric], 2)
 
 
-    def test_get_data_types(self):
-        for data_type in self.data_types:
-            self.data_feature[data_type] = 2
+    def test_get_metrics(self):
+        for statistical_metric in self.statistical_metrics:
+            self.data_feature[statistical_metric] = 2
 
-        self.assertEqual(set(self.data_types), set(self.data_feature.get_data_types()))
+        self.assertEqual(set(self.statistical_metrics), set(self.data_feature.get_metrics()))
 
         self.data_feature.x = 2
 
-        self.assertEqual(set(self.data_types + ["x"]), set(self.data_feature.get_data_types()))
+        self.assertEqual(set(self.statistical_metrics + ["x"]), set(self.data_feature.get_metrics()))
 
 
     def test_delitem(self):
-        for data_type in self.data_types:
-            self.data_feature[data_type] = 2
+        for statistical_metric in self.statistical_metrics:
+            self.data_feature[statistical_metric] = 2
 
-        for data_type in self.data_types:
-            del self.data_feature[data_type]
+        for statistical_metric in self.statistical_metrics:
+            del self.data_feature[statistical_metric]
 
-        self.assertEqual(self.data_feature.get_data_types(), [])
+        self.assertEqual(self.data_feature.get_metrics(), [])
 
 
     def test_iter(self):
-        for data_type in self.data_types:
-            self.data_feature[data_type] = 2
+        for statistical_metric in self.statistical_metrics:
+            self.data_feature[statistical_metric] = 2
 
         result = []
-        for data_type in self.data_feature:
-            result.append(data_type)
+        for statistical_metric in self.data_feature:
+            result.append(statistical_metric)
 
-        self.assertEqual(set(self.data_feature.get_data_types()), set(self.data_types))
+        self.assertEqual(set(self.data_feature.get_metrics()), set(self.statistical_metrics))
 
 
     def test_len(self):
-        for data_type in self.data_types:
-            self.data_feature[data_type] = 2
+        for statistical_metric in self.statistical_metrics:
+            self.data_feature[statistical_metric] = 2
 
-        self.assertEqual(len(self.data_feature), len(self.data_types))
+        self.assertEqual(len(self.data_feature), len(self.statistical_metrics))
 
 
     def test_ndim(self):
@@ -129,7 +129,7 @@ class TestData(unittest.TestCase):
 
         self.data = Data()
 
-        self.data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+        self.statistical_metrics = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
                            "sensitivity_1", "sensitivity_1_sum",
                            "sensitivity_t", "sensitivity_t_sum"]
 
@@ -221,9 +221,9 @@ class TestData(unittest.TestCase):
     def test_save(self):
         self.data.add_features(["feature1d", "TestingModel1d"])
 
-        for data_type in self.data_types:
-            self.data["feature1d"][data_type] = [1., 2.]
-            self.data["TestingModel1d"][data_type] = [3., 4.]
+        for statistical_metric in self.statistical_metrics:
+            self.data["feature1d"][statistical_metric] = [1., 2.]
+            self.data["TestingModel1d"][statistical_metric] = [3., 4.]
 
         self.data["feature1d"]["labels"] = ["xlabel", "ylabel"]
         self.data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
@@ -272,9 +272,9 @@ class TestData(unittest.TestCase):
 
         self.data.load(compare_file)
 
-        for data_type in self.data_types:
-            self.assertTrue(np.array_equal(self.data["feature1d"][data_type], [1., 2.]))
-            self.assertTrue(np.array_equal(self.data["TestingModel1d"][data_type], [3., 4.]))
+        for statistical_metric in self.statistical_metrics:
+            self.assertTrue(np.array_equal(self.data["feature1d"][statistical_metric], [1., 2.]))
+            self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric], [3., 4.]))
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
 
