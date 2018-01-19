@@ -21,10 +21,7 @@ or from source by cloning the Github repository:
     $ cd /path/to/uncertainpy
     $ sudo python setup.py install
 
-Uncertainpy comes with an extensive test suite that can be run with the `test.py` script.
-For how to use test.py run:
-
-    $ python test.py --help
+### Dependencies
 
 Uncertainpy has the following dependencies:
 
@@ -40,13 +37,22 @@ Uncertainpy has the following dependencies:
 Additionally Uncertainpy has a few optional dependencies for specific classes of models and for features of the models.
 The following external simulators are required for specific models:
 
-* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python), a simulator for neurons) .
-* `uncertainpy.NestModel`: Requires [nest](http://www.nest-simulator.org/installation) (with Python), a simulator for network of neurons) .
+* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python), a simulator for neurons.
+* `uncertainpy.NestModel`: Requires [Nest](http://www.nest-simulator.org/installation) (with Python), a simulator for network of neurons.
 
-And following Python packages are required for specific features:
+And the following Python packages are required for specific features:
 
-* `uncertainpy.EfelFeatures`: `efel`
-* `uncertainpy.NetworkFeatures`: `elephant`, `neo`, and `quantities`
+* `uncertainpy.EfelFeatures`: `efel`.
+* `uncertainpy.NetworkFeatures`: `elephant`, `neo`, and `quantities`.
+
+### Test suite
+
+Uncertainpy comes with an extensive test suite that can be run with the `test.py` script.
+For how to use test.py run:
+
+    $ python test.py --help
+
+
 
 ## Example of Uncertainpy in use
 
