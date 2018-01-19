@@ -28,25 +28,25 @@ For how to use test.py run:
 
 Uncertainpy has the following dependencies:
 
-* xvfbwrapper
-* chaospy
-* tqdm
-* h5py
-* multiprocess
-* numpy
-* scipy
-* seaborn
+* `xvfbwrapper`
+* `chaospy`
+* `tqdm`
+* `h5py`
+* `multiprocess`
+* `numpy`
+* `scipy`
+* `seaborn`
 
 Additionally Uncertainpy has a few optional dependencies for specific classes of models and for features of the models.
 The following external simulators are required for specific models:
 
-* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) with Python, a simulator for neurons) .
-* `uncertainpy.NestModel`: Requires [nest](http://www.nest-simulator.org/installation/)  with Python, a simulator for network of neurons) .
+* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python), a simulator for neurons) .
+* `uncertainpy.NestModel`: Requires [nest](http://www.nest-simulator.org/installation) (with Python), a simulator for network of neurons) .
 
 And following Python packages are required for specific features:
 
-* `uncertainpy.EfelFeatures`: efel
-* `uncertainpy.NetworkFeatures`: elephant, neo, quantities
+* `uncertainpy.EfelFeatures`: `efel`
+* `uncertainpy.NetworkFeatures`: `elephant`, `neo`, and `quantities`
 
 ## Example of Uncertainpy in use
 
