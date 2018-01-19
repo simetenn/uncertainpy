@@ -56,13 +56,12 @@ For how to use test.py run:
 
 ## Example of Uncertainpy in use
 
-Examples for how to use Uncertainpy can be found in the [examples](https://github.com/simetenn/uncertainpy/tree/master/examples) folder as well as in the [documentation]().
-Here is an example that shows how to perform uncertainty quantification and
-sensitivity analysis of a cooling coffee cup.
-It follows Newtons law of cooling
-
-This example is found in [examples/coffee_cup](https://github.com/simetenn/uncertainpy/tree/master/examples/coffee_cup) .
-We examine the changes in temperature of a cooling coffee cup that
+Examples for how to use Uncertainpy can be found in the
+[examples](https://github.com/simetenn/uncertainpy/tree/master/examples) folder
+as well as in the [documentation]().
+Here we show an example,
+found in [examples/coffee_cup](https://github.com/simetenn/uncertainpy/tree/master/examples/coffee_cup),
+where we examine the changes in temperature of a cooling coffee cup that
 follows Newton’s law of cooling:
 
 <!-- \frac{dT(t)}{dt} = -\kappa(T(t) - T_{env}) -->
