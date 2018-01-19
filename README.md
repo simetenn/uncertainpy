@@ -4,7 +4,7 @@
 
 ![img](https://github.com/simetenn/uncertainpy/blob/master/logo/logo.svg)
 
-# Uncertainty quantification and sensitivity analysis
+# A python toolbox for uncertainty quantification and sensitivity analysis
 
 Uncertainpy is a library for performing uncertainty quantification and sensitivity
 analysis of computational models.
