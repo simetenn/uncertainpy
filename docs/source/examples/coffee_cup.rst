@@ -1,4 +1,4 @@
-.. _Coffee cup:
+.. _coffee_cup:
 
 A cooling coffee cup model
 ==========================

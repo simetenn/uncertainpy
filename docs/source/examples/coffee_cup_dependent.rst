@@ -1,9 +1,11 @@
+.. _coffee_dependent:
+
 A cooling coffee cup model with dependent parameters
 ====================================================
 
 Here we show an example (found in ``examples/coffee_dependent``) where we
 examine a cooling coffee cup model with dependent parameters.
-We modify the :ref:`coffee cup <Coffee cup>` model by introducing two auxillary variables
+We modify the :ref:`coffee cup <coffee_cup>` model by introducing two auxillary variables
 :math:`\alpha` and :math:`\hat{\kappa}`:
 
 .. math::

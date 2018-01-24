@@ -1,3 +1,5 @@
+.. _quickstart:
+
 Quickstart
 ==========
 This section gives a brief overview of what you need to know to perform an

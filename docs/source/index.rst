@@ -6,6 +6,7 @@ Welcome to Uncertainpy's documentation!
 .. toctree::
     :maxdepth: 1
     :caption: Content:
+    :hidden:
 
     installation
     quickstart
@@ -25,6 +26,28 @@ Welcome to Uncertainpy's documentation!
     utilities
 
     core
+
+
+Where to start
+==============
+
+* :ref:`Installation <installation>`
+* :ref:`Quickstart <quickstart>`
+
+
+Examples
+========
+
+* :ref:`A simple cooling coffee cup <coffee_cup>`
+* :ref:`A cooling coffee cup with dependent parameters <coffee_dependent>`
+
+
+
+API reference
+=============
+
+
+
 
 Indices and tables
 ==================
