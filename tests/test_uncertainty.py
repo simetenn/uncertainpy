@@ -265,8 +265,8 @@ class TestUncertainty(TestCasePlot):
             self.test_value = "custom PCE method"
 
         uncertainty = UncertaintyQuantification(
-            self.model,
-            self.parameters,
+            model=self.model,
+            parameters=self.parameters,
             create_PCE_custom=create_PCE_custom,
             verbose_level="error"
         )

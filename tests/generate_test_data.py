@@ -309,12 +309,12 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
                                                                parameters=parameters)
 
 
-    data = uncertainty_calculations.polynomial_chaos("a", seed=seed)
+    data = uncertainty_calculations.polynomial_chaos(uncertain_parameters="a", seed=seed)
     data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-a.h5"))
 
     np.random.seed(seed)
 
-    data = uncertainty_calculations.polynomial_chaos("b", seed=seed)
+    data = uncertainty_calculations.polynomial_chaos(uncertain_parameters="b", seed=seed)
     data.save(os.path.join(test_data_dir, "UncertaintyCalculations_single-parameter-b.h5"))
 
 

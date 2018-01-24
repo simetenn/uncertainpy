@@ -757,7 +757,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sensitivity_1 =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sensitivity_1")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sensitivity_1")
 
         self.assertEqual(data["test2D"]["sensitivity_1_sum"][0], 1/3.)
         self.assertEqual(data["test2D"]["sensitivity_1_sum"][1], 2/3.)
@@ -773,7 +773,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sensitivity_1 =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        self.uncertainty_calculations.sensitivity_sum(data, sensitivity="1")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="1")
 
         self.assertEqual(data["test2D"]["sensitivity_1_sum"][0], 1/3.)
         self.assertEqual(data["test2D"]["sensitivity_1_sum"][1], 2/3.)
@@ -788,7 +788,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sensitivity_t =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        self.uncertainty_calculations.sensitivity_sum(data, sensitivity="t")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="t")
 
         self.assertEqual(data["test2D"]["sensitivity_t_sum"][0], 1/3.)
         self.assertEqual(data["test2D"]["sensitivity_t_sum"][1], 2/3.)
@@ -804,7 +804,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sensitivity_t = [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sensitivity_t")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sensitivity_t")
 
         self.assertEqual(data["test2D"]["sensitivity_t_sum"][0], 1/3.)
         self.assertEqual(data["test2D"]["sensitivity_t_sum"][1], 2/3.)
@@ -954,7 +954,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PC_parameter_a(self):
-        data = self.uncertainty_calculations.polynomial_chaos("a",
+        data = self.uncertainty_calculations.polynomial_chaos(uncertain_parameters="a",
                                                               seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
@@ -970,7 +970,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PC_parameter_b(self):
-        data = self.uncertainty_calculations.polynomial_chaos("b",
+        data = self.uncertainty_calculations.polynomial_chaos(uncertain_parameters="b",
                                                               seed=self.seed)
 
         filename = os.path.join(self.output_test_dir, "UncertaintyCalculations_single-parameter-b.h5")

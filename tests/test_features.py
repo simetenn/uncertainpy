@@ -254,14 +254,14 @@ class TestSpikingFeatures(unittest.TestCase):
                                      "average_AHP_depth", "average_AP_width",
                                      "accommodation_index"]
 
-        self.implemented_labels = {"nr_spikes": ["number of spikes"],
-                                   "spike_rate": ["spike rate [Hz]"],
-                                   "time_before_first_spike": ["time [ms]"],
-                                   "accommodation_index": ["accommodation index"],
-                                   "average_AP_overshoot": ["voltage [mV]"],
-                                   "average_AHP_depth": ["voltage [mV]"],
-                                   "average_AP_width": ["time [ms]"],
-                                  }
+        self.implemented_labels = {"nr_spikes": ["Number of spikes"],
+                                   "spike_rate": ["Spike rate (Hz)"],
+                                   "time_before_first_spike": ["Time (ms)"],
+                                   "accommodation_index": ["Accommodation index"],
+                                   "average_AP_overshoot": ["Voltage (mV)"],
+                                   "average_AHP_depth": ["Voltage (mV)"],
+                                   "average_AP_width": ["Time (ms)"]
+                                   }
 
         self.features = SpikingFeatures(verbose_level="error")
 
@@ -288,14 +288,14 @@ class TestSpikingFeatures(unittest.TestCase):
                                            "new": ["new"]})
 
         labels = {"nr_spikes": ["changed"],
-                  "spike_rate": ["spike rate [Hz]"],
-                  "time_before_first_spike": ["time [ms]"],
-                  'average_AP_width': ['time [ms]'],
-                  "accommodation_index": ["accommodation index"],
-                  "average_AP_overshoot": ["voltage [mV]"],
-                  "average_AHP_depth": ["voltage [mV]"],
-                  "new": ["new"]
-                 }
+                  "new": ["new"],
+                  "spike_rate": ["Spike rate (Hz)"],
+                  "time_before_first_spike": ["Time (ms)"],
+                  "accommodation_index": ["Accommodation index"],
+                  "average_AP_overshoot": ["Voltage (mV)"],
+                  "average_AHP_depth": ["Voltage (mV)"],
+                  "average_AP_width": ["Time (ms)"]
+                  }
 
         self.assertEqual(features.labels, labels)
 
@@ -528,6 +528,7 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
 
         self.features = NetworkFeatures()
 
+
     def test_initNone(self):
         self.features = GeneralNetworkFeatures()
 
@@ -586,8 +587,7 @@ class TestNetworkFeatures(unittest.TestCase):
                                      "corrcoef", "covariance", "mean_local_variation"]
 
 
-
-        self.features = NetworkFeatures()
+        self.features = NetworkFeatures(instantaneous_rate_nr_samples=2)
 
         self.time, self.spiketrains = self.features.preprocess(self.time_original, self.values)
 
@@ -707,39 +707,13 @@ class TestNetworkFeatures(unittest.TestCase):
     def test_instantaneous_rate(self):
         time, values = self.features.instantaneous_rate(self.time, self.spiketrains)
 
-        rates = [201.7976071573258992, 270.7685498293570845,
-                 345.7639606392203859, 420.3430010464927022,
-                 486.7768188367210769, 537.5579992556051820,
-                 567.1860438550103254, 573.7223146658689075,
-                 559.5994608897037779, 531.3529919395189154,
-                 498.2464223998736657, 470.1236785019651734,
-                 455.0277266711299262, 457.2299460378653748,
-                 476.1919997742103305, 506.7447214089696104,
-                 540.4430043620118340, 567.7746503588338101,
-                 580.6406099880132388, 574.4777562099577608,
-                 549.4763516278245561, 510.6019227450684639,
-                 466.4604005235715363, 427.3459903488383134,
-                 402.9914602412301292, 400.5619369321500471,
-                 423.3169253559639174, 470.1674223081157038,
-                 536.1340587481936382, 613.5114750284128604,
-                 693.3963029036556236, 767.1795921375620537,
-                 827.6464085719730974, 869.5173515546268845,
-                 889.4655805998627329, 885.8505116405049193,
-                 858.4580587318871494, 808.4356634670250514,
-                 738.4088696230276128, 652.5870483357980447,
-                 556.6158845552261027, 457.0407336107435299,
-                 360.4412580216865081, 272.4742619759052218,
-                 197.1057281755237511, 136.2592191048793211,
-                 89.9202782005130530, 56.5991363488668640,
-                 33.9579695054921231, 19.4106207950416447]
+        rates = [938.762478, 938.7583322]
 
-        correct_values = [np.array(rates), np.array(rates),
-                     np.array(rates), None]
-        correct_t = np.linspace(0, 8, 51)[:-1]
+        correct_t = np.linspace(0, 8, 3)[:-1]
 
-        self.assertTrue(np.array_equal(values[0], rates))
-        self.assertTrue(np.array_equal(values[1], rates))
-        self.assertTrue(np.array_equal(values[2], rates))
+        self.assertTrue(np.all(np.isclose(values[0], rates)))
+        self.assertTrue(np.all(np.isclose(values[1], rates)))
+        self.assertTrue(np.all(np.isclose(values[2], rates)))
         self.assertIsNone(values[3])
         self.assertTrue(np.array_equal(time, correct_t))
 

@@ -1,6 +1,7 @@
 Installation
 ============
 
+Uncertainpy currently only works with Python 2.
 Uncertainpy can easily be installed using pip::
 
     pip install uncertainpy

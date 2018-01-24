@@ -881,8 +881,8 @@ class UncertaintyCalculations(ParameterBase):
 
                     data[feature].sensitivity_1 = cp.Sens_m(U_hat[feature], distribution)
                     data[feature].sensitivity_t = cp.Sens_t(U_hat[feature], distribution)
-                    self.sensitivity_sum(data, sensitivity="sensitivity_1")
-                    self.sensitivity_sum(data, sensitivity="sensitivity_t")
+                    data = self.sensitivity_sum(data, sensitivity="sensitivity_1")
+                    data = self.sensitivity_sum(data, sensitivity="sensitivity_t")
 
                 else:
                     U_mc[feature] = U_hat[feature](samples)
@@ -1294,7 +1294,7 @@ class UncertaintyCalculations(ParameterBase):
             raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t, not {}".format(sensitivity))
 
         if sensitivity == "1":
-            sensitivity = "sensitivity"
+            sensitivity = "sensitivity_1"
         elif sensitivity == "t":
             sensitivity = "sensitivity_t"
 
