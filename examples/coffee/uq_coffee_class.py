@@ -6,13 +6,13 @@ import numpy as np
 
 # Create the coffee cup model
 class CoffeeCup(un.Model):
-    # Add labels to the model
+    # Add labels to the model by calling the constructor of the parent un.Model
     def __init__(self):
         super(CoffeeCup, self).__init__(self,
                                         labels=["Time (s)", "Temperature (C)"])
 
 
-    # Define the run function
+    # Define the run method
     def run(self, kappa, T_env):
         # Initial temperature and time
         T_0 = 95

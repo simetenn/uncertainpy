@@ -161,7 +161,7 @@ which is the default option of `quantify`:
 
     # Set up the uncertainty quantification
     uncertainty = un.UncertaintyQuantification(model=model,
-                                                parameters=parameters)
+                                               parameters=parameters)
 
     # Perform the uncertainty quantification using
     # polynomial chaos with point collocation (by default)

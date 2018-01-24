@@ -26,6 +26,42 @@ class PlotUncertainty(object):
     """
     Plotting the results from the uncertainty quantification and sensitivity
     analysis.
+
+    Parameters
+    ----------
+    filename : {None, str}, optional
+        The name of the data file. If given the file is loaded.
+        If None, nothing is loaded.
+        Default is None.
+    folder : str, optional
+        The folder where to save the plots. Creates a new folder if it does not
+        exist.
+        Default is "figures/".
+    figureformat : str, optional
+        The format to save the plots in. Given as ".xxx". All formats
+        supported by Matplotlib are available.
+        Default is ".png",
+    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored.
+        Default is `"info"`.
+    verbose_filename : {None, str}, optional
+        Sets logging to a file with name `verbose_filename`.
+        No logging to screen if set. Default is None.
+
+    Attributes
+    ----------
+    folder : str
+        The folder where to save the plots.
+    figureformat : str, optional
+        The format to save the plots in. Given as ".xxx". All formats
+        supported by Matplotlib are available.
+    data : Data
+        A data object that contains the results from the uncertainty quantification.
+        Contains all model and feature values, as well as all calculated
+        statistical metrics.
+    logger : logging.Logger
+        Logger object responsible for logging to screen or file.
     """
     def __init__(self,
                  filename=None,
