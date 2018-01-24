@@ -35,7 +35,7 @@ parameters = un.Parameters(parameter_list)
 
 # Create a model from coffee_cup function and add labels
 model = un.Model(coffee_cup_dependent,
-                 labels=["Time [s]", "Temperature [C]"])
+                 labels=["Time (s)", "Temperature (C)"])
 
 
 # Perform the uncertainty quantification using the Rosenblatt transformation
@@ -43,10 +43,8 @@ UQ = un.UncertaintyQuantification(model=model,
                                   parameters=parameters)
 
 UQ.quantify(rosenblatt=True,
-            pc_method="spectral",
-            allow_incomplete=True,
             figure_folder="figures_coffee_dependent",
-            filename="coffee_dependent")
+            filename="coffee_cup_dependent")
 
 
 

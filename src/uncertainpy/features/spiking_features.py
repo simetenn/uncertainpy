@@ -134,13 +134,13 @@ class SpikingFeatures(GeneralSpikingFeatures):
         if not prerequisites:
             raise ImportError("Spiking features require: scipy")
 
-        implemented_labels = {"nr_spikes": ["number of spikes"],
-                              "spike_rate": ["spike rate [Hz]"],
-                              "time_before_first_spike": ["time [ms]"],
-                              "accommodation_index": ["accommodation index"],
-                              "average_AP_overshoot": ["voltage [mV]"],
-                              "average_AHP_depth": ["voltage [mV]"],
-                              "average_AP_width": ["time [ms]"]
+        implemented_labels = {"nr_spikes": ["Number of spikes"],
+                              "spike_rate": ["Spike rate (Hz)"],
+                              "time_before_first_spike": ["Time (ms)"],
+                              "accommodation_index": ["Accommodation index"],
+                              "average_AP_overshoot": ["Voltage (mV)"],
+                              "average_AHP_depth": ["Voltage (mV)"],
+                              "average_AP_width": ["Time (ms)"]
                              }
 
         super(SpikingFeatures, self).__init__(new_features=new_features,

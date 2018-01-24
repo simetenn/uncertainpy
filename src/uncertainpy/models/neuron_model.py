@@ -56,7 +56,7 @@ class NeuronModel(Model):
                  path=None,
                  name=None,
                  adaptive=True,
-                 labels=["Time [ms]", "Membrane potential [mV]"],
+                 labels=["Time (ms)", "Membrane potential (mV)"],
                  stimulus_start=None,
                  stimulus_end=None,
                  **kwargs):

@@ -9,7 +9,7 @@ class Valderrama(Model):
     """
     def __init__(self):
         Model.__init__(self,
-                       labels=["Time [ms]", "Membrane potential [mV]"])
+                       labels=["Time (ms)", "Membrane potential (mV)"])
 
 
         ## HH Parameters

@@ -23,7 +23,7 @@ def coffee_cup(kappa, T_env):
 
 # Create a model from coffee_cup function and add labels
 model = un.Model(run_function=coffee_cup,
-                 labels=["Time [s]", "Temperature [C]"])
+                 labels=["Time (s)", "Temperature (C)"])
 
 # Create the distributions
 kappa_dist = cp.Uniform(0.025, 0.075)

@@ -16,7 +16,7 @@ parameters.set_all_distributions(un.uniform(0.5))
 
 # Create a model from coffee_cup function and add labels
 model = un.Model(izhikevich,
-                labels=["Time [ms]", "Voltage [mV]"])
+                labels=["Time (ms)", "Voltage (mV)"])
 
 # Initialize features
 features = un.SpikingFeatures(features_to_run="all")

@@ -9,11 +9,10 @@ xopen("fixnseg.hoc")
 objref stim, hold
 
 dt = 0.1
-celsius = 36.0
+celsius = 36.0  
 actdends = 1
 
-load_file("Parameters.hoc")
-//load_file("Parameters1.hoc")
+load_file("Parameters1.hoc")
 //load_file("Parameters2.hoc")
 
 
@@ -24,7 +23,6 @@ ldendfac = 0.25
 iahpdendfac = 0.1
 itinc = 2.39/60
 icaninc = itinc
-
 
 // Insert channels:
 forall {insert pas e_pas=Vrest g_pas=1/Rm Ra=rall cm=cap}
@@ -47,8 +45,7 @@ proc init() {
 
 forall {
 	gnabar_hh2 = gna*nadendfac  vtraubNa_hh2 = nash
-    gkbar_hh2 = 0.005
-	vtraubK_hh2 = kdrsh
+      gkbar_hh2 = 0.005 vtraubK_hh2 = kdrsh
 	pcabar_ical = gcal*ldendfac
 	gkbar_iahp = gahp*iahpdendfac
 	ghbar_iar = ghbar*ihdendfac
@@ -57,7 +54,7 @@ forall {
 }
 
 soma {
-	gnabar_hh2 = gna vtraubNa_hh2 = nash
+	gnabar_hh2 = gna vtraubNa_hh2 = nash 
 	gkbar_hh2 = gkdr vtraubK_hh2 = kdrsh
 	gcabar_it2 = gcat
 	pcabar_ical = gcal
@@ -92,7 +89,8 @@ hold.amp=0.0
 
 
 
-/////////////////////////////////////////
+/////////////////////////////////////////////////////////
+// SESSIONS, FIGURES AND PANELS:
 load_file("INmodel.ses")
 PlotShape[0].exec_menu("Shape Plot")
 PlotShape[0].show(0)

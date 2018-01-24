@@ -89,19 +89,19 @@ class DataFeature(collections.MutableMapping):
     -----
     The statistical metrics calculated in Uncertainpy are:
 
-        * ``"values"`` - the results from the model/feature evaluations.
-        * ``"time"`` - the time of the model/feature.
-        * ``"mean"`` - the mean of the model/feature.
-        * ``"variance"``. - the variance of the model/feature.
-        * ``"percentile_5"`` - the 5th percentile of the model/feature.
-        * ``"percentile_95"`` - the 95th percentile of the model/feature.
-        * ``"sensitivity_1"`` - the first order Sobol indices (sensitivity) of
+        * ``values`` - the results from the model/feature evaluations.
+        * ``time`` - the time of the model/feature.
+        * ``mean`` - the mean of the model/feature.
+        * ``variance``. - the variance of the model/feature.
+        * ``percentile_5`` - the 5th percentile of the model/feature.
+        * ``percentile_95`` - the 95th percentile of the model/feature.
+        * ``sensitivity_1`` - the first order Sobol indices (sensitivity) of
           the model/feature.
-        * ``"sensitivity_1_sum"`` - the total order Sobol indices (sensitivity)
+        * ``sensitivity_1_sum`` - the total order Sobol indices (sensitivity)
           of the model/feature.
-        * ``"sensitivity_t"`` - the normalized sum of the first order Sobol
+        * ``sensitivity_t`` - the normalized sum of the first order Sobol
           indices (sensitivity) of the model/feature.
-        * ``"sensitivity_t_sum"`` - the normalized sum of the total order Sobol
+        * ``sensitivity_t_sum`` - the normalized sum of the total order Sobol
           indices (sensitivity) of the model/feature.
     """
     def __init__(self,
@@ -308,19 +308,19 @@ class Data(collections.MutableMapping):
     The statistical metrics calculated for each feature and model in Uncertainpy
     are:
 
-        * ``"values"`` - the results from the model/feature evaluations.
-        * ``"time"`` - the time of the model/feature.
-        * ``"mean"`` - the mean of the model/feature.
-        * ``"variance"``. - the variance of the model/feature.
-        * ``"percentile_5"`` - the 5th percentile of the model/feature.
-        * ``"percentile_95"`` - the 95th percentile of the model/feature.
-        * ``"sensitivity_1"`` - the first order Sobol indices (sensitivity) of
+        * ``values`` - the results from the model/feature evaluations.
+        * ``time`` - the time of the model/feature.
+        * ``mean`` - the mean of the model/feature.
+        * ``variance``. - the variance of the model/feature.
+        * ``percentile_5`` - the 5th percentile of the model/feature.
+        * ``percentile_95`` - the 95th percentile of the model/feature.
+        * ``sensitivity_1`` - the first order Sobol indices (sensitivity) of
           the model/feature.
-        * ``"sensitivity_1_sum"`` - the total order Sobol indices (sensitivity)
+        * ``sensitivity_1_sum`` - the total order Sobol indices (sensitivity)
           of the model/feature.
-        * ``"sensitivity_t"`` - the normalized sum of the first order Sobol
+        * ``sensitivity_t`` - the normalized sum of the first order Sobol
           indices (sensitivity) of the model/feature.
-        * ``"sensitivity_t_sum"`` - the normalized sum of the total order Sobol
+        * ``sensitivity_t_sum`` - the normalized sum of the total order Sobol
           indices (sensitivity) of the model/feature.
 
     See also

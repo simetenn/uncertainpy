@@ -5,7 +5,7 @@ import numpy as np
 class Izhikevich(Model):
     def __init__(self):
         Model.__init__(self,
-                       labels=["Time [ms]", "Voltage [mV]"])
+                       labels=["Time (ms)", "Voltage (mV)"])
 
         time_end = 100
         self.dt = 0.25

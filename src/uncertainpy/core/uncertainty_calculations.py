@@ -632,8 +632,9 @@ class UncertaintyCalculations(ParameterBase):
 
         nodes_R, weights_R = cp.generate_quadrature(quadrature_order,
                                                     dist_R,
-                                                    rule="J",
+                                                    rule="G",
                                                     sparse=True)
+
 
         # TODO Is this correct, copy pasted from below.
         nodes = distribution.inv(dist_R.fwd(nodes_R))
@@ -642,7 +643,6 @@ class UncertaintyCalculations(ParameterBase):
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
 
-
         U_hat = {}
         # Calculate PC for each feature
         for feature in tqdm(data,
@@ -650,7 +650,8 @@ class UncertaintyCalculations(ParameterBase):
                             total=len(data)):
 
             # The tutorial version
-            # masked_nodes, masked_values, mask, masked_weights = self.create_mask(nodes_R,
+            # masked_nodes, masked_values, mask, masked_weights = self.create_mask(data,
+            #                                                           nodes_R,
             #                                                           feature,
             #                                                           weights)
 
@@ -662,10 +663,10 @@ class UncertaintyCalculations(ParameterBase):
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P,
-                                                        masked_nodes,
-                                                        masked_weights,
-                                                        masked_values)
-
+                                                   masked_nodes,
+                                                   masked_weights,
+                                                   masked_values)
+            else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
                                     "due too not all parameter combinations " +
@@ -797,9 +798,9 @@ class UncertaintyCalculations(ParameterBase):
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P,
-                                                        masked_nodes,
-                                                        masked_values,
-                                                        rule="T")
+                                                   masked_nodes,
+                                                   masked_values,
+                                                   rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +

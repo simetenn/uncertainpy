@@ -3,16 +3,17 @@ import uncertainpy as un
 path = "dLGN_modelDB/"
 
 # Define a parameter list
-parameter_list = [["cap", 1.1, None],
+parameter_list = [["Epas", -67, None],
                   ["Rm", 22000, None],
-                  ["Vrest", -63, None],
-                  ["Epas", -67, None],
                   ["gna", 0.09, None],
                   ["nash", -52.6, None],
                   ["gkdr", 0.37, None],
                   ["kdrsh", -51.2, None],
+                  ["gcat", 1.17e-5, None],
+                  ["gcal", 0.0009, None],
+                  ["ghbar", 0.00011, None],
                   ["gahp", 6.4e-5, None],
-                  ["gcat", 1.17e-5, None]]
+                  ["gcanbar", 2e-8, None]]
 
 # Create the parameters
 parameters = un.Parameters(parameter_list)
@@ -32,5 +33,5 @@ features = un.SpikingFeatures(features_to_run="all")
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  CPUs=7)
+                                  CPUs=6)
 UQ.quantify(allow_incomplete=True)

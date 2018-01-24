@@ -175,4 +175,4 @@ and an article on Uncertainpy can be found [here]().
 
 ## Citation
 
-If you use Uncertainpy in you work, please cite the [Uncertainpy paper]().
+If you use Uncertainpy in your work, please cite the [Uncertainpy paper]().

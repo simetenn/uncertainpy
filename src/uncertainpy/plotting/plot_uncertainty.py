@@ -445,7 +445,6 @@ class PlotUncertainty(object):
 
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
-
         ax.set_ylabel(ylabel + ', mean', color=colors[color], fontsize=16)
 
 

@@ -8,7 +8,7 @@ class CoffeeCupDependent(un.Model):
     def __init__(self):
          # Add labels to the model
         super(CoffeeCupDependent, self).__init__(self,
-                                                 labels=["Time [s]", "Temperature [C]"])
+                                                 labels=["Time (s)", "Temperature (C)"])
 
 
     # Define the run function

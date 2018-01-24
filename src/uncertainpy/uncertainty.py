@@ -192,7 +192,7 @@ class UncertaintyQuantification(ParameterBase):
                  uncertain_parameters=None,
                  polynomial_order=3,
                  nr_collocation_nodes=None,
-                 quadrature_order=4,
+                 quadrature_order=None,
                  nr_pc_mc_samples=10**4,
                  nr_mc_samples=10**3,
                  allow_incomplete=False,

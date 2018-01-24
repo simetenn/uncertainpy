@@ -9,7 +9,7 @@ class CoffeeCup(un.Model):
     # Add labels to the model
     def __init__(self):
         super(CoffeeCup, self).__init__(self,
-                                        labels=["Time [s]", "Temperature [C]"])
+                                        labels=["Time (s)", "Temperature (C)"])
 
 
     # Define the run function

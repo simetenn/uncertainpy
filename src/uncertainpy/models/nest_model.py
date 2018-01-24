@@ -47,7 +47,7 @@ class NestModel(Model):
     def __init__(self,
                  run_function=None,
                  adaptive=False,
-                 labels=["time [ms]", "Neuron nr", "Spiking probability"]):
+                 labels=["Time (ms)", "Neuron nr", "Spiking probability"]):
 
 
         if not prerequisites:
