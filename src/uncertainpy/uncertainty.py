@@ -38,11 +38,21 @@ class UncertaintyQuantification(ParameterBase):
     uncertainty_calculations : UncertaintyCalculations or UncertaintyCalculations subclass instance, optional
         An UncertaintyCalculations class or subclass that implements (custom)
         uncertainty quantification and sensitivity analysis methods.
-    create_PCE_custom : callable
-        Create a custom method for calculating the polynomial chaos approximation.
-        For the requirements of the function see ``UncertaintyCalculations.create_PCE_custom``
-    CPUs : int
+    create_PCE_custom : callable, optional
+        A custom method for calculating the polynomial chaos approximation.
+        For the requirements of the function see
+        ``UncertaintyCalculations.create_PCE_custom``. Overwrites existing
+        ``create_PCE_custom`` method.
+        Default is None.
+    custom_uncertainty_quantification : callable, optional
+        A custom method for calculating uncertainties.
+        For the requirements of the function see
+        ``UncertaintyCalculations.custom_uncertainty_quantification``.
+        Overwrites existing ``custom_uncertainty_quantification`` method.
+        Default is None.
+    CPUs : int, optional
         The number of CPUs used when calculating the model and features.
+        By default all CPUs are used.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored.
@@ -87,9 +97,10 @@ class UncertaintyQuantification(ParameterBase):
                  parameters,
                  features=None,
                  uncertainty_calculations=None,
+                 create_PCE_custom=None,
+                 custom_uncertainty_quantification=None,
                  verbose_level="info",
                  verbose_filename=None,
-                 create_PCE_custom=None,
                  CPUs=mp.cpu_count(),
                  suppress_model_graphics=True):
 
@@ -99,6 +110,8 @@ class UncertaintyQuantification(ParameterBase):
                 model=model,
                 parameters=parameters,
                 features=features,
+                create_PCE_custom=create_PCE_custom,
+                custom_uncertainty_quantification=custom_uncertainty_quantification,
                 CPUs=CPUs,
                 suppress_model_graphics=suppress_model_graphics,
                 verbose_level=verbose_level,
@@ -120,11 +133,6 @@ class UncertaintyQuantification(ParameterBase):
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
                                     self.__class__.__name__)
-
-        if create_PCE_custom is not None:
-            self.uncertainty_calculations.create_PCE_custom = types.MethodType(create_PCE_custom,
-                                                                               self.uncertainty_calculations)
-
 
         self.plotting = PlotUncertainty(verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
@@ -617,9 +625,9 @@ class UncertaintyQuantification(ParameterBase):
 
 
         self.data = self.uncertainty_calculations.polynomial_chaos(
-            uncertain_parameters=uncertain_parameters,
             method=method,
             rosenblatt=rosenblatt,
+            uncertain_parameters=uncertain_parameters,
             polynomial_order=polynomial_order,
             nr_collocation_nodes=nr_collocation_nodes,
             quadrature_order=quadrature_order,
@@ -627,7 +635,7 @@ class UncertaintyQuantification(ParameterBase):
             allow_incomplete=allow_incomplete,
             seed=seed,
             **custom_kwargs
-        )
+            )
 
         if filename is None:
             filename = self.model.name
@@ -1096,7 +1104,7 @@ class UncertaintyQuantification(ParameterBase):
             return
 
         elif type.lower() == "condensed_sensitivity_1":
-            self.plotting.plot_condensed(sensitivity="sensitivity_t")
+            self.plotting.plot_condensed(sensitivity="sensitivity_1")
 
         elif type.lower() == "condensed_sensitivity_t":
             self.plotting.plot_condensed(sensitivity="sensitivity_t")
@@ -1112,7 +1120,7 @@ class UncertaintyQuantification(ParameterBase):
             self.plotting.all_evaluations()
 
         else:
-            raise ValueError('plot must one of: "condensed_sensitivity_1", '
+            raise ValueError('type must one of: "condensed_sensitivity_1", '
                              '"condensed_sensitivity_t", "condensed_no_sensitivity" '
                              '"all", "evaluations", None}')
 

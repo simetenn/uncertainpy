@@ -179,7 +179,7 @@ class Model(object):
     @run.setter
     def run(self, new_run_function):
         if not callable(new_run_function):
-            raise TypeError("run() function must be callable")
+            raise TypeError("run function must be callable")
 
         self._run = new_run_function
         self.name = new_run_function.__name__
@@ -200,7 +200,7 @@ class Model(object):
 
 
     def _run(self, **parameters):
-        raise NotImplementedError("No run() method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
+        raise NotImplementedError("No run method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
 
 
 
@@ -215,7 +215,7 @@ class Model(object):
         Parameters
         ----------
         *model_result
-            Variable length argument list. Is the values that ``run()``
+            Variable length argument list. Is the values that ``run``
             returns. It contains `time` and `values`,
             and then any number of optional `info` values.
         time : {None, numpy.nan, array_like}

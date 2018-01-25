@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import glob
 import numpy as np
+import chaospy as cp
 
 import matplotlib
 matplotlib.use('Agg')
@@ -35,7 +36,7 @@ class TestUncertainty(TestCasePlot):
         os.makedirs(self.output_test_dir)
 
         self.parameter_list = [["a", 1, None],
-                              ["b", 2, None]]
+                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameter_list)
         self.parameters.set_all_distributions(uniform(0.5))
@@ -94,6 +95,26 @@ class TestUncertainty(TestCasePlot):
 
 
 
+    def test_init_uncertainty_calculations_custom(self):
+        def uq(self):
+            return "uq"
+
+        def pce(self, uncertain_parameters=None):
+            return "pce"
+
+        uncertainty = UncertaintyQuantification(
+            self.model,
+            self.parameters,
+            create_PCE_custom=pce,
+            custom_uncertainty_quantification=uq,
+            verbose_level="error"
+        )
+
+        result = uncertainty.uncertainty_calculations.create_PCE_custom()
+        self.assertEqual(result, "pce")
+
+        result = uncertainty.uncertainty_calculations.custom_uncertainty_quantification()
+        self.assertEqual(result, "uq")
 
     def test_init_uncertainty_calculations(self):
 
@@ -258,11 +279,28 @@ class TestUncertainty(TestCasePlot):
 
 
 
+
     def test_create_PCE_custom(self):
 
         def create_PCE_custom(self, uncertain_parameters=None):
-            self.data = Data()
-            self.test_value = "custom PCE method"
+            data = Data()
+
+            q0, q1 = cp.variable(2)
+            parameter_space = [cp.Uniform(), cp.Uniform()]
+            distribution = cp.J(*parameter_space)
+
+            data.uncertain_parameters = ["a", "b"]
+
+            data.test_value = "custom PCE method"
+            data.add_features(["TestingModel1d", "feature0d", "feature1d", "feature2d"])
+
+            U_hat = {}
+            U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+
+            return U_hat, distribution, data
 
         uncertainty = UncertaintyQuantification(
             model=self.model,
@@ -271,26 +309,37 @@ class TestUncertainty(TestCasePlot):
             verbose_level="error"
         )
 
-
         uncertainty.polynomial_chaos(method="custom")
-        self.assertTrue(uncertainty.uncertainty_calculations.test_value,
+
+        self.assertTrue(uncertainty.data.test_value,
                         "custom PCE method")
 
-    # def test_convert_uncertain_parameters_list(self):
-    #     result = self.uncertainty.convert_uncertain_parameters(["a", "b"])
 
-    #     self.assertEqual(result, ["a", "b"])
+        # Test if all calculated properties actually exists
+        data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+                      "sensitivity_1", "sensitivity_1_sum",
+                      "sensitivity_t", "sensitivity_t_sum", "labels"]
 
-    # def test_convert_uncertain_parameters_string(self):
-    #     result = self.uncertainty.convert_uncertain_parameters("a")
+        for data_type in data_types:
+            if data_type not in ["values", "time", "labels"]:
+                for feature in uncertainty.data:
+                    self.assertIsInstance(uncertainty.data[feature][data_type], np.ndarray)
 
-    #     self.assertEqual(result, ["a"])
+    def test_convert_uncertain_parameters_list(self):
+        result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
+
+        self.assertEqual(result, ["a", "b"])
+
+    def test_convert_uncertain_parameters_string(self):
+        result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters("a")
+
+        self.assertEqual(result, ["a"])
 
 
-    # def test_convert_uncertain_parameters_none(self):
-    #     result = self.uncertainty.convert_uncertain_parameters(None)
+    def test_convert_uncertain_parameters_none(self):
+        result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(None)
 
-    #     self.assertEqual(result, ["a", "b"])
+        self.assertEqual(result, ["a", "b"])
 
 
     def test_polynomial_chaos_single(self):
@@ -529,7 +578,7 @@ class TestUncertainty(TestCasePlot):
                                           figure_folder=self.output_test_dir,
                                           seed=self.seed)
 
-        self.uncertainty.plot(type="all")
+        self.uncertainty.plot(type="all", folder=self.output_test_dir)
 
 
         self.compare_plot("TestingModel1d_mean")
@@ -590,7 +639,7 @@ class TestUncertainty(TestCasePlot):
                                           data_folder=self.output_test_dir,
                                           figure_folder=self.output_test_dir,
                                           seed=self.seed)
-        self.uncertainty.plot(type="condensed_sensitivity_1")
+        self.uncertainty.plot(type="condensed_sensitivity_1", folder=self.output_test_dir)
 
         self.compare_plot("TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_prediction-interval")
@@ -604,6 +653,10 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("sensitivity_1_sum_grid")
 
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
+
+
 
 
     def test_plotNoSensitivity(self):
@@ -612,18 +665,22 @@ class TestUncertainty(TestCasePlot):
                                           figure_folder=self.output_test_dir,
                                           seed=self.seed)
 
-        self.uncertainty.plot(type="condensed_no_sensitivity")
+        self.uncertainty.plot(type="condensed_no_sensitivity", folder=self.output_test_dir)
 
-        self.compare_plot("TestingModel1d_mean")
-        self.compare_plot("TestingModel1d_variance")
         self.compare_plot("TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_prediction-interval")
 
-
-        self.compare_plot("feature1d_mean")
-        self.compare_plot("feature1d_variance")
         self.compare_plot("feature1d_mean-variance")
         self.compare_plot("feature1d_prediction-interval")
+
+        self.compare_plot("feature0d")
+
+        self.compare_plot("feature2d_mean")
+        self.compare_plot("feature2d_variance")
+
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "*.png")))
+        self.assertEqual(plot_count, 7)
+
 
 
     def test_plot_evaluations(self):
@@ -801,6 +858,38 @@ class TestUncertainty(TestCasePlot):
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
+
+
+    def test_custom_uncertainty_quantification_arguments(self):
+        def custom(self, argument):
+            self.convert_uncertain_parameters()
+
+            data = Data()
+            data.argument = argument
+
+            return data
+
+        self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
+
+        self.uncertainty.quantify(method="custom", argument="value")
+
+        self.assertEqual(self.uncertainty.data.argument, "value")
+
+
+    def test_custom_uncertainty_quantification_arguments(self):
+        def custom(self, argument):
+            self.convert_uncertain_parameters()
+
+            data = Data()
+            data.argument = argument
+
+            return data
+
+        self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
+
+        self.uncertainty.quantify(method="custom", argument="value")
+
+        self.assertEqual(self.uncertainty.data.argument, "value")
 
 
 

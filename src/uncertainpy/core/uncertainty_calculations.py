@@ -2,6 +2,7 @@ import numpy as np
 import multiprocess as mp
 from tqdm import tqdm
 import chaospy as cp
+import types
 
 from .run_model import RunModel
 from .base import ParameterBase
@@ -34,8 +35,21 @@ class UncertaintyCalculations(ParameterBase):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
-    CPUs : int
+    create_PCE_custom : callable, optional
+        A custom method for calculating the polynomial chaos approximation.
+        For the requirements of the function see
+        ``UncertaintyCalculations.create_PCE_custom``. Overwrites existing
+        ``create_PCE_custom`` method.
+        Default is None.
+    custom_uncertainty_quantification : callable, optional
+        A custom method for calculating uncertainties.
+        For the requirements of the function see
+        ``UncertaintyCalculations.custom_uncertainty_quantification``.
+        Overwrites existing ``custom_uncertainty_quantification`` method.
+        Default is None.
+    CPUs : int, optional
         The number of CPUs used when calculating the model and features.
+        By default all CPUs are used.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
@@ -73,6 +87,8 @@ class UncertaintyCalculations(ParameterBase):
                  model=None,
                  parameters=None,
                  features=None,
+                 create_PCE_custom=None,
+                 custom_uncertainty_quantification=None,
                  CPUs=mp.cpu_count(),
                  suppress_model_graphics=True,
                  verbose_level="info",
@@ -86,6 +102,11 @@ class UncertaintyCalculations(ParameterBase):
                                  CPUs=CPUs,
                                  suppress_model_graphics=suppress_model_graphics)
 
+        if create_PCE_custom is not None:
+            self.create_PCE_custom = create_PCE_custom
+
+        if custom_uncertainty_quantification is not None:
+            self.custom_uncertainty_quantification = custom_uncertainty_quantification
 
         super(UncertaintyCalculations, self).__init__(parameters=parameters,
                                                       model=model,
@@ -894,12 +915,17 @@ class UncertaintyCalculations(ParameterBase):
 
 
 
+    @property
     def create_PCE_custom(self, uncertain_parameters=None, **kwargs):
         """
-        Create a custom method for calculating the polynomial chaos approximation.
+        A custom method for calculating the polynomial chaos approximation.
+        Must follow the below requirements.
 
         Parameters
         ----------
+        self : UncertaintyCalculation
+            An explicit self is required as the first argument.
+            self can be used inside the custom function.
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
             approximation. If None, all uncertain parameters are used.
@@ -954,17 +980,33 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.core.Uncertaintycalculations.convert_uncertain_parameters : Converts uncertain parameters to allowed list
         uncertainpy.core.Uncertaintycalculations.create_distribution : Creates the uncertain parameter distribution
         uncertainpy.core.RunModel.run : Runs the model
-
         """
-        raise NotImplementedError("Custom Polynomial Chaos Expansion method not implemented")
+        return self._create_PCE_custom
+
+    @create_PCE_custom.setter
+    def create_PCE_custom(self, new_create_PCE_custom):
+        if not callable(new_create_PCE_custom):
+            raise TypeError("create_PCE_custom function must be callable")
+
+        self._create_PCE_custom = types.MethodType(new_create_PCE_custom, self)
+        # self._create_PCE_custom = new_create_PCE_custom
 
 
+    def _create_PCE_custom(self, uncertain_parameters=None, **kwargs):
+        raise NotImplementedError("No custom Polynomial Chaos expansion method implemented")
+
+
+    @property
     def custom_uncertainty_quantification(self, **kwargs):
         """
-        Create a custom uncertainty quantification method.
+        A custom uncertainty quantification method. Must follow the below
+        requirements.
 
         Parameters
         ----------
+        self : UncertaintyCalculation
+            An explicit self is required as the first argument.
+            self can be used inside the custom function.
         **kwargs
             Any number of optional arguments.
 
@@ -990,7 +1032,19 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.core.Uncertaintycalculations.create_distribution : Create uncertain parameter distribution
         uncertainpy.core.RunModel.run : Runs the model
         """
-        raise NotImplementedError("Custom uncertainty calculation method not implemented")
+
+        return self._custom_uncertainty_quantification
+
+    @custom_uncertainty_quantification.setter
+    def custom_uncertainty_quantification(self, new_custom_uncertainty_quantification):
+        if not callable(new_custom_uncertainty_quantification):
+            raise TypeError("custom_uncertainty_quantification function must be callable")
+
+        self._custom_uncertainty_quantification = types.MethodType(new_custom_uncertainty_quantification, self)
+        # self._custom_uncertainty_quantification = new_custom_uncertainty_quantification
+
+    def _custom_uncertainty_quantification(self, **kwargs):
+        raise NotImplementedError("No custom uncertainty calculation method implemented")
 
 
     def polynomial_chaos(self,

@@ -582,8 +582,49 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.create_PCE_custom()
 
 
+    def test_create_PCE_custom_assign(self):
+        def create_PCE_custom(self, uncertain_parameters=None, custom=None):
+            return "Custom pce", custom
+
+        self.uncertainty_calculations.create_PCE_custom = create_PCE_custom
+
+        data, custom = self.uncertainty_calculations.create_PCE_custom(custom="test")
+        self.assertEqual(data, "Custom pce")
+        self.assertEqual(custom, "test")
+
+
+    def test_create_PCE_custom_assign_no_arguments(self):
+        def create_PCE_custom():
+            return "Custom pce"
+
+        self.uncertainty_calculations.create_PCE_custom = create_PCE_custom
+
+        with self.assertRaises(TypeError):
+            self.uncertainty_calculations.create_PCE_custom()
+
+
     def test_custom_uncertainty_quantification(self):
         with self.assertRaises(NotImplementedError):
+            self.uncertainty_calculations.custom_uncertainty_quantification()
+
+
+
+    def test_custom_uncertainty_quantification_assigned(self):
+        def custom_method(self, argument=None):
+            return "custom"
+
+        self.uncertainty_calculations.custom_uncertainty_quantification = custom_method
+        result = self.uncertainty_calculations.custom_uncertainty_quantification(argument="test")
+
+        self.assertEqual(result, "custom")
+
+    def test_custom_uncertainty_quantification_assigned_no_arguments(self):
+        def custom_method():
+            return "custom"
+
+        self.uncertainty_calculations.custom_uncertainty_quantification = custom_method
+
+        with self.assertRaises(TypeError):
             self.uncertainty_calculations.custom_uncertainty_quantification()
 
 
@@ -826,7 +867,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_analyse_PCE(self):
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
         parameters = Parameters(parameter_list)
         parameters.set_all_distributions(uniform(0.5))
@@ -851,8 +892,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         data.uncertain_parameters = ["a", "b"]
 
-        data.add_features(["TestingModel1d", "feature0d",
-                                                        "feature1d", "feature2d"])
+        data.add_features(["TestingModel1d", "feature0d", "feature1d", "feature2d"])
 
         U_hat = {}
         U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
@@ -945,6 +985,49 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.polynomial_chaos(method="custom",
                                                            seed=self.seed)
 
+
+    def test_PCE_custom_assigned(self):
+        def create_PCE_custom(self, uncertain_parameters=None, custom_argument=None):
+            uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+
+            data = Data()
+
+            q0, q1 = cp.variable(2)
+            parameter_space = [cp.Uniform(), cp.Uniform()]
+            distribution = cp.J(*parameter_space)
+
+            data.uncertain_parameters = ["a", "b"]
+
+            data.test_value = custom_argument
+            data.add_features(["TestingModel1d", "feature0d", "feature1d", "feature2d"])
+
+            U_hat = {}
+            U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+
+            return U_hat, distribution, data
+
+
+        self.uncertainty_calculations.create_PCE_custom = create_PCE_custom
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="custom",
+                                                              seed=self.seed,
+                                                              custom_argument="test")
+
+        self.assertTrue(data.test_value, "test")
+
+
+        # Test if all calculated properties actually exists
+        data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+                      "sensitivity_1", "sensitivity_1_sum",
+                      "sensitivity_t", "sensitivity_t_sum", "labels"]
+
+        for data_type in data_types:
+            if data_type not in ["values", "time", "labels"]:
+                for feature in data:
+                    self.assertIsInstance(data[feature][data_type], np.ndarray)
 
 
     def test_PC_error(self):
