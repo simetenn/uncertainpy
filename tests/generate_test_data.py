@@ -57,7 +57,9 @@ def generate_data_PC_spectral():  # pragma: no cover
 
 
     test.polynomial_chaos(method="spectral",
+                          polynomial_order=6,
                           filename="TestingModel1d_spectral",
+                          seed=seed,
                           data_folder=test_data_dir,
                           plot=None)
 
