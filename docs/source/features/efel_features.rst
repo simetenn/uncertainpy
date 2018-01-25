@@ -1,3 +1,5 @@
+.. _efel:
+
 Electrophys Feature Extraction Library (eFEL)
 =============================================
 

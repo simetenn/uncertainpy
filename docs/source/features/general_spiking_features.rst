@@ -1,3 +1,5 @@
+.. _general_spiking:
+
 General spiking features
 ========================
 

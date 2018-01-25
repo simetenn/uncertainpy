@@ -1,3 +1,5 @@
+.. _general_network:
+
 General network features
 ========================
 
