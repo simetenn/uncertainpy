@@ -17,6 +17,8 @@ deploy:
   server: https://test.pypi.org/legacy/
   distributions: "sdist bdist_wheel"
   skip_cleanup: true
+  on:
+    tags: true
 
 # # Real pypi
 # deploy:

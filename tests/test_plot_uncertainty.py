@@ -964,7 +964,7 @@ class TestPlotUncertainpy(TestCasePlot):
     def test_plot_all(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.plot(condensed=False, sensitivity="sensitivity_1")
+        self.plot.plot(condensed=False, sensitivity="all")
 
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
