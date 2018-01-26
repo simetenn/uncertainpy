@@ -203,7 +203,7 @@ class UncertaintyQuantification(ParameterBase):
                  quadrature_order=None,
                  nr_pc_mc_samples=10**4,
                  nr_mc_samples=10**3,
-                 allow_incomplete=False,
+                 allow_incomplete=True,
                  seed=None,
                  single=False,
                  plot="condensed_sensitivity_1",
@@ -262,7 +262,7 @@ class UncertaintyQuantification(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -495,7 +495,7 @@ class UncertaintyQuantification(ParameterBase):
                          nr_collocation_nodes=None,
                          quadrature_order=None,
                          nr_pc_mc_samples=10**4,
-                         allow_incomplete=False,
+                         allow_incomplete=True,
                          seed=None,
                          plot="condensed_sensitivity_1",
                          figure_folder="figures",
@@ -543,7 +543,7 @@ class UncertaintyQuantification(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -748,7 +748,7 @@ class UncertaintyQuantification(ParameterBase):
                                 nr_collocation_nodes=None,
                                 quadrature_order=None,
                                 nr_pc_mc_samples=10**4,
-                                allow_incomplete=False,
+                                allow_incomplete=True,
                                 seed=None,
                                 plot="condensed_sensitivity_1",
                                 figure_folder="figures",
@@ -795,7 +795,7 @@ class UncertaintyQuantification(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.

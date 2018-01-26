@@ -303,7 +303,7 @@ class UncertaintyCalculations(ParameterBase):
                             uncertain_parameters=None,
                             polynomial_order=3,
                             quadrature_order=None,
-                            allow_incomplete=False):
+                            allow_incomplete=True):
         """
         Create the polynomial approximation `U_hat` using pseudo-spectral
         projection.
@@ -324,7 +324,7 @@ class UncertaintyCalculations(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
 
         Returns
         -------
@@ -336,7 +336,6 @@ class UncertaintyCalculations(ParameterBase):
         data : Data
             A data object containing the values from the model evaluation
             and feature calculations.
-
 
         Raises
         ------
@@ -427,7 +426,7 @@ class UncertaintyCalculations(ParameterBase):
                                uncertain_parameters=None,
                                polynomial_order=3,
                                nr_collocation_nodes=None,
-                               allow_incomplete=False):
+                               allow_incomplete=True):
         """
         Create the polynomial approximation `U_hat` using pseudo-spectral
         projection.
@@ -448,7 +447,7 @@ class UncertaintyCalculations(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
 
         Returns
         -------
@@ -547,7 +546,7 @@ class UncertaintyCalculations(ParameterBase):
                                        uncertain_parameters=None,
                                        polynomial_order=3,
                                        quadrature_order=None,
-                                       allow_incomplete=False):
+                                       allow_incomplete=True):
         """
         Create the polynomial approximation `U_hat` using pseudo-spectral
         projection and the Rosenblatt transformation. Works for dependend
@@ -569,7 +568,7 @@ class UncertaintyCalculations(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
 
         Returns
         -------
@@ -704,7 +703,7 @@ class UncertaintyCalculations(ParameterBase):
                                           uncertain_parameters=None,
                                           polynomial_order=3,
                                           nr_collocation_nodes=None,
-                                          allow_incomplete=False):
+                                          allow_incomplete=True):
         """
         Create the polynomial approximation `U_hat` using pseudo-spectral
         projection and the Rosenblatt transformation. Works for dependend
@@ -726,7 +725,7 @@ class UncertaintyCalculations(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
 
         Returns
         -------
@@ -1055,7 +1054,7 @@ class UncertaintyCalculations(ParameterBase):
                          nr_collocation_nodes=None,
                          quadrature_order=None,
                          nr_pc_mc_samples=10**4,
-                         allow_incomplete=False,
+                         allow_incomplete=True,
                          seed=None,
                          **custom_kwargs):
         """
@@ -1096,7 +1095,7 @@ class UncertaintyCalculations(ParameterBase):
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
-            Default is False.
+            Default is True.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.

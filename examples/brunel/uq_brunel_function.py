@@ -29,8 +29,7 @@ UQ = un.UncertaintyQuantification(model,
                                   CPUs=7)
 
 UQ.quantify(figure_folder="figures_brunel_function_SR",
-            filename="brunel_function_SR",
-            allow_incomplete=True)
+            filename="brunel_function_SR")
 
 
 
@@ -53,5 +52,4 @@ UQ = un.UncertaintyQuantification(model,
                                   CPUs=7)
 
 UQ.quantify(figure_folder="figures_brunel_function_AI",
-            filename="brunel_function_AI",
-            allow_incomplete=True)
+            filename="brunel_function_AI")

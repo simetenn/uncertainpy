@@ -1,6 +1,5 @@
 import uncertainpy as un
 
-path = "dLGN_modelDB/"
 
 # Define a parameter list
 parameter_list = [["Epas", -67, None],
@@ -23,7 +22,7 @@ parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.05))
 
 # Initialize the model with the start and end time of the stimulus
-model = un.NeuronModel(path=path, adaptive=True,
+model = un.NeuronModel(path="dLGN_modelDB/", adaptive=True,
                        stimulus_start=1000, stimulus_end=1900)
 
 # Initialize the features
@@ -33,5 +32,5 @@ features = un.SpikingFeatures(features_to_run="all")
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features,
-                                  CPUs=6)
-UQ.quantify(allow_incomplete=True)
+                                  CPUs=7)
+UQ.quantify()
