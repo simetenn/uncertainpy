@@ -16,22 +16,7 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 3.5)],
                   ["g", None, cp.Uniform(1, 3)],
                   ["delay", None, cp.Uniform(1.5, 3)],
                   ["J_E", None, cp.Uniform(0.05, 0.15)]]
-
 parameters_SR = un.Parameters(parameter_list)
-
-# Perform uncertainty quantification
-# using 7 CPUs,
-# allowing incomplete features to be used and saving
-# the data and plots under their own name
-UQ = un.UncertaintyQuantification(model,
-                                  parameters=parameters_SR,
-                                  features=features,
-                                  CPUs=7)
-
-UQ.quantify(figure_folder="figures_brunel_function_SR",
-            filename="brunel_function_SR")
-
-
 
 
 # Parameter for the asynchronous irregular (AI) state
@@ -39,17 +24,22 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
                   ["g", None, cp.Uniform(5, 8)],
                   ["delay", None, cp.Uniform(1.5, 3)],
                   ["J_E", None, cp.Uniform(0.05, 0.15)]]
-
 parameters_AI = un.Parameters(parameter_list)
 
-# Perform uncertainty quantification
-# using 7 CPUs,
-# allowing incomplete features to be used and saving
-# the data and plots under their own name
+# Set up the problem
 UQ = un.UncertaintyQuantification(model,
-                                  parameters=parameters_AI,
-                                  features=features,
-                                  CPUs=7)
+                                  parameters=parameters_SR,
+                                  features=features)
 
-UQ.quantify(figure_folder="figures_brunel_function_AI",
-            filename="brunel_function_AI")
+# Perform uncertainty quantification
+# and save the data and plots under their own name
+UQ.quantify(figure_folder="figures_brunel_SR",
+            filename="brunel_SR")
+
+# Change the set of parameters
+UQ.parameters = parameters_AI
+
+# Perform uncertainty quantification on the new parameter set
+# and save the data and plots under their own name
+UQ.quantify(figure_folder="figures_brunel_AI",
+            filename="brunel_AI")
