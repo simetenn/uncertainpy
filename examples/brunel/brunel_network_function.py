@@ -28,7 +28,7 @@ def brunel_network(eta,
 
     # Network parameters
     N_rec = 20             # Record from 20 neurons
-    simtime = 1000         # Simulation time
+    simulation_end = 1000         # Simulation time
 
     tau_m = 20.0           # Time constant of membrane potential in ms
     V_th = 20.0
@@ -94,7 +94,7 @@ def brunel_network(eta,
 
 
     # Run the simulation
-    nest.Simulate(simtime)
+    nest.Simulate(simulation_end)
 
 
     events_E = nest.GetStatus(spikes_E, 'events')[0]
@@ -117,7 +117,7 @@ def brunel_network(eta,
     #     spiketrains.append(spiketrain)
 
 
-    return simtime, spiketrains
+    return simulation_end, spiketrains
 
 
 
