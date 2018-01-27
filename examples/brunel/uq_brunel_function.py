@@ -17,14 +17,14 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 3.5)],
                   ["delay", None, cp.Uniform(1.5, 3)],
                   ["J_E", None, cp.Uniform(0.05, 0.15)]]
 
-parameters = un.Parameters(parameter_list)
+parameters_SR = un.Parameters(parameter_list)
 
 # Perform uncertainty quantification
 # using 7 CPUs,
 # allowing incomplete features to be used and saving
 # the data and plots under their own name
 UQ = un.UncertaintyQuantification(model,
-                                  parameters=parameters,
+                                  parameters=parameters_SR,
                                   features=features,
                                   CPUs=7)
 
@@ -40,14 +40,14 @@ parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
                   ["delay", None, cp.Uniform(1.5, 3)],
                   ["J_E", None, cp.Uniform(0.05, 0.15)]]
 
-parameters = un.Parameters(parameter_list)
+parameters_AI = un.Parameters(parameter_list)
 
 # Perform uncertainty quantification
 # using 7 CPUs,
 # allowing incomplete features to be used and saving
 # the data and plots under their own name
 UQ = un.UncertaintyQuantification(model,
-                                  parameters=parameters,
+                                  parameters=parameters_AI,
                                   features=features,
                                   CPUs=7)
 
