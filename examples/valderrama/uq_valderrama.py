@@ -1,7 +1,7 @@
 import uncertainpy as un
 import chaospy as cp
 
-from valderrama import Valderrama
+from valderrama import valderrama
 
 # Define a parameter list
 parameter_list = [["V_0", -10, None],
@@ -24,7 +24,8 @@ parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.2))
 
 # Initialize the model
-model = Valderrama()
+model = un.Model(run_function=valderrama,
+                 labels=["Time (ms)", "Membrane potential (mV)"])
 
 # Initialize features, with automatic detection of spikes
 features = un.SpikingFeatures(threshold="auto")

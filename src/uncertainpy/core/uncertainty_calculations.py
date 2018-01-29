@@ -656,9 +656,8 @@ class UncertaintyCalculations(ParameterBase):
                                                     sparse=True)
 
 
-        # TODO Is this correct, copy pasted from below.
         nodes = distribution.inv(dist_R.fwd(nodes_R))
-        weights = weights_R*distribution.pdf(nodes)/dist_R.pdf(nodes_R)
+        # weights = weights_R*distribution.pdf(nodes)/dist_R.pdf(nodes_R)
 
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -889,7 +888,9 @@ class UncertaintyCalculations(ParameterBase):
             self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
 
         U_mc = {}
-        for feature in data:
+        for feature in tqdm(data,
+                            desc="Analysing PC for each feature",
+                            total=len(data)):
             if feature in U_hat:
                 data[feature].mean = cp.E(U_hat[feature], distribution)
                 data[feature].variance = cp.Var(U_hat[feature], distribution)

@@ -1,7 +1,7 @@
 import uncertainpy as un
 import chaospy as cp
 
-from brunel_network_function import brunel_network
+from brunel_network import brunel_network
 
 
 # Create a Nest model from the brunel network function
