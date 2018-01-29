@@ -11,7 +11,7 @@ model = un.NestModel(run_function=brunel_network)
 features = un.NetworkFeatures()
 
 
-# Parametes for the Synchronous regular (SR) state
+# Parametes for the synchronous regular (SR) state
 parameter_list = [["eta", None, cp.Uniform(1.5, 3.5)],
                   ["g", None, cp.Uniform(1, 3)],
                   ["delay", None, cp.Uniform(1.5, 3)],

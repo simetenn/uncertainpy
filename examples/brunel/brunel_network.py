@@ -47,7 +47,6 @@ def brunel_network(eta,
     # Configure kernel
     nest.SetKernelStatus({"grng_seed": 10})
 
-
     nest.SetDefaults('iaf_psc_delta',
                      {'C_m': 1.0,
                       'tau_m': tau_m,
@@ -101,27 +100,12 @@ def brunel_network(eta,
     events_I = nest.GetStatus(spikes_I, 'events')[0]
 
 
-    # TODO is there any difference in sending back only excitatory
-    #      or inhibitory neurons, or should both be sent back?
-    spiketrains = []
     # Excitatory spike trains
     # Makes sure the spiketrain is added even if there are no results
     # to get a regular result
+    spiketrains = []
     for sender in nodes_E[:N_rec]:
         spiketrain = events_E["times"][events_E["senders"] == sender]
         spiketrains.append(spiketrain)
 
-    # Inhibitory spike trains
-    # for sender in nodes_I[:N_rec]:
-    #     spiketrain = events_I["times"][events_I["senders"] == sender]
-    #     spiketrains.append(spiketrain)
-
-
     return simulation_end, spiketrains
-
-
-
-
-if __name__ == "__main__":
-    time, values = brunel_network()
-    print values
