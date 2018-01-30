@@ -124,7 +124,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
                               "mean_cv": ["Mean coefficient of variation"],
-                              "mean_isi": ["Mean interspike interval [{}]".format(unit_string)],
+                              "mean_isi": ["Mean interspike interval ({})".format(unit_string)],
                               "local_variation": ["Neuron nr", "Local variation"],
                               "mean_local_variation": ["Mean local variation"],
                               "mean_firing_rate": ["Neuron nr", "Rate (Hz)"],
@@ -132,7 +132,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                               "fanofactor": ["Fanofactor"],
                               "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
                               "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],
-                              "binned_isi": ["Interspike interval [{}]".format(unit_string),
+                              "binned_isi": ["Interspike interval ({})".format(unit_string),
                                              "Neuron nr", "Count"],
                               "corrcoef": ["Neuron nr", "Neuron nr", "Correlation coefficient"],
                               "covariance": ["Neuron nr", "Neuron nr", "Covariance"]
