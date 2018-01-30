@@ -31,7 +31,8 @@ __all__ = ["TestDistribution",
            "TestExamples",
            "TestBase",
            "TestParameterBase",
-           "TestEfelFeatures"]
+           "TestEfelFeatures",
+           "TestNestModel"]
 
 from .test_distribution import TestDistribution
 # from test_exploration import TestExploration
@@ -40,7 +41,7 @@ from .test_features import TestNetworkFeatures, TestTestingFeatures, TestGeneral
 from .test_features import TestEfelFeatures
 from .test_logger import TestLogger
 
-from .test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel
+from .test_models import TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel, TestNestModel
 from .test_models import TestIzhikevichModel, TestTestingModel0d, TestTestingModel1d
 from .test_models import TestTestingModel2d, TestNeuronModel
 
