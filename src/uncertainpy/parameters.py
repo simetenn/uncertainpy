@@ -146,20 +146,20 @@ class Parameters(collections.MutableMapping):
     """
     A collection of parameters.
 
-    Has all standard dictionary methods implemented, such as items, value, contains and similar implemented.
+    Has all standard dictionary methods implemented,
+    such as items, value, contains and similar implemented.
 
     Parameters
     ----------
-    parameter_list: {list of Parameter instances, list [[name, value, distribution],...]}
+    parameter_list: {list of Parameter instances, list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...], list [[name, value or Chaospy distribution], ...]}
         List the parameters that should be created.
-        On the form: ``parameter_list = [ParameterObject1, ParameterObject2, ...]``
-        Or: ``parameter_list = [[name1, value1, distribution1], ...]``, where
-        the arguments are similar to the arguments given to Parameter().
+        On the form: ``parameter_list = [ParameterObject1, ParameterObject2, ...]``,
+        or ``parameter_list = [[name1, value1, Chaospy distribution or callable that returns a Chaospy distribution], ...]``, where
+        or ``parameter_list = [[name1, value1 or Chaospy distribution], ...]``.
     distribution: {None, multivariate Chaospy distribution}, optional
         A multivariate distribution of all parameters, if it exists, it is used
         instead of individual distributions.
         Defaults to None.
-
 
     Attributes
     ----------
@@ -180,13 +180,21 @@ class Parameters(collections.MutableMapping):
         self.distribution = distribution
 
         try:
-            for i in parameter_list:
-                if isinstance(i, Parameter):
-                    self.parameters[i.name] = i
+            for parameter in parameter_list:
+                if isinstance(parameter, Parameter):
+                    self.parameters[parameter.name] = parameter
                 else:
-                    self.parameters[i[0]] = Parameter(*i)
+                    if len(parameter) == 2:
+                        if isinstance(parameter[1], cp.Dist):
+                            self.parameters[parameter[0]] = Parameter(parameter[0], distribution=parameter[1])
+                        else:
+                             self.parameters[parameter[0]] = Parameter(parameter[0], value=parameter[1])
+                    else:
+                        self.parameters[parameter[0]] = Parameter(*parameter)
         except TypeError as error:
-            msg = "parameters must be either list of Parameter objects or list [[name, value, distribution], ...]"
+            msg = "parameters must be either list of Parameter objects,\n" \
+                   + "list on the form [[name, value, Chaospy distribution or callable that returns a Chaospy distribution], ...],\n" \
+                   + "or list on the form [[name, value or Chaospy distribution], ...]"
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)
