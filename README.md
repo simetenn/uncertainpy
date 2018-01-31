@@ -22,9 +22,14 @@ potential shape.
 
 Uncertainpy is tailored towards neuroscience models, and comes with several
 common neurosience models and features built in, but new models and features can
-easily be implemented. It should be noted that while \uncertainpy is tailored
+easily be implemented. It should be noted that while Uncertainpy is tailored
 towards neuroscience, the implemented methods are general, and Uncertainpy can
 be used for many other types of models and features within other fields.
+
+## Documentation
+
+The documentation for Uncertainpy can be found [here](),
+and a paper on Uncertainpy can be found [here]().
 
 ## Installation
 
@@ -168,11 +173,6 @@ which is the default option of `quantify`:
     # polynomial chaos with point collocation (by default)
     uncertainty.quantify()
 
-
-## Documentation
-
-The documentation for Uncertainpy can be found [here](),
-and an article on Uncertainpy can be found [here]().
 
 ## Citation
 
