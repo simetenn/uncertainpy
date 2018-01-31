@@ -24,7 +24,7 @@ parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.2))
 
 # Initialize the model
-model = un.Model(run_function=valderrama,
+model = un.Model(run=valderrama,
                  labels=["Time (ms)", "Membrane potential (mV)"])
 
 # Initialize features, with automatic detection of spikes

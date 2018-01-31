@@ -31,7 +31,7 @@ class TestModel(unittest.TestCase):
 
 
     def test_run(self):
-        model = Model(run_function=model_function)
+        model = Model(run=model_function)
 
         parameters = {"a": -1, "b": -1}
         time, values = model.run(**parameters)
@@ -52,7 +52,7 @@ class TestModel(unittest.TestCase):
 
         with self.assertRaises(TypeError):
             model.run = ""
-            Model(run_function=2)
+            Model(run=2)
 
 
     def test_set_parameters(self):
@@ -68,7 +68,7 @@ class TestModel(unittest.TestCase):
         def f(x):
             return x
 
-        model = Model(run_function=f,
+        model = Model(run=f,
                       adaptive=True,
                       labels=["test x", "text y"])
 
@@ -109,7 +109,7 @@ class TestModel(unittest.TestCase):
 
 
     def test_assign_postprocess(self):
-        model = Model(run_function=model_function)
+        model = Model(run=model_function)
 
         parameters = {"a": -1, "b": -1}
         results = model.run(**parameters)
@@ -129,7 +129,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(time, "time")
         self.assertEqual(values, "values")
 
-        model = Model(run_function=model_function)
+        model = Model(run=model_function)
         with self.assertRaises(TypeError):
             model.postprocess = 12
 
@@ -138,7 +138,7 @@ class TestModel(unittest.TestCase):
         def postprocess(time, values):
             return "time", "values"
 
-        model = Model(run_function=model_function,
+        model = Model(run=model_function,
                       postprocess=postprocess)
 
         parameters = {"a": -1, "b": -1}

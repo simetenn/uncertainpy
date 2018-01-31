@@ -27,7 +27,7 @@ class NestModel(Model):
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
         Default is ``["time [ms]", "Neuron nr", "Spiking probability"]``.
-    run_function : {None, function}, optional
+    run : {None, function}, optional
         A function that implements the model. See Note for requirements of the
         function. Default is None.
 
@@ -45,7 +45,7 @@ class NestModel(Model):
     uncertainpy.models.NestModel.run
     """
     def __init__(self,
-                 run_function=None,
+                 run=None,
                  adaptive=False,
                  labels=["Time (ms)", "Neuron nr", "Spiking probability"]):
 
@@ -53,7 +53,7 @@ class NestModel(Model):
         if not prerequisites:
             raise ImportError("NestModel requires: nest")
 
-        super(NestModel, self).__init__(run_function=run_function,
+        super(NestModel, self).__init__(run=run,
                                         adaptive=adaptive,
                                         labels=labels)
 

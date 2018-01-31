@@ -5,7 +5,7 @@ from brunel_network import brunel_network
 
 
 # Create a Nest model from the brunel network function
-model = un.NestModel(run_function=brunel_network)
+model = un.NestModel(run=brunel_network)
 
 # Initialize network features
 features = un.NetworkFeatures()

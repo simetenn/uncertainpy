@@ -134,7 +134,7 @@ but we would like to have labels on the axes when plotting.
 So we create a `Model` with the above run function and labels:
 
     # Create a model from coffee_cup function and add labels
-    model = un.Model(run_function=coffee_cup,
+    model = un.Model(run=coffee_cup,
                     labels=["Time [s]", "Temperature [C]"])
 
 The next step is to define the uncertain parameters.

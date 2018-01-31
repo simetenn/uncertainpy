@@ -22,7 +22,7 @@ class Model(object):
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
         Default is an empty list.
-    run_function : {None, callable}, optional
+    run : {None, callable}, optional
         A function that implements the model. See the ``run`` method for
         requirements of the function. Default is None.
 
@@ -45,7 +45,7 @@ class Model(object):
     uncertainpy.models.Model.postprocess
     """
     def __init__(self,
-                 run_function=None,
+                 run=None,
                  adaptive=False,
                  labels=[],
                  postprocess=None,
@@ -56,13 +56,8 @@ class Model(object):
         self.labels = labels
         self.ignore = ignore
 
-        if run_function is not None:
-            self.run = run_function
-        else:
-            self.name = self.__class__.__name__
-
-        if run_function is not None:
-                self.run = run_function
+        if run is not None:
+            self.run = run
         else:
             self.name = self.__class__.__name__
 
@@ -186,12 +181,12 @@ class Model(object):
 
 
     @run.setter
-    def run(self, new_run_function):
-        if not callable(new_run_function):
+    def run(self, new_run):
+        if not callable(new_run):
             raise TypeError("run function must be callable")
 
-        self._run = new_run_function
-        self.name = new_run_function.__name__
+        self._run = new_run
+        self.name = new_run.__name__
 
 
     def _run(self, **parameters):
