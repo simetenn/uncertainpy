@@ -77,6 +77,7 @@ class Features(object):
                  new_utility_methods=None,
                  adaptive=None,
                  labels={},
+                 preprocess=None,
                  verbose_level="info",
                  verbose_filename=None):
 
@@ -87,7 +88,8 @@ class Features(object):
                                 "implemented_features",
                                 "preprocess",
                                 "add_features",
-                                "reference_feature"]
+                                "reference_feature",
+                                "_preprocess"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -102,6 +104,8 @@ class Features(object):
 
         if new_features is not None:
             self.add_features(new_features, labels=labels)
+        if preprocess is not None:
+            self.preprocess = preprocess
 
         self.labels = labels
         self.features_to_run = features_to_run
@@ -111,8 +115,8 @@ class Features(object):
                                     self.__class__.__name__)
 
 
-
-    def preprocess(self, *model_results):
+    @property
+    def preprocess(self):
         """
         Preprossesing of the time `time` and results `values` from the model, before the
         features are calculated.
@@ -148,8 +152,18 @@ class Features(object):
         --------
         uncertainpy.models.Model.run : The model run method
         """
-        return model_results
+        return self._preprocess
 
+
+    def _preprocess(self, *model_result):
+        return model_result
+
+    @preprocess.setter
+    def preprocess(self, new_preprocess_function):
+        if not callable(new_preprocess_function):
+            raise TypeError("preprocess function must be callable")
+
+        self._preprocess = new_preprocess_function
 
     @property
     def labels(self):
@@ -476,7 +490,7 @@ class Features(object):
     def implemented_features(self):
         """
         Return a list of all callable methods in feature, that are not utility
-        methods.
+        methods, does not starts with "_" and not a method of a general python object.
 
         Returns
         -------
@@ -484,7 +498,7 @@ class Features(object):
             A list of all callable methods in feature, that are not utility
             methods.
         """
-        return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods and method not in dir(object)]
+        return [method for method in dir(self) if callable(getattr(self, method)) and method not in self.utility_methods and method not in dir(object) and not method.startswith("_")]
 
 
     def reference_feature(self, *preprocess_results):

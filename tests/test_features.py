@@ -54,6 +54,31 @@ class TestFeatures(unittest.TestCase):
         self.assertEqual(b, 2)
 
 
+    def test_preprocess_assign(self):
+        def preprocess(time, values):
+            return "time", "values"
+
+        features = Features(preprocess=preprocess)
+
+        time, values = features.preprocess(self.time, self.values)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+
+        features = Features(preprocess=None)
+        features.preprocess = preprocess
+
+        time, values = features.preprocess(self.time, self.values)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+
+        features = Features(preprocess=None)
+        with self.assertRaises(TypeError):
+            features.preprocess = 12
+
+
+
     def test_calculate_featureNotImplemented(self):
         with self.assertRaises(AttributeError):
             self.features.calculate_feature("not_in_class", self.time, self.values)

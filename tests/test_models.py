@@ -129,6 +129,10 @@ class TestModel(unittest.TestCase):
         self.assertEqual(time, "time")
         self.assertEqual(values, "values")
 
+        model = Model(run_function=model_function)
+        with self.assertRaises(TypeError):
+            model.postprocess = 12
+
 
     def test_postprocess_argument(self):
         def postprocess(time, values):
