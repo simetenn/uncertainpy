@@ -48,6 +48,7 @@ class Model(object):
                  run_function=None,
                  adaptive=False,
                  labels=[],
+                 postprocess=None,
                  ignore=False):
                  # TODO fix and document ignore option
 
@@ -59,6 +60,14 @@ class Model(object):
             self.run = run_function
         else:
             self.name = self.__class__.__name__
+
+        if run_function is not None:
+                self.run = run_function
+        else:
+            self.name = self.__class__.__name__
+
+        if postprocess is not None:
+            self.postprocess = postprocess
 
 
     @property
@@ -185,25 +194,11 @@ class Model(object):
         self.name = new_run_function.__name__
 
 
-    def set_parameters(self, **parameters):
-        """
-        Set all named arguments as attributes of the model class.
-
-        Parameters
-        ----------
-        **parameters : A number of named arguments (name=value).
-            All set as attributes of the class.
-        """
-        for parameter in parameters:
-            setattr(self, parameter, parameters[parameter])
-
-
-
     def _run(self, **parameters):
         raise NotImplementedError("No run method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
 
 
-
+    @property
     def postprocess(self, *model_result):
         """
         Postprocessing of the time and results from the model.
@@ -257,7 +252,19 @@ class Model(object):
         but still need to postprocess the model results to perform the
         uncertainty quantification.
         """
+        return self._postprocess
+
+
+    def _postprocess(self, *model_result):
         return model_result[:2]
+
+
+    @postprocess.setter
+    def postprocess(self, new_postprocess_function):
+        if not callable(new_postprocess_function):
+            raise TypeError("postprocess function must be callable")
+
+        self._postprocess = new_postprocess_function
 
 
     def validate_run_result(self, model_result):
@@ -319,3 +326,16 @@ class Model(object):
                 error.args = ("",)
             error.args = error.args + (msg,)
             raise
+
+
+    def set_parameters(self, **parameters):
+        """
+        Set all named arguments as attributes of the model class.
+
+        Parameters
+        ----------
+        **parameters : A number of named arguments (name=value).
+            All set as attributes of the class.
+        """
+        for parameter in parameters:
+            setattr(self, parameter, parameters[parameter])

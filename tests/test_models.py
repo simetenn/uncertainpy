@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 from xvfbwrapper import Xvfb
+import nest
 
 from uncertainpy.models import Model, NeuronModel, NestModel
 
@@ -40,7 +41,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(model.name, "model_function")
 
         model = Model()
-        model.run = run_function=model_function
+        model.run = model_function
 
         parameters = {"a": -1, "b": -1}
         time, values = model.run(**parameters)
@@ -95,7 +96,7 @@ class TestModel(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.model.validate_run_result("123456")
-            self.model.validate_run_result(np.linspace(0,1,100))
+            self.model.validate_run_result(np.linspace(0, 1, 100))
 
         with self.assertRaises(TypeError):
             self.model.validate_run_result(1)
@@ -105,6 +106,44 @@ class TestModel(unittest.TestCase):
         result = self.model.postprocess(1, 2, 3)
 
         self.assertEqual(result, (1, 2))
+
+
+    def test_assign_postprocess(self):
+        model = Model(run_function=model_function)
+
+        parameters = {"a": -1, "b": -1}
+        results = model.run(**parameters)
+
+        time, values = model.postprocess(*results)
+
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
+        self.assertTrue(np.array_equal(values, np.arange(0, 10) - 2))
+
+        def postprocess(time, values):
+            return "time", "values"
+
+        model.postprocess = postprocess
+
+        time, values = model.postprocess(*results)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+
+
+    def test_postprocess_argument(self):
+        def postprocess(time, values):
+            return "time", "values"
+
+        model = Model(run_function=model_function,
+                      postprocess=postprocess)
+
+        parameters = {"a": -1, "b": -1}
+        results = model.run(**parameters)
+
+        time, values = model.postprocess(*results)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
     def test_run(self):
@@ -254,26 +293,30 @@ class TestNestModel(unittest.TestCase):
 
         time, values = model.run()
 
-        correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
-                     47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
+        correct_values = np.array([55.6, 71.4, 109.4, 129.4, 141.6, 159.1, 193.3, 213.9,
+                                   233.6, 245.1, 278.3, 305.5, 318., 340.7, 361.1, 391.9,
+                                   416.2, 457.2, 475.6, 512.4, 544.5, 584.7, 594.6, 608.8,
+                                   637.2, 656.1, 694.6, 716.5, 732.1, 766.2, 795.8, 829.4,
+                                   860., 876.4, 908.2, 928.2, 948.4, 986.7])
 
-        self.assertIsNone(time)
-        self.assertEqual(values[0], correct_values)
+        self.assertEqual(time, 1000)
+        self.assertTrue(np.allclose(values[0], correct_values, rtol=1e-5))
 
 
     def test_postprocess(self):
         model = NestModel(brunel_network)
 
-        time, values = model.run()
-        correct_values = [5.6, 11.1, 15.2, 19.5, 22.4, 30.3, 36, 42.2,
-                          47.1, 55.2, 60.8, 67.3, 76.8, 81.5, 88.3, 96.1]
 
-        time, values = NestModel.postprocess(time, correct_values)
+        time, values = model.postprocess(4, [[0, 2, 3]])
 
-        binary_spike = np.zeros(len(time))
-        binary_spike[np.in1d(time, correct_values)] = 1
+        correct_time = np.arange(0, 4, 0.1)
+        binary_spike =  np.zeros(len(time))
+        binary_spike[0] = 1
+        binary_spike[20] = 1
+        binary_spike[30] = 1
 
-        self.assertTrue(np.array_equal(time, np.arange(0, 100.1, 0.1)))
+        binary_spike = [binary_spike]
+        self.assertTrue(np.array_equal(time, correct_time))
         self.assertTrue(np.array_equal(values, binary_spike))
 
 

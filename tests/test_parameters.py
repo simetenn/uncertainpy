@@ -221,8 +221,8 @@ class TestParameters(unittest.TestCase):
 
     def test_init_object_dist(self):
         parameter_list = [Parameter("gbar_Na", 120, cp.Uniform(110, 130)),
-                         Parameter("gbar_K", 36),
-                         Parameter("gbar_l", 10.3)]
+                          Parameter("gbar_K", 36),
+                          Parameter("gbar_l", 10.3)]
 
         parameters = Parameters(parameter_list, distribution=cp.Uniform(110, 130))
 
@@ -273,6 +273,29 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(parameters["gbar_l"].value, 0.3)
 
         self.assertIsNone(parameters["gbar_Na"].distribution)
+        self.assertIsNone(parameters["gbar_K"].distribution)
+        self.assertIsNone(parameters["gbar_l"].distribution)
+
+
+    def test_init_list_mixed(self):
+        parameter_list = [["gbar_Na", cp.Uniform(110, 130)],
+                          ["gbar_K", 36],
+                          ["gbar_l", 0.3]]
+
+        parameters = Parameters(parameter_list)
+
+        self.assertIsInstance(parameters, Parameters)
+        self.assertIsInstance(parameters["gbar_Na"], Parameter)
+        self.assertIsInstance(parameters["gbar_K"], Parameter)
+        self.assertIsInstance(parameters["gbar_l"], Parameter)
+
+
+        self.assertNone(parameters["gbar_Na"].value)
+        self.assertEqual(parameters["gbar_K"].value, 36)
+        self.assertEqual(parameters["gbar_l"].value, 0.3)
+
+
+        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Dist)
         self.assertIsNone(parameters["gbar_K"].distribution)
         self.assertIsNone(parameters["gbar_l"].distribution)
 
