@@ -273,6 +273,18 @@ class TestNeuronModel(unittest.TestCase):
         #     model.run(**model_parameters)
 
 
+    def test_assign_run(self):
+        def test_run(a, b):
+            return "time", "values"
+
+        model = NeuronModel(run=test_run)
+
+        model_parameters = {"a": 1.1, "b": 22000}
+        time, values = model.run(**model_parameters)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+
 
 class TestNestModel(unittest.TestCase):
     def test_init(self):

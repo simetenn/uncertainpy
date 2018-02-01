@@ -56,6 +56,7 @@ class NeuronModel(Model):
                  path=None,
                  name=None,
                  adaptive=True,
+                 run=None,
                  labels=["Time (ms)", "Membrane potential (mV)"],
                  stimulus_start=None,
                  stimulus_end=None,
@@ -76,6 +77,9 @@ class NeuronModel(Model):
 
         for key in kwargs:
             self.info[key] = kwargs[key]
+
+        if run is not None:
+            self.run = run
 
         if name:
             self.name = name
@@ -158,7 +162,9 @@ class NeuronModel(Model):
         self.time = self._record("_ref_t")
 
 
-    def run(self, **parameters):
+
+    @Model.run.setter
+    def run(self, new_run):
         """
         Load and run a Neuron simulation and return the model result.
 
@@ -180,7 +186,11 @@ class NeuronModel(Model):
             Efel features require ``"stimulus_start"`` and ``"stimulus_end"``
             as keys, while spiking_features require ``stimulus_start"``.
         """
+        Model.run.fset(self, new_run)
 
+
+
+    def _run(self, **parameters):
         self.load_neuron()
 
         self.set_parameters(parameters)
@@ -194,7 +204,6 @@ class NeuronModel(Model):
         time = self._to_array(self.time)
 
         return time, values, self.info
-
 
 
     def set_parameters(self, parameters):
