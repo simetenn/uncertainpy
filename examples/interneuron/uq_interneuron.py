@@ -22,7 +22,7 @@ parameters = un.Parameters(parameter_list)
 parameters.set_all_distributions(un.uniform(0.05))
 
 # Initialize the model with the start and end time of the stimulus
-model = un.NeuronModel(path="dLGN_modelDB/", adaptive=True,
+model = un.NeuronModel(path="interneuron_modelDB/", adaptive=True,
                        stimulus_start=1000, stimulus_end=1900)
 
 # Initialize the features

@@ -290,7 +290,7 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(parameters["gbar_l"], Parameter)
 
 
-        self.assertNone(parameters["gbar_Na"].value)
+        self.assertIsNone(parameters["gbar_Na"].value)
         self.assertEqual(parameters["gbar_K"].value, 36)
         self.assertEqual(parameters["gbar_l"].value, 0.3)
 

@@ -24,7 +24,6 @@ __all__ = ["TestDistribution",
            "TestSpike",
            "TestSpikes",
            "TestUncertainty",
-           "TestUseCases",
            "TestData",
            "TestDataFeature",
            "TestUncertaintyCalculations",
@@ -51,7 +50,6 @@ from .test_plot_uncertainty import TestPlotUncertainpy
 from .test_spike import TestSpike
 from .test_spikes import TestSpikes
 from .test_uncertainty import TestUncertainty
-from .test_usecase import TestUseCases
 from .test_data import TestData, TestDataFeature
 from .test_run_model import TestRunModel
 from .test_uncertainty_calculations import TestUncertaintyCalculations

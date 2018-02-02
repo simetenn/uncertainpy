@@ -135,8 +135,6 @@ test_plotUncertainty = create_test_suite_parameter(TestPlotUncertainpy, paramete
 
 test_uncertainty = create_test_suite_parameter(TestUncertainty, parameter=args.exact)
 
-test_usecase = create_test_suite([TestUseCases])
-
 test_utils = unittest.TestSuite([test_logger])
 
 test_plotting = unittest.TestSuite([test_plotUncertainty])
@@ -163,7 +161,6 @@ test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncerta
 test_all = unittest.TestSuite([test_basic, test_uncertainty,
                                test_plotUncertainty, test_plotUncertainty, test_examples])
 
-# test_all = unittest.TestSuite([test_fast, test_usecase])
 # test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
 
 
@@ -251,10 +248,6 @@ if args.plotting:
     print("-----------------------------------------")
     print("Running testsuite: plotting")
     results["plotting"] = test_runner.run(test_plotting)
-if args.usecase:
-    print("-----------------------------------------")
-    print("Running testsuite: usecase")
-    results["usecase"] = test_runner.run(test_usecase)
 if args.data:
     print("-----------------------------------------")
     print("Running testsuite: data")

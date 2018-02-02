@@ -780,7 +780,7 @@ class TestRunModel(unittest.TestCase):
 
     def test_run_neuron_model(self):
         path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                            "models/dLGN_modelDB/")
+                            "models/interneuron_modelDB/")
 
         model = NeuronModel(path=path,
                             adaptive=True)

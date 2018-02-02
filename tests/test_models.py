@@ -238,14 +238,14 @@ class TestTestingModelAdaptive(unittest.TestCase):
 class TestNeuronModel(unittest.TestCase):
     def test_init(self):
         file = "mosinit.hoc"
-        path = "models/dLGN_modelDB/"
+        path = "models/interneuron_modelDB/"
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)
 
         model = NeuronModel(file=file,
                             path=os.path.join(filedir, path),
-                            name="lgn",
+                            name="interneuron",
                             stimulus_end=1000,
                             stimulus_start=1900,
                             test=12)
@@ -253,12 +253,12 @@ class TestNeuronModel(unittest.TestCase):
         self.assertEqual(model.info["test"], 12)
         self.assertEqual(model.info["stimulus_end"], 1000)
         self.assertEqual(model.info["stimulus_start"], 1900)
-        self.assertEqual(model.name, "lgn")
+        self.assertEqual(model.name, "interneuron")
 
 
     def test_run(self):
         file = "mosinit.hoc"
-        path = "models/dLGN_modelDB/"
+        path = "models/interneuron_modelDB/"
 
         filepath = os.path.abspath(__file__)
         filedir = os.path.dirname(filepath)

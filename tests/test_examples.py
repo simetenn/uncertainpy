@@ -60,28 +60,13 @@ class TestExamples(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-    def test_lgn(self):
-        folder = os.path.join(self.example_folder, "lgn")
+    def test_interneuron(self):
+        folder = os.path.join(self.example_folder, "interneuron")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_lgn.py"], env=os.environ.copy())
+        result = subprocess.call(["python", "uq_interneuron.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
-
-    # def test_lgn_simulator_class(self):
-    #     folder = os.path.join(self.example_folder, "lgn_simulator")
-    #     os.chdir(folder)
-    #
-    #     result = subprocess.call(["python", "uq_lgn_simulator_class.py"])
-    #     self.assertEqual(result, 0)
-    #
-    #
-    # def test_lgn_simulator_function(self):
-    #     folder = os.path.join(self.example_folder, "lgn_simulator")
-    #     os.chdir(folder)
-    #
-    #     result = subprocess.call(["python", "uq_lgn_simulator_function.py"])
-    #     self.assertEqual(result, 0)
 
     def test_valderrama(self):
         folder = os.path.join(self.example_folder, "valderrama")
