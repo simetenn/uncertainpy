@@ -34,9 +34,9 @@ alpha_dist = cp.Uniform(0.5, 1.5)
 kappa_hat_dist = cp.Uniform(0.025, 0.075)/alpha_dist
 
 # Define a parameter list and use it to create the Parameters
-parameter_list = [["alpha", None, alpha_dist],
-                  ["kappa_hat", None, kappa_hat_dist],
-                  ["T_env", None, T_env_dist]]
+parameter_list = [["alpha", alpha_dist],
+                  ["kappa_hat", kappa_hat_dist],
+                  ["T_env", T_env_dist]]
 parameters = un.Parameters(parameter_list)
 
 # Initialize the model
