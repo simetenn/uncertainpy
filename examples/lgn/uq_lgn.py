@@ -2,17 +2,17 @@ import uncertainpy as un
 
 
 # Define a parameter list
-parameter_list = [["Epas", -67, None],
-                  ["Rm", 22000, None],
-                  ["gna", 0.09, None],
-                  ["nash", -52.6, None],
-                  ["gkdr", 0.37, None],
-                  ["kdrsh", -51.2, None],
-                  ["gcat", 1.17e-5, None],
-                  ["gcal", 0.0009, None],
-                  ["ghbar", 0.00011, None],
-                  ["gahp", 6.4e-5, None],
-                  ["gcanbar", 2e-8, None]]
+parameter_list = [["Epas", -67],
+                  ["Rm", 22000],
+                  ["gna", 0.09],
+                  ["nash", -52.6],
+                  ["gkdr", 0.37],
+                  ["kdrsh", -51.2],
+                  ["gcat", 1.17e-5],
+                  ["gcal", 0.0009],
+                  ["ghbar", 0.00011],
+                  ["gahp", 6.4e-5],
+                  ["gcanbar", 2e-8]]
 
 # Create the parameters
 parameters = un.Parameters(parameter_list)

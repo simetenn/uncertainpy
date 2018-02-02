@@ -5,18 +5,19 @@ from scipy.integrate import odeint
 
 
 def I(time):
-    return 150 # mA
+    return 137 # micro A/cm**2
 
 def valderrama(V_0, C_m, gbar_Na, gbar_K, gbar_l, E_Na, E_K, E_l, m_0, n_0, h_0):
 
     # Setup time
-    end_time = 15                 # ms
+    end_time = 15          # ms
     dt = 0.025             # ms
     time = np.arange(0, end_time + dt, dt)
 
     # K channel
     def alpha_n(V):
         return 0.01*(10 - V)/(np.exp((10 - V)/10.) - 1)
+
 
     def beta_n(V):
         return 0.125*np.exp(-V/80.)
