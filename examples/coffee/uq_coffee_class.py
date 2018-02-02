@@ -42,9 +42,9 @@ parameter_list = [["kappa", kappa_dist],
 parameters = un.Parameters(parameter_list)
 
 # Set up the uncertainty quantification
-uncertainty = un.UncertaintyQuantification(model=model,
-                                           parameters=parameters)
+UQ = un.UncertaintyQuantification(model=model,
+                                  parameters=parameters)
 
 # Perform the uncertainty quantification using
 # polynomial chaos with point collocation (by default)
-uncertainty.quantify()
+UQ.quantify()

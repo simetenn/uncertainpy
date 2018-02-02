@@ -5,7 +5,7 @@ from scipy.integrate import odeint
 
 
 def I(time):
-    return 137 # micro A/cm**2
+    return 140 # micro A/cm**2
 
 def valderrama(V_0, C_m, gbar_Na, gbar_K, gbar_l, E_Na, E_K, E_l, m_0, n_0, h_0):
 

@@ -14,10 +14,10 @@ def coffee_cup_dependent(kappa_hat, T_env, alpha):
         return -alpha*kappa_hat*(T - T_env)
 
     # Solving the equation by integration.
-    values = odeint(f, T_0, time, args=(alpha, kappa_hat, T_env))[:, 0]
+    temperature = odeint(f, T_0, time, args=(alpha, kappa_hat, T_env))[:, 0]
 
     # Return time and model results
-    return time, values
+    return time, temperature
 
 
 # Create the distributions
