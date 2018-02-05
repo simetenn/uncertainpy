@@ -4,16 +4,12 @@ import numpy as np
 from scipy.integrate import odeint
 
 
-class HodgkinHuxley(Model):
-    """
-    The model must be able to handle these calls
 
-    simulation.run()
-    """
+class HodgkinHuxley(Model):
     def __init__(self):
         Model.__init__(self,
                        adaptive=False,
-                       labels=["time [ms]", "voltage [mv]"])
+                       labels=["Time (ms)", "Voltage (mV)"])
 
         ## HH Parameters
         self.V_rest = -65   # mV
@@ -105,9 +101,9 @@ class HodgkinHuxley(Model):
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
         X = odeint(self.dXdt, initial_conditions, self.time)
-        V = X[:, 0]
+        values = X[:, 0]
 
          # Add info needed by certain spiking features and efel features
         info = {"stimulus_start": self.time[0], "stimulus_end": self.time[-1]}
 
-        return self.time, V, info
+        return self.time, values, info

@@ -1,9 +1,6 @@
 import nest
 
-def brunel_network(eta=2,
-                   g=5,
-                   delay=1.5,
-                   J_E=0.1):
+def brunel_network(eta, g, delay, J_E):
     """
     A brunel network, from:
 
@@ -26,14 +23,15 @@ def brunel_network(eta=2,
         Amplitude of excitatory postsynaptic current. Default is 0.1
     """
 
+    # Reduced number of neurons and simulation time
     # Network parameters
     N_rec = 20             # Record from 20 neurons
-    simtime = 1000         # Simulation time
+    simulation_end = 100   # Simulation time
 
     tau_m = 20.0           # Time constant of membrane potential in ms
     V_th = 20.0
-    N_E = 10000            # Number of inhibitory neurons
-    N_I = 2500             # Number of excitatory neurons
+    N_E = 1000             # Number of inhibitory neurons
+    N_I = 250              # Number of excitatory neurons
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = N_E/10           # Number of excitatory synapses per neuron
     C_I = N_I/10           # Number of inhibitory synapses per neuron
@@ -46,7 +44,6 @@ def brunel_network(eta=2,
 
     # Configure kernel
     nest.SetKernelStatus({"grng_seed": 10})
-
 
     nest.SetDefaults('iaf_psc_delta',
                      {'C_m': 1.0,
@@ -94,34 +91,19 @@ def brunel_network(eta=2,
 
 
     # Run the simulation
-    nest.Simulate(simtime)
+    nest.Simulate(simulation_end)
 
 
     events_E = nest.GetStatus(spikes_E, 'events')[0]
     events_I = nest.GetStatus(spikes_I, 'events')[0]
 
 
-    # TODO is there any difference in sending back only excitatory
-    #      or inhibitory neurons, or should both be sent back?
-    spiketrains = []
     # Excitatory spike trains
     # Makes sure the spiketrain is added even if there are no results
     # to get a regular result
+    spiketrains = []
     for sender in nodes_E[:N_rec]:
         spiketrain = events_E["times"][events_E["senders"] == sender]
         spiketrains.append(spiketrain)
 
-    # Inhibitory spike trains
-    # for sender in nodes_I[:N_rec]:
-    #     spiketrain = events_I["times"][events_I["senders"] == sender]
-    #     spiketrains.append(spiketrain)
-
-
-    return simtime, spiketrains
-
-
-
-
-if __name__ == "__main__":
-    time, values = brunel_network()
-    print values
+    return simulation_end, spiketrains

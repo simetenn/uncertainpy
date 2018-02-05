@@ -86,7 +86,6 @@ RUN conda install -c conda-forge codecov
 
 # Install uncertainpy dependencies
 RUN apt-get update --fix-missing
-RUN apt-get -y install texlive-latex-base texlive-latex-extra # texlive-fonts-recommended
 RUN apt-get -y install dvipng
 RUN apt-get -y install Xvfb
 

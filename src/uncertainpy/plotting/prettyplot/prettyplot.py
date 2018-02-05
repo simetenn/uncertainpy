@@ -1,19 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn.apionly as sns
+import seaborn as sns
 
 
 axis_grey = (0.6, 0.6, 0.6)
-titlesize = 20
-fontsize = 14
-labelsize = 16
-ticklabelsize = 10
-figsize = (10, 7.5)
 ticksize = 5
-linewidth = 2
 markersize = 8
 markeredgewidth = 2
-
+figure_width = 7.08
+labelsize = 10
+titlesize = 12
+fontsize = 8
+ticklabelsize = 8
+linewidth = 1.4
+figsize = (figure_width, figure_width*0.75)
 
 def set_figuresize():
     """
@@ -50,6 +50,16 @@ Set legend options.
 
 
 def set_font():
+    """Set font options."""
+    params = {"text.antialiased": True,
+              "font.family": "sans-serif",
+              "font.weight": "normal",
+              }
+
+    plt.rcParams.update(params)
+
+
+def set_latex_font():
     """
 Set font options. Note, uses latex.
     """
@@ -61,7 +71,6 @@ Set font options. Note, uses latex.
               }
 
     plt.rcParams.update(params)
-
 
 def set_linestyle():
     """
@@ -522,7 +531,7 @@ ax : matplotlib.axis object
     Default is None
 new_figure : bool
     If a new figure should be made, or if the plot should be made
-    ontop of the last existing plot.
+    on top of the last existing plot.
     Default is True.
 linestyle: str
     ["solid" | "dashed", "dashdot", "dotted" | (offset, on-off-dash-seq) | "-" | "--" | "-." | ":" | "None" | " " | ""]

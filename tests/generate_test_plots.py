@@ -6,7 +6,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from uncertainpy.plotting import PlotUncertainty
-# from uncertainpy.plotting.plotUncertaintyCompare import PlotUncertaintyCompare
 from uncertainpy.plotting.prettyplot import prettyPlot
 from uncertainpy.features.spikes import Spikes
 
@@ -19,7 +18,7 @@ output_test_dir = os.path.join(folder, "figures")
 def generate_plot_uncertainty():
     data_file = "TestingModel1d.h5"
 
-    plot = PlotUncertainty(output_dir=output_test_dir,
+    plot = PlotUncertainty(folder=output_test_dir,
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
@@ -30,7 +29,7 @@ def generate_plot_uncertainty():
 def generate_plots_plot_uncertainty_no_sensitivity():
     data_file = "TestingModel1d.h5"
 
-    plot = PlotUncertainty(output_dir=output_test_dir,
+    plot = PlotUncertainty(folder=output_test_dir,
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
@@ -41,7 +40,7 @@ def generate_plots_plot_uncertainty_no_sensitivity():
 def generate_plots_plot_uncertainty_sensitivity_t():
     data_file = "TestingModel1d.h5"
 
-    plot = PlotUncertainty(output_dir=output_test_dir,
+    plot = PlotUncertainty(folder=output_test_dir,
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
@@ -52,7 +51,7 @@ def generate_plots_plot_uncertainty_sensitivity_t():
 def generate_plots_plot_uncertainty_single():
     data_file = "TestingModel1d_single-parameter-a.h5"
 
-    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir,
+    plot = PlotUncertainty(folder=os.path.join(output_test_dir,
                                                    "TestingModel1d_single-parameter-a"),
                            verbose_level="error")
 
@@ -62,7 +61,7 @@ def generate_plots_plot_uncertainty_single():
 
     data_file = "TestingModel1d_single-parameter-b.h5"
 
-    plot = PlotUncertainty(output_dir=os.path.join(output_test_dir,
+    plot = PlotUncertainty(folder=os.path.join(output_test_dir,
                                                    "TestingModel1d_single-parameter-b"),
                            verbose_level="error")
 
@@ -71,35 +70,16 @@ def generate_plots_plot_uncertainty_single():
     plot.plot_all()
 
 
-def generate_plots_compare():
-    data_file = "TestingModel.h5"
-    compare_folders = ["pc", "mc_10", "mc_100"]
-
-    plot = PlotUncertaintyCompare(output_dir=output_test_dir,
-                                  verbose_level="error")
-
-
-    plot.plotCompareAll(data_file, compare_folders)
-
-
-# def generate_simulator_plot():
-#     values = np.load(os.path.join(test_data_dir, "U_test.npy"))
-#     t = np.load(os.path.join(test_data_dir, "t_test.npy"))
-
-#     prettyPlot(time, values, ,title=,  xlabel="", ylabel="")
-
-#     plt.savefig(os.path.join(output_test_dir, "U.png"))
-
 
 def generate_simulator_plot_0d():
     data_file = "TestingModel0d.h5"
 
-    plot = PlotUncertainty(output_dir=output_test_dir,
+    plot = PlotUncertainty(folder=output_test_dir,
                            verbose_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
-    plot.results()
+    plot.evaluations()
 
 
 def generate_spike_plot():
@@ -131,7 +111,6 @@ def generate_spikes_plot():
 
 if __name__ == "__main__":
     generate_plot_uncertainty()
-    # generate_plots_compare()
     # generate_simulator_plot()
     generate_simulator_plot_0d()
     generate_spike_plot()

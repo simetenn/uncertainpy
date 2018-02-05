@@ -1,9 +1,6 @@
 import nest
 
-def brunel_network(eta,
-                   g,
-                   delay,
-                   J_E):
+def brunel_network(eta, g, delay, J_E):
     """
     A brunel network, from:
 
