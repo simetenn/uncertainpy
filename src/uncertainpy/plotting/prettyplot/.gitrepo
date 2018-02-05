@@ -7,5 +7,5 @@
 	remote = https://github.com/simetenn/prettyplot
 	branch = master
 	commit = f0fcccaf5bd2b99faa0261c4e729de1d4a4b3b24
-	parent = f15e9cad50e7cc99dca39678a7f305e123675988
+	parent = 1c27559d28ac0f7e37732adfbb13883a86d326e9
 	cmdver = 0.3.1
