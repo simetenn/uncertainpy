@@ -15,29 +15,33 @@ class TestPrettyPlot(unittest.TestCase):
 
     def test_prettyPlotX(self):
 
-        prettyPlot(self.U)
+        prettyPlot(self.values)
 
         plt.close()
 
 
     def test_prettyPlotXY(self):
-        prettyPlot(self.time, self.U)
+        prettyPlot(self.time, self.values,
+                  xlabel="xlabel",
+                  ylabel="ylabel",
+                  title="Plot")
+        plt.savefig("test.png")
         plt.close()
 
 
     def test_prettyPlotXYColor(self):
-        prettyPlot(self.time, self.U)
+        prettyPlot(self.time, self.values)
         plt.close()
 
 
     def test_prettyPlotFalseNewFigure(self):
-        prettyPlot(self.U)
-        prettyPlot(self.time, self.U, new_figure=False)
+        prettyPlot(self.values)
+        prettyPlot(self.time, self.values, new_figure=False)
         plt.close()
 
 
     def test_prettyPlotFalseNewFigure2(self):
-        prettyPlot(self.time, self.U, new_figure=False)
+        prettyPlot(self.time, self.values, new_figure=False)
         plt.close()
 
 
@@ -49,28 +53,28 @@ class TestPrettyBar(unittest.TestCase):
 
 
     def test_PrettyBar(self):
-        prettyBar(self.U)
+        prettyBar(self.values)
         plt.close()
 
 
     def test_PrettyBarError(self):
-        prettyBar(self.U, self.error)
+        prettyBar(self.values, self.error)
         plt.close()
 
 
     def test_PrettyBarLabels(self):
-        prettyBar(self.U, xlabels=self.labels)
+        prettyBar(self.values, xlabels=self.labels)
         plt.close()
 
 
     def test_prettyBarFalseNewFigure(self):
-        prettyBar(self.U)
-        prettyBar(self.U, new_figure=False)
+        prettyBar(self.values)
+        prettyBar(self.values, new_figure=False)
         plt.close()
 
 
     def test_prettyPlotFalseNewFigure2(self):
-        prettyBar(self.U, new_figure=False)
+        prettyBar(self.values, new_figure=False)
         plt.close()
 
 

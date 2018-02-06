@@ -157,7 +157,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
     def nr_spikes(self, time, spikes, info):
         """
-        The number of spikes in the model result.
+        The number of spikes in the model result during the stimulus period.
 
         Parameters
         ----------
@@ -166,15 +166,52 @@ class SpikingFeatures(GeneralSpikingFeatures):
         spikes : Spikes
             Spikes found in the model result.
         info : dictionary
-            Not used in this feature.
+            If ``strict=True``, requires ``info["stimulus_start"]`` and
+            ``info['stimulus_end']`` set.
 
         Returns
         -------
         time : None
         nr_spikes : int
             The number of spikes in the model result.
+
+        Raises
+        ------
+        RuntimeError
+            If strict is True and ``"stimulus_start"`` and ``"stimulus_end"`` are
+            missing from `info`.
         """
-        return None, spikes.nr_spikes
+
+        if "stimulus_start" not in info:
+            if self.strict:
+                raise RuntimeError("spike_rate require info['stimulus_start']. "
+                                    "No 'stimulus_start' found in info, "
+                                    "Set 'stimulus_start', or set strict to "
+                                    "False to use initial time as stimulus start")
+            else:
+                info["stimulus_start"] = time[0]
+                self.logger.warning("spike_rate features require info['stimulus_start']. "
+                                    "No 'stimulus_start' found in info, "
+                                    "setting stimulus start as initial time")
+
+
+        if "stimulus_end" not in info:
+            if self.strict:
+                raise RuntimeError("spike_rate require info['stimulus_end']. "
+                                    "No 'stimulus_end' found in info, "
+                                    "Set 'stimulus_start', or set strict to "
+                                    "False to use end time as stimulus end")
+            else:
+                info["stimulus_end"] = time[-1]
+                self.logger.warning("spike_rate require info['stimulus_start']. "
+                                    "No 'stimulus_end' found in info, "
+                                    "setting stimulus end as end time")
+        nr_spikes = 0
+        for spike in spikes:
+            if info["stimulus_start"] < spike.time_spike < info["stimulus_end"]:
+                nr_spikes += 1
+
+        return None, nr_spikes
 
 
     def time_before_first_spike(self, time, spikes, info):
@@ -188,8 +225,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         spikes : Spikes
             Spikes found in the model result.
         info : dictionary
-            A dictionary with info["stimulus_start"] set. If
-            info["stimulus_start"] None is returned.
+            If ``strict=True``, requires ``info["stimulus_start"]`` set.
 
         Returns
         -------
@@ -239,7 +275,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
         spikes : Spikes
             Spikes found in the model result.
         info : dictionary
-            Not used in this feature.
+            If ``strict=True``, requires ``info["stimulus_start"]`` and
+            ``info['stimulus_end']`` set.
 
         Returns
         -------

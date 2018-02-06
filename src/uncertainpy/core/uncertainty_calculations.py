@@ -408,7 +408,7 @@ class UncertaintyCalculations(ParameterBase):
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
-                                                        masked_weights, masked_values)
+                                                    masked_weights, masked_values)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +\
                                     "for feature: {} ".format(feature) +\
@@ -874,10 +874,10 @@ class UncertaintyCalculations(ParameterBase):
             7. ``data["model/features"].variance``
             8. ``data["model/features"].percentile_5``
             9. ``data["model/features"].percentile_95``
-            10. ``data["model/features"].sensitivity_1``, if more than 1 parameter
-            11. ``data["model/features"].sensitivity_t``, if more than 1 parameter
-            12. ``data["model/features"].sensitivity_1_sum``, if more than 1 parameter
-            13. ``data["model/features"].sensitivity_t_sum``, if more than 1 parameter
+            10. ``data["model/features"].sobol_first``, if more than 1 parameter
+            11. ``data["model/features"].sobol_total``, if more than 1 parameter
+            12. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
         See also
         --------
@@ -889,7 +889,7 @@ class UncertaintyCalculations(ParameterBase):
 
         U_mc = {}
         for feature in tqdm(data,
-                            desc="Analysing PC for each feature",
+                            desc="Calculating statistics from PCE",
                             total=len(data)):
             if feature in U_hat:
                 data[feature].mean = cp.E(U_hat[feature], distribution)
@@ -900,10 +900,10 @@ class UncertaintyCalculations(ParameterBase):
                 if len(data.uncertain_parameters) > 1:
                     U_mc[feature] = U_hat[feature](*samples)
 
-                    data[feature].sensitivity_1 = cp.Sens_m(U_hat[feature], distribution)
-                    data[feature].sensitivity_t = cp.Sens_t(U_hat[feature], distribution)
-                    data = self.sensitivity_sum(data, sensitivity="sensitivity_1")
-                    data = self.sensitivity_sum(data, sensitivity="sensitivity_t")
+                    data[feature].sobol_first = cp.Sens_m(U_hat[feature], distribution)
+                    data[feature].sobol_total = cp.Sens_t(U_hat[feature], distribution)
+                    data = self.sensitivity_sum(data, sensitivity="sobol_first")
+                    data = self.sensitivity_sum(data, sensitivity="sobol_total")
 
                 else:
                     U_mc[feature] = U_hat[feature](samples)
@@ -1130,10 +1130,10 @@ class UncertaintyCalculations(ParameterBase):
             7. ``data["model/features"].variance``
             8. ``data["model/features"].percentile_5``
             9. ``data["model/features"].percentile_95``
-            10. ``data["model/features"].sensitivity_1``, if more than 1 parameter
-            11. ``data["model/features"].sensitivity_t``, if more than 1 parameter
-            12. ``data["model/features"].sensitivity_1_sum``, if more than 1 parameter
-            13. ``data["model/features"].sensitivity_t_sum``, if more than 1 parameter
+            10. ``data["model/features"].sobol_first``, if more than 1 parameter
+            11. ``data["model/features"].sobol_total``, if more than 1 parameter
+            12. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -1318,7 +1318,7 @@ class UncertaintyCalculations(ParameterBase):
         return data
 
 
-    def sensitivity_sum(self, data, sensitivity="sensitivity_1"):
+    def sensitivity_sum(self, data, sensitivity="sobol_first"):
         """
         Calculate the normalized sum of the sensitivities for the model and all
         features and add them to `data`.
@@ -1328,11 +1328,11 @@ class UncertaintyCalculations(ParameterBase):
         data : Data
             A data object with all model and feature values, as well as all
             calculated statistical metrics.
-        sensitivity : {"sensitivity_1", "1", "sensitivity_t", "t"}, optional
-            The sensitivity to normalize and sum. "sensitivity_1" and "1" are
-            for the first order Sobol indice while "sensitivity_t" and "t" is
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            The sensitivity to normalize and sum. "sobol_first" and "1" are
+            for the first order Sobol indice while "sobol_total" and "t" is
             for the total order Sobol indices.
-            Default is "sensitivity_1".
+            Default is "sobol_first".
 
         Returns
         ----------
@@ -1344,13 +1344,13 @@ class UncertaintyCalculations(ParameterBase):
         --------
         uncertainpy.Data
         """
-        if sensitivity not in ["sensitivity_1", "sensitivity_t", "1", "t"]:
-            raise ValueError("Sensitivity must be either: sensitivity_1, sensitivity_t, 1, or t, not {}".format(sensitivity))
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        if sensitivity == "1":
-            sensitivity = "sensitivity_1"
-        elif sensitivity == "t":
-            sensitivity = "sensitivity_t"
+        if sensitivity == "first":
+            sensitivity = "sobol_first"
+        elif sensitivity == "total":
+            sensitivity = "sobol_total"
 
         for feature in data:
             if sensitivity in data[feature]:

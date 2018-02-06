@@ -37,7 +37,7 @@ def generate_plots_plot_uncertainty_no_sensitivity():
     plot.plot_all(sensitivity=None)
 
 
-def generate_plots_plot_uncertainty_sensitivity_t():
+def generate_plots_plot_uncertainty_sobol_total():
     data_file = "TestingModel1d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
@@ -45,7 +45,7 @@ def generate_plots_plot_uncertainty_sensitivity_t():
 
     plot.load(os.path.join(test_data_dir, data_file))
 
-    plot.plot_all(sensitivity="sensitivity_t")
+    plot.plot_all(sensitivity="sobol_total")
 
 
 def generate_plots_plot_uncertainty_single():
@@ -88,9 +88,10 @@ def generate_spike_plot():
 
     prettyPlot(time, values, title="Spike",
                xlabel="time", ylabel="voltage")
-
+    plt.xlim([min(time), max(time)])
 
     plt.savefig(os.path.join(output_test_dir, "spike.png"))
+    plt.close()
 
 
 def generate_spikes_plot():
@@ -117,4 +118,4 @@ if __name__ == "__main__":
     generate_spikes_plot()
     generate_plots_plot_uncertainty_single()
     generate_plots_plot_uncertainty_no_sensitivity()
-    # generate_plots_plot_uncertainty_sensitivity_t()
+    # generate_plots_plot_uncertainty_sobol_total()

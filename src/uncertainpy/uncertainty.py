@@ -206,7 +206,7 @@ class UncertaintyQuantification(ParameterBase):
                  allow_incomplete=True,
                  seed=None,
                  single=False,
-                 plot="condensed_sensitivity_1",
+                 plot="condensed_first",
                  figure_folder="figures",
                  figureformat=".png",
                  data_folder="data",
@@ -269,16 +269,16 @@ class UncertaintyQuantification(ParameterBase):
         single : bool
             If an uncertainty quantification should be performed with only one
             uncertain parameter at the time.
-        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         figure_folder : str, optional
             Name of the folder where to save all figures.
             Default is "figures".
@@ -416,7 +416,7 @@ class UncertaintyQuantification(ParameterBase):
 
 
     def custom_uncertainty_quantification(self,
-                                          plot="condensed_sensitivity_1",
+                                          plot="condensed_first",
                                           figure_folder="figures",
                                           figureformat=".png",
                                           data_folder="data",
@@ -428,16 +428,16 @@ class UncertaintyQuantification(ParameterBase):
 
         Parameters
         ----------
-        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         figure_folder : str, optional
             Name of the folder where to save all figures.
             Default is "figures".
@@ -497,7 +497,7 @@ class UncertaintyQuantification(ParameterBase):
                          nr_pc_mc_samples=10**4,
                          allow_incomplete=True,
                          seed=None,
-                         plot="condensed_sensitivity_1",
+                         plot="condensed_first",
                          figure_folder="figures",
                          figureformat=".png",
                          data_folder="data",
@@ -547,16 +547,16 @@ class UncertaintyQuantification(ParameterBase):
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
-        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         figure_folder : str, optional
             Name of the folder where to save all figures.
             Default is "figures".
@@ -650,7 +650,7 @@ class UncertaintyQuantification(ParameterBase):
                     uncertain_parameters=None,
                     nr_samples=10**3,
                     seed=None,
-                    plot="condensed_sensitivity_1",
+                    plot="condensed_first",
                     figure_folder="figures",
                     figureformat=".png",
                     data_folder="data",
@@ -671,16 +671,16 @@ class UncertaintyQuantification(ParameterBase):
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
-        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         figure_folder : str, optional
             Name of the folder where to save all figures.
             Default is "figures".
@@ -750,7 +750,7 @@ class UncertaintyQuantification(ParameterBase):
                                 nr_pc_mc_samples=10**4,
                                 allow_incomplete=True,
                                 seed=None,
-                                plot="condensed_sensitivity_1",
+                                plot="condensed_first",
                                 figure_folder="figures",
                                 figureformat=".png",
                                 data_folder="data",
@@ -799,16 +799,16 @@ class UncertaintyQuantification(ParameterBase):
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
-        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         figure_folder : str, optional
             Name of the folder where to save all figures.
             Default is "figures".
@@ -910,7 +910,7 @@ class UncertaintyQuantification(ParameterBase):
                            uncertain_parameters=None,
                            nr_samples=10**3,
                            seed=None,
-                           plot="condensed_sensitivity_1",
+                           plot="condensed_first",
                            data_folder="data",
                            figure_folder="figures",
                            figureformat=".png",
@@ -932,16 +932,16 @@ class UncertaintyQuantification(ParameterBase):
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
-        plot : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         figure_folder : str, optional
             Name of the folder where to save all figures.
             Default is "figures".
@@ -1057,7 +1057,7 @@ class UncertaintyQuantification(ParameterBase):
 
 
     def plot(self,
-             type="condensed_sensitivity_1",
+             type="condensed_first",
              folder="figures",
              figureformat=".png"):
         """
@@ -1066,16 +1066,16 @@ class UncertaintyQuantification(ParameterBase):
 
         Parameters
         ----------
-        type : {"condensed_sensitivity_1", "condensed_sensitivity_t", "condensed_no_sensitivity", "all", "evaluations", None}, optional
+        type : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
-            "condensed_sensitivity_1" is a subset of the most important plots and
+            "condensed_first" is a subset of the most important plots and
             only plots each result once, and contains plots of the first order
-            Sobol indices. "condensed_sensitivity_t" is similar, but with the
+            Sobol indices. "condensed_total" is similar, but with the
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
             nothing.
-            Default is "condensed_sensitivity_1".
+            Default is "condensed_first".
         folder : str
             Name of the folder where to save all figures.
             Default is "figures".
@@ -1103,11 +1103,11 @@ class UncertaintyQuantification(ParameterBase):
         if type is None:
             return
 
-        elif type.lower() == "condensed_sensitivity_1":
-            self.plotting.plot_condensed(sensitivity="sensitivity_1")
+        elif type.lower() == "condensed_first":
+            self.plotting.plot_condensed(sensitivity="first")
 
-        elif type.lower() == "condensed_sensitivity_t":
-            self.plotting.plot_condensed(sensitivity="sensitivity_t")
+        elif type.lower() == "condensed_total":
+            self.plotting.plot_condensed(sensitivity="total")
 
         elif type.lower() == "condensed_no_sensitivity":
             self.plotting.plot_condensed(sensitivity=None)
@@ -1120,7 +1120,8 @@ class UncertaintyQuantification(ParameterBase):
             self.plotting.all_evaluations()
 
         else:
-            raise ValueError('type must one of: "condensed_sensitivity_1", '
-                             '"condensed_sensitivity_t", "condensed_no_sensitivity" '
-                             '"all", "evaluations", None}')
+            raise ValueError('type must one of: "condensed_first", '
+                             '"condensed_total", "condensed_no_sensitivity" '
+                             '"all", "evaluations", None, not {}'.format(type))
+
 

@@ -7,8 +7,8 @@ from scipy.integrate import odeint
 # Create the coffee cup run function
 def coffee_cup(kappa, T_env):
     # Initial temperature and time array
-    time = np.linspace(0, 200, 150)
-    T_0 = 95
+    time = np.linspace(0, 200, 150)            # Minutes
+    T_0 = 95                                   # Celsius
 
     # The equation describing the model
     def f(T, time, kappa, T_env):
@@ -23,7 +23,7 @@ def coffee_cup(kappa, T_env):
 
 # Create a model from coffee_cup function and add labels
 model = un.Model(run=coffee_cup,
-                 labels=["Time (s)", "Temperature (C)"])
+                 labels=["Time (min)", "Temperature (C)"])
 
 # Create the distributions
 kappa_dist = cp.Uniform(0.025, 0.075)

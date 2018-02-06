@@ -6,7 +6,7 @@ import seaborn as sns
 axis_grey = (0.6, 0.6, 0.6)
 ticksize = 5
 markersize = 8
-markeredgewidth = 2
+markeredgewidth = 1.4
 figure_width = 7.08
 labelsize = 10
 titlesize = 12
@@ -42,17 +42,12 @@ Set legend options.
     }
     plt.rcParams.update(params)
 
-    # if legend is not None:
-    #     if ax is None:
-    #         plt.legend(legend)
-    #     else:
-    #         ax.legend(legend)
 
 
 def set_font():
     """Set font options."""
     params = {"text.antialiased": True,
-              "font.family": "sans-serif",
+              "font.family": "serif",
               "font.weight": "normal",
               }
 

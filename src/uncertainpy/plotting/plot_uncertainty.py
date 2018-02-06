@@ -7,7 +7,7 @@ import numpy as np
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
 from .prettyplot import get_colormap_tableu20, set_style
-from .prettyplot import axis_grey, labelsize, fontsize, titlesize
+from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 from ..data import Data
 from ..utils import create_logger, str_to_latex, list_to_latex
@@ -160,11 +160,13 @@ class PlotUncertainty(object):
             os.makedirs(save_folder)
 
         prettyPlot(self.data[feature].values,
-                   xlabel=r"simulator run \#number",
+                   xlabel=r"simulator run #number",
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, result".format(feature.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
+
+        plt.tight_layout()
         plt.savefig(os.path.join(save_folder, "values" + self.figureformat))
         plt.close()
 
@@ -199,9 +201,11 @@ class PlotUncertainty(object):
 
         padding = len(str(len(self.data[feature].values[0]) + 1))
         for values in self.data[feature].values:
-            prettyPlot(time, values,
-                       xlabel=xlabel, ylabel=ylabel,
-                       title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
+            ax = prettyPlot(time, values,
+                            xlabel=xlabel, ylabel=ylabel,
+                            title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
+            ax.set_xlim([min(time), max(time)])
+            plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
                                      "values_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
@@ -250,11 +254,11 @@ class PlotUncertainty(object):
                             **plot_kwargs)
 
             cbar = fig.colorbar(iax)
-            # cbar.ax.set_title(zlabel)
             cbar.ax.set_ylabel(zlabel)
 
             ax.set_xlabel(xlabel)
             ax.set_ylabel(ylabel)
+            plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
                                      "values_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
@@ -296,16 +300,17 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
         title = feature + ", " + attribute_name
-        prettyPlot(time, self.data[feature][attribute],
-                   title.replace("_", " "), xlabel, ylabel, **plot_kwargs)
+        ax = prettyPlot(time, self.data[feature][attribute],
+                        title.replace("_", " "), xlabel, ylabel, **plot_kwargs)
 
+        ax.set_xlim([min(time), max(time)])
 
         save_name = feature + "_" + attribute_name
+        plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     save_name + self.figureformat),
-                        bbox_inches="tight")
+                                     save_name + self.figureformat))
 
         if show:
             plt.show()
@@ -367,15 +372,16 @@ class PlotUncertainty(object):
         # cbar.ax.set_title(zlabel)
         cbar.ax.set_ylabel(zlabel)
 
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
+        ax.set_xlabel(xlabel, fontsize=labelsize)
+        ax.set_ylabel(ylabel, fontsize=labelsize)
 
         save_name = feature + "_" + attribute_name
 
+        plt.tight_layout()
+
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     save_name + self.figureformat),
-                        bbox_inches="tight")
+                                     save_name + self.figureformat))
 
         if show:
             plt.show()
@@ -459,6 +465,7 @@ class PlotUncertainty(object):
                         title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style, **plot_kwargs)
 
+
         colors = get_current_colormap()
 
         ax2 = ax.twinx()
@@ -469,25 +476,28 @@ class PlotUncertainty(object):
                         color=colors[color+2], labelcolor=colors[color+2], labelsize=labelsize)
         ax2.set_ylabel(ylabel + ', variance', color=colors[color+2], fontsize=labelsize)
 
-        # ax2.set_xlim([min(self.data.time[feature]), max(self.data.time[feature])])
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
         ax2.plot(time, self.data[feature].variance,
-                 color=colors[color+2], linewidth=2, antialiased=True)
+                 color=colors[color+2], linewidth=linewidth, antialiased=True)
 
-        ax2.yaxis.offsetText.set_fontsize(16)
+        ax2.yaxis.offsetText.set_fontsize(fontsize)
         ax2.yaxis.offsetText.set_color(colors[color+2])
 
 
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
-        ax.set_ylabel(ylabel + ', mean', color=colors[color], fontsize=16)
+        ax.set_ylabel(ylabel + ', mean', color=colors[color], fontsize=labelsize)
 
+        ax2.set_xlim([min(time), max(time)])
+        ax.set_xlim([min(time), max(time)])
+
+
+        plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_mean-variance" + self.figureformat),
-                        bbox_inches="tight")
+                                     feature + "_mean-variance" + self.figureformat))
 
         if show:
             plt.show()
@@ -530,25 +540,25 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        title = feature.replace("_", " ") + ", 90\\% prediction interval"
-        prettyPlot(time, self.data[feature].mean, title=title,
-                   xlabel=xlabel, ylabel=ylabel, color=0,
-                   **plot_kwargs)
+        title = feature.replace("_", " ") + ", 90% prediction interval"
+        ax = prettyPlot(time, self.data[feature].mean, title=title,
+                        xlabel=xlabel, ylabel=ylabel, color=0,
+                        **plot_kwargs)
 
         colors = get_current_colormap()
-        plt.fill_between(time,
+        ax.fill_between(time,
                          self.data[feature].percentile_5,
                          self.data[feature].percentile_95,
                          alpha=0.5, color=colors[0])
 
+        ax.set_xlim([min(time), max(time)])
+        plt.legend(["mean", "90% prediction interval"], loc="best")
 
-        plt.legend(["mean", "90\% prediction interval"])
-
+        plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_prediction-interval" + self.figureformat),
-                        bbox_inches="tight")
+                                     feature + "_prediction-interval" + self.figureformat))
 
         if show:
             plt.show()
@@ -558,10 +568,15 @@ class PlotUncertainty(object):
 
     def sensitivity_1d(self,
                        feature=None,
-                       sensitivity="sensitivity_1",
+                       sensitivity="first",
                        hardcopy=True,
                        show=False,
                        **plot_kwargs):
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        sensitivity, title = self.convert_sensitivity(sensitivity)
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -586,19 +601,21 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
         for i in range(len(self.data[feature][sensitivity])):
-            prettyPlot(time, self.data[feature][sensitivity][i],
-                       title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " ") + ", " + str_to_latex(self.data.uncertain_parameters[i]),
-                       xlabel=xlabel, ylabel="sensitivity",
-                       color=i,
-                       nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
+            ax = prettyPlot(time, self.data[feature][sensitivity][i],
+                            title=title.capitalize() + ", " + feature.replace("_", " ") + " - " + self.data.uncertain_parameters[i],
+                            xlabel=xlabel,
+                            ylabel=title.capitalize(),
+                            color=i,
+                            nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
+            ax.set_xlim([min(time), max(time)])
 
+            plt.tight_layout()
 
             if hardcopy:
                 plt.savefig(os.path.join(self.folder,
                                          feature + "_" + sensitivity + "_"
-                                         + self.data.uncertain_parameters[i] + self.figureformat),
-                            bbox_inches="tight")
+                                         + self.data.uncertain_parameters[i] + self.figureformat))
 
             if show:
                 plt.show()
@@ -610,10 +627,17 @@ class PlotUncertainty(object):
 
     def sensitivity_1d_grid(self,
                             feature=None,
-                            sensitivity="sensitivity_1",
+                            sensitivity="first",
                             hardcopy=True,
                             show=False,
                             **plot_kwargs):
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        sensitivity, title = self.convert_sensitivity(sensitivity)
+
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -654,7 +678,7 @@ class PlotUncertainty(object):
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         ax.set_xlabel(xlabel)
-        ax.set_ylabel('sensitivity')
+        ax.set_ylabel(title.capitalize())
 
         for i in range(0, grid_x_size*grid_y_size):
             nx = i % grid_x_size
@@ -664,7 +688,7 @@ class PlotUncertainty(object):
 
             if i < nr_plots:
                 prettyPlot(time, self.data[feature][sensitivity][i],
-                           title=str_to_latex(parameter_names[i]), color=i,
+                           title=parameter_names[i], color=i,
                            nr_colors=nr_plots, ax=ax,
                            **plot_kwargs)
 
@@ -672,12 +696,13 @@ class PlotUncertainty(object):
                     tick.set_rotation(-30)
 
                 ax.set_ylim([0, 1.05])
+                ax.set_xlim([min(time), max(time)])
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
                 ax.tick_params(labelsize=10)
             else:
                 ax.axis("off")
 
-        title = feature.replace("_", " ") + ", " + sensitivity.replace("_", " ")
+        title = title.capitalize() + ", " + feature.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.85)
@@ -685,8 +710,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_" + sensitivity + "_grid" + self.figureformat),
-                        bbox_inches="tight")
+                                     feature + "_" + sensitivity + "_grid" + self.figureformat))
 
         if show:
             plt.show()
@@ -698,10 +722,16 @@ class PlotUncertainty(object):
 
     def sensitivity_1d_combined(self,
                                 feature=None,
-                                sensitivity="sensitivity_1",
+                                sensitivity="first",
                                 hardcopy=True,
                                 show=False,
                                 **plot_kwargs):
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        sensitivity, title = self.convert_sensitivity(sensitivity)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -728,25 +758,26 @@ class PlotUncertainty(object):
         for i in range(len(self.data[feature][sensitivity])):
             prettyPlot(time,
                        self.data[feature][sensitivity][i],
-                       title=feature.replace("_", " ") + ", " + sensitivity.replace("_", " "),
+                       title=title.capitalize() + ", " + feature.replace("_", " "),
                        xlabel=xlabel,
-                       ylabel="sensitivity",
+                       ylabel=title.capitalize(),
                        new_figure=False,
                        color=i,
                        nr_colors=len(self.data.uncertain_parameters),
-                       label=str_to_latex(self.data.uncertain_parameters[i]),
+                       label=self.data.uncertain_parameters[i],
                        **plot_kwargs)
 
         plt.ylim([0, 1.05])
+        plt.xlim([min(time), max(time)])
         if len(self.data[feature][sensitivity]) > 4:
             plt.xlim([time[0], 1.3*time[-1]])
 
         plt.legend()
+        plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_" + sensitivity + self.figureformat),
-                        bbox_inches="tight")
+                                     feature + "_" + sensitivity + self.figureformat))
 
         if show:
             plt.show()
@@ -754,9 +785,18 @@ class PlotUncertainty(object):
             plt.close()
 
 
-    def features_1d(self, sensitivity="sensitivity_1"):
+    def features_1d(self, sensitivity="first"):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total or None, not {}".format(sensitivity))
+
+        if sensitivity == "first":
+            sensitivity = "sobol_first"
+        elif sensitivity == "total":
+            sensitivity = "sobol_total"
+
 
         for feature in self.data:
             if self.data.ndim(feature) == 1:
@@ -769,6 +809,22 @@ class PlotUncertainty(object):
                     self.sensitivity_1d(feature=feature, sensitivity=sensitivity)
                     self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity)
                     self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
+
+
+
+    def convert_sensitivity(self, sensitivity):
+        if sensitivity == "first":
+            sensitivity = "sobol_first"
+        elif sensitivity == "total":
+            sensitivity = "sobol_total"
+
+        full_text = ""
+        if sensitivity == "sobol_first":
+            full_text = "first order Sobol indices"
+        elif sensitivity == "sobol_total":
+            full_text = "total order Sobol indices"
+
+        return sensitivity, full_text
 
 
     def features_2d(self):
@@ -786,9 +842,16 @@ class PlotUncertainty(object):
     def feature_0d(self,
                    feature,
                    max_legend_size=5,
-                   sensitivity="sensitivity_1",
+                   sensitivity="first",
                    hardcopy=True,
                    show=False):
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total or None, not {}".format(sensitivity))
+
+
+        sensitivity, label = self.convert_sensitivity(sensitivity)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -834,7 +897,7 @@ class PlotUncertainty(object):
                                      "right": axis_grey, "left": "None"})
             ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                             color=axis_grey, labelcolor="black", labelsize=labelsize)
-            ax2.set_ylabel('sensitivity', fontsize=fontsize)
+            ax2.set_ylabel(label.capitalize(), fontsize=fontsize)
             ax2.set_ylim([0, 1.05])
 
 
@@ -857,7 +920,7 @@ class PlotUncertainty(object):
 
             location = (0.5, 1.01 + legend_width*0.095)
             plt.legend(legend_bars,
-                       list_to_latex(self.data.uncertain_parameters),
+                       self.data.uncertain_parameters,
                        loc='upper center',
                        bbox_to_anchor=location,
                        ncol=legend_size)
@@ -897,9 +960,15 @@ class PlotUncertainty(object):
 
     def sensitivity_sum(self,
                           feature,
-                          sensitivity="sensitivity_1",
+                          sensitivity="first",
                           hardcopy=True,
                           show=False):
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        sensitivity, title = self.convert_sensitivity(sensitivity)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -915,12 +984,10 @@ class PlotUncertainty(object):
 
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
-
         prettyBar(self.data[feature][sensitivity + "_sum"],
-                  title="normalized sum " + sensitivity.replace("_", " ")
-                  + ", " + feature.replace("_", " "),
-                  xlabels=list_to_latex(self.data.uncertain_parameters),
-                  ylabel="\% sensitivity sum",
+                  title="Normalized sum of " + title + ", " + feature.replace("_", " "),
+                  xlabels=self.data.uncertain_parameters,
+                  ylabel="Normalized sum of " + title,
                   nr_colors=len(self.data.uncertain_parameters),
                   index=index)
 
@@ -939,21 +1006,29 @@ class PlotUncertainty(object):
 
 
     def sensitivity_sum_all(self,
-                            sensitivity="sensitivity_1",
+                            sensitivity="first",
                             hardcopy=True,
                             show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        if sensitivity == "first":
+            sensitivity = "sobol_first"
+        elif sensitivity == "total":
+            sensitivity = "sobol_total"
+
         for feature in self.data:
             if sensitivity + "_sum" in self.data[feature]:
                 self.sensitivity_sum(feature=feature,
-                                    sensitivity=sensitivity,
-                                    hardcopy=hardcopy,
-                                    show=show)
+                                     sensitivity=sensitivity,
+                                     hardcopy=hardcopy,
+                                     show=show)
 
 
-    def features_0d(self, sensitivity="sensitivity_1", hardcopy=True, show=False):
+    def features_0d(self, sensitivity="first", hardcopy=True, show=False):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -974,7 +1049,7 @@ class PlotUncertainty(object):
 
 
 
-    # def plot_allNoSensitivity(self, sensitivity="sensitivity_1"):
+    # def plot_allNoSensitivity(self, sensitivity="first"):
     #     if self.data is None:
     #         raise ValueError("Datafile must be loaded.")
     #
@@ -983,7 +1058,7 @@ class PlotUncertainty(object):
     #     self.features_0d(sensitivity=sensitivity)
 
 
-    def plot_all(self, sensitivity="sensitivity_1"):
+    def plot_all(self, sensitivity="first"):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -1002,21 +1077,21 @@ class PlotUncertainty(object):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
-        self.plot_all(sensitivity="sensitivity_1")
+        self.plot_all(sensitivity="first")
 
         for feature in self.data:
             if self.data.ndim(feature) == 1:
-                self.sensitivity_1d(feature=feature, sensitivity="sensitivity_t")
-                self.sensitivity_1d_combined(feature=feature, sensitivity="sensitivity_t")
-                self.sensitivity_1d_grid(feature=feature, sensitivity="sensitivity_t")
+                self.sensitivity_1d(feature=feature, sensitivity="total")
+                self.sensitivity_1d_combined(feature=feature, sensitivity="total")
+                self.sensitivity_1d_grid(feature=feature, sensitivity="total")
 
-        self.features_0d(sensitivity="sensitivity_t")
+        self.features_0d(sensitivity="total")
 
-        self.sensitivity_sum_all(sensitivity="sensitivity_t")
-        self.sensitivity_sum_grid(sensitivity="sensitivity_t")
+        self.sensitivity_sum_all(sensitivity="total")
+        self.sensitivity_sum_grid(sensitivity="total")
 
 
-    def plot_condensed(self, sensitivity="sensitivity_1"):
+    def plot_condensed(self, sensitivity="first"):
         for feature in self.data:
             if self.data.ndim(feature) == 1:
                 self.mean_variance_1d(feature=feature)
@@ -1034,7 +1109,7 @@ class PlotUncertainty(object):
 
 
 
-    def plot(self, condensed=True, sensitivity="sensitivity_1"):
+    def plot(self, condensed=True, sensitivity="sobol_first"):
 
         if condensed:
             self.plot_condensed(sensitivity=sensitivity)
@@ -1066,12 +1141,21 @@ class PlotUncertainty(object):
 
 
     def sensitivity_sum_grid(self,
-                             sensitivity="sensitivity_1",
+                             sensitivity="first",
                              hardcopy=True,
                              show=False,
                              **plot_kwargs):
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        if sensitivity == "first":
+            sensitivity = "sobol_first"
+        elif sensitivity == "total":
+            sensitivity = "sobol_total"
+
 
         no_sensitivity = True
         for feature in self.data:
@@ -1104,7 +1188,7 @@ class PlotUncertainty(object):
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
         # ax.set_xlabel(self.data.xlabel)
-        ax.set_ylabel('\% ' + sensitivity.split("_")[0] + " sum " + sensitivity.split("_")[1])
+        ax.set_ylabel('% ' + sensitivity.split("_")[0] + " sum " + sensitivity.split("_")[1])
 
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
@@ -1126,7 +1210,7 @@ class PlotUncertainty(object):
 
                 prettyBar(self.data[self.data.keys()[i]][sensitivity + "_sum"],
                           title=self.data.keys()[i].replace("_", " "),
-                          xlabels=list_to_latex(self.data.uncertain_parameters),
+                          xlabels=self.data.uncertain_parameters,
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
                           ax=ax,
@@ -1150,8 +1234,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     sensitivity + "_sum_grid" + self.figureformat),
-                        bbox_inches="tight")
+                                     sensitivity + "_sum_grid" + self.figureformat))
 
         if show:
             plt.show()

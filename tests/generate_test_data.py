@@ -267,8 +267,8 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 def generate_data_data():  # pragma: no cover
     data = un.Data()
     data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
-                  "sensitivity_1", "sensitivity_1_sum",
-                  "sensitivity_t", "sensitivity_t_sum"]
+                  "sobol_first", "sobol_first_sum",
+                  "sobol_total", "sobol_total_sum"]
 
     data.add_features(["feature1d", "TestingModel1d"])
 

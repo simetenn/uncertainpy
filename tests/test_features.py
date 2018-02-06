@@ -342,6 +342,16 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertEqual(self.features.nr_spikes(self.time, self.spikes, self.info), (None, 12))
 
 
+    def test_nr_spikes_no_stimulus(self):
+        info = {"stimulus_start": -1, "stimulus_end": -2}
+        self.assertEqual(self.features.nr_spikes(self.time, self.spikes, info), (None, 0))
+
+
+    def test_nr_spikes_error(self):
+        self.features.strict = True
+        with self.assertRaises(RuntimeError):
+            self.features.nr_spikes(self.time, self.spikes, {})
+
     def test_time_before_first_spike(self):
         self.assertGreater(self.features.time_before_first_spike(self.time, self.spikes, self.info)[1], 10)
 

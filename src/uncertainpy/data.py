@@ -40,16 +40,16 @@ class DataFeature(collections.MutableMapping):
     percentile_95 : {None, array_like}, optional.
         95 percentile of the feature or model results.
         Default is None.
-    sensitivity_1 : {None, array_like}, optional.
+    sobol_first : {None, array_like}, optional.
         First order sensitivity of the feature or model results.
         Default is None.
-    sensitivity_1_sum : {None, array_like}, optional.
+    sobol_first_sum : {None, array_like}, optional.
         First order sensitivity of the feature or model results.
         Default is None.
-    sensitivity_t : {None, array_like}, optional.
+    sobol_total : {None, array_like}, optional.
         Total effect sensitivity of the feature or model results.
         Default is None.
-    sensitivity_t_sum : {None, array_like}, optional.
+    sobol_total_sum : {None, array_like}, optional.
         Normalized sum of total effect sensitivity of
         the feature or model results.
         Default is None.
@@ -73,13 +73,13 @@ class DataFeature(collections.MutableMapping):
         5 percentile of the feature or model results.
     percentile_95 : {None, array_like}
         95 percentile of the feature or model results.
-    sensitivity_1 : {None, array_like}
+    sobol_first : {None, array_like}
         First order sensitivity of the feature or model results.
-    sensitivity_1_sum : {None, array_like}
+    sobol_first_sum : {None, array_like}
         First order sensitivity of the feature or model results.
-    sensitivity_t : {None, array_like}
+    sobol_total : {None, array_like}
         Total effect sensitivity of the feature or model results.
-    sensitivity_t_sum : {None, array_like}
+    sobol_total_sum : {None, array_like}
         Normalized sum of total effect sensitivity of
         the feature or model results.
     labels : list
@@ -95,13 +95,13 @@ class DataFeature(collections.MutableMapping):
         * ``variance``. - the variance of the model/feature.
         * ``percentile_5`` - the 5th percentile of the model/feature.
         * ``percentile_95`` - the 95th percentile of the model/feature.
-        * ``sensitivity_1`` - the first order Sobol indices (sensitivity) of
+        * ``sobol_first`` - the first order Sobol indices (sensitivity) of
           the model/feature.
-        * ``sensitivity_1_sum`` - the total order Sobol indices (sensitivity)
+        * ``sobol_first_sum`` - the total order Sobol indices (sensitivity)
           of the model/feature.
-        * ``sensitivity_t`` - the normalized sum of the first order Sobol
+        * ``sobol_total`` - the normalized sum of the first order Sobol
           indices (sensitivity) of the model/feature.
-        * ``sensitivity_t_sum`` - the normalized sum of the total order Sobol
+        * ``sobol_total_sum`` - the normalized sum of the total order Sobol
           indices (sensitivity) of the model/feature.
     """
     def __init__(self,
@@ -112,10 +112,10 @@ class DataFeature(collections.MutableMapping):
                  variance=None,
                  percentile_5=None,
                  percentile_95=None,
-                 sensitivity_1=None,
-                 sensitivity_1_sum=None,
-                 sensitivity_t=None,
-                 sensitivity_t_sum=None,
+                 sobol_first=None,
+                 sobol_first_sum=None,
+                 sobol_total=None,
+                 sobol_total_sum=None,
                  labels=[]):
 
         self.name = name
@@ -125,16 +125,16 @@ class DataFeature(collections.MutableMapping):
         self.variance = variance
         self.percentile_5 = percentile_5
         self.percentile_95 = percentile_95
-        self.sensitivity_1 = sensitivity_1
-        self.sensitivity_1_sum = sensitivity_1_sum
-        self.sensitivity_t = sensitivity_t
-        self.sensitivity_t_sum = sensitivity_t_sum
+        self.sobol_first = sobol_first
+        self.sobol_first_sum = sobol_first_sum
+        self.sobol_total = sobol_total
+        self.sobol_total_sum = sobol_total_sum
         self.labels = labels
 
         self._built_in_statistical_metrics = ["values", "time", "mean", "variance",
                                      "percentile_5", "percentile_95",
-                                     "sensitivity_1", "sensitivity_1_sum",
-                                     "sensitivity_t", "sensitivity_t_sum"]
+                                     "sobol_first", "sobol_first_sum",
+                                     "sobol_total", "sobol_total_sum"]
 
         self._information = ["name", "labels"]
 
@@ -314,13 +314,13 @@ class Data(collections.MutableMapping):
         * ``variance``. - the variance of the model/feature.
         * ``percentile_5`` - the 5th percentile of the model/feature.
         * ``percentile_95`` - the 95th percentile of the model/feature.
-        * ``sensitivity_1`` - the first order Sobol indices (sensitivity) of
+        * ``sobol_first`` - the first order Sobol indices (sensitivity) of
           the model/feature.
-        * ``sensitivity_1_sum`` - the total order Sobol indices (sensitivity)
+        * ``sobol_first_sum`` - the total order Sobol indices (sensitivity)
           of the model/feature.
-        * ``sensitivity_t`` - the normalized sum of the first order Sobol
+        * ``sobol_total`` - the normalized sum of the first order Sobol
           indices (sensitivity) of the model/feature.
-        * ``sensitivity_t_sum`` - the normalized sum of the total order Sobol
+        * ``sobol_total_sum`` - the normalized sum of the total order Sobol
           indices (sensitivity) of the model/feature.
 
     See also

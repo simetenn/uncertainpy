@@ -162,7 +162,7 @@ class TestCoffeeCupModel(unittest.TestCase):
     def test_run(self):
         model = CoffeeCup()
 
-        parameters = {"kappa": -0.05, "T_env": 20}
+        parameters = {"kappa": 0.05, "T_env": 20}
         model.run(**parameters)
 
 
@@ -307,15 +307,10 @@ class TestNestModel(unittest.TestCase):
     def test_run(self):
         model = NestModel(brunel_network)
 
-        time, values = model.run()
+        time, values = model.run(eta=2, g=5, delay=1.5, J_E=0.1)
+        correct_values = np.array([39.4,  54.9,  68.5,  80.8,  90.9])
 
-        correct_values = np.array([55.6, 71.4, 109.4, 129.4, 141.6, 159.1, 193.3, 213.9,
-                                   233.6, 245.1, 278.3, 305.5, 318., 340.7, 361.1, 391.9,
-                                   416.2, 457.2, 475.6, 512.4, 544.5, 584.7, 594.6, 608.8,
-                                   637.2, 656.1, 694.6, 716.5, 732.1, 766.2, 795.8, 829.4,
-                                   860., 876.4, 908.2, 928.2, 948.4, 986.7])
-
-        self.assertEqual(time, 1000)
+        self.assertEqual(time, 100)
         self.assertTrue(np.allclose(values[0], correct_values, rtol=1e-5))
 
 

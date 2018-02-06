@@ -790,75 +790,75 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_calculate_sensitivity_1_sum(self):
+    def test_calculate_sobol_first_sum(self):
         data = Data()
 
         data.add_features(["test2D", "test1D"])
-        data["test2D"].sensitivity_1 = [[4, 6], [8, 12]]
-        data["test1D"].sensitivity_1 =  [1, 2]
+        data["test2D"].sobol_first = [[4, 6], [8, 12]]
+        data["test1D"].sobol_first =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sensitivity_1")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sobol_first")
 
-        self.assertEqual(data["test2D"]["sensitivity_1_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sensitivity_1_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sensitivity_1_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sensitivity_1_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_first_sum"][0], 1/3.)
+        self.assertEqual(data["test2D"]["sobol_first_sum"][1], 2/3.)
+        self.assertEqual(data["test1D"]["sobol_first_sum"][0], 1/3.)
+        self.assertEqual(data["test1D"]["sobol_first_sum"][1], 2/3.)
 
 
-    def test_calculate_1_sum(self):
+    def test_calculate_first_sum(self):
         data = Data()
 
         data.add_features(["test2D", "test1D"])
-        data["test2D"].sensitivity_1 = [[4, 6], [8, 12]]
-        data["test1D"].sensitivity_1 =  [1, 2]
+        data["test2D"].sobol_first = [[4, 6], [8, 12]]
+        data["test1D"].sobol_first =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="1")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="first")
 
-        self.assertEqual(data["test2D"]["sensitivity_1_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sensitivity_1_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sensitivity_1_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sensitivity_1_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_first_sum"][0], 1/3.)
+        self.assertEqual(data["test2D"]["sobol_first_sum"][1], 2/3.)
+        self.assertEqual(data["test1D"]["sobol_first_sum"][0], 1/3.)
+        self.assertEqual(data["test1D"]["sobol_first_sum"][1], 2/3.)
 
-    def test_calculate_t_sum(self):
+    def test_calculate_total_sum(self):
         data = Data()
 
         data.add_features(["test2D", "test1D"])
-        data["test2D"].sensitivity_t = [[4, 6], [8, 12]]
-        data["test1D"].sensitivity_t =  [1, 2]
+        data["test2D"].sobol_total = [[4, 6], [8, 12]]
+        data["test1D"].sobol_total =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="t")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="total")
 
-        self.assertEqual(data["test2D"]["sensitivity_t_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sensitivity_t_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sensitivity_t_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sensitivity_t_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_total_sum"][0], 1/3.)
+        self.assertEqual(data["test2D"]["sobol_total_sum"][1], 2/3.)
+        self.assertEqual(data["test1D"]["sobol_total_sum"][0], 1/3.)
+        self.assertEqual(data["test1D"]["sobol_total_sum"][1], 2/3.)
 
 
-    def test_calculate_sensitivity_t_sum(self):
+    def test_calculate_sensitivity_total_sum(self):
         data = Data()
 
         data.add_features(["test2D", "test1D"])
-        data["test2D"].sensitivity_t = [[4, 6], [8, 12]]
-        data["test1D"].sensitivity_t = [1, 2]
+        data["test2D"].sobol_total = [[4, 6], [8, 12]]
+        data["test1D"].sobol_total = [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sensitivity_t")
+        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sobol_total")
 
-        self.assertEqual(data["test2D"]["sensitivity_t_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sensitivity_t_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sensitivity_t_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sensitivity_t_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_total_sum"][0], 1/3.)
+        self.assertEqual(data["test2D"]["sobol_total_sum"][1], 2/3.)
+        self.assertEqual(data["test1D"]["sobol_total_sum"][0], 1/3.)
+        self.assertEqual(data["test1D"]["sobol_total_sum"][1], 2/3.)
 
 
     def test_sensitivity_sum_error(self):
         data = Data()
 
         data.add_features(["test2D", "test1D"])
-        data["test2D"].sensitivity_t = [[4, 6], [8, 12]]
-        data["test1D"].sensitivity_t = [1, 2]
+        data["test2D"].sobol_total = [[4, 6], [8, 12]]
+        data["test1D"].sobol_total = [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
         with self.assertRaises(ValueError):
@@ -904,8 +904,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # Test if all calculated properties actually exists
         data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sensitivity_1", "sensitivity_1_sum",
-                      "sensitivity_t", "sensitivity_t_sum", "labels"]
+                      "sobol_first", "sobol_first_sum",
+                      "sobol_total", "sobol_total_sum", "labels"]
 
         for data_type in data_types:
             if data_type not in ["values", "time", "labels"]:
@@ -1023,8 +1023,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # Test if all calculated properties actually exists
         data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sensitivity_1", "sensitivity_1_sum",
-                      "sensitivity_t", "sensitivity_t_sum", "labels"]
+                      "sobol_first", "sobol_first_sum",
+                      "sobol_total", "sobol_total_sum", "labels"]
 
         for data_type in data_types:
             if data_type not in ["values", "time", "labels"]:

@@ -72,10 +72,13 @@ class Spike:
                    xlabel=self.xlabel,
                    ylabel=self.ylabel)
 
+        plt.xlim([min(self.time), max(self.time)])
+
         if save_name is None:
             plt.show()
         else:
             plt.savefig(save_name)
+            plt.close()
 
 
 
@@ -347,10 +350,11 @@ class Spikes:
 
 
         plt.ylim([min(V_min), max(V_max)])
-        plt.xlim([0, max(time_max)*1.25])
+        plt.xlim([0, max(time_max)*1.2])
         plt.legend(labels)
 
         if save_name is None:
             plt.show()
         else:
             plt.savefig(save_name)
+            plt.close()
