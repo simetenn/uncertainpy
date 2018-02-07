@@ -178,7 +178,7 @@ class RunModel(ParameterBase):
                           "feature0d": {"values": 1,
                                         "time": np.nan},
                           "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -197,10 +197,10 @@ class RunModel(ParameterBase):
         Notes
         -----
         Sets the following in data, if applicable:
-        1. `data["model/features"].values`
-        2. `data["model/features"].time`
-        3. `data["model/features"].labels`
-        4. `data.model_name`
+        1. ``data["model/features"].evaluations` - ``values``
+        2. ``data["model/features"].time``
+        3. ``data["model/features"].labels``
+        4. ``data.model_name``
 
         See Also
         --------
@@ -256,7 +256,7 @@ class RunModel(ParameterBase):
 
                         interpolations.append(result[feature]["interpolation"])
 
-                    data[feature]["time"], data[feature]["values"] = self.apply_interpolation(time_interpolate, interpolations)
+                    data[feature].time, data[feature].evaluations = self.apply_interpolation(time_interpolate, interpolations)
 
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
@@ -264,26 +264,26 @@ class RunModel(ParameterBase):
                     self.logger.warning("Feature: {feature}, ".format(feature=feature) +
                                         "is a 0D result. No interpolation is performed")
 
-                    data[feature]["time"] = results[0][feature]["time"]
+                    data[feature].time = results[0][feature]["time"]
 
-                    data[feature]["values"] = []
+                    data[feature].evaluations  = []
                     for result in results:
-                        data[feature]["values"].append(result[feature]["values"])
+                        data[feature].evaluations.append(result[feature]["values"])
 
             else:
                 # Store data from results in a Data object
-                data[feature]["time"] = results[0][feature]["time"]
+                data[feature].time = results[0][feature]["time"]
 
-                data[feature]["values"] = []
+                data[feature].evaluations = []
                 for result in results:
-                    data[feature]["values"].append(result[feature]["values"])
+                    data[feature].evaluations.append(result[feature]["values"])
 
         # TODO is this necessary to ensure all results are arrays?
         for feature in data:
             if "time" in data[feature]:
-                data[feature]["time"] = np.array(data[feature]["time"])
+                data[feature].time = np.array(data[feature].time)
 
-            data[feature]["values"] = np.array(data[feature]["values"])
+            data[feature].evaluations = np.array(data[feature].evaluations )
 
         # data.remove_only_invalid_features()
 

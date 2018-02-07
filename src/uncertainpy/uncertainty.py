@@ -77,7 +77,7 @@ class UncertaintyQuantification(ParameterBase):
         quantification calculations.
     data : Data
         A data object that contains the results from the uncertainty quantification.
-        Contains all model and feature values, as well as all calculated
+        Contains all model and feature evaluations, as well as all calculated
         statistical metrics.
     logger : logging.Logger
         Logger object responsible for logging to screen or file.

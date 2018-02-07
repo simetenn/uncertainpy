@@ -13,7 +13,7 @@ def model_function(a=1, b=2):
 
 class TestingModel0d(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x"])
+        super(TestingModel0d, self).__init__(labels=["x"])
 
 
     def run(self, a=1, b=2):
@@ -26,7 +26,7 @@ class TestingModel0d(Model):
 
 class TestingModel1d(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        super(TestingModel1d, self).__init__(labels=["x", "y"])
 
     def run(self, a=1, b=2):
 
@@ -40,7 +40,7 @@ class TestingModel1d(Model):
 
 class TestingModel2d(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y", "z"])
+        super(TestingModel2d, self).__init__(labels=["x", "y", "z"])
 
 
     def run(self, a=1, b=2):
@@ -53,8 +53,7 @@ class TestingModel2d(Model):
 
 class TestingModelAdaptive(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"], adaptive=True)
-
+        super(TestingModelAdaptive, self).__init__(labels=["x", "y"], adaptive=True)
 
     def run(self, a=1, b=2):
 
@@ -94,7 +93,7 @@ class TestingModelNoTime(Model):
 
 class TestingModelNoTimeU(Model):
     def __init__(self):
-        Model.__init__(self, labels=[])
+        super(TestingModelNoTimeU, self).__init__(labels=[])
 
 
     def run(self, a=1, b=2):
@@ -104,7 +103,7 @@ class TestingModelNoTimeU(Model):
 
 class TestingModelThree(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        super(TestingModelThree, self).__init__(labels=["x", "y"])
 
 
     def run(self, a=1, b=2):
@@ -112,7 +111,7 @@ class TestingModelThree(Model):
 
 class TestingModelIncomplete(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        super(TestingModelIncomplete, self).__init__(labels=["x", "y"])
 
 
     def run(self, a=1, b=2):
@@ -122,7 +121,7 @@ class TestingModelIncomplete(Model):
 
 class PostprocessErrorNumpy(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        super(PostprocessErrorNumpy, self).__init__(labels=["x", "y"])
 
     def run(self, a=1, b=2):
 
@@ -137,7 +136,7 @@ class PostprocessErrorNumpy(Model):
 
 class PostprocessErrorOne(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+       super(PostprocessErrorOne, self).__init__(labels=["x", "y"])
 
     def run(self, a=1, b=2):
 
@@ -152,7 +151,7 @@ class PostprocessErrorOne(Model):
 
 class PostprocessErrorValue(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        super(PostprocessErrorValue, self).__init__(labels=["x", "y"])
 
     def run(self, a=1, b=2):
 

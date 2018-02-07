@@ -148,26 +148,26 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "values"  not in self.data[feature]:
+        if feature not in self.data or "evaluations"  not in self.data[feature]:
             self.logger.warning("No {} evaluations to plot.".format(feature))
             return
 
         if self.data.ndim(feature) != 0:
-            raise ValueError("{} is not a 0D feature".format(self.data.model_name))
+            raise ValueError("{} is not a 0D feature".format(feature))
 
         save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
 
-        prettyPlot(self.data[feature].values,
-                   xlabel=r"simulator run #number",
+        prettyPlot(self.data[feature].evaluations,
+                   xlabel=r"evaluation #number",
                    ylabel=self.data.get_labels(feature)[0],
-                   title="{}, result".format(feature.replace("_", " ")),
+                   title="{}, evaluations".format(feature.replace("_", " ")),
                    new_figure=True,
                    **plot_kwargs)
 
         plt.tight_layout()
-        plt.savefig(os.path.join(save_folder, "values" + self.figureformat))
+        plt.savefig(os.path.join(save_folder, "evaluations" + self.figureformat))
         plt.close()
 
 
@@ -178,7 +178,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "values"  not in self.data[feature]:
+        if feature not in self.data or "evaluations"  not in self.data[feature]:
             self.logger.warning("No model evaluations to plot.")
             return
 
@@ -194,20 +194,20 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
-            time = np.arange(0, len(self.data[feature].values[0]))
+            time = np.arange(0, len(self.data[feature].evaluations[0]))
         else:
             time = self.data[feature].time
 
 
-        padding = len(str(len(self.data[feature].values[0]) + 1))
-        for values in self.data[feature].values:
-            ax = prettyPlot(time, values,
+        padding = len(str(len(self.data[feature].evaluations[0]) + 1))
+        for evaluation in self.data[feature].evaluations:
+            ax = prettyPlot(time, evaluation,
                             xlabel=xlabel, ylabel=ylabel,
-                            title="{}, result {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
+                            title="{}, evaluation {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "values_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
             i += 1
 
@@ -220,7 +220,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "values"  not in self.data[feature]:
+        if feature not in self.data or "evaluations" not in self.data[feature]:
             self.logger.warning("No model evaluations to plot.")
             return
 
@@ -237,20 +237,20 @@ class PlotUncertainty(object):
         xlabel, ylabel, zlabel = labels
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
-            time = np.arange(0, len(self.data[feature].values[0]))
+            time = np.arange(0, len(self.data[feature].evaluations[0]))
         else:
             time = self.data[feature].time
 
-        padding = len(str(len(self.data[feature].values) + 1))
-        for i, values in enumerate(self.data[feature].values):
+        padding = len(str(len(self.data[feature].evaluations) + 1))
+        for i, evaluation in enumerate(self.data[feature].evaluations):
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            ax.set_title("{}, result {:d}".format(feature.replace("_", " "), i))
+            ax.set_title("{}, evaluation {:d}".format(feature.replace("_", " "), i))
 
-            iax = ax.imshow(values, cmap="viridis", aspect="auto",
+            iax = ax.imshow(evaluation, cmap="viridis", aspect="auto",
                             extent=[time[0],
                                     time[-1],
-                                    0, values.shape[0]],
+                                    0, evaluation.shape[0]],
                             **plot_kwargs)
 
             cbar = fig.colorbar(iax)
@@ -260,7 +260,7 @@ class PlotUncertainty(object):
             ax.set_ylabel(ylabel)
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "values_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
 
 

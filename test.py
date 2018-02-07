@@ -196,10 +196,6 @@ if args.parallel:
     print("-----------------------------------------")
     print("Running testsuite: parallel")
     results["parallel"] = test_runner.run(test_parallel)
-# if args.exploration:
-#     print "-----------------------------------------"
-#     print "Running testsuite: exploration"
-#     results["exploration"] = test_runner.run(test_exploration)
 if args.parameters:
     print("-----------------------------------------")
     print("Running testsuite: parameters")
@@ -224,10 +220,6 @@ if args.plotuncertainty:
     print("-----------------------------------------")
     print("Running testsuite: plotUncertainty")
     results["plotUncertainty"] = test_runner.run(test_plotUncertainty)
-# if args.plotuncertaintycompare:
-#     print "-----------------------------------------"
-#     print "Running testsuite: plotUncertaintyCompare"
-#     results["plotUncertaintyCompare"] = test_runner.run(test_plotUncertaintyCompare)
 if args.features:
     print("-----------------------------------------")
     print("Running testsuite: features")

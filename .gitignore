@@ -6,6 +6,7 @@
 x86_64/
 *.mod
 *.txt
+*.hoc
 
 
 # Byte-compiled / optimized / DLL files

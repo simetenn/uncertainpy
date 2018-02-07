@@ -316,12 +316,12 @@ class TestUncertainty(TestCasePlot):
 
 
         # Test if all calculated properties actually exists
-        data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+        data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                       "sobol_first", "sobol_first_sum",
                       "sobol_total", "sobol_total_sum", "labels"]
 
         for data_type in data_types:
-            if data_type not in ["values", "time", "labels"]:
+            if data_type not in ["evaluations", "time", "labels"]:
                 for feature in uncertainty.data:
                     self.assertIsInstance(uncertainty.data[feature][data_type], np.ndarray)
 
@@ -557,7 +557,7 @@ class TestUncertainty(TestCasePlot):
         folder = os.path.dirname(os.path.realpath(__file__))
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+        data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                       "sobol_first", "sobol_first_sum",
                       "sobol_total", "sobol_total_sum"]
 

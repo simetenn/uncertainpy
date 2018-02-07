@@ -33,7 +33,7 @@ class TestPlotUncertainpy(TestCasePlot):
                                     verbose_level="error",
                                     figureformat=self.figureformat)
 
-        self.data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+        self.data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                            "sobol_first", "sobol_first_sum",
                            "sobol_total", "sobol_total_sum"]
 
@@ -108,9 +108,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        self.plot.data["TestingModel1d"].time = np.load(os.path.join(self.folder, "data/t_test.npy"))
         values = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
+        self.plot.data["TestingModel1d"].evaluations = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         self.plot.evaluations_1d(feature="TestingModel1d")
@@ -132,9 +132,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        self.plot.data["TestingModel1d"].time = np.load(os.path.join(self.folder, "data/t_test.npy"))
         values = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
+        self.plot.data["TestingModel1d"].evaluations = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
@@ -150,7 +150,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.evaluations_1d(feature="TestingModel1d")
 
         self.plot.data.add_features("TestingModel1d")
-        self.plot.data["TestingModel1d"]["values"] = [1, 1, 1, 1, 1]
+        self.plot.data["TestingModel1d"].evaluations = [1, 1, 1, 1, 1]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
@@ -167,9 +167,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        self.plot.data["TestingModel1d"].time = np.load(os.path.join(self.folder, "data/t_test.npy"))
         values = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
+        self.plot.data["TestingModel1d"].evaluations = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         with self.assertRaises(ValueError):
@@ -183,9 +183,9 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.plot.data.add_features("TestingModel1d")
         self.plot.data["TestingModel1d"].labels = ["x", "y"]
-        self.plot.data["TestingModel1d"]["time"] = np.load(os.path.join(self.folder, "data/t_test.npy"))
+        self.plot.data["TestingModel1d"].time = np.load(os.path.join(self.folder, "data/t_test.npy"))
         values = np.load(os.path.join(self.folder, "data/U_test.npy"))
-        self.plot.data["TestingModel1d"]["values"] = [values, values, values, values, values]
+        self.plot.data["TestingModel1d"].evaluations = [values, values, values, values, values]
         self.plot.data.model_name = "TestingModel1d"
 
         self.plot.evaluations(feature="TestingModel1d")
@@ -318,9 +318,9 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.evaluations_0d(feature="TestingModel0d")
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "evaluations", "values" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "evaluations", "evaluations" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_evaluations", "values" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_evaluations", "evaluations" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -335,9 +335,9 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.evaluations(feature="TestingModel0d")
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "figures", "evaluations", "values" + self.figureformat)
+        compare_file = os.path.join(folder, "figures", "evaluations", "evaluations" + self.figureformat)
 
-        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_evaluations", "values" + self.figureformat)
+        plot_file = os.path.join(self.output_test_dir, "TestingModel0d_evaluations", "evaluations" + self.figureformat)
 
         if self.exact_plots:
             result = subprocess.call(["diff", plot_file, compare_file])
@@ -695,7 +695,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
     def test_features_1d_no_t(self):
         self.plot.load(self.data_file_path)
-        del self.plot.data["feature1d"]["time"]
+        self.plot.data["feature1d"].time = None
 
         self.plot.features_1d(sensitivity="sobol_first")
 
@@ -1059,9 +1059,9 @@ class TestPlotUncertainpy(TestCasePlot):
         with self.assertRaises(AttributeError):
             self.plot.evaluations()
 
-        self.plot.data["0D"].values = [1, 2, 3]
-        self.plot.data["1D"].values = [[1], [2], [3]]
-        self.plot.data["2D"].values = [[[1]], [[2]], [[3]]]
+        self.plot.data["0D"].evaluations = [1, 2, 3]
+        self.plot.data["1D"].evaluations = [[1], [2], [3]]
+        self.plot.data["2D"].evaluations = [[[1]], [[2]], [[3]]]
 
         self.assertIsNone(self.plot.attribute_feature_1d("1D"))
         self.assertIsNone(self.plot.attribute_feature_2d("2D"))

@@ -22,11 +22,11 @@ class DataFeature(collections.MutableMapping):
     ----------
     name : str
         Name of the model/feature.
-    values : {None, array_like}, optional.
+    evaluations : {None, array_like}, optional.
         Feature or model result.
         Default is None.
     time : {None, array_like}, optional.
-        Time values for feature or model.
+        Time evaluations for feature or model.
         Default is None.
     mean : {None, array_like}, optional.
         Mean of the feature or model results.
@@ -61,8 +61,8 @@ class DataFeature(collections.MutableMapping):
     ----------
     name : str
         Name of the model/feature.
-    values : {None, array_like}
-        Feature or model result.
+    evaluations : {None, array_like}
+        Feature or model output.
     time : {None, array_like}
         Time values for feature or model.
     mean : {None, array_like}
@@ -89,7 +89,7 @@ class DataFeature(collections.MutableMapping):
     -----
     The statistical metrics calculated in Uncertainpy are:
 
-        * ``values`` - the results from the model/feature evaluations.
+        * ``evaluations`` - the results from the model/feature evaluations.
         * ``time`` - the time of the model/feature.
         * ``mean`` - the mean of the model/feature.
         * ``variance``. - the variance of the model/feature.
@@ -106,7 +106,7 @@ class DataFeature(collections.MutableMapping):
     """
     def __init__(self,
                  name,
-                 values=None,
+                 evaluations=None,
                  time=None,
                  mean=None,
                  variance=None,
@@ -119,7 +119,7 @@ class DataFeature(collections.MutableMapping):
                  labels=[]):
 
         self.name = name
-        self.values = values
+        self.evaluations = evaluations
         self.time = time
         self.mean = mean
         self.variance = variance
@@ -131,7 +131,7 @@ class DataFeature(collections.MutableMapping):
         self.sobol_total_sum = sobol_total_sum
         self.labels = labels
 
-        self._built_in_statistical_metrics = ["values", "time", "mean", "variance",
+        self._statistical_metrics = ["evaluations", "time", "mean", "variance",
                                      "percentile_5", "percentile_95",
                                      "sobol_first", "sobol_first_sum",
                                      "sobol_total", "sobol_total_sum"]
@@ -261,8 +261,8 @@ class DataFeature(collections.MutableMapping):
             The number of dimensions of the data of the data type.
         """
 
-        if self.values is not None:
-            return np.ndim(self.values[0])
+        if self.evaluations is not None:
+            return np.ndim(self.evaluations[0])
         else:
             return None
 
@@ -308,7 +308,7 @@ class Data(collections.MutableMapping):
     The statistical metrics calculated for each feature and model in Uncertainpy
     are:
 
-        * ``values`` - the results from the model/feature evaluations.
+        * ``evaluations`` - the results from the model/feature evaluations.
         * ``time`` - the time of the model/feature.
         * ``mean`` - the mean of the model/feature.
         * ``variance``. - the variance of the model/feature.
@@ -596,7 +596,7 @@ class Data(collections.MutableMapping):
         feature_list = self.data.keys()[:]
         for feature in feature_list:
             all_nan = True
-            for U in self[feature]["values"]:
+            for U in self[feature].evaluations:
                 if not np.all(np.isnan(U)):
                     all_nan = False
 

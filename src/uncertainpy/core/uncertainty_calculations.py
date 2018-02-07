@@ -238,8 +238,8 @@ class UncertaintyCalculations(ParameterBase):
         Parameters
         ----------
         data : Data
-            A Data object with values for the model and each feature.
-            Must contain `data[feature].values`.
+            A Data object with evaluations for the model and each feature.
+            Must contain `data[feature].evaluations`.
         nodes : array_like
             The nodes used to evaluate the model.
         feature : str
@@ -252,8 +252,8 @@ class UncertaintyCalculations(ParameterBase):
         -------
         masked_nodes : array_like
             The nodes that correspond to the evaluations with results.
-        masked_values : array_like
-            The values which have results.
+        masked_evaluations : array_like
+            The evaluations which have results.
         mask : boolean array
             The mask itself, used to create the masked arrays.
         masked_weights : array_like, optional
@@ -263,15 +263,15 @@ class UncertaintyCalculations(ParameterBase):
         if feature not in data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
-        masked_values = []
-        mask = np.ones(len(data[feature]["values"]), dtype=bool)
+        masked_evaluations = []
+        mask = np.ones(len(data[feature].evaluations ), dtype=bool)
 
         # TODO use numpy masked array
-        for i, result in enumerate(data[feature]["values"]):
+        for i, result in enumerate(data[feature].evaluations ):
             if np.any(np.isnan(result)):
                 mask[i] = False
             else:
-                masked_values.append(result)
+                masked_evaluations.append(result)
 
 
         if len(nodes.shape) > 1:
@@ -293,9 +293,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
         if weights is None:
-            return np.array(masked_nodes), np.array(masked_values), mask
+            return np.array(masked_nodes), np.array(masked_evaluations), mask
         else:
-            return np.array(masked_nodes), np.array(masked_values), mask, np.array(masked_weights)
+            return np.array(masked_nodes), np.array(masked_evaluations), mask, np.array(masked_weights)
 
 
 
@@ -347,7 +347,7 @@ class UncertaintyCalculations(ParameterBase):
         -----
         The returned `data` should contain (but not necessarily) the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -404,11 +404,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(data,
                             desc="Calculating PC for each feature",
                             total=len(data)):
-            masked_nodes, masked_values, mask, masked_weights = self.create_mask(data, nodes, feature, weights)
+            masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data, nodes, feature, weights)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
-                                                    masked_weights, masked_values)
+                                                    masked_weights, masked_evaluations)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +\
                                     "for feature: {} ".format(feature) +\
@@ -470,7 +470,7 @@ class UncertaintyCalculations(ParameterBase):
         -----
         The returned `data` should contain (but not necessarily) the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -523,11 +523,11 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(data,
                             desc="Calculating PC for each feature",
                             total=len(data)):
-            masked_nodes, masked_values, mask = self.create_mask(data, nodes, feature)
+            masked_nodes, masked_evaluations, mask = self.create_mask(data, nodes, feature)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P, masked_nodes,
-                                                        masked_values, rule="T")
+                                                        masked_evaluations, rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -592,7 +592,7 @@ class UncertaintyCalculations(ParameterBase):
         `data` should contain (but not necessarily) the following, if
            applicable:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -675,7 +675,7 @@ class UncertaintyCalculations(ParameterBase):
             #                                                           weights)
 
             # The version thats seems to be working
-            masked_nodes, masked_values, mask, masked_weights = self.create_mask(data,
+            masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data,
                                                                       nodes_R,
                                                                       feature,
                                                                       weights_R)
@@ -684,7 +684,7 @@ class UncertaintyCalculations(ParameterBase):
                 U_hat[feature] = cp.fit_quadrature(P,
                                                    masked_nodes,
                                                    masked_weights,
-                                                   masked_values)
+                                                   masked_evaluations)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -747,7 +747,7 @@ class UncertaintyCalculations(ParameterBase):
         -----
         The returned `data` should contain (but not necessarily) the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -812,13 +812,13 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(data,
                             desc="Calculating PC for each feature",
                             total=len(data)):
-            masked_nodes, masked_values, mask = self.create_mask(data, nodes_R, feature)
+            masked_nodes, masked_evaluations, mask = self.create_mask(data, nodes_R, feature)
 
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P,
                                                    masked_nodes,
-                                                   masked_values,
+                                                   masked_evaluations,
                                                    rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
@@ -862,7 +862,7 @@ class UncertaintyCalculations(ParameterBase):
         -----
         The `data` parameter should contain (but not necessarily) the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -958,7 +958,7 @@ class UncertaintyCalculations(ParameterBase):
 
         The returned `data` should contain (but not necessarily) the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -1121,7 +1121,7 @@ class UncertaintyCalculations(ParameterBase):
         -----
         The `data` parameter contains the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -1256,7 +1256,7 @@ class UncertaintyCalculations(ParameterBase):
         Returns
         -------
         data : Data
-            A data object with all model and feature values, as well as all
+            A data object with all model and feature evaluations, as well as all
             calculated statistical metrics.
 
         Raises
@@ -1269,7 +1269,7 @@ class UncertaintyCalculations(ParameterBase):
         -----
         The `data` parameter contains the following:
 
-            1. ``data["model/features"].values``
+            1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
@@ -1309,11 +1309,11 @@ class UncertaintyCalculations(ParameterBase):
 
         # TODO mask data
         for feature in data:
-            data[feature]["mean"] = np.mean(data[feature]["values"], 0)
-            data[feature]["variance"] = np.var(data[feature]["values"], 0)
+            data[feature].mean = np.mean(data[feature].evaluations , 0)
+            data[feature].variance = np.var(data[feature].evaluations , 0)
 
-            data[feature]["percentile_5"] = np.percentile(data[feature]["values"], 5, 0)
-            data[feature]["percentile_95"] = np.percentile(data[feature]["values"], 95, 0)
+            data[feature].percentile_5 = np.percentile(data[feature].evaluations , 5, 0)
+            data[feature].percentile_95 = np.percentile(data[feature].evaluations , 95, 0)
 
         return data
 
@@ -1326,7 +1326,7 @@ class UncertaintyCalculations(ParameterBase):
         Parameters
         ----------
         data : Data
-            A data object with all model and feature values, as well as all
+            A data object with all model and feature evaluations, as well as all
             calculated statistical metrics.
         sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
             The sensitivity to normalize and sum. "sobol_first" and "1" are

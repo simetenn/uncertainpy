@@ -65,17 +65,17 @@ class Parallel(Base):
 
                 result = {model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                      "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature0d": {"values": 1,
-                                      "time": np.nan},
-                        "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                      "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
-                        "feature_invalid": {"values": np.nan,
-                                            "time": np.nan}}
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
 
         Returns
         -------
@@ -123,7 +123,7 @@ class Parallel(Base):
                 if feature in self.features.adaptive or \
                     (feature == self.model.name and self.model.adaptive):
                     if np.any(np.isnan(result[feature]["time"])):
-                        raise AttributeError("{} does not return any t values.".format(feature)
+                        raise AttributeError("{} does not return any time values.".format(feature)
                                              + " Unable to perform interpolation.")
 
                     interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
@@ -172,19 +172,19 @@ class Parallel(Base):
             .. code-block:: Python
 
                 result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                                             "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature0d": {"values": 1,
-                                         "time": np.nan},
+                                        "time": np.nan},
                           "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                                          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
-                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                "interpolation": scipy interpolation object},
                           "feature_invalid": {"values": np.nan,
-                                             "time": np.nan}}
+                                              "time": np.nan}}
 
         Notes
         -----

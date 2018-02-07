@@ -266,7 +266,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
 def generate_data_data():  # pragma: no cover
     data = un.Data()
-    data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
+    data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                   "sobol_first", "sobol_first_sum",
                   "sobol_total", "sobol_total_sum"]
 

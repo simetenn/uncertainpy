@@ -1,40 +1,37 @@
-__all__ = ["TestDistribution",
-        #    "TestExploration",
-           "TestFeatures",
-           "TestRunModel",
-           "TestParallel",
-           "TestGeneralSpikingFeatures",
-           "TestSpikingFeatures",
-           "TestNetworkFeatures",
-           "TestGeneralNetworkFeatures",
-           "TestTestingFeatures",
-           "TestLogger",
-           "TestModel",
-           "TestHodgkinHuxleyModel",
-           "TestCoffeeCupModel",
-           "TestIzhikevichModel",
-           "TestTestingModel0d",
-           "TestTestingModel1d",
-           "TestTestingModel2d",
-           "TestNeuronModel",
-           "TestParameter",
-           "TestParameters",
-           "TestPlotUncertainpy",
-        #    "TestPlotUncertainpyCompare",
-           "TestSpike",
-           "TestSpikes",
-           "TestUncertainty",
-           "TestData",
-           "TestDataFeature",
-           "TestUncertaintyCalculations",
-           "TestExamples",
-           "TestBase",
-           "TestParameterBase",
-           "TestEfelFeatures",
-           "TestNestModel"]
+# __all__ = ["TestDistribution",
+#            "TestFeatures",
+#            "TestRunModel",
+#            "TestParallel",
+#            "TestGeneralSpikingFeatures",
+#            "TestSpikingFeatures",
+#            "TestNetworkFeatures",
+#            "TestGeneralNetworkFeatures",
+#            "TestTestingFeatures",
+#            "TestLogger",
+#            "TestModel",
+#            "TestHodgkinHuxleyModel",
+#            "TestCoffeeCupModel",
+#            "TestIzhikevichModel",
+#            "TestTestingModel0d",
+#            "TestTestingModel1d",
+#            "TestTestingModel2d",
+#            "TestNeuronModel",
+#            "TestParameter",
+#            "TestParameters",
+#            "TestPlotUncertainpy",
+#            "TestSpike",
+#            "TestSpikes",
+#            "TestUncertainty",
+#            "TestData",
+#            "TestDataFeature",
+#            "TestUncertaintyCalculations",
+#            "TestExamples",
+#            "TestBase",
+#            "TestParameterBase",
+#            "TestEfelFeatures",
+#            "TestNestModel"]
 
 from .test_distribution import TestDistribution
-# from test_exploration import TestExploration
 from .test_features import TestFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures
 from .test_features import TestNetworkFeatures, TestTestingFeatures, TestGeneralNetworkFeatures
 from .test_features import TestEfelFeatures
@@ -46,7 +43,6 @@ from .test_models import TestTestingModel2d, TestNeuronModel
 
 from .test_parameters import TestParameter, TestParameters
 from .test_plot_uncertainty import TestPlotUncertainpy
-# from test_plotUncertaintyCompare import TestPlotUncertainpyCompare
 from .test_spike import TestSpike
 from .test_spikes import TestSpikes
 from .test_uncertainty import TestUncertainty
