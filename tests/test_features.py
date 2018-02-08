@@ -343,14 +343,18 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_nr_spikes_no_stimulus(self):
-        info = {"stimulus_start": -1, "stimulus_end": -2}
+        info = {"stimulus_start": -2, "stimulus_end": -1}
         self.assertEqual(self.features.nr_spikes(self.time, self.spikes, info), (None, 0))
 
 
     def test_nr_spikes_error(self):
         self.features.strict = True
-        with self.assertRaises(RuntimeError):
-            self.features.nr_spikes(self.time, self.spikes, {})
+        with self.assertRaises(ValueError):
+            self.features.spike_rate(self.time, self.spikes, {})
+            self.features.spike_rate(self.time, self.spikes, {"stimulus_start": 1})
+            self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1})
+            self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1, "stimulus_start": -1})
+
 
     def test_time_before_first_spike(self):
         self.assertGreater(self.features.time_before_first_spike(self.time, self.spikes, self.info)[1], 10)
@@ -368,7 +372,7 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_time_before_first_spike_error(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             self.features.time_before_first_spike(self.time, self.spikes, {})
             self.features.time_before_first_spike(self.time, self.spikes, {"stimulus_end": 1})
 
@@ -388,10 +392,11 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_spike_rate_error(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             self.features.spike_rate(self.time, self.spikes, {})
             self.features.spike_rate(self.time, self.spikes, {"stimulus_start": 1})
             self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1})
+            self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1, "stimulus_start": -1})
 
 
     def test_average_AP_overshoot(self):
@@ -529,10 +534,11 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_spikecount_error(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(ValueError):
             self.features.Spikecount(self.time, self.values, {})
             self.features.Spikecount(self.time, self.values, {"stimulus_start": self.time[0]})
             self.features.Spikecount(self.time, self.values, {"stimulus_end": self.time[-1]})
+            self.features.Spikecount(self.time, self.values, {"stimulus_end": 0, "stimulus_start": 1})
 
 
     def test_spikecount_no_strict(self):

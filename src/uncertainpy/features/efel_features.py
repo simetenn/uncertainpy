@@ -54,7 +54,7 @@ class EfelFeatures(Features):
 
     strict : bool, optional
         If True, missing ``"stimulus_start"`` and ``"stimulus_end"`` from `info`
-        raises a RuntimeError. If False the simulation start time is used
+        raises a ValueError. If False the simulation start time is used
         as ``"stimulus_start"`` and the simulation end time is used for
         ``"stimulus_end"``. The decay_time_constant_after_stim feature becomes
         disabled with False. Default is True
@@ -85,9 +85,11 @@ class EfelFeatures(Features):
 
     Raises
     ------
-    RuntimeError
+    ValueError
         If strict is True and ``"stimulus_start"`` and ``"stimulus_end"`` are
         missing from `info`.
+    ValueError
+        If stimulus_start >= stimulus_end.
 
     Notes
     -----
@@ -184,7 +186,7 @@ class EfelFeatures(Features):
 
                 if "stimulus_start" not in info:
                     if strict:
-                        raise RuntimeError("Efel features require info['stimulus_start']. "
+                        raise ValueError("Efel features require info['stimulus_start']. "
                                            "No 'stimulus_start' found in info, "
                                            "Set 'stimulus_start', or set strict to "
                                            "False to use initial time as stimulus start")
@@ -196,7 +198,7 @@ class EfelFeatures(Features):
 
                 if "stimulus_end" not in info:
                     if strict:
-                        raise RuntimeError("Efel features require info['stimulus_end']. "
+                        raise ValueError("Efel features require info['stimulus_end']. "
                                            "No 'stimulus_end' found in info, "
                                            "Set 'stimulus_start', or set strict to "
                                            "False to use end time as stimulus end")
@@ -206,11 +208,17 @@ class EfelFeatures(Features):
                                             "No 'stimulus_end' found in info, "
                                             "setting stimulus end as end time")
 
+
+                if info["stimulus_start"] >= info["stimulus_end"]:
+                    raise ValueError("stimulus_start >= stimulus_end.")
+
+
                 trace = {}
                 trace["T"] = time
                 trace["V"] = values
                 trace["stim_start"] = [info["stimulus_start"]]
                 trace["stim_end"] = [info["stimulus_end"]]
+
 
 
                 # Disable decay_time_constant_after_stim if no time points left

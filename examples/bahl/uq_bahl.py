@@ -5,12 +5,11 @@ import chaospy as cp
 class NeuronModelBahl(un.NeuronModel):
     def __init__(self, stimulus_start=None, stimulus_end=None):
         # Hardcode the path of the Bahl neuron model
-        super(NeuronModelBahl, self).__init__(self,
-                                              adaptive=True,
+        super(NeuronModelBahl, self).__init__(adaptive=True,
                                               file="mosinit.hoc",
                                               path="bahl_neuron_model",
                                               stimulus_start=stimulus_start,
-                                              stimulus_end=stimulus_start)
+                                              stimulus_end=stimulus_end)
 
 
     def set_parameters(self, parameters):
@@ -21,6 +20,7 @@ class NeuronModelBahl(un.NeuronModel):
         # model to recalculate the parameters after they have been set
         self.h("recalculate_passive_properties()")
         self.h("recalculate_channel_densities()")
+
 
 # Define a parameter list
 parameter_list = [["e_pas", -80, cp.Uniform(-60, -85)],

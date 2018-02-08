@@ -28,19 +28,35 @@ class TestExamples(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-    def test_coffee(self):
+    def test_coffee_function(self):
         folder = os.path.join(self.example_folder, "coffee")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_coffe.py"], env=os.environ.copy())
+        result = subprocess.call(["python", "uq_coffee_function.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
-    def test_coffee_dependent(self):
+    def test_coffee_class(self):
+        folder = os.path.join(self.example_folder, "coffee")
+        os.chdir(folder)
+
+        result = subprocess.call(["python", "uq_coffee_class.py"], env=os.environ.copy())
+        self.assertEqual(result, 0)
+
+
+    def test_coffee_dependent_function(self):
         folder = os.path.join(self.example_folder, "coffee_dependent")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_coffe_dependent.py"], env=os.environ.copy())
+        result = subprocess.call(["python", "uq_coffee_dependent_function.py"], env=os.environ.copy())
+        self.assertEqual(result, 0)
+
+
+    def test_coffee_dependent_class(self):
+        folder = os.path.join(self.example_folder, "coffee_dependent")
+        os.chdir(folder)
+
+        result = subprocess.call(["python", "uq_coffee_dependent_class.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -52,11 +68,19 @@ class TestExamples(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
-    def test_izhikevich(self):
+    def test_izhikevich_function(self):
         folder = os.path.join(self.example_folder, "izhikevich")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_izhikevich.py"], env=os.environ.copy())
+        result = subprocess.call(["python", "uq_izhikevich_function.py"], env=os.environ.copy())
+        self.assertEqual(result, 0)
+
+
+    def test_izhikevich_class(self):
+        folder = os.path.join(self.example_folder, "izhikevich")
+        os.chdir(folder)
+
+        result = subprocess.call(["python", "uq_izhikevich_class.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -74,3 +98,4 @@ class TestExamples(unittest.TestCase):
 
         result = subprocess.call(["python", "uq_valderrama.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
+

@@ -1,24 +1,16 @@
 import unittest
 import sys
-import argparse
+import click
+import collections
 
 import matplotlib
 matplotlib.use('Agg')
 
-
 from tests import *
 
-def create_test_suite(test_classes_to_run):
-    loader = unittest.TestLoader()
 
-    suites_list = []
-    for test_class in test_classes_to_run:
-        suite = loader.loadTestsFromTestCase(test_class)
-        suites_list.append(suite)
+verbose = 1
 
-    big_suite = unittest.TestSuite(suites_list)
-
-    return big_suite
 
 
 def create_test_suite_parameter(testcase, parameter=False):
@@ -34,255 +26,261 @@ class, passing them a parameter.
     return suite
 
 
-
-parser = argparse.ArgumentParser(description="Run tests for Uncertainpy")
-parser.add_argument("-u", "--utils", help="Utility tests", action="store_true")
-parser.add_argument("-p", "--prerequisites",
-                    help="Prerequisites tests",
-                    action="store_true")
-parser.add_argument("-a", "--all", help="All tests", action="store_true")
-parser.add_argument("-b", "--basic",
-                    help="Basic tests (all test up to Uncertainpy)",
-                    action="store_true")
-parser.add_argument("-f", "--fast", help="Run all tests except usecase test", action="store_true")
-parser.add_argument("-e", "--exact",
-                    help="Test if the plot files are exactly equal. " +\
-                         "WARNING: uses diff, test fails on most machines " + \
-                         "due to non vissible differences in the plots.",
-                    action="store_true")
+def to_iterable(iterable):
+    if not isinstance(iterable, collections.Iterable):
+        iterable = [iterable]
+    return iterable
 
 
-parser.add_argument("--uncertainpy", help="Uncertainpy tests", action="store_true")
-# parser.add_argument("--exploration", help="UncertaintyQuantifications (explorations) test",
-#                     action="store_true")
-parser.add_argument("--parameters", help="Parameter tests", action="store_true")
-parser.add_argument("--distribution", help="Distribution tests", action="store_true")
-parser.add_argument("--spike", help="Spike tests", action="store_true")
-parser.add_argument("--spikes", help="Spikes tests ", action="store_true")
-parser.add_argument("--spike_sorting", help="Test spike sorting", action="store_true")
-parser.add_argument("--plotuncertainty", help="PlotUncertainty tests", action="store_true")
-# parser.add_argument("--plotuncertaintycompare", help="PlotUncertaintyCompare tests",
-#                     action="store_true")
-parser.add_argument("--features", help="Features tests", action="store_true")
-parser.add_argument("--model", help="Model tests", action="store_true")
-parser.add_argument("--runmodel", help="RunModel tests", action="store_true")
-parser.add_argument("--logger", help="Logger tests", action="store_true")
-parser.add_argument("--plotting", help="Plotting tests", action="store_true")
-parser.add_argument("--parallel", help="Parallel tests", action="store_true")
-parser.add_argument("--usecase", help="Usecase tests", action="store_true")
-parser.add_argument("--data", help="Data tests", action="store_true")
-parser.add_argument("--uncertaintycalculations", help="uncertaintyCalculations tests",
-                    action="store_true")
-parser.add_argument("--travis", help="Tests to run on travis", action="store_true")
-parser.add_argument("--examples", help="Test all examples", action="store_true")
+def create_test_suite(test_classes_to_run=[], parameter_test_cases=[], parameter=None):
+    loader = unittest.TestLoader()
+
+    test_classes_to_run = to_iterable(test_classes_to_run)
+    parameter_test_cases = to_iterable(parameter_test_cases)
 
 
-args = parser.parse_args()
+    suites_list = []
+    for test_class in test_classes_to_run:
+        suite = loader.loadTestsFromTestCase(test_class)
+        suites_list.append(suite)
+
+    for test_class in parameter_test_cases:
+        suite = create_test_suite_parameter(test_class, parameter=parameter)
+        suites_list.append(suite)
+
+    big_suite = unittest.TestSuite(suites_list)
+    return big_suite
+
+
+def run(test_cases=[], parameter_test_cases=[], parameter=None):
+    suite = create_test_suite(test_cases, parameter_test_cases, parameter)
+
+    runner = unittest.TextTestRunner(verbosity=verbose)
+    results = runner.run(suite)
+
+    errors = len(results.errors)
+    failures = len(results.failures)
+    run = results.testsRun
+    print("------------------------------------------------------")
+    print("Test: run={} errors={} failures={}".format(run, errors, failures))
 
 
 
+testing_spikes = [TestSpike, TestSpikes]
+
+testing_features = [TestFeatures, TestGeneralSpikingFeatures, TestSpikingFeatures,
+                    TestTestingFeatures, TestNetworkFeatures, TestGeneralNetworkFeatures,
+                    TestEfelFeatures]
+
+testing_base = [TestBase, TestParameterBase]
+
+testing_data = [TestData, TestDataFeature]
+
+# TODO: several tests crashes when several tests with Xvfb is run one after another
+testing_models = [TestTestingModel0d, TestTestingModel1d, TestTestingModel2d,
+                  TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel,
+                  TestIzhikevichModel, TestNestModel, TestNeuronModel,
+                  TestRunModel, TestParallel]
+
+testing_parameters = [TestParameter, TestParameters]
+
+testing_exact = testing_spikes + [TestUncertainty, TestPlotUncertainpy]
+
+testing_all = testing_parameters + testing_models + testing_base\
+                   + testing_features + testing_data
+
+testing_complete = testing_all + [TestExamples]
 
 
 
+@click.group()
+@click.option('--verbosity', default=1, help="Verbosity of test runner.")
+def cli(verbosity):
+    global verbose
+    verbose = verbosity
 
 
-test_distribution = create_test_suite([TestDistribution])
-
-test_spike = create_test_suite_parameter(TestSpike, parameter=args.exact)
-test_spikes = create_test_suite_parameter(TestSpikes, parameter=args.exact)
-test_spike_sorting = create_test_suite([TestSpike, TestSpikes])
-
-test_features = create_test_suite([TestFeatures,
-                                   TestGeneralSpikingFeatures,
-                                   TestSpikingFeatures,
-                                   TestTestingFeatures,
-                                   TestNetworkFeatures,
-                                   TestGeneralNetworkFeatures,
-                                   TestEfelFeatures])
+@cli.command()
+def distribution():
+    run(TestDistribution)
 
 
-test_features.addTest(test_spike_sorting)
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def spike(exact):
+    run(parameter_test_cases=TestSpike, parameter=exact)
 
 
-test_logger = create_test_suite([TestLogger])
-
-test_uncertaintycalculations = create_test_suite([TestUncertaintyCalculations])
-
-test_base = create_test_suite([TestBase, TestParameterBase])
-
-test_runModel = create_test_suite([TestRunModel])
-
-test_parallel = create_test_suite([TestParallel])
-
-test_model = create_test_suite([TestModel,
-                                TestHodgkinHuxleyModel,
-                                TestCoffeeCupModel,
-                                TestIzhikevichModel,
-                                TestNestModel,
-                                TestTestingModel0d,
-                                TestTestingModel1d,
-                                TestTestingModel2d,
-                                TestNeuronModel])
-test_model.addTest(test_runModel)
-
-test_parameters = create_test_suite([TestParameter, TestParameters])
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def spikes(exact):
+    run(parameter_test_cases=TestSpikes, parameter=exact)
 
 
-test_data = create_test_suite([TestData, TestDataFeature])
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def all_spikes(exact):
+    run(parameter_test_cases=spikes, parameter=exact)
 
 
-test_plotUncertainty = create_test_suite_parameter(TestPlotUncertainpy, parameter=args.exact)
+@cli.command()
+def features():
+    run(TestFeatures)
 
-test_uncertainty = create_test_suite_parameter(TestUncertainty, parameter=args.exact)
-
-test_utils = unittest.TestSuite([test_logger])
-
-test_plotting = unittest.TestSuite([test_plotUncertainty])
-
-test_prerequisites = unittest.TestSuite([test_utils,
-                                         test_parameters,
-                                         test_distribution,
-                                         test_features,
-                                         test_model,
-                                         test_data,
-                                         test_base,
-                                         test_parallel])
+@cli.command()
+def general_spiking_features():
+    run(TestGeneralSpikingFeatures)
 
 
-test_basic = unittest.TestSuite([test_prerequisites,
-                                 test_uncertaintycalculations])
-
-test_fast = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
-
-test_examples = create_test_suite([TestExamples])
-
-test_travis = unittest.TestSuite([test_basic, test_uncertainty, test_plotUncertainty])
-
-test_all = unittest.TestSuite([test_basic, test_uncertainty,
-                               test_plotUncertainty, test_plotUncertainty, test_examples])
-
-# test_all = unittest.TestSuite([test_fast, test_plotUncertaintyCompare, test_exploration])
+@cli.command()
+def spiking_features():
+    run(TestSpikingFeatures)
 
 
-test_runner = unittest.TextTestRunner()
+@cli.command()
+def test_features():
+    run(TestTestingFeatures)
 
 
+@cli.command()
+def efel_features():
+    run(TestEfelFeatures)
 
 
-
-results = {}
-
-if args.utils:
-    print("-----------------------------------------")
-    print("Running testsuite: utils")
-    results["utils"] = test_runner.run(test_utils)
-if args.prerequisites:
-    print("-----------------------------------------")
-    print("Running testsuite: prerequisites")
-    results["prerequisites"] = test_runner.run(test_prerequisites)
-if args.basic:
-    print("-----------------------------------------")
-    print("Running testsuite: basic")
-    results["basic"] = test_runner.run(test_basic)
-if args.fast:
-    print("-----------------------------------------")
-    print("Running testsuite: fast")
-    results["fast"] = test_runner.run(test_fast)
-if args.uncertainpy:
-    print("-----------------------------------------")
-    print("Running testsuite: uncertainpy")
-    results["uncertainpy"] = test_runner.run(test_uncertainty)
-if args.parallel:
-    print("-----------------------------------------")
-    print("Running testsuite: parallel")
-    results["parallel"] = test_runner.run(test_parallel)
-if args.parameters:
-    print("-----------------------------------------")
-    print("Running testsuite: parameters")
-    results["parameters"] = test_runner.run(test_parameters)
-if args.distribution:
-    print("-----------------------------------------")
-    print("Running testsuite: distribution")
-    results["distribution"] = test_runner.run(test_distribution)
-if args.spike_sorting:
-    print("-----------------------------------------")
-    print("Running testsuite: spike_sorting")
-    results["spike_sorting"] = test_runner.run(test_spike_sorting)
-if args.spike:
-    print("-----------------------------------------")
-    print("Running testsuite: spike")
-    results["spike"] = test_runner.run(test_spike)
-if args.spikes:
-    print("-----------------------------------------")
-    print("Running testsuite: spikes")
-    results["spikes"] = test_runner.run(test_spikes)
-if args.plotuncertainty:
-    print("-----------------------------------------")
-    print("Running testsuite: plotUncertainty")
-    results["plotUncertainty"] = test_runner.run(test_plotUncertainty)
-if args.features:
-    print("-----------------------------------------")
-    print("Running testsuite: features")
-    results["features"] = test_runner.run(test_features)
-if args.model:
-    print("-----------------------------------------")
-    print("Running testsuite: model")
-    results["model"] = test_runner.run(test_model)
-if args.runmodel:
-    print("-----------------------------------------")
-    print("Running testsuite: runModel")
-    results["runModel"] = test_runner.run(test_runModel)
-if args.logger:
-    print("-----------------------------------------")
-    print("Running testsuite: logger")
-    results["logger"] = test_runner.run(test_logger)
-if args.plotting:
-    print("-----------------------------------------")
-    print("Running testsuite: plotting")
-    results["plotting"] = test_runner.run(test_plotting)
-if args.data:
-    print("-----------------------------------------")
-    print("Running testsuite: data")
-    results["data"] = test_runner.run(test_data)
-if args.uncertaintycalculations:
-    print("-----------------------------------------")
-    print("Running testsuite: uncertaintycalculations")
-    results["uncertaintycalculations"] = test_runner.run(test_uncertaintycalculations)
-if args.travis:
-    print("-----------------------------------------")
-    print("Running testsuite: travis")
-    results["travis"] = test_runner.run(test_travis)
-if args.all:
-    print("-----------------------------------------")
-    print("Running testsuite: all")
-    results["all"] = test_runner.run(test_all)
-if args.examples:
-    print("-----------------------------------------")
-    print("Running testsuite: examples")
-    results["examples"] = test_runner.run(test_examples)
+@cli.command()
+def network_features():
+    run(TestNetworkFeatures)
 
 
-total_run = 0
-total_errors = 0
-total_failures = 0
-
-print("----------------------------------------------------------------------")
-print("             Test summary")
-print("")
-for key in results.keys():
-    errors = len(results[key].errors)
-    failures = len(results[key].failures)
-    run = results[key].testsRun
-    print("Test: {}, run={} errors={} failures={}".format(key, run, errors, failures))
-
-    total_run += run
-    total_errors += errors
-    total_failures += failures
-
-print("")
-print("Total tests run={} errors={} failures={}".format(total_run, total_errors, total_failures))
+@cli.command()
+def general_network_features():
+    run(TestGeneralNetworkFeatures)
 
 
-for key in results.keys():
-    if not results[key].wasSuccessful():
-        sys.exit(1)
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def all_features(exact):
+    run(testing_features, testing_spikes, exact)
+
+
+@cli.command()
+def logger():
+    run(TestLogger)
+
+
+@cli.command()
+def uncertainty_calculations():
+    run(TestUncertaintyCalculations)
+
+@cli.command()
+def base():
+    run(TestBase)
+
+
+@cli.command()
+def parameter_base():
+    run(TestParameterBase)
+
+
+@cli.command()
+def all_bases():
+    run(testing_base)
+
+
+@cli.command()
+def parameter():
+    run(TestParameter)
+
+
+@cli.command()
+def parameters():
+    run(TestParameters)
+
+
+@cli.command()
+def all_parameters():
+    run(testing_parameters)
+
+
+@cli.command()
+def data_feature():
+    run(TestDataFeature)
+
+
+@cli.command()
+def data():
+    run(TestData)
+
+
+@cli.command()
+def all_data():
+    run(testing_data)
+
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def plotting(exact):
+    run(parameter_test_cases=TestPlotUncertainpy, parameter=exact)
+
+
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def uncertainty(exact):
+    run(parameter_test_cases=TestUncertainty, parameter=exact)
+
+
+@cli.command()
+def parallel():
+    run(TestParallel)
+
+
+@cli.command()
+def run_model():
+    run(TestRunModel)
+
+
+@cli.command()
+def model():
+    run(TestModel)
+
+
+@cli.command()
+def nest_model():
+    run(TestNestModel)
+
+@cli.command()
+def neuron_model():
+    run(TestNeuronModel)
+
+
+@cli.command()
+def models():
+    run(testing_models)
+
+
+@cli.command()
+def examples():
+    run(TestExamples)
+
+
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def all(exact):
+    run(testing_all, testing_exact, exact)
+
+
+@cli.command()
+@click.option('--exact', default=False, is_flag=True,
+              help="Test if the plot files are exactly equal.")
+def complete(exact):
+    run(testing_complete, testing_exact, exact)
+
+if __name__ == '__main__':
+    cli()
+

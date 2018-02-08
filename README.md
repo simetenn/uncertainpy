@@ -75,7 +75,9 @@ For how to use test.py run:
 
     $ python test.py --help
 
+`test.py` has all the above dependencies in addition to:
 
+* `click`
 
 ## Example of Uncertainpy in use
 
