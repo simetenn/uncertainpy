@@ -1,0 +1,47 @@
+load_file("nrngui.hoc")
+
+load_file("INmodel.hoc")
+
+xpanel("select parameterization")
+  xbutton("Figure 4 A1, 4th trace. P1:MP = -63","runP1MP()")
+  xbutton("Figure 4 B1. P1:HP = -57","runP1HP()")
+  xbutton("Figure 4 A2, 4th trace. P2:MP = -69","runP2MP()")
+  xbutton("Figure 4 B2. P1:MP = -58","runP2HP()")
+xpanel()
+
+
+proc runP1MP() {
+  {print "Using Parameterization 1, Resting pot. -63mV"}
+  {xopen("Parameters1.hoc")}
+  {access soma}
+  {Vrest = -63}
+  {IClamp[0].amp = 0.055}
+  {IClamp[1].amp = 0}
+}
+
+proc runP1HP() {
+  {print "Using Parameterization 1, Holding pot. -57mV obtained by constant current injection (22pA)"}
+  {xopen("Parameters1.hoc")}
+  {access soma}
+  {Vrest = -57}
+  {IClamp[0].amp = -0.15}
+  {IClamp[1].amp = 0.022}
+}
+
+proc runP2MP() {
+  {print "Using Parameterization 2, Resting pot. -69mV"}
+  {xopen("Parameters2.hoc")}
+  {access soma}
+  {Vrest = -69}
+  {IClamp[0].amp = 0.04}
+  {IClamp[1].amp = 0}
+}
+
+proc runP2HP() {
+  {print "Using Parameterization 2, Holding pot. -58mV obtained by constant current injection (12pA)"}
+  {xopen("Parameters2.hoc")}
+  {access soma}
+  {Vrest = -58}
+  {IClamp[0].amp = -0.15}
+  {IClamp[1].amp = 0.012}
+}

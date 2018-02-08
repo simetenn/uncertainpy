@@ -1,0 +1,23 @@
+// dLGN interneuron model
+// PARAMETERIZATION P2
+// Geir Halnes, Norwegian University of Life Sciences, June 2011
+
+
+// From fitting of passive properties:
+rall = 113 //most people find something like this
+cap = 1.1
+Rm = 45000
+Vrest = -69
+Epas = -71.6
+
+// Channel densities & shifts
+gna =  0.09
+nash = - 50.3
+gkdr = 0.5
+kdrsh = -48
+gahp = 0.00013
+gcat=8.5e-6
+gcal=0.0013
+ghbar=5e-6
+catau = 50
+gcanbar = 1e-7
