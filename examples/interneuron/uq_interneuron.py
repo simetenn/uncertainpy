@@ -1,6 +1,5 @@
 import uncertainpy as un
 
-
 # Define a parameter list
 parameter_list = [["Epas", -67],
                   ["Rm", 22000],
@@ -21,16 +20,15 @@ parameters = un.Parameters(parameter_list)
 # within a 5% interval around their fixed value
 parameters.set_all_distributions(un.uniform(0.05))
 
+# Initialize the features
+features = un.SpikingFeatures(features_to_run="all")
+
 # Initialize the model with the start and end time of the stimulus
 model = un.NeuronModel(path="interneuron_modelDB/", adaptive=True,
                        stimulus_start=1000, stimulus_end=1900)
 
-# Initialize the features
-features = un.SpikingFeatures(features_to_run="all")
-
 # Perform the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
-                                  features=features,
-                                  CPUs=7)
+                                  features=features)
 UQ.quantify()

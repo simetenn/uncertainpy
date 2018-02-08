@@ -4,18 +4,18 @@ from scipy.integrate import odeint
 import chaospy as cp
 
 
+# Create the coffee cup model
 class CoffeeCupDependent(un.Model):
     def __init__(self):
-         # Add labels to the model
-        super(CoffeeCupDependent, self).__init__(self,
-                                                 labels=["Time (s)", "Temperature (C)"])
+        # Add labels to the model by calling the constructor of the parent un.Model
+        super(CoffeeCupDependent, self).__init__(labels=["Time (s)", "Temperature (C)"])
 
 
     # Define the run function
     def run(self, kappa_hat, T_env, alpha):
         # Initial temperature and time
-        time = np.linspace(0, 200, 150)
-        T_0 = 95
+        time = np.linspace(0, 200, 150)            # Minutes
+        T_0 = 95                                   # Celsius
 
         # The equation describing the model
         def f(T, time, alpha, kappa_hat, T_env):
@@ -28,6 +28,9 @@ class CoffeeCupDependent(un.Model):
         return time, values
 
 
+# Initialize the model
+model = CoffeeCupDependent()
+
 # Create the distributions
 T_env_dist = cp.Uniform(15, 25)
 alpha_dist = cp.Uniform(0.5, 1.5)
@@ -39,11 +42,8 @@ parameter_list = [["alpha", alpha_dist],
                   ["T_env", T_env_dist]]
 parameters = un.Parameters(parameter_list)
 
-# Initialize the model
-model = CoffeeCupDependent()
-
-UQ = un.UncertaintyQuantification(model=model,
-                                  parameters=parameters)
+# Set up the uncertainty quantification
+UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
 # Perform the uncertainty quantification using the Rosenblatt transformation
 UQ.quantify(rosenblatt=True)

@@ -4,8 +4,10 @@ import numpy as np
 from scipy.integrate import odeint
 
 
+# External stimulus
 def I(time):
     return 140 # micro A/cm**2
+
 
 def valderrama(V_0, C_m, gbar_Na, gbar_K, gbar_l, E_Na, E_K, E_l, m_0, n_0, h_0):
 
@@ -78,7 +80,7 @@ def valderrama(V_0, C_m, gbar_Na, gbar_K, gbar_l, E_Na, E_K, E_l, m_0, n_0, h_0)
     X = odeint(dXdt, initial_conditions, time)
     values = X[:, 0]
 
-    # Only return from 5 seconds onwards, as in valderrama
+    # Only return from 5 seconds onwards, as in the Valderrama paper
     values = values[time > 5]
     time = time[time > 5]
 

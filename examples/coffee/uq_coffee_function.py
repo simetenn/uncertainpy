@@ -4,7 +4,7 @@ import numpy as np
 from scipy.integrate import odeint
 
 
-# Create the coffee cup run function
+# Create the coffee cup model function
 def coffee_cup(kappa, T_env):
     # Initial temperature and time array
     time = np.linspace(0, 200, 150)            # Minutes
@@ -21,9 +21,8 @@ def coffee_cup(kappa, T_env):
     return time, temperature
 
 
-# Create a model from coffee_cup function and add labels
-model = un.Model(run=coffee_cup,
-                 labels=["Time (min)", "Temperature (C)"])
+# Create a model from the coffee_cup function and add labels
+model = un.Model(run=coffee_cup, labels=["Time (min)", "Temperature (C)"])
 
 # Create the distributions
 kappa_dist = cp.Uniform(0.025, 0.075)
@@ -35,8 +34,7 @@ parameter_list = [["kappa", kappa_dist],
 parameters = un.Parameters(parameter_list)
 
 # Set up the uncertainty quantification
-UQ = un.UncertaintyQuantification(model=model,
-                                  parameters=parameters)
+UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
 # Perform the uncertainty quantification using
 # polynomial chaos with point collocation (by default)

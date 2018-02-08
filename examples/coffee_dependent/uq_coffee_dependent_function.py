@@ -4,10 +4,11 @@ import numpy as np
 from scipy.integrate import odeint
 
 
+# Create the coffee cup model function
 def coffee_cup_dependent(kappa_hat, T_env, alpha):
     # Initial temperature and time
-    time = np.linspace(0, 200, 150)
-    T_0 = 95
+    time = np.linspace(0, 200, 150)            # Minutes
+    T_0 = 95                                   # Celsius
 
     # The equation describing the model
     def f(T, time, alpha, kappa_hat, T_env):
@@ -20,6 +21,9 @@ def coffee_cup_dependent(kappa_hat, T_env, alpha):
     return time, temperature
 
 
+# Create a model from the coffee_cup_dependent function and add labels
+model = un.Model(coffee_cup_dependent, labels=["Time (s)", "Temperature (C)"])
+
 # Create the distributions
 T_env_dist = cp.Uniform(15, 25)
 alpha_dist = cp.Uniform(0.5, 1.5)
@@ -31,15 +35,8 @@ parameter_list = [["alpha", alpha_dist],
                   ["T_env", T_env_dist]]
 parameters = un.Parameters(parameter_list)
 
-# Create a model from coffee_cup function and add labels
-model = un.Model(coffee_cup_dependent,
-                 labels=["Time (s)", "Temperature (C)"])
-
+# Set up the uncertainty quantification
+UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
 # Perform the uncertainty quantification using the Rosenblatt transformation
-UQ = un.UncertaintyQuantification(model=model,
-                                  parameters=parameters)
-
-UQ.quantify(rosenblatt=True,
-            figure_folder="figures_coffee_dependent",
-            filename="coffee_cup_dependent")
+UQ.quantify(rosenblatt=True)

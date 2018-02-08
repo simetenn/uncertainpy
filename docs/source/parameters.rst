@@ -1,4 +1,4 @@
-.. _Parameters:
+.. _parameters:
 
 Parameters
 ==========

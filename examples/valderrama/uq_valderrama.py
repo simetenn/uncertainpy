@@ -3,6 +3,10 @@ import chaospy as cp
 
 from valderrama import valderrama
 
+# Initialize the model
+model = un.Model(run=valderrama,
+                 labels=["Time (ms)", "Membrane potential (mV)"])
+
 # Define a parameter list
 parameter_list = [["V_0", -10],
                   ["C_m", 1],
@@ -16,17 +20,12 @@ parameter_list = [["V_0", -10],
                   ["E_K", -12],
                   ["E_l", 10.613]]
 
-
 # Create the parameters
 parameters = un.Parameters(parameter_list)
 
 # Set all parameters to have a uniform distribution
 # within a 20% interval around their fixed value
 parameters.set_all_distributions(un.uniform(0.2))
-
-# Initialize the model
-model = un.Model(run=valderrama,
-                 labels=["Time (ms)", "Membrane potential (mV)"])
 
 # Perform the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,

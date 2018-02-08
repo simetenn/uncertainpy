@@ -1,28 +1,28 @@
 import uncertainpy as un
 import chaospy as cp
 
-from brunel_network import brunel_network
-
+from brunel import brunel_network
 
 # Create a Nest model from the brunel network function
 model = un.NestModel(run=brunel_network)
 
-# Initialize network features
-features = un.NetworkFeatures()
 
 # Parametes for the synchronous regular (SR) state
-parameter_list = [["eta", None, cp.Uniform(1.5, 3.5)],
-                  ["g", None, cp.Uniform(1, 3)],
-                  ["delay", None, cp.Uniform(1.5, 3)],
-                  ["J_E", None, cp.Uniform(0.05, 0.15)]]
+parameter_list = [["eta", cp.Uniform(1.5, 3.5)],
+                  ["g", cp.Uniform(1, 3)],
+                  ["delay", cp.Uniform(1.5, 3)],
+                  ["J_E", cp.Uniform(0.05, 0.15)]]
 parameters_SR = un.Parameters(parameter_list)
 
 # Parameter for the asynchronous irregular (AI) state
-parameter_list = [["eta", None, cp.Uniform(1.5, 2.2)],
-                  ["g", None, cp.Uniform(5, 8)],
-                  ["delay", None, cp.Uniform(1.5, 3)],
-                  ["J_E", None, cp.Uniform(0.05, 0.15)]]
+parameter_list = [["eta", cp.Uniform(1.5, 2.2)],
+                  ["g", cp.Uniform(5, 8)],
+                  ["delay", cp.Uniform(1.5, 3)],
+                  ["J_E", cp.Uniform(0.05, 0.15)]]
 parameters_AI = un.Parameters(parameter_list)
+
+# Initialize network features
+features = un.NetworkFeatures()
 
 # Set up the problem
 UQ = un.UncertaintyQuantification(model,

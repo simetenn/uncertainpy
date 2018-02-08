@@ -3,9 +3,10 @@
 A cooling coffee cup model with dependent parameters
 ====================================================
 
-Here we show an example (found in ``examples/coffee_dependent``) where we
-examine a cooling coffee cup model with dependent parameters.
-We modify the :ref:`coffee cup <coffee_cup>` model by introducing two auxillary variables
+Here we show an example (found in
+:download:`examples/coffee_dependent/uq_coffee_dependent_function.py <../../../examples/coffee_dependent/uq_coffee_dependent_function.py>`)
+where we examine a cooling coffee cup model with dependent parameters.
+We modify the :ref:`simple cooling coffee cup <coffee_cup>` model by introducing two auxillary variables
 :math:`\alpha` and :math:`\hat{\kappa}`:
 
 .. math::
@@ -43,19 +44,11 @@ Which gives us the following distributions:
     T_{env} &= \mathrm{Uniform}(15, 25).
 
 
-With Chaospy we can create these dependencies using arithmetic operators::
+With Chaospy we can create these dependencies using arithmetic operators:
 
-    # Create the distributions
-    alpha_dist = cp.Uniform(0.5, 1.5)
-    kappa_hat_dist = cp.Uniform(0.025, 0.075)/alpha_dist
-    T_env_dist = cp.Uniform(15, 25)
-
-    # Define a parameter list and use it to create the Parameters
-    parameter_list = [["alpha", None, alpha_dist],
-                      ["kappa_hat", None, kappa_hat_dist],
-                      ["T_env", None, T_env_dist]]
-
-    parameters = un.Parameters(parameter_list)
+.. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
+    :language: python
+    :lines: 27-36
 
 To be able to use polynomial chaos methods when we have dependent parameters
 we need to use the Rosenblatt transformation, which we enable by::
@@ -66,4 +59,13 @@ The complete code example become:
 
 .. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
     :language: python
-    :lines: 1-47
+
+In this case,
+the distribution we assign to :math:`\alpha` does not matter for the end result,
+as the distribution for :math:`\hat{\kappa}` will be scaled accordingly.
+Using the Rosenblatt transformation,
+an uncertainty quantification and sensitivity analysis of the
+dependent coffee cup model therefore returns the same results as seen in
+the simple coffee cup model,
+where the role of the original :math:`\kappa` is taken over by :math:`\hat{\kappa}`,
+while the sensitivity to the additional parameter :math:`\alpha` becomes strictly zero.
