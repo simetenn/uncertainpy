@@ -49,3 +49,7 @@ Uncertainpy comes with an extensive test suite that can be run with the ``test.p
 For how to use test.py run::
 
     $ python test.py --help
+
+`test.py` has all the above dependencies in addition to:
+
+* ``click``

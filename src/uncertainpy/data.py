@@ -246,6 +246,23 @@ class DataFeature(collections.MutableMapping):
             return True
 
 
+    def __str__(self):
+        """
+        Convert all data to a readable string.
+
+        Returns
+        -------
+        str
+           A human readable string of all statistical metrics.
+        """
+        output_str = ""
+        for statistical_metric in self:
+            output_str += "=== {statistical_metric} ===\n".format(statistical_metric=statistical_metric)
+            output_str += "{data}\n\n".format(data=self[statistical_metric])
+
+
+        return output_str.strip()
+
     def ndim(self):
         """
         Get the number of dimensions the data of a data type.
@@ -358,7 +375,7 @@ class Data(collections.MutableMapping):
         Returns
         -------
         str
-           A human readable string of all parameter objects.
+           A human readable string of all stored data.
         """
 
         def border(msg):
@@ -381,11 +398,7 @@ class Data(collections.MutableMapping):
             output_str += border(feature)
             output_str += "=== labels ===\n"
             output_str += "{data}\n\n".format(data=self[feature].labels)
-
-            for statistical_metric in self[feature]:
-                output_str += "=== {statistical_metric} ===\n".format(statistical_metric=statistical_metric)
-                output_str += "{data}\n\n".format(data=self[feature][statistical_metric])
-
+            output_str += str(self[feature]) + "\n"
 
         return output_str.strip()
 

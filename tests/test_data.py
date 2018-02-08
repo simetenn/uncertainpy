@@ -73,6 +73,13 @@ class TestDataFeature(unittest.TestCase):
 
         self.assertEqual(self.data_feature.get_metrics(), [])
 
+    def test_str(self):
+        for statistical_metric in self.statistical_metrics:
+            self.data_feature[statistical_metric] = [2, 2, 2]
+
+        # TODO Test that the content of the data string is correct
+        self.assertIsInstance(str(self.data_feature), str)
+
 
     def test_iter(self):
         for statistical_metric in self.statistical_metrics:
