@@ -4,7 +4,7 @@ UncertaintyQuantification
 =========================
 
 
-The ``UncertaintyQuantification`` class is used to define the problem,
+The :py:class:`uncertainpy.UncertaintyQuantification` class is used to define the problem,
 perform the uncertainty quantification and sensitivity analysis,
 and save and visualize the results.
 ``UncertaintyQuantification`` combines the three main components required to
@@ -31,7 +31,7 @@ The arguments are given as instances of their corresponding Uncertainpy classes
 
 After the problem is set up,
 an uncertainty quantification and sensitivity analysis can be performed by using the
-``UncertaintyQuantification.quantify`` method.
+:py:meth:`uncertainpy.UncertaintyQuantification.quantify` method.
 Among others, ``quantify`` takes the optional arguments:::
 
     UQ.quantify(

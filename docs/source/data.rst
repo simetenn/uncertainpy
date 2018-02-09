@@ -33,7 +33,7 @@ Normalized sum of total order Sobol indices       :math:`\widehat{S}_{T}`     ``
 
 An example: if we have performed uncertainty quantification of a spiking
 neuron model with the number of spikes as one of the features,
-we get the variance of the number of spikes by typing:::
+we get the variance of the number of spikes by typing::
 
     data = un.Data()
     data.load("filename")
@@ -46,5 +46,5 @@ API reference
 .. toctree::
     :maxdepth: 1
 
-    data/data_feature
     data/data
+    data/data_feature

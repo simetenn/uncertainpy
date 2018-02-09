@@ -8,7 +8,8 @@ analysis of a model,
 Uncertainpy needs to set the parameters of the model,
 run the model using those parameters,
 and receive the model output.
-The main class for models is :ref:`Model <model>`.
+The main class for models is :ref:`Model <model>`, which is used to create
+custom models.
 Uncertainpy has built-in support for NEURON and NEST models,
 found in the :ref:`NeuronModel <neuron_model>`  and :ref:`NestModel <nest_model>` classes
 respectively.
