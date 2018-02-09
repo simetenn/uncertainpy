@@ -1,7 +1,7 @@
 .. _general_spiking:
 
-General spiking features
-========================
+GeneralSpikingFeatures
+======================
 
 .. autoclass:: uncertainpy.features.GeneralSpikingFeatures
    :members:

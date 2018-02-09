@@ -71,7 +71,7 @@ Such a model function has the following requirements:
 
             2. **Model output** (``values``).
                The model output must either be regular, or it must be possible to
-               interpolate or postprocess the output (see \cref{sec:postprocess})
+               interpolate or postprocess the output (see :ref:`Features <main_features>`)
                to a regular form.
 
             3. **Additional info** (``info``).
