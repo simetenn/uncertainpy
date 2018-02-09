@@ -10,7 +10,7 @@ We select a set of reduced models of layer 5 pyramidal neurons (`Bahl et al., 20
 The code for this example is found in
 :download:`/examples/bahl/uq_bahl.py <../../../examples/bahl/uq_bahl.py>`.
 To be able to run this example you require both the `NEURON`_ simulator,
-as well as the layer 5 pyramidal neuron model saved in a folder ``/bahl_model/``.
+as well as the layer 5 pyramidal neuron model saved in the folder ``/bahl_model/``.
 
 .. _Bahl et al., 2012: https://www.sciencedirect.com/science/article/pii/S016502701200129X?via%3Dihub
 .. _NEURON: https://www.neuron.yale.edu/neuron/

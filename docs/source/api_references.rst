@@ -22,7 +22,7 @@ UncertaintyQuantification
 Models
 ------
 * :ref:`The main model class <model>`
-* :ref:`Nest model class <nest>`
+* :ref:`Nest model class <nest_model>`
 * :ref:`Neuron model class <neuron_model>`
 
 Features

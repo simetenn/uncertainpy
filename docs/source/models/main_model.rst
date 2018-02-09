@@ -140,7 +140,7 @@ form by Uncertainpy.
 Postprocessing is for example required for network models that give output in
 the form of spike trains, i.e. time values indicating when a given neuron fires.
 It should be noted that postprocessing of spike trains is already implemented
-in Uncertainpy, in the :ref:`NestModel <nest>`.
+in Uncertainpy, in the :ref:`NestModel <nest_model>`.
 For most purposes user defined postprocessing will not be necessary.
 
 The requirements for the ``postprocess`` function are:

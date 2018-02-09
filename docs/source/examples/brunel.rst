@@ -22,7 +22,7 @@ To be able to run this example you require NEST to be anle to run the model and
 .. _NEST: http://www.nest-simulator.org/
 
 
-We want to use :ref:`NestModel <nest>` to create our model.
+We want to use :ref:`NestModel <nest_model>` to create our model.
 ``NestModel`` requires the model function to be specified through
 the ``run`` argument, unlike ``NeuronModel``.
 The NEST model function has the same requirements as a regular model function,

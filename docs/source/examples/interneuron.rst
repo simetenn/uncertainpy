@@ -13,7 +13,7 @@ the original model can be used directly with Uncertainpy with the use of
 The code for this case study is found in
 :download:`/examples/interneuron/uq_interneuron.py <../../../examples/interneuron/uq_interneuron.py>`.
 To be able to run this example you require both the NEURON simulator,
-as well as the interneuron model saved in a folder ``/interneuron_model/``.
+as well as the interneuron model saved in the folder ``/interneuron_model/``.
 
 .. _NEURON: https://www.neuron.yale.edu/neuron/
 .. _Halnes et al., 2011: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002160

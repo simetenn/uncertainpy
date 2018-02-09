@@ -11,7 +11,7 @@ Uncertainpy needs to set the parameters of the model,
 run the model using those parameters,
 and receive the model output.
 Uncertainpy has built-in support for NEURON and NEST models,
-found in the :ref:`NeuronModel <neuron_model>`  and :ref:`NestModel <nest>` classes
+found in the :ref:`NeuronModel <neuron_model>`  and :ref:`NestModel <nest_model>` classes
 respectively.
 It should be noted that while Uncertainpy is tailored towards neuroscience,
 it is not restricted to only neuroscience models.

@@ -52,7 +52,7 @@ Content
 * :ref:`UncertaintyQuantification <UncertaintyQuantification>`
 * :ref:`Models <models>`
     * :ref:`Model <model>`
-    * :ref:`NestModel <nest>`
+    * :ref:`NestModel <nest_model>`
     * :ref:`NeuronModel <neuron_model>`
 * :ref:`Data <data>`
 
@@ -67,7 +67,7 @@ Models
 
 * :ref:`Models <models>`
     * :ref:`Model <model>`
-    * :ref:`NestModel <nest>`
+    * :ref:`NestModel <nest_model>`
     * :ref:`NeuronModel <neuron_model>`
 
 
