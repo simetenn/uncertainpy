@@ -35,7 +35,7 @@ postprocessed spiketrain ``[1, 0, 0, 0, 1, 0, 0, 1, 0]``,
 and the postprocessed time array ``[0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]``.
 The final uncertainty quantification of a NEST network therefore predicts the
 probability for a spike to occur at any specific time point in the simulation.
-An Uncertainpy based analysis of a NEST model is found in the
+An example on how to use ``NestModel`` is found in the
 :ref:`Brunel exampel <brunel>`.
 
 

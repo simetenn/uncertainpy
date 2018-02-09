@@ -1,7 +1,7 @@
 .. _Parameter:
 
 Parameter
-=========
+---------
 
 .. autoclass:: uncertainpy.Parameter
     :members:

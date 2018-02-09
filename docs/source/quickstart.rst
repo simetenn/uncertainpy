@@ -100,7 +100,7 @@ It is important that the name of the parameter is the same as the name given
 as the input argument in the model function.
 A parameter is considered uncertain if it has a probability distribution,
 and the distributions are given as Chaospy distributions.
-$64$ different univariate distributions are defined in Chaospy.
+64 different univariate distributions are defined in Chaospy.
 For a list of available distributions and detailed instructions on how to create
 probability distributions with Chaospy,
 see Section 3.3 in the `Chaospy paper`_.
@@ -112,7 +112,7 @@ The parameters are defined by the :ref:`Parameters`  class.
 above information for each parameter.
 As an example, if we have two parameters,
 where the first is named ``name_1`` and has a uniform probability
-distributions in the interval $[8, 16]$, and the second is named
+distributions in the interval :math:`[8, 16]`, and the second is named
 ``name_2`` and has a fixed value 42, the list become::
 
     import chaospy as cp

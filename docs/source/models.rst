@@ -3,13 +3,12 @@
 Models
 ======
 
-
-
 In order to perform the uncertainty quantification and sensitivity
 analysis of a model,
 Uncertainpy needs to set the parameters of the model,
 run the model using those parameters,
 and receive the model output.
+The main class for models is :ref:`Model <model>`.
 Uncertainpy has built-in support for NEURON and NEST models,
 found in the :ref:`NeuronModel <neuron_model>`  and :ref:`NestModel <nest_model>` classes
 respectively.
@@ -19,12 +18,6 @@ Uncertainpy can be used on any model that meets the criteria in
 this section.
 
 
-
-
-
-
-
-.. automodule:: uncertainpy.models
 
 .. toctree::
     :maxdepth: 1

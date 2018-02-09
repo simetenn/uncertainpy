@@ -90,26 +90,31 @@ class NestModel(Model):
         The ``run`` method must either be implemented or set to a
         function. Both options have the following requirements:
 
-        1. **Receive parameters as input**.
-            The run function takes a number of named arguments that are the
-            parameters of the model.
-        2. **Set the parameters of the model**.
-            The arguments received as input (the model parameters) must be
-            assigned to the Nest model.
-        3. **Run the model**.
-            The Nest model must then be run.
-        4. **Return the model results**.
-            Lastly we need to return the model results.
+             Notes
+        -----
+        The ``run`` method must either be implemented or set to a
+        function. Both options have the following requirements:
 
-            1. **Time**.
-                The first object is the final simulation time (`simulation_end`).
-            2. **Model results**.
-                The second object is a list of spike trains (`spiketrains`).
+        1. **Input.**
+           The model function takes a number of arguments which define the
+           uncertain parameters of the model.
 
-        The model results `simulation_end` and `spiketrains` is used to calculate
-        the features.
-        The model result is postprocessed to create a regular result before
-        the calculating the uncertainties of the model.
+        2. **Run the model.**
+           The NEST model must then be run using the parameters given as arguments.
+
+        3. **Output.**
+           The model function must return:
+
+            1. **Time** (``simulation_end``).
+               The final simulation time of the NEST model.
+
+            2. **Model output** (``spiketrains``).
+               A list if spike trains from each recorded neuron.
+
+
+        The model results `simulation_end` and `spiketrains` are used to calculate
+        the features, and is postprocessed to create a regular result before
+        the calculating the uncertainty of the model.
 
         See also
         --------

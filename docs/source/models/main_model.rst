@@ -46,7 +46,6 @@ An example outline of a model function is:::
 
 Such a model function has the following requirements:
 
-
     1. **Input.**
        The model function takes a number of arguments which define the
        uncertain parameters of the model.
@@ -64,7 +63,7 @@ Such a model function has the following requirements:
        and the remaining objects as ``info``.
 
             1. **Time** (``time``).
-               The ``time`` can be interpreted as the $x$-axis of the model.
+               The ``time`` can be interpreted as the x-axis of the model.
                It is used when interpolating (see below),
                and when certain features are calculated.
                We can return ``None`` if the model has no time

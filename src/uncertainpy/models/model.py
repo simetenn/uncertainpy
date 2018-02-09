@@ -10,7 +10,7 @@ class Model(object):
     If you want to calculate features directly from the original model results,
     but still need to postprocess the model results to perform the
     uncertainty quantification, you can implement the postprocessing in the
-    ``postprocess(time, values)`` method.
+    ``postprocess`` method.
 
     Parameters
     ----------
@@ -106,60 +106,52 @@ class Model(object):
         The ``run`` method must either be implemented or set to a
         function. Both options have the following requirements:
 
-        1. **Receive parameters as input**.
-            The run function takes a number of named arguments that are the
-            parameters of the model.
-        2. **Set the parameters of the model**.
-            The arguments received as input (the model parameters) must be set
-            in the model. Depending on the model this can be done by writing the
-            parameters to an init file, assigning them to the correct variable,
-            or simply using them directly.
-        3. **Run the model**.
-            The model must then be run. Examples of this is either to perform
-            the calculations inside the run method, or calling an external
-            simulator.
-        4. **Return the model results**.
-            Lastly we need to return the model results. If we use an external
-            simulator the model results must be loaded into Python, so they can
-            be returned. The run function must return at least two objects,
-            but can return more.
+        1. **Input.**
+           The model function takes a number of arguments which define the
+           uncertain parameters of the model.
 
-            1. **Time**.
-                The first object is the time values (or equivalent) of the model,
-                denoted ``time`` in Uncertainpy. You can return ``None`` if the
-                model has no time values.
-            2. **Model results**.
-                The second object is the model results, denoted ``values``
-                in Uncertainpy. The model results ``time``, and ``values`` must
-                either be regular (have the same number of points for each model
-                evaluation), be able to be interpolated, or be able to be
-                postprocessed to a regular form, or a form that can be
-                interpolated. This is because the uncertainty quantification
-                methods require results that have the same number of points for
-                each set of model evaluations.
-            3. **Additional info**.
-                After ``time`` and ``values``, any number of additional info
-                objects can be returned. These info objects are optional and are
-                used in the ``Model.postprocess`` method, the
-                ``Feature.preprocess`` method, and feature calculations if
-                additional information about the model is needed in these steps.
-                For ease of use we recommend to use a single dictionary as info
-                object, with key-value pairs for all information needed. This
-                makes debugging easier. All features implemented in
-                Uncertainpy use a single dictionary as info object, denoted
-                ``info``. Certain features require that certain keys are present
-                in this dictionary.An example, models of neurons often contain
-                an input stimulus that makes the neuron generate action potentials.
-                The timing of this stimulus is used to calculate certain features,
-                and ``info`` becomes::
+        2. **Run the model.**
+           The model must then be run using the parameters given as arguments.
 
-                    info = {"stimulus_start": 150,  # ms
-                            "stimulus_end":   300}  # ms
+        3. **Output.**
+           The model function must return at least two objects,
+           the model time (or equivalent, if applicable) and model output.
+           Additionally, any number of optional info objects can be returned.
+           In Uncertainpy,
+           we refer to the time object as ``time``,
+           the model output object as ``values``,
+           and the remaining objects as ``info``.
+           Note that while we refer to these objects as ``time``,
+           ``values`` and ``info`` in Uncertainpy,
+           it does not matter what you call the objects returned by
+           the run function.
 
-            Note that while we refer to these objects as ``time``,
-            ``values`` and ``info`` in Uncertainpy,
-            it does not matter what you call the objects returned by
-            the run function.
+            1. **Time** (``time``).
+               The ``time`` can be interpreted as the x-axis of the model.
+               It is used when interpolating (see below),
+               and when certain features are calculated.
+               We can return ``None`` if the model has no time
+               associated with it.
+
+            2. **Model output** (``values``).
+               The model output must either be regular, or it must be possible to
+               interpolate or postprocess the output to a regular form.
+
+            3. **Additional info** (``info``).
+               Some of the methods provided by Uncertainpy,
+               such as the later defined model postprocessing,
+               feature preprocessing,
+               and feature calculations,
+               require additional information from the model (e.g., the time a
+               neuron receives an external stimulus).
+               We recommend to use a
+               single dictionary as info object,
+               with key-value pairs for the information,
+               to make debugging easier.
+               Uncertainpy always uses a single dictionary as the
+               ``info`` object.
+               Certain features require that specific keys are present in this
+               dictionary.
 
         The model does not need to be implemented in Python, you can use any
         model/simulator as long as you are able to set the model parameters of
@@ -169,7 +161,7 @@ class Model(object):
         If you want to calculate features directly from the original model results,
         but still need to postprocess the model results to perform the
         uncertainty quantification, you can implement the postprocessing in the
-        ``postprocess(time, values, *info)`` method.
+        ``postprocess`` method.
 
         See also
         --------
@@ -269,10 +261,10 @@ class Model(object):
         This method ensures the results from returns `time`, `values`, and optional
         info objects.
 
-        Returns
-        -------
+        Parameters
+        ----------
         model_results
-            Any type of model results returned by ``run()``.
+            Any type of model results returned by ``run``.
 
         Raises
         ------
@@ -283,21 +275,20 @@ class Model(object):
 
         Notes
         -----
-        Tries to verify that at least, `time` and `values` are returned from ``run()``.
-        ``run()`` should return on the following format
-        ``return time, values, info_1, info_2, ...``.
-
-        time : {None, numpy.nan, array_like}
-            Time values of the model. If no time values it should return None or
-            numpy.nan.
-        values : array_like
-            Result of the model.
-        info, optional
-            Any number of info objects that is passed on to feature calculations.
-            It is recommended to use a single dictionary with the information
-            stored as key-value pairs.
-            This is what the implemented features requires, as well as
-            require that specific keys to be present.
+        Tries to verify that at least, `time` and `values` are returned from ``run``.
+        ``model_result`` should follow the format: ``return time, values, info_1, info_2, ...``.
+        Where:
+        * ``time`` : ``{None, numpy.nan, array_like}``.
+          Time values of the model. If no time values it should return None or
+          numpy.nan.
+        * ``values`` : ``array_like``
+          Result of the model.
+        * ``info``, optional.
+          Any number of info objects that is passed on to feature calculations.
+          It is recommended to use a single dictionary with the information
+          stored as key-value pairs.
+          This is what the implemented features requires, as well as
+          require that specific keys to be present.
         """
         if isinstance(model_result, np.ndarray):
             raise ValueError("model.run() returns an numpy array. "
