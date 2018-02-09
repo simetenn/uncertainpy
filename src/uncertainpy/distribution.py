@@ -1,5 +1,9 @@
 import chaospy as cp
 
+"""
+Functions (that work as closures) used to set the distribution of a
+parameter to an `interval` around their original value.
+"""
 
 def uniform(interval):
     """

@@ -5,7 +5,8 @@ Spiking features
 
 
 
-:py:class:`~uncertainpy.features.SpikingFeatures` contains a set of features relevant for models of single
+:py:class:`~uncertainpy.features.SpikingFeatures` contains a set of features
+relevant for models of single
 neurons that receive an external stimulus and responds by eliciting a series of
 action potentials, also called spikes.
 Many of these features require the start time and end time of the stimulus,

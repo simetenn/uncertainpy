@@ -16,11 +16,11 @@ Welcome to Uncertainpy's documentation!
     uncertainty_estimation
 
     models
-    features
     parameters
-    distribution
+    features
     data
 
+    distribution
 
     plotting
     utilities
