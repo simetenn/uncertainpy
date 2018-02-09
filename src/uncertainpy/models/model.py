@@ -201,8 +201,8 @@ class Model(object):
             returns. It contains `time` and `values`,
             and then any number of optional `info` values.
         time : {None, numpy.nan, array_like}
-            Time values of the model. If no time values it should return None or
-            numpy.nan.
+            Time values of the model. If no time values the model should return
+            ``None`` or ``numpy.nan``.
         values : array_like
             Result of the model.
         info, optional
@@ -215,10 +215,10 @@ class Model(object):
         Returns
         -------
         time : {None, numpy.nan, array_like}
-            Time values of the model, if no time values returns None or
-            numpy.nan.
+            Time values of the model, if no time values returns ``None`` or
+            ``numpy.nan``.
         values : array_like
-            the postprocessed model results, `values` must either be regular
+            The postprocessed model results, `values` must either be regular
             (have the same number of points for different paramaters) or be able
             to be interpolated.
 
@@ -231,13 +231,40 @@ class Model(object):
         needs results with the same number of points for each set of parameters
         to be able to perform the uncertainty quantification.
 
-        ``postprocess(time, values)`` is implemented to make
+        ``postprocess`` is implemented to make
         the model results regular, or on a form that can be interpolated.
         The results from the postprocessing is not
         used to calculate features, and is therefore used if you
         want to calculate features directly from the original model results,
         but still need to postprocess the model results to perform the
         uncertainty quantification.
+
+        The requirements for a ``postprocess`` function are:
+
+        1. **Input.**
+           ``postprocess`` must take the objects returned by the
+           model function as input arguments.
+
+        2. **Postprocessing.**
+           The model time (``time``) and output (``values``) must
+           be postprocessed to a regular form, or to a form that can be
+           interpolated to a regular form by Uncertainpy.
+           If additional information is needed from the model, it can be passed
+           along in the ``info`` object.
+
+        3. **Output.**
+           The ``postprocess`` function must return two objects:
+
+           1. **Model time** (``time_postprocessed``).
+              The first object is the postprocessed time (or equivalent)
+              of the model.
+              We can return ``None`` if the model has no time.
+              Note that the automatic interpolation of the postprocessed
+              time can only be performed if a postprocessed time is returned
+              (if an interpolation is required).
+
+           2. **Model output** (``values_postprocessed``).
+              The second object is the postprocessed model output.
         """
         return self._postprocess
 
@@ -278,6 +305,7 @@ class Model(object):
         Tries to verify that at least, `time` and `values` are returned from ``run``.
         ``model_result`` should follow the format: ``return time, values, info_1, info_2, ...``.
         Where:
+
         * ``time`` : ``{None, numpy.nan, array_like}``.
           Time values of the model. If no time values it should return None or
           numpy.nan.

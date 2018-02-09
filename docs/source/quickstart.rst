@@ -4,9 +4,6 @@ Quickstart
 ==========
 This section gives a brief overview of what you need to know to perform an
 uncertainty quantification and sensitivity analysis with Uncertainpy.
-An more thorough introduction can be found in the `Uncertainpy paper`_.
-
-.. _Uncertainpy paper:
 
 The uncertainty quantification and sensitivity analysis
 includes three main components:

@@ -12,10 +12,10 @@ from .model import Model
 
 class NestModel(Model):
     """
-    Class for Nest simulator models.
+    Class for NEST simulator models.
 
     The ``run`` method must either be implemented or set to a
-    function, and is responsible for running the Nest model.
+    function, and is responsible for running the NEST model.
 
     Parameters
     ----------
@@ -26,7 +26,7 @@ class NestModel(Model):
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
-        Default is ``["time [ms]", "Neuron nr", "Spiking probability"]``.
+        Default is ``["Time (ms)", "Neuron nr", "Spiking probability"]``.
     run : {None, function}, optional
         A function that implements the model. See Note for requirements of the
         function. Default is None.
@@ -71,7 +71,7 @@ class NestModel(Model):
         ----------
         **parameters : A number of named arguments (name=value).
             The parameters of the model. These parameters must be assigned to
-            the Nest model.
+            the NEST model.
 
         Returns
         -------
@@ -150,7 +150,7 @@ class NestModel(Model):
         Example
         -------
         In a simulation that gives the spiketrain ``[0, 2, 3]``, with a
-        time resolution of 0.5 ms and ends after 4 ms,
+        time resolution of 0.5 ms and that ends after 4 ms,
         the resulting spike train become:
         ``[1, 0, 0, 0, 1, 0, 1, 0, 0]``.
         """

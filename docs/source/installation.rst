@@ -8,11 +8,13 @@ Uncertainpy can easily be installed using pip::
 
     pip install uncertainpy
 
-or from source by cloning the Github repository::
+or from source by cloning the `Github repository`_::
 
     $ git clone https://github.com/simetenn/uncertainpy
     $ cd /path/to/uncertainpy
     $ sudo python setup.py install
+
+.. _Github repository: https://github.com/simetenn/uncertainpy
 
 Dependencies
 ------------
@@ -46,10 +48,10 @@ Test suite
 ----------
 
 Uncertainpy comes with an extensive test suite that can be run with the ``test.py`` script.
-For how to use test.py run::
+For how to use ``test.py`` run::
 
     $ python test.py --help
 
-`test.py` has all the above dependencies in addition to:
+``test.py`` has all the above dependencies in addition to:
 
 * ``click``

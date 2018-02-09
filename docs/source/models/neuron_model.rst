@@ -5,7 +5,7 @@ NeuronModel
 
 `NEURON`_ is a widely used simulator for multi-compartmental neural models.
 Uncertainpy has support for NEURON models through the
-``NeuronModel`` class, a subclass of :ref:`Model <model>`.
+:py:class:`~uncertainpy.model.NeuronModel` class, a subclass of :ref:`Model <model>`.
 Among others, ``NeuronModel`` takes the arguments:::
 
     model = un.NeuronModel(path="path/to/neuron_model",

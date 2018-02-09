@@ -3,7 +3,7 @@
 Model
 =====
 
-Generally, models are created through the ``Model`` class.
+Generally, models are created through the :py:class:`~uncertainpy.model.Model` class.
 ``Model`` takes the argument ``run`` and the optional arguments
 ``postprocess``, ``adaptive`` and ``labels``. ::
 

@@ -29,7 +29,7 @@ And one set of features for network models that return spiketrains :ref:`Network
 
 
 Then there are two general classes
-for spiking (:ref:`GeneralSpikingFeatures <_general_spiking>`) and network features
+for spiking (:ref:`GeneralSpikingFeatures <general_spiking>`) and network features
 (:ref:`GeneralNetworkFeatures <general_network>`) that implements common methods
 used by the two spiking features and network features respectively.
 These classes does not implement any specific models themselves.
@@ -39,9 +39,9 @@ These classes does not implement any specific models themselves.
     :maxdepth: 1
 
     features/master_features
-    features/spikes
-    features/general_spiking_features
     features/spiking_features
+    features/spikes
     features/efel_features
-    features/general_network_features
     features/network_features
+    features/general_network_features
+    features/general_spiking_features
