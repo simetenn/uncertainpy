@@ -1,7 +1,7 @@
 .. _hodgkin_huxley:
 
-Hodgkin-Huxley
-==============
+Hodgkin-Huxley model
+====================
 
 Here we examine the canonical Hodgkin-Huxley model
 (`Hodgkin and Huxley, 1952`_).
@@ -10,7 +10,6 @@ An uncertainty analysis of this model has been performed previously
 and we here we repeat a part of that study using Uncertainpy.
 
 .. _Valderrama et al., 2014: https://mathematical-neuroscience.springeropen.com/articles/10.1186/2190-8567-5-3
-
 .. _Hodgkin and Huxley, 1952: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1392413/pdf/jphysiol01442-0106.pdf
 
 The here used version of the Hodgkin-Huxley model has 11 parameters:

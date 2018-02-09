@@ -1,7 +1,11 @@
 .. _neuron:
 
-Neuron model
-============
+NeuronModel
+===========
+
+
+API Reference
+-------------
 
 .. autoclass:: uncertainpy.models.NeuronModel
    :members:

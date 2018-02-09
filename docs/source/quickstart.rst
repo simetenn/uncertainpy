@@ -35,6 +35,9 @@ Among others, ``UncertaintyQuantification`` takes the following arguments::
             features=...,                    # Optional
         )
 
+The arguments are given as instances of their corresponding Uncertainpy classes
+(:ref:`Models <models>`, :ref:`Parameters <parameters>`, and :ref:`Features <features>`).
+These classes are briefly described below.
 After the problem is defined, an uncertainty quantification and sensitivity
 analysis can be performed using the ``UncertaintyQuantification.quantify`` method.
 Among others, ``quantify`` takes the following arguments::

@@ -1,7 +1,11 @@
 .. _nest:
 
-Nest model
-==========
+NestModel
+=========
+
+
+API Reference
+-------------
 
 .. autoclass:: uncertainpy.models.NestModel
    :members:

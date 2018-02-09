@@ -1,7 +1,7 @@
 .. _main_features:
 
-Features, main class
-====================
+Features
+========
 
 .. autoclass:: uncertainpy.features.Features
    :members:

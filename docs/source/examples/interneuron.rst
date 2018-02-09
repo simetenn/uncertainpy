@@ -1,7 +1,7 @@
 .. _interneuron:
 
-A multi-compartment model of a thalamic interneuron
-===================================================
+A multi-compartment model of a thalamic interneuron implemented in NEURON
+=========================================================================
 
 In this example we illustrate how Uncertainpy can be used on models implemented
 in `NEURON`_.
@@ -9,11 +9,11 @@ For this example, we select a previously published model of an interneuron in
 the dorsal lateral geniculate nucleus `Halnes et al., 2011`_.
 Since the model is in implemented in NEURON,
 the original model can be used directly with Uncertainpy with the use of
-:py:class:`~uncertainpy.models.NeuronModel`.
+:ref:`NeuronModel <neuron>`.
 The code for this case study is found in
 :download:`/examples/interneuron/uq_interneuron.py <../../../examples/interneuron/uq_interneuron.py>`.
 To be able to run this example you require both the Neuron model,
-as well as the interneuron model saved in a folder ``/interneuron_modelDB/``
+as well as the interneuron model saved in a folder ``/interneuron_modelDB/``.
 
 .. _NEURON: https://www.neuron.yale.edu/neuron/
 .. _Halnes et al., 2011: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002160
@@ -54,7 +54,7 @@ We create these parameters similar to what we did in the :ref:`Hodgkin-Huxley ex
 A point-to-point comparison of voltage traces is often uninformative,
 and we therefore want to perform a feature based analysis of the model.
 Since we examine a spiking neuron model,
-we choose the features in :py:class:`~uncertainpy.features.SpikingFeatures`:
+we choose the features in :ref:`SpikingFeatures <spiking>`:
 
 .. literalinclude:: ../../../examples/interneuron/uq_interneuron.py
     :language: python

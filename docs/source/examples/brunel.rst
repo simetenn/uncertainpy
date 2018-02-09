@@ -1,7 +1,7 @@
 .. _brunel:
 
-A sparsely connected recurrent network
-======================================
+A sparsely connected recurrent network using Nest
+=================================================
 
 
 In the last case study,
@@ -15,12 +15,14 @@ This is the values used to create the results in the Uncertainpy paper.
 If you want to just test the network, we recommend reducing the model to
 :math:`2000` inhibitory and :math:`500` excitatory neurons,
 and only simulate the network for :math:`100` ms.
+To be able to run this example you require NEST to be anle to run the model and
+``elephant``, ``neo``, and ``quantities`` to be able to use the network features.
 
 .. _Brunel (2000): https://web.stanford.edu/group/brainsinsilicon/documents/BrunelSparselyConnectedNets.pdf
 .. _NEST: http://www.nest-simulator.org/
 
 
-We want to use :py:class:`~uncertainpy.models.NestModel` to create our model.
+We want to use :ref:`NestModel <nest>` to create our model.
 ``NestModel`` requires the model function to be specified through
 the ``run`` argument, unlike ``NeuronModel``.
 The NEST model function has the same requirements as a regular model function,
@@ -82,7 +84,7 @@ We create two sets of parameters, one for each state:
     :lines: 10-22
 
 
-We use the features in :py:class:`~uncertainpy.features.NetworkFeatures` to
+We use the features in :ref:`NetworkFeatures <network>` to
 examine features of the Brunel network.
 
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
@@ -106,4 +108,9 @@ again specifying a filename and figure folder.
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
     :language: python
     :lines: 37-43
+
+The complete code is:
+
+.. literalinclude:: ../../../examples/brunel/uq_brunel.py
+    :language: python
 

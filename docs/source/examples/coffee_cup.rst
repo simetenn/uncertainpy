@@ -89,8 +89,8 @@ The model can also be created as a class instead of using a function.
 Most of the code is unchanged.
 The complete for this example is in
 :download:`examples/coffee/uq_coffee_class.py <../../../examples/coffee/uq_coffee_class.py>`.
-We create a class that inherits from ``uncertainpy.Model``, and to add the
-labels we call on the constructor of the parent class ``uncertainpy.Model`` and
+We create a class that inherits from :ref:`Model <model>`. To add the
+labels we call on the constructor of the parent class and
 give it the labels.
 
 .. literalinclude:: ../../../examples/coffee/uq_coffee_class.py
