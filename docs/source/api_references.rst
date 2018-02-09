@@ -3,6 +3,17 @@
 API reference
 =============
 
+
+
+
+
+
+
+
+
+
+
+
 UncertaintyQuantification
 -------------------------
 * :ref:`UncertaintyQuantification <uncertainty_quantification_api>`
@@ -12,7 +23,7 @@ Models
 ------
 * :ref:`The main model class <model>`
 * :ref:`Nest model class <nest>`
-* :ref:`Neuron model class <neuron>`
+* :ref:`Neuron model class <neuron_model>`
 
 Features
 --------

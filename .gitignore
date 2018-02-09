@@ -1,3 +1,9 @@
+# Folder for div tests
+random_tests/
+
+# Deprecated code
+deprecated
+
 # Data files
 *.dat
 *.h5

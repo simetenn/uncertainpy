@@ -11,3 +11,4 @@ Examples
     examples/hodgkin_huxley
     examples/interneuron
     examples/brunel
+    examples/bahl

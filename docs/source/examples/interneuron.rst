@@ -9,11 +9,11 @@ For this example, we select a previously published model of an interneuron in
 the dorsal lateral geniculate nucleus `Halnes et al., 2011`_.
 Since the model is in implemented in NEURON,
 the original model can be used directly with Uncertainpy with the use of
-:ref:`NeuronModel <neuron>`.
+:ref:`NeuronModel <neuron_model>`.
 The code for this case study is found in
 :download:`/examples/interneuron/uq_interneuron.py <../../../examples/interneuron/uq_interneuron.py>`.
-To be able to run this example you require both the Neuron model,
-as well as the interneuron model saved in a folder ``/interneuron_modelDB/``.
+To be able to run this example you require both the NEURON simulator,
+as well as the interneuron model saved in a folder ``/interneuron_model/``.
 
 .. _NEURON: https://www.neuron.yale.edu/neuron/
 .. _Halnes et al., 2011: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002160
@@ -71,7 +71,7 @@ meaning we have to set ``adaptive=True``.
 In this way we tell Uncertainpy to perform an interpolation to get the
 output on a regular form before performing the analysis:
 We also give the path to the folder where
-the neuron model is stored with ``path="interneuron_modelDB/"``.
+the neuron model is stored with ``path="interneuron_model/"``.
 ``NeuronModel`` loads the NEURON model from ``mosinit.hoc``,
 sets the parameters of the model,
 evaluates the model and returns the somatic membrane potential of the neuron.

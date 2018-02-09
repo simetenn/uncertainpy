@@ -53,7 +53,7 @@ Content
 * :ref:`Models <models>`
     * :ref:`Model <model>`
     * :ref:`NestModel <nest>`
-    * :ref:`NeuronModel <neuron>`
+    * :ref:`NeuronModel <neuron_model>`
 * :ref:`Data <data>`
 
 
@@ -68,7 +68,7 @@ Models
 * :ref:`Models <models>`
     * :ref:`Model <model>`
     * :ref:`NestModel <nest>`
-    * :ref:`NeuronModel <neuron>`
+    * :ref:`NeuronModel <neuron_model>`
 
 
 
