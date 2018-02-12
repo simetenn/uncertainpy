@@ -93,6 +93,11 @@ Data
 * :ref:`Data <data>`
 
 
+Theory
+======
+* :ref:`The Rosenblatt transformation <rosenblatt>`
+
+
 Indices and tables
 ==================
 
