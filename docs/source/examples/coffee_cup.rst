@@ -73,8 +73,8 @@ expansions with point collocation,
 which is the default option of ``quantify``.
 
 .. literalinclude:: ../../../examples/coffee/uq_coffee_function.py
-:language: python
-:lines: 36-41
+    :language: python
+    :lines: 36-41
 
 The complete code becomes:
 

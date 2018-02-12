@@ -3,7 +3,7 @@
 Plotting
 ========
 
-:py:class:´~uncertainpy.plotting.PlotUncertainty´ creates plot of the data
+:py:class:`~uncertainpy.plotting.PlotUncertainty` creates plot of the data
 from the uncertainty quantification and sensitivity analysis.
 ``PlotUncertainpy`` plots the results for all zero and one dimensional statistical
 metrics, and some of the two dimensional statistical metrics
@@ -15,7 +15,7 @@ the :ref:`Data <Data>` class.
 API Reference
 -------------
 
-.. automodule:: uncertainpy.plotting
+.. autoclass:: uncertainpy.plotting.PlotUncertainty
    :members:
    :inherited-members:
    :undoc-members:

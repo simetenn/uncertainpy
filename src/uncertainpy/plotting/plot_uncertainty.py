@@ -1,9 +1,9 @@
 import glob
-# import argparse
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
 from .prettyplot import get_colormap_tableu20, set_style
@@ -90,11 +90,28 @@ class PlotUncertainty(object):
 
 
     def load(self, filename):
+        """
+        Load data from a hdf5 file with name `filename`.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file to load data from.
+        """
         self.data = Data(filename)
 
 
     @property
     def folder(self):
+        """
+        The folder where to save all plots.
+
+        Parameters
+        ----------
+        new_folder : str
+            Name of new folder where to save all plots. The folder is created
+            if it does not exist.
+        """
         return self._folder
 
 
@@ -109,11 +126,43 @@ class PlotUncertainty(object):
 
 
     def all_evaluations(self, foldername="evaluations"):
+        """
+        Plot all evaluations for all model and features.
+
+        Parameters
+        ----------
+        foldername : str, optional
+            Name of folder where to save all plots. The folder is created
+            if it does not exist. Default folder is named "evaluations".
+        """
         for feature in self.data:
             self.evaluations(feature=feature, foldername=foldername)
 
 
-    def evaluations(self, feature=None, foldername=""):
+    def evaluations(self, feature=None, foldername="", **plot_kwargs):
+        """
+        Plot all evaluations for a specific model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        foldername : str, optional
+            Name of folder where to save all plots. The folder is created
+            if it does not exist. Default folder is named "featurename_evaluations".
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        NotImplementedError
+            If the model/feature have more than 2 dimensions.
+        AttributeError
+            If the dimensions of the evaluations is not valid.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -126,22 +175,43 @@ class PlotUncertainty(object):
 
         dimension = self.data.ndim(feature)
         if dimension == 0:
-            self.evaluations_0d(feature=feature, foldername=foldername)
+            self.evaluations_0d(feature=feature, foldername=foldername, **plot_kwargs)
 
         elif dimension == 1:
-            self.evaluations_1d(feature=feature, foldername=foldername)
+            self.evaluations_1d(feature=feature, foldername=foldername, **plot_kwargs)
 
         elif dimension == 2:
-            self.evaluations_2d(feature=feature, foldername=foldername)
+            self.evaluations_2d(feature=feature, foldername=foldername, **plot_kwargs)
 
         elif dimension > 2:
-            raise NotImplementedError(">2D plots not implemented.")
+            raise NotImplementedError(">2 dimensional plots not implemented.")
         else:
             raise AttributeError("Dimension of evaluations is not valid: dim {}".format(dimension))
 
 
 
     def evaluations_0d(self, feature=None, foldername="", **plot_kwargs):
+        """
+        Plot all 0D evaluations for a specific model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        foldername : str, optional
+            Name of folder where to save all plots. The folder is created
+            if it does not exist.Default folder is named "featurename_evaluations".
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the evaluations are not 0 dimensional.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -153,7 +223,7 @@ class PlotUncertainty(object):
             return
 
         if self.data.ndim(feature) != 0:
-            raise ValueError("{} is not a 0D feature".format(feature))
+            raise ValueError("{} is not a 0 dimensional feature".format(feature))
 
         save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
@@ -172,6 +242,27 @@ class PlotUncertainty(object):
 
 
     def evaluations_1d(self, feature=None, foldername="", **plot_kwargs):
+        """
+        Plot all 1D evaluations for a specific model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        foldername : str, optional
+            Name of folder where to save all plots. The folder is created
+            if it does not exist. Default folder is named "featurename_evaluations".
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the evaluations are not 1 dimensional.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -183,7 +274,7 @@ class PlotUncertainty(object):
             return
 
         if self.data.ndim(feature) != 1:
-            raise ValueError("{} is not a 1D feature".format(feature))
+            raise ValueError("{} is not a 1 dimensional feature".format(feature))
 
         i = 1
         save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
@@ -214,6 +305,28 @@ class PlotUncertainty(object):
 
 
     def evaluations_2d(self, feature=None, foldername="", **plot_kwargs):
+        """
+        Plot all 2D evaluations for a specific model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        foldername : str, optional
+            Name of folder where to save all plots. The folder is created
+            if it does not exist. Default folder is named
+            "featurename_evaluations".
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the evaluations are not 2 dimensional.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -225,7 +338,7 @@ class PlotUncertainty(object):
             return
 
         if self.data.ndim(feature) != 2:
-            raise ValueError("{} is not a 2D feature.".format(feature))
+            raise ValueError("{} is not a 2 dimensional feature.".format(feature))
 
         set_style("seaborn-dark")
 
@@ -273,6 +386,36 @@ class PlotUncertainty(object):
                              hardcopy=True,
                              show=False,
                              **plot_kwargs):
+        """
+        Plot a 1 dimensional attribute for a specific model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        attribute : {"mean", "variance"}, optional
+            Attribute to plot, either the mean or variance. Default is "mean".
+        attribute_name : str
+            Name of the attribute, used as title and name of the plot.
+            Default is "mean".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        ValueError
+            If the attribute is not a supported attribute, either "mean" or
+            "variance".
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -280,7 +423,7 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if self.data.ndim(feature) != 1:
-            raise ValueError("{} is not a 1D feature".format(feature))
+            raise ValueError("{} is not a 1 dimensional feature".format(feature))
 
         if attribute not in ["mean", "variance"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
@@ -326,7 +469,36 @@ class PlotUncertainty(object):
                              hardcopy=True,
                              show=False,
                              **plot_kwargs):
+        """
+        Plot a 2 dimensional attribute for a specific model/feature.
 
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        attribute : {"mean", "variance"}, optional
+            Attribute to plot, either the mean or variance. Default is "mean".
+        attribute_name : str
+            Name of the attribute, used as title and name of the plot.
+            Default is "mean".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 2 dimensional.
+        ValueError
+            If the attribute is not a supported attribute, either "mean" or
+            "variance".
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -391,6 +563,27 @@ class PlotUncertainty(object):
 
 
     def mean_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+        """
+        Plot the mean for a specific 1 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : str
+            The name of the model/feature.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        """
         self.attribute_feature_1d(feature,
                                   attribute="mean",
                                   attribute_name="mean",
@@ -400,6 +593,27 @@ class PlotUncertainty(object):
 
 
     def variance_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+        """
+        Plot the variance for a specific 1 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : str
+            The name of the model/feature.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        """
         self.attribute_feature_1d(feature,
                                   attribute="variance",
                                   attribute_name="variance",
@@ -408,6 +622,27 @@ class PlotUncertainty(object):
                                   **plot_kwargs)
 
     def mean_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+        """
+        Plot the mean for a specific 2 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : str
+            The name of the model/feature.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 2 dimensional.
+        """
         self.attribute_feature_2d(feature,
                                   attribute="mean",
                                   attribute_name="mean",
@@ -417,6 +652,27 @@ class PlotUncertainty(object):
 
 
     def variance_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+        """
+        Plot the variance for a specific 2 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : str
+            The name of the model/feature.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 2 dimensional.
+        """
         self.attribute_feature_2d(feature,
                                   attribute="variance",
                                   attribute_name="variance",
@@ -431,9 +687,31 @@ class PlotUncertainty(object):
                          hardcopy=True,
                          show=False,
                          color=0,
-                         style="seaborn-dark",
                          **plot_kwargs):
+        """
+        Plot the mean and variance for a specific 1 dimensional model/feature.
 
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        color : int, optional
+            Which of the tableu20 colors to start plotting with. Default is 0.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        """
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -460,6 +738,7 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
 
+        style="seaborn-dark"
         title = feature + ", mean and variance"
         ax = prettyPlot(time, self.data[feature].mean,
                         title.replace("_", " "), xlabel, ylabel + ", mean",
@@ -514,6 +793,28 @@ class PlotUncertainty(object):
                                hardcopy=True,
                                show=False,
                                **plot_kwargs):
+        """
+        Plot the prediction interval for a specific 1 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -552,7 +853,7 @@ class PlotUncertainty(object):
                          alpha=0.5, color=colors[0])
 
         ax.set_xlim([min(time), max(time)])
-        plt.legend(["mean", "90% prediction interval"], loc="best")
+        plt.legend(["Mean", "90% prediction interval"], loc="best")
 
         plt.tight_layout()
 
@@ -572,7 +873,36 @@ class PlotUncertainty(object):
                        hardcopy=True,
                        show=False,
                        **plot_kwargs):
+        """
+        Plot the sensitivity for a specific 1 dimensional model/feature. The
+        Sensitivity for each parameter is plotted in sepearate figures.
 
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        """
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -631,7 +961,37 @@ class PlotUncertainty(object):
                             hardcopy=True,
                             show=False,
                             **plot_kwargs):
+        """
+        Plot the sensitivity for a specific 1 dimensional model/feature. The
+        Sensitivity for each parameter is plotted in the same figure, but
+        separate plots.
 
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        """
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -726,7 +1086,36 @@ class PlotUncertainty(object):
                                 hardcopy=True,
                                 show=False,
                                 **plot_kwargs):
+        """
+        Plot the sensitivity for a specific 1 dimensional model/feature. The
+        Sensitivity for each parameter is plotted in the same plot.
 
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        """
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -786,17 +1175,49 @@ class PlotUncertainty(object):
 
 
     def features_1d(self, sensitivity="first"):
+        """
+        Plot all data for all 1 dimensional model/features.
+
+        For each model/feature plots ``mean_1d``, ``variance_1d``,
+        ``mean_variance_1d``, and ``prediction_interval_1d``. If sensitivity
+        also plot ``sensitivity_1d``, ``sensitivity_1d_combined``, and
+        ``sensitivity_1d_grid``.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total", None}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. If None, no sensitivity is plotted. Default is
+            "first".
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            "total" or None.
+
+        See also
+        --------
+        uncertainpy.plotting.PlotUncertainty.mean_1d
+        uncertainpy.plotting.PlotUncertainty.variance_1d
+        uncertainpy.plotting.PlotUncertainty.mean_variance_1d
+        uncertainpy.plotting.PlotUncertainty.prediction_interval_1d
+        uncertainpy.plotting.PlotUncertainty.sensitivity_1d
+        uncertainpy.plotting.PlotUncertainty.sensitivity_1d_combined
+        uncertainpy.plotting.PlotUncertainty.sensitivity_1d_grid
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total or None, not {}".format(sensitivity))
 
-        if sensitivity == "first":
-            sensitivity = "sobol_first"
-        elif sensitivity == "total":
-            sensitivity = "sobol_total"
-
+        sensitivity, label = self.convert_sensitivity(sensitivity)
 
         for feature in self.data:
             if self.data.ndim(feature) == 1:
@@ -813,6 +1234,26 @@ class PlotUncertainty(object):
 
 
     def convert_sensitivity(self, sensitivity):
+        """
+        Convert a sensitivity str to the correct sensitivity attribute, and a
+        full name.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total", None}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices.
+
+        Returns
+        -------
+        sensitivity : str
+            Name of the sensitivity attribute. Either sobol_first",
+            "sobol_total", or the unchanged input.
+        full_text : str
+            Complete name of the sensitivity. Either "", or
+            "first order Sobol indices" or "total order Sobol indices".
+        """
         if sensitivity == "first":
             sensitivity = "sobol_first"
         elif sensitivity == "total":
@@ -828,6 +1269,15 @@ class PlotUncertainty(object):
 
 
     def features_2d(self):
+        """
+        Plot all implemented plots for all 2 dimensional model/features.
+        For each model/feature plots ``mean_2d``, and ``variance_2d``.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -841,10 +1291,41 @@ class PlotUncertainty(object):
     # TODO test that plotting with no sensitivity works
     def feature_0d(self,
                    feature,
-                   max_legend_size=5,
                    sensitivity="first",
                    hardcopy=True,
-                   show=False):
+                   show=False,
+                   max_legend_size=5):
+        """
+        Plot all attributes (mean, variance, p_05, p_95 and sensitivity of it
+        exists) for a 0 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        sensitivity : {"sobol_first", "first", "sobol_total", "total", None}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. If None, no sensitivity is plotted. Default is
+            "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        max_legend_size : int, optional
+            The max number of legends in a row. Default is 5.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 0 dimensional.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            "total" or None.
+        """
 
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total or None, not {}".format(sensitivity))
@@ -959,11 +1440,37 @@ class PlotUncertainty(object):
 
 
     def sensitivity_sum(self,
-                          feature,
-                          sensitivity="first",
-                          hardcopy=True,
-                          show=False):
+                        feature,
+                        sensitivity="first",
+                        hardcopy=True,
+                        show=False):
+        """
+        Plot the normalized sum of the sensitivity for a specific model/feature.
 
+        Parameters
+        ----------
+        feature : {None, str}
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        ValueError
+            If feature does not exist.
+        """
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -1009,16 +1516,36 @@ class PlotUncertainty(object):
                             sensitivity="first",
                             hardcopy=True,
                             show=False):
+        """
+        Plot the normalized sum of the sensitivity for all model/features.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        if sensitivity == "first":
-            sensitivity = "sobol_first"
-        elif sensitivity == "total":
-            sensitivity = "sobol_total"
+
+        sensitivity, title = self.convert_sensitivity(sensitivity)
 
         for feature in self.data:
             if sensitivity + "_sum" in self.data[feature]:
@@ -1029,6 +1556,28 @@ class PlotUncertainty(object):
 
 
     def features_0d(self, sensitivity="first", hardcopy=True, show=False):
+        """
+        Plot the results for all 0 dimensional model/features.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -1038,14 +1587,14 @@ class PlotUncertainty(object):
 
 
 
-    # TODO Not Tested
-    def plot_folder(self, data_dir):
-        self.logger.info("Plotting all data in folder")
+    # # TODO Not Tested
+    # def plot_folder(self, data_dir):
+    #     self.logger.info("Plotting all data in folder")
 
-        for f in glob.glob(os.path.join(data_dir, "*")):
-            self.load(f.split(os.path.sep)[-1])
+    #     for f in glob.glob(os.path.join(data_dir, "*")):
+    #         self.load(f.split(os.path.sep)[-1])
 
-            self.plot_all()
+    #         self.plot_all()
 
 
 
@@ -1059,6 +1608,25 @@ class PlotUncertainty(object):
 
 
     def plot_all(self, sensitivity="first"):
+        """
+        Plot the results for all model/features, with the chosen sensitivity.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total", None}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. If None, no sensitivity is plotted.
+            Default is "first".
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            "total", or None.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -1074,6 +1642,14 @@ class PlotUncertainty(object):
 
     # TODO find a more descriptive name
     def plot_all_sensitivities(self):
+        """
+        Plot the results for all model/features, with all sensitivities.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -1092,6 +1668,26 @@ class PlotUncertainty(object):
 
 
     def plot_condensed(self, sensitivity="first"):
+        """
+        Plot the subset of data that shows all information in the most concise
+        way, with the chosen sensitivity.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. If None, no sensitivity is plotted.
+            Default is "first".
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            "total", or None.
+        """
         for feature in self.data:
             if self.data.ndim(feature) == 1:
                 self.mean_variance_1d(feature=feature)
@@ -1109,8 +1705,30 @@ class PlotUncertainty(object):
 
 
 
-    def plot(self, condensed=True, sensitivity="sobol_first"):
+    def plot(self, condensed=True, sensitivity="first"):
+        """
+        Plot the subset of data that shows all information in the most concise
+        way, with the chosen sensitivity.
 
+        Parameters
+        ----------
+        condensed : bool, optional
+            If the results should be plotted in the most concise way. If not, all
+            plots are created. Default is True.
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. If None, no sensitivity is plotted.
+            Default is "first".
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            "total", or None.
+        """
         if condensed:
             self.plot_condensed(sensitivity=sensitivity)
         else:
@@ -1119,43 +1737,45 @@ class PlotUncertainty(object):
             else:
                 self.plot_all(sensitivity)
 
-    # def plot_allFromExploration(self, exploration_folder):
-    #     self.logger.info("Plotting all data")
-    #
-    #     original_data_dir = self.data_dir
-    #     original_folder = self.folder
-    #
-    #     for folder in glob.glob(os.path.join(self.data_dir, "*")):
-    #         self.data_dir = os.path.join(original_data_dir, folder.split("/")[-1])
-    #         self.folder = os.path.join(original_folder,
-    #                                                folder.split("/")[-1])
-    #
-    #         for filename in glob.glob(os.path.join(folder, "*")):
-    #
-    #             self.loadData(filename.split("/")[-1])
-    #
-    #         self.plot_all()
-    #
-    #     self.data_dir = original_data_dir
-    #     self.folder = original_folder
-
 
     def sensitivity_sum_grid(self,
                              sensitivity="first",
                              hardcopy=True,
                              show=False,
                              **plot_kwargs):
+        """
+        Plot the normalized sum of the sensitivity for all model/features in
+        their own plots in the same figure.
+
+        Parameters
+        ----------
+        sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
+            Which Sobol indices to plot. "sobol_first" and "first" is the first
+            order Sobol indices, while "sobol_total" and "total" are the total
+            order Sobol indices. Default is "first".
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If sensitivity is not one of "sobol_first", "first", "sobol_total",
+            or "total".
+        """
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        if sensitivity == "first":
-            sensitivity = "sobol_first"
-        elif sensitivity == "total":
-            sensitivity = "sobol_total"
 
+        sensitivity, _ = self.convert_sensitivity(sensitivity)
 
         no_sensitivity = True
         for feature in self.data:
@@ -1252,13 +1872,3 @@ class PlotUncertainty(object):
 #     args = parser.parse_args()
 
 #     figureformat = ".png"
-
-
-    # plot = PlotUncertainty(data_dir=args.data_dir,
-    #                        folder=args.folder,
-    #                        figureformat=figureformat)
-    #
-    # # plot.plot_all()
-    # plot.plot_allFromExploration()
-
-    # sortByParameters(path=folder, outputpath=folder)

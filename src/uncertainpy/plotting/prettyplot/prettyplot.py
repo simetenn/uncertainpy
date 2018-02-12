@@ -505,15 +505,15 @@ style : str
     which matplotlib style to use as base.
     Default is "seaborn-darkgrid"
 custom_style : bool
-    If custom style should be used in adittion to the standard style.
+    If custom style should be used in addition to the standard style.
     Default is True
 palette : hls | husl | matplotlib colormap | seaborn color palette
     Set the matplotlib color cycle using a seaborn palette.
-    Availible seaborn palette names:
+    Available seaborn palette names:
         deep, muted, bright, pastel, dark, colorblind
     Other options:
         hls, husl, any named matplotlib palette, list of colors
-    Matplotlib paletes can be specified as reversed palettes by appending "_r"
+    Matplotlib palettes can be specified as reversed palettes by appending "_r"
     to the name or as dark palettes by appending "_d" to the name.
     (These options are mutually exclusive, but the resulting list of colors
     can also be reversed).

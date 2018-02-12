@@ -345,7 +345,6 @@ class UncertaintyQuantification(ParameterBase):
         uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
         uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
         uncertainpy.core.UncertaintyCalculations.custom_uncertainty_quantification : Requirements for custom_uncertainty_quantification
-
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 

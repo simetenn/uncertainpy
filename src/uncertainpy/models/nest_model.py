@@ -90,11 +90,6 @@ class NestModel(Model):
         The ``run`` method must either be implemented or set to a
         function. Both options have the following requirements:
 
-             Notes
-        -----
-        The ``run`` method must either be implemented or set to a
-        function. Both options have the following requirements:
-
         1. **Input.**
            The model function takes a number of arguments which define the
            uncertain parameters of the model.
