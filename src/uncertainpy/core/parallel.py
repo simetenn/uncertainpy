@@ -7,7 +7,8 @@ from .base import Base
 
 class Parallel(Base):
     """
-    Calculate model and features in parallel for one instance of model parameters.
+    Calculates the model and features of the model for one set of
+    model parameters. Is the class that is run in parallel.
 
     Parameters
     ----------

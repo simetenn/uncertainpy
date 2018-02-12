@@ -27,10 +27,9 @@ Welcome to Uncertainpy's documentation!
 
     core
 
-    api_references
 
-Where to start
-==============
+Getting started
+===============
 
 * :ref:`Installation <installation>`
 * :ref:`Quickstart <quickstart>`
@@ -46,24 +45,40 @@ Examples
 * :ref:`A sparsely connected recurrent network <brunel>`
 
 
-Content
-=======
+Content of Uncertainpy
+======================
 
-* :ref:`UncertaintyQuantification <UncertaintyQuantification>`
-* :ref:`Models <models>`
-    * :ref:`Model <model>`
-    * :ref:`NestModel <nest_model>`
-    * :ref:`NeuronModel <neuron_model>`
+* :ref:`UncertaintyQuantification <UncertaintyQuantification>`.
+* :ref:`Models <models>`.
+    * :ref:`General models <model>`.
+    * :ref:`Nest models <nest_model>`.
+    * :ref:`Neuron models <neuron_model>`.
+* :ref:`Parameters <parameters>`.
+* :ref:`Features <features>`.
+    * :ref:`General features <main_features>`.
+    * :ref:`Spiking features <spiking>`.
+    * :ref:`Spikes <spikes>` (used by the spiking features).
+    * :ref:`Electrophys Feature Extraction Library (eFEL) features <efel>`
+    * :ref:`Network features <network>`
+    * :ref:`General spiking features <general_spiking>`
+    * :ref:`General network features <general_network>`
 * :ref:`Data <data>`
-
+* :ref:`Utility distributions <distributions>`
+* :ref:`Plotting <plotting>`
+* :ref:`Utilities <utilities>`
+* :ref:`Core <core>`
+    * :ref:`Base classes <base>`
+    * :ref:`Parallel <parallel>`
+    * :ref:`Run model <run_model>`
+    * :ref:`Uncertainty calculations<uncertainty_calculations>`
 
 
 UncertaintyQuantification
-=========================
+-------------------------
 * :ref:`UncertaintyQuantification <UncertaintyQuantification>`
 
 Models
-======
+------
 
 * :ref:`Models <models>`
     * :ref:`Model <model>`
@@ -73,11 +88,9 @@ Models
 
 
 Data
-======
+----
 
 * :ref:`Data <data>`
-
-
 
 
 Indices and tables

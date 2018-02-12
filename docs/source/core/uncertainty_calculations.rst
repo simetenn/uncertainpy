@@ -1,3 +1,5 @@
+.. _uncertainty_calculations:
+
 UncertaintyCalculations
 =======================
 
