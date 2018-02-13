@@ -1,7 +1,7 @@
 .. _hodgkin_huxley:
 
-Hodgkin-Huxley model
-====================
+The Hodgkin-Huxley model
+========================
 
 Here we examine the canonical Hodgkin-Huxley model
 (`Hodgkin and Huxley, 1952`_).
