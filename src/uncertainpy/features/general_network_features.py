@@ -130,6 +130,11 @@ class GeneralNetworkFeatures(Features):
             The values returned must compatible with the input arguments of
             all features.
 
+        Raises
+        ------
+        ValueError
+            If `simulation_end` is NaN or None.
+
         Notes
         -----
         Perform a preprossesing of the model results before the results are sent

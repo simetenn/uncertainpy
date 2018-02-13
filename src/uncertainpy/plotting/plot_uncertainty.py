@@ -218,7 +218,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "evaluations"  not in self.data[feature]:
+        if feature not in self.data or "evaluations" not in self.data[feature]:
             self.logger.warning("No {} evaluations to plot.".format(feature))
             return
 
