@@ -40,6 +40,9 @@ Getting started
 Examples
 ========
 
+This is a collection of examples that show the use of Uncertainpy for a few
+different case studies.
+
 * :ref:`A simple cooling coffee cup <coffee_cup>`
 * :ref:`A cooling coffee cup with dependent parameters <coffee_dependent>`
 * :ref:`The Hodgkin-Huxley model <hodgkin_huxley>`
@@ -49,6 +52,9 @@ Examples
 
 Content of Uncertainpy
 ======================
+
+This is the content of Uncertainpy and contains instructions for how to use
+all classes and functions, along with their API.
 
 * :ref:`UncertaintyQuantification <UncertaintyQuantification>`
 * :ref:`Models <models>`
@@ -78,12 +84,16 @@ Content of Uncertainpy
 Theory
 ======
 
+Here we give an overview of the theory behind uncertainty quantification and
+sensitivity analysis with a focus on (quasi-)Monte Carlo methods and polynomial
+chaos expansions, the methods implemented in Uncertainpy.
+
+
 * :ref:`Theory on uncertainty quantification and sensitivity analysis <theory>`
+    * :ref:`Problem definition <problem>`
+    * :ref:`Uncertainty quantification <uq>`
+    * :ref:`Sensitivity analysis <sa>`
+    * :ref:`(Quasi-)Monte Carlo methods <qmc>`
+    * :ref:`Polynomial chaos expansions <pce>`
+    * :ref:`Dependency between uncertain parameters <rosenblatt>`
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

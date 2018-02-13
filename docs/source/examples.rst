@@ -1,7 +1,8 @@
 Examples
 ========
 
-
+This is a collection of examples that show the use of Uncertainpy for a few
+different case studies.
 
 .. toctree::
     :maxdepth: 1
