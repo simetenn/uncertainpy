@@ -753,7 +753,7 @@ class PlotUncertainty(object):
                                  "right": colors[color+2], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color+2], labelcolor=colors[color+2], labelsize=labelsize)
-        ax2.set_ylabel(ylabel + ', variance', color=colors[color+2], fontsize=labelsize)
+        ax2.set_ylabel(ylabel + ", variance", color=colors[color+2], fontsize=labelsize)
 
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
@@ -766,7 +766,7 @@ class PlotUncertainty(object):
 
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
-        ax.set_ylabel(ylabel + ', mean', color=colors[color], fontsize=labelsize)
+        ax.set_ylabel(ylabel + ", mean", color=colors[color], fontsize=labelsize)
 
         ax2.set_xlim([min(time), max(time)])
         ax.set_xlim([min(time), max(time)])
@@ -1026,7 +1026,7 @@ class PlotUncertainty(object):
         grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
 
         set_style("seaborn-darkgrid")
-        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex='col', sharey='row')
+        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
@@ -1036,7 +1036,7 @@ class PlotUncertainty(object):
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
-        ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+        ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
         ax.set_xlabel(xlabel)
         ax.set_ylabel(title.capitalize())
 
@@ -1389,7 +1389,7 @@ class PlotUncertainty(object):
             for parameter in self.data.uncertain_parameters:
 
                 l = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
-                            align='center', color=colors[4+i], linewidth=0)
+                            align="center", color=colors[4+i], linewidth=0)
 
                 legend_bars.append(l)
 
@@ -1402,7 +1402,7 @@ class PlotUncertainty(object):
             location = (0.5, 1.01 + legend_width*0.095)
             plt.legend(legend_bars,
                        self.data.uncertain_parameters,
-                       loc='upper center',
+                       loc="upper center",
                        bbox_to_anchor=location,
                        ncol=legend_size)
 
@@ -1800,7 +1800,7 @@ class PlotUncertainty(object):
 
 
         set_style("seaborn-dark")
-        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex='col', sharey='row')
+        fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
         set_style("seaborn-white")
 
 
@@ -1809,9 +1809,9 @@ class PlotUncertainty(object):
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
-        ax.tick_params(labelcolor='w', top='off', bottom='off', left='off', right='off')
+        ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
         # ax.set_xlabel(self.data.xlabel)
-        ax.set_ylabel('% ' + sensitivity.split("_")[0] + " sum " + sensitivity.split("_")[1])
+        ax.set_ylabel("% " + sensitivity.split("_")[0] + " sum " + sensitivity.split("_")[1])
 
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
