@@ -40,7 +40,7 @@ Getting started
 Examples
 ========
 
-This is a collection of examples that show the use of Uncertainpy for a few
+This is a collection of examples that shows the use of Uncertainpy for a few
 different case studies.
 
 * :ref:`A simple cooling coffee cup <coffee_cup>`

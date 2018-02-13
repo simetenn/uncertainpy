@@ -1065,7 +1065,7 @@ class PlotUncertainty(object):
         title = title.capitalize() + ", " + feature.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
-        plt.subplots_adjust(top=0.85)
+        plt.subplots_adjust(top=0.9)
 
 
         if hardcopy:
@@ -1378,7 +1378,7 @@ class PlotUncertainty(object):
                                      "right": axis_grey, "left": "None"})
             ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                             color=axis_grey, labelcolor="black", labelsize=labelsize)
-            ax2.set_ylabel(label.capitalize(), fontsize=fontsize)
+            ax2.set_ylabel(label.capitalize(), fontsize=labelsize)
             ax2.set_ylim([0, 1.05])
 
 
@@ -1421,6 +1421,9 @@ class PlotUncertainty(object):
 
 
         plt.suptitle(feature.replace("_", " "), fontsize=titlesize)
+
+        if sensitivity is None or sensitivity not in self.data[feature]:
+            plt.subplots_adjust(top=0.93)
 
         if sensitivity is None:
             save_name = feature + self.figureformat
@@ -1849,7 +1852,7 @@ class PlotUncertainty(object):
         title = "normalized sum " + sensitivity.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
-        plt.subplots_adjust(top=0.85)
+        plt.subplots_adjust(top=0.9)
 
 
         if hardcopy:

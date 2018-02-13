@@ -1,7 +1,7 @@
 Examples
 ========
 
-This is a collection of examples that show the use of Uncertainpy for a few
+This is a collection of examples that shows the use of Uncertainpy for a few
 different case studies.
 
 .. toctree::
