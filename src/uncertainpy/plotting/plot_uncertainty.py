@@ -13,11 +13,8 @@ from ..data import Data
 from ..utils import create_logger, str_to_latex, list_to_latex
 
 
-# TODO find a good way to find the directory where the data files are
-
 # TODO compare plots in a grid of all plots,
 # such as plotting all features in a grid plot
-
 # TODO Change the use of **plot_kwargs to use a dict for specific plotting commands?
 
 
@@ -1598,7 +1595,6 @@ class PlotUncertainty(object):
     #         self.load(f.split(os.path.sep)[-1])
 
     #         self.plot_all()
-
 
 
     # def plot_allNoSensitivity(self, sensitivity="first"):

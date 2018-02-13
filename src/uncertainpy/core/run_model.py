@@ -278,7 +278,7 @@ class RunModel(ParameterBase):
                 for result in results:
                     data[feature].evaluations.append(result[feature]["values"])
 
-        # TODO is this necessary to ensure all results are arrays?
+        # ensure all results are arrays
         for feature in data:
             if "time" in data[feature]:
                 data[feature].time = np.array(data[feature].time)
@@ -355,7 +355,7 @@ class RunModel(ParameterBase):
         return np.array(results)
 
 
-    # TODO improve the docstring of this method
+
     def create_model_parameters(self, nodes, uncertain_parameters):
         """
         Combine nodes (values) with the uncertain parameter names to create a

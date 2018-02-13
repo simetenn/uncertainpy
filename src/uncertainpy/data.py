@@ -550,6 +550,7 @@ class Data(collections.MutableMapping):
             self.data[feature] = DataFeature(feature)
 
 
+    # TODO expand the save function to also save parameters and model information
     def save(self, filename):
         """
         Save data to a hdf5 file with name `filename`.
@@ -559,8 +560,6 @@ class Data(collections.MutableMapping):
         filename : str
             Name of the file to load data from.
         """
-        ### TODO expand the save function to also save parameters and model information
-
         with h5py.File(filename, 'w') as f:
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name

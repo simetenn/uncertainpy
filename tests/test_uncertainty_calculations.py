@@ -1300,21 +1300,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(U_hat, {})
         self.assertEqual(data.incomplete, ["TestingModelIncomplete"])
 
-        # TODO Find a good way to test this case when not all runs contains None
-        # self.uncertainty_calculations = UncertaintyCalculations(model,
-        #                                                         parameters=parameters,
-        #                                                         features=features,
-        #                                                         verbose_level="error",
-        #                                                         seed=self.seed,
-        #                                                         allow_incomplete=True)
-
-        # self.uncertainty_calculations.create_PCE_spectral_rosenblatt(["a", "b"])
-
-        # self.assertIn("TestingModelIncomplete", self.uncertainty_calculations.U_hat)
-        # self.assertEqual(self.uncertainty_calculations.data.incomplete,
-        #                  ["TestingModelIncomplete"])
-
-
 
     def test_create_PCE_spectral_incomplete(self):
         parameter_list = [["a", 1, None],

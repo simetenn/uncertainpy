@@ -1081,8 +1081,6 @@ class TestPlotUncertainpy(TestCasePlot):
 
 # TODO test combined features 0 for many features
 
-# TODO test plot_folder
-
 
 
 if __name__ == "__main__":

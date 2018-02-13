@@ -169,15 +169,6 @@ class EfelFeatures(Features):
 
         efel.reset()
 
-        # TODO implement efel labels
-        # implemented_labels = {"nr_spikes": ["number of spikes"],
-        #                       "spike_rate": ["spike rate [Hz]"],
-        #                       "time_before_first_spike": ["time [ms]"],
-        #                       "accommodation_index": ["accommodation index"],
-        #                       "average_AP_overshoot": ["voltage [mV]"],
-        #                       "average_AHP_depth": ["voltage [mV]"],
-        #                       "average_AP_width": ["time [ms]"]
-        #                      }
         implemented_labels = {}
 
         def efel_wrapper(feature_name):
