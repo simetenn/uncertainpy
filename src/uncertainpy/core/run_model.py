@@ -1,5 +1,12 @@
+try:
+
+    from xvfbwrapper import Xvfb
+
+    prerequisites = True
+except ImportError:
+    prerequisites = False
+
 from tqdm import tqdm
-from xvfbwrapper import Xvfb
 
 import numpy as np
 import multiprocess as mp
@@ -333,6 +340,9 @@ class RunModel(ParameterBase):
 
         """
         if self.suppress_model_graphics:
+            if not prerequisites:
+                raise ImportError("Running with suppress_model_graphics require: xvfbwrapper")
+
             vdisplay = Xvfb()
             vdisplay.start()
 

@@ -309,7 +309,7 @@ class TestUncertainty(TestCasePlot):
             verbose_level="error"
         )
 
-        uncertainty.polynomial_chaos(method="custom")
+        uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir)
 
         self.assertTrue(uncertainty.data.test_value,
                         "custom PCE method")
@@ -629,7 +629,6 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("feature2d_sobol_total_sum")
 
 
-
         self.compare_plot("sobol_total_sum_grid")
         self.compare_plot("sobol_first_sum_grid")
 
@@ -845,7 +844,9 @@ class TestUncertainty(TestCasePlot):
     def test_quantify_custom(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="custom", custom_keyword="value")
+        self.uncertainty.quantify(method="custom", custom_keyword="value",
+                                 data_folder=self.output_test_dir,
+                                 plot=None)
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
@@ -854,7 +855,7 @@ class TestUncertainty(TestCasePlot):
     def test_custom_uncertainty_quantification(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.custom_uncertainty_quantification(custom_keyword="value")
+        self.uncertainty.custom_uncertainty_quantification(custom_keyword="value", data_folder=self.output_test_dir, plot=None)
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
@@ -871,7 +872,7 @@ class TestUncertainty(TestCasePlot):
 
         self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
 
-        self.uncertainty.quantify(method="custom", argument="value")
+        self.uncertainty.quantify(method="custom", argument="value", plot=None, data_folder=self.output_test_dir)
 
         self.assertEqual(self.uncertainty.data.argument, "value")
 
@@ -887,7 +888,7 @@ class TestUncertainty(TestCasePlot):
 
         self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
 
-        self.uncertainty.quantify(method="custom", argument="value")
+        self.uncertainty.quantify(method="custom", argument="value", data_folder=self.output_test_dir, plot=None)
 
         self.assertEqual(self.uncertainty.data.argument, "value")
 

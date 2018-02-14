@@ -134,7 +134,8 @@ class UncertaintyQuantification(ParameterBase):
                                     verbose_filename,
                                     self.__class__.__name__)
 
-        self.plotting = PlotUncertainty(verbose_level=verbose_level,
+        self.plotting = PlotUncertainty(folder=None,
+                                        verbose_level=verbose_level,
                                         verbose_filename=verbose_filename)
 
 
@@ -1022,8 +1023,7 @@ class UncertaintyQuantification(ParameterBase):
             Name of the data file.
         folder : str, optional
             The folder to store the data in. Creates the folder if it does not
-            exist.
-            Default is "data".
+            exist. Default is "/data".
 
         See also
         --------
@@ -1094,33 +1094,32 @@ class UncertaintyQuantification(ParameterBase):
         uncertainpy.Data
         uncertainpy.plotting.PlotUncertainty
         """
-
-        self.plotting.data = self.data
-        self.plotting.folder = folder
-        self.plotting.figureformat = ".png"
-
         if type is None:
             return
-
-        elif type.lower() == "condensed_first":
-            self.plotting.plot_condensed(sensitivity="first")
-
-        elif type.lower() == "condensed_total":
-            self.plotting.plot_condensed(sensitivity="total")
-
-        elif type.lower() == "condensed_no_sensitivity":
-            self.plotting.plot_condensed(sensitivity=None)
-
-        elif type.lower() == "all":
-            self.plotting.plot_all_sensitivities()
-            self.plotting.all_evaluations()
-
-        elif type.lower() == "evaluations":
-            self.plotting.all_evaluations()
-
         else:
-            raise ValueError('type must one of: "condensed_first", '
-                             '"condensed_total", "condensed_no_sensitivity" '
-                             '"all", "evaluations", None, not {}'.format(type))
+            self.plotting.data = self.data
+            self.plotting.folder = folder
+            self.plotting.figureformat = ".png"
+
+            if type.lower() == "condensed_first":
+                self.plotting.plot_condensed(sensitivity="sobol_first")
+
+            elif type.lower() == "condensed_total":
+                self.plotting.plot_condensed(sensitivity="sobol_total")
+
+            elif type.lower() == "condensed_no_sensitivity":
+                self.plotting.plot_condensed(sensitivity=None)
+
+            elif type.lower() == "all":
+                self.plotting.plot_all_sensitivities()
+                self.plotting.all_evaluations()
+
+            elif type.lower() == "evaluations":
+                self.plotting.all_evaluations()
+
+            else:
+                raise ValueError('type must one of: "condensed_first", '
+                                '"condensed_total", "condensed_no_sensitivity" '
+                                '"all", "evaluations", None, not {}'.format(type))
 
 

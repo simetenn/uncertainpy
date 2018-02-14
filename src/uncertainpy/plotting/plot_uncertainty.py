@@ -116,7 +116,7 @@ class PlotUncertainty(object):
     def folder(self, new_folder):
         self._folder = new_folder
 
-        if not os.path.isdir(new_folder):
+        if new_folder is not None and not os.path.isdir(new_folder):
             os.makedirs(new_folder)
 
 
@@ -1687,6 +1687,11 @@ class PlotUncertainty(object):
             If sensitivity is not one of "sobol_first", "first", "sobol_total",
             "total", or None.
         """
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        sensitivity, _ = self.convert_sensitivity(sensitivity)
+
         for feature in self.data:
             if self.data.ndim(feature) == 1:
                 self.mean_variance_1d(feature=feature)
@@ -1772,7 +1777,6 @@ class PlotUncertainty(object):
 
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
-
 
         sensitivity, _ = self.convert_sensitivity(sensitivity)
 

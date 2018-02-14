@@ -11,7 +11,7 @@ import platform
 if not platform.system() == "Linux":
     print("Warning: Uncertainpy not tested for current operating system")
 
-name = "testme2"
+name = "uncertainpy"
 
 uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                    "multiprocess", "numpy", "scipy", "seaborn", "matplotlib"]
