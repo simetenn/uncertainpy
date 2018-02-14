@@ -10,6 +10,7 @@ from tests import *
 
 
 verbose = 1
+exit_status = 0
 
 
 
@@ -53,6 +54,8 @@ def create_test_suite(test_classes_to_run=[], parameter_test_cases=[], parameter
 
 
 def run(test_cases=[], parameter_test_cases=[], parameter=None):
+    global exit_status
+
     suite = create_test_suite(test_cases, parameter_test_cases, parameter)
 
     runner = unittest.TextTestRunner(verbosity=verbose)
@@ -95,7 +98,7 @@ testing_all = testing_parameters + testing_models + testing_base\
 testing_complete = testing_all + [TestExamples]
 
 
-
+#chain=True
 @click.group()
 @click.option('--verbosity', default=1, help="Verbosity of test runner.")
 def cli(verbosity):
@@ -286,4 +289,5 @@ def complete(exact):
 
 if __name__ == '__main__':
     cli()
+
 
