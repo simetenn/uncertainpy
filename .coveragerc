@@ -2,13 +2,6 @@
 [run]
 source = uncertainpy
 omit = uncertainpy/tests/*
-       # Old files, not removed from repo yet
-       uncertainpy/plotting/plotUncertaintyCompare.py
-       uncertainpy/utils/collect_by_parameter.py
-       uncertainpy/utils/memory.py
-       uncertainpy/evaluate_node_function.py
-       uncertainpy/exploration.py
-
 
 [report]
 # Regexes for lines to exclude from consideration
@@ -19,6 +12,3 @@ exclude_lines =
     # Don't complain if tests don't hit defensive assertion code:
     raise AssertionError
     raise NotImplementedError
-
-    # Don't complain if non-runnable code isn't run:
-    if __name__ == .__main__.:

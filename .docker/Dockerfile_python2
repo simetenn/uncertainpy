@@ -86,11 +86,6 @@ RUN conda install -c conda-forge codecov
 
 # Install uncertainpy dependencies
 RUN apt-get update --fix-missing
-RUN apt-get -y install dvipng
 RUN apt-get -y install Xvfb
 
-
-RUN conda install -c conda-forge xvfbwrapper
-# RUN pip install elephant
-# RUN pip install quantities
-# RUN pip install efel
+RUN pip install xvfbwrapper

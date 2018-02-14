@@ -14,16 +14,16 @@ if not platform.system() == "Linux":
 name = "testme2"
 
 uncertainpy_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
-                   "multiprocess", "numpy", "scipy", "seaborn"]
+                   "multiprocess", "numpy", "scipy", "seaborn", "matplotlib"]
 
 extras_require = {
     'spike_features':  ["efel"],
     'network_features': ["elephant", "neo", "quantities"],
 }
 
-anaconda_req = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
+all_requires = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
                 "multiprocess", "numpy", "scipy", "seaborn",
-                "efel", "elephant",  "neo", "quantities"]
+                "efel", "elephant",  "neo", "quantities", "matplotlib"]
 
 long_description = open("README.md").read()
 
@@ -33,15 +33,15 @@ long_description = "\n".join(long_description.split("\n")[4:])
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name=name,
-      version="0.9.0",
+      version="0.9.1",
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
     #   description='Uncertainty quantification and sensitivity analysis',
     #   long_description=long_description,
-      python_requires=">=2.7",
+      python_requires="==2.7",
       packages=find_packages("src"),
       package_dir={"": "src"},
       data_files=["README.md"],
-      install_requires=anaconda_req,
+      install_requires=all_requires,
       extras_require=extras_require,
       )
