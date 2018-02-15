@@ -48,7 +48,6 @@ or from source by cloning the Github repository:
 
 Uncertainpy has the following dependencies:
 
-* `xvfbwrapper`
 * `chaospy`
 * `tqdm`
 * `h5py`
@@ -60,7 +59,7 @@ Uncertainpy has the following dependencies:
 Additionally Uncertainpy has a few optional dependencies for specific classes of models and for features of the models.
 The following external simulators are required for specific models:
 
-* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python), a simulator for neurons.
+* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python), a simulator for neurons, and `xvfbwrapper`.
 * `uncertainpy.NestModel`: Requires [Nest](http://www.nest-simulator.org/installation) (with Python), a simulator for network of neurons.
 
 And the following Python packages are required for specific features:
@@ -116,28 +115,29 @@ Inside this function we solve our equation by integrating it using
 before we return the results.
 The implementation of the model is:
 
+    # Create the coffee cup model function
     def coffee_cup(kappa, T_env):
-        # Initial temperature and time
-        time = np.linspace(0, 200, 150)
-        T_0 = 95
+        # Initial temperature and time array
+        time = np.linspace(0, 200, 150)            # Minutes
+        T_0 = 95                                   # Celsius
 
         # The equation describing the model
         def f(T, time, kappa, T_env):
             return -kappa*(T - T_env)
 
         # Solving the equation by integration.
-        values = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
+        temperature = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
 
-        # Return time and model results
-        return time, values
+        # Return time and model output
+        return time, temperature
 
 We could use this function directly in `UncertaintyQuantification`,
 but we would like to have labels on the axes when plotting.
 So we create a `Model` with the above run function and labels:
 
-    # Create a model from coffee_cup function and add labels
-    model = un.Model(run=coffee_cup,
-                    labels=["Time [s]", "Temperature [C]"])
+    # Create a model from the coffee_cup function and add labels
+    model = un.Model(run=coffee_cup, labels=["Time (min)", "Temperature (C)"])
+
 
 The next step is to define the uncertain parameters.
 We give the uncertain parameters in the cooling coffee cup model the following
@@ -151,16 +151,18 @@ distributions:
 ![img](http://latex.codecogs.com/svg.latex?\begin{align*}%0D%0A\kappa%26%3D\mathrm{Uniform}(0.025%2C0.075)%2C\\\\%0D%0AT_{env}%26%3D\mathrm{Uniform}(15%2C25).%0D%0A\end{align*})
 
 
-We use Chaospy to create the distributions.
+We use Chaospy to create the distributions, and create a dictionary that we
+pass to `Parameters`:
 
     # Create the distributions
     kappa_dist = cp.Uniform(0.025, 0.075)
     T_env_dist = cp.Uniform(15, 25)
 
-    # Define a parameter list and use it to create the Parameters
-    parameter_list = [["kappa", None, kappa_dist],
-                      ["T_env", None, T_env_dist]]
-    parameters = un.Parameters(parameter_list)
+    # Define the parameters dictionary
+    parameters = {"kappa": kappa_dist, "T_env": T_env_dist}
+
+    # and use it to create the Parameters
+    parameters = un.Parameters(parameters)
 
 
 We can now calculate the uncertainty and sensitivity using polynomial chaos
