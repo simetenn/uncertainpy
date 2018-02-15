@@ -883,6 +883,7 @@ class UncertaintyCalculations(ParameterBase):
             5. ``data.incomplete``
             6. ``data.method``
 
+
         When returned `data` additionally contains:
 
             7. ``data["model/features"].mean``
@@ -893,6 +894,7 @@ class UncertaintyCalculations(ParameterBase):
             12. ``data["model/features"].sobol_total``, if more than 1 parameter
             13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
             14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+
 
         See also
         --------

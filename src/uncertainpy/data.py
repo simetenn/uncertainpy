@@ -293,6 +293,7 @@ class Data(collections.MutableMapping):
     and so implemented. Can be indexed as a regular dictionary with
     model/feature names as keys and returns a DataFeature object that contains
     the data for all statistical metrics for that model/feature.
+    Additionally it contains information on how the calculations was performed
 
     Parameters
     ----------
@@ -310,8 +311,15 @@ class Data(collections.MutableMapping):
 
     Attributes
     ----------
+    uncertain_parameters : list
+        A list of the uncertain parameters in the uncertainty quantification.
     model_name : str
         Name of the model.
+    incomplete : list
+        List of all model/features that have missing model/feature evaluations.
+    method : str
+        A string that describes the method used to perform the uncertainty
+        quantification.
     data : dictionary
         A dictionary with a DataFeature for each model/feature.
     logger : logging.Logger
