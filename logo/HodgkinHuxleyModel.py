@@ -2,26 +2,17 @@ from uncertainpy import Model
 
 import numpy as np
 import odespy
+from uncertainpy import Model
 
-# The class name and file name must be the same
-class HodgkinHuxleyModel(Model):
-    """
-    The model must be able to handle these calls
+import numpy as np
+from scipy.integrate import odeint
 
-    simulation = model()
-    simulation.load()
-    simulation.setParameters(parameters -> dictionary)
-    simulation.run()
-    simulation.save(current_process -> int)
 
-    simulation.cmd()
-    """
-    def __init__(self, parameters=None):
-        """
-        Init must be able to be called with 0 arguments
-        """
-        Model.__init__(self, parameters=parameters)
-
+class HodgkinHuxley(Model):
+    def __init__(self):
+        Model.__init__(self,
+                       adaptive=False,
+                       labels=["Time (ms)", "Voltage (mV)"])
 
         ## HH Parameters
         self.V_rest = -65   # mV
@@ -35,21 +26,14 @@ class HodgkinHuxleyModel(Model):
 
 
         ## setup parameters and state variables
-        self.I_value = 10
-        T = 55    # ms
+        self.I_value = 150
+        T = 15    # ms
         dt = 0.025  # ms
-        self.t = np.arange(0, T + dt, dt)
+        self.time = np.arange(0, T + dt, dt)
 
-
-        self.xlabel = "time [ms]"
-        self.ylabel = "voltage [mv]"
 
 
     def I(self, t):
-        if t >= 5 and t <= 24:
-            return self.I_value
-        else:
-            return 0
         return self.I_value
 
     # K channel
@@ -110,19 +94,19 @@ class HodgkinHuxleyModel(Model):
         return [dVdt, dhdt, dmdt, dndt]
 
 
-    def run(self):
+    def run(self, **parameters):
+        self.set_parameters(**parameters)
 
         self.h0 = self.h_inf(self.V_rest)
         self.m0 = self.m_inf(self.V_rest)
         self.n0 = self.n_inf(self.V_rest)
 
-
         initial_conditions = [self.V_rest, self.h0, self.m0, self.n0]
 
+        X = odeint(self.dXdt, initial_conditions, self.time)
+        values = X[:, 0]
 
-        solver = odespy.RK4(self.dXdt)
-        solver.set_initial_condition(initial_conditions)
-        X, t = solver.solve(self.t)
+         # Add info needed by certain spiking features and efel features
+        info = {"stimulus_start": self.time[0], "stimulus_end": self.time[-1]}
 
-        self.t = t
-        self.values = X[:, 0]
+        return self.time, values, info

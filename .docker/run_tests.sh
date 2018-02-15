@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o pipefail
+set -eo pipefail
 source .bashrc
 cd uncertainpy
 python setup.py install
