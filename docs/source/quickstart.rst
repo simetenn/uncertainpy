@@ -4,6 +4,8 @@ Quickstart
 ==========
 This section gives a brief overview of what you need to know to perform an
 uncertainty quantification and sensitivity analysis with Uncertainpy.
+It only gives the most basic way of getting started, many more options than
+shown here are available.
 
 The uncertainty quantification and sensitivity analysis
 includes three main components:
@@ -103,25 +105,19 @@ probability distributions with Chaospy,
 see Section 3.3 in the `Chaospy paper`_.
 
 .. _Chaospy paper: https://www.sciencedirect.com/science/article/pii/S1877750315300119
-
-The parameters are defined by the :ref:`Parameters`  class.
-``Parameters`` takes the argument ``parameter_list`` with the
-above information for each parameter.
+`parameters` is a dictionary with the above information,
+the names of the parameters are the keys,
+and the fixed values or distributions of the parameters are the values.
 As an example, if we have two parameters,
 where the first is named ``name_1`` and has a uniform probability
 distributions in the interval :math:`[8, 16]`, and the second is named
 ``name_2`` and has a fixed value 42, the list become::
 
     import chaospy as cp
-    parameter_list = [["name_1", cp.Uniform(8, 16)],
-                      ["name_2", 42]]
+    parameters = {"name_1": cp.Uniform(8, 16), "name_2": 42}
 
-And ``Parameters`` is initialized:::
+The `parameter` argument in ``UncertaintyQuantification`` is such a dictionary.
 
-    parameters = un.Parameters(parameter_list=parameter_list)
-
-The `parameter` argument in ``UncertaintyQuantification`` is either
-``Parameters`` object, or a ``parameter_list`` as shown above.
 
 For more on parameters see :ref:`Parameters`.
 

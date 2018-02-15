@@ -16,24 +16,38 @@ see Section 3.3 in the `Chaospy paper`_.
 
 .. _Chaospy paper: https://www.sciencedirect.com/science/article/pii/S1877750315300119
 
+
 The parameters are defined by the :ref:`Parameters <Parameters class>`  class.
-``Parameters`` takes the argument ``parameter_list`` with the
-above information for each parameter.
+``Parameters`` takes the argument `parameters`.
+`parameters` can be on many different forms, but the most useful is
+a dictionary with the above information,
+the names of the parameters are the keys,
+and the fixed values or distributions of the parameters are the values.
 As an example, if we have two parameters,
 where the first is named ``name_1`` and has a uniform probability
 distributions in the interval :math:`[8, 16]`, and the second is named
 ``name_2`` and has a fixed value 42, the list become::
 
     import chaospy as cp
-    parameter_list = [["name_1", cp.Uniform(8, 16)],
-                      ["name_2", 42]]
+    parameters = {"name_1": cp.Uniform(8, 16), "name_2": 42}
 
 And ``Parameters`` is initialized:::
 
-    parameters = un.Parameters(parameter_list=parameter_list)
+    parameters = un.Parameters(parameters=parameters)
 
+
+The other possible forms that `parameters` can take are:
+
+    * ``{name_1: parameter_object_1, name: parameter_object_2, ...}``
+    * ``{name_1:  value_1 or Chaospy distribution, name_2:  value_2 or Chaospy distribution, ...}``
+    * ``[parameter_object_1, parameter_object_2, ...]``,
+    * ``[[name_1, value_1 or Chaospy distribution], ...]``.
+    * ``[[name_1, value_1, Chaospy distribution or callable that returns a Chaospy distribution], ...]``
+
+Where ``name`` is the name of the parameter and ``parameter_object`` is a ``Parameter``
+object (see below).
 The `parameter` argument in ``UncertaintyQuantification`` is either
-``Parameters`` object, or a ``parameter_list`` as shown above.
+``Parameters`` object, or a ``parameters`` dictionary/list as shown above.
 
 Each parameter in ``Parameters`` is a :ref:`Parameter <Parameter>` object.
 Each ``Parameter`` object is responsible for storing the name and fixed value
