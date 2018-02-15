@@ -460,15 +460,6 @@ class TestEfelFeatures(unittest.TestCase):
 
         self.implemented_features = efel.getFeatureNames()
 
-        # self.implemented_labels = {"nr_spikes": ["number of spikes"],
-        #                            "spike_rate": ["spike rate [Hz]"],
-        #                            "time_before_first_spike": ["time [ms]"],
-        #                            "accommodation_index": ["accommodation index"],
-        #                            "average_AP_overshoot": ["voltage [mV]"],
-        #                            "average_AHP_depth": ["voltage [mV]"],
-        #                            "average_AP_width": ["time [ms]"]
-        #                           }
-
         self.features = EfelFeatures(verbose_level="error")
 
         self.info = {}
@@ -488,21 +479,6 @@ class TestEfelFeatures(unittest.TestCase):
     def test_init(self):
         self.assertIsInstance(self.features, EfelFeatures)
 
-    # def test_initLabels(self):
-    #     features = SpikingFeatures(labels={"nr_spikes": ["changed"],
-    #                                        "new": ["new"]})
-
-    #     labels = {"nr_spikes": ["changed"],
-    #               "spike_rate": ["spike rate [Hz]"],
-    #               "time_before_first_spike": ["time [ms]"],
-    #               'average_AP_width': ['time [ms]'],
-    #               "accommodation_index": ["accommodation index"],
-    #               "average_AP_overshoot": ["voltage [mV]"],
-    #               "average_AHP_depth": ["voltage [mV]"],
-    #               "new": ["new"]
-    #              }
-
-    #     self.assertEqual(features.labels, labels)
 
     def test_features_to_run_all(self):
         features = EfelFeatures(features_to_run="all", verbose_level="error")

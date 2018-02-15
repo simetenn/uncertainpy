@@ -29,7 +29,12 @@ class NeuronModel(Model):
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
-        Default is ``["time [ms]", "voltage [mv]"]``.
+        Default is ``["time (ms)", "voltage (mv)"]``.
+    suppress_graphics : bool, optional
+        Suppress all graphics created by the Neuron model.
+        Default is True.
+    **kwargs :
+        Additional key-value pairs added to info.
 
     Attributes
     ----------
@@ -41,6 +46,8 @@ class NeuronModel(Model):
     adaptive : bool
         True if the model is adaptive, meaning it has a varying number of
         time values. False if not. Default is False.
+    suppress_graphics : bool
+        Suppress all graphics created by the model.
 
     Raises
     ------
@@ -60,10 +67,12 @@ class NeuronModel(Model):
                  labels=["Time (ms)", "Membrane potential (mV)"],
                  stimulus_start=None,
                  stimulus_end=None,
+                 suppress_graphics=True,
                  **kwargs):
 
         super(NeuronModel, self).__init__(adaptive=adaptive,
-                                          labels=labels)
+                                          labels=labels,
+                                          suppress_graphics=suppress_graphics)
 
         self.file = file
         self.path = path

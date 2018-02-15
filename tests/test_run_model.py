@@ -38,8 +38,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
-                                 features=self.features,
-                                 suppress_model_graphics=True)
+                                 features=self.features)
 
 
     def tearDown(self):
@@ -309,13 +308,15 @@ class TestRunModel(unittest.TestCase):
 
     def test_evaluate_nodes_not_supress_graphics(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel.suppress_model_graphics = False
+        self.runmodel.model.suppress_graphics = False
+
+
         self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
 
     def test_evaluate_nodes_supress_graphics(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel.supress_model_suppress_model_graphics = True
+        self.runmodel.model.suppress_graphics = True
         self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
 
@@ -329,8 +330,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -358,8 +358,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -383,8 +382,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -433,8 +431,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
         results = [{"feature0d": {"values": 1, "time": np.nan}},
                    {"feature0d": {"values": 1, "time": np.nan}},
@@ -453,8 +450,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -501,8 +497,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -520,8 +515,7 @@ class TestRunModel(unittest.TestCase):
     # def test_results_to_dataAdaptiveError(self):
     #     self.runmodel = RunModel(TestingModelAdaptive(adaptive=True),
     #                              features=TestingFeatures(),
-    #                              supress_model_output=True,
-    #                              suppress_model_graphics=True)
+    #                              suppress_model_output=True)
     #
     #
     #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -656,8 +650,7 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features,
-                                 suppress_model_graphics=True)
+                                 features=features)
 
 
 

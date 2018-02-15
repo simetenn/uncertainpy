@@ -128,7 +128,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                               "local_variation": ["Neuron nr", "Local variation"],
                               "mean_local_variation": ["Mean local variation"],
                               "mean_firing_rate": ["Neuron nr", "Rate (Hz)"],
-                              "instantaneous_rate": ["Time [ms]", "Neuron nr", "Rate (Hz)"],
+                              "instantaneous_rate": ["Time (ms)", "Neuron nr", "Rate (Hz)"],
                               "fanofactor": ["Fanofactor"],
                               "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
                               "victor_purpura_dist": ["Neuron nr", "Neuron nr", ""],

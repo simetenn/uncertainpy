@@ -46,10 +46,6 @@ class RunModel(ParameterBase):
     CPUs : int, optional
         The number of CPUs to use when calculating the model and features.
         Default is number of CPUs on the computer (multiprocess.cpu_count()).
-    suppress_model_graphics : bool, optional
-        Suppress all model graphics created by the model.
-        Default is True.
-
 
     Attributes
     ----------
@@ -63,9 +59,6 @@ class RunModel(ParameterBase):
         Logger object responsible for logging to screen or file.
     CPUs : int
         The number of CPUs used when calculating the model and features.
-    suppress_model_graphics : bool
-        Suppress all model graphics created by the model.
-
 
     See Also
     --------
@@ -82,8 +75,7 @@ class RunModel(ParameterBase):
                  features=None,
                  verbose_level="info",
                  verbose_filename=None,
-                 CPUs=mp.cpu_count(),
-                 suppress_model_graphics=True):
+                 CPUs=mp.cpu_count()):
 
 
         self._parallel = Parallel(model=model,
@@ -98,7 +90,6 @@ class RunModel(ParameterBase):
                                        verbose_filename=verbose_filename)
 
         self.CPUs = CPUs
-        self.suppress_model_graphics = suppress_model_graphics
 
 
 
@@ -339,9 +330,9 @@ class RunModel(ParameterBase):
                 results = [result 1, result 2, ..., result N]
 
         """
-        if self.suppress_model_graphics:
+        if self.model.suppress_graphics:
             if not prerequisites:
-                raise ImportError("Running with suppress_model_graphics require: xvfbwrapper")
+                raise ImportError("Running with suppress_graphics require: xvfbwrapper")
 
             vdisplay = Xvfb()
             vdisplay.start()
@@ -359,7 +350,7 @@ class RunModel(ParameterBase):
 
         pool.close()
 
-        if self.suppress_model_graphics:
+        if self.model.suppress_graphics:
             vdisplay.stop()
 
         return np.array(results)

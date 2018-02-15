@@ -60,9 +60,6 @@ class UncertaintyQuantification(ParameterBase):
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.
         No logging to screen if set. Default is None.
-    suppress_model_graphics : bool, optional
-        Suppress all model graphics created by the model.
-        Default is True.
 
     Attributes
     ----------
@@ -101,8 +98,7 @@ class UncertaintyQuantification(ParameterBase):
                  custom_uncertainty_quantification=None,
                  verbose_level="info",
                  verbose_filename=None,
-                 CPUs=mp.cpu_count(),
-                 suppress_model_graphics=True):
+                 CPUs=mp.cpu_count()):
 
 
         if uncertainty_calculations is None:
@@ -113,7 +109,6 @@ class UncertaintyQuantification(ParameterBase):
                 create_PCE_custom=create_PCE_custom,
                 custom_uncertainty_quantification=custom_uncertainty_quantification,
                 CPUs=CPUs,
-                suppress_model_graphics=suppress_model_graphics,
                 verbose_level=verbose_level,
                 verbose_filename=verbose_filename
             )

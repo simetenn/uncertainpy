@@ -76,7 +76,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(model.labels, ["test x", "text y"])
         self.assertTrue(model.adaptive)
         self.assertEqual(model.name, "f")
-
+        self.assertEqual(model.suppress_graphics, False)
 
     def test_set_run(self):
         def f(x):
@@ -254,7 +254,7 @@ class TestNeuronModel(unittest.TestCase):
         self.assertEqual(model.info["stimulus_end"], 1000)
         self.assertEqual(model.info["stimulus_start"], 1900)
         self.assertEqual(model.name, "interneuron")
-
+        self.assertEqual(model.suppress_graphics, True)
 
     def test_run(self):
         file = "mosinit.hoc"
@@ -291,7 +291,7 @@ class TestNestModel(unittest.TestCase):
         model = NestModel(brunel_network)
         self.assertEqual(model.run, brunel_network)
         self.assertEqual(model.name, "brunel_network")
-
+        self.assertEqual(model.suppress_graphics, False)
 
     def test_set_run(self):
         def f(x):

@@ -57,9 +57,6 @@ class UncertaintyCalculations(ParameterBase):
     verbose_filename : {None, str}, optional
         Sets logging to a file with name `verbose_filename`.
         No logging to screen if set. Default is None.
-    suppress_model_graphics : bool, optional
-        Suppress all model graphics created by the model.
-        Default is True.
 
     Attributes
     ----------
@@ -90,7 +87,6 @@ class UncertaintyCalculations(ParameterBase):
                  create_PCE_custom=None,
                  custom_uncertainty_quantification=None,
                  CPUs=mp.cpu_count(),
-                 suppress_model_graphics=True,
                  verbose_level="info",
                  verbose_filename=None):
 
@@ -99,8 +95,7 @@ class UncertaintyCalculations(ParameterBase):
                                  features=features,
                                  verbose_level=verbose_level,
                                  verbose_filename=verbose_filename,
-                                 CPUs=CPUs,
-                                 suppress_model_graphics=suppress_model_graphics)
+                                 CPUs=CPUs)
 
         if create_PCE_custom is not None:
             self.create_PCE_custom = create_PCE_custom

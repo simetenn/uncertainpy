@@ -25,6 +25,9 @@ class Model(object):
     run : {None, callable}, optional
         A function that implements the model. See the ``run`` method for
         requirements of the function. Default is None.
+    suppress_graphics : bool, optional
+        Suppress all graphics created by the model.
+        Default is False.
 
     Attributes
     ----------
@@ -38,6 +41,8 @@ class Model(object):
     name : str
         Name of the model. Either the name of the class or the name of the
         function set as run.
+    suppress_graphics : bool
+        Suppress all graphics created by the model.
 
     See Also
     --------
@@ -49,12 +54,14 @@ class Model(object):
                  adaptive=False,
                  labels=[],
                  postprocess=None,
+                 suppress_graphics=False,
                  ignore=False):
                  # TODO fix and document ignore option
 
         self.adaptive = adaptive
         self.labels = labels
         self.ignore = ignore
+        self.suppress_graphics = suppress_graphics
 
         if run is not None:
             self.run = run
