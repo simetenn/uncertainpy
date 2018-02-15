@@ -43,7 +43,7 @@ Parameter                      Value        Unit                                
 To perform an uncertainty quantification and sensitivity analysis of this model,
 we assume each of these 11 parameters have a uniform uncertainty distribution
 in the interval :math:`\pm 2.5\%` around their original value.
-We create these parameters similar to what we did in the :ref:`Hodgkin-Huxley example <hodgkin_huxley>`:
+We create these parameters similar to how we did in the :ref:`Hodgkin-Huxley example <hodgkin_huxley>`:
 
 
 .. literalinclude:: ../../../examples/interneuron/uq_interneuron.py

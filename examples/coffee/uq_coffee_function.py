@@ -28,10 +28,11 @@ model = un.Model(run=coffee_cup, labels=["Time (min)", "Temperature (C)"])
 kappa_dist = cp.Uniform(0.025, 0.075)
 T_env_dist = cp.Uniform(15, 25)
 
-# Define a parameter list and use it to create the Parameters
-parameter_list = [["kappa", kappa_dist],
-                  ["T_env", T_env_dist]]
-parameters = un.Parameters(parameter_list)
+# Define the parameters dictionary
+parameters = {"kappa": kappa_dist, "T_env": T_env_dist}
+
+# and use it to create the Parameters
+parameters = un.Parameters(parameters)
 
 # Set up the uncertainty quantification
 UQ = un.UncertaintyQuantification(model=model, parameters=parameters)

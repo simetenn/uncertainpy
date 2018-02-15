@@ -36,13 +36,13 @@ T_env_dist = cp.Uniform(15, 25)
 alpha_dist = cp.Uniform(0.5, 1.5)
 kappa_hat_dist = cp.Uniform(0.025, 0.075)/alpha_dist
 
-# Define a parameter list and use it to create the Parameters
-parameter_list = [["alpha", alpha_dist],
-                  ["kappa_hat", kappa_hat_dist],
-                  ["T_env", T_env_dist]]
-parameters = un.Parameters(parameter_list)
+# Define the parameters dictionary
+parameters = {"alpha": alpha_dist,
+              "kappa_hat": kappa_hat_dist,
+              "T_env": T_env_dist}
 
-# Set up the uncertainty quantification
+# We can use the parameters dictionary directly
+# when we set up the uncertainty quantification
 UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
 # Perform the uncertainty quantification using the Rosenblatt transformation

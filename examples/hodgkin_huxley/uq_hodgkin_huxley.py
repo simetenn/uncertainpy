@@ -13,7 +13,7 @@ parameter_list = [["V_rest", -65, None],
                   ["E_K", -77, cp.Uniform(-74, -79)],
                   ["E_l", -50.613, cp.Uniform(-61, -43)]]
 
-# Create the parameters
+# Create the parameters using that parameter list
 parameters = un.Parameters(parameter_list)
 
 # Set all parameters to have a uniform distribution

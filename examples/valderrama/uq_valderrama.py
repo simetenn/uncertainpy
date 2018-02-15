@@ -8,20 +8,20 @@ model = un.Model(run=valderrama,
                  labels=["Time (ms)", "Membrane potential (mV)"])
 
 # Define a parameter list
-parameter_list = [["V_0", -10],
-                  ["C_m", 1],
-                  ["gbar_Na", 120],
-                  ["gbar_K", 36],
-                  ["gbar_l", 0.3],
-                  ["m_0", 0.0011],
-                  ["n_0", 0.0003],
-                  ["h_0", 0.9998],
-                  ["E_Na", 112],
-                  ["E_K", -12],
-                  ["E_l", 10.613]]
+parameters = {"V_0": -10,
+              "C_m": 1,
+              "gbar_Na": 120,
+              "gbar_K": 36,
+              "gbar_l": 0.3,
+              "m_0": 0.0011,
+              "n_0": 0.0003,
+              "h_0": 0.9998,
+              "E_Na": 112,
+              "E_K": -12,
+              "E_l": 10.613}
 
 # Create the parameters
-parameters = un.Parameters(parameter_list)
+parameters = un.Parameters(parameters)
 
 # Set all parameters to have a uniform distribution
 # within a 20% interval around their fixed value

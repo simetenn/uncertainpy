@@ -24,15 +24,15 @@ class NeuronModelBahl(un.NeuronModel):
 # Initialize the model with the start and end time of the stimulus
 model = NeuronModelBahl(stimulus_start=100, stimulus_end=600)
 
-# Define a parameter list
-parameter_list = [["e_pas", -80, cp.Uniform(-60, -85)],
-                  ["apical Ra", 261, cp.Uniform(150, 300)]]
+# Define a parameter list and use it directly
+parameters = {"e_pas": -80, cp.Uniform(-60, -85),
+              "apical Ra": 261, cp.Uniform(150, 300)}
 
 # Initialize the features
 features = un.SpikingFeatures()
 
 # Perform the uncertainty quantification
 UQ = un.UncertaintyQuantification(model=model,
-                                  parameters=parameter_list,
+                                  parameters=parameters,
                                   features=features)
 UQ.quantify()

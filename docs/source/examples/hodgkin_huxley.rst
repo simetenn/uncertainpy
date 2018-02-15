@@ -37,7 +37,6 @@ we assume each of these parameters have a uniform distribution in the range
 
 
 
-
 We use uncertainty quantification and sensitivity analysis to explore how this
 parameter uncertainty affect the model output,
 i.e., the action potential response of the neural membrane potential :math:`V_m`

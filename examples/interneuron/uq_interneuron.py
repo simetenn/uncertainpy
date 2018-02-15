@@ -1,20 +1,20 @@
 import uncertainpy as un
 
 # Define a parameter list
-parameter_list = [["Epas", -67],
-                  ["Rm", 22000],
-                  ["gna", 0.09],
-                  ["nash", -52.6],
-                  ["gkdr", 0.37],
-                  ["kdrsh", -51.2],
-                  ["gcat", 1.17e-5],
-                  ["gcal", 0.0009],
-                  ["ghbar", 0.00011],
-                  ["gahp", 6.4e-5],
-                  ["gcanbar", 2e-8]]
+parameters= {"Epas": -67,
+             "Rm": 22000,
+             "gna": 0.09,
+             "nash": -52.6,
+             "gkdr": 0.37,
+             "kdrsh": -51.2,
+             "gcat": 1.17e-5,
+             "gcal": 0.0009,
+             "ghbar": 0.00011,
+             "gahp": 6.4e-5,
+             "gcanbar": 2e-8}
 
 # Create the parameters
-parameters = un.Parameters(parameter_list)
+parameters = un.Parameters(parameters)
 
 # Set all parameters to have a uniform distribution
 # within a 5% interval around their fixed value

@@ -48,7 +48,16 @@ With Chaospy we can create these dependencies using arithmetic operators:
 
 .. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
     :language: python
-    :lines: 27-36
+    :lines: 27-35
+
+
+We can use this ``parameters`` dictionary directly
+when we set up the uncertainty quantification
+
+.. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
+    :language: python
+    :lines: 37-39
+
 
 To be able to use polynomial chaos methods when we have dependent parameters
 we need to use the Rosenblatt transformation, which we enable by::

@@ -62,11 +62,13 @@ So we create a `Model` with the above run function and labels:
     :lines: 24-25
 
 The next step is to define the uncertain parameters.
-We use Chaospy to create the distributions.
+We use Chaospy to create the distributions, and create a dictionary that we
+pass to ``Parameters``:
 
 .. literalinclude:: ../../../examples/coffee/uq_coffee_function.py
     :language: python
-    :lines: 27-34
+    :lines: 27-35
+
 
 We can now calculate the uncertainty and sensitivity using polynomial chaos
 expansions with point collocation,
@@ -74,7 +76,7 @@ which is the default option of ``quantify``.
 
 .. literalinclude:: ../../../examples/coffee/uq_coffee_function.py
     :language: python
-    :lines: 36-41
+    :lines: 37-42
 
 The complete code becomes:
 
