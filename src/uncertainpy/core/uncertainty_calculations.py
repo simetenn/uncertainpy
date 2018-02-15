@@ -352,6 +352,7 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
+            6. ``data.method``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -398,6 +399,8 @@ class UncertaintyCalculations(ParameterBase):
 
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
+
+        data.method = "polynomial chaos expansion with the pseudo-spectral method. polynomial_order={}, quadrature_order={}".format(polynomial_order, quadrature_order)
 
         U_hat = {}
         # Calculate PC for each feature
@@ -475,6 +478,7 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
+            6. ``data.method``
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -517,6 +521,8 @@ class UncertaintyCalculations(ParameterBase):
 
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
+
+        data.method = "polynomial chaos expansion with point collocation. polynomial_order={}, nr_collocation_nodes={}".format(polynomial_order, nr_collocation_nodes)
 
         U_hat = {}
         # Calculate PC for each feature
@@ -597,6 +603,7 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
+            6. ``data.method``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -661,6 +668,9 @@ class UncertaintyCalculations(ParameterBase):
 
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
+
+        data.method = "polynomial chaos expansion with the pseudo-spectral method and the Rosenblatt transformation. polynomial_order={}, quadrature_order={}".format(polynomial_order, quadrature_order)
+
 
         U_hat = {}
         # Calculate PC for each feature
@@ -752,6 +762,7 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
+            6. ``data.method``
 
         The model and feature do not necessarily give results for each node. The
         collocation method is robust towards missing values as long as the number
@@ -806,6 +817,9 @@ class UncertaintyCalculations(ParameterBase):
 
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
+
+        data.method = "polynomial chaos expansion with point collocation and the Rosenblatt transformation. polynomial_order={}, nr_collocation_nodes={}".format(polynomial_order, nr_collocation_nodes)
+
 
         U_hat = {}
         # Calculate PC for each feature
@@ -867,17 +881,18 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
+            6. ``data.method``
 
         When returned `data` additionally contains:
 
-            6. ``data["model/features"].mean``
-            7. ``data["model/features"].variance``
-            8. ``data["model/features"].percentile_5``
-            9. ``data["model/features"].percentile_95``
-            10. ``data["model/features"].sobol_first``, if more than 1 parameter
-            11. ``data["model/features"].sobol_total``, if more than 1 parameter
-            12. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            13. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            7. ``data["model/features"].mean``
+            8. ``data["model/features"].variance``
+            9. ``data["model/features"].percentile_5``
+            10. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            12. ``data["model/features"].sobol_total``, if more than 1 parameter
+            13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
         See also
         --------
@@ -963,6 +978,7 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
+            6. ``data.method``
 
         The method `analyse_PCE` is called after the polynomial approximation
         has been created.
@@ -1126,14 +1142,15 @@ class UncertaintyCalculations(ParameterBase):
             3. ``data["model/features"].labels``
             4. ``data.model_name``
             5. ``data.incomplete``
-            6. ``data["model/features"].mean``
-            7. ``data["model/features"].variance``
-            8. ``data["model/features"].percentile_5``
-            9. ``data["model/features"].percentile_95``
-            10. ``data["model/features"].sobol_first``, if more than 1 parameter
-            11. ``data["model/features"].sobol_total``, if more than 1 parameter
-            12. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            13. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            6. ``data.method``
+            7. ``data["model/features"].mean``
+            8. ``data["model/features"].variance``
+            9. ``data["model/features"].percentile_5``
+            10. ``data["model/features"].percentile_95``
+            11. ``data["model/features"].sobol_first``, if more than 1 parameter
+            12. ``data["model/features"].sobol_total``, if more than 1 parameter
+            13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -1230,6 +1247,8 @@ class UncertaintyCalculations(ParameterBase):
 
         data = self.analyse_PCE(U_hat, distribution, data, nr_samples=nr_pc_mc_samples)
 
+        data.method += ", seed={}".format(seed)
+
         return data
 
 
@@ -1273,10 +1292,11 @@ class UncertaintyCalculations(ParameterBase):
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
-            5. ``data["model/features"].mean``
-            6. ``data["model/features"].variance``
-            7. ``data["model/features"].percentile_5``
-            8. ``data["model/features"].percentile_95``
+            5. ``data.method``
+            6. ``data["model/features"].mean``
+            7. ``data["model/features"].variance``
+            8. ``data["model/features"].percentile_5``
+            9. ``data["model/features"].percentile_95``
 
         In the quasi-Monte Carlo method we quasi-randomly draw 10**3 (by default)
         parameter samples using the Hammersley sequence. We evaluate the model
@@ -1306,6 +1326,7 @@ class UncertaintyCalculations(ParameterBase):
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
+        data.method = "monte carlo method. nr_samples={}, seed={}".format(nr_samples, seed)
 
         # TODO mask data
         for feature in data:

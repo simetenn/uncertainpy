@@ -350,7 +350,7 @@ class Data(collections.MutableMapping):
                  verbose_filename=None):
 
         self.data_information = ["uncertain_parameters", "model_name",
-                                 "incomplete"]
+                                 "incomplete", "method", "version"]
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -361,7 +361,13 @@ class Data(collections.MutableMapping):
         self.model_name = ""
         self.incomplete = []
         self.data = {}
+        self.method = ""
 
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        with open(os.path.join(dir_path, "..", "..", "VERSION")) as version_file:
+            version = version_file.read().strip()
+
+        self.version = version
 
         if filename is not None:
             self.load(filename)
@@ -564,6 +570,9 @@ class Data(collections.MutableMapping):
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name
             f.attrs["incomplete results"] = self.incomplete
+            f.attrs["method"] = self.method
+            f.attrs["version"] = self.version
+
 
             for feature in self:
                 group = f.create_group(feature)
@@ -594,6 +603,8 @@ class Data(collections.MutableMapping):
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
             self.model_name = f.attrs["model name"]
             self.incomplete = f.attrs["incomplete results"]
+            self.method = f.attrs["method"]
+            self.version = f.attrs["version"]
 
             for feature in f:
                 self.add_features(str(feature))

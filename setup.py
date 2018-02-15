@@ -7,6 +7,7 @@ except ImportError:
     print("Setuptools: https://pypi.python.org/pypi/setuptools")
 
 import platform
+import os
 
 if not platform.system() == "Linux":
     print("Warning: Uncertainpy not tested for current operating system")
@@ -30,10 +31,12 @@ long_description = open("README.md").read()
 # Remove badges from the description
 long_description = "\n".join(long_description.split("\n")[4:])
 
+with open("VERSION") as version_file:
+    version = version_file.read().strip()
 
 packages = ['uncertainpy', 'uncertainpy.models', 'uncertainpy.features', 'uncertainpy.plotting', 'uncertainpy.utils']
 setup(name=name,
-      version="0.9.1",
+      version=version,
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
     #   description='Uncertainty quantification and sensitivity analysis',
@@ -41,7 +44,7 @@ setup(name=name,
       python_requires="==2.7",
       packages=find_packages("src"),
       package_dir={"": "src"},
-      data_files=["README.md"],
+      data_files=["README.md", "VERSION"],
       install_requires=all_requires,
       extras_require=extras_require,
       )

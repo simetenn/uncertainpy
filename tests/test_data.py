@@ -142,7 +142,7 @@ class TestData(unittest.TestCase):
 
 
         self.data_information = ["uncertain_parameters", "model_name",
-                                 "incomplete"]
+                                 "incomplete", "method", "version"]
 
 
     def tearDown(self):
