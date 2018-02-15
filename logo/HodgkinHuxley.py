@@ -1,11 +1,8 @@
 from uncertainpy import Model
 
 import numpy as np
-import odespy
-from uncertainpy import Model
-
-import numpy as np
 from scipy.integrate import odeint
+
 
 
 class HodgkinHuxley(Model):
@@ -26,8 +23,8 @@ class HodgkinHuxley(Model):
 
 
         ## setup parameters and state variables
-        self.I_value = 150
-        T = 15    # ms
+        self.I_value = 10
+        T = 55    # ms
         dt = 0.025  # ms
         self.time = np.arange(0, T + dt, dt)
 

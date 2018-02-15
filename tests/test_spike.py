@@ -47,4 +47,3 @@ class TestSpike(TestCasePlot):
 
         self.compare_plot("spike")
 
-        self.assertEqual(1, 0)
