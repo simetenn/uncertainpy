@@ -5,6 +5,7 @@ import collections
 import numpy as np
 
 from .utils import create_logger
+from .version import __version__
 
 
 class DataFeature(collections.MutableMapping):
@@ -371,11 +372,8 @@ class Data(collections.MutableMapping):
         self.data = {}
         self.method = ""
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        with open(os.path.join(dir_path, "..", "..", "VERSION")) as version_file:
-            version = version_file.read().strip()
 
-        self.version = version
+        self.version = __version__
 
         if filename is not None:
             self.load(filename)

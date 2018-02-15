@@ -29,3 +29,4 @@ from .plotting import PlotUncertainty
 from .features import Features, NetworkFeatures, EfelFeatures, GeneralNetworkFeatures
 from .features import GeneralSpikingFeatures, SpikingFeatures
 from .models import Model, NeuronModel, NestModel
+from .version import __version__
