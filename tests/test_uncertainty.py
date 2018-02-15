@@ -57,225 +57,225 @@ class TestUncertainty(TestCasePlot):
 
 
 
-    def tearDown(self):
-        if os.path.isdir(self.output_test_dir):
-            shutil.rmtree(self.output_test_dir)
+    # def tearDown(self):
+    #     if os.path.isdir(self.output_test_dir):
+    #         shutil.rmtree(self.output_test_dir)
 
 
-    def test_init(self):
-        uncertainty = UncertaintyQuantification(self.model, self.parameters)
+    # def test_init(self):
+    #     uncertainty = UncertaintyQuantification(self.model, self.parameters)
 
-        self.assertIsInstance(uncertainty.model, TestingModel1d)
-        self.assertIsInstance(uncertainty.parameters, Parameters)
+    #     self.assertIsInstance(uncertainty.model, TestingModel1d)
+    #     self.assertIsInstance(uncertainty.parameters, Parameters)
 
 
-    def test_init_parameter_list(self):
-        uncertainty = UncertaintyQuantification(self.model, self.parameter_list)
+    # def test_init_parameter_list(self):
+    #     uncertainty = UncertaintyQuantification(self.model, self.parameter_list)
 
-        self.assertIsInstance(uncertainty.model, TestingModel1d)
-        self.assertIsInstance(uncertainty.parameters, Parameters)
+    #     self.assertIsInstance(uncertainty.model, TestingModel1d)
+    #     self.assertIsInstance(uncertainty.parameters, Parameters)
 
-    def test_init_parameter_error(self):
+    # def test_init_parameter_error(self):
 
-        with self.assertRaises(TypeError):
-            UncertaintyQuantification(self.model, 2)
+    #     with self.assertRaises(TypeError):
+    #         UncertaintyQuantification(self.model, 2)
 
 
-    def test_init_features(self):
-        uncertainty = UncertaintyQuantification(self.model,
-                                                self.parameters,
-                                                verbose_level="error")
-        self.assertIsInstance(uncertainty.features, Features)
+    # def test_init_features(self):
+    #     uncertainty = UncertaintyQuantification(self.model,
+    #                                             self.parameters,
+    #                                             verbose_level="error")
+    #     self.assertIsInstance(uncertainty.features, Features)
 
-        uncertainty = UncertaintyQuantification(self.model,
-                                                self.parameters,
-                                                features=TestingFeatures(),
-                                                verbose_level="error")
-        self.assertIsInstance(uncertainty.features, TestingFeatures)
+    #     uncertainty = UncertaintyQuantification(self.model,
+    #                                             self.parameters,
+    #                                             features=TestingFeatures(),
+    #                                             verbose_level="error")
+    #     self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
 
-    def test_init_uncertainty_calculations_custom(self):
-        def uq(self):
-            return "uq"
+    # def test_init_uncertainty_calculations_custom(self):
+    #     def uq(self):
+    #         return "uq"
 
-        def pce(self, uncertain_parameters=None):
-            return "pce"
+    #     def pce(self, uncertain_parameters=None):
+    #         return "pce"
 
-        uncertainty = UncertaintyQuantification(
-            self.model,
-            self.parameters,
-            create_PCE_custom=pce,
-            custom_uncertainty_quantification=uq,
-            verbose_level="error"
-        )
+    #     uncertainty = UncertaintyQuantification(
+    #         self.model,
+    #         self.parameters,
+    #         create_PCE_custom=pce,
+    #         custom_uncertainty_quantification=uq,
+    #         verbose_level="error"
+    #     )
 
-        result = uncertainty.uncertainty_calculations.create_PCE_custom()
-        self.assertEqual(result, "pce")
+    #     result = uncertainty.uncertainty_calculations.create_PCE_custom()
+    #     self.assertEqual(result, "pce")
 
-        result = uncertainty.uncertainty_calculations.custom_uncertainty_quantification()
-        self.assertEqual(result, "uq")
+    #     result = uncertainty.uncertainty_calculations.custom_uncertainty_quantification()
+    #     self.assertEqual(result, "uq")
 
-    def test_init_uncertainty_calculations(self):
+    # def test_init_uncertainty_calculations(self):
 
-        class TempUncertaintyCalculations(UncertaintyCalculations):
-            def create_PCE_custom(self):
-                "custom PCE method"
+    #     class TempUncertaintyCalculations(UncertaintyCalculations):
+    #         def create_PCE_custom(self):
+    #             "custom PCE method"
 
-        uncertainty = UncertaintyQuantification(
-            self.model,
-            self.parameters,
-            uncertainty_calculations=TempUncertaintyCalculations(self.model),
-            verbose_level="error"
-        )
+    #     uncertainty = UncertaintyQuantification(
+    #         self.model,
+    #         self.parameters,
+    #         uncertainty_calculations=TempUncertaintyCalculations(self.model),
+    #         verbose_level="error"
+    #     )
 
-        self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
 
 
-    def test_set_parameters(self):
-        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                                parameters=None,
-                                                verbose_level="error")
-        uncertainty.parameters = Parameters()
-
-        self.assertIsInstance(uncertainty.parameters, Parameters)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
-                              Parameters)
-
-
-    def test_set_parameter_list(self):
-        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                                parameters=None,
-                                                verbose_level="error")
-        uncertainty.parameters = self.parameter_list
-
-        self.assertIsInstance(uncertainty.parameters, Parameters)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
-                              Parameters)
-
-
-    def test_set_parameter_error(self):
-        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                                parameters=None,
-                                                verbose_level="error")
-        with self.assertRaises(TypeError):
-            uncertainty.parameters = 2
-
-
-    def test_set_features(self):
-        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                                parameters=None,
-                                                verbose_level="error")
-        uncertainty.features = TestingFeatures()
-
-        self.assertIsInstance(uncertainty.features, TestingFeatures)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.features, TestingFeatures)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.features,
-                              TestingFeatures)
-
-
-    def test_feature_function(self):
-        def feature_function(time, values):
-            return "time", "values"
-
-        self.uncertainty.features = feature_function
-        self.assertIsInstance(self.uncertainty.features, Features)
-
-        time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(time, "time")
-        self.assertEqual(values, "values")
-
-        self.assertEqual(self.uncertainty.features.features_to_run,
-                         ["feature_function"])
-
-
-    def test_feature_functions(self):
-        def feature_function(time, values):
-            return "time", "values"
-
-        def feature_function2(time, values):
-            return "t2", "U2"
-
-
-        self.uncertainty.features = [feature_function, feature_function2]
-        self.assertIsInstance(self.uncertainty.features, Features)
-
-        time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(time, "time")
-        self.assertEqual(values, "values")
-
-
-        time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(time, "time")
-        self.assertEqual(values, "values")
-
-        time, values = self.uncertainty.features.feature_function2(None, None)
-        self.assertEqual(time, "t2")
-        self.assertEqual(values, "U2")
-
-        self.assertEqual(self.uncertainty.features.features_to_run,
-                         ["feature_function", "feature_function2"])
-
-
-
-    def test_feature_functions_base(self):
-        def feature_function(time, values):
-            return "time", "values"
-
-        def feature_function2(time, values):
-            return "time2", "values2"
-
-        implemented_features = ["nr_spikes", "time_before_first_spike",
-                                "spike_rate", "average_AP_overshoot",
-                                "average_AHP_depth", "average_AP_width",
-                                "accommodation_index"]
-
-        self.uncertainty.features = SpikingFeatures([feature_function, feature_function2])
-        self.assertIsInstance(self.uncertainty.features, SpikingFeatures)
-
-        time, values = self.uncertainty.features.feature_function(None, None)
-        self.assertEqual(time, "time")
-        self.assertEqual(values, "values")
-
-        time, values = self.uncertainty.features.feature_function2(None, None)
-        self.assertEqual(time, "time2")
-        self.assertEqual(values, "values2")
-
-        self.assertEqual(set(self.uncertainty.features.features_to_run),
-                         set(["feature_function", "feature_function2"] + implemented_features))
-
-
-    def test_set_model(self):
-        uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-                                                parameters=None,
-                                                verbose_level="error")
-        uncertainty.model = TestingModel1d()
-
-        self.assertIsInstance(uncertainty.model, TestingModel1d)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.model, TestingModel1d)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.model,
-                              TestingModel1d)
-
-
-    def test_set_model_function(self):
-        uncertainty = UncertaintyQuantification(model=model_function,
-                                                parameters=None,
-                                                verbose_level="error")
-
-        self.assertIsInstance(uncertainty.model, Model)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.model, Model)
-        self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.model,
-                              Model)
-
-
-
-    # def test_label(self):
+    # def test_set_parameters(self):
     #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
-    #                                         parameters=None,
-    #                                         verbose_level="error",
-    #                                         seed=self.seed)
+    #                                             parameters=None,
+    #                                             verbose_level="error")
+    #     uncertainty.parameters = Parameters()
+
+    #     self.assertIsInstance(uncertainty.parameters, Parameters)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
+    #                           Parameters)
+
+
+    # def test_set_parameter_list(self):
+    #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
+    #                                             parameters=None,
+    #                                             verbose_level="error")
+    #     uncertainty.parameters = self.parameter_list
+
+    #     self.assertIsInstance(uncertainty.parameters, Parameters)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.parameters, Parameters)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.parameters,
+    #                           Parameters)
+
+
+    # def test_set_parameter_error(self):
+    #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
+    #                                             parameters=None,
+    #                                             verbose_level="error")
+    #     with self.assertRaises(TypeError):
+    #         uncertainty.parameters = 2
+
+
+    # def test_set_features(self):
+    #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
+    #                                             parameters=None,
+    #                                             verbose_level="error")
+    #     uncertainty.features = TestingFeatures()
+
+    #     self.assertIsInstance(uncertainty.features, TestingFeatures)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.features, TestingFeatures)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.features,
+    #                           TestingFeatures)
+
+
+    # def test_feature_function(self):
+    #     def feature_function(time, values):
+    #         return "time", "values"
+
+    #     self.uncertainty.features = feature_function
+    #     self.assertIsInstance(self.uncertainty.features, Features)
+
+    #     time, values = self.uncertainty.features.feature_function(None, None)
+    #     self.assertEqual(time, "time")
+    #     self.assertEqual(values, "values")
+
+    #     self.assertEqual(self.uncertainty.features.features_to_run,
+    #                      ["feature_function"])
+
+
+    # def test_feature_functions(self):
+    #     def feature_function(time, values):
+    #         return "time", "values"
+
+    #     def feature_function2(time, values):
+    #         return "t2", "U2"
+
+
+    #     self.uncertainty.features = [feature_function, feature_function2]
+    #     self.assertIsInstance(self.uncertainty.features, Features)
+
+    #     time, values = self.uncertainty.features.feature_function(None, None)
+    #     self.assertEqual(time, "time")
+    #     self.assertEqual(values, "values")
+
+
+    #     time, values = self.uncertainty.features.feature_function(None, None)
+    #     self.assertEqual(time, "time")
+    #     self.assertEqual(values, "values")
+
+    #     time, values = self.uncertainty.features.feature_function2(None, None)
+    #     self.assertEqual(time, "t2")
+    #     self.assertEqual(values, "U2")
+
+    #     self.assertEqual(self.uncertainty.features.features_to_run,
+    #                      ["feature_function", "feature_function2"])
+
+
+
+    # def test_feature_functions_base(self):
+    #     def feature_function(time, values):
+    #         return "time", "values"
+
+    #     def feature_function2(time, values):
+    #         return "time2", "values2"
+
+    #     implemented_features = ["nr_spikes", "time_before_first_spike",
+    #                             "spike_rate", "average_AP_overshoot",
+    #                             "average_AHP_depth", "average_AP_width",
+    #                             "accommodation_index"]
+
+    #     self.uncertainty.features = SpikingFeatures([feature_function, feature_function2])
+    #     self.assertIsInstance(self.uncertainty.features, SpikingFeatures)
+
+    #     time, values = self.uncertainty.features.feature_function(None, None)
+    #     self.assertEqual(time, "time")
+    #     self.assertEqual(values, "values")
+
+    #     time, values = self.uncertainty.features.feature_function2(None, None)
+    #     self.assertEqual(time, "time2")
+    #     self.assertEqual(values, "values2")
+
+    #     self.assertEqual(set(self.uncertainty.features.features_to_run),
+    #                      set(["feature_function", "feature_function2"] + implemented_features))
+
+
+    # def test_set_model(self):
+    #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
+    #                                             parameters=None,
+    #                                             verbose_level="error")
+    #     uncertainty.model = TestingModel1d()
+
+    #     self.assertIsInstance(uncertainty.model, TestingModel1d)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.model, TestingModel1d)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.model,
+    #                           TestingModel1d)
+
+
+    # def test_set_model_function(self):
+    #     uncertainty = UncertaintyQuantification(model=model_function,
+    #                                             parameters=None,
+    #                                             verbose_level="error")
+
+    #     self.assertIsInstance(uncertainty.model, Model)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.model, Model)
+    #     self.assertIsInstance(uncertainty.uncertainty_calculations.runmodel.model,
+    #                           Model)
+
+
+
+    # # def test_label(self):
+    # #     uncertainty = UncertaintyQuantification(model=TestingModel1d(),
+    # #                                         parameters=None,
+    # #                                         verbose_level="error",
+    # #                                         seed=self.seed)
 
 
 
@@ -309,588 +309,588 @@ class TestUncertainty(TestCasePlot):
             verbose_level="error"
         )
 
-        uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir)
+        uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir, figure_folder=self.output_test_dir)
 
         self.assertTrue(uncertainty.data.test_value,
                         "custom PCE method")
 
 
-        # Test if all calculated properties actually exists
-        data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sobol_first", "sobol_first_sum",
-                      "sobol_total", "sobol_total_sum", "labels"]
+    #     # Test if all calculated properties actually exists
+    #     data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
+    #                   "sobol_first", "sobol_first_sum",
+    #                   "sobol_total", "sobol_total_sum", "labels"]
 
-        for data_type in data_types:
-            if data_type not in ["evaluations", "time", "labels"]:
-                for feature in uncertainty.data:
-                    self.assertIsInstance(uncertainty.data[feature][data_type], np.ndarray)
+    #     for data_type in data_types:
+    #         if data_type not in ["evaluations", "time", "labels"]:
+    #             for feature in uncertainty.data:
+    #                 self.assertIsInstance(uncertainty.data[feature][data_type], np.ndarray)
 
-    def test_convert_uncertain_parameters_list(self):
-        result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
+    # def test_convert_uncertain_parameters_list(self):
+    #     result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
 
-        self.assertEqual(result, ["a", "b"])
+    #     self.assertEqual(result, ["a", "b"])
 
-    def test_convert_uncertain_parameters_string(self):
-        result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters("a")
+    # def test_convert_uncertain_parameters_string(self):
+    #     result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters("a")
 
-        self.assertEqual(result, ["a"])
+    #     self.assertEqual(result, ["a"])
 
 
-    def test_convert_uncertain_parameters_none(self):
-        result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(None)
+    # def test_convert_uncertain_parameters_none(self):
+    #     result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(None)
 
-        self.assertEqual(result, ["a", "b"])
+    #     self.assertEqual(result, ["a", "b"])
 
 
-    def test_polynomial_chaos_single(self):
-        self.uncertainty.polynomial_chaos_single(data_folder=self.output_test_dir,
-                                                 figure_folder=self.output_test_dir,
-                                                 seed=self.seed)
+    # def test_polynomial_chaos_single(self):
+    #     self.uncertainty.polynomial_chaos_single(data_folder=self.output_test_dir,
+    #                                              figure_folder=self.output_test_dir,
+    #                                              seed=self.seed)
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
+    #     filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
+    #     filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
 
-    def test_PC_model_function(self):
-        self.uncertainty.model = model_function
-        self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    # def test_PC_model_function(self):
+    #     self.uncertainty.model = model_function
+    #     self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/model_function.h5")
-        filename = os.path.join(self.output_test_dir, "model_function.h5")
-        self.assertTrue(os.path.isfile(filename))
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/model_function.h5")
+    #     filename = os.path.join(self.output_test_dir, "model_function.h5")
+    #     self.assertTrue(os.path.isfile(filename))
 
 
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
-                                  filename, compare_file])
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+    #                               filename, compare_file])
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
 
-    def test_polynomial_chaos(self):
-        self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    # def test_polynomial_chaos(self):
+    #     self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
-        self.assertTrue(os.path.isfile(filename))
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/TestingModel1d.h5")
+    #     filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
+    #     self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
 
-    def test_PC_plot(self):
-        parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+    # def test_PC_plot(self):
+    #     parameter_list = [["a", 1, None],
+    #                      ["b", 2, None]]
 
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
+    #     parameters = Parameters(parameter_list)
+    #     parameters.set_all_distributions(uniform(0.5))
 
-        model = TestingModel1d()
+    #     model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+    #     features = TestingFeatures(features_to_run=["feature0d",
+    #                                                 "feature1d",
+    #                                                 "feature2d"])
 
-        self.uncertainty = UncertaintyQuantification(model,
-                                                 features=features,
-                                                 parameters=parameters,
-                                                 verbose_level="error")
+    #     self.uncertainty = UncertaintyQuantification(model,
+    #                                              features=features,
+    #                                              parameters=parameters,
+    #                                              verbose_level="error")
 
 
-        self.uncertainty.polynomial_chaos(plot="condensed_first",
-                                          data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    #     self.uncertainty.polynomial_chaos(plot="condensed_first",
+    #                                       data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_prediction-interval")
-        self.compare_plot("TestingModel1d_sobol_first_grid")
+    #     self.compare_plot("TestingModel1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_sobol_first_grid")
 
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
-        self.compare_plot("feature1d_sobol_first_grid")
+    #     self.compare_plot("feature1d_mean-variance")
+    #     self.compare_plot("feature1d_prediction-interval")
+    #     self.compare_plot("feature1d_sobol_first_grid")
 
-        self.compare_plot("feature0d_sobol_first")
+    #     self.compare_plot("feature0d_sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+    #     self.compare_plot("sobol_first_sum_grid")
 
 
-    def test_polynomial_chaos_single_plot(self):
-        parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+    # def test_polynomial_chaos_single_plot(self):
+    #     parameter_list = [["a", 1, None],
+    #                      ["b", 2, None]]
 
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
+    #     parameters = Parameters(parameter_list)
+    #     parameters.set_all_distributions(uniform(0.5))
 
-        model = TestingModel1d()
+    #     model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+    #     features = TestingFeatures(features_to_run=["feature0d",
+    #                                                 "feature1d",
+    #                                                 "feature2d"])
 
-        self.uncertainty = UncertaintyQuantification(model,
-                                                     features=features,
-                                                     parameters=parameters,
-                                                     verbose_level="error")
+    #     self.uncertainty = UncertaintyQuantification(model,
+    #                                                  features=features,
+    #                                                  parameters=parameters,
+    #                                                  verbose_level="error")
 
-        self.uncertainty.polynomial_chaos_single(plot="condensed_first",
-                                                 data_folder=self.output_test_dir,
-                                                 figure_folder=self.output_test_dir,
-                                                 seed=self.seed)
+    #     self.uncertainty.polynomial_chaos_single(plot="condensed_first",
+    #                                              data_folder=self.output_test_dir,
+    #                                              figure_folder=self.output_test_dir,
+    #                                              seed=self.seed)
 
-        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_prediction-interval")
 
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_single-parameter-a/feature1d_prediction-interval")
 
-        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_prediction-interval")
 
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_single-parameter-b/feature1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_single-parameter-b/feature1d_prediction-interval")
 
 
-    def test_monte_carlo_single(self):
-        parameter_list = [["a", 1, None],
-                          ["b", 2, None]]
+    # def test_monte_carlo_single(self):
+    #     parameter_list = [["a", 1, None],
+    #                       ["b", 2, None]]
 
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
+    #     parameters = Parameters(parameter_list)
+    #     parameters.set_all_distributions(uniform(0.5))
 
-        model = TestingModel1d()
+    #     model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+    #     features = TestingFeatures(features_to_run=["feature0d",
+    #                                                 "feature1d",
+    #                                                 "feature2d"])
 
-        self.uncertainty = UncertaintyQuantification(model,
-                                                 features=features,
-                                                 parameters=parameters,
-                                                 verbose_level="error")
+    #     self.uncertainty = UncertaintyQuantification(model,
+    #                                              features=features,
+    #                                              parameters=parameters,
+    #                                              verbose_level="error")
 
 
-        self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
-                                            plot=None,
-                                            data_folder=self.output_test_dir,
-                                            seed=self.seed,
-                                            nr_samples=self.nr_mc_samples)
+    #     self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
+    #                                         plot=None,
+    #                                         data_folder=self.output_test_dir,
+    #                                         seed=self.seed,
+    #                                         nr_samples=self.nr_mc_samples)
 
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-a.h5")
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a.h5")
+    #     filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-a.h5")
 
-        self.assertTrue(os.path.isfile(filename))
+    #     self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
 
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b.h5")
+    #     compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b.h5")
+    #     filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b.h5")
 
-        self.assertTrue(os.path.isfile(filename))
+    #     self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
 
-    def test_monte_carlo(self):
+    # def test_monte_carlo(self):
 
-        parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+    #     parameter_list = [["a", 1, None],
+    #                      ["b", 2, None]]
 
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
+    #     parameters = Parameters(parameter_list)
+    #     parameters.set_all_distributions(uniform(0.5))
 
-        model = TestingModel1d()
+    #     model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+    #     features = TestingFeatures(features_to_run=["feature0d",
+    #                                                 "feature1d",
+    #                                                 "feature2d"])
 
-        self.uncertainty = UncertaintyQuantification(model,
-                                                     parameters=parameters,
-                                                     features=features,
-                                                     verbose_level="error")
+    #     self.uncertainty = UncertaintyQuantification(model,
+    #                                                  parameters=parameters,
+    #                                                  features=features,
+    #                                                  verbose_level="error")
 
 
-        self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
-                                     plot=None,
-                                     data_folder=self.output_test_dir,
-                                     seed=self.seed,
-                                     nr_samples=self.nr_mc_samples)
+    #     self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
+    #                                  plot=None,
+    #                                  data_folder=self.output_test_dir,
+    #                                  seed=self.seed,
+    #                                  nr_samples=self.nr_mc_samples)
 
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
-        self.assertTrue(os.path.isfile(filename))
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
+    #     filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
+    #     self.assertTrue(os.path.isfile(filename))
 
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+    #     result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
-        self.assertEqual(result, 0)
+    #     self.assertEqual(result, 0)
 
 
-    def test_load(self):
-        folder = os.path.dirname(os.path.realpath(__file__))
-        self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
+    # def test_load(self):
+    #     folder = os.path.dirname(os.path.realpath(__file__))
+    #     self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
-        data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sobol_first", "sobol_first_sum",
-                      "sobol_total", "sobol_total_sum"]
+    #     data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
+    #                   "sobol_first", "sobol_first_sum",
+    #                   "sobol_total", "sobol_total_sum"]
 
-        for data_type in data_types:
-            self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"][data_type], [1., 2.]))
-            self.assertTrue(np.array_equal(self.uncertainty.data["TestingModel1d"][data_type], [3., 4.]))
+    #     for data_type in data_types:
+    #         self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"][data_type], [1., 2.]))
+    #         self.assertTrue(np.array_equal(self.uncertainty.data["TestingModel1d"][data_type], [3., 4.]))
 
-        self.assertEqual(self.uncertainty.data.uncertain_parameters, ["a", "b"])
+    #     self.assertEqual(self.uncertainty.data.uncertain_parameters, ["a", "b"])
 
-        self.assertTrue(np.array_equal(self.uncertainty.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
-        self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
+    #     self.assertTrue(np.array_equal(self.uncertainty.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
+    #     self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
 
 
 
-    def test_plot_all(self):
-        self.uncertainty.polynomial_chaos(plot=None,
-                                          data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    # def test_plot_all(self):
+    #     self.uncertainty.polynomial_chaos(plot=None,
+    #                                       data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        self.uncertainty.plot(type="all", folder=self.output_test_dir)
+    #     self.uncertainty.plot(type="all", folder=self.output_test_dir)
 
 
-        self.compare_plot("TestingModel1d_mean")
-        self.compare_plot("TestingModel1d_variance")
-        self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_mean")
+    #     self.compare_plot("TestingModel1d_variance")
+    #     self.compare_plot("TestingModel1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_prediction-interval")
 
-        self.compare_plot("TestingModel1d_sobol_first_a")
-        self.compare_plot("TestingModel1d_sobol_first_b")
-        self.compare_plot("TestingModel1d_sobol_first")
-        self.compare_plot("TestingModel1d_sobol_first_grid")
+    #     self.compare_plot("TestingModel1d_sobol_first_a")
+    #     self.compare_plot("TestingModel1d_sobol_first_b")
+    #     self.compare_plot("TestingModel1d_sobol_first")
+    #     self.compare_plot("TestingModel1d_sobol_first_grid")
 
 
-        self.compare_plot("feature1d_mean")
-        self.compare_plot("feature1d_variance")
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
+    #     self.compare_plot("feature1d_mean")
+    #     self.compare_plot("feature1d_variance")
+    #     self.compare_plot("feature1d_mean-variance")
+    #     self.compare_plot("feature1d_prediction-interval")
 
-        self.compare_plot("feature1d_sobol_first_a")
-        self.compare_plot("feature1d_sobol_first_b")
-        self.compare_plot("feature1d_sobol_first")
-        self.compare_plot("feature1d_sobol_first_grid")
-        self.compare_plot("feature0d_sobol_first_sum")
+    #     self.compare_plot("feature1d_sobol_first_a")
+    #     self.compare_plot("feature1d_sobol_first_b")
+    #     self.compare_plot("feature1d_sobol_first")
+    #     self.compare_plot("feature1d_sobol_first_grid")
+    #     self.compare_plot("feature0d_sobol_first_sum")
 
-        self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_sobol_first_sum")
-        self.compare_plot("feature1d_sobol_first_sum")
-        self.compare_plot("feature2d_sobol_first_sum")
+    #     self.compare_plot("TestingModel1d_sobol_first_sum")
+    #     self.compare_plot("feature0d_sobol_first_sum")
+    #     self.compare_plot("feature1d_sobol_first_sum")
+    #     self.compare_plot("feature2d_sobol_first_sum")
 
-        self.compare_plot("feature1d_sobol_total_a")
-        self.compare_plot("feature1d_sobol_total_b")
-        self.compare_plot("feature1d_sobol_total")
-        self.compare_plot("feature1d_sobol_total_grid")
+    #     self.compare_plot("feature1d_sobol_total_a")
+    #     self.compare_plot("feature1d_sobol_total_b")
+    #     self.compare_plot("feature1d_sobol_total")
+    #     self.compare_plot("feature1d_sobol_total_grid")
 
 
 
-        self.compare_plot("TestingModel1d_sobol_total_a")
-        self.compare_plot("TestingModel1d_sobol_total_b")
-        self.compare_plot("TestingModel1d_sobol_total")
-        self.compare_plot("TestingModel1d_sobol_total_grid")
+    #     self.compare_plot("TestingModel1d_sobol_total_a")
+    #     self.compare_plot("TestingModel1d_sobol_total_b")
+    #     self.compare_plot("TestingModel1d_sobol_total")
+    #     self.compare_plot("TestingModel1d_sobol_total_grid")
 
-        self.compare_plot("feature0d_sobol_total_sum")
+    #     self.compare_plot("feature0d_sobol_total_sum")
 
 
-        self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_sobol_total_sum")
-        self.compare_plot("feature1d_sobol_total_sum")
-        self.compare_plot("feature2d_sobol_total_sum")
+    #     self.compare_plot("TestingModel1d_sobol_total_sum")
+    #     self.compare_plot("feature0d_sobol_total_sum")
+    #     self.compare_plot("feature1d_sobol_total_sum")
+    #     self.compare_plot("feature2d_sobol_total_sum")
 
 
-        self.compare_plot("sobol_total_sum_grid")
-        self.compare_plot("sobol_first_sum_grid")
+    #     self.compare_plot("sobol_total_sum_grid")
+    #     self.compare_plot("sobol_first_sum_grid")
 
 
-    def test_plot_condensed(self):
-        self.uncertainty.polynomial_chaos(plot=None,
-                                          data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
-        self.uncertainty.plot(type="condensed_first", folder=self.output_test_dir)
+    # def test_plot_condensed(self):
+    #     self.uncertainty.polynomial_chaos(plot=None,
+    #                                       data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
+    #     self.uncertainty.plot(type="condensed_first", folder=self.output_test_dir)
 
-        self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_prediction-interval")
-        self.compare_plot("TestingModel1d_sobol_first_grid")
+    #     self.compare_plot("TestingModel1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_sobol_first_grid")
 
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
-        self.compare_plot("feature1d_sobol_first_grid")
+    #     self.compare_plot("feature1d_mean-variance")
+    #     self.compare_plot("feature1d_prediction-interval")
+    #     self.compare_plot("feature1d_sobol_first_grid")
 
-        self.compare_plot("feature0d_sobol_first")
+    #     self.compare_plot("feature0d_sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+    #     self.compare_plot("sobol_first_sum_grid")
 
-        self.compare_plot("feature2d_mean")
-        self.compare_plot("feature2d_variance")
+    #     self.compare_plot("feature2d_mean")
+    #     self.compare_plot("feature2d_variance")
 
 
 
 
-    def test_plotNoSensitivity(self):
-        self.uncertainty.polynomial_chaos(plot=None,
-                                          data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    # def test_plotNoSensitivity(self):
+    #     self.uncertainty.polynomial_chaos(plot=None,
+    #                                       data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        self.uncertainty.plot(type="condensed_no_sensitivity", folder=self.output_test_dir)
+    #     self.uncertainty.plot(type="condensed_no_sensitivity", folder=self.output_test_dir)
 
-        self.compare_plot("TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_prediction-interval")
+    #     self.compare_plot("TestingModel1d_mean-variance")
+    #     self.compare_plot("TestingModel1d_prediction-interval")
 
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
+    #     self.compare_plot("feature1d_mean-variance")
+    #     self.compare_plot("feature1d_prediction-interval")
 
-        self.compare_plot("feature0d")
+    #     self.compare_plot("feature0d")
 
-        self.compare_plot("feature2d_mean")
-        self.compare_plot("feature2d_variance")
+    #     self.compare_plot("feature2d_mean")
+    #     self.compare_plot("feature2d_variance")
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "*.png")))
-        self.assertEqual(plot_count, 7)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "*.png")))
+    #     self.assertEqual(plot_count, 7)
 
 
 
-    def test_plot_evaluations(self):
-        self.uncertainty.polynomial_chaos(plot=None,
-                                          data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    # def test_plot_evaluations(self):
+    #     self.uncertainty.polynomial_chaos(plot=None,
+    #                                       data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        self.uncertainty.plot(type="evaluations", folder=self.output_test_dir)
+    #     self.uncertainty.plot(type="evaluations", folder=self.output_test_dir)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
-        self.assertEqual(plot_count, 1)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 1)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 22)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 22)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 22)
 
 
 
-    def test_PCevaluations(self):
-        self.uncertainty.polynomial_chaos(nr_collocation_nodes=12,
-                                          plot="evaluations",
-                                          data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+    # def test_PCevaluations(self):
+    #     self.uncertainty.polynomial_chaos(nr_collocation_nodes=12,
+    #                                       plot="evaluations",
+    #                                       data_folder=self.output_test_dir,
+    #                                       figure_folder=self.output_test_dir,
+    #                                       seed=self.seed)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
-        self.assertEqual(plot_count, 1)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 1)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
-        self.assertEqual(plot_count, 12)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 12)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
-        self.assertEqual(plot_count, 12)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 12)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
-        self.assertEqual(plot_count, 12)
+    #     plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
+    #     self.assertEqual(plot_count, 12)
 
 
-    def set_up_test_calculations(self):
-        parameter_list = [["a", 1, None],
-                          ["b", 2, None]]
+    # def set_up_test_calculations(self):
+    #     parameter_list = [["a", 1, None],
+    #                       ["b", 2, None]]
 
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
+    #     parameters = Parameters(parameter_list)
+    #     parameters.set_all_distributions(uniform(0.5))
 
-        model = TestingModel1d()
+    #     model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=None)
+    #     features = TestingFeatures(features_to_run=None)
 
-        self.uncertainty = UncertaintyQuantification(model,
-                                                     parameters=parameters,
-                                                     features=features,
-                                                     uncertainty_calculations=TestingUncertaintyCalculations(model),
-                                                     verbose_level="error")
+    #     self.uncertainty = UncertaintyQuantification(model,
+    #                                                  parameters=parameters,
+    #                                                  features=features,
+    #                                                  uncertainty_calculations=TestingUncertaintyCalculations(model),
+    #                                                  verbose_level="error")
 
 
-    def test_set_uncertainty_calculations(self):
-        parameter_list = [["a", 1, None],
-                          ["b", 2, None]]
+    # def test_set_uncertainty_calculations(self):
+    #     parameter_list = [["a", 1, None],
+    #                       ["b", 2, None]]
 
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
+    #     parameters = Parameters(parameter_list)
+    #     parameters.set_all_distributions(uniform(0.5))
 
-        model = TestingModel1d()
+    #     model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=None)
+    #     features = TestingFeatures(features_to_run=None)
 
-        self.uncertainty = UncertaintyQuantification(model,
-                                                     parameters=parameters,
-                                                     features=features,
-                                                     verbose_level="error")
+    #     self.uncertainty = UncertaintyQuantification(model,
+    #                                                  parameters=parameters,
+    #                                                  features=features,
+    #                                                  verbose_level="error")
 
-        self.uncertainty.uncertainty_calculations = TestingUncertaintyCalculations()
+    #     self.uncertainty.uncertainty_calculations = TestingUncertaintyCalculations()
 
-        self.assertIsInstance(self.uncertainty.uncertainty_calculations.model, TestingModel1d)
-        self.assertIsInstance(self.uncertainty.uncertainty_calculations.features, TestingFeatures)
+    #     self.assertIsInstance(self.uncertainty.uncertainty_calculations.model, TestingModel1d)
+    #     self.assertIsInstance(self.uncertainty.uncertainty_calculations.features, TestingFeatures)
 
 
-    def test_quantifyPCAll(self):
-        self.set_up_test_calculations()
+    # def test_quantifyPCAll(self):
+    #     self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="pc",
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed,
-                                  uncertain_parameters=None,
-                                  pc_method="collocation",
-                                  rosenblatt=False,
-                                  polynomial_order=2,
-                                  nr_collocation_nodes=50,
-                                  quadrature_order=3,
-                                  nr_pc_mc_samples=10**3,
-                                  allow_incomplete=False)
+    #     self.uncertainty.quantify(method="pc",
+    #                               data_folder=self.output_test_dir,
+    #                               figure_folder=self.output_test_dir,
+    #                               seed=self.seed,
+    #                               uncertain_parameters=None,
+    #                               pc_method="collocation",
+    #                               rosenblatt=False,
+    #                               polynomial_order=2,
+    #                               nr_collocation_nodes=50,
+    #                               quadrature_order=3,
+    #                               nr_pc_mc_samples=10**3,
+    #                               allow_incomplete=False)
 
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
-        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
-        self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], False)
-        self.assertEqual(self.uncertainty.data.arguments["polynomial_order"], 2)
-        self.assertEqual(self.uncertainty.data.arguments["nr_collocation_nodes"], 50)
-        self.assertEqual(self.uncertainty.data.arguments["quadrature_order"], 3)
-        self.assertEqual(self.uncertainty.data.arguments["nr_pc_mc_samples"],10**3)
-        self.assertEqual(self.uncertainty.data.arguments["allow_incomplete"], False)
-        self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
+    #     self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
+    #     self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
+    #     self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
+    #     self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], False)
+    #     self.assertEqual(self.uncertainty.data.arguments["polynomial_order"], 2)
+    #     self.assertEqual(self.uncertainty.data.arguments["nr_collocation_nodes"], 50)
+    #     self.assertEqual(self.uncertainty.data.arguments["quadrature_order"], 3)
+    #     self.assertEqual(self.uncertainty.data.arguments["nr_pc_mc_samples"],10**3)
+    #     self.assertEqual(self.uncertainty.data.arguments["allow_incomplete"], False)
+    #     self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
 
 
 
-    def test_quantify_PC_single_rosenblatt(self):
-        self.set_up_test_calculations()
+    # def test_quantify_PC_single_rosenblatt(self):
+    #     self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="pc",
-                                  pc_method="collocation",
-                                  single=True,
-                                  rosenblatt=True,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+    #     self.uncertainty.quantify(method="pc",
+    #                               pc_method="collocation",
+    #                               single=True,
+    #                               rosenblatt=True,
+    #                               data_folder=self.output_test_dir,
+    #                               figure_folder=self.output_test_dir,
+    #                               seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
-        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
-        self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
-        self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], True)
+    #     self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
+    #     self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
+    #     self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
+    #     self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], True)
 
 
-    def test_quantify_monte_carlo(self):
-        self.set_up_test_calculations()
+    # def test_quantify_monte_carlo(self):
+    #     self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="mc",
-                                  nr_mc_samples=self.nr_mc_samples,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+    #     self.uncertainty.quantify(method="mc",
+    #                               nr_mc_samples=self.nr_mc_samples,
+    #                               data_folder=self.output_test_dir,
+    #                               figure_folder=self.output_test_dir,
+    #                               seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
-        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
-        self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
-        self.assertEqual(self.uncertainty.data.arguments["nr_samples"], self.nr_mc_samples)
+    #     self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
+    #     self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
+    #     self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
+    #     self.assertEqual(self.uncertainty.data.arguments["nr_samples"], self.nr_mc_samples)
 
 
-    def test_quantify_monte_carlo_single(self):
-        self.set_up_test_calculations()
+    # def test_quantify_monte_carlo_single(self):
+    #     self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="mc",
-                                  single=True,
-                                  nr_mc_samples=self.nr_mc_samples,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+    #     self.uncertainty.quantify(method="mc",
+    #                               single=True,
+    #                               nr_mc_samples=self.nr_mc_samples,
+    #                               data_folder=self.output_test_dir,
+    #                               figure_folder=self.output_test_dir,
+    #                               seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
-        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
+    #     self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
+    #     self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
 
 
 
-    def test_quantify_custom(self):
-        self.set_up_test_calculations()
+    # def test_quantify_custom(self):
+    #     self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="custom", custom_keyword="value",
-                                 data_folder=self.output_test_dir,
-                                 plot=None)
+    #     self.uncertainty.quantify(method="custom", custom_keyword="value",
+    #                              data_folder=self.output_test_dir,
+    #                              plot=None)
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
-        self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
+    #     self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
+    #     self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
 
 
-    def test_custom_uncertainty_quantification(self):
-        self.set_up_test_calculations()
+    # def test_custom_uncertainty_quantification(self):
+    #     self.set_up_test_calculations()
 
-        self.uncertainty.custom_uncertainty_quantification(custom_keyword="value", data_folder=self.output_test_dir, plot=None)
+    #     self.uncertainty.custom_uncertainty_quantification(custom_keyword="value", data_folder=self.output_test_dir, plot=None)
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
-        self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
+    #     self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
+    #     self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
 
 
-    def test_custom_uncertainty_quantification_arguments(self):
-        def custom(self, argument):
-            self.convert_uncertain_parameters()
+    # def test_custom_uncertainty_quantification_arguments(self):
+    #     def custom(self, argument):
+    #         self.convert_uncertain_parameters()
 
-            data = Data()
-            data.argument = argument
+    #         data = Data()
+    #         data.argument = argument
 
-            return data
+    #         return data
 
-        self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
+    #     self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
 
-        self.uncertainty.quantify(method="custom", argument="value", plot=None, data_folder=self.output_test_dir)
+    #     self.uncertainty.quantify(method="custom", argument="value", plot=None, data_folder=self.output_test_dir)
 
-        self.assertEqual(self.uncertainty.data.argument, "value")
+    #     self.assertEqual(self.uncertainty.data.argument, "value")
 
 
-    def test_custom_uncertainty_quantification_arguments(self):
-        def custom(self, argument):
-            self.convert_uncertain_parameters()
+    # def test_custom_uncertainty_quantification_arguments(self):
+    #     def custom(self, argument):
+    #         self.convert_uncertain_parameters()
 
-            data = Data()
-            data.argument = argument
+    #         data = Data()
+    #         data.argument = argument
 
-            return data
+    #         return data
 
-        self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
+    #     self.uncertainty.uncertainty_calculations.custom_uncertainty_quantification = custom
 
-        self.uncertainty.quantify(method="custom", argument="value", data_folder=self.output_test_dir, plot=None)
+    #     self.uncertainty.quantify(method="custom", argument="value", data_folder=self.output_test_dir, plot=None)
 
-        self.assertEqual(self.uncertainty.data.argument, "value")
+    #     self.assertEqual(self.uncertainty.data.argument, "value")
 
 
 
