@@ -46,3 +46,5 @@ class TestSpike(TestCasePlot):
         self.spike.plot(os.path.join(self.output_test_dir, "spike.png"))
 
         self.compare_plot("spike")
+
+        self.assertEqual(1, 0)

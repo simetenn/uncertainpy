@@ -66,7 +66,6 @@ def run(test_cases=[], parameter_test_cases=[], parameter=None):
     print("------------------------------------------------------")
     print("Test: run={} errors={} failures={}".format(run, errors, failures))
 
-    sys.exit(1)
     if not results.wasSuccessful():
         sys.exit(1)
 
