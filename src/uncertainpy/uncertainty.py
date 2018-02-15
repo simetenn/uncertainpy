@@ -210,6 +210,7 @@ class UncertaintyQuantification(ParameterBase):
                  plot="condensed_first",
                  figure_folder="figures",
                  figureformat=".png",
+                 save=True,
                  data_folder="data",
                  filename=None,
                  **custom_kwargs):
@@ -287,6 +288,8 @@ class UncertaintyQuantification(ParameterBase):
             The figure format to save the plots in. Supports all formats in
             matplolib.
             Default is ".png".
+        save : bool, optional
+            If the data should be saved. Default is True.
         data_folder : str, optional
             Name of the folder where to save the data.
             Default is "data".
@@ -363,6 +366,7 @@ class UncertaintyQuantification(ParameterBase):
                                              plot=plot,
                                              figure_folder=figure_folder,
                                              figureformat=figureformat,
+                                             save=save,
                                              data_folder=data_folder,
                                              filename=filename,
                                              **custom_kwargs)
@@ -379,6 +383,7 @@ class UncertaintyQuantification(ParameterBase):
                                       plot=plot,
                                       figure_folder=figure_folder,
                                       figureformat=figureformat,
+                                      save=save,
                                       data_folder=data_folder,
                                       filename=filename,
                                       **custom_kwargs)
@@ -389,6 +394,7 @@ class UncertaintyQuantification(ParameterBase):
                                         plot=plot,
                                         figure_folder=figure_folder,
                                         figureformat=figureformat,
+                                        save=save,
                                         data_folder=data_folder,
                                         filename=filename,
                                         seed=seed)
@@ -398,6 +404,7 @@ class UncertaintyQuantification(ParameterBase):
                                  plot=plot,
                                  figure_folder=figure_folder,
                                  figureformat=figureformat,
+                                 save=save,
                                  data_folder=data_folder,
                                  filename=filename,
                                  seed=seed)
@@ -406,6 +413,7 @@ class UncertaintyQuantification(ParameterBase):
             self.custom_uncertainty_quantification(plot=plot,
                                                    figure_folder=figure_folder,
                                                    figureformat=figureformat,
+                                                   save=save,
                                                    data_folder=data_folder,
                                                    filename=filename,
                                                    **custom_kwargs)
@@ -419,6 +427,7 @@ class UncertaintyQuantification(ParameterBase):
                                           plot="condensed_first",
                                           figure_folder="figures",
                                           figureformat=".png",
+                                          save=True,
                                           data_folder="data",
                                           filename=None,
                                           **custom_kwargs):
@@ -445,6 +454,8 @@ class UncertaintyQuantification(ParameterBase):
             The figure format to save the plots in. Supports all formats in
             matplolib.
             Default is ".png".
+        save : bool, optional
+            If the data should be saved. Default is True.
         data_folder : str, optional
             Name of the folder where to save the data.
             Default is "data".
@@ -481,7 +492,9 @@ class UncertaintyQuantification(ParameterBase):
         if filename is None:
             filename = self.model.name
 
-        self.save(filename, folder=data_folder)
+        if save:
+            self.save(filename, folder=data_folder)
+
         self.plot(type=plot,
                   folder=figure_folder,
                   figureformat=figureformat)
@@ -500,6 +513,7 @@ class UncertaintyQuantification(ParameterBase):
                          plot="condensed_first",
                          figure_folder="figures",
                          figureformat=".png",
+                         save=True,
                          data_folder="data",
                          filename=None,
                          **custom_kwargs):
@@ -564,6 +578,8 @@ class UncertaintyQuantification(ParameterBase):
             The figure format to save the plots in. Supports all formats in
             matplolib.
             Default is ".png".
+        save : bool, optional
+            If the data should be saved. Default is True.
         data_folder : str, optional
             Name of the folder where to save the data.
             Default is "data".
@@ -640,7 +656,9 @@ class UncertaintyQuantification(ParameterBase):
         if filename is None:
             filename = self.model.name
 
-        self.save(filename, folder=data_folder)
+        if save:
+            self.save(filename, folder=data_folder)
+
         self.plot(type=plot,
                   folder=figure_folder,
                   figureformat=figureformat)
@@ -653,6 +671,7 @@ class UncertaintyQuantification(ParameterBase):
                     plot="condensed_first",
                     figure_folder="figures",
                     figureformat=".png",
+                    save=True,
                     data_folder="data",
                     filename=None):
         """
@@ -688,6 +707,8 @@ class UncertaintyQuantification(ParameterBase):
             The figure format to save the plots in. Supports all formats in
             matplolib.
             Default is ".png".
+        save : bool, optional
+            If the data should be saved. Default is True.
         data_folder : str, optional
             Name of the folder where to save the data.
             Default is "data".
@@ -731,7 +752,8 @@ class UncertaintyQuantification(ParameterBase):
         if filename is None:
            filename = self.model.name
 
-        self.save(filename, folder=data_folder)
+        if save:
+            self.save(filename, folder=data_folder)
 
         self.plot(type=plot,
                   folder=figure_folder,
@@ -753,6 +775,7 @@ class UncertaintyQuantification(ParameterBase):
                                 plot="condensed_first",
                                 figure_folder="figures",
                                 figureformat=".png",
+                                save=True,
                                 data_folder="data",
                                 filename=None):
         """
@@ -816,6 +839,8 @@ class UncertaintyQuantification(ParameterBase):
             The figure format to save the plots in. Supports all formats in
             matplolib.
             Default is ".png".
+        save : bool, optional
+            If the data should be saved. Default is True.
         data_folder : str, optional
             Name of the folder where to save the data.
             Default is "data".
@@ -898,7 +923,8 @@ class UncertaintyQuantification(ParameterBase):
                 uncertain_parameter
             )
 
-            self.save(tmp_filename, folder=data_folder)
+            if save:
+                self.save(tmp_filename, folder=data_folder)
 
             tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
             self.plot(type=plot,
@@ -911,6 +937,7 @@ class UncertaintyQuantification(ParameterBase):
                            nr_samples=10**3,
                            seed=None,
                            plot="condensed_first",
+                           save=True,
                            data_folder="data",
                            figure_folder="figures",
                            figureformat=".png",
@@ -949,6 +976,8 @@ class UncertaintyQuantification(ParameterBase):
             The figure format to save the plots in. Supports all formats in
             matplolib.
             Default is ".png".
+        save : bool, optional
+            If the data should be saved. Default is True.
         data_folder : str, optional
             Name of the folder where to save the data.
             Default is "data".
@@ -1002,7 +1031,8 @@ class UncertaintyQuantification(ParameterBase):
                 uncertain_parameter
             )
 
-            self.save(tmp_filename, folder=data_folder)
+            if save:
+                self.save(tmp_filename, folder=data_folder)
 
             tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
 
@@ -1121,5 +1151,3 @@ class UncertaintyQuantification(ParameterBase):
                 raise ValueError('type must one of: "condensed_first", '
                                 '"condensed_total", "condensed_no_sensitivity" '
                                 '"all", "evaluations", None, not {}'.format(type))
-
-

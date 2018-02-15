@@ -788,6 +788,114 @@ class TestUncertainty(TestCasePlot):
 
 
 
+    def test_no_save(self):
+        self.set_up_test_calculations()
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=False,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 0)
+
+        self.uncertainty.quantify(method="pc",
+                                  single=True,
+                                  plot=None,
+                                  save=False,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 0)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=False,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 0)
+
+        self.uncertainty.quantify(method="mc",
+                                  single=True,
+                                  plot=None,
+                                  save=False,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 0)
+
+
+
+    def test_save(self):
+        self.set_up_test_calculations()
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 1)
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="pc",
+                                  single=True,
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 2)
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 1)
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                                  single=True,
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 2)
+
+
+
     def test_quantify_PC_single_rosenblatt(self):
         self.set_up_test_calculations()
 
