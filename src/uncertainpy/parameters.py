@@ -146,16 +146,21 @@ class Parameters(collections.MutableMapping):
     """
     A collection of parameters.
 
-    Has all standard dictionary methods implemented,
-    such as items, value, contains and similar implemented.
+    Has all standard dictionary methods implemented, such as items, value,
+    contains and similar implemented. As such, behaves as an ordered dictionary.
 
     Parameters
     ----------
-    parameter_list: {list of Parameter instances, list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...], list [[name, value or Chaospy distribution], ...]}
-        List the parameters that should be created.
-        On the form: ``parameter_list = [ParameterObject1, ParameterObject2, ...]``,
-        or ``parameter_list = [[name1, value1, Chaospy distribution or callable that returns a Chaospy distribution], ...]``, where
-        or ``parameter_list = [[name1, value1 or Chaospy distribution], ...]``.
+    parameters: {dict {name: parameter_object}, dict of {name: value or Chaospy distribution}, ...], list of Parameter instances, list [[name, value or Chaospy distribution], ...], list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...],}
+        List or dictionary of the parameters that should be created.
+        On the form ``parameters =``
+
+            * ``{name_1: parameter_object_1, name: parameter_object_2, ...}``
+            * ``{name_1:  value_1 or Chaospy distribution, name_2:  value_2 or Chaospy distribution, ...}``
+            * ``[parameter_object_1, parameter_object_2, ...]``,
+            * ``[[name_1, value_1 or Chaospy distribution], ...]``.
+            * ``[[name_1, value_1, Chaospy distribution or callable that returns a Chaospy distribution], ...]``
+
     distribution: {None, multivariate Chaospy distribution}, optional
         A multivariate distribution of all parameters, if it exists, it is used
         instead of individual distributions.
@@ -174,27 +179,39 @@ class Parameters(collections.MutableMapping):
     --------
     uncertainpy.Parameter
     """
-    def __init__(self, parameter_list=[], distribution=None):
+    def __init__(self, parameters={}, distribution=None):
 
         self.parameters = collections.OrderedDict()
         self.distribution = distribution
 
+
         try:
-            for parameter in parameter_list:
-                if isinstance(parameter, Parameter):
-                    self.parameters[parameter.name] = parameter
-                else:
-                    if len(parameter) == 2:
-                        if isinstance(parameter[1], cp.Dist):
-                            self.parameters[parameter[0]] = Parameter(parameter[0], distribution=parameter[1])
-                        else:
-                             self.parameters[parameter[0]] = Parameter(parameter[0], value=parameter[1])
+            # Handle dict
+            if isinstance(parameters, dict):
+                for parameter in parameters:
+                    if isinstance(parameters[parameter], Parameter):
+                        self.parameters[parameter] = parameters[parameter]
                     else:
-                        self.parameters[parameter[0]] = Parameter(*parameter)
+                        if isinstance(parameters[parameter], cp.Dist):
+                            self.parameters[parameter] = Parameter(parameter, distribution=parameters[parameter])
+                        else:
+                                self.parameters[parameter] = Parameter(parameter, value=parameters[parameter])
+
+            else:
+                # Handle lists
+                for parameter in parameters:
+                    if isinstance(parameter, Parameter):
+                        self.parameters[parameter.name] = parameter
+                    else:
+                        if len(parameter) == 2:
+                            if isinstance(parameter[1], cp.Dist):
+                                self.parameters[parameter[0]] = Parameter(parameter[0], distribution=parameter[1])
+                            else:
+                                self.parameters[parameter[0]] = Parameter(parameter[0], value=parameter[1])
+                        else:
+                            self.parameters[parameter[0]] = Parameter(*parameter)
         except TypeError as error:
-            msg = "parameters must be either list of Parameter objects,\n" \
-                   + "list on the form [[name, value, Chaospy distribution or callable that returns a Chaospy distribution], ...],\n" \
-                   + "or list on the form [[name, value or Chaospy distribution], ...]"
+            msg = "Input to parameters is on the wrong format."
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)

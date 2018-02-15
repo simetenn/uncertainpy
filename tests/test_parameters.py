@@ -300,6 +300,31 @@ class TestParameters(unittest.TestCase):
         self.assertIsNone(parameters["gbar_l"].distribution)
 
 
+
+    def test_init_dict(self):
+        parameters = {"gbar_Na": cp.Uniform(110, 130),
+                      "gbar_K": 36,
+                      "gbar_l": 0.3}
+
+        parameters = Parameters(parameters)
+
+        self.assertIsInstance(parameters, Parameters)
+        self.assertIsInstance(parameters["gbar_Na"], Parameter)
+        self.assertIsInstance(parameters["gbar_K"], Parameter)
+        self.assertIsInstance(parameters["gbar_l"], Parameter)
+
+
+        self.assertIsNone(parameters["gbar_Na"].value)
+        self.assertEqual(parameters["gbar_K"].value, 36)
+        self.assertEqual(parameters["gbar_l"].value, 0.3)
+
+
+        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Dist)
+        self.assertIsNone(parameters["gbar_K"].distribution)
+        self.assertIsNone(parameters["gbar_l"].distribution)
+
+
+
     def test_ordered(self):
         parameter_list = [["gbar_Na", 120, cp.Uniform(110, 130)],
                           ["gbar_K", 36, cp.Normal(36, 1)],
