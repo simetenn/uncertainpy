@@ -14,6 +14,7 @@ if not platform.system() == "Linux":
 
 name = "testme3"
 
+description = "Uncertainty quantification and sensitivity analysis of computational models and features of the models."
 long_description = """A python toolbox for uncertainty quantification and sensitivity analysis
 
 Uncertainpy is a python toolbox for uncertainty quantification and sensitivity
@@ -57,7 +58,7 @@ setup(name=name,
       version=__version__,
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
-    #   description="Uncertainty quantification and sensitivity analysis",
+    #   description=description,
       long_description=long_description,
       python_requires=">=2.7,<3",
       packages=find_packages("src"),

@@ -65,6 +65,11 @@ Uncertainpy has the following dependencies:
 * `xvfbwrapper`
 
 These are installed with the minimum install.
+
+`xvfbwrapper` requires `Xvfb`, which can be installed with:
+
+    sudo apt-get install Xvfb
+
 Additionally Uncertainpy has a few optional dependencies for specific classes
 of models and for features of the models.
 
