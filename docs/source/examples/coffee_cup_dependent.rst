@@ -4,7 +4,7 @@ A cooling coffee cup model with dependent parameters
 ====================================================
 
 Here we show an example (found in
-:download:`examples/coffee_dependent/uq_coffee_dependent_function.py <../../../examples/coffee_dependent/uq_coffee_dependent_function.py>`)
+:download:`examples/coffee_cup_dependent/uq_coffee_dependent_function.py <../../../examples/coffee_cup_dependent/uq_coffee_dependent_function.py>`)
 where we examine a cooling coffee cup model with dependent parameters.
 We modify the :ref:`simple cooling coffee cup <coffee_cup>` model by introducing two auxillary variables
 :math:`\alpha` and :math:`\hat{\kappa}`:
@@ -46,7 +46,7 @@ Which gives us the following distributions:
 
 With Chaospy we can create these dependencies using arithmetic operators:
 
-.. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
+.. literalinclude:: ../../../examples/coffee_cup_dependent/uq_coffee_dependent_function.py
     :language: python
     :lines: 27-35
 
@@ -54,7 +54,7 @@ With Chaospy we can create these dependencies using arithmetic operators:
 We can use this ``parameters`` dictionary directly
 when we set up the uncertainty quantification
 
-.. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
+.. literalinclude:: ../../../examples/coffee_cup_dependent/uq_coffee_dependent_function.py
     :language: python
     :lines: 37-39
 
@@ -66,7 +66,7 @@ we need to use the Rosenblatt transformation, which we enable by::
 
 The complete code example become:
 
-.. literalinclude:: ../../../examples/coffee_dependent/uq_coffee_dependent_function.py
+.. literalinclude:: ../../../examples/coffee_cup_dependent/uq_coffee_dependent_function.py
     :language: python
 
 In this case,

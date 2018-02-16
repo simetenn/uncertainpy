@@ -29,7 +29,7 @@ class TestExamples(unittest.TestCase):
 
 
     def test_coffee_function(self):
-        folder = os.path.join(self.example_folder, "coffee")
+        folder = os.path.join(self.example_folder, "coffee_cup")
         os.chdir(folder)
 
         result = subprocess.call(["python", "uq_coffee_function.py"], env=os.environ.copy())
@@ -37,7 +37,7 @@ class TestExamples(unittest.TestCase):
 
 
     def test_coffee_class(self):
-        folder = os.path.join(self.example_folder, "coffee")
+        folder = os.path.join(self.example_folder, "coffee_cup")
         os.chdir(folder)
 
         result = subprocess.call(["python", "uq_coffee_class.py"], env=os.environ.copy())
@@ -45,7 +45,7 @@ class TestExamples(unittest.TestCase):
 
 
     def test_coffee_dependent_function(self):
-        folder = os.path.join(self.example_folder, "coffee_dependent")
+        folder = os.path.join(self.example_folder, "coffee_cup_dependent")
         os.chdir(folder)
 
         result = subprocess.call(["python", "uq_coffee_dependent_function.py"], env=os.environ.copy())
@@ -53,7 +53,7 @@ class TestExamples(unittest.TestCase):
 
 
     def test_coffee_dependent_class(self):
-        folder = os.path.join(self.example_folder, "coffee_dependent")
+        folder = os.path.join(self.example_folder, "coffee_cup_dependent")
         os.chdir(folder)
 
         result = subprocess.call(["python", "uq_coffee_dependent_class.py"], env=os.environ.copy())
