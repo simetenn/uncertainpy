@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -8,6 +7,8 @@ except ImportError:
 
 import platform
 import os
+import sys
+
 
 if not platform.system() == "Linux":
     print("Warning: Uncertainpy not tested for current operating system")
@@ -49,6 +50,36 @@ extras_require = {"efel_features":  efel_features,
                   "network_features": network_features,
                   "all": all_requires,
                   "tests": tests_require}
+
+
+help_text = """
+Custom optinas:
+  --all               Install with all dependencies required by Uncertainpy
+  --tests             Install with dependencies required by tests
+  --network_features  Install with dependencies required by NetworkFeatures
+  --efel_features     Install with dependencies required by EfelFeatures
+    """
+
+if "--help" in sys.argv or "-h" in sys.argv:
+    print help_text
+
+if "--all" in sys.argv:
+    uncertainpy_require = all_requires
+    sys.argv.remove("--all")
+
+if "--tests" in sys.argv:
+    uncertainpy_require = tests_require
+    sys.argv.remove("--tests")
+
+
+if "--network_features" in sys.argv:
+    uncertainpy_require = uncertainpy_require + network_features
+    sys.argv.remove("--network_features")
+
+
+if "--efel_features" in sys.argv:
+    uncertainpy_require = uncertainpy_require + efel_features
+    sys.argv.remove("--efel_features")
 
 
 # Get version
