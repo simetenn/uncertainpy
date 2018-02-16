@@ -34,11 +34,17 @@ and a paper on Uncertainpy can be found [here]().
 ## Installation
 
 Uncertainpy currently only works with Python 2.
-Uncertainpy can easily be installed using pip:
+Uncertainpy can easily be installed using pip. The minimum install is:
 
     pip install uncertainpy
 
-or from source by cloning the Github repository:
+To install all requirements you can write:
+
+    pip install uncertainpy[all]
+
+Specific optional requirements can also be installed,
+see below for an explanation.
+Uncertainpy can also be installed by cloning the Github repository:
 
     $ git clone https://github.com/simetenn/uncertainpy
     $ cd /path/to/uncertainpy
@@ -55,17 +61,50 @@ Uncertainpy has the following dependencies:
 * `numpy`
 * `scipy`
 * `seaborn`
+* `matplotlib`
+* `xvfbwrapper`
 
-Additionally Uncertainpy has a few optional dependencies for specific classes of models and for features of the models.
-The following external simulators are required for specific models:
+These are installed with the minimum install.
+Additionally Uncertainpy has a few optional dependencies for specific classes
+of models and for features of the models.
 
-* `uncertainpy.NeuronModel`: Requires [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python), a simulator for neurons, and `xvfbwrapper`.
-* `uncertainpy.NestModel`: Requires [Nest](http://www.nest-simulator.org/installation) (with Python), a simulator for network of neurons.
+#### EfelFeatures
 
-And the following Python packages are required for specific features:
+`uncertainpy.EfelFeatures` requires the Python package `efel`,
+which can be installed with:
 
-* `uncertainpy.EfelFeatures`: `efel`.
-* `uncertainpy.NetworkFeatures`: `elephant`, `neo`, and `quantities`.
+    pip install uncertainpy[efel_features]
+
+or:
+    pip install efel
+
+#### NetworkFeatures
+
+
+`uncertainpy.NetworkFeatures` requires the Python packages
+`elephant`, `neo`, and `quantities`.
+which can be installed with:
+
+    pip install uncertainpy[network_features]
+
+or:
+
+    pip install elephant, neo, quantities
+
+
+#### NeuronModel
+
+`uncertainpy.NeuronModel` requires the external simulator
+[Neuron](https://www.neuron.yale.edu/neuron/download) (with Python),
+a simulator for neurons. This must be installed by the user.
+
+#### NestModel
+
+`uncertainpy.NestModel` requires the external simulator
+[Nest](http://www.nest-simulator.org/installation) (with Python),
+a simulator for network of neurons.
+This must be installed by the user.
+
 
 ### Test suite
 
@@ -74,9 +113,13 @@ For how to use test.py run:
 
     $ python test.py --help
 
-`test.py` has all the above dependencies in addition to:
+`test.py` has all the dependencies if Uncertainpy in addition to:
 
 * `click`
+
+These can be installed with pip:
+
+    pip install uncertainpy[tests]
 
 ## Example of Uncertainpy in use
 
