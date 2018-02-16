@@ -237,7 +237,9 @@ class TestData(unittest.TestCase):
 
         self.data.model_name = "TestingModel1d"
         self.data.uncertain_parameters = ["a", "b"]
-
+        self.data.method = "mock"
+        self.data.seed = 10
+        self.data.incomplete = ["a", "b"]
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/test_save_mock")

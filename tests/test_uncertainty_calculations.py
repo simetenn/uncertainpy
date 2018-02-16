@@ -23,6 +23,7 @@ from .testing_classes import TestingModelAdaptive, TestingModelIncomplete
 class TestUncertaintyCalculations(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
+        self.threshold = 1e-10
         self.seed = 10
 
         if os.path.isdir(self.output_test_dir):
@@ -922,7 +923,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -938,7 +939,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -955,7 +956,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_spectral.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(5e-4), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -1043,7 +1044,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -1058,7 +1059,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
 
         compare_file = os.path.join(folder, "data/UncertaintyCalculations_single-parameter-b.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
