@@ -14,40 +14,54 @@ if not platform.system() == "Linux":
 
 name = "testme3"
 
+long_description = """A python toolbox for uncertainty quantification and sensitivity analysis
+
+Uncertainpy is a python toolbox for uncertainty quantification and sensitivity
+analysis of computational models and features of the models.
+
+Uncertainpy is model independent and treats the model as a black box where the
+model can be left unchanged. Uncertainpy implements both quasi-Monte Carlo
+methods and polynomial chaos expansions using either point collocation or the
+pseudo-spectral method. Both of the polynomial chaos expansion methods have
+support for the rosenblatt transformation to handle dependent input parameters.
+
+Uncertainpy is feature based, i.e., if applicable, it recognizes and calculates
+the uncertainty in features of the model, as well as the model itself.
+Examples of features in neuroscience can be spike timing and the action
+potential shape.
+
+Uncertainpy is tailored towards neuroscience models, and comes with several
+common neurosience models and features built in, but new models and features can
+easily be implemented. It should be noted that while Uncertainpy is tailored
+towards neuroscience, the implemented methods are general, and Uncertainpy can
+be used for many other types of models and features within other fields.
+"""
+
 uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy", "seaborn", "matplotlib"]
-
-all_requires = ["xvfbwrapper", "chaospy", "tqdm", "h5py",
-                "multiprocess", "numpy", "scipy", "seaborn",
-                "efel", "elephant",  "neo", "quantities", "matplotlib"]
-
+                       "scipy", "seaborn", "matplotlib", "xvfbwrapper"]
+efel_features = ["efel"]
+network_features = ["elephant", "neo", "quantities"]
+all_requires = uncertainpy_require + efel_features + network_features
 tests_require = all_requires + ["click"]
 
-extras_require = {"spike_features":  ["efel"],
-                  "network_features": ["elephant", "neo", "quantities"],
-                  "neuron": ["xvfbwrapper"],
-                  "all": all_requires}
+extras_require = {"efel_features":  efel_features,
+                  "network_features": network_features,
+                  "all": all_requires,
+                  "tests": tests_require}
 
 
-long_description = open("README.md").read()
-
-# Remove badges from the description
-long_description = "\n".join(long_description.split("\n")[4:])
-
-execfile('src/uncertainpy/version.py')
-
-#packages = ["uncertainpy", "uncertainpy.models", "uncertainpy.features", "uncertainpy.plotting", "uncertainpy.utils"]
+# Get version
+exec(open(os.path.join("src", "uncertainpy", "version.py")).read())
 
 setup(name=name,
       version=__version__,
     #   url="https://github.com/simetenn/uncertainpy",
     #   author="Simen Tennøe",
     #   description="Uncertainty quantification and sensitivity analysis",
-    #   long_description=long_description,
-      python_requires=">=2.7.*",
+      long_description=long_description,
+      python_requires=">=2.7,<3",
       packages=find_packages("src"),
       package_dir={"": "src"},
-    #   data_files=("version", ["README.md", "VERSION"]),
-      install_requires=all_requires,
-    #   extras_require=extras_require,
-      )
+      install_requires=uncertainpy_require,
+      extras_require=extras_require,
+)
