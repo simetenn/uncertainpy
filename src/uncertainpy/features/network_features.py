@@ -50,9 +50,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
                           "1d_feature": ["x-axis", "y-axis"],
                           "2d_feature": ["x-axis", "y-axis", "z-axis"]
                          }
-    units : Quantities unit
-        The Quantities unit of the time in the model.
-        The default is ms.
+    units : {None, Quantities unit}, optional
+        The Quantities unit of the time in the model. If None, ms is used.
+        The default is None.
     instantaneous_rate_nr_samples : int
         The number of samples used to calculate the instantaneous rate.
         Default is 50.
@@ -109,7 +109,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                  features_to_run="all",
                  adaptive=None,
                  labels={},
-                 units=pq.ms,
+                 units=None,
                  instantaneous_rate_nr_samples=50,
                  isi_bin_size=1,
                  corrcoef_bin_size=1,
