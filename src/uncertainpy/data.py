@@ -372,7 +372,6 @@ class Data(collections.MutableMapping):
         self.data = {}
         self.method = ""
 
-
         self.version = __version__
 
         if filename is not None:
