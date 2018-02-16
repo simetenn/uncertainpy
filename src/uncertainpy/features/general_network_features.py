@@ -55,9 +55,9 @@ class GeneralNetworkFeatures(Features):
                           "1d_feature": ["x-axis", "y-axis"],
                           "2d_feature": ["x-axis", "y-axis", "z-axis"]
                          }
-    units : Quantities unit
-        The Quantities unit of the time in the model.
-        The default is ms.
+    units : {None, Quantities unit}, optional
+        The Quantities unit of the time in the model. If None, ms is used.
+        The default is None.
     verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
@@ -90,7 +90,7 @@ class GeneralNetworkFeatures(Features):
                  features_to_run="all",
                  adaptive=None,
                  labels={},
-                 units=pq.ms,
+                 units=None,
                  verbose_level="info",
                  verbose_filename=None):
 
@@ -103,8 +103,11 @@ class GeneralNetworkFeatures(Features):
                                                      labels=labels,
                                                      verbose_level=verbose_level,
                                                      verbose_filename=verbose_filename)
+        if units is None:
+            self.units = pq.ms
+        else:
+            self.units = units
 
-        self.units = units
 
 
     def preprocess(self, simulation_end, spiketrains):
