@@ -120,6 +120,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         if not prerequisites:
             raise ImportError("Network features require: elephant and quantities")
 
+        if units is None:
+            units = pq.ms
+
         unit_string = str(units).split()[1]
 
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],

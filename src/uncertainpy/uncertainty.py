@@ -913,6 +913,8 @@ class UncertaintyQuantification(ParameterBase):
                 allow_incomplete=allow_incomplete,
             )
 
+            self.data.seed = seed
+
             tmp_filename = "{}_single-parameter-{}".format(
                 filename,
                 uncertain_parameter
@@ -1025,6 +1027,8 @@ class UncertaintyQuantification(ParameterBase):
                 filename,
                 uncertain_parameter
             )
+
+            self.data.seed = seed
 
             if save:
                 self.save(tmp_filename, folder=data_folder)

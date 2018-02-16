@@ -1244,7 +1244,7 @@ class UncertaintyCalculations(ParameterBase):
 
         data = self.analyse_PCE(U_hat, distribution, data, nr_samples=nr_pc_mc_samples)
 
-        data.method += ", seed={}".format(seed)
+        data.seed = seed
 
         return data
 
@@ -1323,7 +1323,8 @@ class UncertaintyCalculations(ParameterBase):
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
-        data.method = "monte carlo method. nr_samples={}, seed={}".format(nr_samples, seed)
+        data.method = "monte carlo method. nr_samples={}".format(nr_samples, seed)
+        data.seed = seed
 
         # TODO mask data
         for feature in data:

@@ -74,7 +74,7 @@ class Base(object):
 
         Returns
         -------
-        features: {None, Features object}
+        features : {None, Features object}
              Features to calculate from the model result.
              If None, no features are calculated.
 

@@ -359,7 +359,7 @@ class Data(collections.MutableMapping):
                  verbose_filename=None):
 
         self.data_information = ["uncertain_parameters", "model_name",
-                                 "incomplete", "method", "version"]
+                                 "incomplete", "method", "version", "seed"]
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -371,12 +371,39 @@ class Data(collections.MutableMapping):
         self.incomplete = []
         self.data = {}
         self.method = ""
+        self._seed = ""
 
         self.version = __version__
 
         if filename is not None:
             self.load(filename)
 
+
+    @property
+    def seed(self):
+        """
+        Seed used in the calculations.
+
+        Parameters
+        ----------
+        new_seed : {None, int}
+            Seed used in the calculations.
+            If None, converted to "".
+
+        Returns
+        -------
+        seed : {int, str}
+            Seed used in the calculations.
+        """
+        return self._seed
+
+
+    @seed.setter
+    def seed(self, new_seed):
+        if new_seed is None:
+            self._seed = ""
+        else:
+            self._seed = new_seed
 
 
     def __str__(self):
@@ -421,8 +448,12 @@ class Data(collections.MutableMapping):
         """
         self.uncertain_parameters = []
         self.model_name = ""
-
+        self.incomplete = []
         self.data = {}
+        self.method = ""
+        self._seed = ""
+
+        self.version = __version__
 
 
     def ndim(self, feature):
@@ -577,6 +608,7 @@ class Data(collections.MutableMapping):
             f.attrs["incomplete results"] = self.incomplete
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
+            f.attrs["seed"] = self.seed
 
 
             for feature in self:
@@ -607,9 +639,10 @@ class Data(collections.MutableMapping):
         with h5py.File(filename, 'r') as f:
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
             self.model_name = f.attrs["model name"]
-            self.incomplete = f.attrs["incomplete results"]
+            self.incomplete = list(f.attrs["incomplete results"])
             self.method = f.attrs["method"]
             self.version = f.attrs["version"]
+            self.seed = f.attrs["seed"]
 
             for feature in f:
                 self.add_features(str(feature))

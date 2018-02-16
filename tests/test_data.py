@@ -257,6 +257,16 @@ class TestData(unittest.TestCase):
     #     with self.assertRaises(FileNotFoundError):
     #         self.data.load(compare_file)
 
+    def test_seed(self):
+        data = Data()
+        self.assertEqual(data.seed, "")
+
+        data.seed = 10
+        self.assertEqual(data.seed, 10)
+
+        data.seed = None
+        self.assertEqual(data.seed, "")
+
 
     def test_save_empty(self):
         data = Data()
@@ -284,10 +294,14 @@ class TestData(unittest.TestCase):
             self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric], [3., 4.]))
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
+        self.assertEqual(self.data.incomplete, ["a", "b"])
+
+        self.assertEqual(self.data.model_name, "TestingModel1d")
+        self.assertEqual(self.data.method, "mock")
+        self.assertEqual(self.data.seed, 10)
 
         self.assertTrue(np.array_equal(self.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
         self.assertTrue(np.array_equal(self.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
-
 
 
     def test_load_empty(self):
@@ -301,7 +315,10 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.uncertain_parameters, [])
         self.assertEqual(self.data.model_name, "")
-
+        self.assertEqual(self.data.uncertain_parameters, [])
+        self.assertEqual(self.data.incomplete, [])
+        self.assertEqual(self.data.method, "")
+        self.assertEqual(self.data.seed, "")
 
 
     def test_get_labels(self):
@@ -415,12 +432,19 @@ class TestData(unittest.TestCase):
         self.data.uncertain_parameters = -1
         self.data.model_name = -1
         self.data.data = -1
+        self.data.incomplete = -1
+        self.data.method = -1
+        self.data.seed = -1
 
         self.data.clear()
 
         self.assertEqual(self.data.model_name, "")
         self.assertEqual(self.data.data, {})
         self.assertEqual(self.data.uncertain_parameters, [])
+        self.assertEqual(self.data.incomplete, [])
+        self.assertEqual(self.data.model_name, "")
+        self.assertEqual(self.data.method, "")
+        self.assertEqual(self.data.seed, "")
 
 
     def test_ndim(self):

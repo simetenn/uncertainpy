@@ -227,7 +227,7 @@ class PlotUncertainty(object):
             os.makedirs(save_folder)
 
         prettyPlot(self.data[feature].evaluations,
-                   xlabel=r"evaluation #number",
+                   xlabel=r"Evaluation #number",
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, evaluations".format(feature.replace("_", " ")),
                    new_figure=True,
@@ -290,7 +290,7 @@ class PlotUncertainty(object):
         padding = len(str(len(self.data[feature].evaluations[0]) + 1))
         for evaluation in self.data[feature].evaluations:
             ax = prettyPlot(time, evaluation,
-                            xlabel=xlabel, ylabel=ylabel,
+                            xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(),
                             title="{}, evaluation {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
             plt.tight_layout()
@@ -366,11 +366,11 @@ class PlotUncertainty(object):
             cbar = fig.colorbar(iax)
             cbar.ax.set_ylabel(zlabel)
 
-            ax.set_xlabel(xlabel)
-            ax.set_ylabel(ylabel)
+            ax.set_xlabel(xlabel.capitalize())
+            ax.set_ylabel(ylabel.capitalize())
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "Evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
 
 
@@ -441,7 +441,7 @@ class PlotUncertainty(object):
 
         title = feature + ", " + attribute_name
         ax = prettyPlot(time, self.data[feature][attribute],
-                        title.replace("_", " "), xlabel, ylabel, **plot_kwargs)
+                        title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize(), **plot_kwargs)
 
         ax.set_xlim([min(time), max(time)])
 
@@ -541,8 +541,8 @@ class PlotUncertainty(object):
         # cbar.ax.set_title(zlabel)
         cbar.ax.set_ylabel(zlabel)
 
-        ax.set_xlabel(xlabel, fontsize=labelsize)
-        ax.set_ylabel(ylabel, fontsize=labelsize)
+        ax.set_xlabel(xlabel.capitalize(), fontsize=labelsize)
+        ax.set_ylabel(ylabel.capitalize(), fontsize=labelsize)
 
         save_name = feature + "_" + attribute_name
 
@@ -738,7 +738,7 @@ class PlotUncertainty(object):
         style="seaborn-dark"
         title = feature + ", mean and variance"
         ax = prettyPlot(time, self.data[feature].mean,
-                        title.replace("_", " "), xlabel, ylabel + ", mean",
+                        title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize() + ", mean",
                         style=style, **plot_kwargs)
 
 
@@ -840,7 +840,7 @@ class PlotUncertainty(object):
 
         title = feature.replace("_", " ") + ", 90% prediction interval"
         ax = prettyPlot(time, self.data[feature].mean, title=title,
-                        xlabel=xlabel, ylabel=ylabel, color=0,
+                        xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(), color=0,
                         **plot_kwargs)
 
         colors = get_current_colormap()
@@ -930,7 +930,7 @@ class PlotUncertainty(object):
         for i in range(len(self.data[feature][sensitivity])):
             ax = prettyPlot(time, self.data[feature][sensitivity][i],
                             title=title.capitalize() + ", " + feature.replace("_", " ") + " - " + self.data.uncertain_parameters[i],
-                            xlabel=xlabel,
+                            xlabel=xlabel.capitalize(),
                             ylabel=title.capitalize(),
                             color=i,
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
@@ -1034,7 +1034,7 @@ class PlotUncertainty(object):
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
-        ax.set_xlabel(xlabel)
+        ax.set_xlabel(xlabel.capitalize(), labelpad=8)
         ax.set_ylabel(title.capitalize())
 
         for i in range(0, grid_x_size*grid_y_size):
@@ -1049,8 +1049,8 @@ class PlotUncertainty(object):
                            nr_colors=nr_plots, ax=ax,
                            **plot_kwargs)
 
-                for tick in ax.get_xticklabels():
-                    tick.set_rotation(-30)
+                # for tick in ax.get_xticklabels():
+                #     tick.set_rotation(-30)
 
                 ax.set_ylim([0, 1.05])
                 ax.set_xlim([min(time), max(time)])
@@ -1145,7 +1145,7 @@ class PlotUncertainty(object):
             prettyPlot(time,
                        self.data[feature][sensitivity][i],
                        title=title.capitalize() + ", " + feature.replace("_", " "),
-                       xlabel=xlabel,
+                       xlabel=xlabel.capitalize(),
                        ylabel=title.capitalize(),
                        new_figure=False,
                        color=i,
@@ -1352,7 +1352,7 @@ class PlotUncertainty(object):
         width = 0.2
         distance = 0.5
 
-        xlabels = ["mean", "variance", "$P_5$", "$P_{95}$"]
+        xlabels = ["Mean", "Variance", "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2*width]
 
         values = [self.data[feature].mean, self.data[feature].variance,
@@ -1363,7 +1363,7 @@ class PlotUncertainty(object):
         ax = prettyBar(values,
                        index=xticks,
                        xlabels=xlabels,
-                       ylabel=ylabel,
+                       ylabel=ylabel.capitalize(),
                        palette=get_colormap_tableu20())
 
         if sensitivity in self.data[feature]:
@@ -1845,11 +1845,11 @@ class PlotUncertainty(object):
 
                 ax.set_ylim([0, 1.05])
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
-                ax.tick_params(labelsize=10)
+                ax.tick_params(labelsize=fontsize)
             else:
                 ax.axis("off")
 
-        title = "normalized sum " + sensitivity.replace("_", " ")
+        title = "Normalized sum " + sensitivity.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.9)

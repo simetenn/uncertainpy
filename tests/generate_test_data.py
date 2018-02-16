@@ -155,7 +155,8 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
     test.polynomial_chaos(rosenblatt=True,
                           filename="TestingModel1d_Rosenblatt",
                           data_folder=test_data_dir,
-                          plot=None)
+                          plot=None,
+                          seed=seed)
 
 
 
@@ -183,7 +184,8 @@ def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
                           method="spectral",
                           filename="TestingModel1d_Rosenblatt_spectral",
                           data_folder=test_data_dir,
-                          plot=None)
+                          plot=None,
+                          seed=seed)
 
 
 
@@ -281,6 +283,9 @@ def generate_data_data():  # pragma: no cover
 
     data.uncertain_parameters = ["a", "b"]
     data.model_name = "TestingModel1d"
+    data.method = "mock"
+    data.seed = 10
+    data.incomplete = ["a", "b"]
 
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
