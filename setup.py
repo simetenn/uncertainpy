@@ -53,7 +53,7 @@ extras_require = {"efel_features":  efel_features,
 
 
 help_text = """
-Custom optinas:
+Custom options:
   --all               Install with all dependencies required by Uncertainpy
   --tests             Install with dependencies required by tests
   --network_features  Install with dependencies required by NetworkFeatures
@@ -63,9 +63,11 @@ Custom optinas:
 if "--help" in sys.argv or "-h" in sys.argv:
     print help_text
 
+
 if "--all" in sys.argv:
     uncertainpy_require = all_requires
     sys.argv.remove("--all")
+
 
 if "--tests" in sys.argv:
     uncertainpy_require = tests_require
