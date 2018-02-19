@@ -956,13 +956,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_spectral.h5")
-        result = subprocess.call(["h5diff", "-v", "-d", str(5e-4), filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(5e-4), filename, compare_file])
 
         self.assertEqual(result, 0)
 
 
 
-    def test_PC_collocation_spectral(self):
+    def test_polynomial_chaos_spectral_rosenblatt(self):
         data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
                                                               rosenblatt=True,
                                                               seed=self.seed)
@@ -972,7 +972,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
-        result = subprocess.call(["h5diff", "-v", filename, compare_file])
+        result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
 
