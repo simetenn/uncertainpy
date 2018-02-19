@@ -20,14 +20,15 @@ class Model(object):
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
-        that is correct for the model output.
-        Default is an empty list.
+        that is correct for the model output. Default is an empty list.
     run : {None, callable}, optional
         A function that implements the model. See the ``run`` method for
         requirements of the function. Default is None.
     suppress_graphics : bool, optional
-        Suppress all graphics created by the model.
-        Default is False.
+        Suppress all graphics created by the model. Default is False.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. Default is False.
 
     Attributes
     ----------
@@ -43,6 +44,9 @@ class Model(object):
         function set as run.
     suppress_graphics : bool
         Suppress all graphics created by the model.
+    ignore : bool
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. Default is False.
 
     See Also
     --------

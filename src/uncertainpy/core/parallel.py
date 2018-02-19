@@ -209,23 +209,23 @@ class Parallel(Base):
 
             results = {}
 
-            if not self.model.ignore:
-                postprocess_result = self.model.postprocess(*model_result)
 
-                try:
-                    time_postprocess, values_postprocess = postprocess_result
-                except (ValueError, TypeError) as error:
-                    msg = "model.postprocess() must return time and values (return time, values | return None, values)"
-                    if not error.args:
-                        error.args = ("",)
-                    error.args = error.args + (msg,)
-                    raise
+            postprocess_result = self.model.postprocess(*model_result)
 
-                values_postprocess = self.none_to_nan(values_postprocess)
-                time_postprocess = self.none_to_nan(time_postprocess)
+            try:
+                time_postprocess, values_postprocess = postprocess_result
+            except (ValueError, TypeError) as error:
+                msg = "model.postprocess() must return time and values (return time, values | return None, values)"
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
 
-                results[self.model.name] = {"time": time_postprocess,
-                                            "values": values_postprocess}
+            values_postprocess = self.none_to_nan(values_postprocess)
+            time_postprocess = self.none_to_nan(time_postprocess)
+
+            results[self.model.name] = {"time": time_postprocess,
+                                        "values": values_postprocess}
 
 
             # Calculate features from the model results
