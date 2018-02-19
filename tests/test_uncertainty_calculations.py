@@ -972,7 +972,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
