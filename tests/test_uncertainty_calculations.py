@@ -964,6 +964,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_polynomial_chaos_spectral_rosenblatt(self):
         data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
+                                                              polynomial_order=6,
                                                               rosenblatt=True,
                                                               seed=self.seed)
 
