@@ -22,7 +22,7 @@ class TestingFeatures(Features):
         self.is_preprocess_run = False
 
     def feature0d(self, time, values):
-        return None, 1
+        return None, np.sum(values)
 
     def feature1d(self, time, values):
         return np.arange(0, 10), np.arange(0, 10)

@@ -60,7 +60,6 @@ class Model(object):
                  postprocess=None,
                  suppress_graphics=False,
                  ignore=False):
-                 # TODO fix and document ignore option
 
         self.adaptive = adaptive
         self.labels = labels
