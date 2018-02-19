@@ -652,7 +652,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_create_PCE_collocation_one(self):
-
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_collocation("a")
 
         self.assertEqual(data.uncertain_parameters, ["a"])
@@ -661,7 +660,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(U_hat["feature2d"], cp.Poly)
         self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
 
-    #
+
 
     def test_create_PCE_collocation_adaptive_error(self):
         parameter_list = [["a", 1, None],
@@ -914,6 +913,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
+
     def test_polynomial_chaos_collocation(self):
         data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
                                                               seed=self.seed)
@@ -972,9 +972,46 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
-        result = subprocess.call(["h5diff", "-d", str(5e-4), filename, compare_file])
+        result = subprocess.call(["h5diff", "-v", "-d", str(5e-4), filename, compare_file])
 
         self.assertEqual(result, 0)
+
+
+
+    def test_ignore_model(self):
+        self.uncertainty_calculations.model.ignore = True
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
+                                                              rosenblatt=True,
+                                                              seed=self.seed)
+        self.assertEqual(set(data["TestingModel1d"].get_metrics()),
+                         set(["evaluations", "time"]))
+
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
+                                                              rosenblatt=False,
+                                                              seed=self.seed)
+        self.assertEqual(set(data["TestingModel1d"].get_metrics()),
+                             set(["evaluations", "time"]))
+
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt=True,
+                                                              seed=self.seed)
+        self.assertEqual(set(data["TestingModel1d"].get_metrics()),
+                         set(["evaluations", "time"]))
+
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt=False,
+                                                              seed=self.seed)
+        self.assertEqual(set(data["TestingModel1d"].get_metrics()),
+                         set(["evaluations", "time"]))
+
+
+        data = self.uncertainty_calculations.monte_carlo(seed=self.seed)
+        self.assertEqual(set(data["TestingModel1d"].get_metrics()),
+                         set(["evaluations", "time"]))
 
 
 

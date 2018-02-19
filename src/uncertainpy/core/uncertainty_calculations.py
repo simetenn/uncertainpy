@@ -375,8 +375,6 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.Data
         uncertainpy.Parameters
         """
-        if allow_incomplete:
-            self.logger.warning("The pseudo-spectral methods is sensitive to missing values, so `allow_incomplete` should be used with care.")
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
@@ -402,6 +400,9 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(data,
                             desc="Calculating PC for each feature",
                             total=len(data)):
+            if feature == self.model.name and self.model.ignore:
+                    continue
+
             masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data, nodes, feature, weights)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
@@ -411,8 +412,7 @@ class UncertaintyCalculations(ParameterBase):
                 self.logger.warning("Uncertainty quantification is not performed " +\
                                     "for feature: {} ".format(feature) +\
                                     "due too not all parameter combinations " +\
-                                    "giving a result. Set allow_incomplete=True to " +\
-                                    "calculate the uncertainties anyway.")
+                                    "giving a result.")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -524,6 +524,9 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(data,
                             desc="Calculating PC for each feature",
                             total=len(data)):
+            if feature == self.model.name and self.model.ignore:
+                continue
+
             masked_nodes, masked_evaluations, mask = self.create_mask(data, nodes, feature)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
@@ -632,9 +635,6 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.Parameters
         """
 
-        if allow_incomplete:
-            self.logger.warning("The pseudo-spectral methods is sensitive to missing values, so `allow_incomplete` should be used with care.")
-
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -673,6 +673,9 @@ class UncertaintyCalculations(ParameterBase):
                             desc="Calculating PC for each feature",
                             total=len(data)):
 
+            if feature == self.model.name and self.model.ignore:
+                continue
+
             # The tutorial version
             # masked_nodes, masked_values, mask, masked_weights = self.create_mask(data,
             #                                                           nodes_R,
@@ -681,15 +684,15 @@ class UncertaintyCalculations(ParameterBase):
 
             # The version thats seems to be working
             masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data,
-                                                                      nodes_R,
-                                                                      feature,
-                                                                      weights_R)
+                                                                    nodes_R,
+                                                                    feature,
+                                                                    weights_R)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P,
-                                                   masked_nodes,
-                                                   masked_weights,
-                                                   masked_evaluations)
+                                                masked_nodes,
+                                                masked_weights,
+                                                masked_evaluations)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
@@ -821,20 +824,22 @@ class UncertaintyCalculations(ParameterBase):
         for feature in tqdm(data,
                             desc="Calculating PC for each feature",
                             total=len(data)):
+            if feature == self.model.name and self.model.ignore:
+                continue
+
             masked_nodes, masked_evaluations, mask = self.create_mask(data, nodes_R, feature)
 
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P,
-                                                   masked_nodes,
-                                                   masked_evaluations,
-                                                   rule="T")
+                                                masked_nodes,
+                                                masked_evaluations,
+                                                rule="T")
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +
                                     "for feature: {} ".format(feature) +
                                     "due too not all parameter combinations " +
-                                    "giving a result. Set allow_incomplete=True to " +
-                                    "calculate the uncertainties anyway.")
+                                    "giving a result.")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -1328,6 +1333,9 @@ class UncertaintyCalculations(ParameterBase):
 
         # TODO mask data
         for feature in data:
+            if feature == self.model.name and self.model.ignore:
+                continue
+
             data[feature].mean = np.mean(data[feature].evaluations , 0)
             data[feature].variance = np.var(data[feature].evaluations , 0)
 
