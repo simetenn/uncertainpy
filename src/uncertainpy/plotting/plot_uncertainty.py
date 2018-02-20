@@ -10,7 +10,7 @@ from .prettyplot import get_colormap_tableu20, set_style
 from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 from ..data import Data
-from ..utils import create_logger, str_to_latex, list_to_latex
+from ..utils import create_logger
 
 
 # TODO compare plots in a grid of all plots,
