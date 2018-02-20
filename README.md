@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/simetenn/uncertainpy.svg?token=aSp3vyuQyzq8iEpgpnpb&branch=master)](https://travis-ci.com/simetenn/uncertainpy)
 [![codecov](https://codecov.io/gh/simetenn/uncertainpy/branch/master/graph/badge.svg?token=BFXnBcPbMA)](https://codecov.io/gh/simetenn/uncertainpy)
 
-![img](https://github.com/simetenn/uncertainpy/blob/master/logo/uncertainpy.png)
+<img src="https://github.com/simetenn/uncertainpy/blob/master/logo/uncertainpy.svg" width="900">
 
 # A python toolbox for uncertainty quantification and sensitivity analysis
 
