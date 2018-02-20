@@ -13,12 +13,16 @@ class TestDistribution(unittest.TestCase):
 
 
     def test_normal_error(self):
+        dist = uniform(0.1)
+
         with self.assertRaises(ValueError):
-            normal(0)
+            dist(0)
 
     def test_uniform_error(self):
+        dist = uniform(0.1)
+
         with self.assertRaises(ValueError):
-            uniform(0)
+            dist(0)
 
 
 if __name__ == "__main__":
