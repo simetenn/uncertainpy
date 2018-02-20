@@ -92,7 +92,7 @@ testing_parameters = [TestParameter, TestParameters]
 testing_exact = testing_spikes + [TestUncertainty, TestPlotUncertainpy]
 
 testing_all = testing_parameters + testing_models + testing_base\
-              + testing_features + testing_data + [TestUncertaintyCalculations]
+              + testing_features + testing_data + [TestUncertaintyCalculations, TestDistribution]
 
 testing_complete = testing_all + [TestExamples]
 

@@ -12,5 +12,14 @@ class TestDistribution(unittest.TestCase):
         self.assertIsInstance(dist(5), cp.Dist)
 
 
+    def test_normal_error(self):
+        with self.assertRaises(ValueError):
+            normal(0)
+
+    def test_uniform_error(self):
+        with self.assertRaises(ValueError):
+            uniform(0)
+
+
 if __name__ == "__main__":
     unittest.main()
