@@ -350,10 +350,10 @@ class TestSpikingFeatures(unittest.TestCase):
     def test_nr_spikes_error(self):
         self.features.strict = True
         with self.assertRaises(ValueError):
-            self.features.spike_rate(self.time, self.spikes, {})
-            self.features.spike_rate(self.time, self.spikes, {"stimulus_start": 1})
-            self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1})
-            self.features.spike_rate(self.time, self.spikes, {"stimulus_end": 1, "stimulus_start": -1})
+            self.features.nr_spikes(self.time, self.spikes, {})
+            self.features.nr_spikes(self.time, self.spikes, {"stimulus_start": 1})
+            self.features.nr_spikes(self.time, self.spikes, {"stimulus_end": 1})
+            self.features.nr_spikes(self.time, self.spikes, {"stimulus_end": 1, "stimulus_start": -1})
 
 
     def test_time_before_first_spike(self):
