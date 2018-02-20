@@ -29,7 +29,7 @@ be used for many other types of models and features within other fields.
 ## Documentation
 
 The documentation for Uncertainpy can be found [here](),
-and a paper on Uncertainpy can be found [here]().
+and a paper on Uncertainpy [here]().
 
 ## Installation
 
