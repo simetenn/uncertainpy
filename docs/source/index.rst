@@ -4,7 +4,7 @@ Welcome to Uncertainpy's documentation!
 .. automodule:: uncertainpy
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Content:
     :hidden:
 

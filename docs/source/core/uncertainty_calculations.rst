@@ -25,7 +25,7 @@ To use the quasi-Monte Carlo method, we call
 :py:meth:`~uncertainpy.UncertaintyQuantification.quantify` with
 ``method="mc"``, and the optional argument ``nr_mc_samples``::
 
-    UQ.quantify(
+    data = UQ.quantify(
         method="mc",
         nr_mc_samples=10**3,
     )
@@ -55,7 +55,7 @@ To use polynomial chaos expansions we use :py:meth:`~uncertainpy.UncertaintyQuan
 with the argument ``method="pc"``,
 which takes a set of optional arguments (default are values specified)::
 
-    UQ.quantify(
+    data = UQ.quantify(
         method="pc",
         pc_method="collocation",
         rosenblatt=False,

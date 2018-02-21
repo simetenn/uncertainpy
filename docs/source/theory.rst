@@ -4,7 +4,7 @@ Theory
 ======
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :hidden:
 
     theory/problem
@@ -13,6 +13,7 @@ Theory
     theory/qmc
     theory/pce
     theory/rosenblatt
+
 
 
 Here we give an overview of the theory behind uncertainty quantification and
@@ -64,8 +65,7 @@ We note that insight into this theory is not a prerequisite for using
 Uncertainpy.
 
 
-Overview of theory
-------------------
+
 
 * :ref:`Problem definition <problem>`
 * :ref:`Uncertainty quantification <uq>`
@@ -73,3 +73,4 @@ Overview of theory
 * :ref:`(Quasi-)Monte Carlo methods <qmc>`
 * :ref:`Polynomial chaos expansions <pce>`
 * :ref:`Dependency between uncertain parameters <rosenblatt>`
+
