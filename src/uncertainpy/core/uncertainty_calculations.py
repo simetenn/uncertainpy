@@ -1188,7 +1188,7 @@ class UncertaintyCalculations(ParameterBase):
         If we have dependent uncertain parameters we must use the Rosenblatt
         transformation. We use the Rosenblatt transformation to transform from
         dependent to independent variables before we create the polynomial chaos
-        expansion. We first find the polynomials using the three-therm
+        expansion. We first find the polynomials using the three-ththerm
         recurrence relation from the independent distributions.
 
         Both pseudo-spectral projection and point collocation is performed using

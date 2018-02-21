@@ -182,7 +182,8 @@ def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
 
     test.polynomial_chaos(rosenblatt=True,
                           method="spectral",
-                          polynomial_order=7,
+                          polynomial_order=6,
+                          quadrature_order=10,
                           filename="TestingModel1d_Rosenblatt_spectral",
                           data_folder=test_data_dir,
                           plot=None,
