@@ -34,7 +34,7 @@ an uncertainty quantification and sensitivity analysis can be performed by using
 :py:meth:`uncertainpy.UncertaintyQuantification.quantify` method.
 Among others, ``quantify`` takes the optional arguments:::
 
-    UQ.quantify(
+    data = UQ.quantify(
         method="pc"|"mc",
         pc_method="collocation"|"spectral",
         rosenblatt=False|True
@@ -57,13 +57,12 @@ collocation without the
 Rosenblatt transformation.
 
 
-The results from the uncertainty quantification are automatically saved and
-plotted.
-After the calculations are performed the results are available in
-``UQ.data`` as a :ref:`Data <data>` object.
-The results are also saved in a ``data`` folder,
-and figures are saved in a ``figures`` folder,
+The results from the uncertainty quantification are returned in ``data``,
+as a ``Data`` object(see :ref:`Data <data>`).
+The results are also automatically saved in a folder named ``data``,
+and figures automatically plotted and saved in a folder named ``figures``,
 both in the current directory.
+The returned ``data`` object is therefore not necessary to use.
 
 
 Polynomial chaos expansions are recommended as long as the number of uncertain

@@ -108,6 +108,7 @@ probability distributions with Chaospy,
 see Section 3.3 in the `Chaospy paper`_.
 
 .. _Chaospy paper: https://www.sciencedirect.com/science/article/pii/S1877750315300119
+
 `parameters` is a dictionary with the above information,
 the names of the parameters are the keys,
 and the fixed values or distributions of the parameters are the values.

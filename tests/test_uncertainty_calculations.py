@@ -1349,8 +1349,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error",
-                                                                allow_incomplete=False)
+                                                                verbose_level="error")
 
         U_hat, distribution, data = \
             self.uncertainty_calculations.create_PCE_spectral(["a", "b"],

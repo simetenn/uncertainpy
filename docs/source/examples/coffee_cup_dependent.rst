@@ -62,7 +62,7 @@ when we set up the uncertainty quantification
 To be able to use polynomial chaos methods when we have dependent parameters
 we need to use the Rosenblatt transformation, which we enable by::
 
-    UQ.quantify(rosenblatt=True)
+    data = UQ.quantify(rosenblatt=True)
 
 The complete code example become:
 

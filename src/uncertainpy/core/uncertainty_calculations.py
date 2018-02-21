@@ -883,18 +883,16 @@ class UncertaintyCalculations(ParameterBase):
             5. ``data.incomplete``
             6. ``data.method``
 
-
         When returned `data` additionally contains:
 
             7. ``data["model/features"].mean``
             8. ``data["model/features"].variance``
             9. ``data["model/features"].percentile_5``
             10. ``data["model/features"].percentile_95``
-            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            11. ``data["model/features"].sobol_first``, if more than 1 parameter
             12. ``data["model/features"].sobol_total``, if more than 1 parameter
             13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
             14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
-
 
         See also
         --------
@@ -1188,7 +1186,7 @@ class UncertaintyCalculations(ParameterBase):
         If we have dependent uncertain parameters we must use the Rosenblatt
         transformation. We use the Rosenblatt transformation to transform from
         dependent to independent variables before we create the polynomial chaos
-        expansion. We first find the polynomials using the three-ththerm
+        expansion. We first find the polynomials using the three-term
         recurrence relation from the independent distributions.
 
         Both pseudo-spectral projection and point collocation is performed using
@@ -1328,7 +1326,7 @@ class UncertaintyCalculations(ParameterBase):
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
-        data.method = "monte carlo method. nr_samples={}".format(nr_samples, seed)
+        data.method = "monte carlo method. nr_samples={}".format(nr_samples)
         data.seed = seed
 
         # TODO mask data
