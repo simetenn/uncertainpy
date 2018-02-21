@@ -966,7 +966,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
     # approach beeing worse than point collocation, but examine why more closely
     def test_polynomial_chaos_spectral_rosenblatt(self):
         data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
-                                                              polynomial_order=7,
+                                                              polynomial_order=6,
+                                                              quadrature_order=10,
                                                               rosenblatt=True,
                                                               seed=self.seed)
 
