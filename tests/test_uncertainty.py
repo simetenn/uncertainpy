@@ -303,11 +303,13 @@ class TestUncertainty(TestCasePlot):
             verbose_level="error"
         )
 
-        uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir, figure_folder=self.output_test_dir)
+        data = uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir, figure_folder=self.output_test_dir)
 
         self.assertTrue(uncertainty.data.test_value,
                         "custom PCE method")
 
+        self.assertTrue(data.test_value,
+                        "custom PCE method")
 
         # Test if all calculated properties actually exists
         data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
@@ -318,6 +320,11 @@ class TestUncertainty(TestCasePlot):
             if data_type not in ["evaluations", "time", "labels"]:
                 for feature in uncertainty.data:
                     self.assertIsInstance(uncertainty.data[feature][data_type], np.ndarray)
+
+        for data_type in data_types:
+            if data_type not in ["evaluations", "time", "labels"]:
+                for feature in data:
+                    self.assertIsInstance(data[feature][data_type], np.ndarray)
 
     def test_convert_uncertain_parameters_list(self):
         result = self.uncertainty.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
@@ -337,9 +344,12 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_polynomial_chaos_single(self):
-        self.uncertainty.polynomial_chaos_single(data_folder=self.output_test_dir,
-                                                 figure_folder=self.output_test_dir,
-                                                 seed=self.seed)
+        data_dict = self.uncertainty.polynomial_chaos_single(data_folder=self.output_test_dir,
+                                                             figure_folder=self.output_test_dir,
+                                                             seed=self.seed)
+
+        self.assertIsInstance(data_dict["a"], Data)
+        self.assertIsInstance(data_dict["b"], Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
@@ -359,9 +369,11 @@ class TestUncertainty(TestCasePlot):
 
     def test_PC_model_function(self):
         self.uncertainty.model = model_function
-        self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+        data = self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed)
+
+        self.assertIsInstance(data, Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/model_function.h5")
@@ -376,9 +388,11 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_polynomial_chaos(self):
-        self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
-                                          figure_folder=self.output_test_dir,
-                                          seed=self.seed)
+        data = self.uncertainty.polynomial_chaos(data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed)
+
+        self.assertIsInstance(data, Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
@@ -482,12 +496,14 @@ class TestUncertainty(TestCasePlot):
                                                  verbose_level="error")
 
 
-        self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
-                                            plot=None,
-                                            data_folder=self.output_test_dir,
-                                            seed=self.seed,
-                                            nr_samples=self.nr_mc_samples)
+        data_dict = self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
+                                                        plot=None,
+                                                        data_folder=self.output_test_dir,
+                                                        seed=self.seed,
+                                                        nr_samples=self.nr_mc_samples)
 
+        self.assertIsInstance(data_dict["a"], Data)
+        self.assertIsInstance(data_dict["b"], Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a.h5")
@@ -530,12 +546,13 @@ class TestUncertainty(TestCasePlot):
                                                      verbose_level="error")
 
 
-        self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
-                                     plot=None,
-                                     data_folder=self.output_test_dir,
-                                     seed=self.seed,
-                                     nr_samples=self.nr_mc_samples)
+        data = self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
+                                            plot=None,
+                                            data_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            nr_samples=self.nr_mc_samples)
 
+        self.assertIsInstance(data, Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
@@ -761,18 +778,18 @@ class TestUncertainty(TestCasePlot):
     def test_quantifyPCAll(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="pc",
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed,
-                                  uncertain_parameters=None,
-                                  pc_method="collocation",
-                                  rosenblatt=False,
-                                  polynomial_order=2,
-                                  nr_collocation_nodes=50,
-                                  quadrature_order=3,
-                                  nr_pc_mc_samples=10**3,
-                                  allow_incomplete=False)
+        data = self.uncertainty.quantify(method="pc",
+                                         data_folder=self.output_test_dir,
+                                         figure_folder=self.output_test_dir,
+                                         seed=self.seed,
+                                         uncertain_parameters=None,
+                                         pc_method="collocation",
+                                         rosenblatt=False,
+                                         polynomial_order=2,
+                                         nr_collocation_nodes=50,
+                                         quadrature_order=3,
+                                         nr_pc_mc_samples=10**3,
+                                         allow_incomplete=False)
 
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
@@ -785,6 +802,17 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(self.uncertainty.data.arguments["nr_pc_mc_samples"],10**3)
         self.assertEqual(self.uncertainty.data.arguments["allow_incomplete"], False)
         self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
+
+        self.assertEqual(data.arguments["function"], "PC")
+        self.assertEqual(data.arguments["uncertain_parameters"], ["a", "b"])
+        self.assertEqual(data.arguments["method"], "collocation")
+        self.assertEqual(data.arguments["rosenblatt"], False)
+        self.assertEqual(data.arguments["polynomial_order"], 2)
+        self.assertEqual(data.arguments["nr_collocation_nodes"], 50)
+        self.assertEqual(data.arguments["quadrature_order"], 3)
+        self.assertEqual(data.arguments["nr_pc_mc_samples"],10**3)
+        self.assertEqual(data.arguments["allow_incomplete"], False)
+        self.assertEqual(data.arguments["seed"], self.seed)
 
 
 
@@ -801,8 +829,17 @@ class TestUncertainty(TestCasePlot):
         file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
         self.assertEqual(file_count, 0)
 
-        self.uncertainty.quantify(method="pc",
-                                  single=True,
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=False,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed)
+
+        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
+        self.assertEqual(file_count, 0)
+
+
+        self.uncertainty.quantify(method="mc",
                                   plot=None,
                                   save=False,
                                   data_folder=self.output_test_dir,
@@ -812,24 +849,11 @@ class TestUncertainty(TestCasePlot):
         file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
         self.assertEqual(file_count, 0)
 
-
-        self.uncertainty.quantify(method="mc",
-                            plot=None,
-                            save=False,
-                            data_folder=self.output_test_dir,
-                            figure_folder=self.output_test_dir,
-                            seed=self.seed)
-
-        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
-        self.assertEqual(file_count, 0)
-
-        self.uncertainty.quantify(method="mc",
-                                  single=True,
-                                  plot=None,
-                                  save=False,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=False,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed)
 
         file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
         self.assertEqual(file_count, 0)
@@ -854,13 +878,11 @@ class TestUncertainty(TestCasePlot):
             shutil.rmtree(self.output_test_dir)
 
 
-        self.uncertainty.quantify(method="pc",
-                                  single=True,
-                                  plot=None,
-                                  save=True,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed)
 
         file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
         self.assertEqual(file_count, 2)
@@ -883,29 +905,24 @@ class TestUncertainty(TestCasePlot):
             shutil.rmtree(self.output_test_dir)
 
 
-        self.uncertainty.quantify(method="mc",
-                                  single=True,
-                                  plot=None,
-                                  save=True,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed)
 
         file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
         self.assertEqual(file_count, 2)
 
 
 
-    def test_quantify_PC_single_rosenblatt(self):
+    def test_PC_single_rosenblatt(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="pc",
-                                  pc_method="collocation",
-                                  single=True,
-                                  rosenblatt=True,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+        self.uncertainty.polynomial_chaos_single(rosenblatt=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed)
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
         self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
@@ -916,51 +933,47 @@ class TestUncertainty(TestCasePlot):
     def test_quantify_monte_carlo(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="mc",
-                                  nr_mc_samples=self.nr_mc_samples,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
+        data = self.uncertainty.quantify(method="mc",
+                                         nr_mc_samples=self.nr_mc_samples,
+                                         data_folder=self.output_test_dir,
+                                         figure_folder=self.output_test_dir,
+                                         seed=self.seed)
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
         self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], ["a", "b"])
         self.assertEqual(self.uncertainty.data.arguments["seed"], self.seed)
         self.assertEqual(self.uncertainty.data.arguments["nr_samples"], self.nr_mc_samples)
 
-
-    def test_quantify_monte_carlo_single(self):
-        self.set_up_test_calculations()
-
-        self.uncertainty.quantify(method="mc",
-                                  single=True,
-                                  nr_mc_samples=self.nr_mc_samples,
-                                  data_folder=self.output_test_dir,
-                                  figure_folder=self.output_test_dir,
-                                  seed=self.seed)
-
-        self.assertEqual(self.uncertainty.data.arguments["function"], "MC")
-        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
-
+        self.assertEqual(data.arguments["function"], "MC")
+        self.assertEqual(data.arguments["uncertain_parameters"], ["a", "b"])
+        self.assertEqual(data.arguments["seed"], self.seed)
+        self.assertEqual(data.arguments["nr_samples"], self.nr_mc_samples)
 
 
     def test_quantify_custom(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.quantify(method="custom", custom_keyword="value",
-                                 data_folder=self.output_test_dir,
-                                 plot=None)
+        data = self.uncertainty.quantify(method="custom", custom_keyword="value",
+                                         data_folder=self.output_test_dir,
+                                         plot=None)
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
+
+        self.assertEqual(data.arguments["function"], "custom_uncertainty_quantification")
+        self.assertEqual(data.arguments["custom_keyword"], "value")
 
 
     def test_custom_uncertainty_quantification(self):
         self.set_up_test_calculations()
 
-        self.uncertainty.custom_uncertainty_quantification(custom_keyword="value", data_folder=self.output_test_dir, plot=None)
+        data = self.uncertainty.custom_uncertainty_quantification(custom_keyword="value", data_folder=self.output_test_dir, plot=None)
 
         self.assertEqual(self.uncertainty.data.arguments["function"], "custom_uncertainty_quantification")
         self.assertEqual(self.uncertainty.data.arguments["custom_keyword"], "value")
+
+        self.assertEqual(data.arguments["function"], "custom_uncertainty_quantification")
+        self.assertEqual(data.arguments["custom_keyword"], "value")
 
 
     def test_custom_uncertainty_quantification_arguments(self):
