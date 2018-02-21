@@ -39,4 +39,4 @@ parameters = {"alpha": alpha_dist,
 UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
 # Perform the uncertainty quantification using the Rosenblatt transformation
-UQ.quantify(rosenblatt=True)
+data = UQ.quantify(rosenblatt=True)

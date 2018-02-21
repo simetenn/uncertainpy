@@ -31,4 +31,4 @@ model = un.NeuronModel(path="interneuron_model/", adaptive=True,
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features)
-UQ.quantify()
+data = UQ.quantify()

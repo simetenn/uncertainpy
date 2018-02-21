@@ -39,5 +39,5 @@ UQ.parameters = parameters_AI
 
 # Perform uncertainty quantification on the new parameter set
 # and save the data and plots under their own name
-UQ.quantify(figure_folder="figures_brunel_AI",
-            filename="brunel_AI")
+data = UQ.quantify(figure_folder="figures_brunel_AI",
+                   filename="brunel_AI")

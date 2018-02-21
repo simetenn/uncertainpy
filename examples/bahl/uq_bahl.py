@@ -35,4 +35,4 @@ features = un.SpikingFeatures()
 UQ = un.UncertaintyQuantification(model=model,
                                   parameters=parameters,
                                   features=features)
-UQ.quantify()
+data = UQ.quantify()

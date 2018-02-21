@@ -41,7 +41,7 @@ After the problem is defined, an uncertainty quantification and sensitivity
 analysis can be performed using the ``UncertaintyQuantification.quantify`` method.
 Among others, ``quantify`` takes the following arguments::
 
-    UQ.quantify(
+    data = UQ.quantify(
         method="pc"``"mc",
         pc_method="collocation"``"spectral",
         rosenblatt=False``True
@@ -62,6 +62,9 @@ Uncertainpy by default uses polynomial chaos based on point collocation without 
 Rosenblatt transformation.
 The results from the uncertainty quantification are automatically saved and
 plotted.
+Additionally, the results from the uncertainty quantification are returned in
+``data``,
+as a ``Data`` object (see :ref:`Data <data>`).
 
 
 Models

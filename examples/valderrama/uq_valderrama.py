@@ -30,4 +30,4 @@ parameters.set_all_distributions(un.uniform(0.2))
 # Perform the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters)
-UQ.quantify()
+data = UQ.quantify()
