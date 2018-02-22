@@ -157,7 +157,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def cv(self, simulation_end, spiketrains):
         """
-        Calculate the coefficient of variation.
+        Calculate the coefficient of variation for each neuron.
 
         Parameters
         ----------
@@ -239,7 +239,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     def mean_isi(self, simulation_end, spiketrains):
         """
-        Calculate the mean interspike interval (isi).
+        Calculate the mean interspike interval (isi) variation for each neuron.
 
         Parameters
         ----------
