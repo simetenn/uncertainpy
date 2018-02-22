@@ -88,7 +88,6 @@ or:
 
 #### NetworkFeatures
 
-
 `uncertainpy.NetworkFeatures` requires the Python packages
 `elephant`, `neo`, and `quantities`.
 which can be installed with:
@@ -105,6 +104,7 @@ or:
 `uncertainpy.NeuronModel` requires the external simulator
 [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python),
 a simulator for neurons. This must be installed by the user.
+
 
 #### NestModel
 
@@ -212,7 +212,7 @@ pass to `Parameters`:
     # Define the parameters dictionary
     parameters = {"kappa": kappa_dist, "T_env": T_env_dist}
 
-    # and use it to create the Parameters
+    # and use it to create the parameters
     parameters = un.Parameters(parameters)
 
 

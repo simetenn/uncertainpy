@@ -31,7 +31,7 @@ T_env_dist = cp.Uniform(15, 25)
 # Define the parameters dictionary
 parameters = {"kappa": kappa_dist, "T_env": T_env_dist}
 
-# and use it to create the Parameters
+# and use it to create the parameters
 parameters = un.Parameters(parameters)
 
 # Set up the uncertainty quantification
