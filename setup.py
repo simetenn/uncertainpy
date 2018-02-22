@@ -13,7 +13,7 @@ import sys
 if not platform.system() == "Linux":
     print("Warning: Uncertainpy not tested for current operating system")
 
-name = "testme3"
+name = "Uncertainpy"
 
 description = "Uncertainty quantification and sensitivity analysis of computational models and features of the models."
 long_description = """A python toolbox for uncertainty quantification and sensitivity analysis
@@ -33,7 +33,7 @@ Examples of features in neuroscience can be spike timing and the action
 potential shape.
 
 Uncertainpy is tailored towards neuroscience models, and comes with several
-common neurosience models and features built in, but new models and features can
+common neuroscience models and features built in, but new models and features can
 easily be implemented. It should be noted that while Uncertainpy is tailored
 towards neuroscience, the implemented methods are general, and Uncertainpy can
 be used for many other types of models and features within other fields.
@@ -61,7 +61,7 @@ Custom options:
     """
 
 if "--help" in sys.argv or "-h" in sys.argv:
-    print help_text
+    print(help_text)
 
 
 if "--all" in sys.argv:

@@ -24,7 +24,7 @@ Examples of features in neuroscience can be spike timing and the action
 potential shape.
 
 Uncertainpy is tailored towards neuroscience models, and comes with several
-common neurosience models and features built in, but new models and features can
+common neuroscience models and features built in, but new models and features can
 easily be implemented. It should be noted that while Uncertainpy is tailored
 towards neuroscience, the implemented methods are general, and Uncertainpy can
 be used for many other types of models and features within other fields.
