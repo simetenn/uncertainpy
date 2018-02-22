@@ -18,7 +18,7 @@ figsize = (figure_width, figure_width*0.75)
 def set_figuresize():
     """
 Set the size of a figure.
-Default is (10, 7.5)
+Default is (180mm, 180,,*0.75)
     """
 
     params = {"figure.figsize": figsize}
@@ -359,17 +359,17 @@ nr_colors : int
     Default is 6
 palette : hls | husl | matplotlib colormap | seaborn color palette
     Set the matplotlib color cycle using a seaborn palette.
-    Availible seaborn palette names:
+    Available seaborn palette names:
         deep | muted | bright | pastel | dark | colorblind
     Other options:
         hls | husl | any named matplotlib palette | list of colors
-    Matplotlib paletes can be specified as reversed palettes by appending "_r"
+    Matplotlib pallettes can be specified as reversed palettes by appending "_r"
     to the name or as dark palettes by appending "_d" to the name.
     (These options are mutually exclusive, but the resulting list of colors
     can also be reversed).
     Default is "hsl"
 custom : bool
-    If custom style should be used in adittion to the standard style.
+    If custom style should be used in addition to the standard style.
     Default is True
     """
     plt.style.use(style)
@@ -408,11 +408,11 @@ nr_colors : int
     Default is 6
 palette : hls | husl | matplotlib colormap | seaborn color palette
     Set the matplotlib color cycle using a seaborn palette.
-    Availible seaborn palette names:
+    Available seaborn palette names:
         deep | muted | bright | pastel | dark | colorblind
     Other options:
         hls | husl | any named matplotlib palette | list of colors
-    Matplotlib paletes can be specified as reversed palettes by appending "_r"
+    Matplotlib palettes can be specified as reversed palettes by appending "_r"
     to the name or as dark palettes by appending "_d" to the name.
     (These options are mutually exclusive, but the resulting list of colors
     can also be reversed).
