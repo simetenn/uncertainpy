@@ -1,6 +1,17 @@
 import os
+import sys
+import mock
+
 # Get version
 exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
+
+# Mock packages
+uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
+                       "matplotlib.pyplot", "scipy.interpolate", "scipy",
+                       "seaborn", "matplotlib", "xvfbwrapper"]
+
+for mod_name in uncertainpy_require:
+    sys.modules[mod_name] = mock.Mock()
 
 # -*- coding: utf-8 -*-
 #
@@ -20,10 +31,8 @@ exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 # add these directories to sys.path here. If the directory is relative to the
 # documentation rootime, valuesse os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
-print os.path.abspath(os.path.join("..", ".."))
+# sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
+
 
 # -- General configuration ------------------------------------------------
 
