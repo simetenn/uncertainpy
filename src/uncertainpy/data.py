@@ -5,7 +5,7 @@ import collections
 import numpy as np
 
 from .utils import create_logger
-from .version import __version__
+from ._version import __version__
 
 
 class DataFeature(collections.MutableMapping):
