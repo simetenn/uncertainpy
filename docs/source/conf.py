@@ -22,7 +22,7 @@ exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 #
 import os
 import sys
-sys.path.insert(0, os.path.join("..", "..", "src", "uncertainpy"))
+sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy")))
 
 
 # -- General configuration ------------------------------------------------
