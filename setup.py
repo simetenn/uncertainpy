@@ -48,6 +48,10 @@ extras_require = {"efel_features":  efel_features,
                   "tests": tests_require}
 
 
+if os.environ.get('READTHEDOCS') == 'True':
+    uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
+                           "scipy", "seaborn", "matplotlib"]
+
 help_text = """
 Custom options:
   --all               Install with all dependencies required by Uncertainpy

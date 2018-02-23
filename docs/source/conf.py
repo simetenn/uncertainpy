@@ -22,13 +22,8 @@ exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy")))
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy", "core")))
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy", "features")))
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy", "models")))
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy", "plotting")))
-sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src", "uncertainpy", "utils")))
-
+sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
+print os.path.abspath(os.path.join("..", ".."))
 
 # -- General configuration ------------------------------------------------
 
