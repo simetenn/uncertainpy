@@ -1,16 +1,17 @@
 import os
 import sys
+import mock
 
 # Get version
 exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 
-# # Mock packages
-# uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-#                        "matplotlib.pyplot", "scipy.interpolate", "scipy",
-#                        "seaborn", "matplotlib", "xvfbwrapper"]
+# Mock packages
+uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
+                       "matplotlib.pyplot", "scipy.interpolate", "scipy",
+                       "seaborn", "matplotlib", "xvfbwrapper"]
 
-# for mod_name in uncertainpy_require:
-#     sys.modules[mod_name] = mock.Mock()
+for mod_name in uncertainpy_require:
+    sys.modules[mod_name] = mock.Mock()
 
 # -*- coding: utf-8 -*-
 #
