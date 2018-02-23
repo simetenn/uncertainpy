@@ -10,6 +10,7 @@ before_script:
   - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 script:
   - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
+
 # Real pypi
 deploy:
   branch: master
