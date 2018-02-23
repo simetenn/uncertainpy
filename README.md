@@ -31,8 +31,8 @@ be used for many other types of models and features within other fields.
 
 ## Documentation
 
-The documentation for Uncertainpy can be found [here](),
-and a paper on Uncertainpy [here]().
+The documentation for Uncertainpy can be found [here](http://uncertainpy.readthedocs.io).
+<!-- and the Uncertainpy paper [here]()-->
 
 ## Installation
 
@@ -229,6 +229,6 @@ which is the default option of `quantify`:
     data = UQ.quantify()
 
 
-## Citation
+<!-- ## Citation
 
-If you use Uncertainpy in your work, please cite the [Uncertainpy paper]().
+If you use Uncertainpy in your work, please cite the [Uncertainpy paper](). -->
