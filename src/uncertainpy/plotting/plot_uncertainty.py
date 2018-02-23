@@ -231,6 +231,7 @@ class PlotUncertainty(object):
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, evaluations".format(feature.replace("_", " ")),
                    new_figure=True,
+                   palette="deep",
                    **plot_kwargs)
 
         plt.tight_layout()
@@ -290,8 +291,12 @@ class PlotUncertainty(object):
         padding = len(str(len(self.data[feature].evaluations[0]) + 1))
         for evaluation in self.data[feature].evaluations:
             ax = prettyPlot(time, evaluation,
-                            xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(),
-                            title="{}, evaluation {:d}".format(feature.replace("_", " "), i), new_figure=True, **plot_kwargs)
+                            xlabel=xlabel.capitalize(),
+                            ylabel=ylabel.capitalize(),
+                            title="{}, evaluation {:d}".format(feature.replace("_", " "), i),
+                            new_figure=True,
+                            palette="deep",
+                            **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
@@ -441,7 +446,10 @@ class PlotUncertainty(object):
 
         title = feature + ", " + attribute_name
         ax = prettyPlot(time, self.data[feature][attribute],
-                        title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize(), **plot_kwargs)
+                        title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize(),
+                        nr_colors=3,
+                        palette="deep",
+                        **plot_kwargs)
 
         ax.set_xlim([min(time), max(time)])
 
@@ -586,6 +594,7 @@ class PlotUncertainty(object):
                                   attribute_name="mean",
                                   hardcopy=hardcopy,
                                   show=show,
+                                  color=0,
                                   **plot_kwargs)
 
 
@@ -616,6 +625,7 @@ class PlotUncertainty(object):
                                   attribute_name="variance",
                                   hardcopy=hardcopy,
                                   show=show,
+                                  color=2,
                                   **plot_kwargs)
 
     def mean_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
@@ -683,7 +693,6 @@ class PlotUncertainty(object):
                          new_figure=True,
                          hardcopy=True,
                          show=False,
-                         color=0,
                          **plot_kwargs):
         """
         Plot the mean and variance for a specific 1 dimensional model/feature.
@@ -697,8 +706,6 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
-        color : int, optional
-            Which of the tableu20 colors to start plotting with. Default is 0.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -735,31 +742,38 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
 
-        style="seaborn-dark"
+        style="seaborn-white"
         title = feature + ", mean and variance"
         ax = prettyPlot(time, self.data[feature].mean,
                         title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize() + ", mean",
-                        style=style, **plot_kwargs)
+                        style=style,
+                        nr_colors=3,
+                        palette="deep",
+                        **plot_kwargs)
 
 
         colors = get_current_colormap()
 
         ax2 = ax.twinx()
+        color = 0
+        color_2 = 2
 
         spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                 "right": colors[color+2], "left": "None"})
+                                 "right": colors[color_2], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
-                        color=colors[color+2], labelcolor=colors[color+2], labelsize=labelsize)
-        ax2.set_ylabel(ylabel + ", variance", color=colors[color+2], fontsize=labelsize)
+                        color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
+        ax2.set_ylabel(ylabel.capitalize() + ", variance", color=colors[color_2], fontsize=labelsize)
 
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
         ax2.plot(time, self.data[feature].variance,
-                 color=colors[color+2], linewidth=linewidth, antialiased=True)
+                 color=colors[color_2], linewidth=linewidth, antialiased=True)
 
         ax2.yaxis.offsetText.set_fontsize(fontsize)
-        ax2.yaxis.offsetText.set_color(colors[color+2])
+        ax2.yaxis.offsetText.set_color(colors[color_2])
 
+        ax2.spines["right"].set_visible(True)
+        ax2.spines["right"].set_edgecolor(colors[color_2])
 
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
@@ -840,14 +854,18 @@ class PlotUncertainty(object):
 
         title = feature.replace("_", " ") + ", 90% prediction interval"
         ax = prettyPlot(time, self.data[feature].mean, title=title,
-                        xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(), color=0,
+                        xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(),
+                        color=0,
+                        nr_colors=3,
+                        palette="deep",
                         **plot_kwargs)
 
         colors = get_current_colormap()
         ax.fill_between(time,
                          self.data[feature].percentile_5,
                          self.data[feature].percentile_95,
-                         alpha=0.5, color=colors[0])
+                         alpha=0.5, color=colors[0],
+                         linewidth=0)
 
         ax.set_xlim([min(time), max(time)])
         plt.legend(["Mean", "90% prediction interval"], loc="best")
@@ -933,6 +951,7 @@ class PlotUncertainty(object):
                             xlabel=xlabel.capitalize(),
                             ylabel=title.capitalize(),
                             color=i,
+                            palette="deep",
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
             ax.set_xlim([min(time), max(time)])
@@ -1045,8 +1064,11 @@ class PlotUncertainty(object):
 
             if i < nr_plots:
                 prettyPlot(time, self.data[feature][sensitivity][i],
-                           title=parameter_names[i], color=i,
-                           nr_colors=nr_plots, ax=ax,
+                           title=parameter_names[i],
+                           color=i,
+                           nr_colors=nr_plots,
+                           ax=ax,
+                           palette="deep",
                            **plot_kwargs)
 
                 # for tick in ax.get_xticklabels():
@@ -1149,6 +1171,7 @@ class PlotUncertainty(object):
                        ylabel=title.capitalize(),
                        new_figure=False,
                        color=i,
+                       palette="deep",
                        nr_colors=len(self.data.uncertain_parameters),
                        label=self.data.uncertain_parameters[i],
                        **plot_kwargs)
@@ -1364,7 +1387,8 @@ class PlotUncertainty(object):
                        index=xticks,
                        xlabels=xlabels,
                        ylabel=ylabel.capitalize(),
-                       palette=get_colormap_tableu20())
+                       palette=get_colormap_tableu20(),
+                       style="seaborn-white")
 
         if sensitivity in self.data[feature]:
             pos = 2*distance + 2*width
@@ -1496,7 +1520,9 @@ class PlotUncertainty(object):
                   xlabels=self.data.uncertain_parameters,
                   ylabel="Normalized sum of " + title,
                   nr_colors=len(self.data.uncertain_parameters),
-                  index=index)
+                  palette="deep",
+                  index=index,
+                  style="seaborn-darkgrid")
 
 
         plt.ylim([0, 1])
@@ -1778,7 +1804,7 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        sensitivity, _ = self.convert_sensitivity(sensitivity)
+        sensitivity, title = self.convert_sensitivity(sensitivity)
 
         no_sensitivity = True
         for feature in self.data:
@@ -1798,7 +1824,6 @@ class PlotUncertainty(object):
 
         # plt.close("all")
 
-
         set_style("seaborn-dark")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
         set_style("seaborn-white")
@@ -1810,8 +1835,8 @@ class PlotUncertainty(object):
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
-        # ax.set_xlabel(self.data.xlabel)
-        ax.set_ylabel("% " + sensitivity.split("_")[0] + " sum " + sensitivity.split("_")[1])
+        ax.set_xlabel("Parameters")
+        ax.set_ylabel("Normalized sum of " + title)
 
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
@@ -1836,6 +1861,7 @@ class PlotUncertainty(object):
                           xlabels=self.data.uncertain_parameters,
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
+                          palette="deep",
                           ax=ax,
                           **plot_kwargs)
 
@@ -1849,10 +1875,10 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = "Normalized sum " + sensitivity.replace("_", " ")
+        title = "Normalized sum of " + title
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
-        plt.subplots_adjust(top=0.9)
+        plt.subplots_adjust(top=0.88)
 
 
         if hardcopy:

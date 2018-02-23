@@ -82,6 +82,27 @@ def generate_simulator_plot_0d():
     plot.evaluations()
 
 
+def generate_simulator_plot_1d():
+    data_file = "TestingModel1d.h5"
+
+    plot = PlotUncertainty(folder=output_test_dir,
+                           verbose_level="error")
+
+    plot.load(os.path.join(test_data_dir, data_file))
+
+    plot.evaluations()
+
+def generate_simulator_plot_2d():
+    data_file = "TestingModel2d.h5"
+
+    plot = PlotUncertainty(folder=output_test_dir,
+                           verbose_level="error")
+
+    plot.load(os.path.join(test_data_dir, data_file))
+
+    plot.evaluations()
+
+
 def generate_spike_plot():
     time = np.arange(0, 10)
     values = np.arange(0, 10) + 10
@@ -114,6 +135,8 @@ if __name__ == "__main__":
     generate_plot_uncertainty()
     # generate_simulator_plot()
     generate_simulator_plot_0d()
+    generate_simulator_plot_1d()
+    generate_simulator_plot_2d()
     generate_spike_plot()
     generate_spikes_plot()
     generate_plots_plot_uncertainty_single()

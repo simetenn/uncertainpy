@@ -78,18 +78,26 @@ of models and for features of the models.
 
 #### EfelFeatures
 
-`uncertainpy.EfelFeatures` requires the Python package `efel`,
+`uncertainpy.EfelFeatures` requires the Python package
+
+* `efel`,
+
 which can be installed with:
 
     pip install uncertainpy[efel_features]
 
 or:
+
     pip install efel
 
 #### NetworkFeatures
 
 `uncertainpy.NetworkFeatures` requires the Python packages
-`elephant`, `neo`, and `quantities`.
+
+* `elephant`
+* `neo`
+*  `quantities`
+
 which can be installed with:
 
     pip install uncertainpy[network_features]
@@ -128,6 +136,7 @@ For how to use test.py run:
 These can be installed with pip:
 
     pip install uncertainpy[tests]
+
 
 ## Example of Uncertainpy in use
 

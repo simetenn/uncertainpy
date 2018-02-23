@@ -1,7 +1,6 @@
 .. image:: ../../logo/uncertainpy.png
 
 |
-|
 
 Welcome to Uncertainpy's documentation!
 =======================================
