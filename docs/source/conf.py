@@ -1,6 +1,5 @@
 import os
 import sys
-# import mock
 
 # Get version
 exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
