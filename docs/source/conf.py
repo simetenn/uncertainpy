@@ -1,4 +1,4 @@
-from ..uncertainpy._version import __version__
+from uncertainpy import __version__
 
 # -*- coding: utf-8 -*-
 #
