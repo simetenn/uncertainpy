@@ -1,4 +1,6 @@
-from uncertainpy import __version__
+import os
+# Get version
+exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 
 # -*- coding: utf-8 -*-
 #
