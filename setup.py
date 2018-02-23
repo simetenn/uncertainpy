@@ -47,10 +47,6 @@ extras_require = {"efel_features":  efel_features,
                   "all": all_requires,
                   "tests": tests_require}
 
-# To install on read the docs
-if os.environ.get('READTHEDOCS') == 'True':
-    uncertainpy_require = ["mock"]
-
 
 help_text = """
 Custom options:
