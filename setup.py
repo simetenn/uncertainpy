@@ -51,6 +51,7 @@ extras_require = {"efel_features":  efel_features,
 if os.environ.get('READTHEDOCS') == 'True':
     uncertainpy_require = ["mock"]
 
+
 help_text = """
 Custom options:
   --all               Install with all dependencies required by Uncertainpy

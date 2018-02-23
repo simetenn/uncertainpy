@@ -107,13 +107,14 @@ The ``postprocess`` function is used to postprocess the model output
 before it is used in the uncertainty quantification.
 Postprocessing does not change the model output sent to the feature
 calculations.
+This is useful if we need to transform the model output
 This is useful if we need to transform the model output to a regular result
 for the uncertainty quantification,
 but still need to preserve the original model output to reliably
 detect the model features.
 
 
-.. image:: ../figures/diagram.png
+.. image:: ../../images/diagram.png
 
 
 This figure illustrates how the objects returned by the model

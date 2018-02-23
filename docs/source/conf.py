@@ -53,7 +53,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon']
 
-
+viewcode_import = True
 
 # Napoleon options
 napoleon_google_docstring = False

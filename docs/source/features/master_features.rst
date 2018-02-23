@@ -123,7 +123,7 @@ The requirements for a ``preprocess`` function are:
    so the two must be compatible.
 
 
-.. image:: ../figures/diagram.png
+.. image:: ../../images/diagram.png
 
 This figure illustrates how the objects returned by the model function
 are passed to ``preprocess``,
