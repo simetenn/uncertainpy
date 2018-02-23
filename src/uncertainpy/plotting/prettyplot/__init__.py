@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-__version__ = "0.9"
-__author__ = "Simen Tennøe"
-
 from .prettyplot import set_figuresize
 from .prettyplot import set_legendstyle
 from .prettyplot import set_font

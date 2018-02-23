@@ -9,11 +9,7 @@ import platform
 import os
 import sys
 
-
-if not platform.system() == "Linux":
-    print("Warning: Uncertainpy not tested for current operating system")
-
-name = "Uncertainpy"
+name = "uncertainpy"
 
 description = "Uncertainty quantification and sensitivity analysis of computational models and features of the models."
 long_description = """A python toolbox for uncertainty quantification and sensitivity analysis
@@ -85,13 +81,15 @@ if "--efel_features" in sys.argv:
 
 
 # Get version
-exec(open(os.path.join("src", "uncertainpy", "version.py")).read())
+exec(open(os.path.join("src", "uncertainpy", "_version.py")).read())
 
 setup(name=name,
       version=__version__,
-    #   url="https://github.com/simetenn/uncertainpy",
-    #   author="Simen Tennøe",
-    #   description=description,
+      url="https://github.com/simetenn/uncertainpy",
+      author="Simen Tennøe",
+      description=description,
+      license="GNU GPLv3",
+      keywords="uncertainty quantification sensitivity analysis neuroscience",
       long_description=long_description,
       python_requires=">=2.7,<3",
       packages=find_packages("src"),
