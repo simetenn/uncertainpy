@@ -10,15 +10,14 @@ before_script:
   - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 script:
   - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
-
-# Real pypi
-deploy:
-  branch: master
-  provider: pypi
-  user: simetenn
-  password:
-    secure: "rf+9ONBIGkqcEEQXrY4GtCHBgy65V43i4GduFyWJENmLLwtQdkbomSLApPVHcfECtEIUvFlQdxzHAm9fyBGpyl8wEw4RmD660ixf4Y/28ecuqSzNJmm1Vps2EbnAtdq1OAvOgV/omc8q9Pw9FziZL4hp5RQypa3O3DyiRSRMiPUUxFf65u5vrLRaSPBl2tycU6Ow+E3Ohu/9cpwwf8+K30WqK4sCwsxIc+qzfBK11NUmh9C/jgzmH8Zjxkr2YrfhZotNBunKGKpG+H5eK3qjUiRvpgj1C9F6wh/7F3hM0MnxG/wqxWZKlPXOemlXY7tqJX0TypczVlRnw+G1VoVlDFNXs1Jl2DpypIY2kuWelghfESaKxFj36LhC8TNznujxFE6K8+vNaU/Jdorrr7k5dbFTPiKEM73sPzcnIT1YTV+qVrVEIjDEDmVTYYZ2UcuVLQM+WMFPdqoxjGju0iwmdTAl7iPIe060wTOeW248QXUGjYeFCQDs5XF0F5GYqkpfQkQR5HLtyNZCDfeKn46rc5Cohegf7QYvUxExFFd/LjZg3907f0uUNfcUhUB0dTqSmMQ8ooe0NuasztEQhRoKgRrlmXdnr6uG9WzWf597ZgC7kunro50ZrueMXgflETO/40S5SoNAlrzY8TQrQA5Q8IvtpFR4Ju9I/64/e+8scWQ="
-  distributions: "sdist bdist_wheel"
-  skip_cleanup: true
-  on:
-    tags: true
+# # Real pypi
+# deploy:
+#   branch: master
+#   provider: pypi
+#   user: simetenn
+#   password:
+#     secure: "rf+9ONBIGkqcEEQXrY4GtCHBgy65V43i4GduFyWJENmLLwtQdkbomSLApPVHcfECtEIUvFlQdxzHAm9fyBGpyl8wEw4RmD660ixf4Y/28ecuqSzNJmm1Vps2EbnAtdq1OAvOgV/omc8q9Pw9FziZL4hp5RQypa3O3DyiRSRMiPUUxFf65u5vrLRaSPBl2tycU6Ow+E3Ohu/9cpwwf8+K30WqK4sCwsxIc+qzfBK11NUmh9C/jgzmH8Zjxkr2YrfhZotNBunKGKpG+H5eK3qjUiRvpgj1C9F6wh/7F3hM0MnxG/wqxWZKlPXOemlXY7tqJX0TypczVlRnw+G1VoVlDFNXs1Jl2DpypIY2kuWelghfESaKxFj36LhC8TNznujxFE6K8+vNaU/Jdorrr7k5dbFTPiKEM73sPzcnIT1YTV+qVrVEIjDEDmVTYYZ2UcuVLQM+WMFPdqoxjGju0iwmdTAl7iPIe060wTOeW248QXUGjYeFCQDs5XF0F5GYqkpfQkQR5HLtyNZCDfeKn46rc5Cohegf7QYvUxExFFd/LjZg3907f0uUNfcUhUB0dTqSmMQ8ooe0NuasztEQhRoKgRrlmXdnr6uG9WzWf597ZgC7kunro50ZrueMXgflETO/40S5SoNAlrzY8TQrQA5Q8IvtpFR4Ju9I/64/e+8scWQ="
+#   distributions: "sdist bdist_wheel"
+#   skip_cleanup: true
+#   on:
+#     tags: true
