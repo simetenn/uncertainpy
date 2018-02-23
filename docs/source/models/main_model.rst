@@ -34,7 +34,7 @@ Defining a model function
 As explained above, the ``run`` argument is a Python function that runs
 a simulation on a specific model for a given set of model parameters,
 and returns the simulation output.
-An example outline of a model function is:::
+An example outline of a model function is::
 
     def example_model(parameter_1, parameter_2):
         # An algorithm for the model, or a script that runs
@@ -124,7 +124,7 @@ Functions associated with the model are in red while functions
 associated with features are in green.
 
 
-An example outline of the ``postprocess`` function is:::
+An example outline of the ``postprocess`` function is::
 
     def example_postprocess(time, values, info):
         # Postprocess the result to a regular form using time,

@@ -5,7 +5,7 @@ NestModel
 
 `NEST`_  is a simulator for large networks of spiking neurons.
 NEST models are supported through the :py:class:`~uncertainpy.model.NestModel` class,
-another subclass of :ref:`Model <model>`:::
+another subclass of :ref:`Model <model>`::
 
     model = un.NestModel(run=nest_model_function)
 

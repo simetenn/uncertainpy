@@ -87,7 +87,7 @@ It takes `interval` as input and returns a function which takes the
 `fixed_value` of each parameter as input and returns a Chaospy distribution with this
 `interval` around the `fixed_value`.
 Ultimately the distribution of each parameter is set to `interval` around their
-`fixed_value`:::
+`fixed_value`::
 
     cp.Uniform(fixed_value - abs(interval/2.*fixed_value),
                fixed_value + abs(interval/2.*fixed_value)).

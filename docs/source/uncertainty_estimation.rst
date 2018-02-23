@@ -17,7 +17,7 @@ perform an uncertainty quantification and sensitivity analysis:
 The model and parameters are required components,
 while the feature specifications are optional.
 
-Among others, UncertaintyQuantification takes the arguments:::
+Among others, UncertaintyQuantification takes the arguments::
 
     UQ = un.UncertaintyQuantification(
             model=Model(...),                        # Required
@@ -32,7 +32,7 @@ The arguments are given as instances of their corresponding Uncertainpy classes
 After the problem is set up,
 an uncertainty quantification and sensitivity analysis can be performed by using the
 :py:meth:`uncertainpy.UncertaintyQuantification.quantify` method.
-Among others, ``quantify`` takes the optional arguments:::
+Among others, ``quantify`` takes the optional arguments::
 
     data = UQ.quantify(
         method="pc"|"mc",

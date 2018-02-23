@@ -6,7 +6,7 @@ Features
 
 The ``Features`` class is used when creating custom features.
 Additionally it contains all common methods used by all features.
-The most common arguments to ``Features`` are:::
+The most common arguments to ``Features`` are::
 
     list_of_feature_functions = [example_feature]
 
@@ -35,7 +35,7 @@ Feature functions
 -----------------
 
 A specific feature is given as a Python function.
-The outline of such a feature function is:::
+The outline of such a feature function is::
 
     def example_feature(time, values, info):
         # Calculate the feature using time, values and info.
@@ -94,7 +94,7 @@ different features.
 One example is finding the spike times from a voltage trace.
 The ``preprocess`` function is used to avoid having to perform the
 same calculations several times.
-An example outline of a ``preprocess`` function is:::
+An example outline of a ``preprocess`` function is::
 
     def preprocess(time, values, info):
         # Perform all common feature calculations using time,

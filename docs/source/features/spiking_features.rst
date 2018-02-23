@@ -72,7 +72,7 @@ and a voltage (``V``) array that only includes the selected spike.
 The information in ``Spikes`` is used to calculate each feature.
 As an example, let us assume we want to create a feature that is the time
 at which the first spike in the voltage trace ends.
-Such a feature can be defined as follows:::
+Such a feature can be defined as follows::
 
     def first_spike_end_time(time, spikes, info):
         # Calculate the feature from the spikes object
@@ -90,7 +90,7 @@ model.
 Let us say we are interested in how the model performs in terms of the three
 features: ``nr_spikes``, ``average_AHP_depth`` and
 ``first_spike_end_time``.
-A spiking features object that calculates these features is created by:::
+A spiking features object that calculates these features is created by::
 
     features_to_run = ["nr_spikes",
                        "average_AHP_depth",

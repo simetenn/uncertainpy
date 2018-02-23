@@ -140,7 +140,7 @@ The feature function take the items returned by the model as as input arguments,
 calculates a specific feature of this model output and returns the results.
 quantification on.
 
-The outline for a feature function is:::
+The outline for a feature function is::
 
     def example_feature(time, values, info):
         # Calculate the feature using time, values and info.

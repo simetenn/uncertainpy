@@ -31,7 +31,7 @@ distributions in the interval :math:`[8, 16]`, and the second is named
     import chaospy as cp
     parameters = {"name_1": cp.Uniform(8, 16), "name_2": 42}
 
-And ``Parameters`` is initialized:::
+And ``Parameters`` is initialized::
 
     parameters = un.Parameters(parameters=parameters)
 
@@ -52,7 +52,7 @@ The `parameter` argument in ``UncertaintyQuantification`` is either
 Each parameter in ``Parameters`` is a :ref:`Parameter <Parameter>` object.
 Each ``Parameter`` object is responsible for storing the name and fixed value
 and/or distribution of each parameter.
-It is initialized as:::
+It is initialized as::
 
     parameter = Parameter(name="name_1", distribution=cp.Uniform(8, 16))
 
