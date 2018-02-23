@@ -1,17 +1,17 @@
 import os
 import sys
-import mock
+# import mock
 
 # Get version
 exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 
-# Mock packages
-uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "matplotlib.pyplot", "scipy.interpolate", "scipy",
-                       "seaborn", "matplotlib", "xvfbwrapper"]
+# # Mock packages
+# uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
+#                        "matplotlib.pyplot", "scipy.interpolate", "scipy",
+#                        "seaborn", "matplotlib", "xvfbwrapper"]
 
-for mod_name in uncertainpy_require:
-    sys.modules[mod_name] = mock.Mock()
+# for mod_name in uncertainpy_require:
+#     sys.modules[mod_name] = mock.Mock()
 
 # -*- coding: utf-8 -*-
 #
@@ -30,11 +30,8 @@ for mod_name in uncertainpy_require:
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation rootime, valuesse os.path.abspath to make it absolute, like shown here.
-#
-# sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
-# sys.path.insert(0, os.path.abspath("."))
+
 sys.path.insert(0, os.path.abspath("../../src"))
-# sys.path.insert(0, os.path.abspath("../src/uncertainpy"))
 
 # -- General configuration ------------------------------------------------
 
