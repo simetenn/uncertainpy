@@ -80,7 +80,7 @@ of models and for features of the models.
 
 `uncertainpy.EfelFeatures` requires the Python package
 
-* `efel`,
+* `efel`
 
 which can be installed with:
 
