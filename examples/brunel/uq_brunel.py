@@ -32,7 +32,7 @@ UQ = un.UncertaintyQuantification(model,
 # Perform uncertainty quantification
 # and save the data and plots under their own name
 UQ.quantify(figure_folder="figures_brunel_SR",
-            filename="brunel_SR")
+            filename="brunel_SR_test")
 
 # Change the set of parameters
 UQ.parameters = parameters_AI
@@ -40,4 +40,4 @@ UQ.parameters = parameters_AI
 # Perform uncertainty quantification on the new parameter set
 # and save the data and plots under their own name
 data = UQ.quantify(figure_folder="figures_brunel_AI",
-                   filename="brunel_AI")
+                   filename="brunel_AI_test")
