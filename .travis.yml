@@ -6,8 +6,12 @@ python:
 before_script:
 - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 script:
-- docker run $(bash <(curl -s https://codecov.io/env)) -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
-
+- docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
+- docker cp coverage:uncertainpy/.coverage .coverage
+- docker stop coverage
+- docker rm coverage
+after_success:
+  - bash <(curl -s https://codecov.io/env)
 deploy:
   provider: pypi
   user: simetenn
