@@ -1,4 +1,7 @@
-FROM continuumio/anaconda
+FROM continuumio/anaconda:latest
+
+# Update anaconda in case the anaconda image is outdated
+RUN conda update conda
 
 # https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
 RUN set -x \
