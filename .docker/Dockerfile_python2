@@ -92,4 +92,3 @@ RUN apt-get update --fix-missing
 RUN apt-get -y install Xvfb
 
 RUN pip install xvfbwrapper
-RUN pip install coverage
