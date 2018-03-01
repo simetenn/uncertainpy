@@ -15,6 +15,7 @@ deploy:
   distributions: sdist bdist_wheel
   repo: simetenn/uncertainpy
   skip_cleanup: true
+  branch: master
   password:
     secure: wiuIzEfD2M7m08/KH0Oq1b4/AXvknxmsKX2bA9nxYnSbIXwB7Bv/NO0rOTbuHxHbDcLzT+GndgMU7mix9/iA0Lo0lWQV8tSsxTAIczfCgbstpaM01VpbWmNdrkW1OfpWjk/7bFSbWDf5jGip+8+L9gOH3+FAc61Cqji0EsNrCg9PTGsxsxzqwXnZHZrYEJp8VfyrJIRE1wBftwWl+6wQFf2MTYU098Smv+m/uvknNkfmtOLISSZKPVNvHYEuQtEndl7x5T1ueeuY7Bae1sQB9abHHx1ZD6k7ReKiEZleNJKHh6JhE0Hb4/SKTJX4oIsJP5gioTAmf9P17RXEFBK+MhX8Ow3kxUM+oqLh39a04xiHmTNH48G94092Xpor22GO6U9i5nFblZmyq4WL2mwBB/sC+22Gg+ozHg8b8ZuCZEefpN/6rVwDdcA9o1e6GJWBlu2mwsqhfOE2lGIYAJCtur1408dj+2UHmAMH22dNfPHPjJcn6n/av48+5pSPJg5w7bI6t3AQD9GiOIQocRK60adTKNGhwPmizs5EWXxBZ7+JpTIpJNgNdKCPAyinsCf8GdbqANYLRf9tZ8XAKxGRARuYpE7/unWSKRKUFT5IgBVlMsvDVspb4BK9yvRh93EYt7D/lcn/TpTym1e5okchOv8mg1bJp0aY7JWq3BFs6/Y=
   on:
