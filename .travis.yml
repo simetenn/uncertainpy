@@ -5,9 +5,9 @@ python:
 - '2.7'
 before_script:
 - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
-- ci_env = `bash <(curl -s https://codecov.io/env)`
 script:
-- docker run $ci_env -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
+- docker run $(bash <(curl -s https://codecov.io/env)) -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
+
 deploy:
   provider: pypi
   user: simetenn
