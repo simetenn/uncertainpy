@@ -85,7 +85,7 @@ RUN conda install libgcc
 
 # Install test coverage dependencies
 RUN pip install coverage
-RUN conda install -c conda-forge codecov
+#RUN conda install -c conda-forge codecov
 
 # Install uncertainpy dependencies
 RUN apt-get update --fix-missing
