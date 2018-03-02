@@ -10,17 +10,14 @@ before_script:
 #  - docker build -t uncertainpy -f .docker/dummy .docker
 script:
 - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
-- ls -a
-- ls -a /home/docker/uncertainpy
-- bash <(curl -s https://codecov.io/bash) -s /home/docker/uncertainpy
 - docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
-- bash <(curl -s https://codecov.io/bash)
-- ls -a
-- codecov
+# - bash <(curl -s https://codecov.io/bash)
+# - ls -a
 # - docker stop coverage
 # - docker rm coverage
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+# - bash <(curl -s https://codecov.io/bash)
+- codecov
 deploy:
   provider: pypi
   user: simetenn
