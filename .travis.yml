@@ -12,7 +12,7 @@ script:
 - docker stop coverage
 - docker rm coverage
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -D /home/docker/uncertainpy
+  - bash <(curl -s https://codecov.io/bash) -s /home/docker/uncertainpy
 deploy:
   provider: pypi
   user: simetenn
