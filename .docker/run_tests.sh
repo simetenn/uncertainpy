@@ -4,7 +4,7 @@ set -eo pipefail
 source .bashrc
 cd uncertainpy
 python setup.py install --tests
-coverage run test.py all
+coverage run test.py spikes
 cat .coverage
 echo oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 echo oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
