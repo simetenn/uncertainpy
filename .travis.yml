@@ -10,8 +10,8 @@ before_script:
 #  - docker build -t uncertainpy -f .docker/dummy .docker
 script:
 - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
-- docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
-
+- docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
+# - docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
 # - docker stop coverage
 # - docker rm coverage
 after_success:
