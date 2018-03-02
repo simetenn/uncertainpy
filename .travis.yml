@@ -3,6 +3,8 @@ services: docker
 language: python
 python:
 - '2.7'
+install:
+ - pip install codecov
 before_script:
  - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 #  - docker build -t uncertainpy -f .docker/dummy .docker
@@ -14,6 +16,7 @@ script:
 - docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
 - bash <(curl -s https://codecov.io/bash) -s /home/docker/uncertainpy
 - ls -a
+- codecov
 # - docker stop coverage
 # - docker rm coverage
 after_success:
