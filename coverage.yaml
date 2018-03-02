@@ -1,0 +1,6 @@
+coverage:
+  precision: 2
+  round: nearest
+
+codecov:
+  branch: master
