@@ -5,3 +5,7 @@ source .bashrc
 cd uncertainpy
 python setup.py install --tests
 coverage run test.py all
+cat .coverage
+echo oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+echo oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+echo oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
