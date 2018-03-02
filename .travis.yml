@@ -4,11 +4,10 @@ language: python
 python:
 - '2.7'
 before_script:
-# - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
- - docker build -t uncertainpy -f .docker/dummy .docker
+ - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 script:
 - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
-- docker cp coverage:/home/docker/uncertainpy/README.md .coverage
+- docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
 - docker stop coverage
 - docker rm coverage
 - ls -a
