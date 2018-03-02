@@ -9,8 +9,11 @@ before_script:
 script:
 - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 - ls -a
+- ls -a /home/docker/uncertainpy
 - bash <(curl -s https://codecov.io/bash) -s /home/docker/uncertainpy
-# - docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
+- docker cp coverage:/home/docker/uncertainpy/.coverage .coverage
+- bash <(curl -s https://codecov.io/bash) -s /home/docker/uncertainpy
+- ls -a
 # - docker stop coverage
 # - docker rm coverage
 after_success:
