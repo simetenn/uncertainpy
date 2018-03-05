@@ -5,3 +5,4 @@ source .bashrc
 cd uncertainpy
 python setup.py develop --tests
 coverage run test.py spikes
+coverage xml
