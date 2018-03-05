@@ -16,11 +16,12 @@ script:
 - coverage xml
 - ls
 - cat coverage.xml
+- codecov
 # - docker stop coverage
 # - docker rm coverage
-after_success:
-- codecov
-- bash <(curl -s https://codecov.io/bash)
+# after_success:
+# - codecov
+# - bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pypi
   user: simetenn
