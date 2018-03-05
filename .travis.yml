@@ -9,19 +9,16 @@ before_script:
  - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 #  - docker build -t uncertainpy -f .docker/dummy .docker
 script:
-- docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
+# - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
-# - docker cp coverage:/home/docker/uncertainpy/.coverage .
 - cat .coverage
-- coverage xml -i
+- coverage xml
 - ls -a
 - ls /home/docker/uncertainpy/src/uncertainpy/
 - cat coverage.xml
 - bash <(curl -s https://codecov.io/bash)
-# - docker stop coverage
-# - docker rm coverage
-# after_success:
-# - codecov
+after_success:
+- codecov
 # - bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pypi
