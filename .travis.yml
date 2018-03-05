@@ -15,6 +15,7 @@ script:
 - cat .coverage
 - coverage xml -i
 - ls -a
+- ls /home/docker/uncertainpy/src/uncertainpy/
 - cat coverage.xml
 - bash <(curl -s https://codecov.io/bash)
 # - docker stop coverage
