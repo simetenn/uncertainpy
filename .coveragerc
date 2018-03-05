@@ -1,6 +1,6 @@
 # .coveragerc to control coverage.py
 [run]
-source = uncertainpy
+source = uncertainpy/
 omit = uncertainpy/tests/*
 
 [report]
