@@ -5,5 +5,5 @@ coverage:
 codecov:
   branch: master
 
-fixes:
-  - "/home/docker/uncertainpy::"
+# fixes:
+#   - "/home/docker/uncertainpy::"
