@@ -8,7 +8,8 @@ python:
 # before_script:
 #  - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 # #  - docker build -t uncertainpy -f .docker/dummy .docker
-# script:
+script:
+- echo Not running tests
 # - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 # after_success:
 # - codecov
