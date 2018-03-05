@@ -13,10 +13,14 @@ script:
 - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 # - docker cp coverage:/home/docker/uncertainpy/.coverage .
 - cat .coverage
+- coverage xml
+- ls
+- cat coverage.xml
 # - docker stop coverage
 # - docker rm coverage
 after_success:
 - codecov
+- bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pypi
   user: simetenn
