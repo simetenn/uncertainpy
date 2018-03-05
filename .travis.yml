@@ -12,8 +12,6 @@ script:
 # - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 - cat .coverage
-- coverage xml
-- cat coverage.xml
 after_success:
 - codecov
 - cat .coverage

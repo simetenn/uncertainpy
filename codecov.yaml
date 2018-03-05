@@ -6,4 +6,4 @@ codecov:
   branch: master
 
 fixes:
-  - "/home/docker/uncertainpy/src/uncertainpy/::/src/uncertainpy/"
+  - "/home/docker/uncertainpy::"
