@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
-source = uncertainpy/
-omit = uncertainpy/tests/*
+source = src/uncertainpy
+omit = tests/*
 
 [report]
 # Regexes for lines to exclude from consideration
