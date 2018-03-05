@@ -3,6 +3,6 @@ set -eo pipefail
 
 source .bashrc
 cd uncertainpy
-python setup.py develop --all
-coverage run test.py spikes
+python setup.py develop --tests
+coverage run test.py all
 coverage xml
