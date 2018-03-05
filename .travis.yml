@@ -16,7 +16,7 @@ script:
 - coverage xml
 - ls
 - cat coverage.xml
-- codecov
+- bash <(curl -s https://codecov.io/bash)
 # - docker stop coverage
 # - docker rm coverage
 # after_success:
