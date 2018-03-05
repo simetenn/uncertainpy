@@ -14,7 +14,7 @@ script:
 - cat .coverage
 - coverage xml
 - ls -a
-- ls /home/docker/uncertainpy/src/uncertainpy/
+- ls src/uncertainpy/
 - cat coverage.xml
 - bash <(curl -s https://codecov.io/bash)
 after_success:
