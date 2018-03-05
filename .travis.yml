@@ -4,20 +4,14 @@ language: python
 python:
 - '2.7'
 install:
- - pip install codecov coverage
+ - pip install codecov
 before_script:
  - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 #  - docker build -t uncertainpy -f .docker/dummy .docker
 script:
-# - docker run --name="coverage" --rm=False -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
-- cat .coverage
-- cat coverage.xml
 after_success:
 - codecov
-- cat .coverage
-- cat coverage.xml
-# - bash <(curl -s https://codecov.io/bash)
 deploy:
   provider: pypi
   user: simetenn
