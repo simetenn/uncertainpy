@@ -3,11 +3,6 @@
 source = src/uncertainpy
 omit = tests/*
 
-[paths]
-source =
-    src/uncertainpy
-    /home/docker/uncertainpy/src/uncertainpy
-
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
