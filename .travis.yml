@@ -9,9 +9,11 @@ before_script:
  - docker build -t uncertainpy -f .docker/Dockerfile_python2 .docker
 script:
 - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
+- ls -a src
 after_success:
 - codecov
 - ls -a
+- ls -a src
 deploy:
   provider: pypi
   user: simetenn
