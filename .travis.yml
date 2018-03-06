@@ -11,6 +11,7 @@ script:
 - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 after_success:
 - codecov
+- ls -a
 deploy:
   provider: pypi
   user: simetenn
