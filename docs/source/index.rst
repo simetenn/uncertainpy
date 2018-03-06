@@ -34,6 +34,12 @@ Welcome to Uncertainpy's documentation!
 
     theory
 
+Uncertainpy paper
+=================
+
+The preprint for the Uncertainpy paper can be found here `here <preprint>`_.
+
+.. _preprint: https://www.biorxiv.org/content/early/2018/03/05/274779
 
 Getting started
 ===============

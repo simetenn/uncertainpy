@@ -31,8 +31,8 @@ be used for many other types of models and features within other fields.
 
 ## Documentation
 
-The documentation for Uncertainpy can be found [here](http://uncertainpy.readthedocs.io).
-<!-- and the Uncertainpy paper [here]()-->
+The documentation for Uncertainpy can be found [here](http://uncertainpy.readthedocs.io),
+and a preprint of an article for the Uncertainpy paper [here](https://www.biorxiv.org/content/early/2018/03/05/274779).
 
 ## Installation
 
@@ -51,7 +51,7 @@ Uncertainpy can also be installed by cloning the Github repository:
 
     $ git clone https://github.com/simetenn/uncertainpy
     $ cd /path/to/uncertainpy
-    $ sudo python setup.py install
+    $ python setup.py install
 
 ### Dependencies
 
@@ -238,6 +238,7 @@ which is the default option of `quantify`:
     data = UQ.quantify()
 
 
-<!-- ## Citation
+## Citation
 
-If you use Uncertainpy in your work, please cite the [Uncertainpy paper](). -->
+If you use Uncertainpy in your work, please cite the preprint for the
+[Uncertainpy paper](https://www.biorxiv.org/content/early/2018/03/05/274779).

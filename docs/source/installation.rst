@@ -12,7 +12,7 @@ or from source by cloning the `Github repository`_::
 
     $ git clone https://github.com/simetenn/uncertainpy
     $ cd /path/to/uncertainpy
-    $ sudo python setup.py install
+    $ python setup.py install
 
 .. _Github repository: https://github.com/simetenn/uncertainpy
 
