@@ -13,7 +13,8 @@ script:
 after_success:
   - codecov
 before_deploy:
-  - ls -a
+  - ls -a src
+  - rm -r src/uncertainpy.egg-info
   - ls -a src
 deploy:
   provider: pypi
