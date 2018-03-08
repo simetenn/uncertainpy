@@ -4,7 +4,7 @@
 [![Documentation Status](https://readthedocs.org/projects/uncertainpy/badge/?version=latest)](http://uncertainpy.readthedocs.io/en/latest/?badge=latest)
 
 
-<img src="https://github.com/simetenn/uncertainpy/blob/master/logo/uncertainpy.svg" width="900">
+<img src="https://github.com/simetenn/uncertainpy/blob/master/logo/uncertainpy.svg" width="700">
 
 
 # A python toolbox for uncertainty quantification and sensitivity analysis
