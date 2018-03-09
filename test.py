@@ -12,7 +12,6 @@ from tests import *
 verbose = 1
 
 
-
 def create_test_suite_parameter(testcase, parameter=False):
     """
 Create a suite containing all tests taken from the given
