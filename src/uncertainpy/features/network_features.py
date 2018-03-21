@@ -13,7 +13,8 @@ from .general_network_features import GeneralNetworkFeatures
 
 class NetworkFeatures(GeneralNetworkFeatures):
     """
-    Network features of a model result, works with Nest models.
+    Network features of a model result, works with all models that return
+    the simulation end time, and a list of spiketrains.
 
     Parameters
     ----------
@@ -99,6 +100,23 @@ class NetworkFeatures(GeneralNetworkFeatures):
     covariance_bin_size : int
         The size of each bin in the ``covariance`` method.
         Default is 1.
+
+    Notes
+    -----
+    All features in this set of features take the following input arguments:
+
+    simulation_end : float
+        The simulation end time
+    neo_spiketrains : list
+        A list of Neo spiketrains.
+
+    The model must return:
+
+    simulation_end : float
+        The simulation end time
+    spiketrains : list
+        A list of spiketrains, each spiketrain is a list of the times when
+        a given neuron spikes.
 
     See also
     --------

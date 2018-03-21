@@ -6,8 +6,8 @@ import glob
 import numpy as np
 import chaospy as cp
 
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 
 from uncertainpy import UncertaintyQuantification
 from uncertainpy.parameters import Parameters

@@ -100,7 +100,7 @@ class TestParameterBase(unittest.TestCase):
         self.assertEqual(base.parameters["b"].value, 2)
 
         parameter_list = [["a", 1, None],
-                         ["b", 2, None]]
+                          ["b", 2, None]]
 
 
         base.parameters = Parameters(parameter_list)

@@ -5,8 +5,8 @@ import subprocess
 import shutil
 import numpy as np
 
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 
 from .testing_classes import TestCasePlot
 from uncertainpy.plotting.plot_uncertainty import PlotUncertainty
