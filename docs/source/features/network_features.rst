@@ -4,8 +4,10 @@ NetworkFeatures
 ===============
 
 :py:class:`~uncertainpy.features.NetworkFeatures` contains a set of features
-relevant for the output of NEST network
-models and are calculated using the `Elephant software`_.
+relevant for the output of network models and are calculated using the
+`Elephant software`_.
+This set of features require that the model returns the simulation end time and
+a list of spiketrains, which are the times a given neuron spikes.
 The implemented features are:
 
 .. _Elephant software: http://neuralensemble.org/elephant/
