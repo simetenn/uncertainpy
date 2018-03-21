@@ -13,8 +13,9 @@ from .features import Features
 
 class GeneralNetworkFeatures(Features):
     """
-    Class for creating neo spiketrains from spike trains lists, for network
-    models.
+    Class for creating NEO spiketrains from a list of spiketrains, for network
+    models. The model must return the simulation end time and a list of
+    spiketrains.
 
     Parameters
     ----------
@@ -81,8 +82,27 @@ class GeneralNetworkFeatures(Features):
     logger : logging.Logger
         Logger object responsible for logging to screen or file.
 
+    Notes
+    -----
+    All features in this set of features take the following input arguments:
+
+    simulation_end : float
+        The simulation end time
+    neo_spiketrains : list
+        A list of Neo spiketrains.
+
+    The model must return:
+
+    simulation_end : float
+        The simulation end time
+    spiketrains : list
+        A list of spiketrains, each spiketrain is a list of the times when
+        a given neuron spikes.
+
+
     See also
     --------
+    GeneralNetworkFeatures.preprocess
     GeneralNetworkFeatures.reference_feature : reference_feature showing the requirements of a feature function.
     """
     def __init__(self,
@@ -112,40 +132,34 @@ class GeneralNetworkFeatures(Features):
 
     def preprocess(self, simulation_end, spiketrains):
         """
-        Preprossesing of the time `time` and results `values` from the model, before the
-        features are calculated.
-
-        No preprocessing is performed, and the direct model results are
-        currently returned.
-        If preprocessing is needed it should follow the below format.
+        Preprossesing of the simulation end time `simulation_end` and
+        spiketrains `spiketrains` from the model, before the features are
+        calculated.
 
         Parameters
         ----------
-        *model_results
-            Variable length argument list. Is the values that ``model.run()``
-            returns. By default it contains `time` and `values`, and then any number of
-            optional `info` values.
+        simulation_end : float
+            The simulation end time
+        spiketrains : list
+            A list of spiketrains, each spiketrain is a list of the times when
+            a given neuron spikes.
 
         Returns
         -------
-        preprocess_results
-            Returns any number of values that are sent to each feature.
-            The values returned must compatible with the input arguments of
-            all features.
+        simulation_end : float
+            The simulation end time
+        neo_spiketrains : list
+            A list of Neo spiketrains.
 
         Raises
         ------
         ValueError
-            If `simulation_end` is NaN or None.
+            If `simulation_end` is np.nan or None.
 
         Notes
         -----
-        Perform a preprossesing of the model results before the results are sent
-        to the calculation of each feature. It is used to perform common
-        calculations that each feature needs to perform, to reduce the number of
-        necessary calculations. The values returned must therefore be compatible
-        with the input arguments to each features.
-
+        This preprocessing makes it so all features get the input
+        `simulation_end` and `spiketrains`.
 
         See also
         --------
