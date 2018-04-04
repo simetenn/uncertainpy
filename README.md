@@ -53,6 +53,11 @@ Uncertainpy can also be installed by cloning the Github repository:
     $ cd /path/to/uncertainpy
     $ python setup.py install
 
+`setup.py` are able to install different set of dependencies.
+For all options run::
+
+    $ python setup.py --help
+
 ### Dependencies
 
 Uncertainpy has the following dependencies:
@@ -69,9 +74,9 @@ Uncertainpy has the following dependencies:
 
 These are installed with the minimum install.
 
-`xvfbwrapper` requires `Xvfb`, which can be installed with:
+`xvfbwrapper` requires `xvfb`, which can be installed with:
 
-    sudo apt-get install Xvfb
+    sudo apt-get install xvfb
 
 Additionally Uncertainpy has a few optional dependencies for specific classes
 of models and for features of the models.
@@ -96,7 +101,7 @@ or:
 
 * `elephant`
 * `neo`
-*  `quantities`
+* `quantities`
 
 which can be installed with:
 
