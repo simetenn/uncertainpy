@@ -12,7 +12,7 @@ The implemented features are:
 
 .. _Elephant software: http://neuralensemble.org/elephant/
 
-1. ``mean_firing_rate`` -- Mean firing rate (averaged over all recorded neurons).
+1. ``mean_firing_rate`` -- Mean firing rate (for a single recorded neuron).
 2. ``instantaneous_rate`` -- Instantaneous firing rate (averaged over all recorded neurons within a small time window).
 3. ``mean_isi`` -- Mean interspike interval (averaged over all recorded neurons).
 4. ``cv`` -- Coefficient of variation of the interspike interval (for a single recorded neuron).
