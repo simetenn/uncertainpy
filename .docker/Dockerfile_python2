@@ -88,6 +88,6 @@ RUN pip install coverage
 
 # Install uncertainpy dependencies
 RUN apt-get update --fix-missing
-RUN apt-get -y install Xvfb
+RUN apt-get -y install xvfb
 
 RUN pip install xvfbwrapper
