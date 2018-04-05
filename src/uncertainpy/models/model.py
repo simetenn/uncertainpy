@@ -16,7 +16,8 @@ class Model(object):
     ----------
     adaptive : bool, optional
         True if the model is adaptive, meaning it has a varying number of
-        return values. False if not. Default is False.
+        return values between different model evaluations. An interpolation of
+        the results are performed if True. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -28,7 +29,8 @@ class Model(object):
         Suppress all graphics created by the model. Default is False.
     ignore : bool, optional
         Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. Default is False.
+        uncertainty is not calculated for the model. The model results are still
+        postprocessed if a postprocessing is implemented. Default is False.
 
     Attributes
     ----------
@@ -38,7 +40,8 @@ class Model(object):
         that is correct for the model output.
     adaptive : bool
         True if the model is adaptive, meaning it has a varying number of
-        time values. False if not. Default is False.
+        return values between different model evaluations. An interpolation of
+        the results are performed if True. Default is False.
     name : str
         Name of the model. Either the name of the class or the name of the
         function set as run.
@@ -46,7 +49,8 @@ class Model(object):
         Suppress all graphics created by the model.
     ignore : bool
         Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. Default is False.
+        uncertainty is not calculated for the model. The model results are still
+        postprocessed if a postprocessing is implemented. Default is False.
 
     See Also
     --------
