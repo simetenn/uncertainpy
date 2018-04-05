@@ -21,7 +21,8 @@ class NestModel(Model):
     ----------
     adaptive : bool, optional
         True if the model is adaptive, meaning it has a varying number of
-        time values. False if not. Default is False.
+        return values between different model evaluations. An interpolation of
+        the results are performed if True. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -30,6 +31,10 @@ class NestModel(Model):
     run : {None, function}, optional
         A function that implements the model. See Note for requirements of the
         function. Default is None.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. The model results are still
+        postprocessed. Default is False.
 
     Attributes
     ----------
@@ -38,7 +43,12 @@ class NestModel(Model):
         A list of label names for the axes when plotting the model.
     adaptive : bool
         True if the model is adaptive, meaning it has a varying number of
-        return values. False if not. Default is False.
+        return values between different model evaluations. An interpolation of
+        the results are performed if True. Default is False.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. The model results are still
+        postprocessed. Default is False.
 
     See Also
     --------
@@ -47,6 +57,7 @@ class NestModel(Model):
     def __init__(self,
                  run=None,
                  adaptive=False,
+                 ignore=False,
                  labels=["Time (ms)", "Neuron nr", "Spiking probability"]):
 
 
@@ -55,6 +66,7 @@ class NestModel(Model):
 
         super(NestModel, self).__init__(run=run,
                                         adaptive=adaptive,
+                                        ignore=ignore,
                                         labels=labels)
 
 

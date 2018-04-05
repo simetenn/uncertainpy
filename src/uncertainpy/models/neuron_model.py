@@ -24,7 +24,8 @@ class NeuronModel(Model):
         Default is None.
     adaptive : bool, optional
         True if the model is adaptive, meaning it has a varying number of
-        return values. False if not. Default is False.
+        return values between different model evaluations. An interpolation of
+        the results are performed if True. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -33,6 +34,10 @@ class NeuronModel(Model):
     suppress_graphics : bool, optional
         Suppress all graphics created by the Neuron model.
         Default is True.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. The model results are still
+        postprocessed if a postprocessing is implemented. Default is False.
     **kwargs :
         Additional key-value pairs added to info.
 
@@ -45,9 +50,14 @@ class NeuronModel(Model):
         that is correct for the model output.
     adaptive : bool
         True if the model is adaptive, meaning it has a varying number of
-        time values. False if not. Default is False.
+        return values between different model evaluations. An interpolation of
+        the results are performed if True. Default is False.
     suppress_graphics : bool
         Suppress all graphics created by the model.
+    ignore : bool
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. The model results are still
+        postprocessed if a postprocessing is implemented. Default is False.
 
     Raises
     ------
@@ -63,6 +73,7 @@ class NeuronModel(Model):
                  path=None,
                  name=None,
                  adaptive=True,
+                 ignore=False,
                  run=None,
                  labels=["Time (ms)", "Membrane potential (mV)"],
                  stimulus_start=None,
@@ -71,6 +82,7 @@ class NeuronModel(Model):
                  **kwargs):
 
         super(NeuronModel, self).__init__(adaptive=adaptive,
+                                          ignore=ignore,
                                           labels=labels,
                                           suppress_graphics=suppress_graphics)
 
