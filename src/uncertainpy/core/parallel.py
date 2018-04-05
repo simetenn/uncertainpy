@@ -47,12 +47,12 @@ class Parallel(Base):
         """
         Create an interpolation for adaptive model and features `result`.
 
-        Adaptive model or feature `result`, meaning they
-        have a varying number of time steps, are interpolated.
-        Interpolation is only performed for one dimensional `result`.
-        zero dimensional `result` does not need to be interpolated,
-        and support for interpolating two dimensional and above `result`
-        have currently not been implemented.
+        Adaptive model or feature `result`, meaning they have a varying number
+        of time steps, are interpolated. Interpolation is only performed for one
+        dimensional `result`. Zero dimensional `result` does not need to be
+        interpolated, and support for interpolating two dimensional and above
+        `result` have currently not been implemented.
+        Adds a `"interpolation"` key-value pair to `result`.
 
         Parameters
         ----------
@@ -99,33 +99,30 @@ class Parallel(Base):
                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
-                                             "interpolation": scipy interpolation object},
+                                              "interpolation": scipy interpolation object},
                           "feature_invalid": {"values": np.nan,
                                               "time": np.nan}}
 
 
         Notes
         -----
-        If either model or feature results are adaptive,
-        the results  must be interpolated for Chaospy
-        to be able to create the polynomial approximation.
-        For 1D results this is done with scipy:
+        If either model or feature results are adaptive, the results must be
+        interpolated for Chaospy to be able to create the polynomial
+        approximation. For 1D results this is done with scipy:
         ``InterpolatedUnivariateSpline(time, U, k=3)``.
         """
-
         for feature in result:
-            if np.ndim(result[feature]["values"]) == 0:
-                if feature in self.features.adaptive or \
-                        (feature == self.model.name and self.model.adaptive):
-                    raise AttributeError("{} is 0D,".format(feature)
-                                         + " interpolation makes no sense.")
+            if feature in self.features.adaptive or \
+                (feature == self.model.name and self.model.adaptive and not self.model.ignore):
 
-            if np.ndim(result[feature]["values"]) == 1:
-                if feature in self.features.adaptive or \
-                    (feature == self.model.name and self.model.adaptive):
+                if np.ndim(result[feature]["values"]) == 0:
+                        raise AttributeError("{} is 0D,".format(feature)
+                                            + " interpolation makes no sense.")
+
+                elif np.ndim(result[feature]["values"]) == 1:
                     if np.any(np.isnan(result[feature]["time"])):
-                        raise AttributeError("{} does not return any time values.".format(feature)
-                                             + " Unable to perform interpolation.")
+                        raise AttributeError("{} does not return any time values.".format(feature) +
+                                             " Unable to perform interpolation.")
 
                     interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
                                                                       result[feature]["values"],
@@ -133,12 +130,10 @@ class Parallel(Base):
                     result[feature]["interpolation"] = interpolation
 
 
-            if np.ndim(result[feature]["values"]) >= 2:
-                # TODO implement interpolation of >= 2d data, part 1
-                if feature in self.features.adaptive or \
-                        (feature == self.model.name and self.model.adaptive):
+                elif np.ndim(result[feature]["values"]) >= 2:
+                    # TODO implement interpolation of >= 2d data, part 1
                     raise NotImplementedError("{feature},".format(feature=feature)
-                                              + " no support for >= 2D interpolation")
+                                            + " no support for >= 2D interpolation")
 
         return result
 

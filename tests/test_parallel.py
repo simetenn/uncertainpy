@@ -174,6 +174,24 @@ class TestParallel(unittest.TestCase):
 
 
 
+    def test_create_interpolations_ignore(self):
+        results = {"TestingModel1d": {"values": np.arange(0, 10) + 1,
+                                      "time": np.arange(0, 10)}}
+
+        self.parallel.model.adaptive = True
+        inter = self.parallel.create_interpolations(results)
+
+        self.assertIsInstance(inter["TestingModel1d"]["interpolation"],
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+
+        self.parallel.model.ignore = True
+        results = {"TestingModel1d": {"values": np.arange(0, 10) + 1,
+                                      "time": np.arange(0, 10)}}
+
+        inter = self.parallel.create_interpolations(results)
+        self.assertNotIn("interpolation", inter["TestingModel1d"])
+
+
     def test_create_interpolations_feature_1d_no_t(self):
         results = {"feature_adaptive": {"values": np.arange(0, 10),
                                         "time": np.nan}}
@@ -212,7 +230,7 @@ class TestParallel(unittest.TestCase):
     def test_create_interpolations_model_2d(self):
         self.parallel.model.adaptive = True
         results = {"TestingModel1d": {"values": np.array([np.arange(0, 10),
-                                                     np.arange(0, 10)]),
+                                                          np.arange(0, 10)]),
                                       "time": np.arange(0, 10)}}
 
         with self.assertRaises(NotImplementedError):
