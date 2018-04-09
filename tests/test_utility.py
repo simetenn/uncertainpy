@@ -1,7 +1,7 @@
 import numpy as np
 import unittest
 
-from uncertainpy.utils import lengths, none_to_nan
+from uncertainpy.utils import lengths, none_to_nan, contains_none_or_nan
 
 
 class TestLengths(unittest.TestCase):
@@ -144,7 +144,6 @@ class TestNoneToNan(unittest.TestCase):
 
         result = none_to_nan(values_irregular)
 
-        print result
         self.assertEqual(len(result), 4)
         self.assertEqual(result[0], [])
         self.assertTrue(np.isnan(result[2]))
@@ -242,7 +241,113 @@ class TestNoneToNan(unittest.TestCase):
 
 
 
+class TestContainsNoneOrNan(unittest.TestCase):
+    def test_simple(self):
+        values = [1, 2, 3]
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
 
+
+    def test_simple_nan(self):
+        values = [1, np.nan, 3]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_nested(self):
+        values = [[1, 2], 3]
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
+
+
+    def test_nested_nan(self):
+        values = [[1, np.nan], 3]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_deeply_nested(self):
+        values = [[1, [1, 4, 2]], 3, 3, []]
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
+
+
+    def test_deeply_nested_nan(self):
+        values = [[1, [1, 4, 2]], np.nan, 3, []]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+    def test_simple_none(self):
+        values = [1, None, 3]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+    def test_nested_none(self):
+        values = [[1, None], 3]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_deeply_nested_none(self):
+        values = [[1, [1, 4, 2]], None, 3, []]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_int(self):
+        values = 1
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
+
+    def test_int_nan(self):
+        values = np.nan
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_int_nan(self):
+        values = None
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+
+
+class TestOnlyNoneOrNan(unittest.TestCase):
+    def test_simple(self):
+        values = [1, 2, 3]
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
+
+
+    def test_simple_nan(self):
+        values = [np.nan, np.nan, None]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_simple(self):
+        values = [1, 2, 3, [], [[1], 2, 3]]
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
+
+
+    def test_simple_nan(self):
+        values = [np.nan, np.nan, None, [], [[None], np.nan, np.nan]]
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
+
+
+    def test_int(self):
+        values = 1
+        result = contains_none_or_nan(values)
+        self.assertFalse(result)
+
+
+    def test_none(self):
+        values = None
+        result = contains_none_or_nan(values)
+        self.assertTrue(result)
 
 
 

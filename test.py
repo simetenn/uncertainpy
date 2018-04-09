@@ -80,7 +80,8 @@ testing_base = [TestBase, TestParameterBase]
 
 testing_data = [TestData, TestDataFeature]
 
-testing_utils = [TestLogger, TestNoneToNan, TestLengths]
+testing_utils = [TestLogger, TestNoneToNan, TestLengths, TestContainsNoneOrNan,
+                 TestOnlyNoneOrNan]
 
 # TODO: several tests crashes when several tests with Xvfb is run one after another
 testing_models = [TestTestingModel0d, TestTestingModel1d, TestTestingModel2d,

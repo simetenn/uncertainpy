@@ -8,12 +8,13 @@ def none_to_nan(values):
     Parameters
     ----------
     values : array_like, list, number
-        Result from model or features. Can be of any dimensions.
+        Values where to convert occurrences of ``None`` converted to ``np.nan``.
+        Can be irregular and have any number of nested elements.
 
     Returns
     -------
     values : array_like, list, number
-        `values` with all occurrences of None converted to ``np.nan``.
+        `values` with all occurrences of ``None`` converted to ``np.nan``.
     """
 
     if values is None:
@@ -31,6 +32,139 @@ def none_to_nan(values):
             return values
 
     return values
+
+
+def contains_none_or_nan(values):
+    """
+    Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
+    any there are at least one occurrence of ``None`` or ``numpy.nan``.
+
+    Parameters
+    ----------
+    values : array_like, list, number
+        `values` where to check for occurrences of ``None`` or ``np.nan``.
+        Can be irregular and have any number of nested elements.
+
+    Returns
+    -------
+    bool
+        ``True`` if `values` has at least one occurrence of ``None`` or
+        ``numpy.nan``.
+    """
+    none_or_nan = False
+
+    if values is None or values is np.nan:
+       return True
+    else:
+        try:
+            for value in values:
+                if hasattr(value, "__iter__"):
+                    none_or_nan = contains_none_or_nan(value)
+
+                elif value is None or value is np.nan:
+                    return True
+
+        except TypeError:
+            return none_or_nan
+
+    return none_or_nan
+
+
+def only_none_or_nan(values):
+    """
+    Checks if `values` only contains``None`` and/or ``numpy.nan``. Returns
+    ``True`` if `values` only contains``None`` and/or ``numpy.nan``.
+
+    Parameters
+    ----------
+    values : array_like, list, number
+        `values` where to check for occurrences of ``None`` or ``np.nan``.
+        Can be irregular and have any number of nested elements.
+
+    Returns
+    -------
+    bool
+        ``True`` if `values`  only contains ``None`` and/or ``numpy.nan``.
+    """
+    none_or_nan = True
+
+    if values is not None or values is not np.nan:
+       return False
+    else:
+        try:
+            for value in values:
+                if hasattr(value, "__iter__"):
+                    none_or_nan = only_none_or_nan(value)
+
+                elif value is not None or value is not np.nan:
+                    return False
+
+        except TypeError:
+            return none_or_nan
+
+    return none_or_nan
+
+
+# def only_contains_none_or_nan(self, values):
+#     """
+#     Test if all elements in `values` are ``None`` and/or ``numpy.nan``.
+
+#     Parameters
+#     ----------
+#     values : {list, array_like}
+#         A list of values to check if are ``None`` and/or ``numpy.nan``.
+
+#     Returns
+#     -------
+#     bool
+#         True if all elements in `values` are ``None`` and/or ``numpy.nan``.
+#     """
+
+#     def recursive_none_nan(values):
+#         if hasattr(values, "__iter__"):
+#             for value in values:
+#                 result = recursive_none_nan(value)
+
+#                 if not result:
+#                     return False
+
+#         elif np.isscalar(values):
+#             return False
+
+#         else:
+#             return True
+
+#     return recursive_none_nan(values)
+
+
+
+def lengths(values):
+    """
+    Get the lengths of a list and all its sublists.
+
+    Parameters
+    ----------
+    values : list
+        List where we want to find the lengths of the list and all sublists.
+
+    Returns
+    -------
+    list
+        A list with the lengths of the list and all sublists.
+    """
+    lengths = []
+
+    def recursive_len(values, lengths):
+        if hasattr(values, "__iter__"):
+            lengths.append(len(values))
+
+            for value in values:
+                recursive_len(value, lengths)
+
+    recursive_len(values, lengths)
+
+    return lengths
+
 
 
 
@@ -110,65 +244,3 @@ def none_to_nan(values):
 #         value = np.array(values)
 
 #     return values
-
-
-def lengths(values):
-    """
-    Get the lengths of a list and all its sublists.
-
-    Parameters
-    ----------
-    values : list
-        List where we want to find the lengths of the list and all sublists.
-
-    Returns
-    -------
-    list
-        A list with the lengths of the list and all sublists.
-    """
-    lengths = []
-
-    def recursive_len(values, lengths):
-        if hasattr(values, "__iter__"):
-            lengths.append(len(values))
-
-            for value in values:
-                recursive_len(value, lengths)
-
-    recursive_len(values, lengths)
-
-    return lengths
-
-
-
-
-# def only_contains_none_or_nan(self, values):
-#     """
-#     Test if all elements in `values` are ``None`` and/or ``numpy.nan``.
-
-#     Parameters
-#     ----------
-#     values : {list, array_like}
-#         A list of values to check if are ``None`` and/or ``numpy.nan``.
-
-#     Returns
-#     -------
-#     bool
-#         True if all elements in `values` are ``None`` and/or ``numpy.nan``.
-#     """
-
-#     def recursive_none_nan(values):
-#         if hasattr(values, "__iter__"):
-#             for value in values:
-#                 result = recursive_none_nan(value)
-
-#                 if not result:
-#                     return False
-
-#         elif np.isscalar(values):
-#             return False
-
-#         else:
-#             return True
-
-#     return recursive_none_nan(values)
