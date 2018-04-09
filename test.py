@@ -80,6 +80,8 @@ testing_base = [TestBase, TestParameterBase]
 
 testing_data = [TestData, TestDataFeature]
 
+testing_utils = [TestLogger, TestNoneToNan, TestLengths]
+
 # TODO: several tests crashes when several tests with Xvfb is run one after another
 testing_models = [TestTestingModel0d, TestTestingModel1d, TestTestingModel2d,
                   TestModel, TestHodgkinHuxleyModel, TestCoffeeCupModel,
@@ -91,7 +93,8 @@ testing_parameters = [TestParameter, TestParameters]
 testing_exact = testing_spikes + [TestUncertainty, TestPlotUncertainpy]
 
 testing_all = testing_parameters + testing_models + testing_base\
-              + testing_features + testing_data + [TestUncertaintyCalculations, TestDistribution]
+              + testing_features + testing_data + [TestUncertaintyCalculations, TestDistribution]\
+              + testing_utils
 
 testing_complete = testing_all + [TestExamples]
 
@@ -174,6 +177,11 @@ def all_features(exact):
 @cli.command()
 def logger():
     run(TestLogger)
+
+
+@cli.command()
+def utilities():
+    run(testing_utils)
 
 
 @cli.command()
