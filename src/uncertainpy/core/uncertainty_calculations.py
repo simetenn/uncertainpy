@@ -6,6 +6,7 @@ import types
 
 from .run_model import RunModel
 from .base import ParameterBase
+from ..utils import contains_none_or_nan
 
 
 class UncertaintyCalculations(ParameterBase):
@@ -259,10 +260,10 @@ class UncertaintyCalculations(ParameterBase):
             raise AttributeError("Error: {} is not a feature".format(feature))
 
         masked_evaluations = []
-        mask = np.ones(len(data[feature].evaluations ), dtype=bool)
+        mask = np.ones(len(data[feature].evaluations), dtype=bool)
 
-        # TODO use numpy masked array
-        for i, result in enumerate(data[feature].evaluations ):
+        for i, result in enumerate(data[feature].evaluations):
+            # if contains_none_or_nan(result):
             if np.any(np.isnan(result)):
                 mask[i] = False
             else:
@@ -288,9 +289,9 @@ class UncertaintyCalculations(ParameterBase):
 
 
         if weights is None:
-            return np.array(masked_nodes), np.array(masked_evaluations), mask
+            return masked_nodes, masked_evaluations, mask
         else:
-            return np.array(masked_nodes), np.array(masked_evaluations), mask, np.array(masked_weights)
+            return masked_nodes, masked_evaluations, mask, masked_weights
 
 
 
@@ -401,13 +402,13 @@ class UncertaintyCalculations(ParameterBase):
                             desc="Calculating PC for each feature",
                             total=len(data)):
             if feature == self.model.name and self.model.ignore:
-                    continue
+                continue
 
             masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data, nodes, feature, weights)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
-                                                    masked_weights, masked_evaluations)
+                                                   masked_weights, masked_evaluations)
             else:
                 self.logger.warning("Uncertainty quantification is not performed " +\
                                     "for feature: {} ".format(feature) +\
@@ -1334,11 +1335,11 @@ class UncertaintyCalculations(ParameterBase):
             if feature == self.model.name and self.model.ignore:
                 continue
 
-            data[feature].mean = np.mean(data[feature].evaluations , 0)
-            data[feature].variance = np.var(data[feature].evaluations , 0)
+            data[feature].mean = np.mean(data[feature].evaluations, 0)
+            data[feature].variance = np.var(data[feature].evaluations, 0)
 
-            data[feature].percentile_5 = np.percentile(data[feature].evaluations , 5, 0)
-            data[feature].percentile_95 = np.percentile(data[feature].evaluations , 95, 0)
+            data[feature].percentile_5 = np.percentile(data[feature].evaluations, 5, 0)
+            data[feature].percentile_95 = np.percentile(data[feature].evaluations, 95, 0)
 
         return data
 
