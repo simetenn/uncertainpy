@@ -802,6 +802,26 @@ class TestRunModel(unittest.TestCase):
                                     np.arange(0, 20) + 5.))
 
 
+    def test_apply_interpolation_none(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.model.adaptive = True
+
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        self.assertTrue(np.array_equal(results[0]["TestingModel1d"]["time"], results[1]["TestingModel1d"]["time"]))
+        self.assertTrue(np.array_equal(results[1]["TestingModel1d"]["time"], results[2]["TestingModel1d"]["time"]))
+
+        results[1]["TestingModel1d"]["interpolation"] = None
+
+        time, interpolated_solves = self.runmodel.apply_interpolation(results, "TestingModel1d")
+
+        self.assertTrue(np.array_equal(time, np.arange(0, 10)))
+        self.assertTrue(np.allclose(interpolated_solves[0],
+                                    np.arange(0, 10) + 1))
+        self.assertTrue(np.isnan(interpolated_solves[1]))
+        self.assertTrue(np.allclose(interpolated_solves[2],
+                                    np.arange(0, 10) + 5.))
+
 
     def test_run_two_uncertain_parameters(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])

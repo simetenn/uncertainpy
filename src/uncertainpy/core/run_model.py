@@ -146,18 +146,18 @@ class RunModel(ParameterBase):
 
         Returns
         -------
-        time : array
-            The time array with the highest number of time steps.
-        interpolated_results : array
-            An array containing all interpolated model/features results.
-            Interpolated at the points of the time array with the highest
+        time : array_like
+            The time array with the greatest number of time steps.
+        interpolated_results : list
+            A list containing all interpolated model/features results.
+            Interpolated at the points of the time results with the greatest
             number of time steps.
 
         Notes
         -----
         Chooses the time array with the highest number of time points and use
         this time array to interpolate the model/feature results in each of
-        those points.
+        those points. If an interpolation is None, gives numpy.nan instead.
         """
         time_lengths = []
         for result in results:
@@ -168,9 +168,12 @@ class RunModel(ParameterBase):
 
         interpolated_results = []
         for result in results:
-            interpolated_results.append(result[feature]["interpolation"](time))
+            interpolation = result[feature]["interpolation"]
 
-        interpolated_results = np.array(interpolated_results)
+            if interpolation is None:
+                interpolated_results.append(np.nan)
+            else:
+                interpolated_results.append(interpolation(time))
 
         return time, interpolated_results
 
