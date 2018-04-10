@@ -225,8 +225,20 @@ class TestParallel(unittest.TestCase):
         results = {"feature_adaptive": {"values": np.arange(0, 10),
                                         "time": [np.nan]*10}}
 
-        with self.assertRaises(ValueError):
-            self.parallel.create_interpolations(results)
+        results = self.parallel.create_interpolations(results)
+
+        self.assertIsNone(results["feature_adaptive"]["interpolation"])
+
+
+
+    def test_create_interpolations_feature_1d_values_nan(self):
+        results = {"feature_adaptive": {"time": np.arange(0, 10),
+                                        "values": [np.nan]*10}}
+
+        results = self.parallel.create_interpolations(results)
+
+        self.assertIsNone(results["feature_adaptive"]["interpolation"])
+
 
     def test_create_interpolations_feature_0d(self):
         results = {"feature_adaptive": {"values": 1,
@@ -247,6 +259,122 @@ class TestParallel(unittest.TestCase):
 
         with self.assertRaises(NotImplementedError):
             self.parallel.create_interpolations(results)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    def test_interpolation_1d(self):
+        results = {"TestingModel1d": {"values": np.arange(0, 10) + 1,
+                                      "time": np.arange(0, 10)}}
+
+        interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+        self.assertIsInstance(interpolation,
+                              scipy.interpolate.fitpack2.UnivariateSpline)
+
+
+    def test_interpolation_1d_different_time_values(self):
+        results = {"TestingModel1d": {"values": np.arange(0, 5),
+                                      "time": [[1, 3], [3, 4]]}}
+
+        with self.assertRaises(ValueError):
+            self.parallel.interpolation_1d(results, "TestingModel1d")
+
+
+
+    def test_interpolation_1d_values_nan(self):
+        results = {"TestingModel1d": {"values": [1, 2, 3, 4, np.nan],
+                                      "time": [1, 2, 3, 4, 5]}}
+
+        interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+        self.assertIsNone(interpolation)
+
+
+
+    def test_interpolation_1d_values_none(self):
+        results = {"TestingModel1d": {"values": [1, 2, 3, 4, None],
+                                      "time": [1, 2, 3, 4, 5]}}
+
+        interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+        self.assertIsNone(interpolation)
+
+
+
+    def test_interpolation_1d_time_nan(self):
+        results = {"TestingModel1d": {"time": [1, 2, 3, 4, np.nan],
+                                      "values": [1, 2, 3, 4, 5]}}
+
+        interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+        self.assertIsNone(interpolation)
+
+
+
+    def test_interpolation_1d_time_none(self):
+        results = {"TestingModel1d": {"time": [1, 2, 3, 4, None],
+                                      "values": [1, 2, 3, 4, 5]}}
+
+        interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+        self.assertIsNone(interpolation)
+
+
+    def test_interpolation_1d_feature_1d_no_t(self):
+        results = {"TestingModel1d": {"values": np.arange(0, 10),
+                                      "time": np.nan}}
+
+        with self.assertRaises(ValueError):
+            interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+
+
+    def test_interpolation_1d_feature_1d_t_nan(self):
+        results = {"TestingModel1d": {"values": np.arange(0, 10),
+                                        "time": [np.nan]*10}}
+
+        interpolation = self.parallel.interpolation_1d(results, "TestingModel1d")
+
+        self.assertIsNone(interpolation)
+
+
+
+    def test_interpolation_1d_irregular(self):
+        results = {"TestingModel1d": {"values": np.arange(0, 10),
+                                      "time": [1, 3, [3, 4]]}}
+
+        with self.assertRaises(ValueError):
+            self.parallel.interpolation_1d(results, "TestingModel1d")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -130,7 +130,6 @@ class Parallel(Base):
                                      " unable to perform interpolation.")
 
 
-                # TODO: np.ndim() gives "wrong" results for object arrays.
                 if np.ndim(result[feature]["values"]) == 0:
                         # raise AttributeError("{} is 0D,".format(feature)
                         #                     + " interpolation makes no sense.")
@@ -139,41 +138,100 @@ class Parallel(Base):
 
 
                 elif np.ndim(result[feature]["values"]) == 1:
-                    if np.ndim(result[feature]["time"]) != 1:
-                        raise ValueError("{}: different dimensions between time and values,".format(feature) +
-                                         " unable to perform interpolation.")
+                    result[feature]["interpolation"] = self.interpolation_1d(result, feature)
 
-                    if contains_none_or_nan(result[feature]["time"]):
-                        raise ValueError("{} time contains np.nan or None values.".format(feature) +
-                                         " Unable to perform interpolation.")
-
-                    if contains_none_or_nan(result[feature]["values"]):
-                        raise ValueError("{} values contains np.nan or None values.".format(feature) +
-                                         " Unable to perform interpolation.")
-
-                    try:
-                        interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
-                                                                          result[feature]["values"],
-                                                                          k=3)
-                    except Exception as error:
-                        msg = "{}: unable to interpolate using scipy.interpolate.InterpolatedUnivariateSpline(time, values, k=3)".format(feature)
-                        if not error.args:
-                            error.args = ("",)
-                        error.args = error.args + (msg,)
-                        raise
-
-                    # TODO: make it so a none result is returned instead of the interpolation.
-                    # TODO: save raw result instead of
-
-                    result[feature]["interpolation"] = interpolation
 
 
                 elif np.ndim(result[feature]["values"]) >= 2:
                     # TODO implement interpolation of >= 2d data, part 1
-                    raise NotImplementedError("{feature},".format(feature=feature)
+                    raise NotImplementedError("{feature}: ".format(feature=feature)
                                             + " no support for >= 2D interpolation")
 
         return result
+
+
+    def interpolation_1d(self, result, feature):
+        """
+        Create an interpolation for an 1D result.
+
+        Parameters
+        ----------
+        result : dict
+            The model and feature results. The model and each feature each has
+            a dictionary with the time values, ``"time"``,  and model/feature
+            results, ``"values"``.
+            An example:
+
+            .. code-block:: Python
+
+                result = {model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                       "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
+
+        Returns
+        -------
+        interpolation : {scipy.interpolate.fitpack2.InterpolatedUnivariateSpline, None}
+            The result of the interpolation. If either the time or values contain
+            None or numpy.nan, None is returned.
+
+        Raises
+        ------
+        ValueError
+            If the values of the feature are not 1D.
+        ValueError
+            If the time of the feature is not 1D.
+
+
+        Notes
+        -----
+        The interpolation is performed using scipy:
+        ``InterpolatedUnivariateSpline(time, values, k=3)``.
+        """
+        if np.ndim(result[feature]["values"]) != 1:
+            raise ValueError("Cannot create 1D interpolation as the values of {} are not 1D".format(feature))
+
+        if np.ndim(result[feature]["time"]) != 1:
+            raise ValueError("Cannot create 1D interpolation as the time of {} is not 1D".format(feature))
+
+
+        interpolation = None
+
+        if contains_none_or_nan(result[feature]["values"]):
+            interpolation = None
+            msg = "{} values contains np.nan or None values, unable to perform interpolation.".format(feature)
+            self.logger.warning(msg)
+            # raise ValueError(msg)
+
+        elif contains_none_or_nan(result[feature]["time"]):
+            interpolation = None
+            msg = "{}: time contains np.nan or None values, unable to perform interpolation.".format(feature)
+            self.logger.warning(msg)
+            # raise ValueError(msg)
+
+        else:
+            try:
+                interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
+                                                                  result[feature]["values"],
+                                                                  k=3)
+            except Exception as error:
+                msg = "{}: unable to interpolate using scipy.interpolate.InterpolatedUnivariateSpline(time, values, k=3)".format(feature)
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
+
+        return interpolation
+
 
 
 
