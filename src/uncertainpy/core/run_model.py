@@ -234,6 +234,7 @@ class RunModel(ParameterBase):
 
 
         # Store all results in data, interpolate as needed
+        # TODO: save raw result instead of interpolated result?
         for feature in data:
             # Interpolate the data if it is adaptive, and ignore the model if required
             if feature in self.features.adaptive or \
@@ -249,49 +250,7 @@ class RunModel(ParameterBase):
                     interpolations = []
 
                     for result in results:
-
-                        # Check if there are not only nan values in the time values of each feature.
-                        # np.isnan() crashes is the time values have a irregular shape such
-                        # as [1, [1, 2]] or [[], [1, 3]]
-                        # Try to give informative error messages in all cases
-                        time_exists = False
-
-                        # TODO: consider removing isnan and recursively go through
-                        # the time results and check for np.nan/None
-                        # np.isnan() gives errors in some cases,
-                        # keep this as a check of time result?
-                        try:
-                            if not np.all(np.isnan(result[feature]["time"])):
-                                time_interpolate.append(result[feature]["time"])
-                                time_exists = True
-                        except (TypeError, ValueError) as error:
-                            msg = "{}: the time of is most likely not regular, unable to interpolate".format(feature)
-                            if not error.args:
-                                error.args = ("",)
-                            error.args = error.args + (msg,)
-                            raise
-
-                        try:
-                            if feature == self.model.name or not time_exists:
-                                if not np.all(np.isnan(result[self.model.name]["time"])):
-                                    time_interpolate.append(result[self.model.name]["time"])
-                                    time_exists = True
-
-                        except (TypeError, ValueError) as error:
-                            msg = "No valid time for {feature}, attempted to use the time of {model}. " + \
-                                  "{model} time is most likely not regular, unable to interpolate".format(feature=feature, model=self.model.name)
-                            if not error.args:
-                                error.args = ("",)
-                            error.args = error.args + (msg,)
-                            raise
-
-                        if not time_exists:
-                            if feature == self.model.name:
-                                msg = "{model} has no valid time values to use in the interpolation".format(feature=feature, model=self.model.name)
-                            else:
-                                msg = "Neither {feature} or {model} has valid time values to use in the interpolation".format(feature=feature, model=self.model.name)
-                            raise ValueError(msg)
-
+                        time_interpolate.append(result[feature]["time"])
                         interpolations.append(result[feature]["interpolation"])
 
                     data[feature].time, data[feature].evaluations = self.apply_interpolation(time_interpolate, interpolations)
