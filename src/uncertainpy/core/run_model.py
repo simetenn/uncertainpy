@@ -8,12 +8,15 @@ except ImportError:
 
 from tqdm import tqdm
 
+import warnings
 import numpy as np
 import multiprocess as mp
 
 from ..data import Data
+from ..utils.utility import lengths
 from .base import ParameterBase
 from .parallel import Parallel
+
 
 
 class RunModel(ParameterBase):
@@ -136,11 +139,11 @@ class RunModel(ParameterBase):
         those points.
         """
 
-        lengths = []
+        time_lengths = []
         for time_tmp in time_interpolate:
-            lengths.append(len(time_tmp))
+            time_lengths.append(len(time_tmp))
 
-        index_max_len = np.argmax(lengths)
+        index_max_len = np.argmax(time_lengths)
         time = time_interpolate[index_max_len]
 
         interpolated_results = []
@@ -195,7 +198,7 @@ class RunModel(ParameterBase):
         Notes
         -----
         Sets the following in data, if applicable:
-        1. ``data["model/features"].evaluations` - ``values``
+        1. ``data["model/features"].evaluations``, which contains all ``values``
         2. ``data["model/features"].time``
         3. ``data["model/features"].labels``
         4. ``data.model_name``
@@ -218,39 +221,76 @@ class RunModel(ParameterBase):
 
         data.model_name = self.model.name
 
-        results = self.regularize_nan_results(results)
+        # results = self.regularize_nan_results(results)
 
         # Check if features are adaptive without being specified as a adaptive
         # TODO if the feature is adaptive, perform the complete interpolation here instead
         for feature in data:
-            if self.is_adaptive(results, feature):
-                if (feature == self.model.name and not self.model.adaptive) \
-                    or (feature != self.model.name and feature not in self.features.adaptive):
-                    raise ValueError("{}: The number of points varies between runs.".format(feature)
-                                     + " Try setting adaptive to True in {}".format(feature))
+            if (feature == self.model.name and not (self.model.ignore or self.model.adaptive)) \
+                or (feature != self.model.name and feature not in self.features.adaptive):
+                    if not self.is_regular(results, feature):
+                        raise ValueError("{}: The number of points varies between evaluations.".format(feature)
+                                         + " Try setting adaptive to True in {}".format(feature))
 
 
         # Store all results in data, interpolate as needed
         for feature in data:
-            # Interpolate the data if it is adaptive
+            # Interpolate the data if it is adaptive, and ignore the model if required
             if feature in self.features.adaptive or \
-                    (feature == self.model.name and self.model.adaptive):
+                    (feature == self.model.name and self.model.adaptive and not self.model.ignore):
                 # TODO implement interpolation of >= 2d data, part2
                 if np.ndim(results[0][feature]["values"]) >= 2:
                     raise NotImplementedError("Feature: {feature},".format(feature=feature)
                                               + " no support for >= 2D interpolation")
 
+
                 elif np.ndim(results[0][feature]["values"]) == 1:
                     time_interpolate = []
                     interpolations = []
+
                     for result in results:
-                        # if "time" in result[feature]:
-                        if not np.all(np.isnan(result[feature]["time"])):
-                            time_interpolate.append(result[feature]["time"])
-                        elif not np.all(np.isnan(result[self.model.name]["time"])):
-                            time_interpolate.append(result[self.model.name]["time"])
-                        else:
-                            raise ValueError("Neither {} or model has t values to use in interpolation".format(feature))
+
+                        # Check if there are not only nan values in the time values of each feature.
+                        # np.isnan() crashes is the time values have a irregular shape such
+                        # as [1, [1, 2]] or [[], [1, 3]]
+                        # Try to give informative error messages in all cases
+                        time_exists = False
+
+                        # TODO: consider removing isnan and recursively go through
+                        # the time results and check for np.nan/None
+                        # np.isnan() gives errors in some cases,
+                        # keep this as a check of time result?
+                        try:
+                            if not np.all(np.isnan(result[feature]["time"])):
+                                time_interpolate.append(result[feature]["time"])
+                                time_exists = True
+                        except (TypeError, ValueError) as error:
+                            msg = "{}: the time of is most likely not regular, unable to interpolate".format(feature)
+                            if not error.args:
+                                error.args = ("",)
+                            error.args = error.args + (msg,)
+                            raise
+
+                        try:
+                            if feature == self.model.name or not time_exists:
+                                if not np.all(np.isnan(result[self.model.name]["time"])):
+                                    time_interpolate.append(result[self.model.name]["time"])
+                                    time_exists = True
+
+                        except (TypeError, ValueError) as error:
+                            msg = "No valid time for {feature}, attempted to use the time of {model}. " + \
+                                  "{model} time is most likely not regular, unable to interpolate".format(feature=feature, model=self.model.name)
+                            if not error.args:
+                                error.args = ("",)
+                            error.args = error.args + (msg,)
+                            raise
+
+                        if not time_exists:
+                            if feature == self.model.name:
+                                msg = "{model} has no valid time values to use in the interpolation".format(feature=feature, model=self.model.name)
+                            else:
+                                msg = "Neither {feature} or {model} has valid time values to use in the interpolation".format(feature=feature, model=self.model.name)
+                            raise ValueError(msg)
 
                         interpolations.append(result[feature]["interpolation"])
 
@@ -259,14 +299,23 @@ class RunModel(ParameterBase):
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
                 elif np.ndim(results[0][feature]["values"]) == 0:
-                    self.logger.warning("Feature: {feature}, ".format(feature=feature) +
-                                        "is a 0D result. No interpolation is performed")
+                    self.logger.warning("{feature} ".format(feature=feature) +
+                                        "gives a 0D result. No interpolation performed")
 
                     data[feature].time = results[0][feature]["time"]
 
                     data[feature].evaluations  = []
                     for result in results:
                         data[feature].evaluations.append(result[feature]["values"])
+
+
+            elif feature == self.model.name and self.model.ignore:
+                data[feature].time = []
+                data[feature].evaluations = []
+
+                for result in results:
+                    data[feature].evaluations.append(result[feature]["values"])
+                    data[feature].time.append(result[feature]["time"])
 
             else:
                 # Store data from results in a Data object
@@ -276,12 +325,12 @@ class RunModel(ParameterBase):
                 for result in results:
                     data[feature].evaluations.append(result[feature]["values"])
 
-        # ensure all results are arrays
-        for feature in data:
-            if "time" in data[feature]:
-                data[feature].time = np.array(data[feature].time)
+        # # ensure all results are arrays
+        # for feature in data:
+        #     if "time" in data[feature]:
+        #         data[feature].time = np.array(data[feature].time)
 
-            data[feature].evaluations = np.array(data[feature].evaluations )
+        #     data[feature].evaluations = np.array(data[feature].evaluations)
 
         # data.remove_only_invalid_features()
 
@@ -353,7 +402,7 @@ class RunModel(ParameterBase):
         if self.model.suppress_graphics:
             vdisplay.stop()
 
-        return np.array(results)
+        return results
 
 
 
@@ -404,10 +453,10 @@ class RunModel(ParameterBase):
         return model_parameters
 
 
-    def is_adaptive(self, results, feature):
+    def is_regular(self, results, feature):
         """
-        Test if a `feature` in the `results` is adaptive, meaning it has a
-        varying number of time points.
+        Test if `feature` in `results` is regular or not, meaning it has a
+        varying number of values for each evaluation.
 
         Parameters
         ----------
@@ -425,7 +474,7 @@ class RunModel(ParameterBase):
                           "feature0d": {"values": 1,
                                         "time": np.nan},
                           "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -441,27 +490,28 @@ class RunModel(ParameterBase):
         Returns
         -------
         bool
-            True if the feature is adaptive or
-            False if the feature is not.
-
+            True if the feature is regular or False if the feature is irregular.
         """
 
-        # Find first array with none values
+        # Find first array that us not np.nan or None
         i = 0
         for result in results:
-            if not np.all(np.isnan(result[feature]["values"])):
+            i += 1
+            if result[feature]["values"] is not np.nan and result[feature]["values"] is not None:
                 values_prev = result[feature]["values"]
                 break
-            i += 1
 
         for result in results[i:]:
             values = result[feature]["values"]
-            if not np.all(np.isnan(values)):
-                if np.shape(values_prev) != np.shape(values):
-                    return True
+
+            if values is not np.nan or values is not None:
+                if lengths(values_prev) != lengths(values):
+                    return False
+
                 values_prev = values
 
-        return False
+        return True
+
 
 
 
@@ -505,8 +555,8 @@ class RunModel(ParameterBase):
         """
         Regularize arrays with that only contain numpy.nan values.
 
-        Make each result for each feature have the same number have the same
-        shape, if they only contain numpy.nan values.
+        Make each result for each feature have the same the same shape, if they
+        only contain numpy.nan values.
 
         Parameters
         ----------
@@ -524,7 +574,7 @@ class RunModel(ParameterBase):
                           "feature0d": {"values": 1,
                                         "time": np.nan},
                           "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -549,7 +599,7 @@ class RunModel(ParameterBase):
                           "feature0d": {"values": 1,
                                         "time": np.nan},
                           "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
                                         "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
                           "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
                                                "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -561,12 +611,17 @@ class RunModel(ParameterBase):
 
         """
 
+        warnings.warn(
+            "regularize_nan_results is no longer used as nan results no longer are required to be regular.",
+            DeprecationWarning
+        )
 
         def regularize(results, data):
             """
             Parameters
             ---------
             data : {"values", "time"}
+                Which data to regularize, either time or values
             """
             features = results[0].keys()
             for feature in features:
