@@ -110,18 +110,39 @@ class RunModel(ParameterBase):
         self._parallel.model = self.model
 
 
-    def apply_interpolation(self, time_interpolate, interpolation):
+    def apply_interpolation(self, results, feature):
         """
         Perform interpolation of one model/feature using the interpolation
         objects created by Parallel.
 
         Parameters
         ----------
-        time_interpolate : list
-            A list of time arrays from all runs of the model/features.
-        interpolation : list
-            A list of scipy interpolation objects from all runs of
-            the model/features.
+        results : list
+            A list where each element is a result dictionary for each set
+            of model evaluations.
+            An example:
+
+            .. code-block:: Python
+
+                result = {self.model.name: {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                            "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature1d": {"values": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature0d": {"values": 1,
+                                        "time": np.nan},
+                          "feature2d": {"values": array([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                                                         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]),
+                                        "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])},
+                          "feature_adaptive": {"values": array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                                               "time": array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                               "interpolation": scipy interpolation object},
+                          "feature_invalid": {"values": np.nan,
+                                              "time": np.nan}}
+
+                results = [result 1, result 2, ..., result N]
+
+        feature: str
+            Name of a feature or the model.
 
         Returns
         -------
@@ -138,17 +159,16 @@ class RunModel(ParameterBase):
         this time array to interpolate the model/feature results in each of
         those points.
         """
-
         time_lengths = []
-        for time_tmp in time_interpolate:
-            time_lengths.append(len(time_tmp))
+        for result in results:
+            time_lengths.append(len(result[feature]["time"]))
 
         index_max_len = np.argmax(time_lengths)
-        time = time_interpolate[index_max_len]
+        time = results[index_max_len][feature]["time"]
 
         interpolated_results = []
-        for inter in interpolation:
-            interpolated_results.append(inter(time))
+        for result in results:
+            interpolated_results.append(result[feature]["interpolation"](time))
 
         interpolated_results = np.array(interpolated_results)
 
@@ -246,14 +266,7 @@ class RunModel(ParameterBase):
 
 
                 elif np.ndim(results[0][feature]["values"]) == 1:
-                    time_interpolate = []
-                    interpolations = []
-
-                    for result in results:
-                        time_interpolate.append(result[feature]["time"])
-                        interpolations.append(result[feature]["interpolation"])
-
-                    data[feature].time, data[feature].evaluations = self.apply_interpolation(time_interpolate, interpolations)
+                     data[feature].time, data[feature].evaluations = self.apply_interpolation(results, feature)
 
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal

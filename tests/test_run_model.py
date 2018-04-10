@@ -768,24 +768,18 @@ class TestRunModel(unittest.TestCase):
         self.runmodel.model.adaptive = True
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
-        ts = []
-        interpolation = []
 
-        for solved in results:
-            ts.append(solved["TestingModel1d"]["time"])
-            interpolation.append(solved["TestingModel1d"]["interpolation"])
+        self.assertTrue(np.array_equal(results[0]["TestingModel1d"]["time"], results[1]["TestingModel1d"]["time"]))
+        self.assertTrue(np.array_equal(results[1]["TestingModel1d"]["time"], results[2]["TestingModel1d"]["time"]))
 
-        self.assertTrue(np.array_equal(ts[0], ts[1]))
-        self.assertTrue(np.array_equal(ts[1], ts[2]))
-
-        self.assertIsInstance(interpolation[0],
+        self.assertIsInstance(results[0]["TestingModel1d"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
-        self.assertIsInstance(interpolation[1],
+        self.assertIsInstance(results[1]["TestingModel1d"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
-        self.assertIsInstance(interpolation[2],
+        self.assertIsInstance(results[2]["TestingModel1d"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
-        time, interpolated_solves = self.runmodel.apply_interpolation(ts, interpolation)
+        time, interpolated_solves = self.runmodel.apply_interpolation(results, "TestingModel1d")
 
         self.assertTrue(np.array_equal(time, np.arange(0, 10)))
         self.assertTrue(np.allclose(interpolated_solves[0],
@@ -795,9 +789,9 @@ class TestRunModel(unittest.TestCase):
         self.assertTrue(np.allclose(interpolated_solves[2],
                                     np.arange(0, 10) + 5.))
 
-        ts[1] = np.arange(0, 20)
+        results[1]["TestingModel1d"]["time"] = np.arange(0, 20)
 
-        time, interpolated_solves = self.runmodel.apply_interpolation(ts, interpolation)
+        time, interpolated_solves = self.runmodel.apply_interpolation(results, "TestingModel1d")
 
         self.assertTrue(np.array_equal(time, np.arange(0, 20)))
         self.assertTrue(np.allclose(interpolated_solves[0],
