@@ -173,6 +173,27 @@ class TestParallel(unittest.TestCase):
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
 
+    def test_create_interpolations_irregular_values(self):
+        self.parallel.model.adaptive = True
+
+        results = {"TestingModel1d": {"values": [1, 3, [3, 4]],
+                                      "time": np.arange(0, 10)}}
+
+
+        with self.assertRaises(ValueError):
+            results = self.parallel.create_interpolations(results)
+
+    def test_create_interpolations_irregular_time(self):
+        self.parallel.model.adaptive = True
+
+        results = {"TestingModel1d": {"values": np.arange(0, 10),
+                                      "time": [1, 3, [3, 4]]}}
+
+        with self.assertRaises(ValueError):
+            results = self.parallel.create_interpolations(results)
+
+
+
 
     def test_create_interpolations_ignore(self):
         results = {"TestingModel1d": {"values": np.arange(0, 10) + 1,
@@ -196,17 +217,28 @@ class TestParallel(unittest.TestCase):
         results = {"feature_adaptive": {"values": np.arange(0, 10),
                                         "time": np.nan}}
 
-        with self.assertRaises(AttributeError):
+        with self.assertRaises(ValueError):
             self.parallel.create_interpolations(results)
 
+
+    def test_create_interpolations_feature_1d_t_nan(self):
+        results = {"feature_adaptive": {"values": np.arange(0, 10),
+                                        "time": [np.nan]*10}}
+
+        with self.assertRaises(ValueError):
+            self.parallel.create_interpolations(results)
 
     def test_create_interpolations_feature_0d(self):
         results = {"feature_adaptive": {"values": 1,
                                         "time": np.arange(0, 10)}}
 
-        with self.assertRaises(AttributeError):
-            self.parallel.create_interpolations(results)
+        # with self.assertRaises(AttributeError):
+        #     self.parallel.create_interpolations(results)
+        results =  self.parallel.create_interpolations(results)
 
+        self.assertTrue(np.array_equal(results["feature_adaptive"]["time"],
+                                       np.arange(0, 10)))
+        self.assertEqual(results["feature_adaptive"]["values"], 1)
 
     def test_create_interpolations_feature_2d(self):
         results = {"feature_adaptive": {"values": np.array([np.arange(0, 10),
@@ -223,8 +255,15 @@ class TestParallel(unittest.TestCase):
         results = {"TestingModel1d": {"values": 1,
                                       "time": np.arange(0, 10)}}
 
-        with self.assertRaises(AttributeError):
-            self.parallel.create_interpolations(results)
+        # with self.assertRaises(AttributeError):
+        #     self.parallel.create_interpolations(results)
+
+        results =  self.parallel.create_interpolations(results)
+
+        self.assertTrue(np.array_equal(results["TestingModel1d"]["time"],
+                                       np.arange(0, 10)))
+        self.assertEqual(results["TestingModel1d"]["values"], 1)
+
 
 
     def test_create_interpolations_model_2d(self):
@@ -367,88 +406,3 @@ class TestParallel(unittest.TestCase):
         self.parallel.features = feature_function
         with self.assertRaises(TypeError):
             self.parallel.run(self.model_parameters)
-
-
-
-    def test_none_to_nan(self):
-
-        values_irregular = np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])
-
-        result = self.parallel.none_to_nan(values_irregular)
-
-        values_correct = np.array([[np.nan, np.nan, np.nan], [1, 2, 3],
-                              [np.nan, np.nan, np.nan], [1, 2, 3]])
-
-
-        result = np.array(result)
-        self.assertTrue(((result == values_correct) | (np.isnan(result) & np.isnan(values_correct))).all())
-
-
-
-        values_irregular = np.array([None,
-                                np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
-                                np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
-                                np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])]),
-                                None])
-
-        result = self.parallel.none_to_nan(values_irregular)
-
-        values_correct = np.array([[[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
-                               [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]],
-                              [[np.nan, np.nan, np.nan], [1, 2, 3],
-                               [np.nan, np.nan, np.nan], [1, 2, 3]],
-                              [[np.nan, np.nan, np.nan], [1, 2, 3],
-                               [np.nan, np.nan, np.nan], [1, 2, 3]],
-                              [[np.nan, np.nan, np.nan], [1, 2, 3],
-                               [np.nan, np.nan, np.nan], [1, 2, 3]],
-                              [[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan],
-                               [np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan]]])
-
-        result = np.array(result)
-        self.assertTrue(((result == values_correct) | (np.isnan(result) & np.isnan(values_correct))).all())
-
-
-
-        values_irregular = np.array([np.array([1, 2, 3]), np.array([1, 2, 3]),
-                                np.array([1, 2, 3]), np.array([1, 2, 3])])
-
-        result = self.parallel.none_to_nan(values_irregular)
-
-        result = np.array(result)
-        self.assertTrue(np.array_equal(result, values_irregular))
-
-
-
-        values_irregular = np.array([None, np.array([np.array(1), np.array(2), np.array(3)]),
-                                None, np.array([np.array(1), np.array(2), np.array(3)])])
-
-        result = self.parallel.none_to_nan(values_irregular)
-
-        values_correct = np.array([[np.nan, np.nan, np.nan], [1, 2, 3],
-                              [np.nan, np.nan, np.nan], [1, 2, 3]])
-
-        result = np.array(result)
-        self.assertTrue(((result == values_correct) | (np.isnan(result) & np.isnan(values_correct))).all())
-
-
-
-        values_irregular = np.array([np.array(1), np.array(2), np.array(3)])
-
-        result = self.parallel.none_to_nan(values_irregular)
-
-        values_correct = np.array([np.array(1), np.array(2), np.array(3)])
-
-        result = np.array(result)
-        self.assertTrue(np.array_equal(result, values_irregular))
-
-
-        values_irregular = np.array([None, None, None])
-
-        result = self.parallel.none_to_nan(values_irregular)
-
-        values_correct = np.array([np.nan, np.nan, np.nan])
-
-        result = np.array(result)
-
-        self.assertTrue(np.all(np.isnan(result)))
-        self.assertEqual(len(result), 3)

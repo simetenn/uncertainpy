@@ -1,9 +1,11 @@
 import traceback
+import warnings
 
 import numpy as np
 import scipy.interpolate as scpi
 
 from .base import Base
+from ..utils.utility import none_to_nan, contains_none_or_nan, is_regular
 
 class Parallel(Base):
     """
@@ -115,18 +117,54 @@ class Parallel(Base):
             if feature in self.features.adaptive or \
                 (feature == self.model.name and self.model.adaptive and not self.model.ignore):
 
+                # TODO: Find out how many tests should be performed on the
+                # results here.
+                # Find out how a model result should be validated.
+
+                if not is_regular(result[feature]["values"]):
+                     raise ValueError("{}: values within one evaluation is irregular,".format(feature) +
+                                      " unable to perform interpolation.")
+
+                if not is_regular(result[feature]["time"]):
+                    raise ValueError("{}: times within one evaluation is irregular,".format(feature) +
+                                     " unable to perform interpolation.")
+
+
+                # TODO: np.ndim() gives "wrong" results for object arrays.
                 if np.ndim(result[feature]["values"]) == 0:
-                        raise AttributeError("{} is 0D,".format(feature)
-                                            + " interpolation makes no sense.")
+                        # raise AttributeError("{} is 0D,".format(feature)
+                        #                     + " interpolation makes no sense.")
+                        self.logger.warning("{feature} ".format(feature=feature) +
+                                            "gives a 0D result. No interpolation performed")
+
 
                 elif np.ndim(result[feature]["values"]) == 1:
-                    if np.any(np.isnan(result[feature]["time"])):
-                        raise AttributeError("{} does not return any time values.".format(feature) +
-                                             " Unable to perform interpolation.")
+                    if np.ndim(result[feature]["time"]) != 1:
+                        raise ValueError("{}: different dimensions between time and values,".format(feature) +
+                                         " unable to perform interpolation.")
 
-                    interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
-                                                                      result[feature]["values"],
-                                                                      k=3)
+                    if contains_none_or_nan(result[feature]["time"]):
+                        raise ValueError("{} time contains np.nan or None values.".format(feature) +
+                                         " Unable to perform interpolation.")
+
+                    if contains_none_or_nan(result[feature]["values"]):
+                        raise ValueError("{} values contains np.nan or None values.".format(feature) +
+                                         " Unable to perform interpolation.")
+
+                    try:
+                        interpolation = scpi.InterpolatedUnivariateSpline(result[feature]["time"],
+                                                                          result[feature]["values"],
+                                                                          k=3)
+                    except Exception as error:
+                        msg = "{}: unable to interpolate using scipy.interpolate.InterpolatedUnivariateSpline(time, values, k=3)".format(feature)
+                        if not error.args:
+                            error.args = ("",)
+                        error.args = error.args + (msg,)
+                        raise
+
+                    # TODO: make it so a none result is returned instead of the interpolation.
+                    # TODO: save raw result instead of
+
                     result[feature]["interpolation"] = interpolation
 
 
@@ -192,7 +230,7 @@ class Parallel(Base):
 
         See also
         --------
-        uncertainpy.Parallel.none_to_nan : Method for converting from None to NaN
+        uncertainpy.utils.utility.none_to_nan : Method for converting from None to NaN
         uncertainpy.features.Features.preprocess : preprocessing model results before features are calculated
         uncertainpy.models.Model.postprocess : posteprocessing of model results
         """
@@ -216,8 +254,8 @@ class Parallel(Base):
                 error.args = error.args + (msg,)
                 raise
 
-            values_postprocess = self.none_to_nan(values_postprocess)
-            time_postprocess = self.none_to_nan(time_postprocess)
+            values_postprocess = none_to_nan(values_postprocess)
+            time_postprocess = none_to_nan(time_postprocess)
 
             results[self.model.name] = {"time": time_postprocess,
                                         "values": values_postprocess}
@@ -231,8 +269,8 @@ class Parallel(Base):
                 time_feature = feature_results[feature]["time"]
                 values_feature = feature_results[feature]["values"]
 
-                time_feature = self.none_to_nan(time_feature)
-                values_feature = self.none_to_nan(values_feature)
+                time_feature = none_to_nan(time_feature)
+                values_feature = none_to_nan(values_feature)
 
                 results[feature] = {"values": values_feature,
                                     "time": time_feature}
@@ -250,68 +288,4 @@ class Parallel(Base):
             print("")
             raise error
 
-
-    def none_to_nan(self, values):
-        """
-        Converts None values in `values` to a arrays of numpy.nan.
-
-        If `values` is a 2 dimensional or above array, each instance of None is converted to an
-        array of numpy.nan of the correct shape, which makes the array regular.
-
-
-        Parameters
-        ----------
-        values : array_like
-            Result from model or features. Can be of any dimensions.
-
-        Returns
-        -------
-        array
-            Array with all None converted to arrays of NaN of the correct shape.
-
-
-        Examples
-        --------
-        >>> from uncertainpy import Parallel
-        >>> parallel = Parallel()
-        >>> U_irregular = np.array([None, np.array([None, np.array([1, 2, 3]), None, np.array([1, 2, 3])])])
-        >>> result = parallel.none_to_nan(U_irregular)
-            array([[[ nan,  nan,  nan],
-                    [ nan,  nan,  nan],
-                    [ nan,  nan,  nan],
-                    [ nan,  nan,  nan]],
-                   [[ nan,  nan,  nan],
-                    [  1.,   2.,   3.],
-                    [ nan,  nan,  nan],
-                    [  1.,   2.,   3.]]])
-        """
-        values_list = np.array(values).tolist()
-
-        if values is None:
-            values_list = np.nan
-        elif hasattr(values, "__iter__") and len(values) == 0:
-            values_list = np.nan
-        else:
-            # To handle the special case of 0d arrays,
-            # which have an __iter__, but cannot be iterated over
-            try:
-                for i, u in enumerate(values):
-                    if hasattr(u, "__iter__"):
-                        values_list[i] = self.none_to_nan(u)
-
-                fill = np.nan
-                for i, u in enumerate(values):
-                    if u is not None:
-                        fill = np.full(np.shape(values_list[i]), np.nan, dtype=float).tolist()
-                        break
-
-                for i, u in enumerate(values):
-                    if u is None:
-                        values_list[i] = fill
-
-            except TypeError:
-                return values_list
-
-
-        return np.array(values_list)
 
