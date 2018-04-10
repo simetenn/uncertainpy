@@ -32,13 +32,14 @@ class TestRunModel(unittest.TestCase):
                                                          "feature_adaptive"])
 
         self.parameter_list = [["a", 1, None],
-                              ["b", 2, None]]
+                               ["b", 2, None]]
 
         self.parameters = Parameters(self.parameter_list)
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
-                                 features=self.features)
+                                 features=self.features,
+                                 verbose_level="warning")
 
 
     def tearDown(self):
@@ -47,7 +48,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_init(self):
-        RunModel(model=TestingModel1d(), parameters=self.parameters)
+        RunModel(model=TestingModel1d(), parameters=self.parameters, verbose_level="warning")
 
 
     def test_set_feature(self):
@@ -58,7 +59,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_model(self):
-        self.runmodel = RunModel(TestingModel2d(), None)
+        self.runmodel = RunModel(TestingModel2d(), None, verbose_level="warning")
         self.runmodel.model = TestingModel1d()
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
@@ -382,7 +383,8 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 verbose_level="warning")
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -424,6 +426,120 @@ class TestRunModel(unittest.TestCase):
         self.assert_feature_2d(data)
 
 
+    def test_results_to_data_model_1d_adaptive_ignore(self):
+        self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
+                                 parameters=self.parameters,
+                                 verbose_level="warning")
+
+        self.runmodel.model.adaptive = False
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        data = self.runmodel.results_to_data(results)
+
+        self.assertEqual(data.keys(),
+                         ["TestingModelAdaptive"])
+
+
+        self.assertIn("TestingModelAdaptive", data)
+
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"][0],
+                                       np.arange(0, 11)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"][1],
+                                       np.arange(0, 13)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"][2],
+                                       np.arange(0, 15)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[0],
+                                       np.arange(0, 11)) + 1)
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[1],
+                                       np.arange(0, 13) + 3))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[2],
+                                       np.arange(0, 15) + 5))
+
+
+    def test_results_to_data_model_1d_spiketrain_no_ignore(self):
+        self.runmodel = RunModel(model=TestingModelAdaptive(ignore=False),
+                                 parameters=self.parameters,
+                                 verbose_level="warning")
+
+        self.runmodel.model.adaptive = False
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        results[0]["TestingModelAdaptive"]["values"] = [[], [1, 2]]
+
+        with self.assertRaises(ValueError):
+            data = self.runmodel.results_to_data(results)
+
+
+    def test_results_to_data_model_1d_spiketrain_ignore(self):
+        self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
+                                 parameters=self.parameters,
+                                 verbose_level="warning")
+
+        self.runmodel.model.adaptive = False
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        results[0]["TestingModelAdaptive"]["values"] = [[], [1, 2]]
+
+
+        data = self.runmodel.results_to_data(results)
+
+        self.assertEqual(data.keys(),
+                         ["TestingModelAdaptive"])
+
+        self.assertIn("TestingModelAdaptive", data)
+
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].time[0],
+                                       np.arange(0, 11)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].time[1],
+                                       np.arange(0, 13)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].time[2],
+                                       np.arange(0, 15)))
+
+        self.assertEqual(data["TestingModelAdaptive"].evaluations[0],
+                        [[], [1, 2]])
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[0],
+                                       np.arange(0, 11)) + 1)
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[1],
+                                       np.arange(0, 13) + 3))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[2],
+                                       np.arange(0, 15) + 5))
+
+
+    def test_results_to_data_model_1d_adaptive_ignore_and_adaptive(self):
+        self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
+                                 parameters=self.parameters,
+                                 verbose_level="warning")
+
+        self.runmodel.model.adaptive = True
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+
+        data = self.runmodel.results_to_data(results)
+
+        self.assertEqual(data.keys(),
+                         ["TestingModelAdaptive"])
+
+
+        self.assertIn("TestingModelAdaptive", data)
+
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"][0],
+                                       np.arange(0, 11)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"][1],
+                                       np.arange(0, 13)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"]["time"][2],
+                                       np.arange(0, 15)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[0],
+                                       np.arange(0, 11)) + 1)
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[1],
+                                       np.arange(0, 13) + 3))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[2],
+                                       np.arange(0, 15) + 5))
+
+
     def test_results_to_data_feature_0d(self):
 
         features = TestingFeatures(features_to_run=["feature0d",],
@@ -450,7 +566,8 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 verbose_level="warning")
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -497,7 +614,8 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 verbose_level="warning")
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -511,6 +629,52 @@ class TestRunModel(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.runmodel.results_to_data(results)
 
+
+
+    def test_results_to_data_no_time_type_error(self):
+
+        features = TestingFeatures(features_to_run=["feature_adaptive"],
+                                   adaptive="feature_adaptive")
+
+        self.runmodel = RunModel(model=TestingModelAdaptive(),
+                                 parameters=self.parameters,
+                                 features=features)
+
+
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        # Remove time from feature_adaptive and model results
+        for result in results:
+            result["feature_adaptive"]["time"] = np.nan
+            result["TestingModelAdaptive"]["time"] = [1, []]
+
+        with self.assertRaises(ValueError):
+            self.runmodel.results_to_data(results)
+
+
+        for result in results:
+            result["feature_adaptive"]["time"] = [1, []]
+            result["TestingModelAdaptive"]["time"] = np.nan
+
+        with self.assertRaises(ValueError):
+            self.runmodel.results_to_data(results)
+
+
+        for result in results:
+            result["feature_adaptive"]["time"] = np.nan
+            result["TestingModelAdaptive"]["time"] = [[1, 2], []]
+
+        with self.assertRaises(TypeError):
+            self.runmodel.results_to_data(results)
+
+
+        for result in results:
+            result["feature_adaptive"]["time"] = [[1, 2], []]
+            result["TestingModelAdaptive"]["time"] = [1, 2, 3]
+
+        with self.assertRaises(TypeError):
+            self.runmodel.results_to_data(results)
 
     # def test_results_to_dataAdaptiveError(self):
     #     self.runmodel = RunModel(TestingModelAdaptive(adaptive=True),
@@ -609,54 +773,92 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(data["TestingModel1d"]["labels"], ["x", "y"])
 
 
-    # def assert_feature_invalid(self, data):
-    #     self.assertIn("feature_invalid", data.U.keys())
-    #     self.assertTrue(np.isnan(data.t["feature_invalid"]))
-    #     self.assertTrue(np.isnan(data.U["feature_invalid"][0]))
-    #     self.assertTrue(np.isnan(data.U["feature_invalid"][1]))
-    #     self.assertTrue(np.isnan(data.U["feature_invalid"][2]))
+    # # def assert_feature_invalid(self, data):
+    # #     self.assertIn("feature_invalid", data.U.keys())
+    # #     self.assertTrue(np.isnan(data.t["feature_invalid"]))
+    # #     self.assertTrue(np.isnan(data.U["feature_invalid"][0]))
+    # #     self.assertTrue(np.isnan(data.U["feature_invalid"][1]))
+    # #     self.assertTrue(np.isnan(data.U["feature_invalid"][2]))
 
 
-    def test_is_adaptive_false(self):
-        results = [{"TestingModel1d": {"values": np.arange(0, 10)},
-                    "feature2d": {"values": np.array([np.arange(0, 10),
-                                                 np.arange(0, 10)])},
-                    "feature1d": {"values": np.arange(0, 10)},
-                    "feature0d": {"values": 1},
-                    "feature_invalid": {"values": None}},
-                   {"TestingModel1d": {"values": np.arange(0, 10)},
-                    "feature2d": {"values": np.array([np.arange(0, 10),
-                                                 np.arange(0, 10)])},
-                    "feature1d": {"values": np.arange(0, 10)},
-                    "feature0d": {"values": 1},
-                    "feature_invalid": {"values": None}},
-                   {"TestingModel1d": {"values": np.arange(0, 10)},
-                    "feature2d": {"values": np.array([np.arange(0, 10),
-                                                 np.arange(0, 10)])},
-                    "feature1d": {"values": np.arange(0, 10)},
-                    "feature0d": {"values": 1},
-                    "feature_invalid": {"values": None}}]
+    # def test_is_regular_true(self):
+    #     results = [{"TestingModel1d": {"values": np.arange(0, 10)},
+    #                 "feature2d": {"values": np.array([np.arange(0, 10),
+    #                                              np.arange(0, 10)])},
+    #                 "feature1d": {"values": np.arange(0, 10)},
+    #                 "feature0d": {"values": 1},
+    #                 "feature_invalid": {"values": None}},
+    #                {"TestingModel1d": {"values": np.arange(0, 10)},
+    #                 "feature2d": {"values": np.array([np.arange(0, 10),
+    #                                              np.arange(0, 10)])},
+    #                 "feature1d": {"values": np.arange(0, 10)},
+    #                 "feature0d": {"values": 1},
+    #                 "feature_invalid": {"values": None}},
+    #                {"TestingModel1d": {"values": np.arange(0, 10)},
+    #                 "feature2d": {"values": np.array([np.arange(0, 10),
+    #                                              np.arange(0, 10)])},
+    #                 "feature1d": {"values": np.arange(0, 10)},
+    #                 "feature0d": {"values": 1},
+    #                 "feature_invalid": {"values": None}}]
 
-        self.assertFalse(self.runmodel.is_adaptive(results, "feature2d"))
-        self.assertFalse(self.runmodel.is_adaptive(results, "feature1d"))
-        self.assertFalse(self.runmodel.is_adaptive(results, "TestingModel1d"))
+    #     self.assertTrue(self.runmodel.is_regular(results, "feature2d"))
+    #     self.assertTrue(self.runmodel.is_regular(results, "feature1d"))
+    #     self.assertTrue(self.runmodel.is_regular(results, "TestingModel1d"))
 
 
 
-    def test_is_adaptive_true(self):
+    def test_is_regular_false(self):
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d"])
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 verbose_level="warning")
 
 
 
         results = [{"TestingModelAdaptive": {"values": np.arange(0, 10)},
                     "feature2d": {"values": np.array([np.arange(0, 10),
+                                                      np.arange(0, 10)])},
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": np.nan}},
+                   {"TestingModelAdaptive": {"values": np.arange(0, 15)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                  np.arange(0, 10)])},
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModelAdaptive": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
+                                                      np.arange(0, 10)])},
+                    "feature1d": {"values": np.arange(0, 15)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}}]
+
+
+        self.assertTrue(self.runmodel.is_regular(results, "feature2d"))
+        self.assertFalse(self.runmodel.is_regular(results, "TestingModelAdaptive"))
+        self.assertFalse(self.runmodel.is_regular(results, "feature1d"))
+
+
+    def test_is_regular_irregular_evaluation(self):
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
+
+        self.runmodel = RunModel(model=TestingModelAdaptive(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 verbose_level="warning")
+
+
+
+        results = [{"TestingModelAdaptive": {"values": [1, [1, 2]]},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
+                                                      np.arange(0, 10)])},
                     "feature1d": {"values": np.arange(0, 10)},
                     "feature0d": {"values": 1},
                     "feature_invalid": {"values": None}},
@@ -668,15 +870,15 @@ class TestRunModel(unittest.TestCase):
                     "feature_invalid": {"values": None}},
                    {"TestingModelAdaptive": {"values": np.arange(0, 10)},
                     "feature2d": {"values": np.array([np.arange(0, 10),
-                                                 np.arange(0, 10)])},
+                                                      np.arange(0, 10)])},
                     "feature1d": {"values": np.arange(0, 15)},
                     "feature0d": {"values": 1},
-                    "feature_invalid": {"values": None}}]
+                    "feature_invalid": {"values": np.nan}}]
 
 
-        self.assertFalse(self.runmodel.is_adaptive(results, "feature2d"))
-        self.assertTrue(self.runmodel.is_adaptive(results, "TestingModelAdaptive"))
-        self.assertTrue(self.runmodel.is_adaptive(results, "feature1d"))
+        self.assertTrue(self.runmodel.is_regular(results, "feature2d"))
+        self.assertFalse(self.runmodel.is_regular(results, "TestingModelAdaptive"))
+        self.assertFalse(self.runmodel.is_regular(results, "feature1d"))
 
 
     def test_apply_interpolation(self):
@@ -839,3 +1041,33 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(np.shape(correct_results[0]["a"]["time"]), np.shape(new_results[0]["a"]["time"]))
         self.assertEqual(np.shape(correct_results[1]["a"]["time"]), np.shape(new_results[1]["a"]["time"]))
         self.assertEqual(np.shape(correct_results[2]["a"]["time"]), np.shape(new_results[2]["a"]["time"]))
+
+    # def test_regularize_nan_results_empty_list(self):
+    #     results = [{"a": {"values": [1, 2, 4],
+    #                       "time": 1}},
+    #                {"a": {"values": [[], [1]],
+    #                       "time": 2}},
+    #                {"a": {"values": [1],
+    #                       "time": 3}}]
+    #     i = 0
+
+    #     print results
+    #     print "==========="
+
+    #     new_results = self.runmodel.regularize_nan_results(results)
+    #     print new_results
+
+    #     correct_results = [{"a": {"values": np.full((3, 3, 3), np.nan),
+    #                               "time": np.full((3, 3, 3), np.nan)}},
+    #                        {"a": {"values": np.full((3, 3, 3), 2),
+    #                               "time": np.full((3, 3, 3), 2)}},
+    #                        {"a": {"values": np.full((3, 3, 3), np.nan),
+    #                               "time": np.full((3, 3, 3), np.nan)}}]
+
+    #     # self.assertEqual(correct_results[0]["a"]["values"].shape, new_results[0]["a"]["values"].shape)
+    #     # self.assertEqual(correct_results[1]["a"]["values"].shape, new_results[1]["a"]["values"].shape)
+    #     # self.assertEqual(correct_results[2]["a"]["values"].shape, new_results[2]["a"]["values"].shape)
+
+    #     # self.assertEqual(correct_results[0]["a"]["time"].shape, new_results[0]["a"]["time"].shape)
+    #     # self.assertEqual(correct_results[1]["a"]["time"].shape, new_results[1]["a"]["time"].shape)
+    #     # self.assertEqual(correct_results[2]["a"]["time"].shape, new_results[2]["a"]["time"].shape)
