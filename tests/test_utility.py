@@ -2,6 +2,7 @@ import numpy as np
 import unittest
 
 from uncertainpy.utils import lengths, none_to_nan, contains_none_or_nan
+from uncertainpy.utils import is_regular
 
 
 class TestLengths(unittest.TestCase):
@@ -350,6 +351,75 @@ class TestOnlyNoneOrNan(unittest.TestCase):
         self.assertTrue(result)
 
 
+
+class TestIsRegular(unittest.TestCase):
+    def test_regular(self):
+        values = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        result = is_regular(values)
+        self.assertTrue(result)
+
+
+    def test_regular_nested(self):
+        values = [[[1], [2], [3]], [[4], [5], [6]], [[7], [8], [9]]]
+        result = is_regular(values)
+        self.assertTrue(result)
+
+
+    def test_regular_nan(self):
+        values = [np.nan, [4, 5, 6], [7, 8, 9]]
+        result = is_regular(values)
+        self.assertTrue(result)
+
+
+    def test_regular_one_list(self):
+        values = [np.nan, None, [7, 8, 9]]
+        result = is_regular(values)
+        self.assertTrue(result)
+
+
+    def test_regular_all_nan(self):
+        values = [np.nan, None, np.nan]
+        result = is_regular(values)
+        self.assertTrue(result)
+
+
+    def test_irregular(self):
+        values = [1, 2, [1]]
+        result = is_regular(values)
+        self.assertFalse(result)
+
+
+    def test_irregular_2(self):
+        values = [[1, 2, 3], [1, 2]]
+        result = is_regular(values)
+        self.assertFalse(result)
+
+
+    def test_irregular_nan(self):
+        values = [[1, 2, 3], [1, np.nan], None]
+        result = is_regular(values)
+        self.assertFalse(result)
+
+
+    def test_irregular_nested(self):
+        values = [[[1, 2], [2], [3]], [[4], [5], [6]], [[7], [8], [9]]]
+
+        result = is_regular(values)
+        self.assertFalse(result)
+
+
+    def test_int(self):
+        values = 1
+
+        result = is_regular(values)
+        self.assertTrue(result)
+
+
+    def test_nan(self):
+        values = np.nan
+
+        result = is_regular(values)
+        self.assertTrue(result)
 
 # Old none_to_nan_regularize tests
 
