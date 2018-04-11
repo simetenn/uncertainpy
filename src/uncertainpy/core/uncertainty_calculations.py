@@ -6,7 +6,7 @@ import types
 
 from .run_model import RunModel
 from .base import ParameterBase
-from ..utils import contains_none_or_nan
+from ..utils.utility import contains_none_or_nan
 
 
 class UncertaintyCalculations(ParameterBase):
@@ -225,11 +225,88 @@ class UncertaintyCalculations(ParameterBase):
         return distribution
 
 
-
-    def create_mask(self, data, nodes, feature, weights=None):
+    def create_masked_evaluations(self, data, feature):
         """
         Mask all model and feature evaluations that do not give results
         (anything but np.nan) and the corresponding nodes.
+
+        Parameters
+        ----------
+        data : Data
+            A Data object with evaluations for the model and each feature.
+            Must contain `data[feature].evaluations`.
+        feature : str
+            Name of the feature or model to mask.
+
+        Returns
+        -------
+        masked_evaluations : list
+            The all evaluations that have results (not numpy.nan or None).
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        """
+        if feature not in data:
+            raise AttributeError("Error: {} is not a feature".format(feature))
+
+        masked_evaluations = []
+        mask = np.ones(len(data[feature].evaluations), dtype=bool)
+
+        for i, result in enumerate(data[feature].evaluations):
+            # if np.any(np.isnan(result)):
+            if contains_none_or_nan(result):
+                mask[i] = False
+            else:
+                masked_evaluations.append(result)
+
+        if not np.all(mask):
+            self.logger.warning("{}: only yields ".format(feature) +
+                                "results for {}/{} ".format(sum(mask), len(mask)) +
+                                "parameter combinations.")
+
+
+        return masked_evaluations, mask
+
+
+
+    def create_masked_nodes(self, data, feature, nodes):
+        """
+        Mask all model and feature evaluations that do not give results
+        (anything but np.nan) and the corresponding nodes.
+
+        Parameters
+        ----------
+        data : Data
+            A Data object with evaluations for the model and each feature.
+            Must contain `data[feature].evaluations`.
+        feature : str
+            Name of the feature or model to mask.
+        nodes : array_like
+            The nodes used to evaluate the model.
+
+        Returns
+        -------
+        masked_evaluations : array_like
+            The evaluations which have results.
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        masked_nodes : array_like
+            The nodes that correspond to the evaluations with results.
+        """
+        masked_evaluations, mask = self.create_masked_evaluations(data, feature)
+
+        if len(nodes.shape) > 1:
+            masked_nodes = nodes[:, mask]
+        else:
+            masked_nodes = nodes[mask]
+
+        return masked_evaluations, mask, masked_nodes
+
+
+
+    def create_masked_nodes_weights(self, data, feature, nodes, weights):
+        """
+        Mask all model and feature evaluations that do not give results
+        (anything but numpy.nan) and the corresponding nodes.
 
         Parameters
         ----------
@@ -240,58 +317,30 @@ class UncertaintyCalculations(ParameterBase):
             The nodes used to evaluate the model.
         feature : str
             Name of the feature or model to mask.
-        weights : array_like, optional
+        weights : array_like
             Weights corresponding to each node.
-            Default is None.
 
         Returns
         -------
-        masked_nodes : array_like
-            The nodes that correspond to the evaluations with results.
-        masked_evaluations : array_like
+       masked_evaluations : array_like
             The evaluations which have results.
         mask : boolean array
             The mask itself, used to create the masked arrays.
-        masked_weights : array_like, optional
-            Masked weights that correspond to evaluations with results,
-            only returned when weights are given.
+        masked_nodes : array_like
+            The nodes that correspond to the evaluations with results.
+        masked_weights : array_like
+            Masked weights that correspond to evaluations with results.
         """
-        if feature not in data:
-            raise AttributeError("Error: {} is not a feature".format(feature))
+        masked_evaluations, mask, masked_nodes = self.create_masked_nodes(data, feature, nodes)
 
-        masked_evaluations = []
-        mask = np.ones(len(data[feature].evaluations), dtype=bool)
-
-        for i, result in enumerate(data[feature].evaluations):
-            # if contains_none_or_nan(result):
-            if np.any(np.isnan(result)):
-                mask[i] = False
-            else:
-                masked_evaluations.append(result)
-
-
-        if len(nodes.shape) > 1:
-            masked_nodes = nodes[:, mask]
+        if len(weights.shape) > 1:
+            masked_weights = weights[:, mask]
         else:
-            masked_nodes = nodes[mask]
+            masked_weights = weights[mask]
 
-        if weights is not None:
-            # TODO is this needed?
-            if len(weights.shape) > 1:
-                masked_weights = weights[:, mask]
-            else:
-                masked_weights = weights[mask]
-
-        if not np.all(mask):
-            self.logger.warning("Feature: {} only yields ".format(feature) +
-                                "results for {}/{} ".format(sum(mask), len(mask)) +
-                                "parameter combinations.")
+        return masked_evaluations, mask, masked_nodes, masked_weights
 
 
-        if weights is None:
-            return masked_nodes, masked_evaluations, mask
-        else:
-            return masked_nodes, masked_evaluations, mask, masked_weights
 
 
 
@@ -404,16 +453,16 @@ class UncertaintyCalculations(ParameterBase):
             if feature == self.model.name and self.model.ignore:
                 continue
 
-            masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data, nodes, feature, weights)
+            masked_evaluations, mask, masked_nodes, masked_weights = \
+                self.create_masked_nodes_weights(data, feature, nodes, weights)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
                                                    masked_weights, masked_evaluations)
             else:
-                self.logger.warning("Uncertainty quantification is not performed " +\
-                                    "for feature: {} ".format(feature) +\
-                                    "due too not all parameter combinations " +\
-                                    "giving a result.")
+                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " No uncertainty quantification are performed since allow_incomplete=False")
+
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -528,17 +577,14 @@ class UncertaintyCalculations(ParameterBase):
             if feature == self.model.name and self.model.ignore:
                 continue
 
-            masked_nodes, masked_evaluations, mask = self.create_mask(data, nodes, feature)
+            masked_evaluations, mask, masked_nodes = self.create_masked_nodes(data, feature, nodes)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P, masked_nodes,
                                                         masked_evaluations, rule="T")
             else:
-                self.logger.warning("Uncertainty quantification is not performed " +
-                                    "for feature: {} ".format(feature) +
-                                    "due too not all parameter combinations " +
-                                    "giving a result. Set allow_incomplete=True to " +
-                                    "calculate the uncertainties anyway.")
+                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " No uncertainty quantification are performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -684,10 +730,11 @@ class UncertaintyCalculations(ParameterBase):
             #                                                           weights)
 
             # The version thats seems to be working
-            masked_nodes, masked_evaluations, mask, masked_weights = self.create_mask(data,
-                                                                    nodes_R,
-                                                                    feature,
-                                                                    weights_R)
+            masked_evaluations, mask, masked_nodes, masked_weights = \
+                self.create_masked_nodes_weights(data,
+                                                 feature,
+                                                 nodes_R,
+                                                 weights_R)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P,
@@ -695,11 +742,9 @@ class UncertaintyCalculations(ParameterBase):
                                                 masked_weights,
                                                 masked_evaluations)
             else:
-                self.logger.warning("Uncertainty quantification is not performed " +
-                                    "for feature: {} ".format(feature) +
-                                    "due too not all parameter combinations " +
-                                    "giving a result. Set allow_incomplete=True to " +
-                                    "calculate the uncertainties anyway.")
+                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " No uncertainty quantification are performed since allow_incomplete=False")
+
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -828,8 +873,7 @@ class UncertaintyCalculations(ParameterBase):
             if feature == self.model.name and self.model.ignore:
                 continue
 
-            masked_nodes, masked_evaluations, mask = self.create_mask(data, nodes_R, feature)
-
+            masked_evaluations, mask, masked_nodes = self.create_masked_nodes(data, feature, nodes_R)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P,
@@ -837,10 +881,8 @@ class UncertaintyCalculations(ParameterBase):
                                                 masked_evaluations,
                                                 rule="T")
             else:
-                self.logger.warning("Uncertainty quantification is not performed " +
-                                    "for feature: {} ".format(feature) +
-                                    "due too not all parameter combinations " +
-                                    "giving a result.")
+                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " No uncertainty quantification are performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -1256,7 +1298,8 @@ class UncertaintyCalculations(ParameterBase):
     def monte_carlo(self,
                     uncertain_parameters=None,
                     nr_samples=10**3,
-                    seed=None):
+                    seed=None,
+                    allow_incomplete=True):
         """
         Perform an uncertainty quantification using the quasi-Monte Carlo method.
 
@@ -1272,6 +1315,10 @@ class UncertaintyCalculations(ParameterBase):
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
+        allow_incomplete : bool, optional
+            If the uncertainty quantification should be performed for features
+            or models with incomplete evaluations.
+            Default is True.
 
         Returns
         -------
@@ -1330,16 +1377,27 @@ class UncertaintyCalculations(ParameterBase):
         data.method = "monte carlo method. nr_samples={}".format(nr_samples)
         data.seed = seed
 
-        # TODO mask data
+
         for feature in data:
             if feature == self.model.name and self.model.ignore:
                 continue
 
-            data[feature].mean = np.mean(data[feature].evaluations, 0)
-            data[feature].variance = np.var(data[feature].evaluations, 0)
 
-            data[feature].percentile_5 = np.percentile(data[feature].evaluations, 5, 0)
-            data[feature].percentile_95 = np.percentile(data[feature].evaluations, 95, 0)
+            masked_evaluations, mask = self.create_masked_evaluations(data, feature)
+
+            if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
+                data[feature].mean = np.mean(masked_evaluations, 0)
+                data[feature].variance = np.var(masked_evaluations, 0)
+
+                data[feature].percentile_5 = np.percentile(masked_evaluations, 5, 0)
+                data[feature].percentile_95 = np.percentile(masked_evaluations, 95, 0)
+            else:
+                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " No uncertainty quantification are performed since allow_incomplete=False")
+
+            if not np.all(mask):
+                data.incomplete.append(feature)
+
 
         return data
 
