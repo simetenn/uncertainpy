@@ -762,6 +762,29 @@ class TestRunModel(unittest.TestCase):
         self.assertFalse(self.runmodel.is_regular(results, "TestingModelAdaptive"))
         self.assertFalse(self.runmodel.is_regular(results, "feature1d"))
 
+    def test_is_regular_nan(self):
+        results = [{"test": {"values": np.nan}},
+                   {"test": {"values": np.arange(0, 15)}},
+                   {"test": {"values": np.arange(0, 10)}}]
+
+        self.assertFalse(self.runmodel.is_regular(results, "test"))
+
+
+    def test_is_regular_list(self):
+        results = [{"test": {"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}},
+                   {"test": {"values": np.arange(0, 10)}},
+                   {"test": {"values": np.arange(0, 10)}}]
+
+        self.assertTrue(self.runmodel.is_regular(results, "test"))
+
+
+    def test_is_regular_empty_list(self):
+        results = [{"test": {"values": [0, [], 2, 3, 4, 5, 6, 7, 8, 9]}},
+                   {"test": {"values": np.arange(0, 10)}},
+                   {"test": {"values": np.arange(0, 10)}}]
+
+        self.assertFalse(self.runmodel.is_regular(results, "test"))
+
 
     def test_apply_interpolation(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])

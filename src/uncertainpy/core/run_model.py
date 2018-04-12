@@ -480,13 +480,17 @@ class RunModel(ParameterBase):
             values = result[feature]["values"]
 
             if values is not np.nan or values is not None:
-                if lengths(values_prev) != lengths(values):
-                    return False
+                try:
+                    if np.shape(values_prev) != np.shape(values):
+                        return False
+
+                except ValueError:
+                    if lengths(values_prev) != lengths(values):
+                        return False
 
                 values_prev = values
 
         return True
-
 
 
 
