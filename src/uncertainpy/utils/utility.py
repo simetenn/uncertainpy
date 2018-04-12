@@ -192,7 +192,7 @@ def is_regular(values):
 
     Notes
     -----
-    Does not ignore ``numpy.nan``, so  ``[numpy.nan, [1, 2]]`` returns False.
+    Does not ignore ``numpy.nan``, so ``[numpy.nan, [1, 2]]`` returns False.
     """
 
     try:
