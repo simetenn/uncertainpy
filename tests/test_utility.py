@@ -1,8 +1,8 @@
 import numpy as np
 import unittest
 
-from uncertainpy.utils import lengths, none_to_nan, contains_none_or_nan
-from uncertainpy.utils import is_regular
+from uncertainpy.utils import lengths, none_to_nan, contains_nan
+from uncertainpy.utils import is_regular, set_nan
 
 
 class TestLengths(unittest.TestCase):
@@ -41,6 +41,18 @@ class TestLengths(unittest.TestCase):
 
 
 
+class TestSetNan(unittest.TestCase):
+    def test_list(self):
+        values = [1, 1, 1, 1, 1]
+        set_nan(values, 1)
+        self.assertEqual(values, [1, np.nan, 1, 1, 1])
+
+    def test_nested(self):
+        values = [[], [1, 2, 3], 2, [[1, 2], 3, 3]]
+        set_nan(values, [1, 2])
+        set_nan(values, [3, 0, 1])
+        self.assertEqual(values, [[], [1, 2, np.nan], 2, [[1, np.nan], 3, 3]])
+
 
 class TestNoneToNan(unittest.TestCase):
     def test_none_to_nan_empty_list(self):
@@ -69,103 +81,14 @@ class TestNoneToNan(unittest.TestCase):
         self.assertEqual(result, [1, 2, 3])
 
 
-    def test_none_to_nan_nested(self):
-        values_irregular = [None, [1, 2, 3], None]
 
-        result = none_to_nan(values_irregular)
+    def test_none_to_nan_long(self):
+        result = none_to_nan([np.arange(1, 100), np.arange(1, 100), None, np.arange(1, 100).tolist()])
 
-        self.assertEqual(len(result), 3)
-        self.assertTrue(np.isnan(result[0]))
-        self.assertEqual(result[1], [1, 2, 3])
+        self.assertTrue(np.array_equal(result[0], np.arange(1, 100)))
+        self.assertTrue(np.array_equal(result[1], np.arange(1, 100)))
         self.assertTrue(np.isnan(result[2]))
-
-
-    def test_none_to_nan_nested_none(self):
-        values_irregular = np.array([None, np.array([None, np.array([1, 2, 3])])])
-
-        result = none_to_nan(values_irregular)
-
-        self.assertEqual(len(result), 2)
-        self.assertEqual(len(result[1]), 2)
-        self.assertTrue(np.isnan(result[0]))
-        self.assertTrue(np.isnan(result[1][0]))
-        self.assertTrue(np.array_equal(result[1][1], [1, 2, 3]))
-
-
-    def test_none_to_nan_nested_no_none(self):
-        values_irregular = np.array([np.array([1, 2, 3]), np.array([1, 2, 3]),
-                                     np.array([1, 2, 3]), np.array([1, 2, 3])])
-
-        values_correct = np.array([np.array([1, 2, 3]), np.array([1, 2, 3]),
-                                   np.array([1, 2, 3]), np.array([1, 2, 3])])
-
-        result = none_to_nan(values_irregular)
-
-        self.assertTrue(np.array_equal(result, values_correct))
-
-
-    def test_none_to_nan_nested_array_single(self):
-        values_irregular = np.array([None, np.array([np.array(1), np.array(2), np.array(3)]),
-                                     None, np.array([np.array(1), np.array(2), np.array(3)])])
-
-        result = none_to_nan(values_irregular)
-
-        self.assertEqual(len(result), 4)
-        self.assertTrue(np.isnan(result[0]))
-        self.assertTrue(np.isnan(result[2]))
-
-        self.assertEqual(len(result[1]), 3)
-        self.assertTrue(np.array_equal(result[1],  np.array([np.array(1), np.array(2), np.array(3)])))
-        self.assertEqual(len(result[3]), 3)
-        self.assertTrue(np.array_equal(result[3],  np.array([np.array(1), np.array(2), np.array(3)])))
-
-
-
-    def test_none_to_nan_nested_array_single_no_none(self):
-        values_irregular = np.array([np.array(1), np.array(2), np.array(3)])
-
-        result = none_to_nan(values_irregular)
-
-        values_correct = np.array([np.array(1), np.array(2), np.array(3)])
-
-        self.assertTrue(np.array_equal(result, np.array([np.array(1), np.array(2), np.array(3)])))
-
-
-        values_irregular = np.array([None, None, None])
-
-        result = none_to_nan(values_irregular)
-
-        self.assertEqual(len(result), 3)
-        self.assertTrue(np.isnan(result[0]))
-        self.assertTrue(np.isnan(result[1]))
-        self.assertTrue(np.isnan(result[2]))
-
-        def test_none_to_nan_empty_list(self):
-            values_irregular = np.array([[], np.array([1, 2, 3]), None, [[], None, 3]])
-
-        result = none_to_nan(values_irregular)
-
-        self.assertEqual(len(result), 4)
-        self.assertEqual(result[0], [])
-        self.assertTrue(np.isnan(result[2]))
-        self.assertTrue(np.array_equal(result[1], np.array([1, 2, 3])))
-        self.assertEqual(result[3][0], [])
-        self.assertTrue(np.isnan(result[3][1]))
-        self.assertEqual(result[3][2], 3)
-
-
-    def test_none_to_nan_int(self):
-
-        result = none_to_nan(2)
-
-        self.assertEqual(result, 2)
-
-
-    def test_none_to_nan_list(self):
-
-        result = none_to_nan([1, 2, 3])
-
-        self.assertEqual(result, [1, 2, 3])
+        self.assertEqual(result[3], np.arange(1, 100).tolist())
 
 
     def test_none_to_nan_nested(self):
@@ -245,110 +168,139 @@ class TestNoneToNan(unittest.TestCase):
 class TestContainsNoneOrNan(unittest.TestCase):
     def test_simple(self):
         values = [1, 2, 3]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertFalse(result)
 
 
     def test_simple_nan(self):
         values = [1, np.nan, 3]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
 
+    def test_array_nan(self):
+        values = np.array([np.array(1), np.array(np.nan), np.array(3)])
+        result = contains_nan(values)
+        self.assertTrue(result)
+
+
+    def test_numpy_float_nan(self):
+        values = [np.float64(1), np.float64(np.nan), np.float64(3)]
+        result = contains_nan(values)
+        self.assertTrue(result)
+
     def test_nested(self):
         values = [[1, 2], 3]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertFalse(result)
 
 
     def test_nested_nan(self):
         values = [[1, np.nan], 3]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
 
     def test_deeply_nested(self):
         values = [[1, [1, 4, 2]], 3, 3, []]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertFalse(result)
 
 
     def test_deeply_nested_nan(self):
         values = [[1, [1, 4, 2]], np.nan, 3, []]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
     def test_simple_none(self):
         values = [1, None, 3]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
     def test_nested_none(self):
         values = [[1, None], 3]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
 
     def test_deeply_nested_none(self):
         values = [[1, [1, 4, 2]], None, 3, []]
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
 
     def test_int(self):
         values = 1
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertFalse(result)
 
     def test_int_nan(self):
         values = np.nan
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
 
-    def test_int_nan(self):
+    def test_int_none(self):
         values = None
-        result = contains_none_or_nan(values)
+        result = contains_nan(values)
         self.assertTrue(result)
 
 
 
 
-class TestOnlyNoneOrNan(unittest.TestCase):
-    def test_simple(self):
-        values = [1, 2, 3]
-        result = contains_none_or_nan(values)
-        self.assertFalse(result)
+# class TestOnlyNoneOrNan(unittest.TestCase):
+#     def test_array_nan(self):
+#         values = np.array([np.array(1), np.array(np.nan), np.array(3)])
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
 
 
-    def test_simple_nan(self):
-        values = [np.nan, np.nan, None]
-        result = contains_none_or_nan(values)
-        self.assertTrue(result)
+#     def test_numpy_float_nan(self):
+#         values = [np.float64(1), np.float64(np.nan), np.float64(3)]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
 
 
-    def test_simple(self):
-        values = [1, 2, 3, [], [[1], 2, 3]]
-        result = contains_none_or_nan(values)
-        self.assertFalse(result)
+#     def test_simple(self):
+#         values = [1, 2, 3]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
 
 
-    def test_simple_nan(self):
-        values = [np.nan, np.nan, None, [], [[None], np.nan, np.nan]]
-        result = contains_none_or_nan(values)
-        self.assertTrue(result)
+#     def test_one_nan(self):
+#         values = [1, np.nan, 3]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
 
 
-    def test_int(self):
-        values = 1
-        result = contains_none_or_nan(values)
-        self.assertFalse(result)
+#     def test_simple_nan(self):
+#         values = [np.nan, np.nan, None]
+#         result = only_none_or_nan(values)
+#         self.assertTrue(result)
 
 
-    def test_none(self):
-        values = None
-        result = contains_none_or_nan(values)
-        self.assertTrue(result)
+#     def test_empty(self):
+#         values = [1, 2, 3, [], [[1], 2, 3]]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_simple_nan_empty(self):
+#         values = [np.nan, np.nan, None, [], [[None], np.nan, np.nan]]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_int(self):
+#         values = 1
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_none(self):
+#         values = None
+#         result = only_none_or_nan(values)
+#         self.assertTrue(result)
 
 
 
@@ -368,13 +320,13 @@ class TestIsRegular(unittest.TestCase):
     def test_regular_nan(self):
         values = [np.nan, [4, 5, 6], [7, 8, 9]]
         result = is_regular(values)
-        self.assertTrue(result)
+        self.assertFalse(result)
 
 
     def test_regular_one_list(self):
         values = [np.nan, None, [7, 8, 9]]
         result = is_regular(values)
-        self.assertTrue(result)
+        self.assertFalse(result)
 
 
     def test_regular_all_nan(self):

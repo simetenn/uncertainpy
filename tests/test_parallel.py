@@ -262,22 +262,6 @@ class TestParallel(unittest.TestCase):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def test_interpolation_1d(self):
         results = {"TestingModel1d": {"values": np.arange(0, 10) + 1,
                                       "time": np.arange(0, 10)}}
@@ -361,20 +345,6 @@ class TestParallel(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.parallel.interpolation_1d(results, "TestingModel1d")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

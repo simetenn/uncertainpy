@@ -1,9 +1,32 @@
 import warnings
 import numpy as np
 
+
+def set_nan(values, index):
+    """
+    Set the index of a arbitrarly nested list to nan
+
+    Parameters
+    ----------
+    values : array_like, list, number
+        Values where to set  index to ``numpy.nan``. Can be irregular and have
+        any number of nested elements.
+    index : array_like, list, number
+        Index where to set `values` to ``numpy.nan``.
+    """
+    if hasattr(index, "__iter__"):
+        if(len(index) == 1):
+            values[index[0]] = np.nan
+        else:
+            set_nan(values[index[0]], index[1:])
+    else:
+        values[index] = np.nan
+
+
+
 def none_to_nan(values):
     """
-    Converts ``None`` values in `values` to a arrays of ``np.nan``.
+    Converts ``None`` values in `values` to ``np.nan``.
 
     Parameters
     ----------
@@ -16,25 +39,35 @@ def none_to_nan(values):
     values : array_like, list, number
         `values` with all occurrences of ``None`` converted to ``np.nan``.
     """
-
     if values is None:
         values = np.nan
-    else:
-        try:
-            for i, value in enumerate(values):
-                if hasattr(value, "__iter__"):
+
+    elif isinstance(values, np.ndarray):
+        if values.dtype == "object":
+            try:
+                return values.astype(float)
+            except ValueError:
+                for i, value in enumerate(values):
                     values[i] = none_to_nan(value)
-
-                elif value is None:
-                    values[i] = np.nan
-
-        except TypeError:
+        else:
             return values
+
+    elif hasattr(values, "__iter__"):
+        try:
+            values_array = np.array(values, dtype=float)
+            indices = np.argwhere(np.isnan(values_array))
+
+            for idx in indices:
+                set_nan(values, idx)
+
+        except ValueError:
+            for i, value in enumerate(values):
+                values[i] = none_to_nan(value)
 
     return values
 
 
-def contains_none_or_nan(values):
+def contains_nan(values):
     """
     Checks if ``None`` or ``numpy.nan`` exists in `values`. Returns ``True`` if
     any there are at least one occurrence of ``None`` or ``numpy.nan``.
@@ -51,58 +84,63 @@ def contains_none_or_nan(values):
         ``True`` if `values` has at least one occurrence of ``None`` or
         ``numpy.nan``.
     """
-    none_or_nan = False
-
-    if values is None or values is np.nan:
-       return True
-    else:
-        try:
+    # To speed up we first try the fast option np.any(np.isnan(values))
+    try:
+        return np.any(np.isnan(values))
+    except (ValueError, TypeError):
+        if values is None or values is np.nan:
+            return True
+        # To solve the problem of float/int as well as numpy int/flaot
+        elif np.isscalar(values) and np.isnan(values):
+            return True
+        elif hasattr(values, "__iter__"):
             for value in values:
-                if hasattr(value, "__iter__"):
-                    none_or_nan = contains_none_or_nan(value)
-
-                elif value is None or value is np.nan:
+                if contains_nan(value):
                     return True
 
-        except TypeError:
-            return none_or_nan
+            return False
+        else:
+            return False
 
-    return none_or_nan
 
 
-def only_none_or_nan(values):
-    """
-    Checks if `values` only contains``None`` and/or ``numpy.nan``. Returns
-    ``True`` if `values` only contains``None`` and/or ``numpy.nan``.
+# Not working, but currently not needed
+# def only_none_or_nan(values):
+#     """
+#     Checks if `values` only contains``None`` and/or ``numpy.nan``. Returns
+#     ``True`` if `values` only contains``None`` and/or ``numpy.nan``.
 
-    Parameters
-    ----------
-    values : array_like, list, number
-        `values` where to check for occurrences of ``None`` or ``np.nan``.
-        Can be irregular and have any number of nested elements.
+#     Parameters
+#     ----------
+#     values : array_like, list, number
+#         `values` where to check for occurrences of ``None`` or ``np.nan``.
+#         Can be irregular and have any number of nested elements.
 
-    Returns
-    -------
-    bool
-        ``True`` if `values`  only contains ``None`` and/or ``numpy.nan``.
-    """
-    none_or_nan = True
+#     Returns
+#     -------
+#     bool
+#         ``True`` if `values`  only contains ``None`` and/or ``numpy.nan``.
+#     """
+#     # To speed up we first try the fast option np.all(np.isnan(values))
+#     try:
+#         return np.all(np.isnan(values))
+#     except (ValueError, TypeError):
+#         print "valies", values
+#         if hasattr(values, "__iter__"):
+#             for value in values:
+#                 if not only_none_or_nan(value):
+#                     return True
 
-    if values is not None or values is not np.nan:
-       return False
-    else:
-        try:
-            for value in values:
-                if hasattr(value, "__iter__"):
-                    none_or_nan = only_none_or_nan(value)
+#             return False
+#         # To solve the problem of numpy float and int
+#         elif np.isscalar(values) and not np.isnan(values):
+#             return False
+#         elif values is not None and values is not np.nan:
+#             return False
 
-                elif value is not None or value is not np.nan:
-                    return False
+#         else:
+#             return True
 
-        except TypeError:
-            return none_or_nan
-
-    return none_or_nan
 
 
 
@@ -139,7 +177,7 @@ def lengths(values):
 def is_regular(values):
     """
     Test if `values` is regular or not, meaning it has a varying length of
-    nested elements. Ignores ``None`` and ``numpy.nan`` in outermost list.
+    nested elements.
 
     Parameters
     ----------
@@ -151,28 +189,68 @@ def is_regular(values):
     -------
     bool
         True if the feature is regular or False if the feature is irregular.
+
+    Notes
+    -----
+    Does not ignore ``numpy.nan``, so  ``[numpy.nan, [1, 2]]`` returns False.
     """
 
-    if not hasattr(values, "__iter__"):
-        return True
-
-    # Find first array that is not np.nan or None
-    i = 0
-    for value in values:
-        i += 1
-        if value is not np.nan and value is not None:
-            values_prev = value
-            break
-
-    for value in values[i:]:
-        if value is not np.nan and value is not None:
-            if lengths(values_prev) != lengths(value):
-                return False
-
-            values_prev = value
+    try:
+        np.array(values, dtype=float)
+    except ValueError:
+        return False
 
     return True
 
+
+# Alternative implementation
+# def is_regular(values):
+#     """
+#     Test if `values` is regular or not, meaning it has a varying length of
+#     nested elements. Ignores ``None`` and ``numpy.nan`` in outermost list.
+
+#     Parameters
+#     ----------
+#     values : array_like, list, number
+#         `values` to check if it is regular or not, meaning it has a varying
+#         length of nested elements.
+
+#     Returns
+#     -------
+#     bool
+#         True if the feature is regular or False if the feature is irregular.
+#     """
+
+#     if not hasattr(values, "__iter__"):
+#         return True
+#     elif isinstance(values, np.ndarray) and values.dtype != "object":
+#         return True
+
+
+#     # Find first array that is not np.nan or None
+#     i = 0
+#     for value in values:
+#         i += 1
+#         if value is not np.nan and value is not None:
+#             values_prev = value
+#             break
+
+#     for value in values[i:]:
+#         if value is not np.nan and value is not None:
+#             if lengths(values_prev) != lengths(value):
+#                 return False
+
+#             values_prev = value
+
+#     return True
+
+
+
+
+
+###################
+# Not used anymore
+###################
 
 # def none_to_nan_regularize(values):
 #     """

@@ -5,7 +5,7 @@ import numpy as np
 import scipy.interpolate as scpi
 
 from .base import Base
-from ..utils.utility import none_to_nan, contains_none_or_nan, is_regular
+from ..utils.utility import none_to_nan, contains_nan, is_regular
 
 class Parallel(Base):
     """
@@ -117,10 +117,7 @@ class Parallel(Base):
             if feature in self.features.adaptive or \
                 (feature == self.model.name and self.model.adaptive and not self.model.ignore):
 
-                # TODO: Find out how many tests should be performed on the
-                # results here.
-                # Find out how a model result should be validated.
-
+                # This does not ignore np.nan results
                 if not is_regular(result[feature]["values"]):
                      raise ValueError("{}: values within one evaluation is irregular,".format(feature) +
                                       " unable to perform interpolation.")
@@ -206,13 +203,13 @@ class Parallel(Base):
 
         interpolation = None
 
-        if contains_none_or_nan(result[feature]["values"]):
+        if contains_nan(result[feature]["values"]):
             interpolation = None
             msg = "{} values contains np.nan or None values, unable to perform interpolation.".format(feature)
             self.logger.warning(msg)
             # raise ValueError(msg)
 
-        elif contains_none_or_nan(result[feature]["time"]):
+        elif contains_nan(result[feature]["time"]):
             interpolation = None
             msg = "{}: time contains np.nan or None values, unable to perform interpolation.".format(feature)
             self.logger.warning(msg)

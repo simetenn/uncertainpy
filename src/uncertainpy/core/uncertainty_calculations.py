@@ -6,7 +6,7 @@ import types
 
 from .run_model import RunModel
 from .base import ParameterBase
-from ..utils.utility import contains_none_or_nan
+from ..utils.utility import contains_nan
 
 
 class UncertaintyCalculations(ParameterBase):
@@ -253,7 +253,7 @@ class UncertaintyCalculations(ParameterBase):
 
         for i, result in enumerate(data[feature].evaluations):
             # if np.any(np.isnan(result)):
-            if contains_none_or_nan(result):
+            if contains_nan(result):
                 mask[i] = False
             else:
                 masked_evaluations.append(result)
