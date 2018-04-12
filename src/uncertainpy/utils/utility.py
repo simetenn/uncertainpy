@@ -203,49 +203,6 @@ def is_regular(values):
     return True
 
 
-# Alternative implementation
-# def is_regular(values):
-#     """
-#     Test if `values` is regular or not, meaning it has a varying length of
-#     nested elements. Ignores ``None`` and ``numpy.nan`` in outermost list.
-
-#     Parameters
-#     ----------
-#     values : array_like, list, number
-#         `values` to check if it is regular or not, meaning it has a varying
-#         length of nested elements.
-
-#     Returns
-#     -------
-#     bool
-#         True if the feature is regular or False if the feature is irregular.
-#     """
-
-#     if not hasattr(values, "__iter__"):
-#         return True
-#     elif isinstance(values, np.ndarray) and values.dtype != "object":
-#         return True
-
-
-#     # Find first array that is not np.nan or None
-#     i = 0
-#     for value in values:
-#         i += 1
-#         if value is not np.nan and value is not None:
-#             values_prev = value
-#             break
-
-#     for value in values[i:]:
-#         if value is not np.nan and value is not None:
-#             if lengths(values_prev) != lengths(value):
-#                 return False
-
-#             values_prev = value
-
-#     return True
-
-
-
 
 
 ###################
