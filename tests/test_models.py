@@ -89,18 +89,26 @@ class TestModel(unittest.TestCase):
         self.assertEqual(model.name, "f")
 
 
-    def test_validate_run_result(self):
-        self.model.validate_run_result(("t", "U"))
-        self.model.validate_run_result((1, 2, 3))
-        self.model.validate_run_result([1, 2, 3, 4])
+    def test_validate_run(self):
+        self.model.validate_run(("t", "U"))
+        self.model.validate_run((1, 2, 3))
+        self.model.validate_run([1, 2, 3, 4])
 
         with self.assertRaises(ValueError):
-            self.model.validate_run_result("123456")
-            self.model.validate_run_result(np.linspace(0, 1, 100))
+            self.model.validate_run("123456")
+            self.model.validate_run(np.linspace(0, 1, 100))
 
         with self.assertRaises(TypeError):
-            self.model.validate_run_result(1)
+            self.model.validate_run(1)
 
+
+    def test_validate_postprocess(self):
+        self.model.validate_postprocess(("t", "U"))
+        with self.assertRaises(ValueError):
+            self.model.validate_postprocess("123456")
+            self.model.validate_postprocess(np.linspace(0, 1, 100))
+            self.model.validate_postprocess(1)
+            self.model.validate_postprocess((1, 2, 3))
 
     def test_postprocess(self):
         result = self.model.postprocess(1, 2, 3)

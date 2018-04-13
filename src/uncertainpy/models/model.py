@@ -295,11 +295,11 @@ class Model(object):
         self._postprocess = new_postprocess_function
 
 
-    def validate_run_result(self, model_result):
+    def validate_run(self, model_result):
         """
-        Validate the results from ``run()``.
+        Validate the results from ``run``.
 
-        This method ensures the results from returns `time`, `values`, and optional
+        This method ensures ``run`` returns `time`, `values`, and optional
         info objects.
 
         Parameters
@@ -334,14 +334,14 @@ class Model(object):
         """
         if isinstance(model_result, np.ndarray):
             raise ValueError("model.run() returns an numpy array. "
-                             "This indicates only t or U is returned. "
+                             "This indicates only time or values is returned. "
                              "model.run() or model function must return "
                              "time and values "
                              "(return time, values | return None, values)")
 
         if isinstance(model_result, str):
             raise ValueError("model.run() returns an string. "
-                             "This indicates only t or U is returned. "
+                             "This indicates only time or values is returned. "
                              "model.run() or model function must return "
                              "time and values "
                              " (return time, values | return None, values)")
@@ -354,6 +354,67 @@ class Model(object):
                 error.args = ("",)
             error.args = error.args + (msg,)
             raise
+
+
+
+    def validate_postprocess(self, postprocess_result):
+        """
+        Validate the results from ``postprocess``.
+
+        This method ensures ``postprocess`` returns `time` and `values`.
+
+        Parameters
+        ----------
+        model_results
+            Any type of postprocessed model results returned by ``postprocess``.
+
+        Raises
+        ------
+        ValueError
+            If the model result does not fit the requirements.
+        TypeError
+            If the model result does not fit the requirements.
+
+        Notes
+        -----
+        Tries to verify that `time` and `values` are returned from ``postprocess``.
+        ``postprocess`` must return two objects on the format:
+        ``return time, values``, where:
+
+        * ``time_postprocessed`` : ``{None, numpy.nan, array_like}``.
+            The first object is the postprocessed time (or equivalent)
+            of the model.
+            We can return ``None`` if the model has no time.
+            Note that the automatic interpolation of the postprocessed
+            time can only be performed if a postprocessed time is returned
+            (if an interpolation is required).
+        * ``values_postprocessed`` : ``array_like``.
+            The second object is the postprocessed model output.
+
+        Both of these must be regular or on a form that can be interpolated.
+        """
+        if isinstance(postprocess_result, np.ndarray):
+            raise ValueError("model.postprocess() returns an numpy array. "
+                             "This indicates only time or values is returned. "
+                             "model.postprocess() or model function must return "
+                             "time and values "
+                             "(return time, values | return None, values)")
+
+        if isinstance(postprocess_result, str):
+            raise ValueError("model.postprocess() returns an string. "
+                             "This indicates only time or values is returned. "
+                             "model.postprocess() or model function must return "
+                             "time and values "
+                             " (return time, values | return None, values)")
+            try:
+                time_postprocess, values_postprocess = postprocess_result
+            except (ValueError, TypeError) as error:
+                msg = "model.postprocess() must return time and values (return time, values | return None, values)"
+                if not error.args:
+                    error.args = ("",)
+                error.args = error.args + (msg,)
+                raise
+
 
 
     def set_parameters(self, **parameters):

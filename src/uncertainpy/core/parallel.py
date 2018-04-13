@@ -237,18 +237,18 @@ class Parallel(Base):
         Run a model and calculate features from the model output,
         return the results.
 
-        The model is run and each feature of the model is calculated from the model output,
-        `time` (time values) and `values` (model result).
-        The results are interpolated if they are adaptive, meaning they return a varying number of steps,
-        An interpolation is created and added to results for the model/features that are adaptive.
-        Each instance of None is converted to an
-        array of ``numpy.nan`` of the correct shape, which makes the array regular.
+        The model is run and each feature of the model is calculated from the
+        model output, `time` (time values) and `values` (model result). The
+        results are interpolated if they are adaptive, meaning they return a
+        varying number of steps. An interpolation is created and added to
+        results for the model/features that are adaptive. Each instance of None
+        is converted to ``numpy.nan``.
 
         Parameters
         ----------
         model_parameters : dictionary
-            All model parameters as a dictionary.
-            These parameters are sent to model.run().
+            All model parameters as a dictionary. These parameters are sent to
+            model.run().
 
         Returns
         -------
@@ -293,21 +293,16 @@ class Parallel(Base):
         try:
             model_result = self.model.run(**model_parameters)
 
-            self.model.validate_run_result(model_result)
+            self.model.validate_run(model_result)
 
             results = {}
 
 
             postprocess_result = self.model.postprocess(*model_result)
 
-            try:
-                time_postprocess, values_postprocess = postprocess_result
-            except (ValueError, TypeError) as error:
-                msg = "model.postprocess() must return time and values (return time, values | return None, values)"
-                if not error.args:
-                    error.args = ("",)
-                error.args = error.args + (msg,)
-                raise
+            self.model.validate_postprocess(model_result)
+
+            time_postprocess, values_postprocess = postprocess_result
 
             values_postprocess = none_to_nan(values_postprocess)
             time_postprocess = none_to_nan(time_postprocess)
