@@ -143,17 +143,17 @@ class TestFeatures(unittest.TestCase):
 
 
 
-    def test_intitAdaptiveList(self):
-        features = Features(adaptive=None)
-        self.assertEqual(features.adaptive, [])
+    def test_intitinterpolateList(self):
+        features = Features(interpolate=None)
+        self.assertEqual(features.interpolate, [])
 
-        features = Features(adaptive=["feature1d", "feature2"])
-        self.assertEqual(features.adaptive,
+        features = Features(interpolate=["feature1d", "feature2"])
+        self.assertEqual(features.interpolate,
                          ["feature1d", "feature2"])
 
 
-        features = Features(adaptive="all")
-        self.assertEqual(features.adaptive, [])
+        features = Features(interpolate="all")
+        self.assertEqual(features.interpolate, [])
 
 
     def test_add_feature(self):
@@ -329,9 +329,9 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
-    def test_adaptive_all(self):
-        features = SpikingFeatures(adaptive="all")
-        self.assertEqual(set(features.adaptive), set(self.implemented_features))
+    def test_interpolate_all(self):
+        features = SpikingFeatures(interpolate="all")
+        self.assertEqual(set(features.interpolate), set(self.implemented_features))
 
 
     def test_implemented_features(self):
@@ -558,13 +558,13 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
 
         features = GeneralNetworkFeatures(new_features=feature,
                                           features_to_run=None,
-                                          adaptive=["cv"],
+                                          interpolate=["cv"],
                                           labels={"cv": ["test"]},
                                           units="")
 
         self.assertIsInstance(features, GeneralNetworkFeatures)
         self.assertEqual(features.features_to_run, [])
-        self.assertEqual(features.adaptive, ["cv"])
+        self.assertEqual(features.interpolate, ["cv"])
         self.assertEqual(features.units, "")
         self.assertEqual(set(features.implemented_features()),
                          set(["feature"]))
@@ -621,7 +621,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
         features = NetworkFeatures(new_features=feature,
                                    features_to_run=None,
-                                   adaptive=["cv"],
+                                   interpolate=["cv"],
                                    labels={"cv": ["test"]},
                                    instantaneous_rate_nr_samples=-1.,
                                    isi_bin_size=-1,
@@ -631,7 +631,7 @@ class TestNetworkFeatures(unittest.TestCase):
 
         self.assertIsInstance(features, NetworkFeatures)
         self.assertEqual(features.features_to_run, [])
-        self.assertEqual(features.adaptive, ["cv"])
+        self.assertEqual(features.interpolate, ["cv"])
         self.assertEqual(features.instantaneous_rate_nr_samples, -1)
         self.assertEqual(features.isi_bin_size, -1)
         self.assertEqual(features.corrcoef_bin_size, -1)
@@ -796,7 +796,7 @@ class TestTestingFeatures(unittest.TestCase):
 
         self.implemented_features = ["feature0d", "feature1d",
                                      "feature2d", "feature_invalid",
-                                     "feature_adaptive"]
+                                     "feature_interpolate"]
 
         self.features = TestingFeatures(features_to_run=self.implemented_features)
 

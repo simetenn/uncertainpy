@@ -13,7 +13,7 @@ The most common arguments to ``Features`` are::
     features = un.Features(new_features=list_of_feature_functions,
                            features_to_run=["example_feature"],
                            preprocess=example_preprocess,
-                           adaptive=["example_feature"])
+                           interpolate=["example_feature"])
 
 ``new_features`` is a list of Python functions that each calculates a
 specific feature,
@@ -23,9 +23,9 @@ If nothing is specified, the uncertainty quantification is by default performed
 on all features (``features_to_run="all"``).
 :py:meth:`~uncertainpy.features.Features.preprocess` requires a Python function
 that performs common calculations for all features.
-``adaptive`` is a list of features that have adaptive time steps.
+``interpolate`` is a list of features that must be interpolated.
 As with models,
-Uncertainpy automatically interpolates the output of adaptive features
+Uncertainpy automatically interpolates the output of such features
 to a regular form.
 Below we first go into details on the requirements of a feature function,
 and then the requirements of a ``preprocess`` function.

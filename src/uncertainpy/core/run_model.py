@@ -184,7 +184,7 @@ class RunModel(ParameterBase):
 
         Stores the time and (interpolated) results for the model and each
         feature in a Data object. Performs the interpolation calculated in
-        Parallel, if the result is adaptive.
+        Parallel, if the result is irregular.
 
         Parameters
         ----------
@@ -246,22 +246,22 @@ class RunModel(ParameterBase):
 
         # results = self.regularize_nan_results(results)
 
-        # Check if features are adaptive without being specified as a adaptive
-        # TODO if the feature is adaptive, perform the complete interpolation here instead
+        # Check if features are irregular without being specified as a interpolate
+        # TODO if the feature is irregular, perform the complete interpolation here instead
         for feature in data:
-            if (feature == self.model.name and not (self.model.ignore or self.model.adaptive)) \
-                or (feature != self.model.name and feature not in self.features.adaptive):
+            if (feature == self.model.name and not (self.model.ignore or self.model.interpolate)) \
+                or (feature != self.model.name and feature not in self.features.interpolate):
                     if not self.is_regular(results, feature):
                         raise ValueError("{}: The number of points varies between evaluations.".format(feature)
-                                         + " Try setting adaptive to True in {}".format(feature))
+                                         + " Try setting interpolate=True in {}".format(feature))
 
 
         # Store all results in data, interpolate as needed
         # TODO: save raw result instead of interpolated result?
         for feature in data:
-            # Interpolate the data if it is adaptive, and ignore the model if required
-            if feature in self.features.adaptive or \
-                    (feature == self.model.name and self.model.adaptive and not self.model.ignore):
+            # Interpolate the data if it is irregular, and ignore the model if required
+            if feature in self.features.interpolate or \
+                    (feature == self.model.name and self.model.interpolate and not self.model.ignore):
                 # TODO implement interpolation of >= 2d data, part2
                 if np.ndim(results[0][feature]["values"]) >= 2:
                     raise NotImplementedError("Feature: {feature},".format(feature=feature)

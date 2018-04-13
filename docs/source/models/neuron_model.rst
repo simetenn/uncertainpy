@@ -9,13 +9,13 @@ Uncertainpy has support for NEURON models through the
 Among others, ``NeuronModel`` takes the arguments::
 
     model = un.NeuronModel(path="path/to/neuron_model",
-                        adaptive=True,
+                        interpolate=True,
                         stimulus_start=1000,               # ms
                         stimulus_end=1900)                 # ms
 
 ``path`` is the path to the folder where the NEURON model is saved
 (the location of the ``mosinit.hoc`` file).
-``adaptive`` indicates whether the NEURON model uses adaptive time steps.
+``interpolate`` indicates whether the NEURON model uses adaptive time steps.
 ``stimulus_start`` and ``stimulus_end`` denotes the start and
 end time of any stimulus given to the neuron.
 ``NeuronModel`` loads the NEURON model from ``mosinit.hoc``,

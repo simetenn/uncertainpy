@@ -32,14 +32,14 @@ class SpikingFeatures(GeneralSpikingFeatures):
         A list of new utility methods. All methods in this class that is not in
         the list of utility methods, is considered to be a feature.
         Default is None.
-    adaptive : {None, "all", str, list of feature names}, optional
-        Which features that are adaptive, meaning they have a varying number of
+    interpolate : {None, "all", str, list of feature names}, optional
+        Which features are irregular, meaning they have a varying number of
         time points between evaluations. An interpolation is performed on
-        each adaptive feature to create regular results.
-        If ``"all"``, all features are set to adaptive.
-        If None, or an empty list, no features are adaptive.
-        If str, only that feature is adaptive.
-        If list of feature names, all listed are adaptive.
+        each irregular feature to create regular results.
+        If ``"all"``, all features are interpolated.
+        If None, or an empty list, no features are interpolated.
+        If str, only that feature is interpolated.
+        If list of feature names, all listed features are interpolated.
         Default is None.
     threshold : {float, int, "auto"}, optional
         The threshold where the model result is considered to have a spike.
@@ -86,8 +86,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
         cuttoff.
     features_to_run : list
         Which features to calculate uncertainties for.
-    adaptive : list
-        A list of the adaptive features.
+    interpolate : list
+        A list of irregular features to be interpolated.
     utility_methods : list
         A list of all utility methods implemented. All methods in this class
         that is not in the list of utility methods is considered to be a feature.
@@ -123,7 +123,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
     def __init__(self,
                  new_features=None,
                  features_to_run="all",
-                 adaptive=None,
+                 interpolate=None,
                  threshold=-30,
                  extended_spikes=False,
                  labels={},
@@ -145,7 +145,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         super(SpikingFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,
-                                              adaptive=adaptive,
+                                              interpolate=interpolate,
                                               threshold=threshold,
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels,

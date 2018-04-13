@@ -741,7 +741,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_create_PCE_collocation_adaptive_error(self):
+    def test_create_PCE_collocation_interpolate_error(self):
         parameter_list = [["a", 1, None],
                           ["b", 2, None]]
 
@@ -749,7 +749,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         parameters.set_all_distributions(uniform(1))
 
         model = TestingModelAdaptive()
-        model.adaptive=False
+        model.interpolate=False
 
         features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
         self.uncertainty_calculations = UncertaintyCalculations(model=model,
@@ -821,7 +821,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
 
 
-    def test_create_PCE_collocation_adaptive_error(self):
+    def test_create_PCE_collocation_interpolate_error(self):
         parameter_list = [["a", 1, None],
                           ["b", 2, None]]
 
@@ -829,7 +829,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         parameters.set_all_distributions(uniform(1))
 
         model = TestingModelAdaptive()
-        model.adaptive=False
+        model.interpolate=False
 
         features = TestingFeatures(features_to_run=["feature1d", "feature2d"])
         self.uncertainty_calculations = UncertaintyCalculations(model=model,
@@ -1164,7 +1164,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_ignore_network(self):
         self.model = TestingModelAdaptive(ignore=True)
-        self.model.adaptive = False
+        self.model.interpolate = False
 
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,

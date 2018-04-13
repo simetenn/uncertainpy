@@ -8,7 +8,7 @@ from scipy.integrate import odeint
 class HodgkinHuxley(Model):
     def __init__(self):
         Model.__init__(self,
-                       adaptive=False,
+                       interpolate=False,
                        labels=["Time (ms)", "Voltage (mV)"])
 
         ## HH Parameters

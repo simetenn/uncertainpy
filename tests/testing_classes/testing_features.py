@@ -5,10 +5,10 @@ import numpy as np
 
 class TestingFeatures(Features):
     def __init__(self, features_to_run="all",
-                 adaptive=["feature_adaptive"]):
+                 interpolate=["feature_interpolate"]):
         Features.__init__(self,
                                  features_to_run=features_to_run,
-                                 adaptive=adaptive)
+                                 interpolate=interpolate)
 
         implemented_labels = {"feature0d": ["feature0d"],
                               "feature1d": ["feature1d x", "feature1d y"],
@@ -16,7 +16,7 @@ class TestingFeatures(Features):
                              }
 
         super(TestingFeatures, self).__init__(features_to_run=features_to_run,
-                                              adaptive=adaptive,
+                                              interpolate=interpolate,
                                               labels=implemented_labels)
 
         self.is_preprocess_run = False
@@ -33,7 +33,7 @@ class TestingFeatures(Features):
     def feature_invalid(self, time, values):
         return None, None
 
-    def feature_adaptive(self, time, values):
+    def feature_interpolate(self, time, values):
         return time, values
 
     def feature_no_time(self, time, values):

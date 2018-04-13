@@ -67,7 +67,7 @@ stimulus to be able to calculate certain features.
 They are specified through the ``stimulus_start`` and
 ``stimulus_end`` arguments when initializing ``NeuronModel``.
 Additionally, the interneuron model uses adaptive time steps,
-meaning we have to set ``adaptive=True``.
+meaning we have to set ``interpolate=True``.
 In this way we tell Uncertainpy to perform an interpolation to get the
 output on a regular form before performing the analysis:
 We also give the path to the folder where

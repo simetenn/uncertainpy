@@ -29,7 +29,7 @@ class TestRunModel(unittest.TestCase):
                                                          "feature1d",
                                                          "feature2d",
                                                          "feature_invalid",
-                                                         "feature_adaptive"])
+                                                         "feature_interpolate"])
 
         self.parameter_list = [["a", 1, None],
                                ["b", 2, None]]
@@ -255,7 +255,7 @@ class TestRunModel(unittest.TestCase):
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "TestingModel1d", "feature_invalid", "feature_adaptive"]))
+                              "TestingModel1d", "feature_invalid", "feature_interpolate"]))
 
 
     def test_evaluate_nodes_parallel_model_1d(self):
@@ -266,7 +266,7 @@ class TestRunModel(unittest.TestCase):
 
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
-                              "TestingModel1d", "feature_invalid", "feature_adaptive"]))
+                              "TestingModel1d", "feature_invalid", "feature_interpolate"]))
 
     def test_evaluate_nodes_sequential_model_2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -373,13 +373,13 @@ class TestRunModel(unittest.TestCase):
 
 
 
-    def test_results_to_data_model_1d_features_all_adaptive(self):
+    def test_results_to_data_model_1d_features_all_interpolate(self):
 
         features = TestingFeatures(features_to_run=["feature0d",
                                                     "feature1d",
                                                     "feature2d",
-                                                    "feature_adaptive"],
-                                   adaptive="feature_adaptive")
+                                                    "feature_interpolate"],
+                                   interpolate="feature_interpolate")
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
@@ -397,7 +397,7 @@ class TestRunModel(unittest.TestCase):
 
         self.assertEqual(features,
                          ["TestingModelAdaptive", "feature0d", "feature1d",
-                          "feature2d", "feature_adaptive"])
+                          "feature2d", "feature_interpolate"])
 
         self.assertIn("TestingModelAdaptive", data)
 
@@ -411,13 +411,13 @@ class TestRunModel(unittest.TestCase):
                                     np.arange(0, 15) + 5))
 
 
-        self.assertTrue(np.array_equal(data["feature_adaptive"]["time"],
+        self.assertTrue(np.array_equal(data["feature_interpolate"]["time"],
                                        np.arange(0, 15)))
-        self.assertTrue(np.allclose(data["feature_adaptive"].evaluations[0],
+        self.assertTrue(np.allclose(data["feature_interpolate"].evaluations[0],
                                     np.arange(0, 15) + 1))
-        self.assertTrue(np.allclose(data["feature_adaptive"].evaluations[1],
+        self.assertTrue(np.allclose(data["feature_interpolate"].evaluations[1],
                                     np.arange(0, 15) + 3))
-        self.assertTrue(np.allclose(data["feature_adaptive"].evaluations[2],
+        self.assertTrue(np.allclose(data["feature_interpolate"].evaluations[2],
                                     np.arange(0, 15) + 5))
 
 
@@ -426,12 +426,12 @@ class TestRunModel(unittest.TestCase):
         self.assert_feature_2d(data)
 
 
-    def test_results_to_data_model_1d_adaptive_ignore(self):
+    def test_results_to_data_model_1d_interpolate_ignore(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
                                  verbose_level="warning")
 
-        self.runmodel.model.adaptive = False
+        self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -462,7 +462,7 @@ class TestRunModel(unittest.TestCase):
                                  parameters=self.parameters,
                                  verbose_level="warning")
 
-        self.runmodel.model.adaptive = False
+        self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -477,7 +477,7 @@ class TestRunModel(unittest.TestCase):
                                  parameters=self.parameters,
                                  verbose_level="warning")
 
-        self.runmodel.model.adaptive = False
+        self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -508,12 +508,12 @@ class TestRunModel(unittest.TestCase):
                                        np.arange(0, 15) + 5))
 
 
-    def test_results_to_data_model_1d_adaptive_ignore_and_adaptive(self):
+    def test_results_to_data_model_1d_interpolate_ignore_and_interpolate(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
                                  verbose_level="warning")
 
-        self.runmodel.model.adaptive = True
+        self.runmodel.model.interpolate = True
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -543,7 +543,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_feature_0d(self):
 
         features = TestingFeatures(features_to_run=["feature0d",],
-                                   adaptive="feature0d")
+                                   interpolate="feature0d")
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
@@ -558,8 +558,8 @@ class TestRunModel(unittest.TestCase):
 
 
 
-    # def test_results_to_dataAdaptiveError(self):
-    #     self.runmodel = RunModel(TestingModelAdaptive(adaptive=True),
+    # def test_results_to_datainterpolateError(self):
+    #     self.runmodel = RunModel(TestingModelAdaptive(interpolate=True),
     #                              features=TestingFeatures(),
     #                              suppress_model_output=True)
     #
@@ -788,7 +788,7 @@ class TestRunModel(unittest.TestCase):
 
     def test_apply_interpolation(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel.model.adaptive = True
+        self.runmodel.model.interpolate = True
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -827,7 +827,7 @@ class TestRunModel(unittest.TestCase):
 
     def test_apply_interpolation_none(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
-        self.runmodel.model.adaptive = True
+        self.runmodel.model.interpolate = True
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -897,7 +897,7 @@ class TestRunModel(unittest.TestCase):
                             "models/interneuron_modelDB/")
 
         model = NeuronModel(path=path,
-                            adaptive=True)
+                            interpolate=True)
 
         self.runmodel = RunModel(model=model, parameters=self.parameters, CPUs=1)
         uncertain_parameters = ["cap", "Rm"]

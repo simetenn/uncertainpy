@@ -24,7 +24,7 @@ parameters.set_all_distributions(un.uniform(0.05))
 features = un.SpikingFeatures(features_to_run="all")
 
 # Initialize the model with the start and end time of the stimulus
-model = un.NeuronModel(path="interneuron_model/", adaptive=True,
+model = un.NeuronModel(path="interneuron_model/", interpolate=True,
                        stimulus_start=1000, stimulus_end=1900)
 
 # Perform the uncertainty quantification

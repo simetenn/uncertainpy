@@ -23,14 +23,14 @@ class Features(object):
         A list of new utility methods. All methods in this class that is not in
         the list of utility methods, is considered to be a feature.
         Default is None.
-    adaptive : {None, "all", str, list of feature names}, optional
-        Which features that are adaptive, meaning they have a varying number of
+    interpolate : {None, "all", str, list of feature names}, optional
+        Which features are irregular, meaning they have a varying number of
         time points between evaluations. An interpolation is performed on
-        each adaptive feature to create regular results.
-        If ``"all"``, all features are set to adaptive.
-        If None, or an empty list, no features are adaptive.
-        If str, only that feature is adaptive.
-        If list of feature names, all listed are adaptive.
+        each irregular feature to create regular results.
+        If ``"all"``, all features are interpolated.
+        If None, or an empty list, no features are interpolated.
+        If str, only that feature is interpolated.
+        If list of feature names, all listed features are interpolated.
         Default is None.
     labels : dictionary, optional
         A dictionary with key as the feature name and the value as a list of
@@ -57,8 +57,8 @@ class Features(object):
     ----------
     features_to_run : list
         Which features to calculate uncertainties for.
-    adaptive : list
-        A list of the adaptive features.
+    interpolate : list
+        A list of irregular features to be interpolated.
     utility_methods : list
         A list of all utility methods implemented. All methods in this class
         that is not in the list of utility methods is considered to be a feature.
@@ -75,7 +75,7 @@ class Features(object):
                  new_features=None,
                  features_to_run="all",
                  new_utility_methods=None,
-                 adaptive=None,
+                 interpolate=None,
                  labels={},
                  preprocess=None,
                  verbose_level="info",
@@ -95,12 +95,12 @@ class Features(object):
             new_utility_methods = []
 
         self._features_to_run = []
-        self._adaptive = None
+        self._interpolate = None
         self._labels = {}
 
         self.utility_methods += new_utility_methods
 
-        self.adaptive = adaptive
+        self.interpolate = interpolate
 
         if new_features is not None:
             self.add_features(new_features, labels=labels)
@@ -228,41 +228,41 @@ class Features(object):
 
 
     @property
-    def adaptive(self):
+    def interpolate(self):
         """
-        Adaptive features.
+        Features that require an interpolation.
 
-        Which features that are adaptive, meaning they have a varying number of
+        Which features are interpolated, meaning they have a varying number of
         time points between evaluations. An interpolation is performed on
-        each adaptive feature to create regular results.
+        each interpolated feature to create regular results.
 
         Parameters
         ----------
-        new_features_to_run : {None, "all", str, list of feature names}
-            If ``"all"``, all features are set to adaptive.
-            If None, or an empty list, no features are adaptive.
-            If str, only that feature is adaptive.
-            If list of feature names, all listed are adaptive.
+        new_interpolate : {None, "all", str, list of feature names}
+            If ``"all"``, all features are interpolated.
+            If None, or an empty list, no features are interpolated.
+            If str, only that feature is interpolated.
+            If list of feature names, all listed features are interpolated.
             Default is None.
 
         Returns
         -------
         list
-            A list of adaptive features.
+            A list of irregular features to be interpolated.
         """
-        return self._adaptive
+        return self._interpolate
 
 
-    @adaptive.setter
-    def adaptive(self, new_adaptive):
-        if new_adaptive == "all":
-            self._adaptive = self.implemented_features()
-        elif new_adaptive is None:
-            self._adaptive = []
-        elif isinstance(new_adaptive, str):
-            self._adaptive = [new_adaptive]
+    @interpolate.setter
+    def interpolate(self, new_interpolate):
+        if new_interpolate == "all":
+            self._interpolate = self.implemented_features()
+        elif new_interpolate is None:
+            self._interpolate = []
+        elif isinstance(new_interpolate, str):
+            self._interpolate = [new_interpolate]
         else:
-            self._adaptive = new_adaptive
+            self._interpolate = new_interpolate
 
 
 

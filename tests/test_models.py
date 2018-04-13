@@ -69,12 +69,12 @@ class TestModel(unittest.TestCase):
             return x
 
         model = Model(run=f,
-                      adaptive=True,
+                      interpolate=True,
                       labels=["test x", "text y"])
 
         self.assertEqual(model.run, f)
         self.assertEqual(model.labels, ["test x", "text y"])
-        self.assertTrue(model.adaptive)
+        self.assertTrue(model.interpolate)
         self.assertEqual(model.name, "f")
         self.assertEqual(model.suppress_graphics, False)
 

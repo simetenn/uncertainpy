@@ -19,10 +19,10 @@ class NestModel(Model):
 
     Parameters
     ----------
-    adaptive : bool, optional
-        True if the model is adaptive, meaning it has a varying number of
-        return values between different model evaluations. An interpolation of
-        the results are performed if True. Default is False.
+    interpolate : bool, optional
+        True if the model is irregular, meaning it has a varying number of
+        return values between different model evaluations, and
+        an interpolation of the results is performed. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -41,10 +41,10 @@ class NestModel(Model):
     run : uncertainpy.models.Model.run
     labels : list, optional
         A list of label names for the axes when plotting the model.
-    adaptive : bool
-        True if the model is adaptive, meaning it has a varying number of
-        return values between different model evaluations. An interpolation of
-        the results are performed if True. Default is False.
+    interpolate : bool
+        True if the model is irregular, meaning it has a varying number of
+        return values between different model evaluations, and
+        an interpolation of the results is performed. Default is False.
     ignore : bool, optional
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. The model results are still
@@ -56,7 +56,7 @@ class NestModel(Model):
     """
     def __init__(self,
                  run=None,
-                 adaptive=False,
+                 interpolate=False,
                  ignore=False,
                  labels=["Time (ms)", "Neuron nr", "Spiking probability"]):
 
@@ -65,7 +65,7 @@ class NestModel(Model):
             raise ImportError("NestModel requires: nest")
 
         super(NestModel, self).__init__(run=run,
-                                        adaptive=adaptive,
+                                        interpolate=interpolate,
                                         ignore=ignore,
                                         labels=labels)
 

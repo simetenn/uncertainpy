@@ -22,10 +22,10 @@ class NeuronModel(Model):
     name : {None, str}, optional
         Name of the model, if None the model gets the name of the current class.
         Default is None.
-    adaptive : bool, optional
-        True if the model is adaptive, meaning it has a varying number of
-        return values between different model evaluations. An interpolation of
-        the results are performed if True. Default is False.
+    interpolate : bool, optional
+        True if the model is irregular, meaning it has a varying number of
+        return values between different model evaluations, and
+        an interpolation of the results is performed. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -48,10 +48,10 @@ class NeuronModel(Model):
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
-    adaptive : bool
-        True if the model is adaptive, meaning it has a varying number of
-        return values between different model evaluations. An interpolation of
-        the results are performed if True. Default is False.
+    interpolate : bool
+        True if the model is irregular, meaning it has a varying number of
+        return values between different model evaluations, and
+        an interpolation of the results is performed. Default is False.
     suppress_graphics : bool
         Suppress all graphics created by the model.
     ignore : bool
@@ -72,7 +72,7 @@ class NeuronModel(Model):
                  file="mosinit.hoc",
                  path=None,
                  name=None,
-                 adaptive=True,
+                 interpolate=True,
                  ignore=False,
                  run=None,
                  labels=["Time (ms)", "Membrane potential (mV)"],
@@ -81,7 +81,7 @@ class NeuronModel(Model):
                  suppress_graphics=True,
                  **kwargs):
 
-        super(NeuronModel, self).__init__(adaptive=adaptive,
+        super(NeuronModel, self).__init__(interpolate=interpolate,
                                           ignore=ignore,
                                           labels=labels,
                                           suppress_graphics=suppress_graphics)

@@ -14,10 +14,10 @@ class Model(object):
 
     Parameters
     ----------
-    adaptive : bool, optional
-        True if the model is adaptive, meaning it has a varying number of
-        return values between different model evaluations. An interpolation of
-        the results are performed if True. Default is False.
+    interpolate : bool, optional
+        True if the model is irregular, meaning it has a varying number of
+        return values between different model evaluations, and
+        an interpolation of the results is performed. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -38,10 +38,10 @@ class Model(object):
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
-    adaptive : bool
-        True if the model is adaptive, meaning it has a varying number of
-        return values between different model evaluations. An interpolation of
-        the results are performed if True. Default is False.
+    interpolate : bool
+        True if the model is irregular, meaning it has a varying number of
+        return values between different model evaluations, and
+        an interpolation of the results is performed. Default is False.
     name : str
         Name of the model. Either the name of the class or the name of the
         function set as run.
@@ -59,13 +59,13 @@ class Model(object):
     """
     def __init__(self,
                  run=None,
-                 adaptive=False,
+                 interpolate=False,
                  labels=[],
                  postprocess=None,
                  suppress_graphics=False,
                  ignore=False):
 
-        self.adaptive = adaptive
+        self.interpolate = interpolate
         self.labels = labels
         self.ignore = ignore
         self.suppress_graphics = suppress_graphics

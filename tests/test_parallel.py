@@ -32,7 +32,7 @@ class TestParallel(unittest.TestCase):
                                                          "feature1d",
                                                          "feature2d",
                                                          "feature_invalid",
-                                                         "feature_adaptive"])
+                                                         "feature_interpolate"])
 
         self.parallel = Parallel(model=TestingModel1d(),
                                  features=self.features)
@@ -122,7 +122,7 @@ class TestParallel(unittest.TestCase):
     #                "feature2d": {"values": np.array([np.arange(0, 10),
     #                                             np.arange(0, 10)]),
     #                              "time": np.arange(0, 10)},
-    #                "feature_adaptive": {"values": np.arange(0, 10) + 1,
+    #                "feature_interpolate": {"values": np.arange(0, 10) + 1,
     #                                     "time": np.arange(0, 10),
     #                                     "interpolation": "interpolation object"},
     #                "feature_invalid": {"values": np.nan,
@@ -132,7 +132,7 @@ class TestParallel(unittest.TestCase):
 
     #     self.assertEqual(features_0d, ["feature0d", "feature_invalid"])
     #     self.assertEqual(set(features_1d),
-    #                      set(["feature1d", "TestingModel1d", "feature_adaptive"]))
+    #                      set(["feature1d", "TestingModel1d", "feature_interpolate"]))
     #     self.assertEqual(features_2d, ["feature2d"])
 
 
@@ -148,7 +148,7 @@ class TestParallel(unittest.TestCase):
                    "feature2d": {"values": np.array([np.arange(0, 10),
                                                 np.arange(0, 10)]),
                                  "time": np.arange(0, 10)},
-                   "feature_adaptive": {"values": np.arange(0, 10) + 1,
+                   "feature_interpolate": {"values": np.arange(0, 10) + 1,
                                         "time": np.arange(0, 10)},
                    "feature_invalid": {"values": np.nan,
                                        "time": np.nan}}
@@ -167,14 +167,14 @@ class TestParallel(unittest.TestCase):
                                                                             np.arange(0, 10)])))
         self.assertTrue(np.isnan(results["feature_invalid"]["time"]))
         self.assertTrue(np.isnan(results["feature_invalid"]["values"]))
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["time"], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["values"], np.arange(0, 10) + 1))
-        self.assertIsInstance(results["feature_adaptive"]["interpolation"],
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["time"], np.arange(0, 10)))
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["values"], np.arange(0, 10) + 1))
+        self.assertIsInstance(results["feature_interpolate"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
 
     def test_create_interpolations_irregular_values(self):
-        self.parallel.model.adaptive = True
+        self.parallel.model.interpolate = True
 
         results = {"TestingModel1d": {"values": [1, 3, [3, 4]],
                                       "time": np.arange(0, 10)}}
@@ -184,7 +184,7 @@ class TestParallel(unittest.TestCase):
             results = self.parallel.create_interpolations(results)
 
     def test_create_interpolations_irregular_time(self):
-        self.parallel.model.adaptive = True
+        self.parallel.model.interpolate = True
 
         results = {"TestingModel1d": {"values": np.arange(0, 10),
                                       "time": [1, 3, [3, 4]]}}
@@ -199,7 +199,7 @@ class TestParallel(unittest.TestCase):
         results = {"TestingModel1d": {"values": np.arange(0, 10) + 1,
                                       "time": np.arange(0, 10)}}
 
-        self.parallel.model.adaptive = True
+        self.parallel.model.interpolate = True
         inter = self.parallel.create_interpolations(results)
 
         self.assertIsInstance(inter["TestingModel1d"]["interpolation"],
@@ -214,7 +214,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_create_interpolations_feature_1d_no_t(self):
-        results = {"feature_adaptive": {"values": np.arange(0, 10),
+        results = {"feature_interpolate": {"values": np.arange(0, 10),
                                         "time": np.nan}}
 
         with self.assertRaises(ValueError):
@@ -222,38 +222,38 @@ class TestParallel(unittest.TestCase):
 
 
     def test_create_interpolations_feature_1d_t_nan(self):
-        results = {"feature_adaptive": {"values": np.arange(0, 10),
+        results = {"feature_interpolate": {"values": np.arange(0, 10),
                                         "time": [np.nan]*10}}
 
         results = self.parallel.create_interpolations(results)
 
-        self.assertIsNone(results["feature_adaptive"]["interpolation"])
+        self.assertIsNone(results["feature_interpolate"]["interpolation"])
 
 
 
     def test_create_interpolations_feature_1d_values_nan(self):
-        results = {"feature_adaptive": {"time": np.arange(0, 10),
+        results = {"feature_interpolate": {"time": np.arange(0, 10),
                                         "values": [np.nan]*10}}
 
         results = self.parallel.create_interpolations(results)
 
-        self.assertIsNone(results["feature_adaptive"]["interpolation"])
+        self.assertIsNone(results["feature_interpolate"]["interpolation"])
 
 
     def test_create_interpolations_feature_0d(self):
-        results = {"feature_adaptive": {"values": 1,
+        results = {"feature_interpolate": {"values": 1,
                                         "time": np.arange(0, 10)}}
 
         # with self.assertRaises(AttributeError):
         #     self.parallel.create_interpolations(results)
         results =  self.parallel.create_interpolations(results)
 
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["time"],
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["time"],
                                        np.arange(0, 10)))
-        self.assertEqual(results["feature_adaptive"]["values"], 1)
+        self.assertEqual(results["feature_interpolate"]["values"], 1)
 
     def test_create_interpolations_feature_2d(self):
-        results = {"feature_adaptive": {"values": np.array([np.arange(0, 10),
+        results = {"feature_interpolate": {"values": np.array([np.arange(0, 10),
                                                        np.arange(0, 10)]),
                                         "time": np.arange(0, 10)}}
 
@@ -349,7 +349,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_create_interpolations_model_0d(self):
-        self.parallel.model.adaptive = True
+        self.parallel.model.interpolate = True
         results = {"TestingModel1d": {"values": 1,
                                       "time": np.arange(0, 10)}}
 
@@ -365,7 +365,7 @@ class TestParallel(unittest.TestCase):
 
 
     def test_create_interpolations_model_2d(self):
-        self.parallel.model.adaptive = True
+        self.parallel.model.interpolate = True
         results = {"TestingModel1d": {"values": np.array([np.arange(0, 10),
                                                           np.arange(0, 10)]),
                                       "time": np.arange(0, 10)}}
@@ -390,15 +390,15 @@ class TestParallel(unittest.TestCase):
                                                                             np.arange(0, 10)])))
         self.assertTrue(np.isnan(results["feature_invalid"]["time"]))
         self.assertTrue(np.isnan(results["feature_invalid"]["values"]))
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["time"], np.arange(0, 10)))
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["values"], np.arange(0, 10) + 1))
-        self.assertIsInstance(results["feature_adaptive"]["interpolation"],
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["time"], np.arange(0, 10)))
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["values"], np.arange(0, 10) + 1))
+        self.assertIsInstance(results["feature_interpolate"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
 
-    def test_run_adaptive(self):
+    def test_run_interpolate(self):
         parallel = Parallel(model=TestingModelAdaptive(),
-                            features=TestingFeatures(features_to_run="feature_adaptive"))
+                            features=TestingFeatures(features_to_run="feature_interpolate"))
         results = parallel.run(self.model_parameters)
 
         self.assertTrue(np.array_equal(results["TestingModelAdaptive"]["time"], np.arange(0, 11)))
@@ -406,9 +406,9 @@ class TestParallel(unittest.TestCase):
         self.assertIsInstance(results["TestingModelAdaptive"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["time"], np.arange(0, 11)))
-        self.assertTrue(np.array_equal(results["feature_adaptive"]["values"], np.arange(0, 11) + 1))
-        self.assertIsInstance(results["feature_adaptive"]["interpolation"],
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["time"], np.arange(0, 11)))
+        self.assertTrue(np.array_equal(results["feature_interpolate"]["values"], np.arange(0, 11) + 1))
+        self.assertIsInstance(results["feature_interpolate"]["interpolation"],
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
 
@@ -431,7 +431,7 @@ class TestParallel(unittest.TestCase):
                                   "models/interneuron_modelDB/")
 
         model = NeuronModel(path=path,
-                            adaptive=True)
+                            interpolate=True)
 
         parallel = Parallel(model=model)
         model_parameters = {"cap": 1.1, "Rm": 22000}

@@ -53,7 +53,7 @@ class TestingModel2d(Model):
 
 class TestingModelAdaptive(Model):
     def __init__(self, ignore=False):
-        super(TestingModelAdaptive, self).__init__(labels=["x", "y"], adaptive=True, ignore=ignore)
+        super(TestingModelAdaptive, self).__init__(labels=["x", "y"], interpolate=True, ignore=ignore)
 
     def run(self, a=1, b=2):
 

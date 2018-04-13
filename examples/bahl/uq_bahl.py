@@ -5,7 +5,7 @@ import chaospy as cp
 class NeuronModelBahl(un.NeuronModel):
     def __init__(self, stimulus_start=None, stimulus_end=None):
         # Hardcode the path of the Bahl neuron model
-        super(NeuronModelBahl, self).__init__(adaptive=True,
+        super(NeuronModelBahl, self).__init__(interpolate=True,
                                               path="bahl_neuron_model",
                                               stimulus_start=stimulus_start,
                                               stimulus_end=stimulus_end)

@@ -47,10 +47,10 @@ class Parallel(Base):
     """
     def create_interpolations(self, result):
         """
-        Create an interpolation for adaptive model and features `result`.
+        Create an interpolation.
 
-        Adaptive model or feature `result`, meaning they have a varying number
-        of time steps, are interpolated. Interpolation is only performed for one
+        Model or feature `result` s that have a varying number of time steps,
+        are interpolated. Interpolation is only performed for one
         dimensional `result`. Zero dimensional `result` does not need to be
         interpolated, and support for interpolating two dimensional and above
         `result` have currently not been implemented.
@@ -108,14 +108,14 @@ class Parallel(Base):
 
         Notes
         -----
-        If either model or feature results are adaptive, the results must be
+        If either model or feature results are irregular, the results must be
         interpolated for Chaospy to be able to create the polynomial
         approximation. For 1D results this is done with scipy:
         ``InterpolatedUnivariateSpline(time, U, k=3)``.
         """
         for feature in result:
-            if feature in self.features.adaptive or \
-                (feature == self.model.name and self.model.adaptive and not self.model.ignore):
+            if feature in self.features.interpolate or \
+                (feature == self.model.name and self.model.interpolate and not self.model.ignore):
 
                 # This does not ignore np.nan results
                 if not is_regular(result[feature]["values"]):
@@ -239,9 +239,9 @@ class Parallel(Base):
 
         The model is run and each feature of the model is calculated from the
         model output, `time` (time values) and `values` (model result). The
-        results are interpolated if they are adaptive, meaning they return a
+        results are interpolated if they are irregular, meaning they return a
         varying number of steps. An interpolation is created and added to
-        results for the model/features that are adaptive. Each instance of None
+        results for the model/features that are irregular. Each instance of None
         is converted to ``numpy.nan``.
 
         Parameters

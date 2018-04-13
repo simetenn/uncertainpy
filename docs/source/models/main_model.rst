@@ -9,7 +9,7 @@ Generally, models are created through the :py:class:`~uncertainpy.model.Model` c
 
     model = un.Model(run=example_model,
                      postprocess=example_postprocess,
-                     adaptive=True,
+                     interpolate=True,
                      labels=["xlabel", "ylabel"])
 
 The ``run`` argument must be a Python function that runs a
@@ -20,7 +20,9 @@ The ``postprocess`` argument is a Python function used to postprocess
 the model output if required.
 We go into details on the requirements of the ``postprocess`` and model
 functions below.
-``adaptive`` specifies whether the model uses adaptive time steps or not.
+``interpolate`` specifies whether the model should be interpolated to a regular
+form.
+This is required for for example models with adaptive time steps.
 For adaptive models,
 Uncertainpy automatically interpolates the output to a regular form
 (the same number of points for each model evaluation).
