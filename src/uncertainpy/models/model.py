@@ -331,6 +331,10 @@ class Model(object):
           stored as key-value pairs.
           This is what the implemented features requires, as well as
           require that specific keys to be present.
+
+        See Also
+        --------
+        uncertainpy.models.Model.run
         """
         if isinstance(model_result, np.ndarray):
             raise ValueError("model.run() returns an numpy array. "
@@ -361,7 +365,7 @@ class Model(object):
         """
         Validate the results from ``postprocess``.
 
-        This method ensures ``postprocess`` returns `time` and `values`.
+        This method ensures that ``postprocess`` returns `time` and `values`.
 
         Parameters
         ----------
@@ -371,9 +375,9 @@ class Model(object):
         Raises
         ------
         ValueError
-            If the model result does not fit the requirements.
+            If the postprocessed model result does not fit the requirements.
         TypeError
-            If the model result does not fit the requirements.
+            If the postprocessed model result does not fit the requirements.
 
         Notes
         -----
@@ -392,6 +396,10 @@ class Model(object):
             The second object is the postprocessed model output.
 
         Both of these must be regular or on a form that can be interpolated.
+
+        See Also
+        --------
+        uncertainpy.models.Model.postprocess
         """
         if isinstance(postprocess_result, np.ndarray):
             raise ValueError("model.postprocess() returns an numpy array. "
