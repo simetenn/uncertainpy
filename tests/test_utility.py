@@ -246,64 +246,6 @@ class TestContainsNoneOrNan(unittest.TestCase):
         self.assertTrue(result)
 
 
-
-
-# class TestOnlyNoneOrNan(unittest.TestCase):
-#     def test_array_nan(self):
-#         values = np.array([np.array(1), np.array(np.nan), np.array(3)])
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_numpy_float_nan(self):
-#         values = [np.float64(1), np.float64(np.nan), np.float64(3)]
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_simple(self):
-#         values = [1, 2, 3]
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_one_nan(self):
-#         values = [1, np.nan, 3]
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_simple_nan(self):
-#         values = [np.nan, np.nan, None]
-#         result = only_none_or_nan(values)
-#         self.assertTrue(result)
-
-
-#     def test_empty(self):
-#         values = [1, 2, 3, [], [[1], 2, 3]]
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_simple_nan_empty(self):
-#         values = [np.nan, np.nan, None, [], [[None], np.nan, np.nan]]
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_int(self):
-#         values = 1
-#         result = only_none_or_nan(values)
-#         self.assertFalse(result)
-
-
-#     def test_none(self):
-#         values = None
-#         result = only_none_or_nan(values)
-#         self.assertTrue(result)
-
-
-
 class TestIsRegular(unittest.TestCase):
     def test_regular(self):
         values = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
@@ -372,6 +314,73 @@ class TestIsRegular(unittest.TestCase):
 
         result = is_regular(values)
         self.assertTrue(result)
+
+
+
+
+
+
+# Commented out since function currently does not work
+# and is not needed
+# class TestOnlyNoneOrNan(unittest.TestCase):
+#     def test_array_nan(self):
+#         values = np.array([np.array(1), np.array(np.nan), np.array(3)])
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_numpy_float_nan(self):
+#         values = [np.float64(1), np.float64(np.nan), np.float64(3)]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_simple(self):
+#         values = [1, 2, 3]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_one_nan(self):
+#         values = [1, np.nan, 3]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_simple_nan(self):
+#         values = [np.nan, np.nan, None]
+#         result = only_none_or_nan(values)
+#         self.assertTrue(result)
+
+
+#     def test_empty(self):
+#         values = [1, 2, 3, [], [[1], 2, 3]]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_simple_nan_empty(self):
+#         values = [np.nan, np.nan, None, [], [[None], np.nan, np.nan]]
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_int(self):
+#         values = 1
+#         result = only_none_or_nan(values)
+#         self.assertFalse(result)
+
+
+#     def test_none(self):
+#         values = None
+#         result = only_none_or_nan(values)
+#         self.assertTrue(result)
+
+
+
+
+
+
 
 # Old none_to_nan_regularize tests
 
