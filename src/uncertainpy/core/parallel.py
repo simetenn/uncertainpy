@@ -312,8 +312,7 @@ class Parallel(Base):
 
 
             # Calculate features from the model results
-            feature_preprocess = self.features.preprocess(*model_result)
-            feature_results = self.features.calculate_features(*feature_preprocess)
+            feature_results = self.features.calculate_features(*model_result)
 
             for feature in feature_results:
                 time_feature = feature_results[feature]["time"]

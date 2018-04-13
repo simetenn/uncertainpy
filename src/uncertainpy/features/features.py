@@ -122,8 +122,8 @@ class Features(object):
         features are calculated.
 
         No preprocessing is performed, and the direct model results are
-        currently returned.
-        If preprocessing is needed it should follow the below format.
+        currently returned. If preprocessing is needed it should follow the
+        below format.
 
         Parameters
         ----------
@@ -379,7 +379,7 @@ class Features(object):
         try:
             feature_result = getattr(self, feature_name)(*preprocess_results)
         except Exception as error:
-            msg = "Error in calculation of feature: {}".format(feature_name)
+            msg = "Error when calculating: {}".format(feature_name)
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)
@@ -389,7 +389,7 @@ class Features(object):
         try:
             time_feature, values_feature = feature_result
         except (ValueError, TypeError) as error:
-            msg = "feature {} must return time and values (return time, values | return None, U)".format(feature_name)
+            msg = "feature {} must return time and values (return time, values | return None, values)".format(feature_name)
             if not error.args:
                 error.args = ("",)
             error.args = error.args + (msg,)
@@ -399,20 +399,17 @@ class Features(object):
 
 
 
-    def calculate_features(self, *preprocess_results):
+    def calculate_features(self, *model_results):
         """
         Calculate all features in ``features_to_run``.
 
         Parameters
         ----------
-        *preprocess_results
-            The values returned by ``preprocess``. These values are sent
-            as input arguments to each feature. By default preprocess returns
-            the values that ``model.run()`` returns, which contains `time` and
-            `values`, and then any number of optional `info` values.
-            The implemented features require that `info` is a single
-            dictionary with the information stored as key-value pairs.
-            Certain features require specific keys to be present.
+        *model_results
+            Variable length argument list. Is the values that ``model.run()``
+            returns. By default it contains `time` and `values`, and then any number of
+            optional `info` values.
+
 
         Returns
         -------
@@ -434,6 +431,8 @@ class Features(object):
         --------
         uncertainpy.features.Features.calculate_feature : Method for calculating a single feature.
         """
+        preprocess_results = self.preprocess(*model_results)
+
         results = {}
         for feature in self.features_to_run:
             time_feature, values_feature = self.calculate_feature(feature, *preprocess_results)
@@ -443,20 +442,17 @@ class Features(object):
         return results
 
 
-    def calculate_all_features(self, *args):
+    def calculate_all_features(self, *model_results):
         """
         Calculate all implemented features.
 
         Parameters
         ----------
-        *preprocess_results
-            The values returned by ``preprocess``. These values are sent
-            as input arguments to each feature. By default preprocess returns
-            the values that ``model.run()`` returns, which contains `time` and
-            `values`, and then any number of optional `info` values.
-            The implemented features require that `info` is a single
-            dictionary with the information stored as key-value pairs.
-            Certain features require specific keys to be present.
+        *model_results
+            Variable length argument list. Is the values that ``model.run()``
+            returns. By default it contains `time` and `values`, and then any number of
+            optional `info` values.
+
 
         Returns
         -------
@@ -478,9 +474,11 @@ class Features(object):
         --------
         uncertainpy.features.Features.calculate_feature : Method for calculating a single feature.
         """
+        preprocess_results = self.preprocess(*model_results)
+
         results = {}
         for feature in self.implemented_features():
-            time_feature, values_feature = self.calculate_feature(feature, *args)
+            time_feature, values_feature = self.calculate_feature(feature, *preprocess_results)
 
             results[feature] = {"time": time_feature, "values": values_feature}
 
