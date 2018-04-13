@@ -359,7 +359,8 @@ class Data(collections.MutableMapping):
                  verbose_filename=None):
 
         self.data_information = ["uncertain_parameters", "model_name",
-                                 "incomplete", "method", "version", "seed"]
+                                 "incomplete", "method", "version", "seed",
+                                 "model_ignore"]
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -371,6 +372,7 @@ class Data(collections.MutableMapping):
         self.incomplete = []
         self.data = {}
         self.method = ""
+        self.model_ignore = False
         self._seed = ""
 
         self.version = __version__
@@ -452,7 +454,7 @@ class Data(collections.MutableMapping):
         self.data = {}
         self.method = ""
         self._seed = ""
-
+        self.model_ignore = False
         self.version = __version__
 
 
@@ -602,6 +604,22 @@ class Data(collections.MutableMapping):
         filename : str
             Name of the file to load data from.
         """
+        def add_evaluation(group, values, name="evaluation"):
+            iteration = 0
+
+            padding = len(str(len(values) + 1))
+
+            for value in values:
+                try:
+                    group.create_dataset(name + "_{0:0{1}d}".format(iteration, padding), data=value)
+                except (TypeError, ValueError):
+                    new_group = group.create_group(name + "_{0:0{1}d}".format(iteration, padding))
+                    add_evaluation(new_group, value, name="sub_evaluation")
+
+                iteration += 1
+
+
+
         with h5py.File(filename, 'w') as f:
             f.attrs["uncertain parameters"] = self.uncertain_parameters
             f.attrs["model name"] = self.model_name
@@ -609,13 +627,18 @@ class Data(collections.MutableMapping):
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
             f.attrs["seed"] = self.seed
+            f.attrs["model_ignore"] = self.model_ignore
 
 
             for feature in self:
                 group = f.create_group(feature)
 
                 for statistical_metric in self[feature]:
-                    group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
+                    if statistical_metric == "evaluations":
+                        evaluations_group = group.create_group("evaluations")
+                        add_evaluation(evaluations_group, self[feature][statistical_metric])
+                    else:
+                        group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
                 group.create_dataset("labels", data=self[feature].labels)
 
@@ -636,6 +659,18 @@ class Data(collections.MutableMapping):
         #     raise FileNotFoundError("{} file not found".format(self.filename))
         self.clear()
 
+        def append_evaluations(evaluations, group):
+            sub_evaluations = []
+            for item in group:
+                value = group[item]
+                if isinstance(value, h5py.Dataset):
+                    sub_evaluations.append(value[()])
+
+                elif  isinstance(value, h5py.Group):
+                    append_evaluations(sub_evaluations, group)
+
+            evaluations.append(sub_evaluations)
+
         with h5py.File(filename, 'r') as f:
             self.uncertain_parameters = list(f.attrs["uncertain parameters"])
             self.model_name = f.attrs["model name"]
@@ -643,11 +678,26 @@ class Data(collections.MutableMapping):
             self.method = f.attrs["method"]
             self.version = f.attrs["version"]
             self.seed = f.attrs["seed"]
+            self.model_ignore = f.attrs["model_ignore"]
 
             for feature in f:
                 self.add_features(str(feature))
                 for statistical_metric in f[feature]:
-                    self[feature][statistical_metric] = f[feature][statistical_metric][()]
+
+                    # TODO: working here
+                    if statistical_metric == "evaluations":
+                        evaluations = []
+
+                        for item in f[feature][statistical_metric]:
+                            value = f[feature][statistical_metric][item]
+                            if isinstance(value, h5py.Dataset):
+                                evaluations.append(value[()])
+                            elif  isinstance(value, h5py.Group):
+                                append_evaluations(evaluations, value)
+
+                        self[feature][statistical_metric] = evaluations
+                    else:
+                        self[feature][statistical_metric] = f[feature][statistical_metric][()]
 
 
     def remove_only_invalid_features(self):

@@ -124,6 +124,9 @@ class TestDataFeature(unittest.TestCase):
 
         self.assertTrue("evaluations" in self.data_feature)
 
+
+
+
 class TestData(unittest.TestCase):
     def setUp(self):
         self.output_test_dir = ".tests/"
@@ -134,7 +137,7 @@ class TestData(unittest.TestCase):
         os.makedirs(self.output_test_dir)
 
 
-        self.data = Data()
+        self.data = Data(verbose_level="error")
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                            "sobol_first", "sobol_first_sum",
@@ -174,56 +177,6 @@ class TestData(unittest.TestCase):
                                           "feature2": DataFeature("feature2"),
                                           "feature3": DataFeature("feature3")})
 
-    # def test_nan_to_none(self):
-    #     a = np.array([0, 1, 2, None, 4, None, None])
-    #     b = np.array([0, 1, 2, np.nan, 4, np.nan, np.nan])
-
-    #     result = self.data.nan_to_none(b)
-
-    #     self.assertTrue(np.array_equal(a, result))
-
-
-    # def test_none_to_nan(self):
-    #     a = [0, 1, 2, None, 4, None, None]
-    #     b = np.array([0, 1, 2, np.nan, 4, np.nan, np.nan])
-
-    #     result = self.data.none_to_nan(a)
-
-    #     self.assertTrue(np.array_equal(b[~np.isnan(b)], result[~np.isnan(result)]))
-    #     self.assertTrue(np.array_equal(np.isnan(b), np.isnan(result)))
-
-
-    # def test_features_2d(self):
-    #     self.data.features_2d = ["feature2d"]
-
-    #     self.assertEqual(self.data.feature_list, ["feature2d"])
-    #     self.assertEqual(self.data.features_2d, ["feature2d"])
-
-
-    # def test_update_feature_list(self):
-    #     self.data._features_1d = ["b"]
-    #     self.data._features_2d = ["a"]
-
-    #     self.data._update_feature_list()
-    #     self.assertEqual(self.data.feature_list, ["a", "b"])
-
-
-    # def test_is_adaptive_false(self):
-    #     self.data.evaluations = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)],
-    #                    "TestingModel1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
-
-    #     self.data.features_1d = ["feature1d", "TestingModel1d"]
-
-    #     self.assertFalse(self.data.is_adaptive())
-
-
-    # def test_is_adaptive_true(self):
-    #     self.data.evaluations = {"feature1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 5)],
-    #                    "TestingModel1d": [np.arange(1, 4), np.arange(1, 4), np.arange(1, 4)]}
-
-    #     self.data.features_1d = ["feature1d", "TestingModel1d"]
-
-    #     self.assertTrue(self.data.is_adaptive())
 
     def test_save(self):
         self.data.add_features(["feature1d", "TestingModel1d"])
@@ -250,6 +203,78 @@ class TestData(unittest.TestCase):
         result = subprocess.call(["h5diff", filename, compare_file])
 
         self.assertEqual(result, 0)
+
+
+    def test_save_irregular(self):
+        self.data.add_features(["feature1d", "TestingModel1d"])
+
+        for statistical_metric in self.statistical_metrics:
+            self.data["feature1d"][statistical_metric] = [1., 2.]
+            self.data["TestingModel1d"][statistical_metric] = [3., 4.]
+
+        self.data["feature1d"]["labels"] = ["xlabel", "ylabel"]
+        self.data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
+
+        self.data.model_name = "TestingModel1d"
+        self.data.uncertain_parameters = ["a", "b"]
+        self.data.method = "mock"
+        self.data.seed = 10
+        self.data.incomplete = ["a", "b"]
+        self.data.model_ignore = True
+
+        self.data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock_irregular")
+        filename = os.path.join(self.output_test_dir, "test_save_mock_irregular")
+
+        self.data.save(filename)
+
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
+
+
+    def test_load_irregular(self):
+
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock_irregular")
+
+        self.data.load(compare_file)
+
+        for statistical_metric in self.statistical_metrics:
+            if statistical_metric == "evaluations":
+                self.assertTrue(np.array_equal(self.data["feature1d"][statistical_metric], [1., 2.]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][0], [1., 2.]))
+                self.assertTrue(np.isnan(self.data["TestingModel1d"][statistical_metric][1]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][2][0], 1))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][2][1], np.array([2, 3])))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][2][2], 3))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][3], np.array([1])))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][4], 3))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][5], [3, 4, 5]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][6], [1., 2.]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][7], np.array([])))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][8], [3, 4, 5]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][9], np.array([])))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][10], [3, 4, 5]))
+
+            else:
+                self.assertTrue(np.array_equal(self.data["feature1d"][statistical_metric], [1., 2.]))
+                self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric], [3., 4.]))
+
+        self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
+        self.assertEqual(self.data.incomplete, ["a", "b"])
+
+        self.assertEqual(self.data.model_name, "TestingModel1d")
+        self.assertEqual(self.data.method, "mock")
+        self.assertEqual(self.data.seed, 10)
+
+        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
+        self.assertTrue(np.array_equal(self.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
+
+
 
 
     # TODO add this check when changing to python 3

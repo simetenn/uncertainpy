@@ -292,6 +292,36 @@ def generate_data_data():  # pragma: no cover
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
 
+def generate_data_data_irregular():  # pragma: no cover
+    data = un.Data()
+    data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
+                  "sobol_first", "sobol_first_sum",
+                  "sobol_total", "sobol_total_sum"]
+
+    data.add_features(["feature1d", "TestingModel1d"])
+
+    for data_type in data_types:
+        data["feature1d"][data_type] = [1., 2.]
+        data["TestingModel1d"][data_type] = [3., 4.]
+
+
+    data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1],
+                                          3, [3, 4, 5], [1, 2], [], [3, 4, 5],
+                                          [], [3, 4, 5]]
+
+    data["feature1d"]["labels"] = ["xlabel", "ylabel"]
+    data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
+
+    data.uncertain_parameters = ["a", "b"]
+    data.model_name = "TestingModel1d"
+    data.method = "mock"
+    data.seed = 10
+    data.incomplete = ["a", "b"]
+    data.model_ignore = True
+
+    data.save(os.path.join(test_data_dir, "test_save_mock_irregular"))
+
+
 def generate_data_empty():  # pragma: no cover
     data = un.Data()
 
@@ -343,3 +373,4 @@ if __name__ == "__main__":  # pragma: no cover
     generate_data_uncertainty_calculations()
     generate_data_data()
     generate_data_empty()
+    generate_data_data_irregular()
