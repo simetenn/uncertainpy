@@ -1,3 +1,5 @@
+import numpy as np
+
 from ..utils import create_logger
 
 class Features(object):
@@ -89,7 +91,8 @@ class Features(object):
                                 "preprocess",
                                 "add_features",
                                 "reference_feature",
-                                "_preprocess"]
+                                "_preprocess",
+                                "validate"]
 
         if new_utility_methods is None:
             new_utility_methods = []
@@ -363,18 +366,12 @@ class Features(object):
         TypeError
             If `feature_name` is a utility method.
 
-        Notes
-        -----
-        Checks that the feature returns two arguments.
-
-
         See also
         --------
         uncertainpy.models.Model.run : The model run method
         """
         if feature_name in self.utility_methods:
             raise TypeError("{} is a utility method".format(feature_name))
-
 
         try:
             feature_result = getattr(self, feature_name)(*preprocess_results)
@@ -385,6 +382,60 @@ class Features(object):
             error.args = error.args + (msg,)
             raise
 
+        self.validate(feature_name, *feature_result)
+
+        return feature_result
+
+
+    def validate(feature_name, *feature_result):
+        """
+        Validate the results from ``calculate_feature``.
+
+        This method ensures each returns `time`, `values`.
+
+        Parameters
+        ----------
+        model_results
+            Any type of model results returned by ``run``.
+        feature_name : str
+            Name of the feature, to create better error messages.
+
+        Raises
+        ------
+        ValueError
+            If the model result does not fit the requirements.
+        TypeError
+            If the model result does not fit the requirements.
+
+        Notes
+        -----
+        Tries to verify that at least, `time` and `values` are returned from ``run``.
+        ``model_result`` should follow the format: ``return time, values, info_1, info_2, ...``.
+        Where:
+
+        * ``time_feature`` : ``{None, numpy.nan, array_like}``
+            Time values, or equivalent, of the feature, if no time values
+            return None or numpy.nan.
+        * ``values`` : ``{None, numpy.nan, array_like}``
+            The feature results, `values` must either be regular (have the same
+            number of points for different paramaters) or be able to be
+            interpolated. If there are no feature results return
+            None or ``numpy.nan`` instead of `values` and that evaluation are
+            disregarded.
+        """
+
+        if isinstance(feature_result, np.ndarray):
+            raise ValueError("{} returns an numpy array. ".format(feature_name) +
+                             "This indicates only time or values is returned. " +
+                             "{} must return time and values".format(feature_name) +
+                             "(return time, values | return None, values)")
+
+        if isinstance(feature_result, str):
+            raise ValueError("{} returns a string. ".format(feature_name) +
+                             "This indicates only time or values is returned. " +
+                             "{} must return time and values".format(feature_name) +
+                             "(return time, values | return None, values)")
+
         # Check that time, and values is returned
         try:
             time_feature, values_feature = feature_result
@@ -394,8 +445,6 @@ class Features(object):
                 error.args = ("",)
             error.args = error.args + (msg,)
             raise
-
-        return feature_result
 
 
 
@@ -409,7 +458,6 @@ class Features(object):
             Variable length argument list. Is the values that ``model.run()``
             returns. By default it contains `time` and `values`, and then any number of
             optional `info` values.
-
 
         Returns
         -------

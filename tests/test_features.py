@@ -54,6 +54,16 @@ class TestFeatures(unittest.TestCase):
         self.assertEqual(b, 2)
 
 
+    def test_validate(self):
+        self.features.validate("name", ("t", "U"))
+
+        with self.assertRaises(ValueError):
+            self.features.validate("123456")
+            self.features.validate(np.linspace(0, 1, 100))
+            self.features.validate(1)
+            self.features.validate((1, 2, 3))
+
+
     def test_preprocess_assign(self):
         def preprocess(time, values):
             return "time", "values"
