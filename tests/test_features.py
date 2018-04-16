@@ -55,7 +55,7 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_validate(self):
-        self.features.validate("name", ("t", "U"))
+        self.features.validate("name", "t", "U")
 
         with self.assertRaises(ValueError):
             self.features.validate("123456")

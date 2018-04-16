@@ -387,7 +387,7 @@ class Features(object):
         return feature_result
 
 
-    def validate(feature_name, *feature_result):
+    def validate(self, feature_name, *feature_result):
         """
         Validate the results from ``calculate_feature``.
 
@@ -435,6 +435,7 @@ class Features(object):
                              "This indicates only time or values is returned. " +
                              "{} must return time and values".format(feature_name) +
                              "(return time, values | return None, values)")
+
 
         # Check that time, and values is returned
         try:
