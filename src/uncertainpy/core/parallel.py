@@ -117,7 +117,7 @@ class Parallel(Base):
             if feature in self.features.interpolate or \
                 (feature == self.model.name and self.model.interpolate and not self.model.ignore):
 
-                # This does not ignore np.nan results
+                # This does not ignore shape differences due to np.nan results
                 if not is_regular(result[feature]["values"]):
                      raise ValueError("{}: values within one evaluation is irregular,".format(feature) +
                                       " unable to perform interpolation.")
