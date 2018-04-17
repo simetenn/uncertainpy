@@ -1,4 +1,7 @@
-FROM continuumio/anaconda3
+FROM continuumio/anaconda3:latest
+
+# Update anaconda in case the anaconda image is outdated
+RUN conda update conda
 
 # https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
 RUN set -x \
@@ -46,7 +49,7 @@ ENV VENV=$HOME/simulators
 RUN mkdir $HOME; mkdir $HOME/packages; mkdir $VENV
 
 
-ENV NEST_VER=2.12.0 NRN_VER=7.4
+ENV NEST_VER=2.14.0 NRN_VER=7.5
 ENV NEST=nest-$NEST_VER NRN=nrn-$NRN_VER
 
 WORKDIR $HOME/packages
@@ -68,56 +71,20 @@ RUN mkdir $NEST; \
     cmake -DCMAKE_INSTALL_PREFIX=$VENV \
           -Dwith-mpi=ON  \
           -Dwith-python=3 \
-          -DPYTHON_EXECUTABLE=/opt/conda/bin/python3.6 \
-          -DPYTHON_LIBRARY=/opt/conda/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6m.a \
-          -DPYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m \
           $HOME/packages/$NEST; \
     make; make install;
 
 
-RUN pip install nrnutils
-
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
-
 RUN conda install libgcc
 
 
+# Install test coverage dependencies
+RUN pip install coverage
 
-
-# Install uncertainpy and dependencies
-
-
-# # Uncertainpy dependencies
+# Install uncertainpy dependencies
 RUN apt-get update --fix-missing
+RUN apt-get -y install xvfb
 
-RUN apt-get -y install texlive-latex-base texlive-latex-extra texlive-fonts-recommended
-RUN apt-get -y install dvipng
-RUN apt-get -y install Xvfb
-RUN apt-get -y install h5utils
-# RUN apt-get -y install libx11-dev libxext-dev x11-apps
-
-
-RUN conda install -c conda-forge xvfbwrapper
-RUN conda install -c conda-forge multiprocess
-
-
-# # Downgrade the pyqt package to solve a bug in anaconda
-# RUN conda install pyqt=4.11
-# RUN conda install -c anaconda pandas
-# RUN conda install -c anaconda seaborn
-
-
-RUN pip install elephant
-
-# # RUN conda install -c conda-forge matplotlib=2.0.0
-
-
-
-COPY . $HOME/uncertainpy
-WORKDIR $HOME/uncertainpy
-
-RUN cd prettyplot; python setup.py install
-
-RUN cp -r tests/figures_docker/. tests/figures/.
-RUN python setup.py install
+RUN pip install xvfbwrapper
