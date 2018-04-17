@@ -680,6 +680,14 @@ class TestNetworkFeatures(unittest.TestCase):
                                         0],
                                        values))
 
+    def test_empty_spiketrain(self):
+        for feature in self.implemented_features:
+            time, values = getattr(self.features, feature)(self.time, [])
+
+            self.assertIsNone(time)
+            self.assertIsNone(values)
+
+
     def test_mean_cv(self):
         time, values = self.features.mean_cv(self.time, self.spiketrains)
 

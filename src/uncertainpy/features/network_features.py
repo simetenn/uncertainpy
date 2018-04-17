@@ -190,6 +190,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         values : array
             The coefficient of variation for each spiketrain.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         cv = []
         for spiketrain in spiketrains:
             cv.append(elephant.statistics.cv(spiketrain))
@@ -214,6 +217,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         values : float
             The mean coefficient of variation of each spiketrain.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         cv = []
         for spiketrain in spiketrains:
             cv.append(elephant.statistics.cv(spiketrain))
@@ -240,6 +246,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         binned_isi : array
             The binned interspike intervals.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         binned_isi = []
         bins = np.arange(0, spiketrains[0].t_stop.magnitude + self.isi_bin_size, self.isi_bin_size)
 
@@ -272,6 +281,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         mean_isi : float
            The mean interspike interval.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         isi = []
         for spiketrain in spiketrains:
             if len(spiketrain) > 1:
@@ -298,6 +310,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         local_variation : list
             The local variation for each spiketrain.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         local_variation = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)
@@ -327,6 +342,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         mean_local_variation : float
             The mean of the local variation for each spiketrain.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         local_variation = []
         for spiketrain in spiketrains:
             isi = elephant.statistics.isi(spiketrain)
@@ -355,6 +373,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         """
         mean_firing_rates = []
 
+        if len(spiketrains) == 0:
+            return None, None
+
         for spiketrain in spiketrains:
             mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
             mean_firing_rate.units = pq.Hz
@@ -381,6 +402,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         instantaneous_rate : float
             The instantaneous firing rate.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         instantaneous_rates = []
         t = None
         for spiketrain in spiketrains:
@@ -423,6 +447,10 @@ class NetworkFeatures(GeneralNetworkFeatures):
         fanofactor : float
             The fanofactor.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
+
         return None, elephant.statistics.fanofactor(spiketrains)
 
 
@@ -443,6 +471,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         van_rossum_dist : 2D array
             The van Rossum distance.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         van_rossum_dist = elephant.spike_train_dissimilarity.van_rossum_dist(spiketrains)
 
         # van_rossum_dist returns 0.j imaginary parts in some cases
@@ -469,6 +500,10 @@ class NetworkFeatures(GeneralNetworkFeatures):
         values : 2D array
             The Victor-Purpura's distance.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
+
         victor_purpura_dist = elephant.spike_train_dissimilarity.victor_purpura_dist(spiketrains)
 
         return None, victor_purpura_dist
@@ -491,6 +526,10 @@ class NetworkFeatures(GeneralNetworkFeatures):
         values : 2D array
             The pairwise Pearson's correlation coefficients.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
+
         binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
                                                           binsize=self.corrcoef_bin_size*self.units)
         corrcoef = elephant.spike_train_correlation.corrcoef(binned_sts)
@@ -514,6 +553,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         values : 2D array
             The pairwise covariances.
         """
+        if len(spiketrains) == 0:
+            return None, None
+
         binned_sts = elephant.conversion.BinnedSpikeTrain(spiketrains,
                                                           binsize=self.covariance_bin_size*self.units)
         covariance = elephant.spike_train_correlation.covariance(binned_sts)
