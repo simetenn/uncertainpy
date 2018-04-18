@@ -115,7 +115,7 @@ class TestDataFeature(unittest.TestCase):
         self.assertEqual(self.data_feature.ndim(), 2)
 
         self.data_feature.evaluations = [[]]
-        self.assertEqual(self.data_feature.ndim(), 0)
+        self.assertEqual(self.data_feature.ndim(), 1)
 
 
     def test_contains(self):

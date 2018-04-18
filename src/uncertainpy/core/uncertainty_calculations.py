@@ -437,6 +437,7 @@ class UncertaintyCalculations(ParameterBase):
         if quadrature_order is None:
             quadrature_order = polynomial_order + 2
 
+
         nodes, weights = cp.generate_quadrature(quadrature_order,
                                                 distribution,
                                                 rule="J",

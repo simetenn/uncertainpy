@@ -266,6 +266,7 @@ class DataFeature(collections.MutableMapping):
 
         return output_str.strip()
 
+    # TODO: add test for a single evaluations list
     def ndim(self):
         """
         Get the number of dimensions the data of a data type.
@@ -471,10 +472,10 @@ class Data(collections.MutableMapping):
 
         Returns
         -------
-        int
-            The number of dimensions of the model/feature result.
+        int, None
+            The number of dimensions of the model/feature result. Returns None
+            if the feature has no evaluations.
         """
-
         return self[feature].ndim()
 
 

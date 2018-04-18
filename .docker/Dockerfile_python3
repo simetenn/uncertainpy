@@ -88,3 +88,12 @@ RUN apt-get update --fix-missing
 RUN apt-get -y install xvfb
 
 RUN pip install xvfbwrapper
+
+# Options required to be able to generate results
+
+# Set the matplotlib backed to be agg
+RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
+
+# Temporary fix to chaospy
+RUN git clone https://github.com/simetenn/chaospy.git
+RUN cd chaospy; python chaospy/setup.py install
