@@ -622,10 +622,14 @@ class Data(collections.MutableMapping):
 
 
 
-        with h5py.File(filename, 'w') as f:
-            f.attrs["uncertain parameters"] = self.uncertain_parameters
+        with h5py.File(filename, "w") as f:
+            # f.attrs["uncertain parameters"] = np.array(self.uncertain_parameters).astype("UTF8")
+            f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
+            # f.attrs.create("uncertain parameters", self.uncertain_parameters, dtype=h5py.special_dtype(vlen=str))
             f.attrs["model name"] = self.model_name
-            f.attrs["incomplete results"] = self.incomplete
+            # f.attrs["incomplete results"] = np.array(self.incomplete).astype("UTF8")
+            f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
+            # f.attrs.create("incomplete results", self.incomplete, dtype=h5py.special_dtype(vlen=str))
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
             f.attrs["seed"] = self.seed
@@ -642,7 +646,9 @@ class Data(collections.MutableMapping):
                     else:
                         group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
-                group.create_dataset("labels", data=self[feature].labels)
+                # group.create_dataset("labels", data=np.array(self[feature].labels).astype("UTF8"))
+                group.create_dataset("labels", data=[label.encode("utf8") for label in self[feature].labels])
+                # group.create_dataset("labels", data=self[feature].labels, dtype=h5py.special_dtype(vlen=str))
 
 
 
@@ -673,12 +679,12 @@ class Data(collections.MutableMapping):
 
             evaluations.append(sub_evaluations)
 
-        with h5py.File(filename, 'r') as f:
-            self.uncertain_parameters = list(f.attrs["uncertain parameters"])
-            self.model_name = f.attrs["model name"]
-            self.incomplete = list(f.attrs["incomplete results"])
-            self.method = f.attrs["method"]
-            self.version = f.attrs["version"]
+        with h5py.File(filename, "r") as f:
+            self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
+            self.model_name = str(f.attrs["model name"])
+            self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
+            self.method = str(f.attrs["method"])
+            self.version = str(f.attrs["version"])
             self.seed = f.attrs["seed"]
             self.model_ignore = f.attrs["model_ignore"]
 
@@ -686,18 +692,20 @@ class Data(collections.MutableMapping):
                 self.add_features(str(feature))
                 for statistical_metric in f[feature]:
 
-                    # TODO: working here
                     if statistical_metric == "evaluations":
                         evaluations = []
 
                         for item in f[feature][statistical_metric]:
                             value = f[feature][statistical_metric][item]
+
                             if isinstance(value, h5py.Dataset):
                                 evaluations.append(value[()])
                             elif  isinstance(value, h5py.Group):
                                 append_evaluations(evaluations, value)
 
                         self[feature][statistical_metric] = evaluations
+                    elif statistical_metric == "labels":
+                         self[feature][statistical_metric] = [label.decode("utf8") for label in f[feature][statistical_metric][()]]
                     else:
                         self[feature][statistical_metric] = f[feature][statistical_metric][()]
 
@@ -706,7 +714,7 @@ class Data(collections.MutableMapping):
         """
         Remove all features that only have invalid results (NaN).
         """
-        feature_list = self.data.keys()[:]
+        feature_list = list(self.data.keys())
         for feature in feature_list:
             all_nan = True
             for U in self[feature].evaluations:

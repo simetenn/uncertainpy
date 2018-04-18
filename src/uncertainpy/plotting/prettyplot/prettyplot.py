@@ -61,7 +61,7 @@ def set_latex_font():
 Set font options. Note, uses latex.
     """
     params = {"text.usetex": True,
-              "text.latex.preamble": r"\usepackage{lmodern}",
+              "text.latex.preamble": "\\usepackage{lmodern}",
               "text.antialiased": True,
               "font.family": "lmodern",
               "font.weight": "normal"

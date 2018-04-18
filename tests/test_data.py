@@ -153,19 +153,6 @@ class TestData(unittest.TestCase):
             shutil.rmtree(self.output_test_dir)
 
 
-    # def test_features_0d(self):
-    #     self.data.features_0d = ["feature0d"]
-
-    #     self.assertEqual(self.data.feature_list, ["feature0d"])
-    #     self.assertEqual(self.data.features_0d, ["feature0d"])
-
-    # def test_features_1d(self):
-    #     self.data.features_1d = ["feature1d"]
-
-    #     self.assertEqual(self.data.feature_list, ["feature1d"])
-    #     self.assertEqual(self.data.features_1d, ["feature1d"])
-
-
     def test_add_features(self):
         self.data.add_features("feature1")
 
