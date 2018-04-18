@@ -623,18 +623,13 @@ class Data(collections.MutableMapping):
 
 
         with h5py.File(filename, "w") as f:
-            # f.attrs["uncertain parameters"] = np.array(self.uncertain_parameters).astype("UTF8")
             f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
-            # f.attrs.create("uncertain parameters", self.uncertain_parameters, dtype=h5py.special_dtype(vlen=str))
             f.attrs["model name"] = self.model_name
-            # f.attrs["incomplete results"] = np.array(self.incomplete).astype("UTF8")
             f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
-            # f.attrs.create("incomplete results", self.incomplete, dtype=h5py.special_dtype(vlen=str))
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
             f.attrs["seed"] = self.seed
             f.attrs["model_ignore"] = self.model_ignore
-
 
             for feature in self:
                 group = f.create_group(feature)
@@ -646,9 +641,7 @@ class Data(collections.MutableMapping):
                     else:
                         group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
-                # group.create_dataset("labels", data=np.array(self[feature].labels).astype("UTF8"))
                 group.create_dataset("labels", data=[label.encode("utf8") for label in self[feature].labels])
-                # group.create_dataset("labels", data=self[feature].labels, dtype=h5py.special_dtype(vlen=str))
 
 
 
