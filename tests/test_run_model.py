@@ -337,7 +337,7 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.results_to_data(results)
 
-        features = data.keys()
+        features = list(data.keys())
         features.sort()
         self.assertEqual(features,
                          ["TestingModel1d", "feature0d", "feature1d", "feature2d"])
@@ -392,7 +392,7 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.results_to_data(results)
 
-        features = data.keys()
+        features = list(data.keys())
         features.sort()
 
         self.assertEqual(features,
@@ -437,7 +437,7 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.results_to_data(results)
 
-        self.assertEqual(data.keys(),
+        self.assertEqual(list(data.keys()),
                          ["TestingModelAdaptive"])
 
 
@@ -486,7 +486,7 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.results_to_data(results)
 
-        self.assertEqual(data.keys(),
+        self.assertEqual(list(data.keys()),
                          ["TestingModelAdaptive"])
 
         self.assertIn("TestingModelAdaptive", data)
@@ -520,7 +520,7 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.results_to_data(results)
 
-        self.assertEqual(data.keys(),
+        self.assertEqual(list(data.keys()),
                          ["TestingModelAdaptive"])
 
 
@@ -860,7 +860,7 @@ class TestRunModel(unittest.TestCase):
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
-        features = data.keys()
+        features = list(data.keys())
         features.sort()
         self.assertEqual(features,
                          ["TestingModel1d", "feature0d", "feature1d", "feature2d"])
