@@ -43,6 +43,8 @@ def none_to_nan(values):
     """
     if values is None:
         values = np.nan
+    elif isinstance(values, str):
+        pass
 
     elif isinstance(values, np.ndarray):
         if values.dtype == "object":
