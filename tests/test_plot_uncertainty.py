@@ -964,7 +964,7 @@ class TestPlotUncertainpy(TestCasePlot):
     def test_plot_all(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.plot(condensed=False, sensitivity="all")
+        self.plot.plot_all_sensitivities()
 
         self.compare_plot("TestingModel1d_mean")
         self.compare_plot("TestingModel1d_variance")
@@ -1056,8 +1056,8 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.data.add_features("1D")
         self.plot.data.add_features("2D")
 
-        with self.assertRaises(AttributeError):
-            self.plot.evaluations()
+        # with self.assertRaises(AttributeError):
+        self.plot.evaluations()
 
         self.plot.data["0D"].evaluations = [1, 2, 3]
         self.plot.data["1D"].evaluations = [[1], [2], [3]]

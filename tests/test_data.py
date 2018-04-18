@@ -101,20 +101,21 @@ class TestDataFeature(unittest.TestCase):
 
     def test_ndim(self):
         self.data_feature.evaluations = [[[1, 2, 3], [1, 2, 3]]]
-
         self.assertEqual(self.data_feature.ndim(), 2)
 
         self.data_feature.evaluations = [1]
-
         self.assertEqual(self.data_feature.ndim(), 0)
 
         self.data_feature.evaluations = [np.arange(0, 10)]
         self.assertEqual(self.data_feature.ndim(), 1)
 
         self.data_feature.evaluations =[np.array([np.arange(0, 10),
-                                        np.arange(0, 10)])]
+                                                  np.arange(0, 10)])]
 
         self.assertEqual(self.data_feature.ndim(), 2)
+
+        self.data_feature.evaluations = [[]]
+        self.assertEqual(self.data_feature.ndim(), 0)
 
 
     def test_contains(self):
@@ -463,7 +464,7 @@ class TestData(unittest.TestCase):
 
     def test_ndim(self):
 
-        self.data.add_features(["feature0d", "feature1d", "feature2d", "feature_invalid"])
+        self.data.add_features(["feature0d", "feature1d", "feature2d", "feature_invalid", "empty"])
 
         self.data["feature0d"].evaluations = [1]
         self.data["feature1d"].evaluations = [np.arange(0, 10)]
@@ -475,3 +476,4 @@ class TestData(unittest.TestCase):
         self.assertEqual(self.data.ndim("feature1d"), 1)
         self.assertEqual(self.data.ndim("feature2d"), 2)
         self.assertEqual(self.data.ndim("feature_invalid"), 0)
+        self.assertIsNone(self.data.ndim("empty"))

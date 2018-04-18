@@ -173,7 +173,9 @@ class PlotUncertainty(object):
             os.makedirs(save_folder)
 
         dimension = self.data.ndim(feature)
-        if dimension == 0:
+        if dimension is None:
+            self.logger.warning("No evaluations to plot")
+        elif dimension == 0:
             self.evaluations_0d(feature=feature, foldername=foldername, **plot_kwargs)
 
         elif dimension == 1:
@@ -1843,23 +1845,24 @@ class PlotUncertainty(object):
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
-
+        features = list(self.data.keys())
         for i in range(0, grid_x_size*grid_y_size):
             nx = i % grid_x_size
             ny = int(np.floor(i/float(grid_x_size)))
 
             ax = axes[ny][nx]
 
+
             if i < nr_plots:
-                if sensitivity + "_sum" not in self.data[self.data.keys()[i]]:
+                if sensitivity + "_sum" not in self.data[features[i]]:
                     msg = " Unable to plot {sensitivity}_sum_grid. {sensitivity}_sum of {feature} does not exist."
                     self.logger.warning(msg.format(sensitivity=sensitivity,
-                                                   feature=self.data.keys()[i]))
+                                                   feature=features[i]))
                     ax.axis("off")
                     continue
 
-                prettyBar(self.data[self.data.keys()[i]][sensitivity + "_sum"],
-                          title=self.data.keys()[i].replace("_", " "),
+                prettyBar(self.data[features[i]][sensitivity + "_sum"],
+                          title=features[i].replace("_", " "),
                           xlabels=self.data.uncertain_parameters,
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
