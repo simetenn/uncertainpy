@@ -12,7 +12,7 @@ logger = create_logger("debug")
 
 def system(cmds):
     """Run system command cmd using subprocess module."""
-    if isinstance(cmds, str):
+    if isinstance(cmds, six.string_types):
         cmds = [cmds]
 
     output = None

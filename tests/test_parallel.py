@@ -35,7 +35,8 @@ class TestParallel(unittest.TestCase):
                                                          "feature_interpolate"])
 
         self.parallel = Parallel(model=TestingModel1d(),
-                                 features=self.features)
+                                 features=self.features,
+                                 verbose_level="error")
 
         self.model_parameters = {"a": 0, "b": 1}
 

@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import six
 import re
 import fileinput
 import sys
@@ -386,7 +387,7 @@ class Parameters(collections.MutableMapping):
         if parameter_names is None:
             parameter_names = self.parameters.keys()
 
-        if isinstance(parameter_names, str):
+        if isinstance(parameter_names, six.string_types):
             parameter_names = [parameter_names]
 
         return_parameters = []

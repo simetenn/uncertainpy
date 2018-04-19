@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import six
 import os
 import h5py
 import collections
@@ -590,7 +591,7 @@ class Data(collections.MutableMapping):
         features : {str, list}
             Name of feature to add, or list of features to add.
         """
-        if isinstance(features, str):
+        if isinstance(features, six.string_types):
             features = [features]
 
         for feature in features:

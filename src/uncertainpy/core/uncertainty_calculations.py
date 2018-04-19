@@ -162,7 +162,7 @@ class UncertaintyCalculations(ParameterBase):
         --------
         uncertainpy.Parameters
         """
-        if isinstance(uncertain_parameters, str):
+        if isinstance(uncertain_parameters, six.string_types):
             uncertain_parameters = [uncertain_parameters]
 
         if self.parameters.distribution is not None:

@@ -1,7 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 try:
-
     from xvfbwrapper import Xvfb
 
     prerequisites = True
@@ -10,6 +9,7 @@ except ImportError:
 
 from tqdm import tqdm
 
+import six
 import warnings
 import numpy as np
 import multiprocess as mp
@@ -521,7 +521,7 @@ class RunModel(ParameterBase):
         uncertainpy.Data
         """
 
-        if isinstance(uncertain_parameters, str):
+        if isinstance(uncertain_parameters, six.string_types):
             uncertain_parameters = [uncertain_parameters]
 
         results = self.evaluate_nodes(nodes, uncertain_parameters)

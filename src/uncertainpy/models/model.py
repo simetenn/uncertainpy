@@ -345,7 +345,7 @@ class Model(object):
                              "time and values "
                              "(return time, values | return None, values)")
 
-        if isinstance(model_result, str):
+        if isinstance(model_result, six.string_types):
             raise ValueError("model.run() returns an string. "
                              "This indicates only time or values is returned. "
                              "model.run() or model function must return "
@@ -410,7 +410,7 @@ class Model(object):
                              "time and values "
                              "(return time, values | return None, values)")
 
-        if isinstance(postprocess_result, str):
+        if isinstance(postprocess_result, six.string_types):
             raise ValueError("model.postprocess() returns an string. "
                              "This indicates only time or values is returned. "
                              "model.postprocess() or model function must return "

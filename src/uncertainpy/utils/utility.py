@@ -43,7 +43,7 @@ def none_to_nan(values):
     """
     if values is None:
         values = np.nan
-    elif isinstance(values, str):
+    elif isinstance(values, six.string_types):
         pass
 
     elif isinstance(values, np.ndarray):

@@ -159,6 +159,10 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.data, {"feature1": DataFeature("feature1")})
 
+        self.data.add_features(u"feature1")
+
+        self.assertEqual(self.data.data, {"feature1": DataFeature("feature1")})
+
         self.data.add_features(["feature2", "feature3"])
 
         self.assertEqual(self.data.data, {"feature1": DataFeature("feature1"),
