@@ -1,13 +1,13 @@
 #!/bin/sh
 if test "x${NRNHOME}" = "x" ; then
-	NRNHOME="/usr/local/nrn"
+	NRNHOME="/home/docker/simulators"
 fi
 if test "x${NRNBIN}" = "x" ; then
-	NRNBIN="/usr/local/nrn/x86_64/bin/"
+	NRNBIN="/home/docker/simulators/x86_64/bin/"
 fi
 if test "" = "yes" ; then
 	NRNIV="${NRNBIN}nrniv.app/Contents/MacOS/nrniv"
 else
 	NRNIV="${NRNBIN}nrniv"
 fi
-"${NRNIV}" -dll "/home/simen/Dropbox/phd/uncertainpy/examples/lgn_original/dLGN_modelDB/x86_64/.libs/libnrnmech.so" "$@"
+"${NRNIV}" -dll "/home/docker/uncertainpy/tests/models/interneuron_modelDB/x86_64/.libs/libnrnmech.so" "$@"
