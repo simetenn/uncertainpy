@@ -16,7 +16,7 @@ before_script:
   - ls
 script:
   # - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
-  - docker run -t uncertainpy  ls /home/docker/
+  - docker run -t uncertainpy  ls
   - docker run -t uncertainpy  ls /home/docker/uncertainpy/
   - docker run -t uncertainpy  ls /home/docker/uncertainpy/.docker/
   - docker run -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
