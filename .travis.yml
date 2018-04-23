@@ -7,16 +7,17 @@ python:
 install:
   - pip install codecov
 before_script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then Dockerfile="Dockerfile_uncertainpy2" ; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then Dockerfile="Dockerfile_uncertainpy3" ; fi
-  - docker build -t uncertainpy -f .docker/$Dockerfile .docker
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then PYTHON_VERSION=2 ; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then PYTHON_VERSION=3 ; fi
+  - docker build -t uncertainpy_requirements -f .docker/Dockerfile_python$PYTHON_VERSION .docker
+  - docker build -t uncertainpy -f .docker/Dockerfile_uncertainpy$PYTHON_VERSION .docker
   - ci_env=`bash <(curl -s https://codecov.io/env)`
 script:
-  - docker run -t uncertainpy $ci_env cd uncertainpy; coverage run test.py all; coverage xml
-after_success:
-  - codecov
-before_deploy:
-  - sudo rm -rf src/uncertainpy.egg-info
+  - docker run -t uncertainpy $ci_env cd uncertainpy; coverage run test.py all; coverage xml; bash <(curl -s https://codecov.io/bash)
+# after_success:
+#   - codecov
+# before_deploy:
+#   - sudo rm -rf src/uncertainpy.egg-info
 deploy:
   provider: pypi
   user: simetenn
