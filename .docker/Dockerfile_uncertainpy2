@@ -1,4 +1,5 @@
-FROM uncertainpy2
+#FROM uncertainpy2
+FROM continuumio/anaconda:latest
 
 COPY  . uncertainpy/
 RUN ls
