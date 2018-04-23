@@ -1,4 +1,4 @@
-pip freeFROM continuumio/anaconda3:latest
+FROM continuumio/anaconda3:latest
 
 # Update anaconda in case the anaconda image is outdated
 RUN conda update conda
