@@ -1,6 +1,4 @@
-#FROM uncertainpy2
-FROM continuumio/anaconda:latest
+FROM uncertainpy2
 
-COPY  . uncertainpy/
-COPY  . uncertainpy/.docker/run_tests.sh
-#RUN cd uncertainpy; python setup.py develop --tests
+COPY . uncertainpy/
+RUN cd uncertainpy; python setup.py develop --tests

@@ -9,24 +9,17 @@ install:
 before_script:
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then PYTHON_VERSION=2 ; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then PYTHON_VERSION=3 ; fi
-  # - docker build -t uncertainpy$PYTHON_VERSION -f .docker/Dockerfile_python$PYTHON_VERSION .
+  - docker build -t uncertainpy$PYTHON_VERSION -f .docker/Dockerfile_python$PYTHON_VERSION .
   - docker build -t uncertainpy -f .docker/Dockerfile_uncertainpy$PYTHON_VERSION .
   - ci_env=`bash <(curl -s https://codecov.io/env)`
   - mkdir shared
   - ls
 script:
   # - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
-  - docker run -t uncertainpy  ls
-  - docker run -t uncertainpy  pwd
-  - docker run -t uncertainpy  ls uncertainpy/
-  - docker run -t uncertainpy  ls uncertainpy/.docker/
-  - docker run -t uncertainpy cd uncertainpy; ls
-  - docker run -t uncertainpy cd uncertainpy; coverage run test.py all; coverage xml;
-# mv coverage.xml ../shared/coverage.xml
   # - docker run -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
-  # - docker run -t uncertainpy -v $(pwd)/shared:/shared /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
-# after_success:
-#   - codecov
+  - docker run -t uncertainpy -v $(pwd)/shared:/shared cd uncertainpy; coverage run test.py all; coverage xml; mv coverage.xml ../shared/coverage.xml
+after_success:
+  - codecov
 # before_deploy:
 #   - sudo rm -rf src/uncertainpy.egg-info
 deploy:
