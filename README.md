@@ -117,7 +117,7 @@ or:
 
 `uncertainpy.NeuronModel` requires the external simulator
 [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python),
-a simulator for neurons. This must be installed by the user.
+a simulator for neurons. Neuron must be installed by the user.
 
 
 #### NestModel
@@ -125,7 +125,7 @@ a simulator for neurons. This must be installed by the user.
 `uncertainpy.NestModel` requires the external simulator
 [Nest](http://www.nest-simulator.org/installation) (with Python),
 a simulator for network of neurons.
-This must be installed by the user.
+Nest must be installed by the user.
 
 
 ### Test suite
@@ -135,7 +135,7 @@ For how to use test.py run:
 
     $ python test.py --help
 
-`test.py` has all the dependencies if Uncertainpy in addition to:
+`test.py` has all dependencies of Uncertainpy in addition to:
 
 * `click`
 
