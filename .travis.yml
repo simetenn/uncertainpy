@@ -14,8 +14,8 @@ before_script:
   - ci_env=`bash <(curl -s https://codecov.io/env)`
   - mkdir shared
 script:
-  - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
-  # - docker run -t uncertainpy -v "$PWD/shared:/shared" /home/docker/uncertainpy/.docker/run_tests.sh
+  # - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
+  - docker run -t uncertainpy -v "$PWD/shared:/shared" /home/docker/uncertainpy/.docker/run_tests.sh
 # after_success:
 #   - codecov
 # before_deploy:
