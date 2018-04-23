@@ -333,10 +333,10 @@ class Parallel(Base):
 
 
         except Exception as error:
-            print("Caught exception in parallel run of model:")
-            print("")
-            traceback.print_exc()
-            print("")
-            raise error
+            # print("Caught exception in parallel run of model:")
+            # print("")
+            # traceback.print_exc()
+            # print("")
+            raise
 
 
