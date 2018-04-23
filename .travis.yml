@@ -7,8 +7,8 @@ python:
 install:
   - pip install codecov
 before_script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7]]; then Dockerfile="Dockerfile_python2" ; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3]]; then Dockerfile="Dockerfile_python3" ; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then Dockerfile="Dockerfile_python2" ; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then Dockerfile="Dockerfile_python3" ; fi
   - docker build -t uncertainpy -f .docker/$Dockerfile .docker
 script:
   - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
