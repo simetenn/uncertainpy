@@ -15,6 +15,9 @@ before_script:
   - mkdir shared
 script:
   # - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
+  - docker run -t uncertainpy  /bin/bash ls /home/docker/
+  - docker run -t uncertainpy  /bin/bash ls /home/docker/uncertainpy/
+  - docker run -t uncertainpy  /bin/bash ls /home/docker/uncertainpy/.docker/
   - docker run -t uncertainpy -v $(pwd)/shared:/shared /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 # after_success:
 #   - codecov
