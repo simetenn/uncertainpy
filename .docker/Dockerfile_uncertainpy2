@@ -2,4 +2,5 @@
 FROM continuumio/anaconda:latest
 
 COPY  . uncertainpy/
+COPY  . uncertainpy/.docker/run_tests.sh
 #RUN cd uncertainpy; python setup.py develop --tests
