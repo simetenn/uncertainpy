@@ -3,15 +3,16 @@ services: docker
 language: python
 python:
   - "2.7"
-  - "3"
+  # - "3"
 install:
   - pip install codecov
 before_script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then Dockerfile="Dockerfile_python2" ; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then Dockerfile="Dockerfile_python3" ; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then Dockerfile="Dockerfile_uncertainpy2" ; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then Dockerfile="Dockerfile_uncertainpy3" ; fi
   - docker build -t uncertainpy -f .docker/$Dockerfile .docker
+  - ci_env=`bash <(curl -s https://codecov.io/env)`
 script:
-  - docker run -v $(pwd):/home/docker/uncertainpy -t uncertainpy /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
+  - docker run -t uncertainpy $ci_env cd uncertainpy; coverage run test.py all; coverage xml
 after_success:
   - codecov
 before_deploy:
