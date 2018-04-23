@@ -67,6 +67,11 @@ RUN apt-get -y install xvfb
 
 RUN pip install xvfbwrapper
 
+# Make sure matplotlib uses agg
+RUN mkdir .config/
+RUN mkdir .config/matplotlib
+RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
+
 # Temporary fix to chaospy
 RUN git clone https://github.com/jonathf/chaospy.git
 RUN cd chaospy; python setup.py install
