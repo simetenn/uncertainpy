@@ -20,7 +20,10 @@ script:
   - docker run -t uncertainpy  pwd
   - docker run -t uncertainpy  ls uncertainpy/
   - docker run -t uncertainpy  ls uncertainpy/.docker/
-  - docker run -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
+  - docker run -t uncertainpy cd uncertainpy; ls
+  - docker run -t uncertainpy cd uncertainpy; coverage run test.py all; coverage xml;
+# mv coverage.xml ../shared/coverage.xml
+  # - docker run -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
   # - docker run -t uncertainpy -v $(pwd)/shared:/shared /bin/bash /home/docker/uncertainpy/.docker/run_tests.sh
 # after_success:
 #   - codecov
