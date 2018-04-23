@@ -12,8 +12,10 @@ before_script:
   - docker build -t uncertainpy$PYTHON_VERSION -f .docker/Dockerfile_python$PYTHON_VERSION .docker
   - docker build -t uncertainpy -f .docker/Dockerfile_uncertainpy$PYTHON_VERSION .docker
   - ci_env=`bash <(curl -s https://codecov.io/env)`
+  - mkdir shared
 script:
-  - docker run -t uncertainpy $ci_env cd uncertainpy; coverage run test.py all; coverage xml; bash <(curl -s https://codecov.io/bash)
+  - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
+  # - docker run -t uncertainpy -v "$PWD/shared:/shared" /home/docker/uncertainpy/.docker/run_tests.sh
 # after_success:
 #   - codecov
 # before_deploy:
