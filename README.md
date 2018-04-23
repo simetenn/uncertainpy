@@ -71,6 +71,7 @@ Uncertainpy has the following dependencies:
 * `seaborn`
 * `matplotlib`
 * `xvfbwrapper`
+* `six`
 
 These are installed with the minimum install.
 
