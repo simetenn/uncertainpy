@@ -4,6 +4,10 @@ random_tests/
 # Deprecated code
 deprecated
 
+# fish
+.fish
+
+
 # Data files
 *.dat
 *.h5
