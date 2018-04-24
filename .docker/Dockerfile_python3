@@ -8,7 +8,7 @@ RUN conda update conda
 ENV LANG=C.UTF-8
 
 RUN apt-get update; apt-get install -y automake libtool build-essential openmpi-bin libopenmpi-dev \
-                                       libncurses5-dev libreadline-dev libgsl0-dev cmake
+                                       libncurses5-dev libreadline-dev libgsl0-dev cmake > /dev/null
 
 
 ENV HOME=/home/docker
