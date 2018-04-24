@@ -11,6 +11,7 @@ from .prettyplot import spines_color, get_current_colormap
 from .prettyplot import get_colormap_tableu20, set_style
 from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
+import seaborn as sns
 from ..data import Data
 from ..utils import create_logger
 
@@ -235,7 +236,7 @@ class PlotUncertainty(object):
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, evaluations".format(feature.replace("_", " ")),
                    new_figure=True,
-                   palette="deep",
+                   palette="husl",
                    **plot_kwargs)
 
         plt.tight_layout()
@@ -299,7 +300,7 @@ class PlotUncertainty(object):
                             ylabel=ylabel.capitalize(),
                             title="{}, evaluation {:d}".format(feature.replace("_", " "), i),
                             new_figure=True,
-                            palette="deep",
+                            palette="husl",
                             **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
             plt.tight_layout()
@@ -452,7 +453,7 @@ class PlotUncertainty(object):
         ax = prettyPlot(time, self.data[feature][attribute],
                         title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize(),
                         nr_colors=3,
-                        palette="deep",
+                        palette="husl",
                         **plot_kwargs)
 
         ax.set_xlim([min(time), max(time)])
@@ -752,7 +753,7 @@ class PlotUncertainty(object):
                         title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize() + ", mean",
                         style=style,
                         nr_colors=3,
-                        palette="deep",
+                        palette="husl",
                         **plot_kwargs)
 
 
@@ -861,7 +862,7 @@ class PlotUncertainty(object):
                         xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(),
                         color=0,
                         nr_colors=3,
-                        palette="deep",
+                        palette="husl",
                         **plot_kwargs)
 
         colors = get_current_colormap()
@@ -955,7 +956,7 @@ class PlotUncertainty(object):
                             xlabel=xlabel.capitalize(),
                             ylabel=title.capitalize(),
                             color=i,
-                            palette="deep",
+                            palette="husl",
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
             ax.set_xlim([min(time), max(time)])
@@ -1072,7 +1073,7 @@ class PlotUncertainty(object):
                            color=i,
                            nr_colors=nr_plots,
                            ax=ax,
-                           palette="deep",
+                           palette="husl",
                            **plot_kwargs)
 
                 # for tick in ax.get_xticklabels():
@@ -1175,7 +1176,7 @@ class PlotUncertainty(object):
                        ylabel=title.capitalize(),
                        new_figure=False,
                        color=i,
-                       palette="deep",
+                       palette="husl",
                        nr_colors=len(self.data.uncertain_parameters),
                        label=self.data.uncertain_parameters[i],
                        **plot_kwargs)
@@ -1524,7 +1525,7 @@ class PlotUncertainty(object):
                   xlabels=self.data.uncertain_parameters,
                   ylabel="Normalized sum of " + title,
                   nr_colors=len(self.data.uncertain_parameters),
-                  palette="deep",
+                  palette="husl",
                   index=index,
                   style="seaborn-darkgrid")
 
@@ -1866,7 +1867,7 @@ class PlotUncertainty(object):
                           xlabels=self.data.uncertain_parameters,
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
-                          palette="deep",
+                          palette="husl",
                           ax=ax,
                           **plot_kwargs)
 
