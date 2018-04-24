@@ -27,23 +27,23 @@ ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NE
 RUN tar xzf $NEST.tar.gz; tar xzf $NRN.tar.gz; rm $NEST.tar.gz $NRN.tar.gz
 
 
-RUN mkdir $VENV/build; mkdir $VENV/bin
-WORKDIR $VENV/build
-RUN mkdir $NRN; \
-    cd $NRN; \
-    $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV; \
-    make; make install; \
-    cd src/nrnpython; python setup.py install; \
-    cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl; ln -s ../x86_64/bin/nrngui; ln -s ../x86_64/bin/nrnoc; ln -s ../x86_64/bin/nrniv
+RUN mkdir $VENV/build; mkdir $VENV/build/$NRN; mkdir $VENV/build/$NEST; mkdir $VENV/bin
+
+WORKDIR $VENV/build/$NRN
+RUN $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV > /dev/null
+RUN make > /dev/null
+RUN make install > /dev/null
+RUN cd src/nrnpython; python setup.py install > /dev/null
+RUN cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl; ln -s ../x86_64/bin/nrngui; ln -s ../x86_64/bin/nrnoc; ln -s ../x86_64/bin/nrniv
 
 
-RUN mkdir $NEST; \
-    cd $NEST; \
-    cmake -DCMAKE_INSTALL_PREFIX=$VENV \
+WORKDIR $VENV/build/$NEST
+RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV \
           -Dwith-mpi=ON  \
           -Dwith-python=3 \
-          $HOME/packages/$NEST; \
-    make; make install;
+          $HOME/packages/$NEST > /dev/null
+RUN make > /dev/null
+RUN make install > /dev/null
 
 
 
