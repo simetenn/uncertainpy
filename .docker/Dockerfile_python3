@@ -49,6 +49,8 @@ RUN mkdir $NEST; \
 
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
+# Add nest to python path
+ENV PYTHONPATH $PYTHONPATH:/home/docker/simulators/lib/python3.6/site-packages/
 RUN conda install libgcc
 
 
