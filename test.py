@@ -100,6 +100,10 @@ testing_all = testing_parameters + testing_models + testing_base\
 testing_complete = testing_all + [TestExamples]
 
 
+testing_all_no_simulators = list(testing_all)
+testing_all_no_simulators.remove(TestNestModel)
+testing_all_no_simulators.remove(TestNeuronModel)
+
 #chain=True
 @click.group()
 @click.option('--verbosity', default=1, help="Verbosity of test runner.")
@@ -232,6 +236,10 @@ def data():
 @cli.command()
 def all_data():
     run(testing_data)
+
+@cli.command()
+def all_no_simulators():
+    run(testing_all_no_simulators)
 
 @cli.command()
 @click.option('--exact', default=False, is_flag=True,

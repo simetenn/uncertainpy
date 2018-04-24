@@ -7,7 +7,7 @@ import numpy as np
 
 from uncertainpy import Parameters
 from uncertainpy.core import RunModel
-from uncertainpy.models import NeuronModel, Model
+from uncertainpy.models import Model
 from uncertainpy.features import Features, SpikingFeatures
 
 from .testing_classes import TestingFeatures, model_function
@@ -890,20 +890,6 @@ class TestRunModel(unittest.TestCase):
                                        np.arange(0, 10) + 3))
         self.assertTrue(np.array_equal(data["TestingModel1d"].evaluations[2],
                                        np.arange(0, 10) + 4))
-
-
-    def test_run_neuron_model(self):
-        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                            "models/interneuron_modelDB/")
-
-        model = NeuronModel(path=path,
-                            interpolate=True)
-
-        self.runmodel = RunModel(model=model, parameters=self.parameters, CPUs=1)
-        uncertain_parameters = ["cap", "Rm"]
-        nodes = np.array([[1.0, 1.1, 1.2], [21900, 22000, 22100]])
-
-        self.runmodel.run(nodes, uncertain_parameters)
 
 
     def test_regularize_nan_results(self):

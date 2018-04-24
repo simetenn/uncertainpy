@@ -1,4 +1,9 @@
-import nest
+nest_prerequisite = True
+
+try:
+    import nest
+except ImportError:
+    nest_prerequisite = False
 
 def brunel_network(eta, g, delay, J_E):
     """
@@ -22,6 +27,9 @@ def brunel_network(eta, g, delay, J_E):
     J_E : {int, float}, optional
         Amplitude of excitatory postsynaptic current. Default is 0.1
     """
+
+    if not nest_prerequisite:
+        raise ImportError("brunel_network requires: nest")
 
     # Reduced number of neurons and simulation time
     # Network parameters
