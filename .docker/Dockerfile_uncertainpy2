@@ -2,4 +2,3 @@ FROM uncertainpy2
 
 COPY . uncertainpy/
 RUN cd uncertainpy; python setup.py develop --tests
-ENV PYTHONPATH $PYTHONPATH:/home/docker/simulators/lib/python2.7/site-packages/
