@@ -8,7 +8,7 @@ import numpy as np
 
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
-from .prettyplot import get_colormap_tableu20, set_style
+from .prettyplot import get_colormap_tableu20, set_style, get_colormap
 from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 import seaborn as sns
@@ -1392,7 +1392,7 @@ class PlotUncertainty(object):
                        index=xticks,
                        xlabels=xlabels,
                        ylabel=ylabel.capitalize(),
-                       palette=get_colormap_tableu20(),
+                       palette="Paired",
                        style="seaborn-white")
 
         if sensitivity in self.data[feature]:
@@ -1410,12 +1410,12 @@ class PlotUncertainty(object):
 
             i = 0
             legend_bars = []
-            colors = get_colormap_tableu20()
+            colors = get_colormap(palette="husl", nr_colors=len(self.data.uncertain_parameters))
 
             for parameter in self.data.uncertain_parameters:
 
                 l = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
-                            align="center", color=colors[4+i], linewidth=0)
+                            align="center", color=colors[i], linewidth=0)
 
                 legend_bars.append(l)
 
