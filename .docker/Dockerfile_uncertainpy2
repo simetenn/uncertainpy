@@ -1,5 +1,4 @@
-#FROM uncertainpy2
-FROM continuumio/anaconda:latest
+FROM uncertainpy2
 
 COPY . uncertainpy/
-#RUN cd uncertainpy; python setup.py develop --tests
+RUN cd uncertainpy; python setup.py develop --tests
