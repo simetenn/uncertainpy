@@ -17,7 +17,8 @@ before_script:
 script:
   # - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
   # - docker run -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
-  - docker run -t uncertainpy -v $(pwd)/shared:/shared cd uncertainpy; coverage run test.py all; coverage xml; mv coverage.xml ../shared/coverage.xml
+  - docker run -t uncertainpy python -c "import click"
+  - docker run -t uncertainpy -v $(pwd)/shared:/shared  /bin/bash uncertainpy/run_tests.sh
 after_success:
   - codecov
 # before_deploy:
