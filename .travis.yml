@@ -11,15 +11,14 @@ before_script:
   - if [[ $TRAVIS_PYTHON_VERSION == 3 ]]; then PYTHON_VERSION=3 ; fi
   # - docker build -t uncertainpy$PYTHON_VERSION -f .docker/Dockerfile_python$PYTHON_VERSION .
   - docker build -t uncertainpy -f .docker/Dockerfile_uncertainpy$PYTHON_VERSION .
-  - ci_env=`bash <(curl -s https://codecov.io/env)`
+  #- ci_env=`bash <(curl -s https://codecov.io/env)`
   - mkdir shared
-  - ls
 script:
   # - docker run -t uncertainpy $ci_env /home/docker/uncertainpy/.docker/run_tests.sh
   # - docker run -t uncertainpy /bin/bash uncertainpy/.docker/run_tests.sh
   - docker run -t uncertainpy python -c "import click"
   - docker run -t uncertainpy ls
-  - docker run -t uncertainpy -v $(pwd)/shared:/shared uncertainpy/run_tests.sh
+  - docker run -v $(pwd)/shared:/shared -t uncertainpy uncertainpy/run_tests.sh
 after_success:
   - codecov
 # before_deploy:
