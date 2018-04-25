@@ -43,9 +43,9 @@ class TestUncertainty(TestCasePlot):
 
         self.model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
 
         self.uncertainty = UncertaintyQuantification(self.model,
                                                      parameters=self.parameters,
@@ -286,13 +286,13 @@ class TestUncertainty(TestCasePlot):
             data.uncertain_parameters = ["a", "b"]
 
             data.test_value = "custom PCE method"
-            data.add_features(["TestingModel1d", "feature0d", "feature1d", "feature2d"])
+            data.add_features(["TestingModel1d", "feature0d_var", "feature1d_var", "feature2d_var"])
 
             U_hat = {}
             U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature0d_var"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature1d_var"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["feature2d_var"] = cp.Poly([q0, q1*q0, q1])
 
             return U_hat, distribution, data
 
@@ -380,7 +380,6 @@ class TestUncertainty(TestCasePlot):
         filename = os.path.join(self.output_test_dir, "model_function.h5")
         self.assertTrue(os.path.isfile(filename))
 
-
         result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
                                   filename, compare_file])
 
@@ -413,9 +412,9 @@ class TestUncertainty(TestCasePlot):
 
         model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
 
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
@@ -432,11 +431,11 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_prediction-interval")
         self.compare_plot("TestingModel1d_sobol_first_grid")
 
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
-        self.compare_plot("feature1d_sobol_first_grid")
+        self.compare_plot("feature1d_var_mean-variance")
+        self.compare_plot("feature1d_var_prediction-interval")
+        self.compare_plot("feature1d_var_sobol_first_grid")
 
-        self.compare_plot("feature0d_sobol_first")
+        self.compare_plot("feature0d_var_sobol_first")
 
         self.compare_plot("sobol_first_sum_grid")
 
@@ -450,9 +449,9 @@ class TestUncertainty(TestCasePlot):
 
         model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
 
         self.uncertainty = UncertaintyQuantification(model,
                                                      features=features,
@@ -467,17 +466,17 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_prediction-interval")
 
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_prediction-interval")
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_var_mean-variance")
+        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_var_prediction-interval")
 
         self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_prediction-interval")
 
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_prediction-interval")
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_var_mean-variance")
+        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_var_prediction-interval")
 
 
-    def test_monte_carlo_single(self):
+    def test_var_var_carlo_single(self):
         parameter_list = [["a", 1, None],
                           ["b", 2, None]]
 
@@ -486,9 +485,9 @@ class TestUncertainty(TestCasePlot):
 
         model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
 
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
@@ -536,9 +535,9 @@ class TestUncertainty(TestCasePlot):
 
         model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
 
         self.uncertainty = UncertaintyQuantification(model,
                                                      parameters=parameters,
@@ -603,26 +602,26 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_sobol_first_grid")
 
 
-        self.compare_plot("feature1d_mean")
-        self.compare_plot("feature1d_variance")
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
+        self.compare_plot("feature1d_var_mean")
+        self.compare_plot("feature1d_var_variance")
+        self.compare_plot("feature1d_var_mean-variance")
+        self.compare_plot("feature1d_var_prediction-interval")
 
-        self.compare_plot("feature1d_sobol_first_a")
-        self.compare_plot("feature1d_sobol_first_b")
-        self.compare_plot("feature1d_sobol_first")
-        self.compare_plot("feature1d_sobol_first_grid")
-        self.compare_plot("feature0d_sobol_first_sum")
+        self.compare_plot("feature1d_var_sobol_first_a")
+        self.compare_plot("feature1d_var_sobol_first_b")
+        self.compare_plot("feature1d_var_sobol_first")
+        self.compare_plot("feature1d_var_sobol_first_grid")
+        self.compare_plot("feature0d_var_sobol_first_sum")
 
         self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_sobol_first_sum")
-        self.compare_plot("feature1d_sobol_first_sum")
-        self.compare_plot("feature2d_sobol_first_sum")
+        self.compare_plot("feature0d_var_sobol_first_sum")
+        self.compare_plot("feature1d_var_sobol_first_sum")
+        self.compare_plot("feature2d_var_sobol_first_sum")
 
-        self.compare_plot("feature1d_sobol_total_a")
-        self.compare_plot("feature1d_sobol_total_b")
-        self.compare_plot("feature1d_sobol_total")
-        self.compare_plot("feature1d_sobol_total_grid")
+        self.compare_plot("feature1d_var_sobol_total_a")
+        self.compare_plot("feature1d_var_sobol_total_b")
+        self.compare_plot("feature1d_var_sobol_total")
+        self.compare_plot("feature1d_var_sobol_total_grid")
 
 
 
@@ -631,13 +630,13 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_sobol_total")
         self.compare_plot("TestingModel1d_sobol_total_grid")
 
-        self.compare_plot("feature0d_sobol_total_sum")
+        self.compare_plot("feature0d_var_sobol_total_sum")
 
 
         self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_sobol_total_sum")
-        self.compare_plot("feature1d_sobol_total_sum")
-        self.compare_plot("feature2d_sobol_total_sum")
+        self.compare_plot("feature0d_var_sobol_total_sum")
+        self.compare_plot("feature1d_var_sobol_total_sum")
+        self.compare_plot("feature2d_var_sobol_total_sum")
 
 
         self.compare_plot("sobol_total_sum_grid")
@@ -655,16 +654,16 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_prediction-interval")
         self.compare_plot("TestingModel1d_sobol_first_grid")
 
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
-        self.compare_plot("feature1d_sobol_first_grid")
+        self.compare_plot("feature1d_var_mean-variance")
+        self.compare_plot("feature1d_var_prediction-interval")
+        self.compare_plot("feature1d_var_sobol_first_grid")
 
-        self.compare_plot("feature0d_sobol_first")
+        self.compare_plot("feature0d_var_sobol_first")
 
         self.compare_plot("sobol_first_sum_grid")
 
-        self.compare_plot("feature2d_mean")
-        self.compare_plot("feature2d_variance")
+        self.compare_plot("feature2d_var_mean")
+        self.compare_plot("feature2d_var_variance")
 
 
 
@@ -680,13 +679,13 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_mean-variance")
         self.compare_plot("TestingModel1d_prediction-interval")
 
-        self.compare_plot("feature1d_mean-variance")
-        self.compare_plot("feature1d_prediction-interval")
+        self.compare_plot("feature1d_var_mean-variance")
+        self.compare_plot("feature1d_var_prediction-interval")
 
-        self.compare_plot("feature0d")
+        self.compare_plot("feature0d_var")
 
-        self.compare_plot("feature2d_mean")
-        self.compare_plot("feature2d_variance")
+        self.compare_plot("feature2d_var_mean")
+        self.compare_plot("feature2d_var_variance")
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "*.png")))
         self.assertEqual(plot_count, 7)
@@ -701,13 +700,13 @@ class TestUncertainty(TestCasePlot):
 
         self.uncertainty.plot(type="evaluations", folder=self.output_test_dir)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_var_evaluations/*.png")))
         self.assertEqual(plot_count, 1)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_var_evaluations/*.png")))
         self.assertEqual(plot_count, 22)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_var_evaluations/*.png")))
         self.assertEqual(plot_count, 22)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
@@ -722,13 +721,13 @@ class TestUncertainty(TestCasePlot):
                                           figure_folder=self.output_test_dir,
                                           seed=self.seed)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_evaluations/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature0d_var_evaluations/*.png")))
         self.assertEqual(plot_count, 1)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_evaluations/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_var_evaluations/*.png")))
         self.assertEqual(plot_count, 12)
 
-        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_evaluations/*.png")))
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_var_evaluations/*.png")))
         self.assertEqual(plot_count, 12)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))

@@ -36,7 +36,7 @@ be used for many other types of models and features within other fields.
 """
 
 uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy", "seaborn", "matplotlib", "xvfbwrapper"]
+                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six"]
 efel_features = ["efel"]
 network_features = ["elephant", "neo", "quantities"]
 all_requires = uncertainpy_require + efel_features + network_features
@@ -95,7 +95,7 @@ setup(name=name,
       license="GNU GPLv3",
       keywords="uncertainty quantification sensitivity analysis neuroscience",
       long_description=long_description,
-      python_requires=">=2.7,<3",
+      python_requires=">=2.7,>=3",
       packages=find_packages("src"),
       package_dir={"": "src"},
       install_requires=uncertainpy_require,

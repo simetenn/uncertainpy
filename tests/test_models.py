@@ -3,9 +3,11 @@ import unittest
 
 import numpy as np
 from xvfbwrapper import Xvfb
-import nest
+# import nest
 
 from uncertainpy.models import Model, NeuronModel, NestModel
+from uncertainpy.core import Parallel
+from uncertainpy.core import RunModel
 
 from .models import HodgkinHuxley
 from .models import CoffeeCup
@@ -292,6 +294,56 @@ class TestNeuronModel(unittest.TestCase):
 
         self.assertEqual(time, "time")
         self.assertEqual(values, "values")
+
+
+
+    def test_parallel(self):
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            "models/interneuron_modelDB/")
+
+        model = NeuronModel(path=path,
+                            interpolate=True)
+
+        parallel = Parallel(model=model)
+        model_parameters = {"cap": 1.1, "Rm": 22000}
+
+        with Xvfb() as xvfb:
+            result = parallel.run(model_parameters)
+
+        self.assertIn("NeuronModel", result.keys())
+
+        self.assertIn("time", result["NeuronModel"].keys())
+        self.assertIn("values", result["NeuronModel"].keys())
+        self.assertIn("interpolation", result["NeuronModel"].keys())
+
+    def test_runmodel(self):
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            "models/interneuron_modelDB/")
+
+        model = NeuronModel(path=path,
+                            interpolate=True)
+
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
+
+        runmodel = RunModel(model=model, parameters=parameter_list, CPUs=1)
+        uncertain_parameters = ["cap", "Rm"]
+        nodes = np.array([[1.0, 1.1, 1.2], [21900, 22000, 22100]])
+
+        result = runmodel.run(nodes, uncertain_parameters)
+
+        self.assertEqual(result.model_name, "NeuronModel")
+
+        self.assertIsInstance(result["NeuronModel"].evaluations[0], np.ndarray)
+        self.assertIsInstance(result["NeuronModel"].evaluations[1], np.ndarray)
+        self.assertIsInstance(result["NeuronModel"].evaluations[2], np.ndarray)
+
+        self.assertEqual(len(result["NeuronModel"].evaluations[0]),
+                         len(result["NeuronModel"].evaluations[1]))
+        self.assertEqual(len(result["NeuronModel"].evaluations[1]),
+                         len(result["NeuronModel"].evaluations[2]))
+
+        self.assertIsInstance(result["NeuronModel"].time, np.ndarray)
 
 
 class TestNestModel(unittest.TestCase):

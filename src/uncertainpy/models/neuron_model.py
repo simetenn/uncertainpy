@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
 
 import numpy as np
@@ -120,7 +122,7 @@ class NeuronModel(Model):
             raise ImportError("NeuronModel requires: neuron")
 
         self.h = neuron.h
-        self.h.load_file(1, self.file)
+        self.h.load_file(1, self.file.encode())
 
         os.chdir(current_dir)
 

@@ -1,123 +1,78 @@
-FROM continuumio/anaconda3
+FROM continuumio/anaconda3:latest
 
-# https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
-RUN set -x \
-	&& apt-get update \
-	&& { \
-		which gpg \
-# prefer gnupg2, to match APT's Recommends
-		|| apt-get install -y --no-install-recommends gnupg2 \
-		|| apt-get install -y --no-install-recommends gnupg \
-	; } \
-# Ubuntu includes "gnupg" (not "gnupg2", but still 2.x), but not dirmngr, and gnupg 2.x requires dirmngr
-# so, if we're not running gnupg 1.x, explicitly install dirmngr too
-	&& { \
-		gpg --version | grep -q '^gpg (GnuPG) 1\.' \
-		|| apt-get install -y --no-install-recommends dirmngr \
-	; } \
-	&& rm -rf /var/lib/apt/lists/*
-
-# apt-key is a bit finicky during "docker build" with gnupg 2.x, so install the repo key the same way debian-archive-keyring does (/etc/apt/trusted.gpg.d)
-# this makes "apt-key list" output prettier too!
-RUN set -x \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys DD95CC430502E37EF840ACEEA5D32F012649A5A9 \
-	&& gpg --export DD95CC430502E37EF840ACEEA5D32F012649A5A9 > /etc/apt/trusted.gpg.d/neurodebian.gpg \
-	&& rm -rf "$GNUPGHOME" \
-	&& apt-key list | grep neurodebian
-
-RUN { \
-	echo 'deb http://neuro.debian.net/debian artful main'; \
-	echo 'deb http://neuro.debian.net/debian data main'; \
-	echo '#deb-src http://neuro.debian.net/debian-devel artful main'; \
-} > /etc/apt/sources.list.d/neurodebian.sources.list
-
+# Update anaconda in case the anaconda image is outdated
+RUN conda update conda
 
 
 # Install Nest and Neuron
 ENV LANG=C.UTF-8
 
 RUN apt-get update; apt-get install -y automake libtool build-essential openmpi-bin libopenmpi-dev \
-                                       libncurses5-dev libreadline-dev libgsl0-dev cmake
+                                       libncurses5-dev libreadline-dev libgsl0-dev cmake > /dev/null
 
 
 ENV HOME=/home/docker
 ENV VENV=$HOME/simulators
 RUN mkdir $HOME; mkdir $HOME/packages; mkdir $VENV
+ENV PATH=$PATH:$VENV/bin
 
-
-ENV NEST_VER=2.12.0 NRN_VER=7.4
+ENV NEST_VER=2.14.0 NRN_VER=7.5
 ENV NEST=nest-$NEST_VER NRN=nrn-$NRN_VER
 
 WORKDIR $HOME/packages
-ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
+# Once neurons certificate is properly set up use add again
+# ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
+RUN wget http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz --no-check-certificate
 ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz .
 RUN tar xzf $NEST.tar.gz; tar xzf $NRN.tar.gz; rm $NEST.tar.gz $NRN.tar.gz
 
-RUN mkdir $VENV/build
-WORKDIR $VENV/build
-RUN mkdir $NRN; \
-    cd $NRN; \
-    $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV; \
-    make; make install; \
-    cd src/nrnpython; python setup.py install; \
-    cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl
 
-RUN mkdir $NEST; \
-    cd $NEST; \
-    cmake -DCMAKE_INSTALL_PREFIX=$VENV \
-          -Dwith-mpi=ON  \
-          -Dwith-python=3 \
-          -DPYTHON_EXECUTABLE=/opt/conda/bin/python3.6 \
-          -DPYTHON_LIBRARY=/opt/conda/lib/python3.6/config-3.6m-x86_64-linux-gnu/libpython3.6m.a \
-          -DPYTHON_INCLUDE_DIR=/opt/conda/include/python3.6m \
-          $HOME/packages/$NEST; \
-    make; make install;
+RUN mkdir $VENV/build; mkdir $VENV/build/$NRN; mkdir $VENV/build/$NEST; mkdir $VENV/bin
+
+WORKDIR $VENV/build/$NRN
+RUN $HOME/packages/$NRN/configure --with-paranrn --with-nrnpython=python --disable-rx3d --without-iv --prefix=$VENV > /dev/null
+RUN make > /dev/null
+RUN make install > /dev/null
+RUN cd src/nrnpython; python setup.py install > /dev/null
+RUN cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl; ln -s ../x86_64/bin/nrngui; ln -s ../x86_64/bin/nrnoc; ln -s ../x86_64/bin/nrniv
 
 
-RUN pip install nrnutils
+WORKDIR $VENV/build/$NEST
+RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV -Dwith-mpi=ON -Dwith-python=3 $HOME/packages/$NEST > /dev/null
+RUN make > /dev/null
+RUN make install > /dev/null
+
+
 
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
-
+# Add nest to python path
+ENV PYTHONPATH $PYTHONPATH:/home/docker/simulators/lib/python3.6/site-packages/
 RUN conda install libgcc
 
 
+# Get X working
+
+RUN touch /home/docker/.Xauthority
+RUN apt-get update; apt-get install -y libx11-dev libxext-dev x11-apps
+EXPOSE 22
 
 
-# Install uncertainpy and dependencies
 
+# Install test coverage dependencies
+RUN pip install coverage
 
-# # Uncertainpy dependencies
+# Install uncertainpy dependencies
 RUN apt-get update --fix-missing
+RUN apt-get -y install xvfb
 
-RUN apt-get -y install texlive-latex-base texlive-latex-extra texlive-fonts-recommended
-RUN apt-get -y install dvipng
-RUN apt-get -y install Xvfb
-RUN apt-get -y install h5utils
-# RUN apt-get -y install libx11-dev libxext-dev x11-apps
+RUN pip install xvfbwrapper
 
+# Make sure matplotlib uses agg
+RUN mkdir .config/
+RUN mkdir .config/matplotlib
+RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
 
-RUN conda install -c conda-forge xvfbwrapper
-RUN conda install -c conda-forge multiprocess
-
-
-# # Downgrade the pyqt package to solve a bug in anaconda
-# RUN conda install pyqt=4.11
-# RUN conda install -c anaconda pandas
-# RUN conda install -c anaconda seaborn
-
-
-RUN pip install elephant
-
-# # RUN conda install -c conda-forge matplotlib=2.0.0
-
-
-
-COPY . $HOME/uncertainpy
-WORKDIR $HOME/uncertainpy
-
-RUN cd prettyplot; python setup.py install
-
-RUN cp -r tests/figures_docker/. tests/figures/.
-RUN python setup.py install
+# Temporary fix to chaospy
+RUN git clone https://github.com/jonathf/chaospy.git
+RUN cd chaospy; python setup.py install

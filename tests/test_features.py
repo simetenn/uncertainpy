@@ -281,8 +281,8 @@ class TestSpikingFeatures(unittest.TestCase):
     def setUp(self):
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        time = np.load(os.path.join(folder, "data/t_test.npy"))
-        V = np.load(os.path.join(folder, "data/U_test.npy"))
+        self.t = np.load(os.path.join(folder, "data/t_test.npy"))
+        self.V = np.load(os.path.join(folder, "data/U_test.npy"))
 
         self.implemented_features = ["nr_spikes", "time_before_first_spike",
                                      "spike_rate", "average_AP_overshoot",
@@ -300,9 +300,9 @@ class TestSpikingFeatures(unittest.TestCase):
 
         self.features = SpikingFeatures(verbose_level="error")
 
-        self.info = {"stimulus_start": time[0], "stimulus_end": time[-1]}
+        self.info = {"stimulus_start": self.t[0], "stimulus_end": self.t[-1]}
 
-        self.time, self.spikes, info = self.features.preprocess(time, V, self.info)
+        self.time, self.spikes, info = self.features.preprocess(self.t, self.V, self.info)
 
 
     def test_initNone(self):
@@ -449,7 +449,8 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_calculate_all_features(self):
-        result = self.features.calculate_all_features(self.time, self.spikes, self.info)
+
+        result = self.features.calculate_all_features(self.t, self.V, self.info)
         self.assertEqual(set(result.keys()),
                          set(self.implemented_features))
 

@@ -75,6 +75,12 @@ class TestNoneToNan(unittest.TestCase):
         self.assertEqual(result, 2)
 
 
+    def test_none_to_nan_str(self):
+        result = none_to_nan("time")
+
+        self.assertEqual(result, "time")
+
+
     def test_none_to_nan_list(self):
         result = none_to_nan([1, 2, 3])
 

@@ -1,4 +1,7 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import numpy as np
+import six
 
 from ..utils import create_logger
 
@@ -224,7 +227,7 @@ class Features(object):
             self._features_to_run = self.implemented_features()
         elif new_features_to_run is None:
             self._features_to_run = []
-        elif isinstance(new_features_to_run, str):
+        elif isinstance(new_features_to_run, six.string_types):
             self._features_to_run = [new_features_to_run]
         else:
             self._features_to_run = new_features_to_run
@@ -262,7 +265,7 @@ class Features(object):
             self._interpolate = self.implemented_features()
         elif new_interpolate is None:
             self._interpolate = []
-        elif isinstance(new_interpolate, str):
+        elif isinstance(new_interpolate, six.string_types):
             self._interpolate = [new_interpolate]
         else:
             self._interpolate = new_interpolate
@@ -430,7 +433,7 @@ class Features(object):
                              "{} must return time and values".format(feature_name) +
                              "(return time, values | return None, values)")
 
-        if isinstance(feature_result, str):
+        if isinstance(feature_result, six.string_types):
             raise ValueError("{} returns a string. ".format(feature_name) +
                              "This indicates only time or values is returned. " +
                              "{} must return time and values".format(feature_name) +

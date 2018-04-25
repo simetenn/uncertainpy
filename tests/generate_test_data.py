@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
 
 import numpy as np
@@ -20,9 +22,9 @@ def generate_data_polynomial_chaos():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
 
     test = un.UncertaintyQuantification(model,
@@ -45,9 +47,9 @@ def generate_data_PC_spectral():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
 
     test = un.UncertaintyQuantification(model,
@@ -57,7 +59,6 @@ def generate_data_PC_spectral():  # pragma: no cover
 
 
     test.polynomial_chaos(method="spectral",
-                          polynomial_order=6,
                           filename="TestingModel1d_spectral",
                           seed=seed,
                           data_folder=test_data_dir,
@@ -71,9 +72,9 @@ def generate_data_PC_model_function():  # pragma: no cover
     parameters = un.Parameters(parameter_list)
     parameters.set_all_distributions(un.uniform(0.5))
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
     test = un.UncertaintyQuantification(model_function,
                                         features=features,
@@ -141,9 +142,9 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
 
     test = un.UncertaintyQuantification(model,
@@ -169,9 +170,9 @@ def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
 
     test = un.UncertaintyQuantification(model,
@@ -182,8 +183,6 @@ def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
 
     test.polynomial_chaos(rosenblatt=True,
                           method="spectral",
-                          polynomial_order=6,
-                          quadrature_order=10,
                           filename="TestingModel1d_Rosenblatt_spectral",
                           data_folder=test_data_dir,
                           plot=None,
@@ -200,9 +199,9 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
     test = un.UncertaintyQuantification(model,
                                         features=features,
@@ -225,9 +224,9 @@ def generate_data_monte_carlo():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
     test = un.UncertaintyQuantification(model,
                                         features=features,
@@ -250,9 +249,9 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
 
     test = un.UncertaintyQuantification(model,
@@ -339,9 +338,9 @@ def generate_data_uncertainty_calculations():  # pragma: no cover
 
     model = TestingModel1d()
 
-    features = TestingFeatures(features_to_run=["feature0d",
-                                                "feature1d",
-                                                "feature2d"])
+    features = TestingFeatures(features_to_run=["feature0d_var",
+                                                "feature1d_var",
+                                                "feature2d_var"])
 
     uncertainty_calculations = un.core.UncertaintyCalculations(model=model,
                                                                features=features,

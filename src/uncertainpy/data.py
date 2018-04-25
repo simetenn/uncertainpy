@@ -1,3 +1,6 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import six
 import os
 import h5py
 import collections
@@ -264,6 +267,7 @@ class DataFeature(collections.MutableMapping):
 
         return output_str.strip()
 
+    # TODO: add test for a single evaluations list
     def ndim(self):
         """
         Get the number of dimensions the data of a data type.
@@ -469,10 +473,10 @@ class Data(collections.MutableMapping):
 
         Returns
         -------
-        int
-            The number of dimensions of the model/feature result.
+        int, None
+            The number of dimensions of the model/feature result. Returns None
+            if the feature has no evaluations.
         """
-
         return self[feature].ndim()
 
 
@@ -587,7 +591,7 @@ class Data(collections.MutableMapping):
         features : {str, list}
             Name of feature to add, or list of features to add.
         """
-        if isinstance(features, str):
+        if isinstance(features, six.string_types):
             features = [features]
 
         for feature in features:
@@ -620,15 +624,14 @@ class Data(collections.MutableMapping):
 
 
 
-        with h5py.File(filename, 'w') as f:
-            f.attrs["uncertain parameters"] = self.uncertain_parameters
+        with h5py.File(filename, "w") as f:
+            f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
             f.attrs["model name"] = self.model_name
-            f.attrs["incomplete results"] = self.incomplete
+            f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
             f.attrs["seed"] = self.seed
             f.attrs["model_ignore"] = self.model_ignore
-
 
             for feature in self:
                 group = f.create_group(feature)
@@ -640,7 +643,7 @@ class Data(collections.MutableMapping):
                     else:
                         group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
-                group.create_dataset("labels", data=self[feature].labels)
+                group.create_dataset("labels", data=[label.encode("utf8") for label in self[feature].labels])
 
 
 
@@ -671,12 +674,12 @@ class Data(collections.MutableMapping):
 
             evaluations.append(sub_evaluations)
 
-        with h5py.File(filename, 'r') as f:
-            self.uncertain_parameters = list(f.attrs["uncertain parameters"])
-            self.model_name = f.attrs["model name"]
-            self.incomplete = list(f.attrs["incomplete results"])
-            self.method = f.attrs["method"]
-            self.version = f.attrs["version"]
+        with h5py.File(filename, "r") as f:
+            self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
+            self.model_name = str(f.attrs["model name"])
+            self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
+            self.method = str(f.attrs["method"])
+            self.version = str(f.attrs["version"])
             self.seed = f.attrs["seed"]
             self.model_ignore = f.attrs["model_ignore"]
 
@@ -684,18 +687,20 @@ class Data(collections.MutableMapping):
                 self.add_features(str(feature))
                 for statistical_metric in f[feature]:
 
-                    # TODO: working here
                     if statistical_metric == "evaluations":
                         evaluations = []
 
                         for item in f[feature][statistical_metric]:
                             value = f[feature][statistical_metric][item]
+
                             if isinstance(value, h5py.Dataset):
                                 evaluations.append(value[()])
                             elif  isinstance(value, h5py.Group):
                                 append_evaluations(evaluations, value)
 
                         self[feature][statistical_metric] = evaluations
+                    elif statistical_metric == "labels":
+                         self[feature][statistical_metric] = [label.decode("utf8") for label in f[feature][statistical_metric][()]]
                     else:
                         self[feature][statistical_metric] = f[feature][statistical_metric][()]
 
@@ -704,7 +709,7 @@ class Data(collections.MutableMapping):
         """
         Remove all features that only have invalid results (NaN).
         """
-        feature_list = self.data.keys()[:]
+        feature_list = list(self.data.keys())
         for feature in feature_list:
             all_nan = True
             for U in self[feature].evaluations:

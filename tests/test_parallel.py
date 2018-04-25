@@ -6,8 +6,8 @@ import scipy.interpolate
 import numpy as np
 
 from xvfbwrapper import Xvfb
-from uncertainpy.core.parallel import Parallel
-from uncertainpy.models import NeuronModel, Model
+from uncertainpy.core import Parallel
+from uncertainpy.models import Model
 from uncertainpy.features import Features
 
 from .testing_classes import TestingFeatures
@@ -35,7 +35,8 @@ class TestParallel(unittest.TestCase):
                                                          "feature_interpolate"])
 
         self.parallel = Parallel(model=TestingModel1d(),
-                                 features=self.features)
+                                 features=self.features,
+                                 verbose_level="error")
 
         self.model_parameters = {"a": 0, "b": 1}
 
@@ -425,20 +426,6 @@ class TestParallel(unittest.TestCase):
         with self.assertRaises(ValueError):
             parallel.run(self.model_parameters)
 
-
-    def test_run_neuron_model(self):
-        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                  "models/interneuron_modelDB/")
-
-        model = NeuronModel(path=path,
-                            interpolate=True)
-
-        parallel = Parallel(model=model)
-        model_parameters = {"cap": 1.1, "Rm": 22000}
-
-
-        with Xvfb() as xvfb:
-            parallel.run(model_parameters)
 
 
     def test_postprocess_error_numpy(self):

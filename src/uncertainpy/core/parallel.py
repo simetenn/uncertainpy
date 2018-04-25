@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import traceback
 import warnings
 
@@ -331,10 +333,10 @@ class Parallel(Base):
 
 
         except Exception as error:
-            print("Caught exception in parallel run of model:")
-            print("")
-            traceback.print_exc()
-            print("")
-            raise error
+            # print("Caught exception in parallel run of model:")
+            # print("")
+            # traceback.print_exc()
+            # print("")
+            raise
 
 

@@ -1,5 +1,6 @@
 /* Created by Language version: 6.2.0 */
 /* VECTORIZED */
+#define NRN_VECTORIZED 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,10 +22,18 @@ extern int _method3;
 extern double hoc_Exp(double);
 #endif
  
-#define _threadargscomma_ _p, _ppvar, _thread, _nt,
-#define _threadargs_ _p, _ppvar, _thread, _nt
+#define nrn_init _nrn_init__Cad
+#define _nrn_initial _nrn_initial__Cad
+#define nrn_cur _nrn_cur__Cad
+#define _nrn_current _nrn_current__Cad
+#define nrn_jacob _nrn_jacob__Cad
+#define nrn_state _nrn_state__Cad
+#define _net_receive _net_receive__Cad 
+#define state state__Cad 
  
+#define _threadargscomma_ _p, _ppvar, _thread, _nt,
 #define _threadargsprotocomma_ double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt,
+#define _threadargs_ _p, _ppvar, _thread, _nt
 #define _threadargsproto_ double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt
  	/*SUPPRESS 761*/
 	/*SUPPRESS 762*/
@@ -129,6 +138,7 @@ static void _ode_spec(_NrnThread*, _Memb_list*, int);
 static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  
 #define _cvode_ieq _ppvar[3]._i
+ static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
  "6.2.0",
@@ -173,7 +183,7 @@ static void nrn_alloc(Prop* _prop) {
 };
  static void _update_ion_pointer(Datum*);
  extern Symbol* hoc_lookup(const char*);
-extern void _nrn_thread_reg(int, int, void(*f)(Datum*));
+extern void _nrn_thread_reg(int, int, void(*)(Datum*));
 extern void _nrn_thread_table_reg(int, void(*)(double*, Datum*, Datum*, _NrnThread*, int));
 extern void hoc_register_tolerance(int, HocStateTolerance*, Symbol***);
 extern void _cvode_abstol( Symbol**, double*, int);
@@ -188,11 +198,15 @@ extern void _cvode_abstol( Symbol**, double*, int);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
   hoc_register_prop_size(_mechtype, 10, 4);
+  hoc_register_dparam_semantics(_mechtype, 0, "Ca_ion");
+  hoc_register_dparam_semantics(_mechtype, 1, "Ca_ion");
+  hoc_register_dparam_semantics(_mechtype, 2, "#Ca_ion");
+  hoc_register_dparam_semantics(_mechtype, 3, "cvodeieq");
  	nrn_writes_conc(_mechtype, 0);
  	hoc_register_cvode(_mechtype, _ode_count, _ode_map, _ode_spec, _ode_matsol);
  	hoc_register_tolerance(_mechtype, _hoc_state_tol, &_atollist);
  	hoc_register_var(hoc_scdoub, hoc_vdoub, hoc_intfunc);
- 	ivoc_help("help ?1 Cad /home/simen/Dropbox/phd/uncertainpy/examples/lgn_original/dLGN_modelDB/x86_64/Cad.mod\n");
+ 	ivoc_help("help ?1 Cad /home/docker/uncertainpy/tests/models/interneuron_modelDB/x86_64/Cad.mod\n");
  hoc_register_limits(_mechtype, _hoc_parm_limits);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
@@ -233,7 +247,7 @@ static int _ode_spec1(_threadargsproto_);
    if ( drive_channel <= 0. ) {
      drive_channel = 0. ;
      }
-    Cai = Cai + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / taur)))*(- ( drive_channel + ( ( Cainf ) ) / taur ) / ( ( ( ( - 1.0) ) ) / taur ) - Cai) ;
+    Cai = Cai + (1. - exp(dt*(( ( ( - 1.0 ) ) ) / taur)))*(- ( drive_channel + ( ( Cainf ) ) / taur ) / ( ( ( ( - 1.0 ) ) ) / taur ) - Cai) ;
    }
   return 0;
 }
@@ -267,6 +281,10 @@ static void _ode_map(int _ieq, double** _pv, double** _pvdot, double* _pp, Datum
  	_pv[0] = &(_ion_Cai);
  }
  
+static void _ode_matsol_instance1(_threadargsproto_) {
+ _ode_matsol1 (_p, _ppvar, _thread, _nt);
+ }
+ 
 static void _ode_matsol(_NrnThread* _nt, _Memb_list* _ml, int _type) {
    double* _p; Datum* _ppvar; Datum* _thread;
    Node* _nd; double _v; int _iml, _cntml;
@@ -279,7 +297,7 @@ static void _ode_matsol(_NrnThread* _nt, _Memb_list* _ml, int _type) {
   iCa = _ion_iCa;
   Cai = _ion_Cai;
   Cai = _ion_Cai;
- _ode_matsol1 (_p, _ppvar, _thread, _nt);
+ _ode_matsol_instance1(_threadargs_);
  }}
  extern void nrn_update_ion_pointer(Symbol*, Datum*, int, int);
  static void _update_ion_pointer(Datum* _ppvar) {
@@ -322,7 +340,8 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
  initmodel(_p, _ppvar, _thread, _nt);
   _ion_Cai = Cai;
   nrn_wrote_conc(_Ca_sym, (&(_ion_Cai)) - 1, _style_Ca);
-}}
+}
+}
 
 static double _nrn_current(double* _p, Datum* _ppvar, Datum* _thread, _NrnThread* _nt, double _v){double _current=0.;v=_v;{
 } return _current;
@@ -348,7 +367,9 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
     _v = NODEV(_nd);
   }
  
-}}
+}
+ 
+}
 
 static void nrn_jacob(_NrnThread* _nt, _Memb_list* _ml, int _type) {
 double* _p; Datum* _ppvar; Datum* _thread;
@@ -370,12 +391,13 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
 	NODED(_nd) += _g;
   }
  
-}}
+}
+ 
+}
 
 static void nrn_state(_NrnThread* _nt, _Memb_list* _ml, int _type) {
- double _break, _save;
 double* _p; Datum* _ppvar; Datum* _thread;
-Node *_nd; double _v; int* _ni; int _iml, _cntml;
+Node *_nd; double _v = 0.0; int* _ni; int _iml, _cntml;
 #if CACHEVEC
     _ni = _ml->_nodeindices;
 #endif
@@ -393,19 +415,13 @@ for (_iml = 0; _iml < _cntml; ++_iml) {
     _nd = _ml->_nodelist[_iml];
     _v = NODEV(_nd);
   }
- _break = t + .5*dt; _save = t;
  v=_v;
 {
   iCa = _ion_iCa;
   Cai = _ion_Cai;
   Cai = _ion_Cai;
- { {
- for (; t < _break; t += dt) {
-   state(_p, _ppvar, _thread, _nt);
-  
-}}
- t = _save;
- } {
+ {   state(_p, _ppvar, _thread, _nt);
+  } {
    }
   _ion_Cai = Cai;
 }}

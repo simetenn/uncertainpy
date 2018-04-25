@@ -32,8 +32,8 @@ def brunel_network(eta, g, delay, J_E):
     N_E = 10000            # Number of inhibitory neurons
     N_I = 2500             # Number of excitatory neurons
     N_neurons = N_E + N_I  # Number of neurons in total
-    C_E = N_E/10           # Number of excitatory synapses per neuron
-    C_I = N_I/10           # Number of inhibitory synapses per neuron
+    C_E = int(N_E/10)      # Number of excitatory synapses per neuron
+    C_I = int(N_I/10)      # Number of inhibitory synapses per neuron
     J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
 
     nu_ex = eta*V_th/(J_E*C_E*tau_m)

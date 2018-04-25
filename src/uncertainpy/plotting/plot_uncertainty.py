@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import glob
 import os
 
@@ -6,9 +8,10 @@ import numpy as np
 
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
-from .prettyplot import get_colormap_tableu20, set_style
+from .prettyplot import get_colormap_tableu20, set_style, get_colormap
 from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
+import seaborn as sns
 from ..data import Data
 from ..utils import create_logger
 
@@ -171,7 +174,9 @@ class PlotUncertainty(object):
             os.makedirs(save_folder)
 
         dimension = self.data.ndim(feature)
-        if dimension == 0:
+        if dimension is None:
+            self.logger.warning("No evaluations to plot")
+        elif dimension == 0:
             self.evaluations_0d(feature=feature, foldername=foldername, **plot_kwargs)
 
         elif dimension == 1:
@@ -231,7 +236,7 @@ class PlotUncertainty(object):
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, evaluations".format(feature.replace("_", " ")),
                    new_figure=True,
-                   palette="deep",
+                   palette="husl",
                    **plot_kwargs)
 
         plt.tight_layout()
@@ -295,7 +300,7 @@ class PlotUncertainty(object):
                             ylabel=ylabel.capitalize(),
                             title="{}, evaluation {:d}".format(feature.replace("_", " "), i),
                             new_figure=True,
-                            palette="deep",
+                            palette="husl",
                             **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
             plt.tight_layout()
@@ -375,7 +380,7 @@ class PlotUncertainty(object):
             ax.set_ylabel(ylabel.capitalize())
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "Evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
 
 
@@ -448,7 +453,7 @@ class PlotUncertainty(object):
         ax = prettyPlot(time, self.data[feature][attribute],
                         title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize(),
                         nr_colors=3,
-                        palette="deep",
+                        palette="husl",
                         **plot_kwargs)
 
         ax.set_xlim([min(time), max(time)])
@@ -748,7 +753,7 @@ class PlotUncertainty(object):
                         title.replace("_", " "), xlabel.capitalize(), ylabel.capitalize() + ", mean",
                         style=style,
                         nr_colors=3,
-                        palette="deep",
+                        palette="husl",
                         **plot_kwargs)
 
 
@@ -857,7 +862,7 @@ class PlotUncertainty(object):
                         xlabel=xlabel.capitalize(), ylabel=ylabel.capitalize(),
                         color=0,
                         nr_colors=3,
-                        palette="deep",
+                        palette="husl",
                         **plot_kwargs)
 
         colors = get_current_colormap()
@@ -951,7 +956,7 @@ class PlotUncertainty(object):
                             xlabel=xlabel.capitalize(),
                             ylabel=title.capitalize(),
                             color=i,
-                            palette="deep",
+                            palette="husl",
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
             ax.set_xlim([min(time), max(time)])
@@ -1068,7 +1073,7 @@ class PlotUncertainty(object):
                            color=i,
                            nr_colors=nr_plots,
                            ax=ax,
-                           palette="deep",
+                           palette="husl",
                            **plot_kwargs)
 
                 # for tick in ax.get_xticklabels():
@@ -1171,7 +1176,7 @@ class PlotUncertainty(object):
                        ylabel=title.capitalize(),
                        new_figure=False,
                        color=i,
-                       palette="deep",
+                       palette="husl",
                        nr_colors=len(self.data.uncertain_parameters),
                        label=self.data.uncertain_parameters[i],
                        **plot_kwargs)
@@ -1387,7 +1392,7 @@ class PlotUncertainty(object):
                        index=xticks,
                        xlabels=xlabels,
                        ylabel=ylabel.capitalize(),
-                       palette=get_colormap_tableu20(),
+                       palette="Paired",
                        style="seaborn-white")
 
         if sensitivity in self.data[feature]:
@@ -1405,12 +1410,12 @@ class PlotUncertainty(object):
 
             i = 0
             legend_bars = []
-            colors = get_colormap_tableu20()
+            colors = get_colormap(palette="husl", nr_colors=len(self.data.uncertain_parameters))
 
             for parameter in self.data.uncertain_parameters:
 
                 l = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
-                            align="center", color=colors[4+i], linewidth=0)
+                            align="center", color=colors[i], linewidth=0)
 
                 legend_bars.append(l)
 
@@ -1520,7 +1525,7 @@ class PlotUncertainty(object):
                   xlabels=self.data.uncertain_parameters,
                   ylabel="Normalized sum of " + title,
                   nr_colors=len(self.data.uncertain_parameters),
-                  palette="deep",
+                  palette="husl",
                   index=index,
                   style="seaborn-darkgrid")
 
@@ -1841,27 +1846,28 @@ class PlotUncertainty(object):
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
-
+        features = list(self.data.keys())
         for i in range(0, grid_x_size*grid_y_size):
             nx = i % grid_x_size
             ny = int(np.floor(i/float(grid_x_size)))
 
             ax = axes[ny][nx]
 
+
             if i < nr_plots:
-                if sensitivity + "_sum" not in self.data[self.data.keys()[i]]:
+                if sensitivity + "_sum" not in self.data[features[i]]:
                     msg = " Unable to plot {sensitivity}_sum_grid. {sensitivity}_sum of {feature} does not exist."
                     self.logger.warning(msg.format(sensitivity=sensitivity,
-                                                   feature=self.data.keys()[i]))
+                                                   feature=features[i]))
                     ax.axis("off")
                     continue
 
-                prettyBar(self.data[self.data.keys()[i]][sensitivity + "_sum"],
-                          title=self.data.keys()[i].replace("_", " "),
+                prettyBar(self.data[features[i]][sensitivity + "_sum"],
+                          title=features[i].replace("_", " "),
                           xlabels=self.data.uncertain_parameters,
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
-                          palette="deep",
+                          palette="husl",
                           ax=ax,
                           **plot_kwargs)
 

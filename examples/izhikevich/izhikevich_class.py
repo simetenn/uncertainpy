@@ -41,7 +41,7 @@ class Izhikevich(Model):
 
         # Runge Kutta 4
         dt2 = self.dt/2.0
-        for n in xrange(len(self.time) - 1):
+        for n in range(len(self.time) - 1):
             K1 = self.dt*f(u[n], self.time[n])
             K2 = self.dt*f(u[n] + 0.5*K1, self.time[n] + dt2)
             K3 = self.dt*f(u[n] + 0.5*K2, self.time[n] + dt2)
