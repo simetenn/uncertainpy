@@ -1040,12 +1040,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         # There are then small differences between the variance in Python 2 and
         # 3. When calculating the sensitivity we among other things divide by the
         # variance so the differences gets blown up.
-        # if (sys.version_info > (3, 0)):
-        #     threshold = self.threshold
-        # else:
-        #     threshold = 0.01
+        if (sys.version_info.major < 3):
+            threshold = 0.01
+        else:
+            threshold = self.threshold
 
-        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -1063,6 +1063,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
         print("")
         print("test_polynomial_chaos_spectral_rosenblatt")
+        print(data["feature2d"].variance)
+        print(data["feature1d"].variance)
+        print(data["feature0d"].variance)
         print("")
         result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
 
