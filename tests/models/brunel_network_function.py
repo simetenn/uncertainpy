@@ -1,4 +1,9 @@
-import nest
+nest_prerequisite = True
+
+try:
+    import nest
+except ImportError:
+    nest_prerequisite = False
 
 def brunel_network(eta, g, delay, J_E):
     """
@@ -23,6 +28,9 @@ def brunel_network(eta, g, delay, J_E):
         Amplitude of excitatory postsynaptic current. Default is 0.1
     """
 
+    if not nest_prerequisite:
+        raise ImportError("brunel_network requires: nest")
+
     # Reduced number of neurons and simulation time
     # Network parameters
     N_rec = 20             # Record from 20 neurons
@@ -33,8 +41,8 @@ def brunel_network(eta, g, delay, J_E):
     N_E = 1000             # Number of inhibitory neurons
     N_I = 250              # Number of excitatory neurons
     N_neurons = N_E + N_I  # Number of neurons in total
-    C_E = N_E/10           # Number of excitatory synapses per neuron
-    C_I = N_I/10           # Number of inhibitory synapses per neuron
+    C_E = int(N_E/10)      # Number of excitatory synapses per neuron
+    C_I = int(N_I/10)      # Number of inhibitory synapses per neuron
     J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
 
     nu_ex = eta*V_th/(J_E*C_E*tau_m)
@@ -71,6 +79,7 @@ def brunel_network(eta, g, delay, J_E):
     # Connect neurons to each other
     nest.CopyModel('static_synapse_hom_w', 'excitatory',
                    {'weight':J_E, 'delay':delay})
+
     nest.Connect(nodes_E, nodes,
                  {'rule': 'fixed_indegree', 'indegree': C_E},
                  'excitatory')

@@ -1,8 +1,6 @@
 #!/bin/bash
 set -eo pipefail
 
-source .bashrc
 cd uncertainpy
-python setup.py develop --tests
 coverage run test.py all
-coverage xml
+bash <(curl -s https://codecov.io/bash)

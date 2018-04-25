@@ -1,3 +1,5 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -59,7 +61,7 @@ def set_latex_font():
 Set font options. Note, uses latex.
     """
     params = {"text.usetex": True,
-              "text.latex.preamble": r"\usepackage{lmodern}",
+              "text.latex.preamble": "\\usepackage{lmodern}",
               "text.antialiased": True,
               "font.family": "lmodern",
               "font.weight": "normal"

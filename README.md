@@ -31,8 +31,9 @@ be used for many other types of models and features within other fields.
 
 ## Documentation
 
-The documentation for Uncertainpy can be found [here](http://uncertainpy.readthedocs.io),
-and a preprint of an article for the Uncertainpy paper [here](https://www.biorxiv.org/content/early/2018/03/05/274779).
+The documentation for Uncertainpy can be found at [http://uncertainpy.readthedocs.io](http://uncertainpy.readthedocs.io),
+and a preprint of an article for the Uncertainpy paper here:
+[Tennøe, S., Halnes, G. and Einevoll, G. T. (2018). bioRxiv 274779](https://www.biorxiv.org/content/early/2018/03/05/274779).
 
 ## Installation
 
@@ -71,6 +72,7 @@ Uncertainpy has the following dependencies:
 * `seaborn`
 * `matplotlib`
 * `xvfbwrapper`
+* `six`
 
 These are installed with the minimum install.
 
@@ -116,7 +118,7 @@ or:
 
 `uncertainpy.NeuronModel` requires the external simulator
 [Neuron](https://www.neuron.yale.edu/neuron/download) (with Python),
-a simulator for neurons. This must be installed by the user.
+a simulator for neurons. Neuron must be installed by the user.
 
 
 #### NestModel
@@ -124,7 +126,7 @@ a simulator for neurons. This must be installed by the user.
 `uncertainpy.NestModel` requires the external simulator
 [Nest](http://www.nest-simulator.org/installation) (with Python),
 a simulator for network of neurons.
-This must be installed by the user.
+Nest must be installed by the user.
 
 
 ### Test suite
@@ -134,7 +136,7 @@ For how to use test.py run:
 
     $ python test.py --help
 
-`test.py` has all the dependencies if Uncertainpy in addition to:
+`test.py` has all dependencies of Uncertainpy in addition to:
 
 * `click`
 

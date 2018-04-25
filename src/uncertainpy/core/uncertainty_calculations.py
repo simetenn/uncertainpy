@@ -1,3 +1,6 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import six
 import numpy as np
 import multiprocess as mp
 from tqdm import tqdm
@@ -160,7 +163,7 @@ class UncertaintyCalculations(ParameterBase):
         --------
         uncertainpy.Parameters
         """
-        if isinstance(uncertain_parameters, str):
+        if isinstance(uncertain_parameters, six.string_types):
             uncertain_parameters = [uncertain_parameters]
 
         if self.parameters.distribution is not None:
@@ -425,7 +428,6 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.Data
         uncertainpy.Parameters
         """
-
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
 
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
@@ -435,13 +437,22 @@ class UncertaintyCalculations(ParameterBase):
         if quadrature_order is None:
             quadrature_order = polynomial_order + 2
 
+
         nodes, weights = cp.generate_quadrature(quadrature_order,
                                                 distribution,
                                                 rule="J",
                                                 sparse=True)
 
+        # print(distribution)
+        # print(quadrature_order)
+        # print(nodes)
+        # print(weights)
+        # print(data)
+
+
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
+
 
         data.method = "polynomial chaos expansion with the pseudo-spectral method. polynomial_order={}, quadrature_order={}".format(polynomial_order, quadrature_order)
 
@@ -455,6 +466,7 @@ class UncertaintyCalculations(ParameterBase):
 
             masked_evaluations, mask, masked_nodes, masked_weights = \
                 self.create_masked_nodes_weights(data, feature, nodes, weights)
+
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
@@ -701,7 +713,7 @@ class UncertaintyCalculations(ParameterBase):
 
         nodes_R, weights_R = cp.generate_quadrature(quadrature_order,
                                                     dist_R,
-                                                    rule="G",
+                                                    rule="J",
                                                     sparse=True)
 
 

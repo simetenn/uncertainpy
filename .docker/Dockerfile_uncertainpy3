@@ -1,0 +1,4 @@
+FROM uncertainpy3
+
+COPY . uncertainpy/
+RUN cd uncertainpy; python setup.py develop --tests

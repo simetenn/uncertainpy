@@ -33,7 +33,7 @@ def izhikevich(a=0.02, b=0.2, c=-50, d=2):
 
     # Runge Kutta 4
     dt2 = dt/2.0
-    for n in xrange(len(time) - 1):
+    for n in range(len(time) - 1):
         K1 = dt*f(u[n], time[n])
         K2 = dt*f(u[n] + 0.5*K1, time[n] + dt2)
         K3 = dt*f(u[n] + 0.5*K2, time[n] + dt2)

@@ -1,3 +1,6 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import six
 import warnings
 import numpy as np
 
@@ -41,6 +44,8 @@ def none_to_nan(values):
     """
     if values is None:
         values = np.nan
+    elif isinstance(values, six.string_types):
+        pass
 
     elif isinstance(values, np.ndarray):
         if values.dtype == "object":
