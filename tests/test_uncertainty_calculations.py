@@ -995,6 +995,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_polynomial_chaos_collocation(self):
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+        self.uncertainty_calculations.features = features
+
         data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
                                                               seed=self.seed)
 
@@ -1003,14 +1008,18 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
-        print("test_polynomial_chaos_collocation")
-        result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
 
 
     def test_PC_collocation_rosenblatt(self):
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+        self.uncertainty_calculations.features = features
+
         data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
                                                               rosenblatt=True,
                                                               seed=self.seed)
@@ -1022,10 +1031,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt.h5")
         result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
-    #     self.assertEqual(result, 0)
+        self.assertEqual(result, 0)
 
 
     def test_polynomial_chaos_spectral(self):
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+        self.uncertainty_calculations.features = features
+
         data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
                                                               seed=self.seed)
 
@@ -1040,10 +1054,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         # There are then small differences between the variance in Python 2 and
         # 3. When calculating the sensitivity we among other things divide by the
         # variance so the differences gets blown up.
-        if (sys.version_info.major < 3):
-            threshold = 0.01
-        else:
-            threshold = self.threshold
+        # if sys.version_info.major < 3:
+        #     threshold = 0.01
+        # else:
+        #     threshold = self.threshold
 
         result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
 
@@ -1052,6 +1066,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_polynomial_chaos_spectral_rosenblatt(self):
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+        self.uncertainty_calculations.features = features
         data = self.uncertainty_calculations.polynomial_chaos(method="spectral",
                                                               rosenblatt=True,
                                                               seed=self.seed)
@@ -1061,13 +1079,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
-        print("")
-        print("test_polynomial_chaos_spectral_rosenblatt")
-        print(data["feature2d"].variance)
-        print(data["feature1d"].variance)
-        print(data["feature0d"].variance)
-        print("")
-        result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
+
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -1247,6 +1260,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PC_parameter_a(self):
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+        self.uncertainty_calculations.features = features
+
         data = self.uncertainty_calculations.polynomial_chaos(uncertain_parameters="a",
                                                               seed=self.seed)
 
@@ -1262,6 +1280,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_PC_parameter_b(self):
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+        self.uncertainty_calculations.features = features
+
         data = self.uncertainty_calculations.polynomial_chaos(uncertain_parameters="b",
                                                               seed=self.seed)
 
@@ -1295,9 +1318,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        features = TestingFeatures(features_to_run=[])
 
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
@@ -1318,15 +1339,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                           np.arange(0, 10) + 3)))
 
 
-        # Compare to pregenerated data
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
-        data.save(filename)
+        # # Compare to pregenerated data
+        # filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
+        # data.save(filename)
 
-        folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
-        result = subprocess.call(["h5diff", filename, compare_file])
+        # folder = os.path.dirname(os.path.realpath(__file__))
+        # compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
+        # result = subprocess.call(["h5diff", filename, compare_file])
 
-        self.assertEqual(result, 0)
+        # self.assertEqual(result, 0)
 
 
 
