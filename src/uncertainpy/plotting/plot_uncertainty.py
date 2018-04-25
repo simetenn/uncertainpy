@@ -8,7 +8,7 @@ import numpy as np
 
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
-from .prettyplot import get_colormap_tableu20, set_style, get_colormap
+from .prettyplot import get_colormap_tableu20, set_style, get_colormap, reset_style
 from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 import seaborn as sns
@@ -243,6 +243,8 @@ class PlotUncertainty(object):
         plt.savefig(os.path.join(save_folder, "evaluations" + self.figureformat))
         plt.close()
 
+        reset_style()
+
 
     def evaluations_1d(self, feature=None, foldername="", **plot_kwargs):
         """
@@ -308,6 +310,8 @@ class PlotUncertainty(object):
                                      "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
             i += 1
+
+        reset_style()
 
 
 
@@ -382,6 +386,8 @@ class PlotUncertainty(object):
             plt.savefig(os.path.join(save_folder,
                                      "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
+
+        reset_style()
 
 
 
@@ -469,6 +475,8 @@ class PlotUncertainty(object):
             plt.show()
         else:
             plt.close()
+
+        reset_style()
 
 
 
@@ -569,6 +577,8 @@ class PlotUncertainty(object):
             plt.show()
         else:
             plt.close()
+
+        reset_style()
 
 
 
@@ -798,6 +808,8 @@ class PlotUncertainty(object):
             plt.show()
         else:
             plt.close()
+
+        reset_style()
         #
         # if not show or not hardcopy:
         #     return ax, ax2
@@ -886,6 +898,8 @@ class PlotUncertainty(object):
         else:
             plt.close()
 
+        reset_style()
+
 
     def sensitivity_1d(self,
                        feature=None,
@@ -973,6 +987,7 @@ class PlotUncertainty(object):
             else:
                 plt.close()
 
+        reset_style()
 
 
 
@@ -1101,6 +1116,7 @@ class PlotUncertainty(object):
         else:
             plt.close()
 
+        reset_style()
 
 
 
@@ -1197,6 +1213,8 @@ class PlotUncertainty(object):
             plt.show()
         else:
             plt.close()
+
+        reset_style()
 
 
     def features_1d(self, sensitivity="first"):
@@ -1464,8 +1482,9 @@ class PlotUncertainty(object):
         else:
             plt.close()
 
+        reset_style()
 
-        return ax
+        # return ax
 
 
     def sensitivity_sum(self,
@@ -1541,6 +1560,8 @@ class PlotUncertainty(object):
             plt.show()
         else:
             plt.close()
+
+        reset_style()
 
 
     def sensitivity_sum_all(self,
@@ -1895,6 +1916,8 @@ class PlotUncertainty(object):
             plt.show()
         else:
             plt.close()
+
+        reset_style()
 
 
 # if __name__ == "__main__":
