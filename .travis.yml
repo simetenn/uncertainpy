@@ -23,6 +23,7 @@ deploy:
   password:
     secure: jmuUgAq8ilrzQAa7e4gmsU7WKtoLK8rFHKdKUSrU9FNM1m7Ebk7uyY+n+TqXfVVwCeCMT9R9//oly7gbTK+JpkFcApYZhO5GMC1p5Ekn8ANeptk4zjbHQfcARsEcALgUDslZq9ZRwkPbOy97UA9ffJBeMam3xo2nPK+kq+pQv+hkHm0up4avPgXVIttiMplgVLsEEFyZ6vaLG9HZw/t+ddUvCYYL33MAHmtPCBm3bKWc8KON3hGHvKaOmXEQjGf4ylsYJoMwh6+8Q+5yiXOUT3SzLW8o8m99HHOCL81O1E5aJlgfcxW5Wpos95i0/q2s5BMXguWRuTG+2ZDBMt7BSFeOfeZluUxa0GOvNgc3IlBV8Mr5ZYzNgvqRD1KQyLqYxWhr7/EtcoZw0G3QrSsmCNPtH27SETeYuOzUJZ3Cg/hVYENMQIvLiIQ+NZhKlb+2a5apaWSvSPiUOSaDY62KZNJNhOvqZsdlAxj5GvXgVVEHlegoyziaOkg5KR52nxxKe7vgV/N8S3sJ8r3s8d0SrTsKd6r12alUkeiusei4vqAgRaGgdHotw/oaDOfOVFoRARL7hNh8VvkQXNoksRe7OFZZ8RUrC4AdwvkjoLwMw0BvrKIgH2O1amSdsOElpOp0Vth/oc2kak11uuu3HVM0o0/H9CB3yvR3GnmEj9o9jBI=
   on:
+    python: 3.6
     tags: true
     distributions: sdist bdist_wheel
     repo: simetenn/uncertainpy
