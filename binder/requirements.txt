@@ -1,0 +1,10 @@
+chaospy
+tqdm
+h5py
+multiprocess
+numpy
+scipy
+seaborn
+matplotlib
+xvfbwrapper
+six
