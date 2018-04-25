@@ -380,7 +380,7 @@ class PlotUncertainty(object):
             ax.set_ylabel(ylabel.capitalize())
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "Evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
 
 
