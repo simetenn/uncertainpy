@@ -247,5 +247,5 @@ which is the default option of `quantify`:
 
 ## Citation
 
-If you use Uncertainpy in your work, please cite the preprint for the
-[Uncertainpy paper](https://www.biorxiv.org/content/early/2018/03/05/274779).
+If you use Uncertainpy in your work, please cite the preprint:
+[Tennøe, S., Halnes, G. and Einevoll, G. T. (2018). bioRxiv 274779](https://www.biorxiv.org/content/early/2018/03/05/274779)..
