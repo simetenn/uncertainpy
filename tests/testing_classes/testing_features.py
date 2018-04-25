@@ -3,6 +3,13 @@ from uncertainpy import Features
 import numpy as np
 
 
+# Note: feature0d, feature1d and feature2d gives varying sobol indices
+# This is because the variance
+# gets extremely low (~10**-26) since the features returns fixed results.
+# When calculating the sensitivity we among other things divide by the
+# variance so the differences gets blown up.
+
+
 class TestingFeatures(Features):
     def __init__(self, features_to_run="all",
                  interpolate=["feature_interpolate"]):

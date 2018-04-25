@@ -1049,16 +1049,6 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_spectral.h5")
 
-        # Note: this test needs much lower threshold. This is because the variance
-        # gets extremely low (~10**-26) since the features returns fixed results.
-        # There are then small differences between the variance in Python 2 and
-        # 3. When calculating the sensitivity we among other things divide by the
-        # variance so the differences gets blown up.
-        # if sys.version_info.major < 3:
-        #     threshold = 0.01
-        # else:
-        #     threshold = self.threshold
-
         result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
