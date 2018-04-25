@@ -31,8 +31,9 @@ be used for many other types of models and features within other fields.
 
 ## Documentation
 
-The documentation for Uncertainpy can be found [here](http://uncertainpy.readthedocs.io),
-and a preprint of an article for the Uncertainpy paper [here](https://www.biorxiv.org/content/early/2018/03/05/274779).
+The documentation for Uncertainpy can be found at [http://uncertainpy.readthedocs.io](http://uncertainpy.readthedocs.io),
+and a preprint of an article for the Uncertainpy paper here:
+[Tennøe, S., Halnes, G. and Einevoll, G. T. (2018). bioRxiv 274779](https://www.biorxiv.org/content/early/2018/03/05/274779).
 
 ## Installation
 
