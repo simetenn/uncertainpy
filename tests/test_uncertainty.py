@@ -380,8 +380,10 @@ class TestUncertainty(TestCasePlot):
         filename = os.path.join(self.output_test_dir, "model_function.h5")
         self.assertTrue(os.path.isfile(filename))
 
-
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold),
+        print("")
+        print("test_PC_model_function")
+        print("")
+        result = subprocess.call(["h5diff", "-v","-d", str(self.difference_treshold),
                                   filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -398,8 +400,10 @@ class TestUncertainty(TestCasePlot):
         compare_file = os.path.join(folder, "data/TestingModel1d.h5")
         filename = os.path.join(self.output_test_dir, "TestingModel1d.h5")
         self.assertTrue(os.path.isfile(filename))
-
-        result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
+        print("")
+        print("test_polynomial_chaos")
+        print("")
+        result = subprocess.call(["h5diff", "-v", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
