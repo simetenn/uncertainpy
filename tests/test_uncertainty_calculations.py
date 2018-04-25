@@ -1059,7 +1059,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         # else:
         #     threshold = self.threshold
 
-        result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
