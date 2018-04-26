@@ -838,9 +838,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 features=features,
                                                                 verbose_level="debug")
 
-        with self.assertRaises(ValueError):
-            self.uncertainty_calculations.create_PCE_spectral()
-
+        U_hat, distribution, data = self.uncertainty_calculations.create_PCE_spectral()
+        self.assertEqual(list(U_hat.keys()), ["feature1d", "feature2d"])
+        print(data)
 
 
     def test_create_PCE_spectral_rosenblatt_all(self):
