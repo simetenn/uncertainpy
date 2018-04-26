@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/simetenn/uncertainpy.svg?branch=master)](https://travis-ci.org/simetenn/uncertainpy)
 [![codecov](https://codecov.io/gh/simetenn/uncertainpy/branch/master/graph/badge.svg?token=BFXnBcPbMA)](https://codecov.io/gh/simetenn/uncertainpy)
 [![Documentation Status](https://readthedocs.org/projects/uncertainpy/badge/?version=latest)](http://uncertainpy.readthedocs.io/en/latest/?badge=latest)
-[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/simetenn/uncertainpy/master?filepath=examples%2Fcoffee_cup%2Fcoffee_cup.ipynb)
+<!-- [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/simetenn/uncertainpy/master?filepath=examples%2Fcoffee_cup%2Fcoffee_cup.ipynb) -->
 
 
 <img src="https://github.com/simetenn/uncertainpy/blob/master/logo/uncertainpy.png" width="700">
