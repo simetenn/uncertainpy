@@ -322,6 +322,9 @@ class Data(collections.MutableMapping):
         Name of the model.
     incomplete : list
         List of all model/features that have missing model/feature evaluations.
+    irregular_not_interpolated : list
+        List of all model/features that were irregular, but not set to be
+        interpolated.
     method : str
         A string that describes the method used to perform the uncertainty
         quantification.
@@ -364,7 +367,7 @@ class Data(collections.MutableMapping):
 
         self.data_information = ["uncertain_parameters", "model_name",
                                  "incomplete", "method", "version", "seed",
-                                 "model_ignore"]
+                                 "model_ignore", "irregular_not_interpolated"]
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -374,6 +377,7 @@ class Data(collections.MutableMapping):
         self.uncertain_parameters = []
         self.model_name = ""
         self.incomplete = []
+        self.irregular_not_interpolated = []
         self.data = {}
         self.method = ""
         self.model_ignore = False
@@ -455,6 +459,7 @@ class Data(collections.MutableMapping):
         self.uncertain_parameters = []
         self.model_name = ""
         self.incomplete = []
+        self.irregular_not_interpolated = []
         self.data = {}
         self.method = ""
         self._seed = ""
@@ -628,10 +633,11 @@ class Data(collections.MutableMapping):
             f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
             f.attrs["model name"] = self.model_name
             f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
+            f.attrs["irregular and not interpolated"] =  [irregular.encode("utf8") for irregular in self.irregular_not_interpolated]
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
             f.attrs["seed"] = self.seed
-            f.attrs["model_ignore"] = self.model_ignore
+            f.attrs["model ignore"] = self.model_ignore
 
             for feature in self:
                 group = f.create_group(feature)
@@ -674,14 +680,32 @@ class Data(collections.MutableMapping):
 
             evaluations.append(sub_evaluations)
 
+
         with h5py.File(filename, "r") as f:
-            self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
-            self.model_name = str(f.attrs["model name"])
-            self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
-            self.method = str(f.attrs["method"])
-            self.version = str(f.attrs["version"])
-            self.seed = f.attrs["seed"]
-            self.model_ignore = f.attrs["model_ignore"]
+            if "uncertain parameters" in f.attrs:
+                self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
+
+            if "model name" in f.attrs:
+                self.model_name = str(f.attrs["model name"])
+
+            if "incomplete results" in f.attrs:
+                self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
+
+            if "irregular and not interpolated" in f.attrs:
+                self.irregular_not_interpolated =  [irregular.decode("utf8") for irregular in f.attrs["irregular and not interpolated"]]
+
+            if "method" in f.attrs:
+                self.method = str(f.attrs["method"])
+
+            if "version" in f.attrs:
+                self.version = str(f.attrs["version"])
+
+            if "seed" in f.attrs:
+                self.seed = f.attrs["seed"]
+
+            if "model ignore" in f.attrs:
+                self.model_ignore = f.attrs["model ignore"]
+
 
             for feature in f:
                 self.add_features(str(feature))
