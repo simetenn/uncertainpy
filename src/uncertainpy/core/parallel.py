@@ -207,14 +207,14 @@ class Parallel(Base):
 
         if contains_nan(result[feature]["values"]):
             interpolation = None
-            msg = "{} values contains np.nan or None values, unable to perform interpolation.".format(feature)
-            self.logger.warning(msg)
+            msg = "{} values contains np.nan or None values, unable to create interpolation.".format(feature)
+            self.logger.error(msg)
             # raise ValueError(msg)
 
         elif contains_nan(result[feature]["time"]):
             interpolation = None
-            msg = "{}: time contains np.nan or None values, unable to perform interpolation.".format(feature)
-            self.logger.warning(msg)
+            msg = "{}: time contains np.nan or None values, unable to create interpolation.".format(feature)
+            self.logger.error(msg)
             # raise ValueError(msg)
 
         else:
