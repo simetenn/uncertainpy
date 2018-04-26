@@ -213,6 +213,7 @@ class TestData(unittest.TestCase):
         self.data.seed = 10
         self.data.incomplete = ["a", "b"]
         self.data.model_ignore = True
+        self.data.irregular_not_interpolated = ["feature1", "feature2"]
 
         self.data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
 
@@ -258,6 +259,7 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
         self.assertEqual(self.data.incomplete, ["a", "b"])
+        self.assertEqual(self.data.irregular_not_interpolated, ["feature1", "feature2"])
 
         self.assertEqual(self.data.model_name, "TestingModel1d")
         self.assertEqual(self.data.method, "mock")
@@ -314,13 +316,37 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
         self.assertEqual(self.data.incomplete, ["a", "b"])
+        self.assertEqual(self.data.irregular_not_interpolated, ["feature1", "feature2"])
 
         self.assertEqual(self.data.model_name, "TestingModel1d")
         self.assertEqual(self.data.method, "mock")
         self.assertEqual(self.data.seed, 10)
+        self.assertTrue(np.array_equal(self.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
+        self.assertTrue(np.array_equal(self.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
+
+
+
+    def test_load_missing(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock_missing")
+
+        self.data.load(compare_file)
+
+        for statistical_metric in self.statistical_metrics:
+            self.assertTrue(np.array_equal(self.data["feature1d"][statistical_metric], [1., 2.]))
+            self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric], [3., 4.]))
+
+        self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
+        self.assertEqual(self.data.incomplete, [])
+        self.assertEqual(self.data.irregular_not_interpolated, ["feature1", "feature2"])
+
+        self.assertEqual(self.data.model_name, "TestingModel1d")
+        self.assertEqual(self.data.method, "mock")
+        self.assertEqual(self.data.seed, "")
 
         self.assertTrue(np.array_equal(self.data["TestingModel1d"]["labels"], ["xlabel", "ylabel"]))
         self.assertTrue(np.array_equal(self.data["feature1d"]["labels"], ["xlabel", "ylabel"]))
+
 
 
     def test_load_empty(self):
