@@ -322,7 +322,7 @@ class Data(collections.MutableMapping):
         Name of the model.
     incomplete : list
         List of all model/features that have missing model/feature evaluations.
-    irregular_not_interpolated : list
+    error : list
         List of all model/features that were irregular, but not set to be
         interpolated.
     method : str
@@ -367,7 +367,7 @@ class Data(collections.MutableMapping):
 
         self.data_information = ["uncertain_parameters", "model_name",
                                  "incomplete", "method", "version", "seed",
-                                 "model_ignore", "irregular_not_interpolated"]
+                                 "model_ignore", "error"]
 
         self.logger = create_logger(verbose_level,
                                     verbose_filename,
@@ -377,7 +377,7 @@ class Data(collections.MutableMapping):
         self.uncertain_parameters = []
         self.model_name = ""
         self.incomplete = []
-        self.irregular_not_interpolated = []
+        self.error = []
         self.data = {}
         self.method = ""
         self.model_ignore = False
@@ -459,7 +459,7 @@ class Data(collections.MutableMapping):
         self.uncertain_parameters = []
         self.model_name = ""
         self.incomplete = []
-        self.irregular_not_interpolated = []
+        self.error = []
         self.data = {}
         self.method = ""
         self._seed = ""
@@ -553,14 +553,18 @@ class Data(collections.MutableMapping):
 
     def __iter__(self):
         """
-        Iterate over each feature/model.
+        Iterate over each feature/model that has not errored.
 
         Yields
         ------
         str
             Name of feature/model.
         """
-        return iter(self.data)
+        for d in self.data:
+            if d not in self.error:
+                yield d
+
+        # return iter(self.data)
 
 
     def __delitem__(self, feature):
@@ -633,7 +637,7 @@ class Data(collections.MutableMapping):
             f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
             f.attrs["model name"] = self.model_name
             f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
-            f.attrs["irregular and not interpolated"] =  [irregular.encode("utf8") for irregular in self.irregular_not_interpolated]
+            f.attrs["error"] =  [irregular.encode("utf8") for irregular in self.error]
             f.attrs["method"] = self.method
             f.attrs["version"] = self.version
             f.attrs["seed"] = self.seed
@@ -691,8 +695,8 @@ class Data(collections.MutableMapping):
             if "incomplete results" in f.attrs:
                 self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
 
-            if "irregular and not interpolated" in f.attrs:
-                self.irregular_not_interpolated =  [irregular.decode("utf8") for irregular in f.attrs["irregular and not interpolated"]]
+            if "error" in f.attrs:
+                self.error =  [irregular.decode("utf8") for irregular in f.attrs["error"]]
 
             if "method" in f.attrs:
                 self.method = str(f.attrs["method"])

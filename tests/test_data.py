@@ -213,7 +213,7 @@ class TestData(unittest.TestCase):
         self.data.seed = 10
         self.data.incomplete = ["a", "b"]
         self.data.model_ignore = True
-        self.data.irregular_not_interpolated = ["feature1", "feature2"]
+        self.data.error = ["feature1", "feature2"]
 
         self.data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
 
@@ -259,7 +259,7 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
         self.assertEqual(self.data.incomplete, ["a", "b"])
-        self.assertEqual(self.data.irregular_not_interpolated, ["feature1", "feature2"])
+        self.assertEqual(self.data.error, ["feature1", "feature2"])
 
         self.assertEqual(self.data.model_name, "TestingModel1d")
         self.assertEqual(self.data.method, "mock")
@@ -316,7 +316,7 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
         self.assertEqual(self.data.incomplete, ["a", "b"])
-        self.assertEqual(self.data.irregular_not_interpolated, ["feature1", "feature2"])
+        self.assertEqual(self.data.error, ["feature1", "feature2"])
 
         self.assertEqual(self.data.model_name, "TestingModel1d")
         self.assertEqual(self.data.method, "mock")
@@ -338,7 +338,7 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(self.data.uncertain_parameters, ["a", "b"])
         self.assertEqual(self.data.incomplete, [])
-        self.assertEqual(self.data.irregular_not_interpolated, ["feature1", "feature2"])
+        self.assertEqual(self.data.error, ["feature1", "feature2"])
 
         self.assertEqual(self.data.model_name, "TestingModel1d")
         self.assertEqual(self.data.method, "mock")
@@ -408,6 +408,30 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(result, ["test1", "test2"])
 
+
+
+    def test_iter_error(self):
+        self.data.data["test1"] = 1
+        self.data.data["test2"] = 2
+
+        self.data.error = ["test2"]
+        result = []
+        for feature in self.data:
+            result.append(feature)
+
+        self.assertEqual(result, ["test1"])
+
+
+    def test_iter_error_all(self):
+        self.data.data["test1"] = 1
+        self.data.data["test2"] = 2
+
+        self.data.error = ["test1", "test2"]
+        result = []
+        for feature in self.data:
+            result.append(feature)
+
+        self.assertEqual(result, [])
 
 
     def test_len(self):
