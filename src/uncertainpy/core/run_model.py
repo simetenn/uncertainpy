@@ -180,6 +180,9 @@ class RunModel(ParameterBase):
         return time, interpolated_results
 
 
+
+
+
     def results_to_data(self, results):
         """
         Store `results` in a Data object.
@@ -246,16 +249,32 @@ class RunModel(ParameterBase):
 
         data.model_name = self.model.name
 
+        def add_results(results, data, feature):
+            data[feature].time = []
+            data[feature].evaluations = []
+
+            for result in results:
+                data[feature].evaluations.append(result[feature]["values"])
+                data[feature].time.append(result[feature]["time"])
+
         # results = self.regularize_nan_results(results)
 
         # Check if features are irregular without being specified as a interpolate
         # TODO if the feature is irregular, perform the complete interpolation here instead
-        for feature in data:
-            if (feature == self.model.name and not (self.model.ignore or self.model.interpolate)) \
-                or (feature != self.model.name and feature not in self.features.interpolate):
-                    if not self.is_regular(results, feature):
-                        raise ValueError("{}: The number of points varies between evaluations.".format(feature)
-                                         + " Try setting interpolate=True in {}".format(feature))
+        # for feature in data:
+        #     if (feature == self.model.name and not (self.model.ignore or self.model.interpolate)) \
+        #         or (feature != self.model.name and feature not in self.features.interpolate):
+        #             if not self.is_regular(results, feature):
+        #                 data.error.append(feature)
+        #                 data[feature].time = []
+        #                 data[feature].evaluations = []
+
+        #                 for result in results:
+        #                     data[feature].evaluations.append(result[feature]["values"])
+        #                     data[feature].time.append(result[feature]["time"])
+
+                        # raise ValueError("{}: The number of points varies between evaluations.".format(feature)
+                        #                  + " Try setting interpolate".format(feature))
 
 
         # Store all results in data, interpolate as needed
@@ -266,8 +285,12 @@ class RunModel(ParameterBase):
                     (feature == self.model.name and self.model.interpolate and not self.model.ignore):
                 # TODO implement interpolation of >= 2d data, part2
                 if np.ndim(results[0][feature]["values"]) >= 2:
-                    raise NotImplementedError("Feature: {feature},".format(feature=feature)
-                                              + " no support for >= 2D interpolation")
+                    # raise NotImplementedError("Feature: {feature},".format(feature=feature)
+                    #                           + " no support for >= 2D interpolation")
+                    self.logger.error("{feature}:".format(feature=feature)
+                                      + " no support for >= 2D interpolation implemented")
+
+                    add_results(results, data, feature)
 
 
                 elif np.ndim(results[0][feature]["values"]) == 1:
@@ -276,8 +299,8 @@ class RunModel(ParameterBase):
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
                 elif np.ndim(results[0][feature]["values"]) == 0:
-                    self.logger.warning("{feature} ".format(feature=feature) +
-                                        "gives a 0D result. No interpolation performed")
+                    self.logger.warning("{feature}: ".format(feature=feature) +
+                                        "returns a 0D result. No interpolation is performed.")
 
                     data[feature].time = results[0][feature]["time"]
 
@@ -287,20 +310,39 @@ class RunModel(ParameterBase):
 
 
             elif feature == self.model.name and self.model.ignore:
-                data[feature].time = []
-                data[feature].evaluations = []
-
-                for result in results:
-                    data[feature].evaluations.append(result[feature]["values"])
-                    data[feature].time.append(result[feature]["time"])
+                add_results(results, data, feature)
 
             else:
-                # Store data from results in a Data object
-                data[feature].time = results[0][feature]["time"]
+                # Check if features are irregular without being specified as a interpolate
+                # TODO if the feature is irregular, perform the complete interpolation here instead
+                if not self.is_regular(results, feature):
+                    data.error.append(feature)
 
-                data[feature].evaluations = []
-                for result in results:
-                    data[feature].evaluations.append(result[feature]["values"])
+                    add_results(results, data, feature)
+
+                    if feature == self.model.name:
+                        msg = "{}: The number of points varies between evaluations. ".format(feature) + \
+                              "Make sure {} returns the same number of points with different parameters, ".format(feature) + \
+                              "implement Model.postprocess, or try to set interpolate=True."
+                    else:
+                        msg = "{}: The number of points varies between evaluations. ".format(feature) + \
+                              "Make sure {} returns the same number of points, ".format(feature) + \
+                              "or try add {} to interpolate=[].".format(feature)
+
+                    self.logger.error(msg)
+
+                    # raise ValueError("{}: The number of points varies between evaluations.".format(feature)
+                    #                  + " Try setting interpolate".format(feature))
+
+
+                else:
+                    # Store data from results in a Data object
+                    data[feature].time = results[0][feature]["time"]
+
+                    data[feature].evaluations = []
+                    for result in results:
+                        data[feature].evaluations.append(result[feature]["values"])
+
 
         # # ensure all results are arrays
         # for feature in data:

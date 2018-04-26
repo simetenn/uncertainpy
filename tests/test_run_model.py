@@ -457,9 +457,16 @@ class TestRunModel(unittest.TestCase):
                                        np.arange(0, 15) + 5))
 
 
-    def test_results_to_data_model_1d_spiketrain_no_ignore(self):
+    def test_results_to_data_model_adaptive_no_interpolate_no_ignore(self):
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "feature_interpolate"],
+                                   interpolate="feature_interpolate")
+
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=False),
                                  parameters=self.parameters,
+                                 features=features,
                                  verbose_level="warning")
 
         self.runmodel.model.interpolate = False
@@ -468,8 +475,41 @@ class TestRunModel(unittest.TestCase):
 
         results[0]["TestingModelAdaptive"]["values"] = [[], [1, 2]]
 
-        with self.assertRaises(ValueError):
-            data = self.runmodel.results_to_data(results)
+
+        data = self.runmodel.results_to_data(results)
+        self.assertEqual(data.error, ["TestingModelAdaptive"])
+
+        self.assertIn("TestingModelAdaptive", data)
+        self.assertEqual(data["TestingModelAdaptive"].evaluations[0],
+                        [[], [1, 2]])
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].time[0],
+                                       np.arange(0, 11)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].time[1],
+                                       np.arange(0, 13)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].time[2],
+                                       np.arange(0, 15)))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[0],
+                                       np.arange(0, 11)) + 1)
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[1],
+                                       np.arange(0, 13) + 3))
+        self.assertTrue(np.array_equal(data["TestingModelAdaptive"].evaluations[2],
+                                       np.arange(0, 15) + 5))
+
+
+        self.assert_feature_0d(data)
+        self.assert_feature_1d(data)
+        self.assert_feature_2d(data)
+
+        self.assertIn("feature_interpolate", data)
+
+        self.assertTrue(np.array_equal(data["feature_interpolate"]["time"],
+                                       np.arange(0, 15)))
+        self.assertTrue(np.allclose(data["feature_interpolate"].evaluations[0],
+                                    np.arange(0, 15) + 1))
+        self.assertTrue(np.allclose(data["feature_interpolate"].evaluations[1],
+                                    np.arange(0, 15) + 3))
+        self.assertTrue(np.allclose(data["feature_interpolate"].evaluations[2],
+                                    np.arange(0, 15) + 5))
 
 
     def test_results_to_data_model_1d_spiketrain_ignore(self):
