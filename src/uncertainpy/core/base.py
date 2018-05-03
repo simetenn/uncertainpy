@@ -1,9 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ..utils import create_logger
+from ..utils import create_logger, load_config
 from ..features import Features
 from ..models import Model
 from ..parameters import Parameters
+
+
+
 
 class Base(object):
     """
@@ -20,14 +23,14 @@ class Base(object):
         If None, no features are calculated.
         If list of feature functions, all listed features will be calculated.
         Default is None.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is ``"info"``.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -47,18 +50,19 @@ class Base(object):
     def __init__(self,
                  model=None,
                  features=None,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename=""):
 
         self._model = None
         self._features = None
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
-
         self.features = features
         self.model = model
+
+        self.logger = create_logger(logger_level,
+                                    __name__ + "." + self.__class__.__name__,
+                                    logger_config_filename)
+
 
 
 
@@ -154,13 +158,14 @@ class ParameterBase(Base):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -184,16 +189,20 @@ class ParameterBase(Base):
                  model=None,
                  parameters=None,
                  features=None,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename=""):
 
         super(ParameterBase, self).__init__(model=model,
                                             features=features,
-                                            verbose_level=verbose_level,
-                                            verbose_filename=verbose_filename)
+                                            logger_level=logger_level,
+                                            logger_config_filename=logger_config_filename)
 
         self._parameters = None
         self.parameters = parameters
+
+        # self.logger = create_logger(logger_level,
+        #                             __name__ + "." + self.__class__.__name__,
+        #                             logger_config_filename)
 
 
     @property

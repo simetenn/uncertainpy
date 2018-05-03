@@ -68,12 +68,12 @@ class SpikingFeatures(GeneralSpikingFeatures):
         raises a ValueError. If False the simulation start time is used
         as ``"stimulus_start"`` and the simulation end time is used for
         ``"stimulus_end"``. Default is True.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
         No logging to screen if a filename is given.
         Default is None.
 
@@ -130,8 +130,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  extended_spikes=False,
                  labels={},
                  strict=True,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Spiking features require: scipy")
@@ -151,8 +151,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                               threshold=threshold,
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels,
-                                              verbose_level=verbose_level,
-                                              verbose_filename=verbose_filename)
+                                              logger_level=logger_level,
+                                              logger_config_filename=logger_config_filename)
         self.labels = labels
         self.strict = strict
 

@@ -19,7 +19,7 @@ def generate_plot_uncertainty():
     data_file = "TestingModel1d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -30,7 +30,7 @@ def generate_plots_plot_uncertainty_no_sensitivity():
     data_file = "TestingModel1d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -41,7 +41,7 @@ def generate_plots_plot_uncertainty_sobol_total():
     data_file = "TestingModel1d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -53,7 +53,7 @@ def generate_plots_plot_uncertainty_single():
 
     plot = PlotUncertainty(folder=os.path.join(output_test_dir,
                                                "TestingModel1d_single-parameter-a"),
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -63,7 +63,7 @@ def generate_plots_plot_uncertainty_single():
 
     plot = PlotUncertainty(folder=os.path.join(output_test_dir,
                                                "TestingModel1d_single-parameter-b"),
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -75,7 +75,7 @@ def generate_simulator_plot_0d():
     data_file = "TestingModel0d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -86,7 +86,7 @@ def generate_simulator_plot_1d():
     data_file = "TestingModel1d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 
@@ -96,7 +96,7 @@ def generate_simulator_plot_2d():
     data_file = "TestingModel2d.h5"
 
     plot = PlotUncertainty(folder=output_test_dir,
-                           verbose_level="error")
+                           logger_level="error")
 
     plot.load(os.path.join(test_data_dir, data_file))
 

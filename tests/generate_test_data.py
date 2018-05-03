@@ -31,7 +31,7 @@ def generate_data_polynomial_chaos():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                     features=features,
                                     parameters=parameters,
-                                    verbose_level="error")
+                                    logger_level="error")
 
 
     test.polynomial_chaos(data_folder=test_data_dir,
@@ -56,7 +56,7 @@ def generate_data_PC_spectral():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
     test.polynomial_chaos(method="spectral",
@@ -80,7 +80,7 @@ def generate_data_PC_model_function():  # pragma: no cover
     test = un.UncertaintyQuantification(model_function,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
     test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
@@ -103,7 +103,7 @@ def generate_data_PC_0D():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
     test.polynomial_chaos(data_folder=test_data_dir,
@@ -126,7 +126,7 @@ def generate_data_PC_2D():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
     test.polynomial_chaos(data_folder=test_data_dir,
@@ -151,7 +151,7 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
     test.polynomial_chaos(rosenblatt=True,
@@ -179,7 +179,7 @@ def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
     test.polynomial_chaos(rosenblatt=True,
@@ -207,7 +207,7 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
 
@@ -232,7 +232,7 @@ def generate_data_monte_carlo():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
     test.monte_carlo(filename="TestingModel1d_MC",
                      data_folder=test_data_dir,
@@ -258,7 +258,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
     test = un.UncertaintyQuantification(model,
                                         features=features,
                                         parameters=parameters,
-                                        verbose_level="error")
+                                        logger_level="error")
 
 
     test.monte_carlo_single(filename="TestingModel1d_MC",

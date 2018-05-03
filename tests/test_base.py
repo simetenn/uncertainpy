@@ -27,8 +27,8 @@ class TestBase(unittest.TestCase):
     def test_init(self):
         base = Base(model=model_function,
                     features=model_function,
-                    verbose_level="warning",
-                    verbose_filename=self.filename)
+                    logger_level="warning",
+                    logger_config_filename=self.filename)
 
         self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)

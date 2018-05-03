@@ -41,13 +41,14 @@ class RunModel(ParameterBase):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
     CPUs : int, optional
         The number of CPUs to use when calculating the model and features.
         Default is number of CPUs on the computer (multiprocess.cpu_count()).
@@ -78,21 +79,23 @@ class RunModel(ParameterBase):
                  model,
                  parameters,
                  features=None,
-                 verbose_level="info",
-                 verbose_filename=None,
+                 logger_level="info",
+                 logger_config_filename="",
                  CPUs=mp.cpu_count()):
-
 
         self._parallel = Parallel(model=model,
                                   features=features,
-                                  verbose_level=verbose_level,
-                                  verbose_filename=verbose_filename)
+                                  logger_level=logger_level,
+                                  logger_config_filename=logger_config_filename)
 
         super(RunModel, self).__init__(model=model,
                                        parameters=parameters,
                                        features=features,
-                                       verbose_level=verbose_level,
-                                       verbose_filename=verbose_filename)
+                                       logger_level=logger_level,
+                                       logger_config_filename=logger_config_filename)
+
+        self.logger_level = logger_level
+        self.logger_config_filename = logger_config_filename
 
         self.CPUs = CPUs
 
@@ -235,8 +238,9 @@ class RunModel(ParameterBase):
         --------
         uncertainpy.Data
         """
-
-        data = Data()
+        self.logger.info("In run_model results_to_data")
+        data = Data(logger_level=self.logger_level,
+                    logger_config_filename=self.logger_config_filename)
 
         # Add features and labels
         for feature in results[0]:

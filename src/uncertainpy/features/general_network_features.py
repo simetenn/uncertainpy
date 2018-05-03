@@ -61,12 +61,12 @@ class GeneralNetworkFeatures(Features):
     units : {None, Quantities unit}, optional
         The Quantities unit of the time in the model. If None, ms is used.
         The default is None.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
         No logging to screen if a filename is given.
         Default is None.
 
@@ -113,8 +113,8 @@ class GeneralNetworkFeatures(Features):
                  interpolate=None,
                  labels={},
                  units=None,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Network features require: neo, quantities")
@@ -123,8 +123,8 @@ class GeneralNetworkFeatures(Features):
                                                      features_to_run=features_to_run,
                                                      interpolate=interpolate,
                                                      labels=labels,
-                                                     verbose_level=verbose_level,
-                                                     verbose_filename=verbose_filename)
+                                                     logger_level=logger_level,
+                                                     logger_config_filename=logger_config_filename)
         if units is None:
             self.units = pq.ms
         else:

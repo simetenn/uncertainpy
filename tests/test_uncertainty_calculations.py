@@ -46,7 +46,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
@@ -64,20 +64,20 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
     def test_intit_features(self):
         uncertainty_calculations = UncertaintyCalculations(model=self.model,
-                                                           verbose_level="error")
+                                                           logger_level="error")
         self.assertIsInstance(uncertainty_calculations.features, Features)
 
         uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                            parameters=None,
                                                            features=TestingFeatures(),
-                                                           verbose_level="error")
+                                                           logger_level="error")
         self.assertIsInstance(uncertainty_calculations.features, TestingFeatures)
 
 
     def test_set_model(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
         self.uncertainty_calculations.model = self.model
@@ -89,7 +89,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_features(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error")
+                                                                logger_level="error")
         self.uncertainty_calculations.features = TestingFeatures()
 
         self.assertIsInstance(self.uncertainty_calculations.features, TestingFeatures)
@@ -169,7 +169,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_parameters(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error")
+                                                                logger_level="error")
         self.uncertainty_calculations.parameters = Parameters()
 
         self.assertIsInstance(self.uncertainty_calculations.parameters, Parameters)
@@ -179,7 +179,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_parameter_list(self):
         uncertainty_calculations = UncertaintyCalculations(model=None,
                                                            parameters=None,
-                                                           verbose_level="error")
+                                                           logger_level="error")
 
         uncertainty_calculations.parameters = self.parameter_list
 
@@ -191,7 +191,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_parameter_error(self):
         uncertainty_calculations = UncertaintyCalculations(model=None,
                                                            parameters=None,
-                                                           verbose_level="error")
+                                                           logger_level="error")
 
         with self.assertRaises(TypeError):
             uncertainty_calculations.parameters = 2
@@ -200,7 +200,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_set_model_function(self):
         self.uncertainty_calculations = UncertaintyCalculations(model=None,
                                                                 parameters=None,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         self.uncertainty_calculations.model = model_function
 
@@ -387,8 +387,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="warning",
-                                                                verbose_filename=logfile)
+                                                                logger_level="warning",
+                                                                logger_config_filename=logfile)
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
@@ -602,7 +602,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         with self.assertRaises(ValueError):
             result = self.uncertainty_calculations.convert_uncertain_parameters(["a"])
@@ -625,7 +625,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
         result = self.uncertainty_calculations.convert_uncertain_parameters(None)
@@ -650,7 +650,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
         result = self.uncertainty_calculations.convert_uncertain_parameters(["a", "b"])
@@ -756,7 +756,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="debug")
+                                                                logger_level="debug")
 
         with self.assertRaises(ValueError):
             self.uncertainty_calculations.create_PCE_collocation()
@@ -836,7 +836,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="debug")
+                                                                logger_level="debug")
 
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_spectral()
         self.assertEqual(list(U_hat.keys()), ["feature1d", "feature2d"])
@@ -961,7 +961,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         data = Data()
 
@@ -1182,7 +1182,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_collocation()
 
@@ -1313,7 +1313,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
@@ -1355,7 +1355,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
 
@@ -1383,7 +1383,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
 
@@ -1413,7 +1413,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
@@ -1442,7 +1442,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
@@ -1475,7 +1475,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1,
                                                          allow_incomplete=False)
@@ -1508,7 +1508,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1,
                                                          allow_incomplete=True)
@@ -1544,7 +1544,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         U_hat, distribution, data =  \
             self.uncertainty_calculations.create_PCE_collocation(["a", "b"],
@@ -1559,7 +1559,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         # self.uncertainty_calculations = UncertaintyCalculations(model,
         #                                                         parameters=parameters,
         #                                                         features=features,
-        #                                                         verbose_level="error",
+        #                                                         logger_level="error",
         #                                                         seed=self.seed,
         #                                                         allow_incomplete=True)
 
@@ -1588,7 +1588,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         U_hat, distribution, data = \
             self.uncertainty_calculations.create_PCE_spectral(["a", "b"],
@@ -1613,7 +1613,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         U_hat, distribution, data = \
             self.uncertainty_calculations.create_PCE_spectral(["a", "b"])
@@ -1638,7 +1638,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         U_hat, distribution, data = \
             self.uncertainty_calculations.create_PCE_spectral(["a", "b"],
@@ -1664,7 +1664,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                verbose_level="error")
+                                                                logger_level="error")
 
         U_hat, distribution, data = \
             self.uncertainty_calculations.create_PCE_spectral(["a", "b"],

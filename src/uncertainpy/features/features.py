@@ -49,14 +49,14 @@ class Features(object):
                           "2d_feature": ["x-axis", "y-axis", "z-axis"]
                          }
 
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -83,8 +83,8 @@ class Features(object):
                  interpolate=None,
                  labels={},
                  preprocess=None,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename=""):
 
         self.utility_methods = ["calculate_feature",
                                 "calculate_features",
@@ -116,9 +116,9 @@ class Features(object):
         self.labels = labels
         self.features_to_run = features_to_run
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
+        self.logger = create_logger(logger_level,
+                                    __name__ + "." + self.__class__.__name__,
+                                    logger_config_filename)
 
 
     @property

@@ -30,7 +30,7 @@ class TestPlotUncertainpy(TestCasePlot):
         os.makedirs(self.output_test_dir)
 
         self.plot = PlotUncertainty(folder=self.output_test_dir,
-                                    verbose_level="error",
+                                    logger_level="error",
                                     figureformat=self.figureformat)
 
         self.data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
@@ -349,7 +349,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
     def test_init(self):
         plot = PlotUncertainty(folder=self.output_test_dir,
-                               verbose_level="error")
+                               logger_level="error")
 
         self.assertIsInstance(plot, PlotUncertainty)
 

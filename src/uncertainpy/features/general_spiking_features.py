@@ -57,12 +57,12 @@ class GeneralSpikingFeatures(Features):
                           "2d_feature": ["x-axis", "y-axis", "z-axis"]
                          }
 
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
         No logging to screen if a filename is given.
         Default is None.
 
@@ -99,8 +99,8 @@ class GeneralSpikingFeatures(Features):
                  threshold=-30,
                  extended_spikes=False,
                  labels={},
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename="uncertainpy.log"):
 
         new_utility_methods = ["calculate_spikes"]
 
@@ -109,8 +109,8 @@ class GeneralSpikingFeatures(Features):
                                                      interpolate=interpolate,
                                                      new_utility_methods=new_utility_methods,
                                                      labels=labels,
-                                                     verbose_level=verbose_level,
-                                                     verbose_filename=verbose_filename)
+                                                     logger_level=logger_level,
+                                                     logger_config_filename=logger_config_filename)
 
         self.spikes = None
 

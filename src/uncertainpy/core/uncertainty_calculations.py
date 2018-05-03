@@ -54,13 +54,14 @@ class UncertaintyCalculations(ParameterBase):
     CPUs : int, optional
         The number of CPUs used when calculating the model and features.
         By default all CPUs are used.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -91,14 +92,14 @@ class UncertaintyCalculations(ParameterBase):
                  create_PCE_custom=None,
                  custom_uncertainty_quantification=None,
                  CPUs=mp.cpu_count(),
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename="uncertainpy.log"):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
                                  features=features,
-                                 verbose_level=verbose_level,
-                                 verbose_filename=verbose_filename,
+                                 logger_level=logger_level,
+                                 logger_config_filename=logger_config_filename,
                                  CPUs=CPUs)
 
         if create_PCE_custom is not None:
@@ -110,8 +111,8 @@ class UncertaintyCalculations(ParameterBase):
         super(UncertaintyCalculations, self).__init__(parameters=parameters,
                                                       model=model,
                                                       features=features,
-                                                      verbose_level=verbose_level,
-                                                      verbose_filename=verbose_filename)
+                                                      logger_level=logger_level,
+                                                      logger_config_filename=logger_config_filename)
 
     @ParameterBase.features.setter
     def features(self, new_features):

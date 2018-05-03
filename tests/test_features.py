@@ -19,7 +19,7 @@ class TestFeatures(unittest.TestCase):
         self.values = np.arange(0, 10) + 1
         self.info = {"info": 1}
 
-        self.features = Features(verbose_level="error")
+        self.features = Features(logger_level="error")
 
     def test_initNone(self):
         features = Features()
@@ -298,7 +298,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                    "average_AP_width": ["Time (ms)"]
                                    }
 
-        self.features = SpikingFeatures(verbose_level="error")
+        self.features = SpikingFeatures(logger_level="error")
 
         self.info = {"stimulus_start": self.t[0], "stimulus_end": self.t[-1]}
 
@@ -471,7 +471,7 @@ class TestEfelFeatures(unittest.TestCase):
 
         self.implemented_features = efel.getFeatureNames()
 
-        self.features = EfelFeatures(verbose_level="error")
+        self.features = EfelFeatures(logger_level="error")
 
         self.info = {}
         self.info["stimulus_start"] = self.time[0]
@@ -492,7 +492,7 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_features_to_run_all(self):
-        features = EfelFeatures(features_to_run="all", verbose_level="error")
+        features = EfelFeatures(features_to_run="all", logger_level="error")
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
@@ -529,7 +529,7 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_spikecount_no_strict(self):
-        self.features = EfelFeatures(strict=False, verbose_level="error")
+        self.features = EfelFeatures(strict=False, logger_level="error")
 
         time, values = self.features.Spikecount(self.time, self.values, {})
         self.assertIsNone(time)

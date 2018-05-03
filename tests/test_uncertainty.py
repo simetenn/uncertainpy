@@ -50,7 +50,7 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(self.model,
                                                      parameters=self.parameters,
                                                      features=features,
-                                                     verbose_level="error")
+                                                     logger_level="error")
 
         self.figureformat = ".png"
         self.nr_mc_samples = 10**1
@@ -84,13 +84,13 @@ class TestUncertainty(TestCasePlot):
     def test_init_features(self):
         uncertainty = UncertaintyQuantification(self.model,
                                                 self.parameters,
-                                                verbose_level="error")
+                                                logger_level="error")
         self.assertIsInstance(uncertainty.features, Features)
 
         uncertainty = UncertaintyQuantification(self.model,
                                                 self.parameters,
                                                 features=TestingFeatures(),
-                                                verbose_level="error")
+                                                logger_level="error")
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
@@ -107,7 +107,7 @@ class TestUncertainty(TestCasePlot):
             self.parameters,
             create_PCE_custom=pce,
             custom_uncertainty_quantification=uq,
-            verbose_level="error"
+            logger_level="error"
         )
 
         result = uncertainty.uncertainty_calculations.create_PCE_custom()
@@ -126,7 +126,7 @@ class TestUncertainty(TestCasePlot):
             self.model,
             self.parameters,
             uncertainty_calculations=TempUncertaintyCalculations(self.model),
-            verbose_level="error"
+            logger_level="error"
         )
 
         self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
@@ -135,7 +135,7 @@ class TestUncertainty(TestCasePlot):
     def test_set_parameters(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                verbose_level="error")
+                                                logger_level="error")
         uncertainty.parameters = Parameters()
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -147,7 +147,7 @@ class TestUncertainty(TestCasePlot):
     def test_set_parameter_list(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                verbose_level="error")
+                                                logger_level="error")
         uncertainty.parameters = self.parameter_list
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -159,7 +159,7 @@ class TestUncertainty(TestCasePlot):
     def test_set_parameter_error(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                verbose_level="error")
+                                                logger_level="error")
         with self.assertRaises(TypeError):
             uncertainty.parameters = 2
 
@@ -167,7 +167,7 @@ class TestUncertainty(TestCasePlot):
     def test_set_features(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                verbose_level="error")
+                                                logger_level="error")
         uncertainty.features = TestingFeatures()
 
         self.assertIsInstance(uncertainty.features, TestingFeatures)
@@ -250,7 +250,7 @@ class TestUncertainty(TestCasePlot):
     def test_set_model(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                verbose_level="error")
+                                                logger_level="error")
         uncertainty.model = TestingModel1d()
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
@@ -262,7 +262,7 @@ class TestUncertainty(TestCasePlot):
     def test_set_model_function(self):
         uncertainty = UncertaintyQuantification(model=model_function,
                                                 parameters=None,
-                                                verbose_level="error")
+                                                logger_level="error")
 
         self.assertIsInstance(uncertainty.model, Model)
         self.assertIsInstance(uncertainty.uncertainty_calculations.model, Model)
@@ -300,7 +300,7 @@ class TestUncertainty(TestCasePlot):
             model=self.model,
             parameters=self.parameters,
             create_PCE_custom=create_PCE_custom,
-            verbose_level="error"
+            logger_level="error"
         )
 
         data = uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir, figure_folder=self.output_test_dir)
@@ -419,7 +419,7 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
-                                                 verbose_level="error")
+                                                 logger_level="error")
 
 
         self.uncertainty.polynomial_chaos(plot="condensed_first",
@@ -456,7 +456,7 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      features=features,
                                                      parameters=parameters,
-                                                     verbose_level="error")
+                                                     logger_level="error")
 
         self.uncertainty.polynomial_chaos_single(plot="condensed_first",
                                                  data_folder=self.output_test_dir,
@@ -492,7 +492,7 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
-                                                 verbose_level="error")
+                                                 logger_level="error")
 
 
         data_dict = self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
@@ -542,7 +542,7 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      parameters=parameters,
                                                      features=features,
-                                                     verbose_level="error")
+                                                     logger_level="error")
 
 
         data = self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
@@ -749,7 +749,7 @@ class TestUncertainty(TestCasePlot):
                                                      parameters=parameters,
                                                      features=features,
                                                      uncertainty_calculations=TestingUncertaintyCalculations(model),
-                                                     verbose_level="error")
+                                                     logger_level="error")
 
 
     def test_set_uncertainty_calculations(self):
@@ -766,7 +766,7 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      parameters=parameters,
                                                      features=features,
-                                                     verbose_level="error")
+                                                     logger_level="error")
 
         self.uncertainty.uncertainty_calculations = TestingUncertaintyCalculations()
 

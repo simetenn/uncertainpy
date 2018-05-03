@@ -60,12 +60,12 @@ class EfelFeatures(Features):
         as ``"stimulus_start"`` and the simulation end time is used for
         ``"stimulus_end"``. The decay_time_constant_after_stim feature becomes
         disabled with False. Default is True
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
         No logging to screen if a filename is given.
         Default is None.
 
@@ -163,8 +163,8 @@ class EfelFeatures(Features):
                  interpolate=None,
                  labels={},
                  strict=True,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Efel features require: efel")
@@ -233,8 +233,8 @@ class EfelFeatures(Features):
                                            interpolate=interpolate,
                                            new_utility_methods=[],
                                            labels=implemented_labels,
-                                           verbose_level=verbose_level,
-                                           verbose_filename=verbose_filename)
+                                           logger_level=logger_level,
+                                           logger_config_filename=logger_config_filename)
 
         for feature_name in efel.getFeatureNames():
             self.add_features(efel_wrapper(feature_name))

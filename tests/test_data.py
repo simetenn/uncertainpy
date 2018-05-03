@@ -138,7 +138,7 @@ class TestData(unittest.TestCase):
         os.makedirs(self.output_test_dir)
 
 
-        self.data = Data(verbose_level="error")
+        self.data = Data(logger_level="error")
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                            "sobol_first", "sobol_first_sum",

@@ -41,13 +41,14 @@ class PlotUncertainty(object):
         The format to save the plots in. Given as ".xxx". All formats
         supported by Matplotlib are available.
         Default is ".png",
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -67,8 +68,8 @@ class PlotUncertainty(object):
                  filename=None,
                  folder="figures/",
                  figureformat=".png",
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename=""):
 
         self._folder = None
 
@@ -82,10 +83,13 @@ class PlotUncertainty(object):
         if filename is not None:
             self.load(filename)
 
+        self.logger_level = logger_level
+        self.logger_config_filename = logger_config_filename
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
+
+        self.logger = create_logger(logger_level,
+                                    __name__ + "." + self.__class__.__name__,
+                                    logger_config_filename)
 
 
 
@@ -98,7 +102,9 @@ class PlotUncertainty(object):
         filename : str
             Name of the file to load data from.
         """
-        self.data = Data(filename)
+        self.data = Data(filename,
+                         logger_level=self.logger_level,
+                         logger_config_filename=self.logger_config_filename)
 
 
     @property

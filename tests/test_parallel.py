@@ -36,7 +36,7 @@ class TestParallel(unittest.TestCase):
 
         self.parallel = Parallel(model=TestingModel1d(),
                                  features=self.features,
-                                 verbose_level="error")
+                                 logger_level="error")
 
         self.model_parameters = {"a": 0, "b": 1}
 

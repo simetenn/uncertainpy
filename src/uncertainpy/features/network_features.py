@@ -68,12 +68,12 @@ class NetworkFeatures(GeneralNetworkFeatures):
     covariance_bin_size : int
         The size of each bin in the ``covariance`` method.
         Default is 1.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
         No logging to screen if a filename is given.
         Default is None.
 
@@ -134,8 +134,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
                  isi_bin_size=1,
                  corrcoef_bin_size=1,
                  covariance_bin_size=1,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Network features require: elephant and quantities")

@@ -305,14 +305,14 @@ class Data(collections.MutableMapping):
     filename : str, optional
         Name of the file to load data from. If None, no data is loaded.
         Default is None.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -362,17 +362,17 @@ class Data(collections.MutableMapping):
     """
     def __init__(self,
                  filename=None,
-                 verbose_level="info",
-                 verbose_filename=None):
+                 logger_level="info",
+                 logger_config_filename=""):
 
         self.data_information = ["uncertain_parameters", "model_name",
                                  "incomplete", "method", "version", "seed",
                                  "model_ignore", "error"]
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
-                                    self.__class__.__name__)
 
+        self.logger = create_logger(logger_level,
+                                    __name__ + "." + self.__class__.__name__,
+                                    logger_config_filename)
 
         self.uncertain_parameters = []
         self.model_name = ""

@@ -55,13 +55,14 @@ class UncertaintyQuantification(ParameterBase):
     CPUs : int, optional
         The number of CPUs used when calculating the model and features.
         By default all CPUs are used.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
-        No logging to screen if set. Default is None.
+    logger_config_filename : {None, "", str}, optional
+        Name of the logger configuration yaml file. If "", the default logger
+        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
+        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -98,8 +99,8 @@ class UncertaintyQuantification(ParameterBase):
                  uncertainty_calculations=None,
                  create_PCE_custom=None,
                  custom_uncertainty_quantification=None,
-                 verbose_level="info",
-                 verbose_filename=None,
+                 logger_level="info",
+                 logger_config_filename="",
                  CPUs=mp.cpu_count()):
 
 
@@ -111,8 +112,8 @@ class UncertaintyQuantification(ParameterBase):
                 create_PCE_custom=create_PCE_custom,
                 custom_uncertainty_quantification=custom_uncertainty_quantification,
                 CPUs=CPUs,
-                verbose_level=verbose_level,
-                verbose_filename=verbose_filename
+                logger_level=logger_level,
+                logger_config_filename=logger_config_filename
             )
         else:
             self._uncertainty_calculations = uncertainty_calculations
@@ -120,20 +121,30 @@ class UncertaintyQuantification(ParameterBase):
         super(UncertaintyQuantification, self).__init__(parameters=parameters,
                                                         model=model,
                                                         features=features,
-                                                        verbose_level=verbose_level,
-                                                        verbose_filename=verbose_filename)
+                                                        logger_level=logger_level,
+                                                        logger_config_filename=logger_config_filename)
 
 
 
         self.data = None
 
-        self.logger = create_logger(verbose_level,
-                                    verbose_filename,
+        self.logger = create_logger(logger_level,
+                                    logger_config_filename,
                                     self.__class__.__name__)
 
         self.plotting = PlotUncertainty(folder=None,
-                                        verbose_level=verbose_level,
-                                        verbose_filename=verbose_filename)
+                                        logger_level=logger_level,
+                                        logger_config_filename=logger_config_filename)
+
+        # WIP: working with logger
+        # two tings to check:
+        # 1) try create a new logger last in each __init__, and asssign it to
+        #    self.logger. This should make sure that self.logger is the new logger.
+        #    use __name__ +"."+ self.__class__.__name__ as the name of each
+        # 2) make sure that only one file and stream handler are added to
+        #    all handlers. It might be that two filehandlers are added to both
+        #    parent and child handler, and teh message therefore are written to
+        #    file twice
 
 
     @ParameterBase.features.setter

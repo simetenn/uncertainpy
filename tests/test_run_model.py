@@ -39,7 +39,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
                                  features=self.features,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
 
     def tearDown(self):
@@ -48,7 +48,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_init(self):
-        RunModel(model=TestingModel1d(), parameters=self.parameters, verbose_level="warning")
+        RunModel(model=TestingModel1d(), parameters=self.parameters, logger_level="warning")
 
 
     def test_set_feature(self):
@@ -59,7 +59,7 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_model(self):
-        self.runmodel = RunModel(TestingModel2d(), None, verbose_level="warning")
+        self.runmodel = RunModel(TestingModel2d(), None, logger_level="warning")
         self.runmodel.model = TestingModel1d()
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
@@ -384,7 +384,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
                                  features=features,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -429,7 +429,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_model_1d_interpolate_ignore(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
         self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -467,7 +467,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=False),
                                  parameters=self.parameters,
                                  features=features,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
         self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -515,7 +515,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_model_1d_spiketrain_ignore(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
         self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -551,7 +551,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_model_1d_interpolate_ignore_and_interpolate(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
         self.runmodel.model.interpolate = True
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -737,7 +737,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
                                  features=features,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
 
 
@@ -774,7 +774,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
                                  features=features,
-                                 verbose_level="warning")
+                                 logger_level="warning")
 
 
 
