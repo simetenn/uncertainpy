@@ -93,7 +93,7 @@ class UncertaintyCalculations(ParameterBase):
                  custom_uncertainty_quantification=None,
                  CPUs=mp.cpu_count(),
                  logger_level="info",
-                 logger_config_filename="uncertainpy.log"):
+                 logger_config_filename=""):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,

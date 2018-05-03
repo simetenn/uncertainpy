@@ -135,7 +135,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                  corrcoef_bin_size=1,
                  covariance_bin_size=1,
                  logger_level="info",
-                 logger_config_filename="uncertainpy.log"):
+                 logger_config_filename=""):
 
         if not prerequisites:
             raise ImportError("Network features require: elephant and quantities")

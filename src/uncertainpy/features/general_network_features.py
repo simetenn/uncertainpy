@@ -114,7 +114,7 @@ class GeneralNetworkFeatures(Features):
                  labels={},
                  units=None,
                  logger_level="info",
-                 logger_config_filename="uncertainpy.log"):
+                 logger_config_filename=""):
 
         if not prerequisites:
             raise ImportError("Network features require: neo, quantities")

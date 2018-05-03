@@ -100,7 +100,7 @@ class GeneralSpikingFeatures(Features):
                  extended_spikes=False,
                  labels={},
                  logger_level="info",
-                 logger_config_filename="uncertainpy.log"):
+                 logger_config_filename=""):
 
         new_utility_methods = ["calculate_spikes"]
 

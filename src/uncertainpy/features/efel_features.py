@@ -164,7 +164,7 @@ class EfelFeatures(Features):
                  labels={},
                  strict=True,
                  logger_level="info",
-                 logger_config_filename="uncertainpy.log"):
+                 logger_config_filename=""):
 
         if not prerequisites:
             raise ImportError("Efel features require: efel")
