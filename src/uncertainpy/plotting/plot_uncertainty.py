@@ -13,7 +13,7 @@ from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 import seaborn as sns
 from ..data import Data
-from ..utils import create_logger
+from ..utils.logger import _create_module_logger
 
 
 # TODO compare plots in a grid of all plots,
@@ -86,10 +86,7 @@ class PlotUncertainty(object):
         self.logger_level = logger_level
         self.logger_config_filename = logger_config_filename
 
-
-        self.logger = create_logger(logger_level,
-                                    __name__ + "." + self.__class__.__name__,
-                                    logger_config_filename)
+        self.logger = _create_module_logger(self, logger_level, logger_config_filename)
 
 
 

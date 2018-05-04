@@ -1,19 +1,18 @@
 version : 1
-disable_existing_loggers: False
+disable_existing_loggers: True
 formatters:
   uncertainpy_formater:
     '()': uncertainpy.utils.MyFormatter
 handlers:
   tqdm:
-    '()': uncertainpy.utils.TqdmLoggingHandler
+    class: uncertainpy.utils.TqdmLoggingHandler
     formatter: uncertainpy_formater
-  file:
-    class: logging.FileHandler
+  multiproccess_file:
+    class: uncertainpy.utils.MultiprocessLoggingHandler
     formatter: uncertainpy_formater
     filename: uncertainpy.log
     mode: w
 loggers:
   uncertainpy:
-    level: INFO
-    handlers: [tqdm, file]
+    handlers: [tqdm, multiproccess_file]
     propagate: True

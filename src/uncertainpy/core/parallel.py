@@ -2,12 +2,14 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import traceback
 import warnings
+import logging
 
 import numpy as np
 import scipy.interpolate as scpi
 
 from .base import Base
 from ..utils.utility import none_to_nan, contains_nan, is_regular
+from ..utils.logger import _create_module_logger, get_logger
 
 class Parallel(Base):
     """
@@ -25,12 +27,12 @@ class Parallel(Base):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
-    verbose_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    verbose_filename : {None, str}, optional
-        Sets logging to a file with name `verbose_filename`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
         No logging to screen if a filename is given.
         Default is None.
 
@@ -47,6 +49,7 @@ class Parallel(Base):
     uncertainpy.models.Model
     uncertainpy.models.Model.run : Requirements for the model run function.
     """
+
     def create_interpolations(self, result):
         """
         Create an interpolation.
@@ -115,6 +118,8 @@ class Parallel(Base):
         approximation. For 1D results this is done with scipy:
         ``InterpolatedUnivariateSpline(time, U, k=3)``.
         """
+        logger = get_logger(self)
+
         for feature in result:
             if feature in self.features.interpolate or \
                 (feature == self.model.name and self.model.interpolate and not self.model.ignore):
@@ -130,10 +135,8 @@ class Parallel(Base):
 
 
                 if np.ndim(result[feature]["values"]) == 0:
-                        # raise AttributeError("{} is 0D,".format(feature)
-                        #                     + " interpolation makes no sense.")
-                        self.logger.warning("{feature} ".format(feature=feature) +
-                                            "gives a 0D result. No interpolation performed")
+                        logger.warning("{feature} ".format(feature=feature) +
+                                       "gives a 0D result. No interpolation performed")
 
 
                 elif np.ndim(result[feature]["values"]) == 1:
@@ -196,6 +199,9 @@ class Parallel(Base):
         The interpolation is performed using scipy:
         ``InterpolatedUnivariateSpline(time, values, k=3)``.
         """
+        logger = get_logger(self)
+
+        interpolation = None
         if np.ndim(result[feature]["values"]) != 1:
             raise ValueError("Cannot create 1D interpolation as the values of {} are not 1D".format(feature))
 
@@ -203,19 +209,13 @@ class Parallel(Base):
             raise ValueError("Cannot create 1D interpolation as the time of {} is not 1D".format(feature))
 
 
-        interpolation = None
-
         if contains_nan(result[feature]["values"]):
-            interpolation = None
-            msg = "{} values contains np.nan or None values, unable to create interpolation.".format(feature)
-            self.logger.error(msg)
-            # raise ValueError(msg)
+            msg = "{}: values contains np.nan or None values, unable to create 1D interpolation.".format(feature)
+            logger.warning(msg)
 
         elif contains_nan(result[feature]["time"]):
-            interpolation = None
-            msg = "{}: time contains np.nan or None values, unable to create interpolation.".format(feature)
-            self.logger.error(msg)
-            # raise ValueError(msg)
+            msg =  "{}: time contains np.nan or None values, unable to create 1D interpolation.".format(feature)
+            logger.warning(msg)
 
         else:
             try:
@@ -291,14 +291,16 @@ class Parallel(Base):
         uncertainpy.features.Features.preprocess : preprocessing model results before features are calculated
         uncertainpy.models.Model.postprocess : posteprocessing of model results
         """
+        # logger = get_logger(self)
+
         # Try-except to catch exceptions and print stack trace
         try:
+
             model_result = self.model.run(**model_parameters)
 
             self.model.validate_run(model_result)
 
             results = {}
-
 
             postprocess_result = self.model.postprocess(*model_result)
 
@@ -313,6 +315,16 @@ class Parallel(Base):
                                         "values": values_postprocess}
 
 
+        except Exception as error:
+            print("")
+            print("Caught exception when running/postprocessing model: {} in parallel:".format(self.model.name))
+            print("===================================================================")
+            traceback.print_exc()
+            print("===================================================================")
+            print("")
+            raise
+
+        try:
             # Calculate features from the model results
             feature_results = self.features.calculate_features(*model_result)
 
@@ -331,12 +343,12 @@ class Parallel(Base):
 
             return results
 
-
         except Exception as error:
-            # print("Caught exception in parallel run of model:")
-            # print("")
-            # traceback.print_exc()
-            # print("")
+            print("")
+            print("Caught exception when calculating/postprocessing features of model: {} in parallel:".format(self.model.name))
+            print("===================================================================")
+            traceback.print_exc()
+            print("===================================================================")
+            print("")
             raise
-
 

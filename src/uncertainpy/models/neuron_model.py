@@ -5,6 +5,7 @@ import os
 import numpy as np
 
 from .model import Model
+from ..utils.logger import _create_module_logger, get_logger
 
 
 class NeuronModel(Model):
@@ -40,6 +41,14 @@ class NeuronModel(Model):
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. The model results are still
         postprocessed if a postprocessing is implemented. Default is False.
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
+        No logging to screen if a filename is given.
+        Default is None.
     **kwargs :
         Additional key-value pairs added to info.
 
@@ -81,6 +90,8 @@ class NeuronModel(Model):
                  stimulus_start=None,
                  stimulus_end=None,
                  suppress_graphics=True,
+                 logger_level="info",
+                 logger_config_filename="",
                  **kwargs):
 
         super(NeuronModel, self).__init__(interpolate=interpolate,
@@ -106,6 +117,8 @@ class NeuronModel(Model):
 
         if name:
             self.name = name
+
+        _create_module_logger(self, logger_level, logger_config_filename)
 
 
 

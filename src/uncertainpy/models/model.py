@@ -3,6 +3,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import six
 import numpy as np
 
+from ..utils.logger import _create_module_logger, get_logger
+
 class Model(object):
     """
     Class for storing the model to perform uncertainty quantification and
@@ -34,6 +36,14 @@ class Model(object):
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. The model results are still
         postprocessed if a postprocessing is implemented. Default is False.
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
+        No logging to screen if a filename is given.
+        Default is None.
 
     Attributes
     ----------
@@ -66,7 +76,9 @@ class Model(object):
                  labels=[],
                  postprocess=None,
                  suppress_graphics=False,
-                 ignore=False):
+                 ignore=False,
+                 logger_level="info",
+                 logger_config_filename=""):
 
         self.interpolate = interpolate
         self.labels = labels
@@ -77,6 +89,8 @@ class Model(object):
             self.run = run
         else:
             self.name = self.__class__.__name__
+
+        _create_module_logger(self, logger_level, logger_config_filename)
 
         if postprocess is not None:
             self.postprocess = postprocess
@@ -199,7 +213,7 @@ class Model(object):
 
 
     def _run(self, **parameters):
-        raise NotImplementedError("No run method implemented or set in {class_name}".format(class_name=self.__class__.__name__))
+        raise NotImplementedError("No run method implemented or set in {class_name}".format(class_name=__name__))
 
 
     @property

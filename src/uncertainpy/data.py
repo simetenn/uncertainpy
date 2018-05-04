@@ -7,7 +7,7 @@ import collections
 
 import numpy as np
 
-from .utils import create_logger
+from .utils.logger import _create_module_logger, get_logger
 from ._version import __version__
 
 
@@ -305,10 +305,11 @@ class Data(collections.MutableMapping):
     filename : str, optional
         Name of the file to load data from. If None, no data is loaded.
         Default is None.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logger level is set. Setting
+        logger level overwrites the logger level set from configuration file.
+        Default logger level is info.
     logger_config_filename : {None, "", str}, optional
         Name of the logger configuration yaml file. If "", the default logger
         configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
@@ -370,9 +371,7 @@ class Data(collections.MutableMapping):
                                  "model_ignore", "error"]
 
 
-        self.logger = create_logger(logger_level,
-                                    __name__ + "." + self.__class__.__name__,
-                                    logger_config_filename)
+        _create_module_logger(self, logger_level, logger_config_filename)
 
         self.uncertain_parameters = []
         self.model_name = ""
@@ -737,6 +736,7 @@ class Data(collections.MutableMapping):
         """
         Remove all features that only have invalid results (NaN).
         """
+
         feature_list = list(self.data.keys())
         for feature in feature_list:
             all_nan = True
@@ -745,8 +745,9 @@ class Data(collections.MutableMapping):
                     all_nan = False
 
             if all_nan:
-                self.logger.warning("Feature: {} does".format(feature)
-                                    + " not yield results for any parameter combinations")
+                logger = get_logger(self)
+                logger.warning("Feature: {} does".format(feature)
+                               + " not yield results for any parameter combinations")
 
                 del self[feature]
 

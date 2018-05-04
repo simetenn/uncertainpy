@@ -10,6 +10,7 @@ import types
 from .run_model import RunModel
 from .base import ParameterBase
 from ..utils.utility import contains_nan
+from ..utils.logger import _create_module_logger, get_logger
 
 
 class UncertaintyCalculations(ParameterBase):
@@ -54,10 +55,11 @@ class UncertaintyCalculations(ParameterBase):
     CPUs : int, optional
         The number of CPUs used when calculating the model and features.
         By default all CPUs are used.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logger level is set. Setting
+        logger level overwrites the logger level set from configuration file.
+        Default logger level is info.
     logger_config_filename : {None, "", str}, optional
         Name of the logger configuration yaml file. If "", the default logger
         configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
@@ -102,6 +104,7 @@ class UncertaintyCalculations(ParameterBase):
                                  logger_config_filename=logger_config_filename,
                                  CPUs=CPUs)
 
+
         if create_PCE_custom is not None:
             self.create_PCE_custom = create_PCE_custom
 
@@ -113,6 +116,7 @@ class UncertaintyCalculations(ParameterBase):
                                                       features=features,
                                                       logger_level=logger_level,
                                                       logger_config_filename=logger_config_filename)
+
 
     @ParameterBase.features.setter
     def features(self, new_features):
@@ -263,7 +267,8 @@ class UncertaintyCalculations(ParameterBase):
                 masked_evaluations.append(result)
 
         if not np.all(mask):
-            self.logger.warning("{}: only yields ".format(feature) +
+            logger = get_logger(self)
+            logger.warning("{}: only yields ".format(feature) +
                                 "results for {}/{} ".format(sum(mask), len(mask)) +
                                 "parameter combinations.")
 
@@ -326,7 +331,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Returns
         -------
-       masked_evaluations : array_like
+        masked_evaluations : array_like
             The evaluations which have results.
         mask : boolean array
             The mask itself, used to create the masked arrays.
@@ -473,8 +478,9 @@ class UncertaintyCalculations(ParameterBase):
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
                                                    masked_weights, masked_evaluations)
             else:
-                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                                    " No uncertainty quantification are performed since allow_incomplete=False")
+                logger = get_logger(self)
+                logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                               " No uncertainty quantification are performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -596,8 +602,9 @@ class UncertaintyCalculations(ParameterBase):
                 U_hat[feature] = cp.fit_regression(P, masked_nodes,
                                                         masked_evaluations, rule="T")
             else:
-                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                                    " No uncertainty quantification are performed since allow_incomplete=False")
+                logger = get_logger(self)
+                logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                               " No uncertainty quantification are performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -755,8 +762,9 @@ class UncertaintyCalculations(ParameterBase):
                                                 masked_weights,
                                                 masked_evaluations)
             else:
-                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                                    " No uncertainty quantification are performed since allow_incomplete=False")
+                logger = get_logger(self)
+                ogger.warning("{}: not all parameter combinations give results.".format(feature) +
+                              " No uncertainty quantification are performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -894,8 +902,9 @@ class UncertaintyCalculations(ParameterBase):
                                                 masked_evaluations,
                                                 rule="T")
             else:
-                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                                    " No uncertainty quantification are performed since allow_incomplete=False")
+                logger = get_logger(self)
+                logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                               " No uncertainty quantification are performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -956,7 +965,8 @@ class UncertaintyCalculations(ParameterBase):
         """
 
         if len(data.uncertain_parameters) == 1:
-            self.logger.info("Only 1 uncertain parameter. Sensitivity is not calculated")
+            logger = get_logger(self)
+            logger.info("Only 1 uncertain parameter. Sensitivities are not calculated")
 
         U_mc = {}
         for feature in tqdm(data,
@@ -1405,8 +1415,9 @@ class UncertaintyCalculations(ParameterBase):
                 data[feature].percentile_5 = np.percentile(masked_evaluations, 5, 0)
                 data[feature].percentile_95 = np.percentile(masked_evaluations, 95, 0)
             else:
-                self.logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                                    " No uncertainty quantification are performed since allow_incomplete=False")
+                logger = get_logger(self)
+                logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                               " No uncertainty quantification are performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)

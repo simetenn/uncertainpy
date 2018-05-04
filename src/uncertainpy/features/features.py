@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import numpy as np
 import six
 
-from ..utils import create_logger
+from ..utils.logger import _create_module_logger
 
 class Features(object):
     """
@@ -116,9 +116,7 @@ class Features(object):
         self.labels = labels
         self.features_to_run = features_to_run
 
-        self.logger = create_logger(logger_level,
-                                    __name__ + "." + self.__class__.__name__,
-                                    logger_config_filename)
+        _create_module_logger(self, logger_level, logger_config_filename)
 
 
     @property

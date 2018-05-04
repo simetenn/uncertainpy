@@ -8,6 +8,7 @@ except ImportError:
     prerequisites = False
 
 from .features import Features
+from ..utils.logger import get_logger
 
 class EfelFeatures(Features):
     """
@@ -173,6 +174,15 @@ class EfelFeatures(Features):
 
         implemented_labels = {}
 
+        super(EfelFeatures, self).__init__(new_features=new_features,
+                                           features_to_run=features_to_run,
+                                           interpolate=interpolate,
+                                           new_utility_methods=[],
+                                           labels=implemented_labels,
+                                           logger_level=logger_level,
+                                           logger_config_filename=logger_config_filename)
+        logger = get_logger(self)
+
         def efel_wrapper(feature_name):
             def feature_function(time, values, info):
                 disable = False
@@ -185,21 +195,21 @@ class EfelFeatures(Features):
                                            "False to use initial time as stimulus start")
                     else:
                         info["stimulus_start"] = time[0]
-                        self.logger.warning("Efel features require info['stimulus_start']. "
-                                            "No 'stimulus_start' found in info, "
-                                            "setting stimulus start as initial time")
+                        logger.warning("Efel features require info['stimulus_start']. "
+                                       "No 'stimulus_start' found in info, "
+                                       "setting stimulus start as initial time")
 
                 if "stimulus_end" not in info:
                     if strict:
                         raise ValueError("Efel features require info['stimulus_end']. "
-                                           "No 'stimulus_end' found in info, "
-                                           "Set 'stimulus_start', or set strict to "
-                                           "False to use end time as stimulus end")
+                                         "No 'stimulus_end' found in info, "
+                                         "Set 'stimulus_start', or set strict to "
+                                         "False to use end time as stimulus end")
                     else:
                         info["stimulus_end"] = time[-1]
-                        self.logger.warning("Efel features require info['stimulus_start']. "
-                                            "No 'stimulus_end' found in info, "
-                                            "setting stimulus end as end time")
+                        logger.warning("Efel features require info['stimulus_start']. "
+                                       "No 'stimulus_end' found in info, "
+                                       "setting stimulus end as end time")
 
 
                 if info["stimulus_start"] >= info["stimulus_end"]:
@@ -216,7 +226,7 @@ class EfelFeatures(Features):
 
                 # Disable decay_time_constant_after_stim if no time points left
                 # in simulation after stimulation has ended.
-                # Otherwise it thros an error
+                # Otherwise it throws an error
                 if feature_name == "decay_time_constant_after_stim":
                     if info["stimulus_end"] >= time[-1]:
                         return None, None
@@ -227,14 +237,6 @@ class EfelFeatures(Features):
 
             feature_function.__name__ = feature_name
             return feature_function
-
-        super(EfelFeatures, self).__init__(new_features=new_features,
-                                           features_to_run=features_to_run,
-                                           interpolate=interpolate,
-                                           new_utility_methods=[],
-                                           labels=implemented_labels,
-                                           logger_level=logger_level,
-                                           logger_config_filename=logger_config_filename)
 
         for feature_name in efel.getFeatureNames():
             self.add_features(efel_wrapper(feature_name))

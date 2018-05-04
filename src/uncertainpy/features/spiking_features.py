@@ -9,6 +9,7 @@ except ImportError:
     prerequisites = False
 
 from .general_spiking_features import GeneralSpikingFeatures
+from ..utils.logger import get_logger
 
 class SpikingFeatures(GeneralSpikingFeatures):
     """
@@ -185,6 +186,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         ValueError
             If stimulus_start >= stimulus_end.
         """
+        logger = get_logger(self)
 
         if "stimulus_start" not in info:
             if self.strict:
@@ -194,9 +196,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                  "False to use initial time as stimulus start")
             else:
                 info["stimulus_start"] = time[0]
-                self.logger.warning("spike_rate features require info['stimulus_start']. "
-                                    "No 'stimulus_start' found in info, "
-                                    "setting stimulus start as initial time")
+                logger.warning("spike_rate features require info['stimulus_start']. "
+                               "No 'stimulus_start' found in info, "
+                               "setting stimulus start as initial time")
 
 
         if "stimulus_end" not in info:
@@ -207,9 +209,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                  "False to use end time as stimulus end")
             else:
                 info["stimulus_end"] = time[-1]
-                self.logger.warning("spike_rate require info['stimulus_start']. "
-                                    "No 'stimulus_end' found in info, "
-                                    "setting stimulus end as end time")
+                logger.warning("spike_rate require info['stimulus_start']. "
+                               "No 'stimulus_end' found in info, "
+                               "setting stimulus end as end time")
 
         if info["stimulus_start"] >= info["stimulus_end"]:
             raise ValueError("stimulus_start >= stimulus_end.")
@@ -248,6 +250,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
             If strict is True and ``"stimulus_start"`` and ``"stimulus_end"`` are
             missing from `info`.
         """
+        logger = get_logger(self)
 
         if "stimulus_start" not in info:
             if self.strict:
@@ -257,9 +260,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                  "False to use initial time as stimulus start")
             else:
                 info["stimulus_start"] = time[0]
-                self.logger.warning("time_before_first_spike features require info['stimulus_start']. "
-                                    "No 'stimulus_start' found in info, "
-                                    "setting stimulus start as initial time")
+                logger.warning("time_before_first_spike features require info['stimulus_start']. "
+                               "No 'stimulus_start' found in info, "
+                               "setting stimulus start as initial time")
 
 
         if spikes.nr_spikes <= 0:
@@ -300,6 +303,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         ValueError
             If stimulus_start >= stimulus_end.
         """
+        logger = get_logger(self)
 
         if "stimulus_start" not in info:
             if self.strict:
@@ -309,9 +313,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                  "False to use initial time as stimulus start")
             else:
                 info["stimulus_start"] = time[0]
-                self.logger.warning("spike_rate features require info['stimulus_start']. "
-                                    "No 'stimulus_start' found in info, "
-                                    "setting stimulus start as initial time")
+                logger.warning("spike_rate features require info['stimulus_start']. "
+                               "No 'stimulus_start' found in info, "
+                               "setting stimulus start as initial time")
 
 
         if "stimulus_end" not in info:
@@ -322,9 +326,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                  "False to use end time as stimulus end")
             else:
                 info["stimulus_end"] = time[-1]
-                self.logger.warning("spike_rate require info['stimulus_start']. "
-                                    "No 'stimulus_end' found in info, "
-                                    "setting stimulus end as end time")
+                logger.warning("spike_rate require info['stimulus_start']. "
+                               "No 'stimulus_end' found in info, "
+                               "setting stimulus end as end time")
 
         if info["stimulus_start"] >= info["stimulus_end"]:
             raise ValueError("stimulus_start >= stimulus_end.")

@@ -13,9 +13,11 @@ import six
 import warnings
 import numpy as np
 import multiprocess as mp
+import logging
 
 from ..data import Data
 from ..utils.utility import lengths
+from ..utils.logger import _create_module_logger, get_logger
 from .base import ParameterBase
 from .parallel import Parallel
 
@@ -41,10 +43,11 @@ class RunModel(ParameterBase):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logger level is set. Setting
+        logger level overwrites the logger level set from configuration file.
+        Default logger level is info.
     logger_config_filename : {None, "", str}, optional
         Name of the logger configuration yaml file. If "", the default logger
         configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
@@ -84,9 +87,7 @@ class RunModel(ParameterBase):
                  CPUs=mp.cpu_count()):
 
         self._parallel = Parallel(model=model,
-                                  features=features,
-                                  logger_level=logger_level,
-                                  logger_config_filename=logger_config_filename)
+                                  features=features)
 
         super(RunModel, self).__init__(model=model,
                                        parameters=parameters,
@@ -99,6 +100,7 @@ class RunModel(ParameterBase):
 
         self.CPUs = CPUs
 
+        # self.logger = _create_module_logger(self, logger_level, logger_config_filename)
 
 
     @ParameterBase.features.setter
@@ -164,6 +166,8 @@ class RunModel(ParameterBase):
         this time array to interpolate the model/feature results in each of
         those points. If an interpolation is None, gives numpy.nan instead.
         """
+        logger = get_logger(self)
+
         time_lengths = []
         for result in results:
             time_lengths.append(len(result[feature]["time"]))
@@ -177,6 +181,12 @@ class RunModel(ParameterBase):
 
             if interpolation is None:
                 interpolated_results.append(np.nan)
+                logger.error("{}: Unknown error while creating the interpolation".format(feature))
+
+            elif isinstance(interpolation, six.string_types):
+                interpolated_results.append(np.nan)
+                logger.error(interpolation)
+
             else:
                 interpolated_results.append(interpolation(time))
 
@@ -238,7 +248,9 @@ class RunModel(ParameterBase):
         --------
         uncertainpy.Data
         """
-        self.logger.info("In run_model results_to_data")
+        logger = get_logger(self)
+        logger.info("In run_model results_to_data")
+
         data = Data(logger_level=self.logger_level,
                     logger_config_filename=self.logger_config_filename)
 
@@ -291,7 +303,7 @@ class RunModel(ParameterBase):
                 if np.ndim(results[0][feature]["values"]) >= 2:
                     # raise NotImplementedError("Feature: {feature},".format(feature=feature)
                     #                           + " no support for >= 2D interpolation")
-                    self.logger.error("{feature}:".format(feature=feature)
+                    logger.error("{feature}:".format(feature=feature)
                                       + " no support for >= 2D interpolation implemented")
 
                     add_results(results, data, feature)
@@ -303,7 +315,7 @@ class RunModel(ParameterBase):
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
                 elif np.ndim(results[0][feature]["values"]) == 0:
-                    self.logger.warning("{feature}: ".format(feature=feature) +
+                    logger.warning("{feature}: ".format(feature=feature) +
                                         "returns a 0D result. No interpolation is performed.")
 
                     data[feature].time = results[0][feature]["time"]
@@ -333,7 +345,7 @@ class RunModel(ParameterBase):
                               "Make sure {} returns the same number of points, ".format(feature) + \
                               "or try add {} to interpolate=[].".format(feature)
 
-                    self.logger.error(msg)
+                    logger.error(msg)
 
                     # raise ValueError("{}: The number of points varies between evaluations.".format(feature)
                     #                  + " Try setting interpolate".format(feature))
@@ -410,10 +422,13 @@ class RunModel(ParameterBase):
             vdisplay.start()
 
         results = []
+
         pool = mp.Pool(processes=self.CPUs)
 
         model_parameters = self.create_model_parameters(nodes, uncertain_parameters)
 
+
+        # pool.map(self._parallel.run, model_parameters)
         for result in tqdm(pool.imap(self._parallel.run, model_parameters),
                            desc="Running model",
                            total=len(nodes.T)):

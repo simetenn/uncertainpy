@@ -10,7 +10,7 @@ except ImportError:
 import numpy as np
 
 from .model import Model
-
+from ..utils.logger import _create_module_logger, get_logger
 
 class NestModel(Model):
     """
@@ -37,6 +37,14 @@ class NestModel(Model):
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. The model results are still
         postprocessed. Default is False.
+    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
+        Set the threshold for the logging level.
+        Logging messages less severe than this level is ignored.
+        Default is `"info"`.
+    logger_config_filename : {None, str}, optional
+        Sets logging to a file with name `uncertainpy.log`.
+        No logging to screen if a filename is given.
+        Default is None.
 
     Attributes
     ----------
@@ -60,7 +68,9 @@ class NestModel(Model):
                  run=None,
                  interpolate=False,
                  ignore=False,
-                 labels=["Time (ms)", "Neuron nr", "Spiking probability"]):
+                 labels=["Time (ms)", "Neuron nr", "Spiking probability"],
+                 logger_level="info",
+                 logger_config_filename=""):
 
 
         if not prerequisites:
@@ -70,6 +80,8 @@ class NestModel(Model):
                                         interpolate=interpolate,
                                         ignore=ignore,
                                         labels=labels)
+
+        _create_module_logger(self, logger_level, logger_config_filename)
 
 
     @Model.run.getter

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ..utils import create_logger, load_config
+from ..utils.logger import _create_module_logger
 from ..features import Features
 from ..models import Model
 from ..parameters import Parameters
@@ -59,9 +59,7 @@ class Base(object):
         self.features = features
         self.model = model
 
-        self.logger = create_logger(logger_level,
-                                    __name__ + "." + self.__class__.__name__,
-                                    logger_config_filename)
+        _create_module_logger(self, logger_level, logger_config_filename)
 
 
 
@@ -192,6 +190,7 @@ class ParameterBase(Base):
                  logger_level="info",
                  logger_config_filename=""):
 
+
         super(ParameterBase, self).__init__(model=model,
                                             features=features,
                                             logger_level=logger_level,
@@ -199,10 +198,6 @@ class ParameterBase(Base):
 
         self._parameters = None
         self.parameters = parameters
-
-        # self.logger = create_logger(logger_level,
-        #                             __name__ + "." + self.__class__.__name__,
-        #                             logger_config_filename)
 
 
     @property

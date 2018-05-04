@@ -7,7 +7,7 @@ import numpy as np
 
 from .core.uncertainty_calculations import UncertaintyCalculations
 from .plotting.plot_uncertainty import PlotUncertainty
-from .utils import create_logger
+from .utils.logger import get_logger
 from .data import Data
 from .core.base import ParameterBase
 
@@ -125,26 +125,11 @@ class UncertaintyQuantification(ParameterBase):
                                                         logger_config_filename=logger_config_filename)
 
 
-
         self.data = None
-
-        self.logger = create_logger(logger_level,
-                                    logger_config_filename,
-                                    self.__class__.__name__)
 
         self.plotting = PlotUncertainty(folder=None,
                                         logger_level=logger_level,
                                         logger_config_filename=logger_config_filename)
-
-        # WIP: working with logger
-        # two tings to check:
-        # 1) try create a new logger last in each __init__, and asssign it to
-        #    self.logger. This should make sure that self.logger is the new logger.
-        #    use __name__ +"."+ self.__class__.__name__ as the name of each
-        # 2) make sure that only one file and stream handler are added to
-        #    all handlers. It might be that two filehandlers are added to both
-        #    parent and child handler, and teh message therefore are written to
-        #    file twice
 
 
     @ParameterBase.features.setter
@@ -906,6 +891,8 @@ class UncertaintyQuantification(ParameterBase):
         uncertainpy.core.UncertaintyCalculations.create_PCE_custom : Requirements for create_PCE_custom
 
         """
+        logger = get_logger(self)
+
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
@@ -917,7 +904,7 @@ class UncertaintyQuantification(ParameterBase):
         data_dict = {}
 
         for uncertain_parameter in uncertain_parameters:
-            self.logger.info("Running for " + uncertain_parameter)
+            logger.info("Running for " + uncertain_parameter)
 
             self.data = self.uncertainty_calculations.polynomial_chaos(
                 uncertain_parameters=uncertain_parameter,
@@ -1036,6 +1023,8 @@ class UncertaintyQuantification(ParameterBase):
         uncertainpy.Parameters
         uncertainpy.core.UncertaintyCalculations.monte_carlo : Uncertainty quantification using quasi-Monte Carlo methods
         """
+        logger = get_logger(self)
+
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if filename is None:
@@ -1046,7 +1035,7 @@ class UncertaintyQuantification(ParameterBase):
 
         data_dict = {}
         for uncertain_parameter in uncertain_parameters:
-            self.logger.info("Running MC for " + uncertain_parameter)
+            logger.info("Running MC for " + uncertain_parameter)
 
             self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameter,
                                                                   nr_samples=nr_samples)
@@ -1093,7 +1082,8 @@ class UncertaintyQuantification(ParameterBase):
 
         save_path = os.path.join(folder, filename + ".h5")
 
-        self.logger.info("Saving data as: {}".format(save_path))
+        logger = get_logger(self)
+        logger.info("Saving data as: {}".format(save_path))
 
         self.data.save(save_path)
 
