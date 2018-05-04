@@ -1,1 +1,2 @@
 include LICENSE.txt
+include src/uncertainpy/utils/logging.yaml
