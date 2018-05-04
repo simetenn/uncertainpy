@@ -28,6 +28,7 @@ Welcome to Uncertainpy's documentation!
     distribution
 
     plotting
+    logging
     utilities
 
     core
@@ -84,6 +85,7 @@ all classes and functions, along with their API.
 * :ref:`Data <data>`
 * :ref:`Utility distributions <distributions>`
 * :ref:`Plotting <plotting>`
+* :ref:`Logging <logging>`
 * :ref:`Utilities <utilities>`
 * :ref:`Core <core>`
     * :ref:`Base classes <base>`

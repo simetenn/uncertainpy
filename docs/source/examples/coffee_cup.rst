@@ -116,4 +116,4 @@ While the rest is unchanged:
 
 .. literalinclude:: ../../../examples/coffee_cup/uq_coffee_class.py
     :language: python
-    :lines: 34-49
+    :lines: 34-47
