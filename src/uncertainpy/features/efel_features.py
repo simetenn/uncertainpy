@@ -63,11 +63,8 @@ class EfelFeatures(Features):
         disabled with False. Default is True
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -82,8 +79,6 @@ class EfelFeatures(Features):
         Labels for the axes of each feature, used when plotting.
     strict : bool
         If missing info values should raise an error.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     Raises
     ------
@@ -163,8 +158,7 @@ class EfelFeatures(Features):
                  interpolate=None,
                  labels={},
                  strict=True,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         if not prerequisites:
             raise ImportError("Efel features require: efel")
@@ -178,8 +172,7 @@ class EfelFeatures(Features):
                                            interpolate=interpolate,
                                            new_utility_methods=[],
                                            labels=implemented_labels,
-                                           logger_level=logger_level,
-                                           logger_filename=logger_filename)
+                                           logger_level=logger_level)
         logger = get_logger(self)
 
         def efel_wrapper(feature_name):

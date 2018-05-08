@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ..utils.logger import setup_module_logging
+from ..utils.logger import setup_module_logger
 from ..features import Features
 from ..models import Model
 from ..parameters import Parameters
@@ -25,11 +25,8 @@ class Base(object):
         Default is None.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -37,8 +34,6 @@ class Base(object):
         The model to perform uncertainty quantification on.
     features : uncertainpy.Features or subclass of uncertainpy.Features
         The features of the model to perform uncertainty quantification on.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     See Also
     --------
@@ -49,18 +44,14 @@ class Base(object):
     def __init__(self,
                  model=None,
                  features=None,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
-
-        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
+        setup_module_logger(class_instance=self, level=logger_level)
 
         self._model = None
         self._features = None
 
-        self.logger_level = logger_level
-        self.logger_filename = logger_filename
-
+        self._logger_level = logger_level
 
         self.features = features
         self.model = model
@@ -102,8 +93,7 @@ class Base(object):
             self._features = new_features
         else:
             self._features = Features(new_features=new_features,
-                                      logger_level=self.logger_level,
-                                      logger_filename=self.logger_filename)
+                                      logger_level=self._logger_level)
 
 
     @property
@@ -137,8 +127,7 @@ class Base(object):
             self._model = new_model
         elif callable(new_model):
             self._model = Model(new_model,
-                                logger_level=self.logger_level,
-                                logger_filename=self.logger_filename)
+                                logger_level=self._logger_level)
         else:
             raise TypeError("model must be a Model or Model subclass instance, callable or None")
 
@@ -167,10 +156,6 @@ class ParameterBase(Base):
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    logger_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
 
     Attributes
     ----------
@@ -180,9 +165,9 @@ class ParameterBase(Base):
         The uncertain parameters.
     features : Features or subclass of Features
         The features of the model to perform uncertainty quantification on.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
-
+    logger_level : {"info", "debug", "warning", "error", "critical", None}
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed.
 
     See Also
     --------
@@ -194,13 +179,11 @@ class ParameterBase(Base):
                  model=None,
                  parameters=None,
                  features=None,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         super(ParameterBase, self).__init__(model=model,
                                             features=features,
-                                            logger_level=logger_level,
-                                            logger_filename=logger_filename)
+                                            logger_level=logger_level)
 
         self._parameters = None
         self.parameters = parameters

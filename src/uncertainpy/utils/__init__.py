@@ -4,11 +4,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 Small utility functions for various purposes.
 """
 
-__all__ = ["create_logger", "lengths", "none_to_nan", "contains_nan",
-           "is_regular", "MyFormatter", "TqdmLoggingHandler", "has_handlers",
-           "MultiprocessLoggingHandler", "setup_module_logging", "setup_logging"]
+__all__ = ["lengths", "none_to_nan", "contains_nan", "is_regular",
+            "MyFormatter", "TqdmLoggingHandler", "MultiprocessLoggingHandler",
+            "setup_module_logger", "setup_logger",
+           "has_handlers", "add_handlers", "add_file_handler", "add_screen_handler"]
 
-from .logger import has_handlers, setup_module_logging, setup_logging
+from .logger import setup_module_logger, setup_logger
+from .logger import has_handlers, add_handlers, add_file_handler, add_screen_handler
 from .logger import MyFormatter, TqdmLoggingHandler, MultiprocessLoggingHandler
 from .utility import lengths, none_to_nan, contains_nan
 from .utility import is_regular, set_nan

@@ -45,11 +45,8 @@ class RunModel(ParameterBase):
         Default is None.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging to file is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging to file is performed.
+        Default logger level is "info".
     CPUs : int, optional
         The number of CPUs to use when calculating the model and features.
         Default is number of CPUs on the computer (multiprocess.cpu_count()).
@@ -62,8 +59,6 @@ class RunModel(ParameterBase):
         The uncertain parameters.
     features : uncertainpy.Features or subclass of uncertainpy.Features
         The features of the model to perform uncertainty quantification on.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
     CPUs : int
         The number of CPUs used when calculating the model and features.
 
@@ -81,20 +76,16 @@ class RunModel(ParameterBase):
                  parameters,
                  features=None,
                  logger_level="info",
-                 logger_filename="uncertainpy.log",
                  CPUs=mp.cpu_count()):
 
         self._parallel = Parallel(model=model,
-                                  features=features)
+                                  features=features,
+                                  logger_level=logger_level)
 
         super(RunModel, self).__init__(model=model,
                                        parameters=parameters,
                                        features=features,
-                                       logger_level=logger_level,
-                                       logger_filename=logger_filename)
-
-        self.logger_level = logger_level
-        self.logger_filename = logger_filename
+                                       logger_level=logger_level)
 
         self.CPUs = CPUs
 
@@ -246,8 +237,7 @@ class RunModel(ParameterBase):
         """
         logger = get_logger(self)
 
-        data = Data(logger_level=self.logger_level,
-                    logger_filename=self.logger_filename)
+        data = Data(logger_level=self._logger_level)
 
         # Add features and labels
         for feature in results[0]:

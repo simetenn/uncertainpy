@@ -70,11 +70,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
         Default is 1.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -133,8 +130,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                  isi_bin_size=1,
                  corrcoef_bin_size=1,
                  covariance_bin_size=1,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         if not prerequisites:
             raise ImportError("Network features require: elephant and quantities")

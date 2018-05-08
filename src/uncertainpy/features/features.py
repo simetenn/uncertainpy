@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import numpy as np
 import six
 
-from ..utils.logger import setup_module_logging
+from ..utils.logger import setup_module_logger
 
 class Features(object):
     """
@@ -51,11 +51,8 @@ class Features(object):
 
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -80,8 +77,7 @@ class Features(object):
                  interpolate=None,
                  labels={},
                  preprocess=None,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         self.utility_methods = ["calculate_feature",
                                 "calculate_features",
@@ -113,7 +109,7 @@ class Features(object):
         self.labels = labels
         self.features_to_run = features_to_run
 
-        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
+        setup_module_logger(class_instance=self, level=logger_level)
 
 
     @property

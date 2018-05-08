@@ -71,11 +71,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
         ``"stimulus_end"``. Default is True.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -128,8 +125,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  extended_spikes=False,
                  labels={},
                  strict=True,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         if not prerequisites:
             raise ImportError("Spiking features require: scipy")
@@ -149,8 +145,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                               threshold=threshold,
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels,
-                                              logger_level=logger_level,
-                                              logger_filename=logger_filename)
+                                              logger_level=logger_level)
         self.labels = labels
         self.strict = strict
 

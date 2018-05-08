@@ -5,7 +5,7 @@ import os
 import numpy as np
 
 from .model import Model
-from ..utils.logger import setup_module_logging, get_logger
+from ..utils.logger import setup_module_logger, get_logger
 
 
 class NeuronModel(Model):
@@ -44,10 +44,7 @@ class NeuronModel(Model):
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        Default logger level is "info".
     **kwargs :
         Additional key-value pairs added to info.
 
@@ -90,7 +87,6 @@ class NeuronModel(Model):
                  stimulus_end=None,
                  suppress_graphics=True,
                  logger_level="info",
-                 logger_filename="uncertainpy.log",
                  **kwargs):
 
         super(NeuronModel, self).__init__(interpolate=interpolate,
@@ -117,7 +113,7 @@ class NeuronModel(Model):
         if name:
             self.name = name
 
-        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
+        setup_module_logger(class_instance=self, level=logger_level)
 
 
 

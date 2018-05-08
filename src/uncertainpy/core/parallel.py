@@ -30,17 +30,12 @@ class Parallel(Base):
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        Default logger level is "info".
 
     Attributes
     ----------
     model : uncertainpy.Parallel.model
     features : uncertainpy.Parallel.features
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     See Also
     --------

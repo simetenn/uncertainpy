@@ -80,7 +80,7 @@ class MultiprocessLoggingHandler(logging.Handler):
     def __init__(self, filename, mode):
         logging.Handler.__init__(self)
 
-        self._handler = logging.FileHandler(filename, mode)
+        self.handler = logging.FileHandler(filename, mode)
         manager = multiprocess.Manager()
         self.queue = manager.Queue(-1)
         # self.queue = multiprocess.Queue(-1)
@@ -94,7 +94,7 @@ class MultiprocessLoggingHandler(logging.Handler):
 
     def setFormatter(self, fmt):
         logging.Handler.setFormatter(self, fmt)
-        self._handler.setFormatter(fmt)
+        self.handler.setFormatter(fmt)
 
 
     def receive(self):
@@ -102,7 +102,7 @@ class MultiprocessLoggingHandler(logging.Handler):
         while not (self.is_closed and self.queue.empty()):
             try:
                 record = self.queue.get()
-                self._handler.emit(record)
+                self.handler.emit(record)
             except (KeyboardInterrupt, SystemExit):
                 raise
             except EOFError:
@@ -147,7 +147,7 @@ class MultiprocessLoggingHandler(logging.Handler):
             self.is_closed = True
 
             self.t.join(5.0)
-            self._handler.close()
+            self.handler.close()
             logging.Handler.close(self)
 
 
@@ -210,7 +210,7 @@ def get_logger(class_instance):
 #         Set the threshold for the logging level. Logging messages less severe
 #         than this level is ignored. If None, no logger level is set. Setting
 #         logger level overwrites the logger level set from configuration file.
-#         Default logger level is info.
+#         Default logger level is "info".
 #     config_filename : {None, "", str}, optional
 #         Name of the logger configuration yaml file. If "", the default logger
 #         configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
@@ -236,7 +236,7 @@ def get_logger(class_instance):
 #         Set the threshold for the logging level. Logging messages less severe
 #         than this level is ignored. If None, no logger level is set. Setting
 #         logger level overwrites the logger level set from configuration file.
-#         Default logger level is info.
+#         Default logger level is "info".
 #     filename : str
 #         Name of the logfile.
 #     config_filename : {None, "", str}, optional
@@ -263,7 +263,7 @@ def get_logger(class_instance):
 #         logger.setLevel(numeric_level)
 
 
-def setup_module_logging(class_instance, level="info", filename="uncertainpy.log"):
+def setup_module_logger(class_instance, level="info"):
     """
     Create a logger with a name from the current class. "uncertainpy." is added
     to the beginning of the name if the module name does not start with
@@ -274,31 +274,26 @@ def setup_module_logging(class_instance, level="info", filename="uncertainpy.log
     class_instance : instance
         Class instance used to set the logger name.
         ``class_instance.__module__ + "." +  class_instance.__class__.__name__.``
-    name : str
-        Name of the logger
     level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logger level is set. Setting
         logger level overwrites the logger level set from configuration file.
-        Default logger level is info.
-    filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        Default logger level is "info".
     """
     name = class_instance.__module__ + "." +  class_instance.__class__.__name__
 
     if not name.startswith("uncertainpy."):
         name = "uncertainpy." + name
 
-    setup_logging(name,
-                  level=level,
-                  filename=filename)
+    setup_logger(name, level=level)
+
+    add_screen_handler()
 
 
-def setup_logging(name, level="info", filename="uncertainpy.log"):
+
+def setup_logger(name, level="info"):
     """
-    Create a logger with `name`. Resets all handlers for the uncertianpy logger
-    and add new handlers.
+    Create a logger with `name`.
 
     Parameters
     ----------
@@ -306,11 +301,8 @@ def setup_logging(name, level="info", filename="uncertainpy.log"):
         Name of the logger
     level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logger is set up. Default
+        logger level is info.
     """
     if level is None:
         return
@@ -324,34 +316,160 @@ def setup_logging(name, level="info", filename="uncertainpy.log"):
     logger.setLevel(numeric_level)
 
 
-    main_logger = logging.getLogger("uncertainpy")
 
-    if not has_handlers(logger):
-        # main_logger.handlers = []
-        # handlers = main_logger.handlers[:]
-        # for handler in handlers:
-        #     handler.close()
-        #     main_logger.removeHandler(handler)
+def add_screen_handler(name="uncertainpy"):
+    """
+    Adds a logging to console (a console handler) to logger with `name`, if no screen handler already
+    exists for the given logger.
 
+    Parameters
+    ----------
+    name : str, optional
+        Name of the logger. Default name is "uncertainpy".
+    """
+    logger = logging.getLogger(name)
 
-        # for handler in handlers:
-        #     if isinstance(handler)
+    handler_exists = False
+    for handler in logger.handlers:
+        if isinstance(handler, TqdmLoggingHandler):
+            handler_exists = True
+            break
 
+    if not handler_exists:
         console = TqdmLoggingHandler()
         console.setFormatter(MyFormatter())
 
-        main_logger.addHandler(console)
+        logger.addHandler(console)
 
-        if filename is not None:
+
+def add_file_handler(name="uncertainpy", filename="uncertainpy.log"):
+    """
+    Add file handler to logger with `name`, if no screen handler already
+    exists for the given logger.
+
+    Parameters
+    ----------
+    name : str, optional
+        Name of the logger. Default name is "uncertainpy".
+    filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
+    """
+    logger = logging.getLogger(name)
+
+    if filename is not None:
+        handler_exists = False
+        for handler in logger.handlers:
+            if isinstance(handler, MultiprocessLoggingHandler):
+                handler_exists = True
+                break
+
+        if not handler_exists:
             multiprocess_file = MultiprocessLoggingHandler(filename=filename, mode="w")
             multiprocess_file.setFormatter(MyFormatter())
 
-            main_logger.addHandler(multiprocess_file)
-
-    # elif filename is not None:
-    # handlers = main_logger.handlers[:]
-    # for handler in handlers:
+            logger.addHandler(multiprocess_file)
 
 
-    # elif filename is not None and len(logging.getLogger("uncertainpy").handlers):
+
+def add_handlers(name="uncertainpy", filename="uncertainpy.log"):
+    """
+    Add handlers to logger if no
+
+    Parameters
+    ----------
+    name : str
+        Name of the logger
+    level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
+    filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
+    """
+    add_screen_handler(name=name)
+    add_file_handler(name=name, filename=filename)
+
+
+
+# def setup_logging(name, level="info", filename="uncertainpy.log"):
+#     """
+#     Create a logger with `name`. Resets all handlers for the uncertainpy logger
+#     and add new handlers.
+
+#     Parameters
+#     ----------
+#     name : str
+#         Name of the logger
+#     level : {"info", "debug", "warning", "error", "critical", None}, optional
+#         Set the threshold for the logging level. Logging messages less severe
+#         than this level is ignored. If None, no logging is performed.
+#         Default logger level is "info".
+#     filename : str
+#         Name of the logfile. If None, no logging to file is performed. Default is
+#         "uncertainpy.log".
+#     """
+#     if level is None:
+#         return
+
+#     setup_logger(name=name, level=level)
+
+
+#     logger = logging.getLogger(name)
+
+#     numeric_level = getattr(logging, level.upper(), None)
+#     if not isinstance(numeric_level, int):
+#         raise ValueError('Invalid log level: %s' % level)
+
+#     logger.setLevel(numeric_level)
+
+#     main_logger = logging.getLogger("uncertainpy")
+
+#     if not has_handlers(logger):
+#     # main_logger.handlers = []
+#         # handlers = main_logger.handlers[:]
+#         # for handler in handlers:
+#         #     handler.close()
+#         #     main_logger.removeHandler(handler)
+
+#         console = TqdmLoggingHandler()
+#         console.setFormatter(MyFormatter())
+
+#         main_logger.addHandler(console)
+
+#         if filename is not None:
+#             multiprocess_file = MultiprocessLoggingHandler(filename=filename, mode="w")
+#             multiprocess_file.setFormatter(MyFormatter())
+
+#             main_logger.addHandler(multiprocess_file)
+
+
+#     # elif filename is not None:
+#     #     file_handler_exists = False
+#     #     for handler in main_logger.handlers:
+#     #         # print(handler)
+#     #         if isinstance(handler, MultiprocessLoggingHandler):
+#     #             file_handler_exists = True
+#     #             file_handler = handler
+#     #             break
+
+#     #     if file_handler_exists:
+#     #         current_dir = os.getcwd()
+#     #         old_filename = file_handler.handler.baseFilename.strip(current_dir)
+
+#     #         if old_filename != filename:
+#     #             # file_handler.close()
+#     #             main_logger.removeHandler(file_handler)
+
+#     #             multiprocess_file = MultiprocessLoggingHandler(filename=filename, mode="w")
+#     #             multiprocess_file.setFormatter(MyFormatter())
+
+#     #             main_logger.addHandler(multiprocess_file)
+
+#     #     else:
+#     #         multiprocess_file = MultiprocessLoggingHandler(filename=filename, mode="w")
+#     #         multiprocess_file.setFormatter(MyFormatter())
+
+#     #         main_logger.addHandler(multiprocess_file)
 

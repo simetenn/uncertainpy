@@ -59,11 +59,8 @@ class GeneralSpikingFeatures(Features):
 
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -96,8 +93,7 @@ class GeneralSpikingFeatures(Features):
                  threshold=-30,
                  extended_spikes=False,
                  labels={},
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         new_utility_methods = ["calculate_spikes"]
 
@@ -106,8 +102,7 @@ class GeneralSpikingFeatures(Features):
                                                      interpolate=interpolate,
                                                      new_utility_methods=new_utility_methods,
                                                      labels=labels,
-                                                     logger_level=logger_level,
-                                                     logger_filename=logger_filename)
+                                                     logger_level=logger_level)
 
         self.spikes = None
 

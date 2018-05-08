@@ -63,11 +63,8 @@ class GeneralNetworkFeatures(Features):
         The default is None.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logging is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        than this level is ignored. If None, no logging is performed.
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -110,8 +107,7 @@ class GeneralNetworkFeatures(Features):
                  interpolate=None,
                  labels={},
                  units=None,
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         if not prerequisites:
             raise ImportError("Network features require: neo, quantities")
@@ -120,8 +116,7 @@ class GeneralNetworkFeatures(Features):
                                                      features_to_run=features_to_run,
                                                      interpolate=interpolate,
                                                      labels=labels,
-                                                     logger_level=logger_level,
-                                                     logger_filename=logger_filename)
+                                                     logger_level=logger_level)
         if units is None:
             self.units = pq.ms
         else:

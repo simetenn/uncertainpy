@@ -7,7 +7,7 @@ import numpy as np
 
 from .core.uncertainty_calculations import UncertaintyCalculations
 from .plotting.plot_uncertainty import PlotUncertainty
-from .utils.logger import get_logger
+from .utils.logger import get_logger, add_file_handler
 from .data import Data
 from .core.base import ParameterBase
 
@@ -58,7 +58,7 @@ class UncertaintyQuantification(ParameterBase):
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
-        Default logger level is info.
+        Default logger level is "info".
     logger_filename : str
         Name of the logfile. If None, no logging to file is performed. Default is
         "uncertainpy.log".
@@ -78,8 +78,6 @@ class UncertaintyQuantification(ParameterBase):
         A data object that contains the results from the uncertainty quantification.
         Contains all model and feature evaluations, as well as all calculated
         statistical metrics.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     See Also
     --------
@@ -112,7 +110,6 @@ class UncertaintyQuantification(ParameterBase):
                 custom_uncertainty_quantification=custom_uncertainty_quantification,
                 CPUs=CPUs,
                 logger_level=logger_level,
-                logger_filename=logger_filename
             )
         else:
             self._uncertainty_calculations = uncertainty_calculations
@@ -120,15 +117,15 @@ class UncertaintyQuantification(ParameterBase):
         super(UncertaintyQuantification, self).__init__(parameters=parameters,
                                                         model=model,
                                                         features=features,
-                                                        logger_level=logger_level,
-                                                        logger_filename=logger_filename)
+                                                        logger_level=logger_level)
 
 
         self.data = None
 
         self.plotting = PlotUncertainty(folder=None,
-                                        logger_level=logger_level,
-                                        logger_filename=logger_filename)
+                                        logger_level=logger_level)
+
+        add_file_handler(filename=logger_filename)
 
 
     @ParameterBase.features.setter
