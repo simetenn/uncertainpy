@@ -358,7 +358,7 @@ def generate_data_data_irregular():  # pragma: no cover
     data.method = "mock"
     data.seed = 10
     data.incomplete = ["a", "b"]
-    data.error = ["feature1", "feature2"]
+    data.error = ["feature1d"]
     data.model_ignore = True
 
     data.save(os.path.join(test_data_dir, "test_save_mock_irregular"))
