@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import numpy as np
 import six
 
-from ..utils.logger import _create_module_logger
+from ..utils.logger import setup_module_logging
 
 class Features(object):
     """
@@ -49,14 +49,13 @@ class Features(object):
                           "2d_feature": ["x-axis", "y-axis", "z-axis"]
                          }
 
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -69,8 +68,6 @@ class Features(object):
         that is not in the list of utility methods is considered to be a feature.
     labels : dictionary
         Labels for the axes of each feature, used when plotting.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     See also
     --------
@@ -84,7 +81,7 @@ class Features(object):
                  labels={},
                  preprocess=None,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         self.utility_methods = ["calculate_feature",
                                 "calculate_features",
@@ -116,7 +113,7 @@ class Features(object):
         self.labels = labels
         self.features_to_run = features_to_run
 
-        _create_module_logger(self, logger_level, logger_config_filename)
+        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
 
 
     @property

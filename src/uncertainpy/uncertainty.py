@@ -55,14 +55,13 @@ class UncertaintyQuantification(ParameterBase):
     CPUs : int, optional
         The number of CPUs used when calculating the model and features.
         By default all CPUs are used.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+        than this level is ignored. If None, no logging to file is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -100,7 +99,7 @@ class UncertaintyQuantification(ParameterBase):
                  create_PCE_custom=None,
                  custom_uncertainty_quantification=None,
                  logger_level="info",
-                 logger_config_filename="",
+                 logger_filename="uncertainpy.log",
                  CPUs=mp.cpu_count()):
 
 
@@ -113,7 +112,7 @@ class UncertaintyQuantification(ParameterBase):
                 custom_uncertainty_quantification=custom_uncertainty_quantification,
                 CPUs=CPUs,
                 logger_level=logger_level,
-                logger_config_filename=logger_config_filename
+                logger_filename=logger_filename
             )
         else:
             self._uncertainty_calculations = uncertainty_calculations
@@ -122,14 +121,14 @@ class UncertaintyQuantification(ParameterBase):
                                                         model=model,
                                                         features=features,
                                                         logger_level=logger_level,
-                                                        logger_config_filename=logger_config_filename)
+                                                        logger_filename=logger_filename)
 
 
         self.data = None
 
         self.plotting = PlotUncertainty(folder=None,
                                         logger_level=logger_level,
-                                        logger_config_filename=logger_config_filename)
+                                        logger_filename=logger_filename)
 
 
     @ParameterBase.features.setter

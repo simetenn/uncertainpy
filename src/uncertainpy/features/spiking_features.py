@@ -69,14 +69,13 @@ class SpikingFeatures(GeneralSpikingFeatures):
         raises a ValueError. If False the simulation start time is used
         as ``"stimulus_start"`` and the simulation end time is used for
         ``"stimulus_end"``. Default is True.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, str}, optional
-        Sets logging to a file with name `uncertainpy.log`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -98,8 +97,6 @@ class SpikingFeatures(GeneralSpikingFeatures):
         Labels for the axes of each feature, used when plotting.
     strict : bool
         If missing info values should raise an error.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     Notes
     -----
@@ -132,7 +129,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  labels={},
                  strict=True,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Spiking features require: scipy")
@@ -153,7 +150,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels,
                                               logger_level=logger_level,
-                                              logger_config_filename=logger_config_filename)
+                                              logger_filename=logger_filename)
         self.labels = labels
         self.strict = strict
 

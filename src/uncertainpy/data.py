@@ -7,7 +7,7 @@ import collections
 
 import numpy as np
 
-from .utils.logger import _create_module_logger, get_logger
+from .utils.logger import setup_module_logging, get_logger
 from ._version import __version__
 
 
@@ -307,13 +307,11 @@ class Data(collections.MutableMapping):
         Default is None.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logger level is set. Setting
-        logger level overwrites the logger level set from configuration file.
+        than this level is ignored. If None, no logging to file is performed
         Default logger level is info.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -331,8 +329,6 @@ class Data(collections.MutableMapping):
         quantification.
     data : dictionary
         A dictionary with a DataFeature for each model/feature.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
     data_information : list
         List of attributes containing additional information.
 
@@ -364,14 +360,14 @@ class Data(collections.MutableMapping):
     def __init__(self,
                  filename=None,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         self.data_information = ["uncertain_parameters", "model_name",
                                  "incomplete", "method", "version", "seed",
                                  "model_ignore", "error"]
 
 
-        _create_module_logger(self, logger_level, logger_config_filename)
+        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
 
         self.uncertain_parameters = []
         self.model_name = ""

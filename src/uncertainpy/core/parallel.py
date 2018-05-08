@@ -9,7 +9,7 @@ import scipy.interpolate as scpi
 
 from .base import Base
 from ..utils.utility import none_to_nan, contains_nan, is_regular
-from ..utils.logger import _create_module_logger, get_logger
+from ..utils.logger import get_logger
 
 class Parallel(Base):
     """
@@ -27,14 +27,13 @@ class Parallel(Base):
         If None, no features are calculated.
         If list of feature functions, all will be calculated.
         Default is None.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, str}, optional
-        Sets logging to a file with name `uncertainpy.log`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging to file is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------

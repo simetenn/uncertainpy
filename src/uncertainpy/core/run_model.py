@@ -17,7 +17,7 @@ import logging
 
 from ..data import Data
 from ..utils.utility import lengths
-from ..utils.logger import _create_module_logger, get_logger
+from ..utils.logger import get_logger
 from .base import ParameterBase
 from .parallel import Parallel
 
@@ -45,13 +45,11 @@ class RunModel(ParameterBase):
         Default is None.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logger level is set. Setting
-        logger level overwrites the logger level set from configuration file.
+        than this level is ignored. If None, no logging to file is performed
         Default logger level is info.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
     CPUs : int, optional
         The number of CPUs to use when calculating the model and features.
         Default is number of CPUs on the computer (multiprocess.cpu_count()).
@@ -83,7 +81,7 @@ class RunModel(ParameterBase):
                  parameters,
                  features=None,
                  logger_level="info",
-                 logger_config_filename="",
+                 logger_filename="uncertainpy.log",
                  CPUs=mp.cpu_count()):
 
         self._parallel = Parallel(model=model,
@@ -93,14 +91,12 @@ class RunModel(ParameterBase):
                                        parameters=parameters,
                                        features=features,
                                        logger_level=logger_level,
-                                       logger_config_filename=logger_config_filename)
+                                       logger_filename=logger_filename)
 
         self.logger_level = logger_level
-        self.logger_config_filename = logger_config_filename
+        self.logger_filename = logger_filename
 
         self.CPUs = CPUs
-
-        # self.logger = _create_module_logger(self, logger_level, logger_config_filename)
 
 
     @ParameterBase.features.setter
@@ -249,10 +245,9 @@ class RunModel(ParameterBase):
         uncertainpy.Data
         """
         logger = get_logger(self)
-        logger.info("In run_model results_to_data")
 
         data = Data(logger_level=self.logger_level,
-                    logger_config_filename=self.logger_config_filename)
+                    logger_filename=self.logger_filename)
 
         # Add features and labels
         for feature in results[0]:

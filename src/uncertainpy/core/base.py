@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ..utils.logger import _create_module_logger
+from ..utils.logger import setup_module_logging
 from ..features import Features
 from ..models import Model
 from ..parameters import Parameters
@@ -23,14 +23,13 @@ class Base(object):
         If None, no features are calculated.
         If list of feature functions, all listed features will be calculated.
         Default is None.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is ``"info"``.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -51,16 +50,20 @@ class Base(object):
                  model=None,
                  features=None,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
+
+
+        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
 
         self._model = None
         self._features = None
 
+        self.logger_level = logger_level
+        self.logger_filename = logger_filename
+
+
         self.features = features
         self.model = model
-
-        _create_module_logger(self, logger_level, logger_config_filename)
-
 
 
 
@@ -98,7 +101,9 @@ class Base(object):
         if isinstance(new_features, Features):
             self._features = new_features
         else:
-            self._features = Features(new_features=new_features)
+            self._features = Features(new_features=new_features,
+                                      logger_level=self.logger_level,
+                                      logger_filename=self.logger_filename)
 
 
     @property
@@ -131,7 +136,9 @@ class Base(object):
         if isinstance(new_model, Model) or new_model is None:
             self._model = new_model
         elif callable(new_model):
-            self._model = Model(new_model)
+            self._model = Model(new_model,
+                                logger_level=self.logger_level,
+                                logger_filename=self.logger_filename)
         else:
             raise TypeError("model must be a Model or Model subclass instance, callable or None")
 
@@ -160,7 +167,7 @@ class ParameterBase(Base):
         Set the threshold for the logging level.
         Logging messages less severe than this level is ignored.
         Default is `"info"`.
-    logger_config_filename : {None, "", str}, optional
+    logger_filename : {None, "", str}, optional
         Name of the logger configuration yaml file. If "", the default logger
         configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
         no configuration is loaded. Default is "".
@@ -188,16 +195,16 @@ class ParameterBase(Base):
                  parameters=None,
                  features=None,
                  logger_level="info",
-                 logger_config_filename=""):
-
+                 logger_filename="uncertainpy.log"):
 
         super(ParameterBase, self).__init__(model=model,
                                             features=features,
                                             logger_level=logger_level,
-                                            logger_config_filename=logger_config_filename)
+                                            logger_filename=logger_filename)
 
         self._parameters = None
         self.parameters = parameters
+
 
 
     @property

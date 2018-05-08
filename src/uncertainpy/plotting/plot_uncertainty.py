@@ -13,7 +13,7 @@ from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 import seaborn as sns
 from ..data import Data
-from ..utils.logger import _create_module_logger
+from ..utils.logger import setup_module_logging, get_logger
 
 
 # TODO compare plots in a grid of all plots,
@@ -41,14 +41,13 @@ class PlotUncertainty(object):
         The format to save the plots in. Given as ".xxx". All formats
         supported by Matplotlib are available.
         Default is ".png",
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+        than this level is ignored. If None, no logging to file is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -61,15 +60,13 @@ class PlotUncertainty(object):
         A data object that contains the results from the uncertainty quantification.
         Contains all model and feature values, as well as all calculated
         statistical metrics.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
     """
     def __init__(self,
                  filename=None,
                  folder="figures/",
                  figureformat=".png",
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         self._folder = None
 
@@ -84,9 +81,9 @@ class PlotUncertainty(object):
             self.load(filename)
 
         self.logger_level = logger_level
-        self.logger_config_filename = logger_config_filename
+        self.logger_filename = logger_filename
 
-        self.logger = _create_module_logger(self, logger_level, logger_config_filename)
+        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
 
 
 
@@ -101,7 +98,7 @@ class PlotUncertainty(object):
         """
         self.data = Data(filename,
                          logger_level=self.logger_level,
-                         logger_config_filename=self.logger_config_filename)
+                         logger_filename=self.logger_filename)
 
 
     @property
@@ -166,6 +163,8 @@ class PlotUncertainty(object):
         AttributeError
             If the dimensions of the evaluations is not valid.
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -178,7 +177,7 @@ class PlotUncertainty(object):
 
         dimension = self.data.ndim(feature)
         if dimension is None:
-            self.logger.warning("No evaluations to plot")
+            logger.warning("No evaluations to plot")
         elif dimension == 0:
             self.evaluations_0d(feature=feature, foldername=foldername, **plot_kwargs)
 
@@ -217,6 +216,8 @@ class PlotUncertainty(object):
         ValueError
             If the evaluations are not 0 dimensional.
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -224,7 +225,7 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if feature not in self.data or "evaluations" not in self.data[feature]:
-            self.logger.warning("No {} evaluations to plot.".format(feature))
+            logger.warning("No {} evaluations to plot.".format(feature))
             return
 
         if self.data.ndim(feature) != 0:
@@ -271,6 +272,8 @@ class PlotUncertainty(object):
         ValueError
             If the evaluations are not 1 dimensional.
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -278,7 +281,7 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if feature not in self.data or "evaluations"  not in self.data[feature]:
-            self.logger.warning("No model evaluations to plot.")
+            logger.warning("No model evaluations to plot.")
             return
 
         if self.data.ndim(feature) != 1:
@@ -341,6 +344,8 @@ class PlotUncertainty(object):
         ValueError
             If the evaluations are not 2 dimensional.
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -348,7 +353,7 @@ class PlotUncertainty(object):
             feature = self.data.model_name
 
         if feature not in self.data or "evaluations" not in self.data[feature]:
-            self.logger.warning("No model evaluations to plot.")
+            logger.warning("No model evaluations to plot.")
             return
 
         if self.data.ndim(feature) != 2:
@@ -432,6 +437,8 @@ class PlotUncertainty(object):
             If the attribute is not a supported attribute, either "mean" or
             "variance".
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -446,7 +453,7 @@ class PlotUncertainty(object):
 
         if attribute not in self.data[feature]:
             msg = " Unable to plot {attribute_name}. {attribute_name} of {feature} does not exist."
-            self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
+            logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
@@ -520,6 +527,8 @@ class PlotUncertainty(object):
             If the attribute is not a supported attribute, either "mean" or
             "variance".
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -535,7 +544,7 @@ class PlotUncertainty(object):
 
         if attribute not in self.data[feature]:
             msg = " Unable to plot {attribute_name}. {attribute_name} of {feature} does not exist."
-            self.logger.warning(msg.format(attribute_name=attribute, feature=feature))
+            logger.warning(msg.format(attribute_name=attribute, feature=feature))
             return
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
@@ -734,6 +743,7 @@ class PlotUncertainty(object):
         ValueError
             If the model/feature is not 1 dimensional.
         """
+        logger = get_logger(self)
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -747,7 +757,7 @@ class PlotUncertainty(object):
         if "mean" not in self.data[feature] or "variance" not in self.data[feature]:
             msg = "Mean and/or variance of {feature} does not exist. ".format(feature=feature) \
                     + "Unable to plot mean and variance"
-            self.logger.warning(msg)
+            logger.warning(msg)
             return
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
@@ -846,6 +856,8 @@ class PlotUncertainty(object):
         ValueError
             If the model/feature is not 1 dimensional.
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -859,7 +871,7 @@ class PlotUncertainty(object):
             or "percentile_5" not in self.data[feature] \
                 or "percentile_95" not in self.data[feature]:
             msg = "E, percentile_5  and/or percentile_95 of {feature} does not exist. Unable to plot prediction interval"
-            self.logger.warning(msg.format(feature=feature))
+            logger.warning(msg.format(feature=feature))
             return
 
 
@@ -940,6 +952,8 @@ class PlotUncertainty(object):
             If sensitivity is not one of "sobol_first", "first", "sobol_total",
             or "total".
         """
+        logger = get_logger(self)
+
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -956,7 +970,7 @@ class PlotUncertainty(object):
 
         if sensitivity not in self.data[feature]:
             msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
@@ -1031,6 +1045,8 @@ class PlotUncertainty(object):
             If sensitivity is not one of "sobol_first", "first", "sobol_total",
             or "total".
         """
+        logger = get_logger(self)
+
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -1048,7 +1064,7 @@ class PlotUncertainty(object):
 
         if sensitivity not in self.data[feature]:
             msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
@@ -1159,6 +1175,8 @@ class PlotUncertainty(object):
             If sensitivity is not one of "sobol_first", "first", "sobol_total",
             or "total".
         """
+        logger = get_logger(self)
+
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -1175,7 +1193,7 @@ class PlotUncertainty(object):
 
         if sensitivity not in self.data[feature]:
             msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
@@ -1372,6 +1390,7 @@ class PlotUncertainty(object):
             If sensitivity is not one of "sobol_first", "first", "sobol_total",
             "total" or None.
         """
+        logger = get_logger(self)
 
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total or None, not {}".format(sensitivity))
@@ -1388,7 +1407,7 @@ class PlotUncertainty(object):
         for data_type in ["mean", "variance", "percentile_5", "percentile_95"]:
             if data_type not in self.data[feature]:
                 msg = "{data_type} for {feature} does not exist. Unable to plot"
-                self.logger.warning(msg.format(data_type=data_type,feature=feature))
+                logger.warning(msg.format(data_type=data_type,feature=feature))
                 return
 
         if len(self.data.uncertain_parameters) > max_legend_size:
@@ -1522,6 +1541,8 @@ class PlotUncertainty(object):
         ValueError
             If feature does not exist.
         """
+        logger = get_logger(self)
+
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
@@ -1535,7 +1556,7 @@ class PlotUncertainty(object):
 
         if sensitivity + "_sum" not in self.data[feature]:
             msg = "{sensitivity}_sum of {feature} does not exist. Unable to plot {sensitivity}_sum."
-            self.logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
         width = 0.2
@@ -1827,6 +1848,8 @@ class PlotUncertainty(object):
             If sensitivity is not one of "sobol_first", "first", "sobol_total",
             or "total".
         """
+        logger = get_logger(self)
+
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
 
@@ -1842,7 +1865,7 @@ class PlotUncertainty(object):
 
         if no_sensitivity:
             msg = "All {sensitivity}_sums are missing. Unable to plot {sensitivity}_sum_grid"
-            self.logger.warning(msg.format(sensitivity=sensitivity))
+            logger.warning(msg.format(sensitivity=sensitivity))
             return
 
         # get size of the grid in x and y directions
@@ -1881,8 +1904,8 @@ class PlotUncertainty(object):
             if i < nr_plots:
                 if sensitivity + "_sum" not in self.data[features[i]]:
                     msg = " Unable to plot {sensitivity}_sum_grid. {sensitivity}_sum of {feature} does not exist."
-                    self.logger.warning(msg.format(sensitivity=sensitivity,
-                                                   feature=features[i]))
+                    logger.warning(msg.format(sensitivity=sensitivity,
+                                              feature=features[i]))
                     ax.axis("off")
                     continue
 

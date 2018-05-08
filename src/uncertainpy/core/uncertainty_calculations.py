@@ -10,7 +10,7 @@ import types
 from .run_model import RunModel
 from .base import ParameterBase
 from ..utils.utility import contains_nan
-from ..utils.logger import _create_module_logger, get_logger
+from ..utils.logger import get_logger
 
 
 class UncertaintyCalculations(ParameterBase):
@@ -57,13 +57,11 @@ class UncertaintyCalculations(ParameterBase):
         By default all CPUs are used.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
-        than this level is ignored. If None, no logger level is set. Setting
-        logger level overwrites the logger level set from configuration file.
+        than this level is ignored. If None, no logging to file is performed
         Default logger level is info.
-    logger_config_filename : {None, "", str}, optional
-        Name of the logger configuration yaml file. If "", the default logger
-        configuration is loaded (/uncertainpy/utils/logging.yaml). If None,
-        no configuration is loaded. Default is "".
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -95,13 +93,13 @@ class UncertaintyCalculations(ParameterBase):
                  custom_uncertainty_quantification=None,
                  CPUs=mp.cpu_count(),
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         self.runmodel = RunModel(model=model,
                                  parameters=parameters,
                                  features=features,
                                  logger_level=logger_level,
-                                 logger_config_filename=logger_config_filename,
+                                 logger_filename=logger_filename,
                                  CPUs=CPUs)
 
 
@@ -115,7 +113,7 @@ class UncertaintyCalculations(ParameterBase):
                                                       model=model,
                                                       features=features,
                                                       logger_level=logger_level,
-                                                      logger_config_filename=logger_config_filename)
+                                                      logger_filename=logger_filename)
 
 
     @ParameterBase.features.setter

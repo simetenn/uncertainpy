@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import six
 import numpy as np
 
-from ..utils.logger import _create_module_logger, get_logger
+from ..utils.logger import setup_module_logging, get_logger
 
 class Model(object):
     """
@@ -36,14 +36,13 @@ class Model(object):
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. The model results are still
         postprocessed if a postprocessing is implemented. Default is False.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, str}, optional
-        Sets logging to a file with name `uncertainpy.log`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging to file is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -78,7 +77,7 @@ class Model(object):
                  suppress_graphics=False,
                  ignore=False,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         self.interpolate = interpolate
         self.labels = labels
@@ -90,7 +89,7 @@ class Model(object):
         else:
             self.name = self.__class__.__name__
 
-        _create_module_logger(self, logger_level, logger_config_filename)
+        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
 
         if postprocess is not None:
             self.postprocess = postprocess

@@ -61,14 +61,13 @@ class GeneralNetworkFeatures(Features):
     units : {None, Quantities unit}, optional
         The Quantities unit of the time in the model. If None, ms is used.
         The default is None.
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, str}, optional
-        Sets logging to a file with name `uncertainpy.log`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -81,8 +80,6 @@ class GeneralNetworkFeatures(Features):
         that is not in the list of utility methods is considered to be a feature.
     labels : dictionary
         Labels for the axes of each feature, used when plotting.
-    logger : logging.Logger
-        Logger object responsible for logging to screen or file.
 
     Notes
     -----
@@ -114,7 +111,7 @@ class GeneralNetworkFeatures(Features):
                  labels={},
                  units=None,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Network features require: neo, quantities")
@@ -124,7 +121,7 @@ class GeneralNetworkFeatures(Features):
                                                      interpolate=interpolate,
                                                      labels=labels,
                                                      logger_level=logger_level,
-                                                     logger_config_filename=logger_config_filename)
+                                                     logger_filename=logger_filename)
         if units is None:
             self.units = pq.ms
         else:

@@ -61,14 +61,13 @@ class EfelFeatures(Features):
         as ``"stimulus_start"`` and the simulation end time is used for
         ``"stimulus_end"``. The decay_time_constant_after_stim feature becomes
         disabled with False. Default is True
-    logger_level : {"info", "debug", "warning", "error", "critical"}, optional
-        Set the threshold for the logging level.
-        Logging messages less severe than this level is ignored.
-        Default is `"info"`.
-    logger_config_filename : {None, str}, optional
-        Sets logging to a file with name `uncertainpy.log`.
-        No logging to screen if a filename is given.
-        Default is None.
+    logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
+        Set the threshold for the logging level. Logging messages less severe
+        than this level is ignored. If None, no logging is performed
+        Default logger level is info.
+    logger_filename : str
+        Name of the logfile. If None, no logging to file is performed. Default is
+        "uncertainpy.log".
 
     Attributes
     ----------
@@ -165,7 +164,7 @@ class EfelFeatures(Features):
                  labels={},
                  strict=True,
                  logger_level="info",
-                 logger_config_filename=""):
+                 logger_filename="uncertainpy.log"):
 
         if not prerequisites:
             raise ImportError("Efel features require: efel")
@@ -180,7 +179,7 @@ class EfelFeatures(Features):
                                            new_utility_methods=[],
                                            labels=implemented_labels,
                                            logger_level=logger_level,
-                                           logger_config_filename=logger_config_filename)
+                                           logger_filename=logger_filename)
         logger = get_logger(self)
 
         def efel_wrapper(feature_name):
