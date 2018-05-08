@@ -5,6 +5,7 @@ import subprocess
 import glob
 import numpy as np
 import chaospy as cp
+import logging
 
 # import matplotlib
 # matplotlib.use('Agg')
@@ -50,7 +51,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(self.model,
                                                      parameters=self.parameters,
                                                      features=features,
-                                                     logger_level="error")
+                                                     logger_level="error",
+                                                     logger_filename=None)
 
         self.figureformat = ".png"
         self.nr_mc_samples = 10**1
@@ -63,14 +65,20 @@ class TestUncertainty(TestCasePlot):
 
 
     def test_init(self):
-        uncertainty = UncertaintyQuantification(self.model, self.parameters)
+        uncertainty = UncertaintyQuantification(self.model,
+                                                self.parameters,
+                                                logger_level="error",
+                                                logger_filename=None)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.parameters, Parameters)
 
 
     def test_init_parameter_list(self):
-        uncertainty = UncertaintyQuantification(self.model, self.parameter_list)
+        uncertainty = UncertaintyQuantification(self.model,
+                                                self.parameter_list,
+                                                logger_level="error",
+                                                logger_filename=None)
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -78,19 +86,24 @@ class TestUncertainty(TestCasePlot):
     def test_init_parameter_error(self):
 
         with self.assertRaises(TypeError):
-            UncertaintyQuantification(self.model, 2)
+            UncertaintyQuantification(self.model,
+                                      2,
+                                      logger_level="error",
+                                      logger_filename=None)
 
 
     def test_init_features(self):
         uncertainty = UncertaintyQuantification(self.model,
                                                 self.parameters,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         self.assertIsInstance(uncertainty.features, Features)
 
         uncertainty = UncertaintyQuantification(self.model,
                                                 self.parameters,
                                                 features=TestingFeatures(),
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         self.assertIsInstance(uncertainty.features, TestingFeatures)
 
 
@@ -126,7 +139,8 @@ class TestUncertainty(TestCasePlot):
             self.model,
             self.parameters,
             uncertainty_calculations=TempUncertaintyCalculations(self.model),
-            logger_level="error"
+            logger_level="error",
+            logger_filename=None
         )
 
         self.assertIsInstance(uncertainty.uncertainty_calculations, TempUncertaintyCalculations)
@@ -135,7 +149,8 @@ class TestUncertainty(TestCasePlot):
     def test_set_parameters(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         uncertainty.parameters = Parameters()
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -147,7 +162,8 @@ class TestUncertainty(TestCasePlot):
     def test_set_parameter_list(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         uncertainty.parameters = self.parameter_list
 
         self.assertIsInstance(uncertainty.parameters, Parameters)
@@ -159,7 +175,8 @@ class TestUncertainty(TestCasePlot):
     def test_set_parameter_error(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         with self.assertRaises(TypeError):
             uncertainty.parameters = 2
 
@@ -167,7 +184,8 @@ class TestUncertainty(TestCasePlot):
     def test_set_features(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         uncertainty.features = TestingFeatures()
 
         self.assertIsInstance(uncertainty.features, TestingFeatures)
@@ -250,7 +268,8 @@ class TestUncertainty(TestCasePlot):
     def test_set_model(self):
         uncertainty = UncertaintyQuantification(model=TestingModel1d(),
                                                 parameters=None,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
         uncertainty.model = TestingModel1d()
 
         self.assertIsInstance(uncertainty.model, TestingModel1d)
@@ -262,7 +281,8 @@ class TestUncertainty(TestCasePlot):
     def test_set_model_function(self):
         uncertainty = UncertaintyQuantification(model=model_function,
                                                 parameters=None,
-                                                logger_level="error")
+                                                logger_level="error",
+                                                logger_filename=None)
 
         self.assertIsInstance(uncertainty.model, Model)
         self.assertIsInstance(uncertainty.uncertainty_calculations.model, Model)
@@ -300,7 +320,8 @@ class TestUncertainty(TestCasePlot):
             model=self.model,
             parameters=self.parameters,
             create_PCE_custom=create_PCE_custom,
-            logger_level="error"
+            logger_level="error",
+            logger_filename=None
         )
 
         data = uncertainty.polynomial_chaos(method="custom", data_folder=self.output_test_dir, figure_folder=self.output_test_dir)
@@ -419,7 +440,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
-                                                 logger_level="error")
+                                                 logger_level="error",
+                                                 logger_filename=None)
 
 
         self.uncertainty.polynomial_chaos(plot="condensed_first",
@@ -456,7 +478,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      features=features,
                                                      parameters=parameters,
-                                                     logger_level="error")
+                                                     logger_level="error",
+                                                     logger_filename=None)
 
         self.uncertainty.polynomial_chaos_single(plot="condensed_first",
                                                  data_folder=self.output_test_dir,
@@ -492,7 +515,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                  features=features,
                                                  parameters=parameters,
-                                                 logger_level="error")
+                                                 logger_level="error",
+                                                 logger_filename=None)
 
 
         data_dict = self.uncertainty.monte_carlo_single(filename="TestingModel1d_MC",
@@ -542,7 +566,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      parameters=parameters,
                                                      features=features,
-                                                     logger_level="error")
+                                                     logger_level="error",
+                                                     logger_filename=None)
 
 
         data = self.uncertainty.monte_carlo(filename="TestingModel1d_MC",
@@ -749,7 +774,8 @@ class TestUncertainty(TestCasePlot):
                                                      parameters=parameters,
                                                      features=features,
                                                      uncertainty_calculations=TestingUncertaintyCalculations(model),
-                                                     logger_level="error")
+                                                     logger_level="error",
+                                                     logger_filename=None)
 
 
     def test_set_uncertainty_calculations(self):
@@ -766,7 +792,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty = UncertaintyQuantification(model,
                                                      parameters=parameters,
                                                      features=features,
-                                                     logger_level="error")
+                                                     logger_level="error",
+                                                     logger_filename=None)
 
         self.uncertainty.uncertainty_calculations = TestingUncertaintyCalculations()
 
@@ -1006,6 +1033,42 @@ class TestUncertainty(TestCasePlot):
 
         self.assertEqual(self.uncertainty.data.argument, "value")
 
+
+
+
+    def test_logging(self):
+        # remove possible added handlers
+        logger = logging.getLogger("uncertainpy")
+
+        handlers = logger.handlers[:]
+        for handler in handlers:
+            handler.close()
+            logger.removeHandler(handler)
+
+        logfile = os.path.join(self.output_test_dir, "test.log")
+
+        features = TestingFeatures(features_to_run=["feature0d_var",
+                                                    "feature1d_var",
+                                                    "feature2d_var"])
+
+
+        self.uncertainty = UncertaintyQuantification(self.model,
+                                                     parameters=self.parameters,
+                                                     features=features,
+                                                     logger_level="debug",
+                                                     logger_filename=logfile)
+
+        self.uncertainty.quantify()
+
+        self.assertEqual(len(open(logfile).readlines()), 1)
+
+        # remove the handler we have added
+        logger = logging.getLogger("uncertainpy")
+
+        handlers = logger.handlers[:]
+        for handler in handlers:
+            handler.close()
+            logger.removeHandler(handler)
 
 
 if __name__ == "__main__":

@@ -48,18 +48,23 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_init(self):
-        RunModel(model=TestingModel1d(), parameters=self.parameters, logger_level="warning")
+        RunModel(model=TestingModel1d(),
+                parameters=self.parameters,
+                logger_level="error")
 
 
     def test_set_feature(self):
-        self.runmodel.features = Features()
+        self.runmodel.features = Features(logger_level="error")
         self.assertIsInstance(self.runmodel._features, Features)
         self.assertIsInstance(self.runmodel._parallel.features, Features)
 
 
 
     def test_set_model(self):
-        self.runmodel = RunModel(TestingModel2d(), None, logger_level="warning")
+        self.runmodel = RunModel(TestingModel2d(),
+                                 None,
+                                 logger_level="error")
+
         self.runmodel.model = TestingModel1d()
 
         self.assertIsInstance(self.runmodel._model, TestingModel1d)
@@ -67,7 +72,9 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_model_none(self):
-        self.runmodel = RunModel(TestingModel2d(), None)
+        self.runmodel = RunModel(TestingModel2d(),
+                                 None,
+                                 logger_level="error")
         self.runmodel.model = None
 
         self.assertIsNone(self.runmodel._model)
@@ -75,7 +82,9 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_parameter_list(self):
-        runmodel = RunModel(TestingModel2d(), None)
+        runmodel = RunModel(TestingModel2d(),
+                            None,
+                            logger_level="error")
 
         runmodel.parameters = self.parameter_list
 
@@ -83,14 +92,18 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_set_parameter_error(self):
-        runmodel = RunModel(TestingModel2d(), None)
+        runmodel = RunModel(TestingModel2d(),
+                            None,
+                            logger_level="error")
 
         with self.assertRaises(TypeError):
             runmodel.parameters = 2
 
 
     def test_set_model_function(self):
-        self.runmodel = RunModel(TestingModel2d(), None)
+        self.runmodel = RunModel(TestingModel2d(),
+                                 None,
+                                 logger_level="error")
 
         self.runmodel.model = model_function
 
@@ -99,7 +112,9 @@ class TestRunModel(unittest.TestCase):
 
 
     def test_init_model_function(self):
-        self.runmodel = RunModel(model_function, None)
+        self.runmodel = RunModel(model_function,
+                                 None,
+                                 logger_level="error")
 
         self.assertIsInstance(self.runmodel.model, Model)
         self.assertIsInstance(self.runmodel._parallel.model, Model)
@@ -170,7 +185,8 @@ class TestRunModel(unittest.TestCase):
                                 "average_AHP_depth", "average_AP_width",
                                 "accommodation_index"]
 
-        self.runmodel.features = SpikingFeatures([feature_function, feature_function2])
+        self.runmodel.features = SpikingFeatures([feature_function, feature_function2],
+                                                 logger_level="error")
         self.assertIsInstance(self.runmodel.features, SpikingFeatures)
 
         time, values = self.runmodel.features.feature_function(None, None)
@@ -216,7 +232,8 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel0d(),
                                  parameters=self.parameters,
                                  features=features,
-                                 CPUs=1)
+                                 CPUs=1,
+                                 logger_level="error")
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -237,7 +254,8 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel0d(),
                                  parameters=self.parameters,
                                  features=features,
-                                 CPUs=3)
+                                 CPUs=3,
+                                 logger_level="error")
 
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
@@ -279,7 +297,8 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel2d(),
                                  parameters=self.parameters,
                                  features=features,
-                                 CPUs=1)
+                                 CPUs=1,
+                                 logger_level="error")
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -299,7 +318,8 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel2d(),
                                  parameters=self.parameters,
                                  features=features,
-                                 CPUs=3)
+                                 CPUs=3,
+                                 logger_level="error")
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -331,7 +351,8 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 logger_level="error")
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -359,7 +380,8 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 logger_level="error")
 
         results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
 
@@ -384,7 +406,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
                                  features=features,
-                                 logger_level="warning")
+                                 logger_level="error")
 
 
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -429,7 +451,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_model_1d_interpolate_ignore(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
-                                 logger_level="warning")
+                                 logger_level="error")
 
         self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -467,7 +489,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=False),
                                  parameters=self.parameters,
                                  features=features,
-                                 logger_level="warning")
+                                 logger_level="error")
 
         self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -515,7 +537,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_model_1d_spiketrain_ignore(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
-                                 logger_level="warning")
+                                 logger_level="error")
 
         self.runmodel.model.interpolate = False
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -551,7 +573,7 @@ class TestRunModel(unittest.TestCase):
     def test_results_to_data_model_1d_interpolate_ignore_and_interpolate(self):
         self.runmodel = RunModel(model=TestingModelAdaptive(ignore=True),
                                  parameters=self.parameters,
-                                 logger_level="warning")
+                                 logger_level="error")
 
         self.runmodel.model.interpolate = True
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
@@ -587,7 +609,8 @@ class TestRunModel(unittest.TestCase):
 
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
-                                 features=features)
+                                 features=features,
+                                 logger_level="error")
 
         results = [{"feature0d": {"values": 1, "time": np.nan}},
                    {"feature0d": {"values": 1, "time": np.nan}},
@@ -737,7 +760,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
                                  features=features,
-                                 logger_level="warning")
+                                 logger_level="error")
 
 
 
@@ -774,7 +797,7 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModelAdaptive(),
                                  parameters=self.parameters,
                                  features=features,
-                                 logger_level="warning")
+                                 logger_level="error")
 
 
 
@@ -895,7 +918,9 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
                                  features=features,
-                                 CPUs=1)
+                                 CPUs=1,
+                                 logger_level="error")
+
         uncertain_parameters = ["a", "b"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -916,7 +941,9 @@ class TestRunModel(unittest.TestCase):
         self.runmodel = RunModel(model=TestingModel1d(),
                                  parameters=self.parameters,
                                  features=None,
-                                 CPUs=1)
+                                 CPUs=1,
+                                 logger_level="error")
+
         uncertain_parameters = ["a"]
 
         data = self.runmodel.run(nodes, uncertain_parameters)

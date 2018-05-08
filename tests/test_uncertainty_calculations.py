@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 import time
-
+import logging
 import numpy as np
 import chaospy as cp
 
@@ -21,6 +21,7 @@ from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
 from .testing_classes import TestingModelAdaptive, TestingModelIncomplete
 
+from uncertainpy.utils.logger import add_file_handler
 
 class TestUncertaintyCalculations(unittest.TestCase):
     def setUp(self):
@@ -47,8 +48,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
                                                                 features=features,
-                                                                logger_level="error",
-                                                                logger_filename=None)
+                                                                logger_level="error")
 
     def tearDown(self):
         if os.path.isdir(self.output_test_dir):
@@ -56,11 +56,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_init(self):
-        uncertainty = UncertaintyCalculations(model=self.model,
-                                              parameters=self.parameters)
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                              parameters=self.parameters,
+                                              logger_level="error")
 
-        self.assertIsInstance(uncertainty.model, TestingModel1d)
-        self.assertIsInstance(uncertainty.features, Features)
+        self.assertIsInstance(uncertainty_calculations.model, TestingModel1d)
+        self.assertIsInstance(uncertainty_calculations.features, Features)
 
 
 
@@ -73,6 +74,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                            parameters=None,
                                                            features=TestingFeatures(),
                                                            logger_level="error")
+
         self.assertIsInstance(uncertainty_calculations.features, TestingFeatures)
 
 
@@ -370,46 +372,60 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    # Currently disabled since teh loggign filename is unable to be changed after it first have been created
-    # def test_create_masked_evaluations_warning(self):
-    #     logfile = os.path.join(self.output_test_dir, "test.log")
+    def test_create_masked_evaluations_warning(self):
+        logfile = os.path.join(self.output_test_dir, "test.log")
 
-    #     parameter_list = [["a", 1, None],
-    #                       ["b", 2, None]]
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
 
-    #     parameters = Parameters(parameter_list)
-    #     parameters.set_all_distributions(uniform(0.5))
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(0.5))
 
-    #     model = TestingModel1d()
+        model = TestingModel1d()
 
-    #     features = TestingFeatures(features_to_run=["feature0d",
-    #                                                 "feature1d",
-    #                                                 "feature2d"])
-
-
-    #     self.uncertainty_calculations = UncertaintyCalculations(model,
-    #                                                             parameters=parameters,
-    #                                                             features=features,
-    #                                                             logger_level="warning",
-    #                                                             logger_filename=logfile)
-
-    #     nodes = np.array([[0, 1, 2], [1, 2, 3]])
-    #     uncertain_parameters = ["a", "b"]
-
-    #     data = self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d"])
 
 
-    #     U_0 = data["TestingModel1d"].evaluations[0]
-    #     U_2 = data["TestingModel1d"].evaluations[2]
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                logger_level="warning")
 
-    #     data["TestingModel1d"].evaluations = [U_0, np.nan, U_2]
 
-    #     self.uncertainty_calculations.create_masked_evaluations(data, "TestingModel1d")
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        uncertain_parameters = ["a", "b"]
 
-    #     time.sleep(0.1)
-    #     message = "WARNING - TestingModel1d: only yields results for 2/3 parameter combinations."
+        data = self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
 
-    #     self.assertTrue(message in open(logfile).read())
+        # add handler to examine if we print the warning
+        add_file_handler("uncertainpy", filename=logfile)
+
+        U_0 = data["TestingModel1d"].evaluations[0]
+        U_2 = data["TestingModel1d"].evaluations[2]
+
+        data["TestingModel1d"].evaluations = [U_0, np.nan, U_2]
+
+        self.uncertainty_calculations.create_masked_evaluations(data, "TestingModel1d")
+
+        time.sleep(0.4)
+        message = "WARNING - TestingModel1d: only yields results for 2/3 parameter combinations."
+
+        self.assertTrue(message in open(logfile).read())
+
+        # remove the handler we have added
+        logger = logging.getLogger("uncertainpy")
+
+        handlers = logger.handlers[:]
+        for handler in handlers:
+            handler.close()
+            logger.removeHandler(handler)
+
+
+
+
+
 
 
 
@@ -761,7 +777,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations = UncertaintyCalculations(model=model,
                                                                 parameters=parameters,
                                                                 features=features,
-                                                                logger_level="debug")
+                                                                logger_level="error")
 
         with self.assertRaises(ValueError):
             self.uncertainty_calculations.create_PCE_collocation()
@@ -873,7 +889,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_calculate_sobol_first_sum(self):
-        data = Data()
+        data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
         data["test2D"].sobol_first = [[4, 6], [8, 12]]
@@ -889,7 +905,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_calculate_first_sum(self):
-        data = Data()
+        data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
         data["test2D"].sobol_first = [[4, 6], [8, 12]]
@@ -904,7 +920,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(data["test1D"]["sobol_first_sum"][1], 2/3.)
 
     def test_calculate_total_sum(self):
-        data = Data()
+        data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
         data["test2D"].sobol_total = [[4, 6], [8, 12]]
@@ -920,7 +936,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_calculate_sensitivity_total_sum(self):
-        data = Data()
+        data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
         data["test2D"].sobol_total = [[4, 6], [8, 12]]
@@ -936,7 +952,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
     def test_sensitivity_sum_error(self):
-        data = Data()
+        data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
         data["test2D"].sobol_total = [[4, 6], [8, 12]]
@@ -966,7 +982,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 features=features,
                                                                 logger_level="error")
 
-        data = Data()
+        data = Data(logger_level="error")
 
         q0, q1 = cp.variable(2)
         parameter_space = parameters.get_from_uncertain("distribution")

@@ -24,7 +24,7 @@ folder = os.path.dirname(os.path.realpath(__file__))
 
 class TestModel(unittest.TestCase):
     def setUp(self):
-        self.model = Model(logger_level="error", logger_filename=None)
+        self.model = Model(logger_level="error")
 
 
     def test_run_error(self):
@@ -33,7 +33,7 @@ class TestModel(unittest.TestCase):
 
 
     def test_run(self):
-        model = Model(run=model_function, logger_level="error", logger_filename=None)
+        model = Model(run=model_function, logger_level="error")
 
         parameters = {"a": -1, "b": -1}
         time, values = model.run(**parameters)
@@ -42,7 +42,7 @@ class TestModel(unittest.TestCase):
         self.assertTrue(np.array_equal(values, np.arange(0, 10) - 2))
         self.assertEqual(model.name, "model_function")
 
-        model = Model(logger_level="error", logger_filename=None)
+        model = Model(logger_level="error")
         model.run = model_function
 
         parameters = {"a": -1, "b": -1}
@@ -73,8 +73,7 @@ class TestModel(unittest.TestCase):
         model = Model(run=f,
                       interpolate=True,
                       labels=["test x", "text y"],
-                      logger_level="error",
-                      logger_filename=None)
+                      logger_level="error")
 
         self.assertEqual(model.run, f)
         self.assertEqual(model.labels, ["test x", "text y"])
@@ -86,7 +85,7 @@ class TestModel(unittest.TestCase):
         def f(x):
             return x
 
-        model = Model(logger_level="error", logger_filename=None)
+        model = Model(logger_level="error")
 
         model.run = f
         self.assertEqual(model.run, f)
@@ -121,7 +120,7 @@ class TestModel(unittest.TestCase):
 
 
     def test_assign_postprocess(self):
-        model = Model(run=model_function, logger_level="error", logger_filename=None)
+        model = Model(run=model_function, logger_level="error")
 
         parameters = {"a": -1, "b": -1}
         results = model.run(**parameters)
@@ -151,7 +150,7 @@ class TestModel(unittest.TestCase):
             return "time", "values"
 
         model = Model(run=model_function,
-                      postprocess=postprocess, logger_level="error", logger_filename=None)
+                      postprocess=postprocess, logger_level="error")
 
         parameters = {"a": -1, "b": -1}
         results = model.run(**parameters)
@@ -261,8 +260,7 @@ class TestNeuronModel(unittest.TestCase):
                             stimulus_end=1000,
                             stimulus_start=1900,
                             test=12,
-                            logger_level="error",
-                            logger_filename=None)
+                            logger_level="error")
 
         self.assertEqual(model.info["test"], 12)
         self.assertEqual(model.info["stimulus_end"], 1000)
@@ -279,8 +277,7 @@ class TestNeuronModel(unittest.TestCase):
 
         model = NeuronModel(file=file,
                             path=os.path.join(filedir, path),
-                            logger_level="error",
-                            logger_filename=None)
+                            logger_level="error")
 
         model_parameters = {"cap": 1.1, "Rm": 22000}
 
@@ -294,8 +291,7 @@ class TestNeuronModel(unittest.TestCase):
             return "time", "values"
 
         model = NeuronModel(run=test_run,
-                            logger_level="error",
-                            logger_filename=None)
+                            logger_level="error")
 
         model_parameters = {"a": 1.1, "b": 22000}
         time, values = model.run(**model_parameters)
@@ -311,8 +307,7 @@ class TestNeuronModel(unittest.TestCase):
 
         model = NeuronModel(path=path,
                             interpolate=True,
-                            logger_level="error",
-                            logger_filename=None)
+                            logger_level="error")
 
         parallel = Parallel(model=model)
         model_parameters = {"cap": 1.1, "Rm": 22000}
@@ -333,8 +328,7 @@ class TestNeuronModel(unittest.TestCase):
 
         model = NeuronModel(path=path,
                             interpolate=True,
-                            logger_level="error",
-                            logger_filename=None)
+                            logger_level="error")
 
         parameter_list = [["a", 1, None],
                           ["b", 2, None]]
@@ -362,8 +356,7 @@ class TestNeuronModel(unittest.TestCase):
 class TestNestModel(unittest.TestCase):
     def test_init(self):
         model = NestModel(brunel_network,
-                          logger_level="error",
-                          logger_filename=None)
+                          logger_level="error")
 
         self.assertEqual(model.run, brunel_network)
         self.assertEqual(model.name, "brunel_network")
@@ -373,8 +366,7 @@ class TestNestModel(unittest.TestCase):
         def f(x):
             return x
 
-        model = NestModel(logger_level="error",
-                          logger_filename=None)
+        model = NestModel(logger_level="error")
 
         model.run = f
         self.assertEqual(model.run, f)
@@ -393,8 +385,7 @@ class TestNestModel(unittest.TestCase):
 
     def test_postprocess(self):
         model = NestModel(brunel_network,
-                          logger_level="error",
-                          logger_filename=None)
+                          logger_level="error")
 
 
         time, values = model.postprocess(4, [[0, 2, 3]])

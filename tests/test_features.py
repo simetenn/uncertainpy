@@ -19,10 +19,10 @@ class TestFeatures(unittest.TestCase):
         self.values = np.arange(0, 10) + 1
         self.info = {"info": 1}
 
-        self.features = Features(logger_level="error", logger_filename=None)
+        self.features = Features(logger_level="error")
 
     def test_initNone(self):
-        features = Features(logger_level="error", logger_filename=None)
+        features = Features(logger_level="error")
 
         self.assertIsInstance(features, Features)
 
@@ -37,7 +37,7 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_preprocess(self):
-        features = Features(logger_level="error", logger_filename=None)
+        features = Features(logger_level="error")
         time, values = features.preprocess(self.time, self.values)
 
         self.assertTrue(np.array_equal(time, self.time))
@@ -45,7 +45,7 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_preprocess_args(self):
-        features = Features(logger_level="error", logger_filename=None)
+        features = Features(logger_level="error")
         time, values, a, b = features.preprocess(self.time, self.values, 1, 2)
 
         self.assertTrue(np.array_equal(time, self.time))
@@ -68,7 +68,7 @@ class TestFeatures(unittest.TestCase):
         def preprocess(time, values):
             return "time", "values"
 
-        features = Features(preprocess=preprocess, logger_level="error", logger_filename=None)
+        features = Features(preprocess=preprocess, logger_level="error")
 
         time, values = features.preprocess(self.time, self.values)
 
@@ -112,7 +112,7 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_intitFeatureList(self):
-        features = Features(features_to_run=None, logger_level="error", logger_filename=None)
+        features = Features(features_to_run=None, logger_level="error")
         self.assertEqual(features.features_to_run, [])
 
         features = Features(features_to_run=["feature1d", "feature2"])
@@ -132,8 +132,7 @@ class TestFeatures(unittest.TestCase):
 
         features = Features(new_features=[feature_function, feature_function2],
                             labels={"feature_function": ["x", "y"]},
-                            logger_level="error",
-                            logger_filename=None)
+                            logger_level="error")
 
 
 
@@ -156,7 +155,7 @@ class TestFeatures(unittest.TestCase):
 
 
     def test_intitinterpolateList(self):
-        features = Features(interpolate=None, logger_level="error", logger_filename=None)
+        features = Features(interpolate=None, logger_level="error")
         self.assertEqual(features.interpolate, [])
 
         features = Features(interpolate=["feature1d", "feature2"])
@@ -196,7 +195,7 @@ class TestFeatures(unittest.TestCase):
         def feature_function2(time, values):
             return "t2", "U2"
 
-        features = Features(logger_level="error", logger_filename=None)
+        features = Features(logger_level="error")
 
         features.add_features([feature_function, feature_function2],
                                labels={"feature_function": ["x", "y"]})
@@ -245,7 +244,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
 
 
     def test_initNone(self):
-        self.features = GeneralSpikingFeatures(logger_level="error", logger_filename=None)
+        self.features = GeneralSpikingFeatures(logger_level="error")
 
         self.assertIsInstance(self.features, GeneralSpikingFeatures)
         self.assertIsNone(self.features.spikes)
@@ -253,7 +252,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
 
 
     def test_calculate_spikes(self):
-        self.features = GeneralSpikingFeatures(logger_level="error", logger_filename=None)
+        self.features = GeneralSpikingFeatures(logger_level="error")
 
         spikes = self.features.calculate_spikes(self.time, self.values)
 
@@ -261,7 +260,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
 
 
     def test_preprocess(self):
-        self.features = GeneralSpikingFeatures(logger_level="error", logger_filename=None)
+        self.features = GeneralSpikingFeatures(logger_level="error")
 
         time, spikes, info = self.features.preprocess(self.time, self.values, self.info)
 
@@ -272,7 +271,7 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
 
 
     def test_reference_feature(self):
-        self.features = GeneralSpikingFeatures(logger_level="error", logger_filename=None)
+        self.features = GeneralSpikingFeatures(logger_level="error")
         time, values = self.features.reference_feature(1, 1, 1)
 
         self.assertIsNone(time)
@@ -308,7 +307,7 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_initNone(self):
-        self.features = SpikingFeatures(logger_level="error", logger_filename=None)
+        self.features = SpikingFeatures(logger_level="error")
 
         self.assertIsInstance(self.features, SpikingFeatures)
         self.assertIsNone(self.features.spikes)
@@ -323,8 +322,7 @@ class TestSpikingFeatures(unittest.TestCase):
     def test_initLabels(self):
         features = SpikingFeatures(labels={"nr_spikes": ["changed"],
                                            "new": ["new"]},
-                                   logger_level="error",
-                                   logger_filename=None)
+                                   logger_level="error")
 
         labels = {"nr_spikes": ["changed"],
                   "new": ["new"],
@@ -339,12 +337,12 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertEqual(features.labels, labels)
 
     def test_features_to_run_all(self):
-        features = SpikingFeatures(features_to_run="all", logger_level="error", logger_filename=None)
+        features = SpikingFeatures(features_to_run="all", logger_level="error")
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
     def test_interpolate_all(self):
-        features = SpikingFeatures(interpolate="all", logger_level="error", logger_filename=None)
+        features = SpikingFeatures(interpolate="all", logger_level="error")
         self.assertEqual(set(features.interpolate), set(self.implemented_features))
 
 
@@ -475,7 +473,7 @@ class TestEfelFeatures(unittest.TestCase):
 
         self.implemented_features = efel.getFeatureNames()
 
-        self.features = EfelFeatures(logger_level="error", logger_filename=None)
+        self.features = EfelFeatures(logger_level="error")
 
         self.info = {}
         self.info["stimulus_start"] = self.time[0]
@@ -496,7 +494,7 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_features_to_run_all(self):
-        features = EfelFeatures(features_to_run="all", logger_level="error", logger_filename=None)
+        features = EfelFeatures(features_to_run="all", logger_level="error")
         self.assertEqual(set(features.features_to_run), set(self.implemented_features))
 
 
@@ -533,7 +531,7 @@ class TestEfelFeatures(unittest.TestCase):
 
 
     def test_spikecount_no_strict(self):
-        self.features = EfelFeatures(strict=False, logger_level="error", logger_filename=None)
+        self.features = EfelFeatures(strict=False, logger_level="error")
 
         time, values = self.features.Spikecount(self.time, self.values, {})
         self.assertIsNone(time)
@@ -558,11 +556,11 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
         self.values = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
 
-        self.features = NetworkFeatures(logger_level="error", logger_filename=None)
+        self.features = NetworkFeatures(logger_level="error")
 
 
     def test_initNone(self):
-        self.features = GeneralNetworkFeatures(logger_level="error", logger_filename=None)
+        self.features = GeneralNetworkFeatures(logger_level="error")
 
         self.assertIsInstance(self.features, GeneralNetworkFeatures)
 
@@ -576,8 +574,7 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
                                           interpolate=["cv"],
                                           labels={"cv": ["test"]},
                                           units="",
-                                          logger_level="error",
-                                          logger_filename=None)
+                                          logger_level="error")
 
         self.assertIsInstance(features, GeneralNetworkFeatures)
         self.assertEqual(features.features_to_run, [])
@@ -588,7 +585,7 @@ class TestGeneralNetworkFeatures(unittest.TestCase):
 
 
     def test_preprocess(self):
-        self.features = GeneralNetworkFeatures(logger_level="error", logger_filename=None)
+        self.features = GeneralNetworkFeatures(logger_level="error")
 
         time, spiketrains = self.features.preprocess(self.time_original, self.values)
 
@@ -622,14 +619,13 @@ class TestNetworkFeatures(unittest.TestCase):
 
 
         self.features = NetworkFeatures(instantaneous_rate_nr_samples=2,
-                                        logger_level="error",
-                                        logger_filename=None)
+                                        logger_level="error")
 
         self.time, self.spiketrains = self.features.preprocess(self.time_original, self.values)
 
 
     def test_initNone(self):
-        self.features = NetworkFeatures(logger_level="error", logger_filename=None)
+        self.features = NetworkFeatures(logger_level="error")
 
         self.assertIsInstance(self.features, NetworkFeatures)
 

@@ -5,7 +5,7 @@ import logging
 import os.path
 import time
 
-from uncertainpy.utils.logger import setup_module_logging, has_handlers, setup_logging
+from uncertainpy.utils.logger import setup_module_logger, has_handlers, setup_logger, add_screen_handler, add_file_handler
 from uncertainpy import Model
 
 from .testing_classes import TestingModel1d
@@ -28,6 +28,10 @@ class TestLogger(unittest.TestCase):
     def tearDown(self):
         logger = logging.getLogger("uncertainpy")
         logger.handlers = []
+
+        # for handler in handlers:
+        #     handler.close()
+        #     main_logger.removeHandler(handler)
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -66,33 +70,66 @@ class TestLogger(unittest.TestCase):
         self.assertFalse(result)
 
 
+    def test_add_screen_handler(self):
+        logger = logging.getLogger("screen")
 
-    def test_create_logger(self):
-        setup_logging("uncertainpy.test1", level="info", filename=self.full_path)
+        add_screen_handler("screen")
+
+        self.assertEqual(len(logger.handlers), 1)
+
+        add_screen_handler("screen")
+        self.assertEqual(len(logger.handlers), 1)
+
+
+    def test_add_file_handler(self):
+        logger = logging.getLogger("file")
+
+        add_file_handler("file")
+
+        self.assertEqual(len(logger.handlers), 1)
+
+        add_file_handler("file")
+        self.assertEqual(len(logger.handlers), 1)
+
+    def test_add_screen_handler(self):
+        logger = logging.getLogger("screen")
+
+        add_screen_handler("screen")
+
+        self.assertEqual(len(logger.handlers), 1)
+
+        add_screen_handler("screen")
+        self.assertEqual(len(logger.handlers), 1)
+
+
+    def test_add_file_and_screen_handlers(self):
+        logger = logging.getLogger("both")
+
+        add_screen_handler("both")
+
+        self.assertEqual(len(logger.handlers), 1)
+
+        add_file_handler("both")
+        self.assertEqual(len(logger.handlers), 2)
+
+
+
+    def test_setup_logger(self):
+        setup_logger("uncertainpy.test1", level="warning")
         logger = logging.getLogger("uncertainpy.test1")
 
         level = logger.getEffectiveLevel()
-        self.assertEqual(level, 20)
-        logger = logging.getLogger("uncertainpy")
-        self.assertEqual(len(logger.handlers), 2)
+        self.assertEqual(level, 30)
+        self.assertEqual(len(logger.handlers), 0)
 
 
-    def test_create_logger_config(self):
 
-        setup_logging("test_logger", level="info", filename=self.full_path)
-        logger = logging.getLogger("test_logger")
-        level = logger.getEffectiveLevel()
-        self.assertEqual(level, 20)
-        logger = logging.getLogger("uncertainpy")
-        self.assertEqual(len(logger.handlers), 2)
-
-
-    def test_setup_logging_debug(self):
-
-
-        setup_logging("uncertainpy", level="debug", filename=self.full_path)
+    def test_setup_logger_debug(self):
+        setup_logger("uncertainpy", level="debug")
 
         logger = logging.getLogger("uncertainpy")
+
+        add_file_handler("uncertainpy", filename=self.full_path)
 
         logger.debug("debug message")
         logger.info("info message")
@@ -104,10 +141,13 @@ class TestLogger(unittest.TestCase):
 
         self.assertEqual(len(open(self.full_path).readlines()), 5)
 
-    def test_setup_logging_info(self):
-        setup_logging("uncertainpy", level="info", filename=self.full_path)
+
+    def test_setup_logger_info(self):
+        setup_logger("uncertainpy", level="info")
 
         logger = logging.getLogger("uncertainpy")
+
+        add_file_handler("uncertainpy", filename=self.full_path)
 
         logger.debug("debug message")
         logger.info("info message")
@@ -120,10 +160,12 @@ class TestLogger(unittest.TestCase):
         self.assertEqual(len(open(self.full_path).readlines()), 4)
 
 
-    def test_setup_logging_warning(self):
-        setup_logging("uncertainpy", level="warning", filename=self.full_path)
+    def test_setup_logger_warning(self):
+        setup_logger("uncertainpy", level="warning")
 
         logger = logging.getLogger("uncertainpy")
+
+        add_file_handler("uncertainpy", filename=self.full_path)
 
         logger.debug("debug message")
         logger.info("info message")
@@ -133,14 +175,16 @@ class TestLogger(unittest.TestCase):
 
         time.sleep(0.1)
 
-        # print(open(self.full_path).readlines())
         self.assertEqual(len(open(self.full_path).readlines()), 3)
 
 
-    def test_setup_logging_error(self):
-        setup_logging("uncertainpy", level="error", filename=self.full_path)
+
+    def test_setup_logger_error(self):
+        setup_logger("uncertainpy", level="error")
 
         logger = logging.getLogger("uncertainpy")
+
+        add_file_handler("uncertainpy", filename=self.full_path)
 
         logger.debug("debug message")
         logger.info("info message")
@@ -153,10 +197,12 @@ class TestLogger(unittest.TestCase):
         self.assertEqual(len(open(self.full_path).readlines()), 2)
 
 
-    def test_setup_logging_critical(self):
-        setup_logging("uncertainpy", level="critical", filename=self.full_path)
+    def test_setup_logger_critical(self):
+        setup_logger("uncertainpy", level="critical")
 
         logger = logging.getLogger("uncertainpy")
+
+        add_file_handler("uncertainpy", filename=self.full_path)
 
         logger.debug("debug message")
         logger.info("info message")
@@ -169,26 +215,34 @@ class TestLogger(unittest.TestCase):
         self.assertEqual(len(open(self.full_path).readlines()), 1)
 
 
-    def test_setup_logging_None(self):
-        setup_logging("uncertainpy", level=None, filename=self.full_path)
+
+    def test_setup_logger_debug(self):
+        setup_logger("uncertainpy", level="debug")
 
         logger = logging.getLogger("uncertainpy")
 
-        self.assertEqual(len(logger.handlers), 0)
+        add_file_handler("uncertainpy", filename=self.full_path)
 
         logger.debug("debug message")
+        logger.info("info message")
+        logger.warning("warning message")
+        logger.error("error message")
+        logger.critical("critical message")
 
         time.sleep(0.1)
 
-        self.assertFalse(os.path.exists(self.full_path))
+        self.assertEqual(len(open(self.full_path).readlines()), 5)
 
-    def test_setup_setup_module_logging(self):
+
+    def test_setup_setup_module_logger(self):
 
         model = Model(logger_level=None)
-        setup_module_logging(class_instance=model, level="info", filename=self.full_path)
+        setup_module_logger(class_instance=model, level="info")
 
         logger = logging.getLogger("uncertainpy.models.model.Model")
 
+        add_file_handler("uncertainpy", filename=self.full_path)
+
         logger.debug("debug message")
         logger.info("info message")
         logger.warning("warning message")
@@ -199,11 +253,17 @@ class TestLogger(unittest.TestCase):
 
         self.assertEqual(len(open(self.full_path).readlines()), 4)
 
-    def test_setup_setup_module_logging_external(self):
+
+
+    def test_setup_setup_module_logger_external(self):
 
         model = TestingModel1d()
-        setup_module_logging(class_instance=model, level="info", filename=self.full_path)
+        setup_module_logger(class_instance=model, level="info")
         logger = logging.getLogger("uncertainpy.tests.testing_classes.testing_models.TestingModel1d")
+
+
+        add_file_handler("uncertainpy", filename=self.full_path)
+
 
         logger.debug("debug message")
         logger.info("info message")
@@ -214,14 +274,6 @@ class TestLogger(unittest.TestCase):
         time.sleep(0.1)
 
         self.assertEqual(len(open(self.full_path).readlines()), 4)
-
-    def test_setup_logging_no_file(self):
-        setup_logging("uncertainpy", level="info", filename=None)
-
-        logger = logging.getLogger("uncertainpy")
-        self.assertEqual(len(logger.handlers), 1)
-
-
 
 
 
