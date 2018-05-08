@@ -32,11 +32,6 @@ class MyFormatter(logging.Formatter):
     error_format = "%(levelname)s - %(module)s - %(filename)s - %(lineno)d - %(message)s"
     critical_format = "%(levelname)s - %(name)s - %(funcName)s - %(lineno)d - %(message)s"
 
-    # debug_format = "%(levelname)s - %(name)s - %(funcName)s - %(filename)s - %(lineno)d - %(message)s"
-    # info_format = "%(levelname)s - %(name)s - %(funcName)s - %(filename)s - %(lineno)d - %(message)s"
-    # warning_format = "%(levelname)s - %(name)s - %(funcName)s - %(filename)s - %(lineno)d - %(message)s"
-    # error_format = "%(levelname)s - %(name)s - %(funcName)s - %(filename)s - %(lineno)d - %(message)s"
-    # critical_format = "%(levelname)s - %(name)s - %(funcName)s - %(filename)s - %(lineno)d - %(message)s"
 
     debug_fmt = logging.Formatter(debug_format)
     info_fmt = logging.Formatter(info_format)
