@@ -13,7 +13,7 @@ from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
 
 import seaborn as sns
 from ..data import Data
-from ..utils.logger import setup_module_logging, get_logger
+from ..utils.logger import setup_module_logger, get_logger
 
 
 # TODO compare plots in a grid of all plots,
@@ -44,10 +44,7 @@ class PlotUncertainty(object):
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
-        Default logger level is info.
-    logger_filename : str
-        Name of the logfile. If None, no logging to file is performed. Default is
-        "uncertainpy.log".
+        Default logger level is "info".
 
     Attributes
     ----------
@@ -65,8 +62,7 @@ class PlotUncertainty(object):
                  filename=None,
                  folder="figures/",
                  figureformat=".png",
-                 logger_level="info",
-                 logger_filename="uncertainpy.log"):
+                 logger_level="info"):
 
         self._folder = None
 
@@ -80,10 +76,9 @@ class PlotUncertainty(object):
         if filename is not None:
             self.load(filename)
 
-        self.logger_level = logger_level
-        self.logger_filename = logger_filename
+        self._logger_level = logger_level
 
-        setup_module_logging(class_instance=self, level=logger_level, filename=logger_filename)
+        setup_module_logger(class_instance=self, level=logger_level)
 
 
 
@@ -97,8 +92,7 @@ class PlotUncertainty(object):
             Name of the file to load data from.
         """
         self.data = Data(filename,
-                         logger_level=self.logger_level,
-                         logger_filename=self.logger_filename)
+                         logger_level=self._logger_level)
 
 
     @property
