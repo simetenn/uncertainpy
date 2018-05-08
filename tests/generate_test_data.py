@@ -32,7 +32,7 @@ def generate_data_polynomial_chaos():  # pragma: no cover
                                     features=features,
                                     parameters=parameters,
                                     logger_level="error",
-                                    filename=None)
+                                    logger_filename=None)
 
 
     test.polynomial_chaos(data_folder=test_data_dir,
@@ -58,7 +58,7 @@ def generate_data_PC_spectral():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
     test.polynomial_chaos(method="spectral",
@@ -83,7 +83,7 @@ def generate_data_PC_model_function():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
     test.polynomial_chaos(data_folder=test_data_dir,
                           seed=seed,
@@ -107,7 +107,7 @@ def generate_data_PC_0D():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
     test.polynomial_chaos(data_folder=test_data_dir,
@@ -131,7 +131,7 @@ def generate_data_PC_2D():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
     test.polynomial_chaos(data_folder=test_data_dir,
@@ -157,7 +157,7 @@ def generate_data_PC_rosenblatt():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
     test.polynomial_chaos(rosenblatt=True,
@@ -186,7 +186,7 @@ def generate_data_PC_rosenblatt_spectral():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
     test.polynomial_chaos(rosenblatt=True,
@@ -215,7 +215,7 @@ def generate_data_polynomial_chaos_single():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
 
@@ -241,7 +241,7 @@ def generate_data_monte_carlo():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
     test.monte_carlo(filename="TestingModel1d_MC",
                      data_folder=test_data_dir,
@@ -268,7 +268,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
                                         features=features,
                                         parameters=parameters,
                                         logger_level="error",
-                                        filename=None)
+                                        logger_filename=None)
 
 
     test.monte_carlo_single(filename="TestingModel1d_MC",
@@ -298,7 +298,7 @@ def generate_data_data():  # pragma: no cover
     data.method = "mock"
     data.seed = 10
     data.incomplete = ["a", "b"]
-    data.error = ["feature1", "feature2"]
+    data.error = ["feature1d"]
 
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
@@ -324,7 +324,7 @@ def generate_data_data_missing():  # pragma: no cover
     data.method = "mock"
     data.seed = 10
     data.incomplete = ["a", "b"]
-    data.error = ["feature1d", ]
+    data.error = ["feature1d"]
 
     data.save(os.path.join(test_data_dir, "test_save_mock_missing"))
 
