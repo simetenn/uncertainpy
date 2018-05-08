@@ -572,14 +572,14 @@ class Data(collections.MutableMapping):
 
     def __len__(self):
         """
-        Get the number of model/features.
+        Get the number of model/features that have not errored.
 
         Returns
         -------
         int
-            The number of model/features.
+            The number of model/features that have not errored.
         """
-        return len(self.data)
+        return len(self.data) - len(self.error)
 
 
     def add_features(self, features):
@@ -634,7 +634,8 @@ class Data(collections.MutableMapping):
             f.attrs["seed"] = self.seed
             f.attrs["model ignore"] = self.model_ignore
 
-            for feature in self:
+
+            for feature in self.data:
                 group = f.create_group(feature)
 
                 for statistical_metric in self[feature]:
