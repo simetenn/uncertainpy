@@ -138,7 +138,8 @@ class TestData(unittest.TestCase):
         os.makedirs(self.output_test_dir)
 
 
-        self.data = Data(logger_level="error")
+        self.data = Data(logger_level="error",
+                         logger_filename=None)
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                            "sobol_first", "sobol_first_sum",
@@ -279,7 +280,7 @@ class TestData(unittest.TestCase):
     #         self.data.load(compare_file)
 
     def test_seed(self):
-        data = Data()
+        data = Data(logger_filename=None)
         self.assertEqual(data.seed, "")
 
         data.seed = 10

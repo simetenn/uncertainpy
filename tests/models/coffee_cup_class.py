@@ -6,7 +6,8 @@ import numpy as np
 class CoffeeCup(Model):
     # Add labels to the model by calling the constructor of the parent un.Model
     def __init__(self):
-        super(CoffeeCup, self).__init__(labels=["Time (s)", "Temperature (C)"])
+        super(CoffeeCup, self).__init__(labels=["Time (s)", "Temperature (C)"],
+                                        logger_level=None)
 
 
     # Define the run method

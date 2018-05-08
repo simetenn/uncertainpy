@@ -28,7 +28,7 @@ class TestBase(unittest.TestCase):
         base = Base(model=model_function,
                     features=model_function,
                     logger_level="warning",
-                    logger_config_filename=self.filename)
+                    logger_filename=None)
 
         self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)
@@ -36,11 +36,10 @@ class TestBase(unittest.TestCase):
         self.assertIsInstance(base.features, Features)
         self.assertEqual(base.features.features_to_run, ["model_function"])
 
-        self.assertIsInstance(base.logger, Logger)
-
 
     def test_feature(self):
-        base = Base()
+        base = Base(logger_level="warning",
+                    logger_filename=None)
 
         base.features = TestingFeatures()
         self.assertIsInstance(base._features, TestingFeatures)
@@ -53,7 +52,8 @@ class TestBase(unittest.TestCase):
 
 
     def test_set_model(self):
-        base = Base()
+        base = Base(logger_level="warning",
+                    logger_filename=None)
 
         base.model = model_function
 
@@ -74,7 +74,9 @@ class TestParameterBase(unittest.TestCase):
 
         base = ParameterBase(parameters=parameter_list,
                              model=model_function,
-                             features=model_function,)
+                             features=model_function,
+                             logger_level="warning",
+                             logger_filename=None)
 
         self.assertIsInstance(base.model, Model)
         self.assertEqual(base.model.run, model_function)
@@ -88,7 +90,8 @@ class TestParameterBase(unittest.TestCase):
 
 
     def test_set_parameters(self):
-        base = ParameterBase()
+        base = ParameterBase(logger_level="warning",
+                             logger_filename=None)
 
         parameter_list = [["a", 1, None],
                          ["b", 2, None]]

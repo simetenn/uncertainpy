@@ -28,7 +28,7 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
         arguments["allow_incomplete"] = allow_incomplete
 
 
-        data = Data()
+        data = Data(logger_level=None)
         data.arguments = arguments
 
         return data
@@ -45,7 +45,7 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
         arguments["seed"] = seed
         arguments["nr_samples"] = nr_samples
 
-        data = Data()
+        data = Data(logger_level=None)
         data.arguments = arguments
 
         return data
@@ -58,7 +58,7 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
         arguments["function"] = "custom_uncertainty_quantification"
         arguments["custom_keyword"] = custom_keyword
 
-        data = Data()
+        data = Data(logger_level=None)
         data.arguments = arguments
 
         return data

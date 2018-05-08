@@ -13,7 +13,7 @@ def model_function(a=1, b=2):
 
 class TestingModel0d(Model):
     def __init__(self):
-        super(TestingModel0d, self).__init__(labels=["x"])
+        super(TestingModel0d, self).__init__(labels=["x"], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -26,7 +26,7 @@ class TestingModel0d(Model):
 
 class TestingModel1d(Model):
     def __init__(self):
-        super(TestingModel1d, self).__init__(labels=["x", "y"])
+        super(TestingModel1d, self).__init__(labels=["x", "y"], logger_level=None)
 
     def run(self, a=1, b=2):
 
@@ -40,7 +40,7 @@ class TestingModel1d(Model):
 
 class TestingModel2d(Model):
     def __init__(self):
-        super(TestingModel2d, self).__init__(labels=["x", "y", "z"])
+        super(TestingModel2d, self).__init__(labels=["x", "y", "z"], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -53,7 +53,7 @@ class TestingModel2d(Model):
 
 class TestingModelAdaptive(Model):
     def __init__(self, ignore=False):
-        super(TestingModelAdaptive, self).__init__(labels=["x", "y"], interpolate=True, ignore=ignore)
+        super(TestingModelAdaptive, self).__init__(labels=["x", "y"], interpolate=True, ignore=ignore, logger_level=None)
 
     def run(self, a=1, b=2):
 
@@ -66,7 +66,7 @@ class TestingModelAdaptive(Model):
 
 class TestingModelConstant(Model):
     def __init__(self):
-        Model.__init__(self, labels=["x", "y"])
+        Model.__init__(self, labels=["x", "y"], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -80,7 +80,7 @@ class TestingModelConstant(Model):
 
 class TestingModelNoTime(Model):
     def __init__(self):
-        Model.__init__(self, labels=["y"])
+        Model.__init__(self, labels=["y"], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -93,7 +93,7 @@ class TestingModelNoTime(Model):
 
 class TestingModelNoTimeU(Model):
     def __init__(self):
-        super(TestingModelNoTimeU, self).__init__(labels=[])
+        super(TestingModelNoTimeU, self).__init__(labels=[], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -103,7 +103,7 @@ class TestingModelNoTimeU(Model):
 
 class TestingModelThree(Model):
     def __init__(self):
-        super(TestingModelThree, self).__init__(labels=["x", "y"])
+        super(TestingModelThree, self).__init__(labels=["x", "y"], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -111,7 +111,7 @@ class TestingModelThree(Model):
 
 class TestingModelIncomplete(Model):
     def __init__(self):
-        super(TestingModelIncomplete, self).__init__(labels=["x", "y"])
+        super(TestingModelIncomplete, self).__init__(labels=["x", "y"], logger_level=None)
 
 
     def run(self, a=1, b=2):
@@ -121,7 +121,7 @@ class TestingModelIncomplete(Model):
 
 class PostprocessErrorNumpy(Model):
     def __init__(self):
-        super(PostprocessErrorNumpy, self).__init__(labels=["x", "y"])
+        super(PostprocessErrorNumpy, self).__init__(labels=["x", "y"], logger_level=None)
 
     def run(self, a=1, b=2):
 
@@ -136,7 +136,7 @@ class PostprocessErrorNumpy(Model):
 
 class PostprocessErrorOne(Model):
     def __init__(self):
-       super(PostprocessErrorOne, self).__init__(labels=["x", "y"])
+       super(PostprocessErrorOne, self).__init__(labels=["x", "y"], logger_level=None)
 
     def run(self, a=1, b=2):
 
@@ -151,7 +151,7 @@ class PostprocessErrorOne(Model):
 
 class PostprocessErrorValue(Model):
     def __init__(self):
-        super(PostprocessErrorValue, self).__init__(labels=["x", "y"])
+        super(PostprocessErrorValue, self).__init__(labels=["x", "y"], logger_level=None)
 
     def run(self, a=1, b=2):
 

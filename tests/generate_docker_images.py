@@ -2,13 +2,13 @@ import six
 import os
 import sys
 import subprocess
-from uncertainpy.utils import create_logger
+from uncertainpy.utils import _create_module_logger
 
 
 folder = os.path.dirname(os.path.realpath(__file__))
 docker_test_dir = os.path.join(folder, "figures_docker")
 
-logger = create_logger("debug")
+logger = _create_module_logger("debug")
 
 
 def system(cmds):

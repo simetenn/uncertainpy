@@ -13,9 +13,6 @@ import numpy as np
 class TestingFeatures(Features):
     def __init__(self, features_to_run="all",
                  interpolate=["feature_interpolate"]):
-        Features.__init__(self,
-                                 features_to_run=features_to_run,
-                                 interpolate=interpolate)
 
         implemented_labels = {"feature0d": ["feature0d"],
                               "feature1d": ["feature1d x", "feature1d y"],
@@ -27,7 +24,8 @@ class TestingFeatures(Features):
 
         super(TestingFeatures, self).__init__(features_to_run=features_to_run,
                                               interpolate=interpolate,
-                                              labels=implemented_labels)
+                                              labels=implemented_labels,
+                                              logger_level=None)
 
         self.is_preprocess_run = False
 
