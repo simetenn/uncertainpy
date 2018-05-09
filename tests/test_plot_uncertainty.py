@@ -215,6 +215,22 @@ class TestPlotUncertainpy(TestCasePlot):
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
         self.assertEqual(plot_count, 22)
 
+
+    def test_evaluations_with_error_results(self):
+        self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
+
+        self.plot.data.error = ["feature1d_var"]
+
+        del self.plot.data.data["feature0d_var"]
+        del self.plot.data.data["feature2d_var"]
+        del self.plot.data.data["TestingModel1d"]
+
+        self.plot.all_evaluations()
+
+        plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_var_evaluations/*.png")))
+        self.assertEqual(plot_count, 22)
+
+
     def test_evaluations_2d_feature(self):
         self.plot.data = Data(os.path.join(self.test_data_dir, "TestingModel1d.h5"))
 

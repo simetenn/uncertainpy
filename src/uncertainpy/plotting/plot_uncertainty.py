@@ -129,7 +129,7 @@ class PlotUncertainty(object):
             Name of folder where to save all plots. The folder is created
             if it does not exist. Default folder is named "evaluations".
         """
-        for feature in self.data:
+        for feature in self.data.data:
             self.evaluations(feature=feature, foldername=foldername)
 
 
