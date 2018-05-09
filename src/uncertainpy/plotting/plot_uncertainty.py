@@ -1400,7 +1400,7 @@ class PlotUncertainty(object):
 
         for data_type in ["mean", "variance", "percentile_5", "percentile_95"]:
             if data_type not in self.data[feature]:
-                msg = "{data_type} for {feature} does not exist. Unable to plot"
+                msg = "{data_type} for {feature} does not exist. Unable to plot."
                 logger.warning(msg.format(data_type=data_type,feature=feature))
                 return
 
@@ -1440,6 +1440,10 @@ class PlotUncertainty(object):
                             color=axis_grey, labelcolor="black", labelsize=labelsize)
             ax2.set_ylabel(label.capitalize(), fontsize=labelsize)
             ax2.set_ylim([0, 1.05])
+
+
+            ax2.spines["right"].set_visible(True)
+            ax2.spines["right"].set_edgecolor(axis_grey)
 
 
             i = 0
