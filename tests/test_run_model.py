@@ -726,30 +726,45 @@ class TestRunModel(unittest.TestCase):
     # #     self.assertTrue(np.isnan(data.U["feature_invalid"][2]))
 
 
-    # def test_is_regular_true(self):
-    #     results = [{"TestingModel1d": {"values": np.arange(0, 10)},
-    #                 "feature2d": {"values": np.array([np.arange(0, 10),
-    #                                              np.arange(0, 10)])},
-    #                 "feature1d": {"values": np.arange(0, 10)},
-    #                 "feature0d": {"values": 1},
-    #                 "feature_invalid": {"values": None}},
-    #                {"TestingModel1d": {"values": np.arange(0, 10)},
-    #                 "feature2d": {"values": np.array([np.arange(0, 10),
-    #                                              np.arange(0, 10)])},
-    #                 "feature1d": {"values": np.arange(0, 10)},
-    #                 "feature0d": {"values": 1},
-    #                 "feature_invalid": {"values": None}},
-    #                {"TestingModel1d": {"values": np.arange(0, 10)},
-    #                 "feature2d": {"values": np.array([np.arange(0, 10),
-    #                                              np.arange(0, 10)])},
-    #                 "feature1d": {"values": np.arange(0, 10)},
-    #                 "feature0d": {"values": 1},
-    #                 "feature_invalid": {"values": None}}]
+    def test_is_regular_true(self):
+        results = [{"TestingModel1d": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])},
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModel1d": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])},
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}},
+                   {"TestingModel1d": {"values": np.arange(0, 10)},
+                    "feature2d": {"values": np.array([np.arange(0, 10),
+                                                 np.arange(0, 10)])},
+                    "feature1d": {"values": np.arange(0, 10)},
+                    "feature0d": {"values": 1},
+                    "feature_invalid": {"values": None}}]
 
-    #     self.assertTrue(self.runmodel.is_regular(results, "feature2d"))
-    #     self.assertTrue(self.runmodel.is_regular(results, "feature1d"))
-    #     self.assertTrue(self.runmodel.is_regular(results, "TestingModel1d"))
+        self.assertTrue(self.runmodel.is_regular(results, "feature2d"))
+        self.assertTrue(self.runmodel.is_regular(results, "feature1d"))
+        self.assertTrue(self.runmodel.is_regular(results, "TestingModel1d"))
 
+
+    def test_is_regular_nested_list(self):
+        results = [{"test": {"values": [[0, 1], [1, 2], [3, 4]]}},
+                   {"test": {"values": [[0, 1], [1, 2], [3, 4]]}},
+                   {"test": {"values": [[0, 1], [1, 2], [3, 4]]}}]
+
+        self.assertTrue(self.runmodel.is_regular(results, "test"))
+
+
+    def test_is_regular_nested_nan(self):
+        results = [{"test": {"values": [[0, 1], np.nan, [3, 4]]}},
+                   {"test": {"values": [[0, 1], [1, 2], [3, 4]]}},
+                   {"test": {"values": [[0, 1], [1, 2], [3, 4]]}}]
+
+        self.assertTrue(self.runmodel.is_regular(results, "test"))
 
 
     def test_is_regular_false(self):
@@ -809,7 +824,7 @@ class TestRunModel(unittest.TestCase):
                     "feature_invalid": {"values": None}},
                    {"TestingModelAdaptive": {"values": np.arange(0, 15)},
                     "feature2d": {"values": np.array([np.arange(0, 10),
-                                                 np.arange(0, 10)])},
+                                                      np.arange(0, 10)])},
                     "feature1d": {"values": np.arange(0, 10)},
                     "feature0d": {"values": 1},
                     "feature_invalid": {"values": None}},
@@ -824,6 +839,7 @@ class TestRunModel(unittest.TestCase):
         self.assertTrue(self.runmodel.is_regular(results, "feature2d"))
         self.assertFalse(self.runmodel.is_regular(results, "TestingModelAdaptive"))
         self.assertFalse(self.runmodel.is_regular(results, "feature1d"))
+
 
     def test_is_regular_nan(self):
         results = [{"test": {"values": np.nan}},

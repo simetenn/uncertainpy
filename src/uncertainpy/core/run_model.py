@@ -16,7 +16,7 @@ import multiprocess as mp
 import logging
 
 from ..data import Data
-from ..utils.utility import lengths
+from ..utils.utility import lengths, contains_nan
 from ..utils.logger import get_logger
 from .base import ParameterBase
 from .parallel import Parallel
@@ -479,7 +479,8 @@ class RunModel(ParameterBase):
     def is_regular(self, results, feature):
         """
         Test if `feature` in `results` is regular or not, meaning it has a
-        varying number of values for each evaluation.
+        varying number of values for each evaluation. Ignores results that
+        contains numpy.nan.
 
         Parameters
         ----------
@@ -515,19 +516,17 @@ class RunModel(ParameterBase):
         bool
             True if the feature is regular or False if the feature is irregular.
         """
-
-        # Find first array that us not np.nan or None
         i = 0
         for result in results:
             i += 1
-            if result[feature]["values"] is not np.nan and result[feature]["values"] is not None:
+            if not contains_nan(result[feature]["values"]):
                 values_prev = result[feature]["values"]
                 break
 
         for result in results[i:]:
             values = result[feature]["values"]
 
-            if values is not np.nan or values is not None:
+            if not contains_nan(values):
                 try:
                     if np.shape(values_prev) != np.shape(values):
                         return False
@@ -577,7 +576,7 @@ class RunModel(ParameterBase):
 
         return data
 
-
+    # Currently not needed
     def regularize_nan_results(self, results):
         """
         Regularize arrays with that only contain numpy.nan values.
