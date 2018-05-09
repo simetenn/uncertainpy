@@ -295,6 +295,7 @@ def add_file_handler(name="uncertainpy", filename="uncertainpy.log"):
         for handler in logger.handlers:
             if isinstance(handler, MultiprocessLoggingHandler):
                 handler_exists = True
+                file_handler = handler
                 break
 
         if not handler_exists:
@@ -302,6 +303,19 @@ def add_file_handler(name="uncertainpy", filename="uncertainpy.log"):
             multiprocess_file.setFormatter(MyFormatter())
 
             logger.addHandler(multiprocess_file)
+
+        else:
+            current_dir = os.getcwd()
+            old_filename = file_handler.handler.baseFilename.strip(current_dir)
+
+            if old_filename != filename:
+                # file_handler.close()
+                logger.removeHandler(file_handler)
+
+                multiprocess_file = MultiprocessLoggingHandler(filename=filename, mode="w")
+                multiprocess_file.setFormatter(MyFormatter())
+
+                logger.addHandler(multiprocess_file)
 
 
 
