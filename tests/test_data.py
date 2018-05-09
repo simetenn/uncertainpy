@@ -118,6 +118,13 @@ class TestDataFeature(unittest.TestCase):
         self.assertEqual(self.data_feature.ndim(), 1)
 
 
+        self.data_feature.evaluations = None
+        self.assertIsNone(self.data_feature.ndim())
+
+        self.data_feature.evaluations = [np.nan, np.nan]
+        self.assertIsNone(self.data_feature.ndim())
+
+
     def test_contains(self):
         self.assertFalse("error" in self.data_feature)
 
@@ -520,16 +527,17 @@ class TestData(unittest.TestCase):
 
     def test_ndim(self):
 
-        self.data.add_features(["feature0d", "feature1d", "feature2d", "feature_invalid", "empty"])
+        self.data.add_features(["feature0d", "feature1d", "feature2d", "feature_invalid", "empty", "test"])
 
         self.data["feature0d"].evaluations = [1]
         self.data["feature1d"].evaluations = [np.arange(0, 10)]
         self.data["feature2d"].evaluations = [np.array([np.arange(0, 10),
                                               np.arange(0, 10)])]
         self.data["feature_invalid"].evaluations = [np.nan]
+        self.data["test"].evaluations = [np.nan, np.arange(0, 10)]
 
         self.assertEqual(self.data.ndim("feature0d"), 0)
         self.assertEqual(self.data.ndim("feature1d"), 1)
         self.assertEqual(self.data.ndim("feature2d"), 2)
-        self.assertEqual(self.data.ndim("feature_invalid"), 0)
+        self.assertIsNone(self.data.ndim("feature_invalid"))
         self.assertIsNone(self.data.ndim("empty"))

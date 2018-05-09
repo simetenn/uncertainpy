@@ -7,6 +7,7 @@ import collections
 
 import numpy as np
 
+from .utils.utility import contains_nan
 from .utils.logger import setup_module_logger, get_logger
 from ._version import __version__
 
@@ -270,7 +271,8 @@ class DataFeature(collections.MutableMapping):
     # TODO: add test for a single evaluations list
     def ndim(self):
         """
-        Get the number of dimensions the data of a data type.
+        Get the number of dimensions the data of a data type. Returns None if no
+        evaluations or all evaluations contain numpy.nan.
 
         Parameters
         ----------
@@ -284,9 +286,11 @@ class DataFeature(collections.MutableMapping):
         """
 
         if self.evaluations is not None:
-            return np.ndim(self.evaluations[0])
-        else:
-            return None
+            for evaluation in self.evaluations:
+                if not contains_nan(evaluation):
+                    return np.ndim(evaluation)
+
+        return None
 
 
 class Data(collections.MutableMapping):
@@ -471,7 +475,7 @@ class Data(collections.MutableMapping):
         -------
         int, None
             The number of dimensions of the model/feature result. Returns None
-            if the feature has no evaluations.
+            if the feature has no evaluations or only contains nan.
         """
         return self[feature].ndim()
 
