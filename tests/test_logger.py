@@ -91,6 +91,21 @@ class TestLogger(unittest.TestCase):
         add_file_handler("file")
         self.assertEqual(len(logger.handlers), 1)
 
+
+    def test_add_file_handler_new_filename(self):
+        logger = logging.getLogger("file")
+
+        add_file_handler("file")
+
+        self.assertTrue(os.path.exists(self.logfile))
+        self.assertEqual(len(logger.handlers), 1)
+
+        new_logfile = os.path.join(self.output_test_dir, "test.log")
+        add_file_handler("file", filename=new_logfile)
+
+        self.assertTrue(os.path.exists(new_logfile))
+        self.assertEqual(len(logger.handlers), 1)
+
     def test_add_screen_handler(self):
         logger = logging.getLogger("screen")
 
