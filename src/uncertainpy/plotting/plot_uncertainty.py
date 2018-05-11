@@ -30,17 +30,14 @@ class PlotUncertainty(object):
     Parameters
     ----------
     filename : {None, str}, optional
-        The name of the data file. If given the file is loaded.
-        If None, nothing is loaded.
-        Default is None.
+        The name of the data file. If given the file is loaded. If None, no file
+        is loaded. Default is None.
     folder : str, optional
         The folder where to save the plots. Creates a new folder if it does not
-        exist.
-        Default is "figures/".
+        exist. Default is "figures/".
     figureformat : str, optional
-        The format to save the plots in. Given as ".xxx". All formats
-        supported by Matplotlib are available.
-        Default is ".png",
+        The format to save the plots in. Given as ".xxx". All formats supported
+        by Matplotlib are available. Default is ".png",
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
@@ -84,7 +81,7 @@ class PlotUncertainty(object):
 
     def load(self, filename):
         """
-        Load data from a hdf5 file with name `filename`.
+        Load data from a HDF5 or Exdir file with name `filename`.
 
         Parameters
         ----------
