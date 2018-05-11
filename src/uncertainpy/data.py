@@ -2,7 +2,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import six
 import os
-import h5py
 import collections
 
 import numpy as np
@@ -309,6 +308,12 @@ class Data(collections.MutableMapping):
     filename : str, optional
         Name of the file to load data from. If None, no data is loaded.
         Default is None.
+    backend : {"auto", "hdf5", "exdir"}, optional
+        The fileformat used to save and load data to/from file. "auto" assumes the
+        filenamess ends with either ".h5" for HDF5 files or ".exdir" for Exdir files.
+        If unknown fileextension defaults to saving as HDF5 files. "hdf5" saves
+        and loads files from HDF5 files. "exdir" saves and loads files from
+        Exdir files. Default is "auto".
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
@@ -354,18 +359,27 @@ class Data(collections.MutableMapping):
         * ``sobol_total_sum`` - the normalized sum of the total order Sobol
           indices (sensitivity) of the model/feature.
 
+    Raises
+    ------
+    ValueError
+        If unsupported backend is chosen.
+
     See also
     --------
     uncertainpy.DataFeature
     """
     def __init__(self,
                  filename=None,
+                 backend="auto",
                  logger_level="info"):
 
         self.data_information = ["uncertain_parameters", "model_name",
                                  "incomplete", "method", "version", "seed",
                                  "model_ignore", "error"]
 
+
+        if backend not in ["auto", "hdf5", "exdir"]:
+            raise ValueError("backend {} not supported. Supported backends are: auto, hdf5, and exdir".format(backend))
 
         setup_module_logger(class_instance=self, level=logger_level)
 
@@ -377,6 +391,7 @@ class Data(collections.MutableMapping):
         self.method = ""
         self.model_ignore = False
         self._seed = ""
+        self.backend = backend
 
         self.version = __version__
 
@@ -605,13 +620,41 @@ class Data(collections.MutableMapping):
     # TODO expand the save function to also save parameters and model information
     def save(self, filename):
         """
-        Save data to a hdf5 file with name `filename`.
+        Save data to a HDF5 or Exdir file with name `filename`.
 
         Parameters
         ----------
         filename : str
             Name of the file to load data from.
         """
+        logger = get_logger(self)
+
+        if self.backend == "auto":
+            if filename.endswith(".h5"):
+                current_backend = "hdf5"
+            elif filename.endswith(".exdir"):
+                current_backend = "exdir"
+            else:
+                logger.warning("Unknown fileextension, defaulting to save {} as a HDF5 file.".format(filename))
+                current_backend = "hdf5"
+        else:
+            current_backend = self.backend
+
+
+        if current_backend == "hdf5":
+            try:
+                import h5py as backend
+            except ImportError:
+                raise ImportError("The HDF5 backend requires: h5py")
+
+        elif current_backend == "exdir":
+            try:
+                import exdir.core as backend
+            except ImportError:
+                raise ImportError("The Exdir backend requires: exdir")
+
+
+
         def add_evaluation(group, values, name="evaluation"):
             iteration = 0
 
@@ -628,40 +671,70 @@ class Data(collections.MutableMapping):
 
 
 
-        with h5py.File(filename, "w") as f:
-            f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
-            f.attrs["model name"] = self.model_name
-            f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
-            f.attrs["error"] =  [irregular.encode("utf8") for irregular in self.error]
-            f.attrs["method"] = self.method
-            f.attrs["version"] = self.version
-            f.attrs["seed"] = self.seed
-            f.attrs["model ignore"] = self.model_ignore
+        # with backend.File(filename, "w") as f:
+        f = backend.File(filename, "w")
+
+        f.attrs["uncertain parameters"] =  [parameter.encode("utf8") for parameter in self.uncertain_parameters]
+        f.attrs["model name"] = self.model_name
+        f.attrs["incomplete results"] =  [incomplete.encode("utf8") for incomplete in self.incomplete]
+        f.attrs["error"] =  [irregular.encode("utf8") for irregular in self.error]
+        f.attrs["method"] = self.method
+        f.attrs["version"] = self.version
+        f.attrs["seed"] = self.seed
+        f.attrs["model ignore"] = self.model_ignore
 
 
-            for feature in self.data:
-                group = f.create_group(feature)
+        for feature in self.data:
+            group = f.create_group(feature)
 
-                for statistical_metric in self[feature]:
-                    if statistical_metric == "evaluations":
-                        evaluations_group = group.create_group("evaluations")
-                        add_evaluation(evaluations_group, self[feature][statistical_metric])
-                    else:
-                        group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
+            for statistical_metric in self[feature]:
+                if statistical_metric == "evaluations":
+                    evaluations_group = group.create_group("evaluations")
+                    add_evaluation(evaluations_group, self[feature][statistical_metric])
+                else:
+                    group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
-                group.create_dataset("labels", data=[label.encode("utf8") for label in self[feature].labels])
+            group.create_dataset("labels", data=np.array([label.encode("utf8") for label in self[feature].labels]))
 
+        f.close()
 
 
     def load(self, filename):
         """
-        Load data from a hdf5 file with name `filename`.
+        Load data from a HDF5 or Exdir file with name `filename`.
 
         Parameters
         ----------
         filename : str
             Name of the file to load data from.
         """
+        logger = get_logger(self)
+
+        if self.backend == "auto":
+            if filename.endswith(".h5"):
+                current_backend = "hdf5"
+            elif filename.endswith(".exdir"):
+                current_backend = "exdir"
+            else:
+                logger.warning("Unknown fileextension, defaulting to load {} from a HDF5 file.".format(filename))
+                current_backend = "hdf5"
+
+        else:
+            current_backend = self.backend
+
+
+        if current_backend == "hdf5":
+            try:
+                import h5py as backend
+            except ImportError:
+                raise ImportError("The HDF5 backend requires: h5py")
+
+        elif current_backend == "exdir":
+            try:
+                import exdir.core as backend
+            except ImportError:
+                raise ImportError("The Exdir backend requires: exdir")
+
 
         # TODO add this check when changing to python 3
         # if not os.path.isfile(self.filename):
@@ -672,61 +745,65 @@ class Data(collections.MutableMapping):
             sub_evaluations = []
             for item in group:
                 value = group[item]
-                if isinstance(value, h5py.Dataset):
+                if isinstance(value, backend.Dataset):
                     sub_evaluations.append(value[()])
 
-                elif  isinstance(value, h5py.Group):
+                elif  isinstance(value, backend.Group):
                     append_evaluations(sub_evaluations, group)
 
             evaluations.append(sub_evaluations)
 
 
-        with h5py.File(filename, "r") as f:
-            if "uncertain parameters" in f.attrs:
-                self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
+        # with backend.File(filename, "r") as f:
+        f = backend.File(filename, "r")
 
-            if "model name" in f.attrs:
-                self.model_name = str(f.attrs["model name"])
+        if "uncertain parameters" in f.attrs:
+            self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
 
-            if "incomplete results" in f.attrs:
-                self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
+        if "model name" in f.attrs:
+            self.model_name = str(f.attrs["model name"])
 
-            if "error" in f.attrs:
-                self.error =  [irregular.decode("utf8") for irregular in f.attrs["error"]]
+        if "incomplete results" in f.attrs:
+            self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
 
-            if "method" in f.attrs:
-                self.method = str(f.attrs["method"])
+        if "error" in f.attrs:
+            self.error =  [irregular.decode("utf8") for irregular in f.attrs["error"]]
 
-            if "version" in f.attrs:
-                self.version = str(f.attrs["version"])
+        if "method" in f.attrs:
+            self.method = str(f.attrs["method"])
 
-            if "seed" in f.attrs:
-                self.seed = f.attrs["seed"]
+        if "version" in f.attrs:
+            self.version = str(f.attrs["version"])
 
-            if "model ignore" in f.attrs:
-                self.model_ignore = f.attrs["model ignore"]
+        if "seed" in f.attrs:
+            self.seed = f.attrs["seed"]
+
+        if "model ignore" in f.attrs:
+            self.model_ignore = f.attrs["model ignore"]
 
 
-            for feature in f:
-                self.add_features(str(feature))
-                for statistical_metric in f[feature]:
+        for feature in f:
+            self.add_features(str(feature))
+            for statistical_metric in f[feature]:
 
-                    if statistical_metric == "evaluations":
-                        evaluations = []
+                if statistical_metric == "evaluations":
+                    evaluations = []
 
-                        for item in f[feature][statistical_metric]:
-                            value = f[feature][statistical_metric][item]
+                    for item in f[feature][statistical_metric]:
+                        value = f[feature][statistical_metric][item]
 
-                            if isinstance(value, h5py.Dataset):
-                                evaluations.append(value[()])
-                            elif  isinstance(value, h5py.Group):
-                                append_evaluations(evaluations, value)
+                        if isinstance(value, backend.Dataset):
+                            evaluations.append(value[()])
+                        elif  isinstance(value, backend.Group):
+                            append_evaluations(evaluations, value)
 
-                        self[feature][statistical_metric] = evaluations
-                    elif statistical_metric == "labels":
-                         self[feature][statistical_metric] = [label.decode("utf8") for label in f[feature][statistical_metric][()]]
-                    else:
-                        self[feature][statistical_metric] = f[feature][statistical_metric][()]
+                    self[feature][statistical_metric] = evaluations
+                elif statistical_metric == "labels":
+                        self[feature][statistical_metric] = [label.decode("utf8") for label in f[feature][statistical_metric][()]]
+                else:
+                    self[feature][statistical_metric] = f[feature][statistical_metric][()]
+
+        f.close()
 
 
     def remove_only_invalid_features(self):

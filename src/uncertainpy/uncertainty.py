@@ -62,6 +62,12 @@ class UncertaintyQuantification(ParameterBase):
     logger_filename : str
         Name of the logfile. If None, no logging to file is performed. Default is
         "uncertainpy.log".
+    backend : {"auto", "hdf5", "exdir"}, optional
+        The fileformat used to save and load data to/from file. "auto" assumes the
+        filenames ends with either ".h5" for HDF5 files or ".exdir" for Exdir files.
+        If unknown fileextension defaults to saving data as HDF5 files. "hdf5" saves
+        and loads files from HDF5 files. "exdir" saves and loads files from
+        Exdir files. Default is "auto".
 
     Attributes
     ----------
@@ -78,6 +84,11 @@ class UncertaintyQuantification(ParameterBase):
         A data object that contains the results from the uncertainty quantification.
         Contains all model and feature evaluations, as well as all calculated
         statistical metrics.
+
+    Raises
+    ------
+    ValueError
+        If unsupported backend is chosen.
 
     See Also
     --------
@@ -96,9 +107,13 @@ class UncertaintyQuantification(ParameterBase):
                  uncertainty_calculations=None,
                  create_PCE_custom=None,
                  custom_uncertainty_quantification=None,
+                 CPUs=mp.cpu_count(),
                  logger_level="info",
                  logger_filename="uncertainpy.log",
-                 CPUs=mp.cpu_count()):
+                 backend="auto"):
+
+        if backend not in ["auto", "hdf5", "exdir"]:
+            raise ValueError("backend {} not supported. Supported backends are: auto, hdf5, and exdir".format(backend))
 
 
         if uncertainty_calculations is None:
@@ -121,6 +136,7 @@ class UncertaintyQuantification(ParameterBase):
 
 
         self.data = None
+        self.backend = backend
 
         self.plotting = PlotUncertainty(folder=None,
                                         logger_level=logger_level)
@@ -279,8 +295,7 @@ class UncertaintyQuantification(ParameterBase):
         save : bool, optional
             If the data should be saved. Default is True.
         data_folder : str, optional
-            Name of the folder where to save the data.
-            Default is "data".
+            Name of the folder where to save the data. Default is "data".
         filename : {None, str}, optional
             Name of the data file. If None the model name is used.
             Default is None.
@@ -457,6 +472,9 @@ class UncertaintyQuantification(ParameterBase):
 
         self.data = self.uncertainty_calculations.custom_uncertainty_quantification(**custom_kwargs)
 
+        self.data.backend = self.backend
+
+
         if filename is None:
             filename = self.model.name
 
@@ -630,6 +648,8 @@ class UncertaintyQuantification(ParameterBase):
             **custom_kwargs
             )
 
+        self.data.backend = self.backend
+
         if filename is None:
             filename = self.model.name
 
@@ -731,9 +751,12 @@ class UncertaintyQuantification(ParameterBase):
         """
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
+
         self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameters,
                                                               nr_samples=nr_samples,
                                                               seed=seed)
+
+        self.data.backend = self.backend
 
         if filename is None:
            filename = self.model.name
@@ -899,6 +922,16 @@ class UncertaintyQuantification(ParameterBase):
 
         data_dict = {}
 
+
+        fileextension = ""
+        if filename.endswith(".h5") and (self.backend == "hdf5" or self.backend == "auto"):
+            fileextension = ".h5"
+            filename = filename.strip(".h5")
+        elif filename.endswith(".exdir") and (self.backend == "exdir" or self.backend == "auto"):
+            fileextension = ".exdir"
+            filename = filename.strip(".exdir")
+
+
         for uncertain_parameter in uncertain_parameters:
             logger.info("Running for " + uncertain_parameter)
 
@@ -913,12 +946,16 @@ class UncertaintyQuantification(ParameterBase):
                 allow_incomplete=allow_incomplete,
             )
 
+            self.data.backend = self.backend
+
             self.data.seed = seed
 
             tmp_filename = "{}_single-parameter-{}".format(
                 filename,
                 uncertain_parameter
             )
+
+            tmp_filename += fileextension
 
             if save:
                 self.save(tmp_filename, folder=data_folder)
@@ -1029,6 +1066,15 @@ class UncertaintyQuantification(ParameterBase):
         if seed is not None:
             np.random.seed(seed)
 
+        fileextension = ""
+        if filename.endswith(".h5") and (self.backend == "hdf5" or self.backend == "auto"):
+            fileextension = ".h5"
+            filename = filename.strip(".h5")
+        elif filename.endswith(".exdir") and (self.backend == "exdir" or self.backend == "auto"):
+            fileextension = ".exdir"
+            filename = filename.strip(".exdir")
+
+
         data_dict = {}
         for uncertain_parameter in uncertain_parameters:
             logger.info("Running MC for " + uncertain_parameter)
@@ -1036,10 +1082,15 @@ class UncertaintyQuantification(ParameterBase):
             self.data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameter,
                                                                   nr_samples=nr_samples)
 
+
+            self.data.backend = self.backend
+
             tmp_filename = "{}_single-parameter-{}".format(
                 filename,
                 uncertain_parameter
             )
+
+            tmp_filename += fileextension
 
             self.data.seed = seed
 
@@ -1076,7 +1127,20 @@ class UncertaintyQuantification(ParameterBase):
         if not os.path.isdir(folder):
             os.makedirs(folder)
 
-        save_path = os.path.join(folder, filename + ".h5")
+        logger = get_logger(self)
+
+        fileextension = ""
+        if self.backend == "auto":
+            if not filename.endswith(".h5") and not filename.endswith(".exdir"):
+                logger.warning("Unknown fileextension, defaulting to save {} to a HDF5 file.".format(filename))
+                fileextension =  ".h5"
+
+        elif self.backend == "hdf5" and not filename.endswith(".h5"):
+            fileextension =  ".h5"
+        elif self.backend == "exdir" and not filename.endswith(".exdir"):
+            fileextension =  ".exdir"
+
+        save_path = os.path.join(folder, filename + fileextension)
 
         logger = get_logger(self)
         logger.info("Saving data as: {}".format(save_path))

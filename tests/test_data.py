@@ -148,8 +148,8 @@ class TestData(unittest.TestCase):
         self.data = Data(logger_level="error")
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                           "sobol_first", "sobol_first_sum",
-                           "sobol_total", "sobol_total_sum"]
+                                    "sobol_first", "sobol_first_sum",
+                                    "sobol_total", "sobol_total_sum"]
 
 
         self.data_information = ["uncertain_parameters", "model_name",
@@ -178,21 +178,7 @@ class TestData(unittest.TestCase):
 
 
     def test_save(self):
-        self.data.add_features(["feature1d", "TestingModel1d"])
-
-        for statistical_metric in self.statistical_metrics:
-            self.data["feature1d"][statistical_metric] = [1., 2.]
-            self.data["TestingModel1d"][statistical_metric] = [3., 4.]
-
-        self.data["feature1d"]["labels"] = ["xlabel", "ylabel"]
-        self.data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
-
-        self.data.model_name = "TestingModel1d"
-        self.data.uncertain_parameters = ["a", "b"]
-        self.data.method = "mock"
-        self.data.seed = 10
-        self.data.incomplete = ["a", "b"]
-        self.data.error = ["feature1d"]
+        self.setup_mock_data(self.data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/test_save_mock")
@@ -204,25 +190,73 @@ class TestData(unittest.TestCase):
 
         self.assertEqual(result, 0)
 
+    def test_backend_error(self):
+        with self.assertRaises(ValueError):
+            self.data = Data(backend="not a backend")
+
+
+    def test_save_load_exdir(self):
+        self.data = Data(logger_level="error", backend="exdir")
+
+        self.setup_mock_data(self.data)
+
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/test_save_mock")
+        filename = os.path.join(self.output_test_dir, "test_save_mock")
+
+        print(filename)
+        print(type(filename))
+
+        self.data.save(filename)
+
+        new_data = Data(filename, backend="exdir")
+
+        for statistical_metric in self.statistical_metrics:
+            new_data["feature1d"][statistical_metric] = np.array([1., 2.])
+            new_data["TestingModel1d"][statistical_metric] = np.array([3., 4.])
+
+        new_data["feature1d"]["labels"] = ["xlabel", "ylabel"]
+        new_data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
+
+        new_data.model_name = "TestingModel1d"
+        new_data.uncertain_parameters = ["a", "b"]
+        new_data.method = "mock"
+        new_data.seed = 10
+        new_data.incomplete = ["a", "b"]
+        new_data.error = ["feature1d"]
+
+
+    #     # data
+
+
+
+    def setup_mock_data(self, data):
+        data.add_features(["feature1d", "TestingModel1d"])
+
+        for statistical_metric in self.statistical_metrics:
+            data["feature1d"][statistical_metric] = np.array([1., 2.])
+            data["TestingModel1d"][statistical_metric] = np.array([3., 4.])
+
+        data["feature1d"]["labels"] = ["xlabel", "ylabel"]
+        data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
+
+        data.model_name = "TestingModel1d"
+        data.uncertain_parameters = ["a", "b"]
+        data.method = "mock"
+        data.seed = 10
+        data.incomplete = ["a", "b"]
+        data.error = ["feature1d"]
+
+        return data
+
 
     def test_save_irregular(self):
         self.data.add_features(["feature1d", "TestingModel1d"])
 
-        for statistical_metric in self.statistical_metrics:
-            self.data["feature1d"][statistical_metric] = [1., 2.]
-            self.data["TestingModel1d"][statistical_metric] = [3., 4.]
+        self.setup_mock_data(self.data)
 
-        self.data["feature1d"]["labels"] = ["xlabel", "ylabel"]
-        self.data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
-
-        self.data.model_name = "TestingModel1d"
-        self.data.uncertain_parameters = ["a", "b"]
-        self.data.method = "mock"
-        self.data.seed = 10
-        self.data.incomplete = ["a", "b"]
         self.data.model_ignore = True
-        self.data.error = ["feature1d"]
-
         self.data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
 
         folder = os.path.dirname(os.path.realpath(__file__))
@@ -237,7 +271,6 @@ class TestData(unittest.TestCase):
 
 
     def test_load_irregular(self):
-
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/test_save_mock_irregular")

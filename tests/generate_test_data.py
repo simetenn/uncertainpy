@@ -278,7 +278,7 @@ def generate_data_monte_carlo_single():  # pragma: no cover
                             plot=None)
 
 
-def generate_data_data():  # pragma: no cover
+def setup_mock_data():  # pragma: no cover
     data = un.Data()
     data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
                   "sobol_first", "sobol_first_sum",
@@ -287,8 +287,8 @@ def generate_data_data():  # pragma: no cover
     data.add_features(["feature1d", "TestingModel1d"])
 
     for data_type in data_types:
-        data["feature1d"][data_type] = [1., 2.]
-        data["TestingModel1d"][data_type] = [3., 4.]
+        data["feature1d"][data_type] = np.array([1., 2.])
+        data["TestingModel1d"][data_type] = np.array([3., 4.])
 
     data["feature1d"]["labels"] = ["xlabel", "ylabel"]
     data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
@@ -299,32 +299,19 @@ def generate_data_data():  # pragma: no cover
     data.seed = 10
     data.incomplete = ["a", "b"]
     data.error = ["feature1d"]
+
+    return data
+
+
+def generate_data_data():  # pragma: no cover
+    data = setup_mock_data()
 
     data.save(os.path.join(test_data_dir, "test_save_mock"))
 
 
 
 def generate_data_data_missing():  # pragma: no cover
-    data = un.Data()
-    data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                  "sobol_first", "sobol_first_sum",
-                  "sobol_total", "sobol_total_sum"]
-
-    data.add_features(["feature1d", "TestingModel1d"])
-
-    for data_type in data_types:
-        data["feature1d"][data_type] = [1., 2.]
-        data["TestingModel1d"][data_type] = [3., 4.]
-
-    data["feature1d"]["labels"] = ["xlabel", "ylabel"]
-    data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]
-
-    data.uncertain_parameters = ["a", "b"]
-    data.model_name = "TestingModel1d"
-    data.method = "mock"
-    data.seed = 10
-    data.incomplete = ["a", "b"]
-    data.error = ["feature1d"]
+    data = setup_mock_data()
 
     data.save(os.path.join(test_data_dir, "test_save_mock_missing"))
 

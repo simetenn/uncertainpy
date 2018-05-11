@@ -92,6 +92,11 @@ class TestUncertainty(TestCasePlot):
                                       logger_filename=None)
 
 
+    def test_init_backend_error(self):
+        with self.assertRaises(ValueError):
+            UncertaintyQuantification(self.model, backend="not a backend")
+
+
     def test_init_features(self):
         uncertainty = UncertaintyQuantification(self.model,
                                                 self.parameters,
@@ -886,8 +891,9 @@ class TestUncertainty(TestCasePlot):
 
 
 
-    def test_save(self):
+    def test_save_auto(self):
         self.set_up_test_calculations()
+        self.uncertainty.backend = "auto"
 
         self.uncertainty.quantify(method="pc",
                                   plot=None,
@@ -896,8 +902,8 @@ class TestUncertainty(TestCasePlot):
                                   figure_folder=self.output_test_dir,
                                   seed=self.seed)
 
-        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
-        self.assertEqual(file_count, 1)
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d.h5")
+        self.assertTrue(os.path.exists(file_path))
 
 
         if os.path.isdir(self.output_test_dir):
@@ -910,22 +916,25 @@ class TestUncertainty(TestCasePlot):
                                                  figure_folder=self.output_test_dir,
                                                  seed=self.seed)
 
-        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
-        self.assertEqual(file_count, 2)
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
 
 
         self.uncertainty.quantify(method="mc",
-                            plot=None,
-                            save=True,
-                            data_folder=self.output_test_dir,
-                            figure_folder=self.output_test_dir,
-                            seed=self.seed)
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed)
 
-        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
-        self.assertEqual(file_count, 1)
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d.h5")
+        self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -937,8 +946,477 @@ class TestUncertainty(TestCasePlot):
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed)
 
-        file_count = len(glob.glob(os.path.join(self.output_test_dir, "*")))
-        self.assertEqual(file_count, 2)
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+
+
+
+    def test_save_auto_h5py(self):
+        self.set_up_test_calculations()
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+    def test_save_auto_exdir(self):
+        self.set_up_test_calculations()
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+
+
+    def test_save_auto_h5py_default(self):
+        self.set_up_test_calculations()
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test")
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test")
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+    def test_save_backend_h5py(self):
+        self.set_up_test_calculations()
+        self.uncertainty.backend = "hdf5"
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+
+    def test_save_backend_exdir(self):
+        self.set_up_test_calculations()
+        self.uncertainty.backend = "exdir"
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test.test")
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+
+    def test_save_backend_h5py_exdir(self):
+        self.set_up_test_calculations()
+        self.uncertainty.backend = "hdf5"
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test.exdir")
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-a.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-b.h5")
+        self.assertTrue(os.path.exists(file_path))
+
+
+
+    def test_save_backend_exdir_h5py(self):
+        self.set_up_test_calculations()
+        self.uncertainty.backend = "exdir"
+
+        self.uncertainty.quantify(method="pc",
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.polynomial_chaos_single(plot=None,
+                                                 save=True,
+                                                 data_folder=self.output_test_dir,
+                                                 figure_folder=self.output_test_dir,
+                                                 seed=self.seed,
+                                                 filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-a.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-b.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.quantify(method="mc",
+                            plot=None,
+                            save=True,
+                            data_folder=self.output_test_dir,
+                            figure_folder=self.output_test_dir,
+                            seed=self.seed,
+                            filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        if os.path.isdir(self.output_test_dir):
+            shutil.rmtree(self.output_test_dir)
+
+
+        self.uncertainty.monte_carlo_single(plot=None,
+                                            save=True,
+                                            data_folder=self.output_test_dir,
+                                            figure_folder=self.output_test_dir,
+                                            seed=self.seed,
+                                            filename="test.h5")
+
+        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-a.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
+        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-b.exdir")
+        self.assertTrue(os.path.exists(file_path))
+
 
 
 
