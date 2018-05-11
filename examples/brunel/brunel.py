@@ -25,12 +25,12 @@ def brunel_network(eta, g, delay, J_E):
 
     # Network parameters
     N_rec = 20             # Record from 20 neurons
-    simulation_end = 100  # Simulation time
+    simulation_end = 1000  # Simulation time
 
     tau_m = 20.0           # Time constant of membrane potential in ms
     V_th = 20.0
-    N_E = 1000            # Number of inhibitory neurons
-    N_I = 250             # Number of excitatory neurons
+    N_E = 10000            # Number of inhibitory neurons
+    N_I = 2500             # Number of excitatory neurons
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = int(N_E/10)      # Number of excitatory synapses per neuron
     C_I = int(N_I/10)      # Number of inhibitory synapses per neuron
