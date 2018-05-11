@@ -1132,9 +1132,7 @@ class UncertaintyQuantification(ParameterBase):
         fileextension = ""
         if self.backend == "auto":
             if not filename.endswith(".h5") and not filename.endswith(".exdir"):
-                logger.warning("Unknown fileextension, defaulting to save {} to a HDF5 file.".format(filename))
                 fileextension =  ".h5"
-
         elif self.backend == "hdf5" and not filename.endswith(".h5"):
             fileextension =  ".h5"
         elif self.backend == "exdir" and not filename.endswith(".exdir"):

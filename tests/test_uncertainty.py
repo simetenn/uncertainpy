@@ -94,7 +94,7 @@ class TestUncertainty(TestCasePlot):
 
     def test_init_backend_error(self):
         with self.assertRaises(ValueError):
-            UncertaintyQuantification(self.model, backend="not a backend")
+            UncertaintyQuantification(self.model, self.parameter_list, backend="not a backend")
 
 
     def test_init_features(self):
