@@ -101,6 +101,16 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
     Notes
     -----
+    Implemented features are:
+
+    ======================= ======================= =======================
+    cv                      mean_cv                 mean_isi,
+    local_variation mean    local_variation         mean_firing_rate
+    instantaneous_rate      fanofactor              van_rossum_dist
+    victor_purpura_dist     binned_isi              corrcoef
+    covariance
+    ======================= ======================= =======================
+
     All features in this set of features take the following input arguments:
 
     simulation_end : float
