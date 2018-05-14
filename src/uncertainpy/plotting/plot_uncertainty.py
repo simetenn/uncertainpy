@@ -278,7 +278,6 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 1:
             raise ValueError("{} is not a 1 dimensional feature".format(feature))
 
-        i = 1
         save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
             os.makedirs(save_folder)
@@ -293,7 +292,7 @@ class PlotUncertainty(object):
 
 
         padding = len(str(len(self.data[feature].evaluations[0]) + 1))
-        for evaluation in self.data[feature].evaluations:
+        for i, evaluation in enumerate(self.data[feature].evaluations):
             ax = prettyPlot(time, evaluation,
                             xlabel=xlabel.capitalize(),
                             ylabel=ylabel.capitalize(),
@@ -306,7 +305,6 @@ class PlotUncertainty(object):
             plt.savefig(os.path.join(save_folder,
                                      "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
             plt.close()
-            i += 1
 
         reset_style()
 
