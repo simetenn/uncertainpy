@@ -70,10 +70,10 @@ class PlotUncertainty(object):
 
         self.data = None
 
+        self._logger_level = logger_level
+
         if filename is not None:
             self.load(filename)
-
-        self._logger_level = logger_level
 
         setup_module_logger(class_instance=self, level=logger_level)
 
