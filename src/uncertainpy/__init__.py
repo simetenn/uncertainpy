@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 """
 Uncertainpy is a python toolbox for uncertainty quantification and sensitivity
 analysis of computational models and features of the models.
@@ -21,6 +19,8 @@ easily be implemented. It should be noted that while Uncertainpy is tailored
 towards neuroscience, the implemented methods are general, and Uncertainpy can
 be used for many other types of models and features within other fields.
 """
+
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 from .data import Data, DataFeature
 from .distribution import uniform, normal
