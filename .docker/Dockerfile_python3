@@ -1,8 +1,5 @@
 FROM continuumio/anaconda3:latest
 
-# Update anaconda in case the anaconda image is outdated
-RUN conda update conda
-
 
 # Install Nest and Neuron
 ENV LANG=C.UTF-8
@@ -21,7 +18,7 @@ ENV NEST=nest-$NEST_VER NRN=nrn-$NRN_VER
 
 WORKDIR $HOME/packages
 # Once neurons certificate is properly set up use add again
-# ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
+ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
 RUN wget http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz --no-check-certificate
 ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz .
 RUN tar xzf $NEST.tar.gz; tar xzf $NRN.tar.gz; rm $NEST.tar.gz $NRN.tar.gz
