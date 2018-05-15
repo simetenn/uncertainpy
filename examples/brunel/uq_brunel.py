@@ -4,7 +4,7 @@ import chaospy as cp
 from brunel import brunel_network
 
 # Create a Nest model from the brunel network function
-model = un.NestModel(run=brunel_network)
+model = un.NestModel(run=brunel_network, ignore=True)
 
 
 # Parametes for the synchronous regular (SR) state
@@ -22,17 +22,17 @@ parameters = {"eta": cp.Uniform(1.5, 2.2),
 parameters_AI = un.Parameters(parameters)
 
 # Initialize network features
-features = un.NetworkFeatures()
+features = un.NetworkFeatures(features_to_run=["mean_isi"])
 
 # Set up the problem
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters_SR,
                                   features=features)
 
-# Perform uncertainty quantification
-# and save the data and plots under their own name
-UQ.quantify(figure_folder="figures_brunel_SR",
-            filename="brunel_SR_test")
+# # Perform uncertainty quantification
+# # and save the data and plots under their own name
+# UQ.quantify(figure_folder="figures_brunel_SR",
+#             filename="brunel_SR_test")
 
 # Change the set of parameters
 UQ.parameters = parameters_AI
