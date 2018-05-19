@@ -148,7 +148,7 @@ data = UQ.quantify()
 
 Here you see an example on how the results might look:
 
-![Example of results]((https://github.com/simetenn/uncertainpy/tree/master/docs/images/coffee_cup.png) "Results for an uncertainty quantification and sensitivity analysis of a cooling coffee cup model")
+![Example of results](https://github.com/simetenn/uncertainpy/blob/dev/docs/images/coffee_cup.png "Results for an uncertainty quantification and sensitivity analysis of a cooling coffee cup model")
 
 
 This plot shows the mean, variance, and 90% prediction interval
