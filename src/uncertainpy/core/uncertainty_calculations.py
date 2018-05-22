@@ -445,13 +445,6 @@ class UncertaintyCalculations(ParameterBase):
                                                 rule="J",
                                                 sparse=True)
 
-        # print(distribution)
-        # print(quadrature_order)
-        # print(nodes)
-        # print(weights)
-        # print(data)
-
-
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
 
@@ -1127,7 +1120,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def polynomial_chaos(self,
                          method="collocation",
-                         rosenblatt=False,
+                         rosenblatt="auto",
                          uncertain_parameters=None,
                          polynomial_order=3,
                          nr_collocation_nodes=None,
@@ -1266,7 +1259,6 @@ class UncertaintyCalculations(ParameterBase):
             np.random.seed(seed)
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
-
         if rosenblatt == "auto":
             distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
@@ -1274,7 +1266,6 @@ class UncertaintyCalculations(ParameterBase):
                 rosenblatt == True
             else:
                 rosenblatt = False
-
 
         if method == "collocation":
             if rosenblatt:

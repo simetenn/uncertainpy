@@ -202,7 +202,7 @@ class UncertaintyQuantification(ParameterBase):
     def quantify(self,
                  method="pc",
                  pc_method="collocation",
-                 rosenblatt=False,
+                 rosenblatt="auto",
                  uncertain_parameters=None,
                  polynomial_order=3,
                  nr_collocation_nodes=None,
@@ -491,7 +491,7 @@ class UncertaintyQuantification(ParameterBase):
 
     def polynomial_chaos(self,
                          method="collocation",
-                         rosenblatt=False,
+                         rosenblatt="auto",
                          uncertain_parameters=None,
                          polynomial_order=3,
                          nr_collocation_nodes=None,
@@ -775,7 +775,7 @@ class UncertaintyQuantification(ParameterBase):
 
     def polynomial_chaos_single(self,
                                 method="collocation",
-                                rosenblatt=False,
+                                rosenblatt="auto",
                                 polynomial_order=3,
                                 uncertain_parameters=None,
                                 nr_collocation_nodes=None,
