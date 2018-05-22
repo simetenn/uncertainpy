@@ -1259,13 +1259,18 @@ class UncertaintyCalculations(ParameterBase):
             np.random.seed(seed)
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
-        if rosenblatt == "auto":
-            distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
+        distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
+        if rosenblatt == "auto":
             if distribution.dependent():
-                rosenblatt == True
+                rosenblatt = True
             else:
                 rosenblatt = False
+
+        elif rosenblatt == False:
+            if distribution.dependent():
+                raise ValueError('Dependent parameters require using the Rosenblatt transformation. Set rosenblatt="auto" or rosenblatt=True')
+
 
         if method == "collocation":
             if rosenblatt:

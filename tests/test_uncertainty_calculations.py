@@ -1096,6 +1096,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIn("Rosenblatt", data.method)
 
 
+        self.uncertainty_calculations.parameters.distribution = cp.J(a, b)
+        with self.assertRaises(ValueError):
+            data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                                rosenblatt=False,
+                                                                seed=self.seed)
+
+
     def test_polynomial_chaos_spectral(self):
         features = TestingFeatures(features_to_run=["feature0d_var",
                                                     "feature1d_var",
