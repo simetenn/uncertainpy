@@ -1142,11 +1142,12 @@ class UncertaintyCalculations(ParameterBase):
             pseudo-spectral projection, and "custom" is the custom polynomial
             method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
             approximation. If None, all uncertain parameters are used.
@@ -1259,6 +1260,15 @@ class UncertaintyCalculations(ParameterBase):
             np.random.seed(seed)
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+
+        if rosenblatt == "auto":
+            distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
+
+            if distribution.dependent():
+                rosenblatt == True
+            else:
+                rosenblatt = False
+
 
         if method == "collocation":
             if rosenblatt:

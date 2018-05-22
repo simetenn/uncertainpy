@@ -1053,6 +1053,49 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
+    def test_PC_collocation_auto(self):
+        features = TestingFeatures(features_to_run=[])
+        self.uncertainty_calculations.features = features
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt="auto",
+                                                              seed=self.seed)
+
+        self.assertNotIn("Rosenblatt", data.method)
+
+
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2)/a
+
+        parameter_dict = {"a": a, "b": b}
+
+        self.uncertainty_calculations.parameters = Parameters(parameter_dict)
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt="auto",
+                                                              seed=self.seed)
+
+        self.assertIn("Rosenblatt", data.method)
+
+
+        self.uncertainty_calculations.parameters.distribution = cp.J(cp.uniform(), cp.Uniform())
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt="auto",
+                                                              seed=self.seed)
+
+        self.assertNotIn("Rosenblatt", data.method)
+
+
+        self.uncertainty_calculations.parameters.distribution = cp.J(a, b)
+
+        data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
+                                                              rosenblatt="auto",
+                                                              seed=self.seed)
+
+        self.assertIn("Rosenblatt", data.method)
+
+
     def test_polynomial_chaos_spectral(self):
         features = TestingFeatures(features_to_run=["feature0d_var",
                                                     "feature1d_var",

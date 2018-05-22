@@ -236,11 +236,12 @@ class UncertaintyQuantification(ParameterBase):
             point collocation method "spectral" is pseudo-spectral projection,
             and "custom" is the custom polynomial method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when performing the uncertainty
             quantification. If None, all uncertain parameters are used.
@@ -517,11 +518,12 @@ class UncertaintyQuantification(ParameterBase):
             point collocation method "spectral" is pseudo-spectral projection,
             and "custom" is the custom polynomial method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when performing the uncertainty
             quantification. If None, all uncertain parameters are used.
@@ -799,11 +801,12 @@ class UncertaintyQuantification(ParameterBase):
             point collocation method "spectral" is pseudo-spectral projection,
             and "custom" is the custom polynomial method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to performing the uncertainty
             quantification for. If None, all uncertain parameters are used.
