@@ -75,7 +75,8 @@ RUN git clone https://github.com/jonathf/chaospy.git
 RUN cd chaospy; python setup.py install
 
 # get exdir
-RUN conda install -c cinpla exdir
+RUN conda install exdir -c cinpla -c conda-forge
+
 
 # Ensure newest version of exdir, only temporary
 RUN git clone https://github.com/CINPLA/exdir.git
