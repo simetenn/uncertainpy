@@ -1,5 +1,8 @@
 FROM continuumio/anaconda:latest
 
+# Update the image since it sometimes are outdated
+RUN conda update conda
+
 # Install Nest and Neuron
 ENV LANG=C.UTF-8
 
