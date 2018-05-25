@@ -6,7 +6,7 @@ import collections
 
 import numpy as np
 
-from .utils.utility import contains_nan
+from .utils.utility import contains_nan, is_regular
 from .utils.logger import setup_module_logger, get_logger
 from ._version import __version__
 
@@ -689,8 +689,11 @@ class Data(collections.MutableMapping):
 
             for statistical_metric in self[feature]:
                 if statistical_metric == "evaluations":
-                    evaluations_group = group.create_group("evaluations")
-                    add_evaluation(evaluations_group, self[feature][statistical_metric])
+                    if is_regular(self[feature][statistical_metric]):
+                        group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
+                    else:
+                        evaluations_group = group.create_group("evaluations")
+                        add_evaluation(evaluations_group, self[feature][statistical_metric])
                 else:
                     group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
@@ -787,19 +790,24 @@ class Data(collections.MutableMapping):
             for statistical_metric in f[feature]:
 
                 if statistical_metric == "evaluations":
-                    evaluations = []
+                    values = f[feature][statistical_metric]
 
-                    for item in f[feature][statistical_metric]:
-                        value = f[feature][statistical_metric][item]
+                    if isinstance(values, backend.Dataset):
+                        evaluations = values[()]
+                    else:
+                        evaluations = []
 
-                        if isinstance(value, backend.Dataset):
-                            evaluations.append(value[()])
-                        elif  isinstance(value, backend.Group):
-                            append_evaluations(evaluations, value)
+                        for item in f[feature][statistical_metric]:
+                            value = f[feature][statistical_metric][item]
+
+                            if isinstance(value, backend.Dataset):
+                                evaluations.append(value[()])
+                            elif  isinstance(value, backend.Group):
+                                append_evaluations(evaluations, value)
 
                     self[feature][statistical_metric] = evaluations
                 elif statistical_metric == "labels":
-                        self[feature][statistical_metric] = [label.decode("utf8") for label in f[feature][statistical_metric][()]]
+                    self[feature][statistical_metric] = [label.decode("utf8") for label in f[feature][statistical_metric][()]]
                 else:
                     self[feature][statistical_metric] = f[feature][statistical_metric][()]
 

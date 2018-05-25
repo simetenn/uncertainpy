@@ -205,9 +205,6 @@ class TestData(unittest.TestCase):
         compare_file = os.path.join(folder, "data/test_save_mock")
         filename = os.path.join(self.output_test_dir, "test_save_mock")
 
-        print(filename)
-        print(type(filename))
-
         self.data.save(filename)
 
         new_data = Data(filename, backend="exdir")
@@ -312,12 +309,12 @@ class TestData(unittest.TestCase):
 
 
 
-    # TODO add this check when changing to python 3
-    # def test_loadError(self):
-    #     compare_file = "this_file_should_not_exist"
-    #
-    #     with self.assertRaises(FileNotFoundError):
-    #         self.data.load(compare_file)
+    # # TODO add this check when changing to python 3
+    # # def test_loadError(self):
+    # #     compare_file = "this_file_should_not_exist"
+    # #
+    # #     with self.assertRaises(FileNotFoundError):
+    # #         self.data.load(compare_file)
 
     def test_seed(self):
         data = Data()
