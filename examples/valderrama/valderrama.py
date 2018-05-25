@@ -9,7 +9,17 @@ def I(time):
     return 140 # micro A/cm**2
 
 
-def valderrama(V_0, C_m, gbar_Na, gbar_K, gbar_L, E_Na, E_K, E_l, m_0, n_0, h_0):
+def valderrama(V_0=-10,
+               C_m=1,
+               gbar_Na=120,
+               gbar_K=36,
+               gbar_L=0.3,
+               E_Na=112,
+               E_K=-12,
+               E_l=10.613,
+               m_0=0.0011,
+               n_0=0.0003,
+               h_0=0.9998):
 
     # Setup time
     end_time = 15          # ms
