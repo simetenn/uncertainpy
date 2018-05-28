@@ -38,7 +38,7 @@ RUN cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl; ln -s ../x86_64/bin/nrngui; ln 
 
 WORKDIR $VENV/build/$NEST
 RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV -Dwith-mpi=ON -Dwith-python=3 $HOME/packages/$NEST > /dev/null
-RUN make > /dev/null
+RUN make
 RUN make install > /dev/null
 
 
