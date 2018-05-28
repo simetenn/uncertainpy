@@ -17,6 +17,7 @@ x86_64/
 *.mod
 *.txt
 *.hoc
+*.eps
 
 
 # Byte-compiled / optimized / DLL files

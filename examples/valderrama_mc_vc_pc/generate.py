@@ -2,18 +2,19 @@ import uncertainpy as un
 import chaospy as cp
 import numpy as np
 
+import time
+
 from valderrama import valderrama
 
 
-reruns = 3
-mc_evaluations = [10, 100, 200, 300, 400, 500, 1000, 1500, 2000]#, 10000, 50000]
+reruns = 100
+mc_evaluations = [10, 100, 200, 300, 400, 500, 1000, 1500, 2000, 10000, 20000, 50000]
 polynomial_orders_3 = np.arange(1, 8)
-polynomial_orders_11 = np.arange(1, 4)
-correct_mc = 10000
+polynomial_orders_11 = np.arange(1, 5)
+correct_mc = 1000000
+
 
 # Few parameters
-
-# Initialize the model
 model = un.Model(run=valderrama,
                  labels=["Time (ms)", "Membrane potential (mV)"])
 
@@ -22,6 +23,7 @@ parameters = {"gbar_Na": 120,
               "gbar_K": 36,
               "gbar_L": 0.3}
 
+
 # Create the parameters
 parameters = un.Parameters(parameters)
 
@@ -29,11 +31,16 @@ parameters = un.Parameters(parameters)
 # within a 20% interval around their fixed value
 parameters.set_all_distributions(un.uniform(0.2))
 
-# Perform the uncertainty quantification
+# Setup the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters)
 
+
+t1 = time.time()
 correct_data = UQ.quantify(method="mc", nr_mc_samples=correct_mc, plot=None, filename="correct", data_folder="data/parameters_3")
+t2 = time.time()
+
+print("time:", t2-t1)
 
 mc_data = {}
 for rerun in range(reruns):
@@ -56,10 +63,6 @@ for polynomial_order in polynomial_orders_3:
 
 
 
-
-# Large number of parameters
-
-# Initialize the model
 model = un.Model(run=valderrama,
                  labels=["Time (ms)", "Membrane potential (mV)"])
 
@@ -76,7 +79,6 @@ parameters = {"V_0": -10,
               "E_K": -12,
               "E_l": 10.613}
 
-
 # Create the parameters
 parameters = un.Parameters(parameters)
 
@@ -84,9 +86,10 @@ parameters = un.Parameters(parameters)
 # within a 20% interval around their fixed value
 parameters.set_all_distributions(un.uniform(0.2))
 
-# Perform the uncertainty quantification
+# Setup the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters)
+
 
 correct_data = UQ.quantify(method="mc", nr_mc_samples=correct_mc, plot=None, filename="correct", data_folder="data/parameters_11")
 
