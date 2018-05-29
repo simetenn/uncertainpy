@@ -36,7 +36,8 @@ be used for many other types of models and features within other fields.
 """
 
 uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six"]
+                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six",
+                       "SALib"]
 efel_features = ["efel"]
 network_features = ["elephant", "neo", "quantities"]
 all_requires = uncertainpy_require + efel_features + network_features
