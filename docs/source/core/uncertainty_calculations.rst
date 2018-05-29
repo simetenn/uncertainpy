@@ -27,10 +27,10 @@ To use the quasi-Monte Carlo method, we call
 
     data = UQ.quantify(
         method="mc",
-        nr_mc_samples=10**3,
+        nr_mc_samples=10**4,
     )
 
-By default, the quasi-Monte Carlo method quasi-randomly draws `1000`
+By default, the quasi-Monte Carlo method quasi-randomly draws `10000`
 parameter samples from the joint multivariate probability distribution of the
 parameters :math:`\rho_{\boldsymbol{Q}}` using Hammersley sampling (`Hammersley, 1960`_).
 As the name indicates, the number of samples is specified by the
