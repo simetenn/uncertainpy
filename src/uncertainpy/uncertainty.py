@@ -208,7 +208,7 @@ class UncertaintyQuantification(ParameterBase):
                  nr_collocation_nodes=None,
                  quadrature_order=None,
                  nr_pc_mc_samples=10**4,
-                 nr_mc_samples=10**3,
+                 nr_mc_samples=10**4,
                  allow_incomplete=True,
                  seed=None,
                  plot="condensed_first",
@@ -265,7 +265,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_mc_samples : int, optional
             Number of samples for the Monte Carlo sampling, if the quasi-Monte
             Carlo method is chosen.
-            Default is 10**3.
+            Default is 10**4.
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
@@ -667,7 +667,7 @@ class UncertaintyQuantification(ParameterBase):
 
     def monte_carlo(self,
                     uncertain_parameters=None,
-                    nr_samples=10**3,
+                    nr_samples=10**4,
                     seed=None,
                     plot="condensed_first",
                     figure_folder="figures",
@@ -687,7 +687,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling, if the quasi-Monte
             Carlo method is chosen.
-            Default is 10**3.
+            Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -975,7 +975,7 @@ class UncertaintyQuantification(ParameterBase):
 
     def monte_carlo_single(self,
                            uncertain_parameters=None,
-                           nr_samples=10**3,
+                           nr_samples=10**4,
                            seed=None,
                            plot="condensed_first",
                            save=True,
@@ -996,7 +996,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling, if the quasi-Monte
             Carlo method is chosen.
-            Default is 10**3.
+            Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
