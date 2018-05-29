@@ -7,7 +7,7 @@ import h5py
 
 
 
-def calculate_error(glob_pattern, correct_data, base="data/"):
+def calculate_error(glob_pattern, exact_data, base="data/"):
     files = glob.glob(base + glob_pattern)
 
     mean_errors = {}
@@ -16,15 +16,15 @@ def calculate_error(glob_pattern, correct_data, base="data/"):
         data = un.Data(file)
 
         mean = data["valderrama"].mean
-        correct_mean = correct_data["valderrama"].mean
+        exact_mean = exact_data["valderrama"].mean
         variance = data["valderrama"].variance
-        correct_variance = correct_data["valderrama"].variance
+        exact_variance = exact_data["valderrama"].variance
 
         dt = data["valderrama"].time[1] - data["valderrama"].time[0]
-        nr_evaluations = len(data["valderrama"].evaluations)
+        nr_evaluations = data["valderrama"].evaluations
 
-        mean_error = dt*np.sum(np.abs((correct_mean - mean)/correct_mean))
-        variance_error = dt*np.sum(np.abs((correct_variance - variance)/correct_variance))
+        mean_error = dt*np.sum(np.abs((exact_mean - mean)/exact_mean))
+        variance_error = dt*np.sum(np.abs((exact_variance - variance)/exact_variance))
 
         if nr_evaluations not in mean_errors:
             mean_errors[nr_evaluations] = [mean_error]
@@ -53,17 +53,17 @@ def calculate_error(glob_pattern, correct_data, base="data/"):
 
 
 # 3 uncertain parameters
-correct_data_3 =  un.Data("data/parameters_3/correct.h5")
+exact_data_3 =  un.Data("data/parameters_3/exact.h5")
 
-pc_evaluations_3, pc_mean_errors_3, pc_variance_errors_3 = calculate_error("parameters_3/pc_*",  correct_data_3)
-mc_evaluations_3, mc_mean_errors_3, mc_variance_errors_3 = calculate_error("parameters_3/mc_*",  correct_data_3)
+pc_evaluations_3, pc_mean_errors_3, pc_variance_errors_3 = calculate_error("parameters_3/pc_*",  exact_data_3)
+mc_evaluations_3, mc_mean_errors_3, mc_variance_errors_3 = calculate_error("parameters_3/mc_*",  exact_data_3)
 
 
 # 11 uncertain parameters
-correct_data_11 =  un.Data("data/parameters_11/correct.h5")
+exact_data_11 =  un.Data("data/parameters_11/exact.h5")
 
-pc_evaluations_11, pc_mean_errors_11, pc_variance_errors_11 = calculate_error("parameters_11/pc_*", correct_data_11)
-mc_evaluations_11, mc_mean_errors_11, mc_variance_errors_11 = calculate_error("parameters_11/mc_*", correct_data_11)
+pc_evaluations_11, pc_mean_errors_11, pc_variance_errors_11 = calculate_error("parameters_11/pc_*", exact_data_11)
+mc_evaluations_11, mc_mean_errors_11, mc_variance_errors_11 = calculate_error("parameters_11/mc_*", exact_data_11)
 
 
 with h5py.File("analysed_data.h5", "w") as f:

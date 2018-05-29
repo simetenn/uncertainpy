@@ -2,16 +2,19 @@ import uncertainpy as un
 import chaospy as cp
 import numpy as np
 
-import time
-
 from valderrama import valderrama
 
-
 reruns = 100
-mc_evaluations = [10, 100, 200, 300, 400, 500, 1000, 1500, 2000, 10000, 20000, 50000]
+
+D = 3
+exact_mc_3 = np.round(1000000/(D + 2))
+mc_evaluations_3 = np.round(np.array([10, 100, 200, 300, 400, 500, 1000, 1500, 2000, 10000, 20000, 50000])/(D + 2))
 polynomial_orders_3 = np.arange(1, 8)
+
+D = 11
+exact_mc_11 = np.round(1000000/(D + 2)) + 1
+mc_evaluations_11 = np.round(np.array([10, 100, 200, 300, 400, 500, 1000, 1500, 2000, 10000, 20000, 50000])/(D + 2))
 polynomial_orders_11 = np.arange(1, 5)
-correct_mc = 1000000
 
 
 # Few parameters
@@ -36,30 +39,40 @@ UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters)
 
 
-t1 = time.time()
-correct_data = UQ.quantify(method="mc", nr_mc_samples=correct_mc, plot=None, filename="correct", data_folder="data/parameters_3")
-t2 = time.time()
+folder = "data/parameters_3/"
 
-print("time:", t2-t1)
+exact_data = UQ.quantify(method="mc", nr_mc_samples=exact_mc_3, plot=None, save=False)
 
-mc_data = {}
+# This is to not save all model evaluations,
+# otherwise the filesize would be 3 Gb
+nr_evaluations = len(exact_data["valderrama"].evaluations)
+exact_data["valderrama"].evaluations = nr_evaluations
+exact_data.save(folder + "exact.h5")
+
+
 for rerun in range(reruns):
-    for nr_evaluations in mc_evaluations:
+    for nr_evaluations in mc_evaluations_3:
+        data = UQ.quantify(method="mc",
+                           nr_mc_samples=nr_evaluations,
+                           plot=None,
+                           save=False)
+
         name = "mc_" + str(nr_evaluations) + "_rerun_" + str(rerun)
-        mc_data[name] = UQ.quantify(method="mc",
-                                    nr_mc_samples=nr_evaluations,
-                                    plot=None,
-                                    filename=name,
-                                    data_folder="data/parameters_3")
+        nr_evaluations = len(data["valderrama"].evaluations)
+        data["valderrama"].evaluations = nr_evaluations
+        data.save(folder + name + ".h5")
 
 
-pc_data = {}
 for polynomial_order in polynomial_orders_3:
+    data = UQ.quantify(polynomial_order=polynomial_order,
+                       plot=None,
+                       save=False)
+
     name = "pc_" + str(polynomial_order)
-    pc_data[name] = UQ.quantify(polynomial_order=polynomial_order,
-                                plot=None,
-                                filename=name,
-                                data_folder="data/parameters_3")
+    nr_evaluations = len(data["valderrama"].evaluations)
+    data["valderrama"].evaluations = nr_evaluations
+    data.save(folder + name + ".h5")
+
 
 
 
@@ -91,27 +104,35 @@ UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters)
 
 
-correct_data = UQ.quantify(method="mc", nr_mc_samples=correct_mc, plot=None, filename="correct", data_folder="data/parameters_11")
+folder = "data/parameters_11/"
 
+exact_data = UQ.quantify(method="mc", nr_mc_samples=exact_mc_11, plot=None, save=False)
 
-mc_data = {}
+# This is to not save all model evaluations,
+# otherwise the filesize would be 3 Gb
+nr_evaluations = len(exact_data["valderrama"].evaluations)
+exact_data["valderrama"].evaluations = nr_evaluations
+exact_data.save(folder + "exact.h5")
+
 for rerun in range(reruns):
-    for nr_evaluations in mc_evaluations:
+    for nr_evaluations in mc_evaluations_11:
+        data = UQ.quantify(method="mc",
+                           nr_mc_samples=nr_evaluations,
+                           plot=None,
+                           save=False)
+
         name = "mc_" + str(nr_evaluations) + "_rerun_" + str(rerun)
-        mc_data[name] = UQ.quantify(method="mc",
-                                    nr_mc_samples=nr_evaluations,
-                                    plot=None,
-                                    filename=name,
-                                    data_folder="data/parameters_11")
+        nr_evaluations = len(data["valderrama"].evaluations)
+        data["valderrama"].evaluations = nr_evaluations
+        data.save(folder + name + ".h5")
 
 
-
-pc_data = {}
 for polynomial_order in polynomial_orders_11:
+    data = UQ.quantify(polynomial_order=polynomial_order,
+                       plot=None,
+                       save=False)
+
     name = "pc_" + str(polynomial_order)
-    pc_data[name] = UQ.quantify(polynomial_order=polynomial_order,
-                                plot=None,
-                                filename=name,
-                                data_folder="data/parameters_11")
-
-
+    nr_evaluations = len(data["valderrama"].evaluations)
+    data["valderrama"].evaluations = nr_evaluations
+    data.save(folder + name + ".h5")
