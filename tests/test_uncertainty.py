@@ -944,7 +944,8 @@ class TestUncertainty(TestCasePlot):
                                             save=True,
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
-                                            seed=self.seed)
+                                            seed=self.seed,
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1012,7 +1013,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.h5")
+                                            filename="test.h5",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1077,7 +1079,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.exdir")
+                                            filename="test.exdir",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.exdir")
         self.assertTrue(os.path.exists(file_path))
@@ -1143,7 +1146,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test")
+                                            filename="test",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1209,7 +1213,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.test")
+                                            filename="test.test",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1276,7 +1281,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.test")
+                                            filename="test.test",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.exdir")
         self.assertTrue(os.path.exists(file_path))
@@ -1342,7 +1348,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.exdir")
+                                            filename="test.exdir",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1409,7 +1416,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.h5")
+                                            filename="test.h5",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-a.exdir")
         self.assertTrue(os.path.exists(file_path))

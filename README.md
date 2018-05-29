@@ -215,6 +215,7 @@ Uncertainpy has the following dependencies:
 * `matplotlib`
 * `xvfbwrapper`
 * `six`
+* `SALib`
 
 These are installed with the minimum install.
 

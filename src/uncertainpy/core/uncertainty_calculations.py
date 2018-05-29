@@ -6,6 +6,8 @@ import multiprocess as mp
 from tqdm import tqdm
 import chaospy as cp
 import types
+from SALib.sample import saltelli
+from SALib.analyze.sobol import first_order, total_order
 
 from .run_model import RunModel
 from .base import ParameterBase
@@ -403,6 +405,7 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -469,7 +472,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -532,6 +535,7 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -566,7 +570,6 @@ class UncertaintyCalculations(ParameterBase):
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         P = cp.orth_ttr(polynomial_order, distribution)
-
         if nr_collocation_nodes is None:
             nr_collocation_nodes = 2*len(P) + 2
 
@@ -593,7 +596,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -658,6 +661,7 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -753,7 +757,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 ogger.warning("{}: not all parameter combinations give results.".format(feature) +
-                              " No uncertainty quantification are performed since allow_incomplete=False")
+                              " No uncertainty quantification is performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -893,7 +897,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -936,17 +940,18 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         When returned `data` additionally contains:
 
-            7. ``data["model/features"].mean``
-            8. ``data["model/features"].variance``
-            9. ``data["model/features"].percentile_5``
-            10. ``data["model/features"].percentile_95``
-            11. ``data["model/features"].sobol_first``, if more than 1 parameter
-            12. ``data["model/features"].sobol_total``, if more than 1 parameter
-            13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            8. ``data["model/features"].mean``
+            9. ``data["model/features"].variance``
+            10. ``data["model/features"].percentile_5``
+            11. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
         See also
         --------
@@ -965,7 +970,7 @@ class UncertaintyCalculations(ParameterBase):
                 data[feature].mean = cp.E(U_hat[feature], distribution)
                 data[feature].variance = cp.Var(U_hat[feature], distribution)
 
-                samples = distribution.sample(nr_samples, "H")
+                samples = distribution.sample(nr_samples, "M")
 
                 if len(data.uncertain_parameters) > 1:
                     U_mc[feature] = U_hat[feature](*samples)
@@ -1191,7 +1196,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        The `data` parameter contains the following:
+        The returned `data` should contain the following:
 
             1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
@@ -1199,14 +1204,15 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
-            7. ``data["model/features"].mean``
-            8. ``data["model/features"].variance``
-            9. ``data["model/features"].percentile_5``
-            10. ``data["model/features"].percentile_95``
-            11. ``data["model/features"].sobol_first``, if more than 1 parameter
-            12. ``data["model/features"].sobol_total``, if more than 1 parameter
-            13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            7. ``data.errored``
+            8. ``data["model/features"].mean``
+            9. ``data["model/features"].variance``
+            10. ``data["model/features"].percentile_5``
+            11. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -1322,7 +1328,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def monte_carlo(self,
                     uncertain_parameters=None,
-                    nr_samples=10**3,
+                    nr_samples=10**4,
                     seed=None,
                     allow_incomplete=True):
         """
@@ -1336,7 +1342,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling.
-            Default is 10**3.
+            Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -1359,28 +1365,42 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        The `data` parameter contains the following:
+        The returned `data` should contain the following:
 
             1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
-            5. ``data.method``
-            6. ``data["model/features"].mean``
-            7. ``data["model/features"].variance``
-            8. ``data["model/features"].percentile_5``
-            9. ``data["model/features"].percentile_95``
+            5. ``data.incomplete``
+            6. ``data.method``
+            7. ``data.errored``
+            8. ``data["model/features"].mean``
+            9. ``data["model/features"].variance``
+            10. ``data["model/features"].percentile_5``
+            11. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
 
-        In the quasi-Monte Carlo method we quasi-randomly draw 10**3 (by default)
-        parameter samples using the Hammersley sequence. We evaluate the model
+
+        In the quasi-Monte Carlo method we quasi-randomly draw
+        ``nr_samples*(nr_uncertain_parameters + 2)`` (nr_samples=10**4 by default)
+        parameter samples using Saltelli's sampling scheme. We evaluate the model
         for each of these parameter samples and calculate the features from each
         of the model results. This step is performed in parallel to speed up the
-        calculations. Lastly we use the model and feature results to calculate
+        calculations. Then we use the model and feature results to calculate
         the mean, variance, and 5th and 95th percentile for the model and each
-        feature.
+        feature. Lastly, we calculate the Sobol indices using Saltellie's
+        approach.
 
-        Sensitivity analysis is currently not yet available for the quasi-Monte
-        Carlo method.
+        References
+        ----------
+        .. [1] Saltelli, A., P. Annoni, I. Azzini, F. Campolongo, M. Ratto, and
+            S. Tarantola (2010).  "Variance based sensitivity analysis of model
+            output.  Design and estimator for the total sensitivity index."
+            Computer Physics Communications, 181(2):259-270,
+            doi:10.1016/j.cpc.2009.09.018.
 
         See also
         --------
@@ -1395,7 +1415,25 @@ class UncertaintyCalculations(ParameterBase):
 
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        nodes = distribution.sample(nr_samples, "M")
+        # nodes = distribution.sample(nr_samples, "M")
+
+        problem = {
+            "num_vars": len(uncertain_parameters),
+            "names": uncertain_parameters,
+            "bounds": [[0,1]]*len(uncertain_parameters)
+        }
+
+        # Create the Multivariate normal distribution
+        dist_R = []
+        for parameter in uncertain_parameters:
+            dist_R.append(cp.Uniform())
+
+        dist_R = cp.J(*dist_R)
+
+        nodes_R = saltelli.sample(problem, nr_samples, calc_second_order=False)
+
+        nodes = distribution.inv(dist_R.fwd(nodes_R.transpose()))
+
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
@@ -1403,6 +1441,7 @@ class UncertaintyCalculations(ParameterBase):
         data.seed = seed
 
 
+        logger = get_logger(self)
         for feature in data:
             if feature == self.model.name and self.model.ignore:
                 continue
@@ -1416,16 +1455,121 @@ class UncertaintyCalculations(ParameterBase):
 
                 data[feature].percentile_5 = np.percentile(masked_evaluations, 5, 0)
                 data[feature].percentile_95 = np.percentile(masked_evaluations, 95, 0)
+
+                if len(data.uncertain_parameters) > 1:
+                    # Results cannot be removed when calculating the sensitivity.
+                    # Instead NaN results are set to the mean.
+                    # see https://github.com/SALib/SALib/issues/134
+                    masked_mean_evaluations = data[feature].evaluations
+
+                    # masked_mean_evaluations[~mask] = data[feature].mean
+                    indices = np.where(mask == 0)[0]
+
+                    for i in indices:
+                        masked_mean_evaluations[i] = data[feature].mean
+
+                    if not np.all(mask):
+                        logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " numpy.nan results are set to the mean when calculating the Sobol indices." +
+                                    " This might affect the Sobol indices.")
+
+
+                    sobol_first, sobol_total = self.mc_calculate_sobol(masked_mean_evaluations, len(uncertain_parameters), nr_samples)
+                    data[feature].sobol_first = sobol_first
+                    data[feature].sobol_total = sobol_total
+                    data = self.sensitivity_sum(data, sensitivity="sobol_first")
+                    data = self.sensitivity_sum(data, sensitivity="sobol_total")
+
             else:
-                logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
 
 
         return data
+
+
+    def separate_output_values(self, evaluations, nr_uncertain_parameters, nr_samples):
+        """
+        Notes
+        -----
+        Separate the output from the model evaluations, evaluated for the
+        samples created by SALIB.sample.saltelli.
+
+        Parameters
+        ----------
+        evaluations : array_like
+            The model evaluations, evaluated for the samples created by
+            SALIB.sample.saltelli.
+        nr_uncertain_parameters : int
+            Number of uncertain parameters.
+        nr_samples : int
+            Number of samples used in the Monte Carlo sampling.
+
+        Returns
+        ----------
+        A : array_like
+            The A sample matrix from saltellie et. al. 2010.
+        B : array_like
+            The B sample matrix from saltellie et. al. 2010.
+        AB : array_like
+            The AB sample matrix from saltellie et. al. 2010.
+
+        Notes
+        -----
+        Adapted from SALib/analyze/sobol.py:
+
+        https://github.com/SALib/SALib/blob/master/SALib/analyze/sobol.py
+        """
+
+        evaluations = np.array(evaluations)
+
+        shape = (nr_samples, nr_uncertain_parameters) + evaluations[0].shape
+        step = nr_uncertain_parameters + 2
+        AB = np.zeros(shape)
+
+        A = evaluations[0:evaluations.shape[0]:step]
+        B = evaluations[(step - 1):evaluations.shape[0]:step]
+
+        for i in range(nr_uncertain_parameters):
+            AB[:, i] = evaluations[(i + 1):evaluations.shape[0]:step]
+
+        return A, B, AB
+
+
+    def mc_calculate_sobol(self, evaluations, nr_uncertain_parameters, nr_samples):
+        """
+        Calculate the Sobol indices.
+
+        Parameters
+        ----------
+        evaluations : array_like
+            The model evaluations, evaluated for the samples created by
+            SALIB.sample.saltelli.
+        nr_uncertain_parameters : int
+            Number of uncertain parameters.
+        nr_samples : int
+            Number of samples used in the Monte Carlo sampling.
+
+        Returns
+        ----------
+        sobol_first : list
+            The first order Sobol indices for each uncertain parameter.
+        sobol_total : list
+            The total order Sobol indices for each uncertain parameter.
+        """
+        sobol_first = [0]*nr_uncertain_parameters
+        sobol_total = [0]*nr_uncertain_parameters
+
+        A, B, AB = self.separate_output_values(evaluations, nr_uncertain_parameters, nr_samples)
+
+        for i in range(nr_uncertain_parameters):
+            sobol_first[i] = first_order(A, AB[:, i], B)
+            sobol_total[i] = total_order(A, AB[:, i], B)
+
+        return sobol_first, sobol_total
 
 
     def sensitivity_sum(self, data, sensitivity="sobol_first"):
@@ -1441,8 +1585,7 @@ class UncertaintyCalculations(ParameterBase):
         sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
             The sensitivity to normalize and sum. "sobol_first" and "1" are
             for the first order Sobol indice while "sobol_total" and "t" is
-            for the total order Sobol indices.
-            Default is "sobol_first".
+            for the total order Sobol indices. Default is "sobol_first".
 
         Returns
         ----------

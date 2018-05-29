@@ -16,6 +16,8 @@ from uncertainpy import Data
 from uncertainpy.models import Model
 from uncertainpy import SpikingFeatures
 
+from SALib.analyze.sobol import separate_output_values
+
 
 from .testing_classes import TestingFeatures
 from .testing_classes import TestingModel1d, model_function
@@ -28,6 +30,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.output_test_dir = ".tests/"
         self.threshold = 1e-10
         self.seed = 10
+        self.nr_mc_samples = 10
 
         if os.path.isdir(self.output_test_dir):
             shutil.rmtree(self.output_test_dir)
@@ -1176,7 +1179,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
                          set(["evaluations", "time"]))
 
 
-        data = self.uncertainty_calculations.monte_carlo(seed=self.seed)
+        data = self.uncertainty_calculations.monte_carlo(seed=self.seed,
+                                                         nr_samples=self.nr_mc_samples)
         self.assertEqual(set(data["TestingModel1d"].get_metrics()),
                          set(["evaluations", "time"]))
 
@@ -1362,7 +1366,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
     def test_ignore_model_monte_carlo(self):
         self.uncertainty_calculations.model.ignore = True
 
-        data = self.uncertainty_calculations.monte_carlo(seed=self.seed)
+        data = self.uncertainty_calculations.monte_carlo(seed=self.seed, nr_samples=self.nr_mc_samples)
         self.assertEqual(set(data["TestingModel1d"].get_metrics()),
                          set(["evaluations", "time"]))
 
@@ -1377,7 +1381,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=[])
+        features = TestingFeatures(features_to_run=["feature0d_var", "feature1d_var", "feature2d_var"])
 
         self.uncertainty_calculations = UncertaintyCalculations(model,
                                                                 parameters=parameters,
@@ -1385,28 +1389,34 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 logger_level="error")
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=10)
 
         # Rough tests
         self.assertTrue(np.allclose(data["TestingModel1d"]["mean"],
                                     np.arange(0, 10) + 3, atol=0.1))
         self.assertTrue(np.allclose(data["TestingModel1d"]["variance"],
-                                    np.zeros(10), atol=0.1))
+                                    np.zeros(10), atol=0.2))
         self.assertTrue(np.all(np.less(data["TestingModel1d"]["percentile_5"],
                                        np.arange(0, 10) + 3)))
         self.assertTrue(np.all(np.greater(data["TestingModel1d"]["percentile_95"],
                                           np.arange(0, 10) + 3)))
 
+        # TODO: currently no tests for the values of the sobol indices
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first"]), (2, 10))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total"]), (2, 10))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first_sum"]), (2,))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total_sum"]), (2,))
 
-        # # Compare to pregenerated data
-        # filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
-        # data.save(filename)
 
-        # folder = os.path.dirname(os.path.realpath(__file__))
-        # compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
-        # result = subprocess.call(["h5diff", filename, compare_file])
+        # Compare to pregenerated data
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
+        data.save(filename)
 
-        # self.assertEqual(result, 0)
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
 
 
 
@@ -1428,7 +1438,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples)
 
         self.assertTrue(np.array_equal(data["feature0d"]["mean"],
                                        features.feature0d(None, None)[1]))
@@ -1437,6 +1447,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                        features.feature0d(None, None)[1]))
         self.assertTrue(np.array_equal(data["feature0d"]["percentile_95"],
                                        features.feature0d(None, None)[1]))
+
+        self.assertEqual(np.shape(data["feature0d"]["sobol_first"]), (2,))
+        self.assertEqual(np.shape(data["feature0d"]["sobol_total"]), (2,))
+        self.assertEqual(np.shape(data["feature0d"]["sobol_first_sum"]), (2,))
+        self.assertEqual(np.shape(data["feature0d"]["sobol_total_sum"]), (2,))
 
 
     def test_monte_carlo_feature1d(self):
@@ -1456,7 +1471,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples)
 
         self.assertTrue(np.array_equal(data["feature1d"]["mean"],
                                        features.feature1d(None, None)[1]))
@@ -1467,34 +1482,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.array_equal(data["feature1d"]["percentile_95"],
                                        features.feature1d(None, None)[1]))
 
+        self.assertEqual(np.shape(data["feature1d"]["sobol_first"]), (2, 10))
+        self.assertEqual(np.shape(data["feature1d"]["sobol_total"]), (2, 10))
+        self.assertEqual(np.shape(data["feature1d"]["sobol_first_sum"]), (2,))
+        self.assertEqual(np.shape(data["feature1d"]["sobol_total_sum"]), (2,))
 
-
-    def test_monte_carlo_feature2d(self):
-        parameter_list = [["a", 1, None],
-                          ["b", 2, None]]
-
-        parameters = Parameters(parameter_list)
-        parameters.set_all_distributions(uniform(0.5))
-
-        model = TestingModel1d()
-        features = TestingFeatures(features_to_run=["feature2d"])
-
-        self.uncertainty_calculations = UncertaintyCalculations(model,
-                                                                parameters=parameters,
-                                                                features=features,
-                                                                logger_level="error")
-
-
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
-
-        self.assertTrue(np.array_equal(data["feature2d"]["mean"],
-                                       features.feature2d(None, None)[1]))
-        self.assertTrue(np.array_equal(data["feature2d"]["variance"],
-                                       np.zeros((2, 10))))
-        self.assertTrue(np.array_equal(data["feature2d"]["percentile_5"],
-                                       features.feature2d(None, None)[1]))
-        self.assertTrue(np.array_equal(data["feature2d"]["percentile_95"],
-                                       features.feature2d(None, None)[1]))
 
 
 
@@ -1514,7 +1506,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 logger_level="error")
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples)
 
         self.assertTrue(np.array_equal(data["feature2d"]["mean"],
                                        features.feature2d(None, None)[1]))
@@ -1524,6 +1516,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                        features.feature2d(None, None)[1]))
         self.assertTrue(np.array_equal(data["feature2d"]["percentile_95"],
                                        features.feature2d(None, None)[1]))
+
+        self.assertEqual(np.shape(data["feature2d"]["sobol_first"]), (2, 2, 10))
+        self.assertEqual(np.shape(data["feature2d"]["sobol_total"]), (2, 2, 10))
+        self.assertEqual(np.shape(data["feature2d"]["sobol_first_sum"]), (2,))
+        self.assertEqual(np.shape(data["feature2d"]["sobol_total_sum"]), (2,))
 
 
 
@@ -1546,7 +1543,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 features=features,
                                                                 logger_level="error")
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1,
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples,
                                                          allow_incomplete=False)
 
         self.assertEqual(data.incomplete, ["TestingModelIncomplete"])
@@ -1554,6 +1551,11 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsNone(data["TestingModelIncomplete"].variance)
         self.assertIsNone(data["TestingModelIncomplete"].percentile_5)
         self.assertIsNone(data["TestingModelIncomplete"].percentile_95)
+        self.assertIsNone(data["TestingModelIncomplete"].sobol_first)
+        self.assertIsNone(data["TestingModelIncomplete"].sobol_total)
+        self.assertIsNone(data["TestingModelIncomplete"].sobol_first_sum)
+        self.assertIsNone(data["TestingModelIncomplete"].sobol_total_sum)
+
 
 
     def test_monte_carlo_incomplete_true(self):
@@ -1561,7 +1563,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         def model(a, b):
             if a < 1:
-                return [1, 2, 3], [a, a +b, b]
+                return [1, 2, 3], [a, a + b, b]
             else:
                 return [1, 2, 3], [a, None, b]
 
@@ -1579,7 +1581,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 features=features,
                                                                 logger_level="error")
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10**1,
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples,
                                                          allow_incomplete=True)
 
         self.assertEqual(data.incomplete, ["model"])
@@ -1594,6 +1596,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.all(np.less(data["model"]["percentile_95"],
                                           [1.5, 4.5, 2.5])))
 
+        self.assertEqual(np.shape(data["model"]["sobol_first"]), (2, 3))
+        self.assertEqual(np.shape(data["model"]["sobol_total"]), (2, 3))
+        self.assertEqual(np.shape(data["model"]["sobol_first_sum"]), (2,))
+        self.assertEqual(np.shape(data["model"]["sobol_total_sum"]), (2,))
+
+        self.assertFalse(np.any(np.isnan(data["model"]["sobol_first"])))
+        self.assertFalse(np.any(np.isnan(data["model"]["sobol_total"])))
+        self.assertFalse(np.any(np.isnan(data["model"]["sobol_first_sum"])))
+        self.assertFalse(np.any(np.isnan(data["model"]["sobol_total_sum"])))
 
 
 
@@ -1741,3 +1752,189 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertEqual(U_hat, {})
         self.assertEqual(data.incomplete, ["TestingModelIncomplete"])
+
+
+    def separate_output_values_use_case(self, base_evaluation):
+         # N = 1, D = 1 => Nt = 3
+        nr_uncertain_parameters = 1
+        nr_samples = 1
+
+        evaluations = [base_evaluation + 1, base_evaluation + 2, base_evaluation + 3]
+
+        A, B, AB = self.uncertainty_calculations.separate_output_values(evaluations,
+                                                                        nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                        nr_samples=nr_samples)
+
+        original_A = [base_evaluation + 1]
+        original_B = [base_evaluation + 3]
+        original_AB = [[base_evaluation + 2]]
+
+        self.assertTrue(np.array_equal(A, original_A))
+        self.assertTrue(np.array_equal(B, original_B))
+        self.assertTrue(np.array_equal(AB, original_AB))
+
+        # N = 1, D = 2 => Nt = 4
+        nr_uncertain_parameters = 2
+        nr_samples = 1
+
+        evaluations = [base_evaluation + 1, base_evaluation + 2, base_evaluation + 3, base_evaluation + 4]
+
+        A, B, AB = self.uncertainty_calculations.separate_output_values(evaluations,
+                                                                        nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                        nr_samples=nr_samples)
+        original_A = [base_evaluation + 1,]
+        original_B = [base_evaluation + 4]
+        original_AB = [[base_evaluation + 2,  base_evaluation + 3]]
+
+
+        self.assertTrue(np.array_equal(A, original_A))
+        self.assertTrue(np.array_equal(B, original_B))
+        self.assertTrue(np.array_equal(AB, original_AB))
+
+
+        # N = 2, D = 2 => Nt = 8
+        nr_uncertain_parameters = 2
+        nr_samples = 2
+        evaluations = [base_evaluation + 1, base_evaluation + 2, base_evaluation + 3, base_evaluation + 4,
+                       base_evaluation + 5, base_evaluation + 6, base_evaluation + 7, base_evaluation + 8]
+
+        A, B, AB = self.uncertainty_calculations.separate_output_values(evaluations,
+                                                                        nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                        nr_samples=nr_samples)
+        original_A = [base_evaluation + 1, base_evaluation + 5]
+        original_B = [base_evaluation + 4, base_evaluation + 8]
+        original_AB = [[base_evaluation + 2, base_evaluation + 3],
+                       [base_evaluation + 6, base_evaluation + 7]]
+
+
+        self.assertTrue(np.array_equal(A, original_A))
+        self.assertTrue(np.array_equal(B, original_B))
+        self.assertTrue(np.array_equal(AB, original_AB))
+
+
+    def test_separate_output_values_0D(self):
+        # N = 1, D = 1 => Nt = 3
+        nr_uncertain_parameters = 1
+        nr_samples = 1
+
+        evaluations = [1, 2, 3]
+
+        A, B, AB = self.uncertainty_calculations.separate_output_values(evaluations,
+                                                                        nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                        nr_samples=nr_samples)
+
+        original_A, original_B, original_AB, _ = separate_output_values(np.array(evaluations),
+                                                                     D=nr_uncertain_parameters,
+                                                                     N=nr_samples,
+                                                                     calc_second_order=False)
+
+        self.assertTrue(np.array_equal(A, original_A))
+        self.assertTrue(np.array_equal(B, original_B))
+        self.assertTrue(np.array_equal(AB, original_AB))
+
+        # N = 1, D = 2 => Nt = 4
+        nr_uncertain_parameters = 2
+        nr_samples = 1
+
+        evaluations = [1, 2, 3, 4]
+
+        A, B, AB = self.uncertainty_calculations.separate_output_values(evaluations,
+                                                                        nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                        nr_samples=nr_samples)
+
+        original_A, original_B, original_AB, _ = separate_output_values(np.array(evaluations),
+                                                                     D=nr_uncertain_parameters,
+                                                                     N=nr_samples,
+                                                                     calc_second_order=False)
+
+        self.assertTrue(np.array_equal(A, original_A))
+        self.assertTrue(np.array_equal(B, original_B))
+        self.assertTrue(np.array_equal(AB, original_AB))
+
+
+        # N = 2, D = 2 => Nt = 8
+        nr_uncertain_parameters = 2
+        nr_samples = 2
+        evaluations = [1, 2, 3, 4,
+                       5, 6, 7, 8]
+
+        A, B, AB = self.uncertainty_calculations.separate_output_values(evaluations,
+                                                                        nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                        nr_samples=nr_samples)
+
+        original_A, original_B, original_AB, _ = separate_output_values(np.array(evaluations),
+                                                                     D=nr_uncertain_parameters,
+                                                                     N=nr_samples,
+                                                                     calc_second_order=False)
+
+        self.assertTrue(np.array_equal(A, original_A))
+        self.assertTrue(np.array_equal(B, original_B))
+        self.assertTrue(np.array_equal(AB, original_AB))
+
+
+    def test_separate_output_values(self):
+
+        test_arrays = [0, np.zeros((4)), np.zeros((4, 3)), np.zeros((4, 3, 4, 5, 6, 2, 3, 1, 2))]
+
+        for test_array in test_arrays:
+            self.separate_output_values_use_case(test_array)
+
+
+
+    def mc_calculate_sobol_use_case(self, base_evaluation):
+        # N = 1, D = 1 => Nt = 3
+        nr_uncertain_parameters = 1
+        nr_samples = 1
+
+        evaluations = [base_evaluation + 1, base_evaluation + 2, base_evaluation + 3]
+
+        sobol_first, sobol_total = self.uncertainty_calculations.mc_calculate_sobol(evaluations=evaluations,
+                                                                                    nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                                    nr_samples=nr_samples)
+
+        self.assertEqual(np.shape(sobol_first[0]), np.shape(base_evaluation))
+        self.assertEqual(np.shape(sobol_total[0]), np.shape(base_evaluation))
+
+
+        # N = 1, D = 2 => Nt = 4
+        nr_uncertain_parameters = 2
+        nr_samples = 1
+
+        evaluations = [base_evaluation + 1, base_evaluation + 2, base_evaluation + 3, base_evaluation + 4]
+
+        sobol_first, sobol_total = self.uncertainty_calculations.mc_calculate_sobol(evaluations=evaluations,
+                                                                                    nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                                    nr_samples=nr_samples)
+
+
+        self.assertEqual(np.shape(sobol_first[0]), np.shape(base_evaluation))
+        self.assertEqual(np.shape(sobol_first[1]), np.shape(base_evaluation))
+
+        self.assertEqual(np.shape(sobol_total[0]), np.shape(base_evaluation))
+        self.assertEqual(np.shape(sobol_total[1]), np.shape(base_evaluation))
+
+
+        # N = 2, D = 2 => Nt = 8
+        nr_uncertain_parameters = 2
+        nr_samples = 2
+
+        evaluations = [base_evaluation + 1, base_evaluation + 2, base_evaluation + 3, base_evaluation + 4,
+                       base_evaluation + 5, base_evaluation + 6, base_evaluation + 7, base_evaluation + 8]
+
+        sobol_first, sobol_total = self.uncertainty_calculations.mc_calculate_sobol(evaluations=evaluations,
+                                                                                    nr_uncertain_parameters=nr_uncertain_parameters,
+                                                                                    nr_samples=nr_samples)
+
+        self.assertEqual(np.shape(sobol_first[0]), np.shape(base_evaluation))
+        self.assertEqual(np.shape(sobol_first[1]), np.shape(base_evaluation))
+
+        self.assertEqual(np.shape(sobol_total[0]), np.shape(base_evaluation))
+        self.assertEqual(np.shape(sobol_total[1]), np.shape(base_evaluation))
+
+
+
+    def test_mc_calculate_sobol(self):
+        test_arrays = [0, np.zeros((4)), np.zeros((4, 3)), np.zeros((4, 3, 4, 5, 6, 2, 3, 1, 2))]
+
+        for test_array in test_arrays:
+            self.mc_calculate_sobol_use_case(test_array)
