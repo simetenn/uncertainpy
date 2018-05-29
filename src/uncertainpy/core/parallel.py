@@ -296,11 +296,15 @@ class Parallel(Base):
 
             results = {}
 
-            postprocess_result = self.model.postprocess(*model_result)
+            if self.model.ignore:
+                time_postprocess, values_postprocess = model_result[:2]
 
-            self.model.validate_postprocess(model_result)
+            else:
+                postprocess_result = self.model.postprocess(*model_result)
 
-            time_postprocess, values_postprocess = postprocess_result
+                self.model.validate_postprocess(model_result)
+
+                time_postprocess, values_postprocess = postprocess_result
 
             values_postprocess = none_to_nan(values_postprocess)
             time_postprocess = none_to_nan(time_postprocess)
