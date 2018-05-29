@@ -295,7 +295,7 @@ class RunModel(ParameterBase):
                     # raise NotImplementedError("Feature: {feature},".format(feature=feature)
                     #                           + " no support for >= 2D interpolation")
                     logger.error("{feature}:".format(feature=feature)
-                                      + " no support for >= 2D interpolation implemented")
+                                 + " no support for >= 2D interpolation implemented")
 
                     add_results(results, data, feature)
 
@@ -349,16 +349,6 @@ class RunModel(ParameterBase):
                     data[feature].evaluations = []
                     for result in results:
                         data[feature].evaluations.append(result[feature]["values"])
-
-
-        # # ensure all results are arrays
-        # for feature in data:
-        #     if "time" in data[feature]:
-        #         data[feature].time = np.array(data[feature].time)
-
-        #     data[feature].evaluations = np.array(data[feature].evaluations)
-
-        # data.remove_only_invalid_features()
 
         return data
 
