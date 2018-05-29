@@ -231,6 +231,35 @@ class UncertaintyCalculations(ParameterBase):
         return distribution
 
 
+    def create_mask(self, evaluations):
+        """
+        Mask evaluations that do not give results (anything but np.nan or None).
+
+        Parameters
+        ----------
+        evaluations : array_like
+            Evaluations for the model.
+
+        Returns
+        -------
+        masked_evaluations : list
+            The evaluations that have results (not numpy.nan or None).
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        """
+        masked_evaluations = []
+        mask = np.ones(len(evaluations), dtype=bool)
+
+        for i, result in enumerate(evaluations):
+            # if np.any(np.isnan(result)):
+            if contains_nan(result):
+                mask[i] = False
+            else:
+                masked_evaluations.append(result)
+
+        return masked_evaluations, mask
+
+
     def create_masked_evaluations(self, data, feature):
         """
         Mask all model and feature evaluations that do not give results
@@ -247,28 +276,20 @@ class UncertaintyCalculations(ParameterBase):
         Returns
         -------
         masked_evaluations : list
-            The all evaluations that have results (not numpy.nan or None).
+            The evaluations that have results (not numpy.nan or None).
         mask : boolean array
             The mask itself, used to create the masked arrays.
         """
         if feature not in data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
-        masked_evaluations = []
-        mask = np.ones(len(data[feature].evaluations), dtype=bool)
-
-        for i, result in enumerate(data[feature].evaluations):
-            # if np.any(np.isnan(result)):
-            if contains_nan(result):
-                mask[i] = False
-            else:
-                masked_evaluations.append(result)
+        masked_evaluations, mask = self.create_mask(data[feature].evaluations)
 
         if not np.all(mask):
             logger = get_logger(self)
             logger.warning("{}: only yields ".format(feature) +
-                                "results for {}/{} ".format(sum(mask), len(mask)) +
-                                "parameter combinations.")
+                           "results for {}/{} ".format(sum(mask), len(mask)) +
+                           "parameter combinations.")
 
 
         return masked_evaluations, mask
@@ -1386,13 +1407,14 @@ class UncertaintyCalculations(ParameterBase):
 
         In the quasi-Monte Carlo method we quasi-randomly draw
         ``nr_samples*(nr_uncertain_parameters + 2)`` (nr_samples=10**4 by default)
-        parameter samples using Saltelli's sampling scheme. We evaluate the model
+        parameter samples using Saltelli's sampling scheme. We require this number of samples
+        to be able to calculate the Sobol indices. We evaluate the model
         for each of these parameter samples and calculate the features from each
         of the model results. This step is performed in parallel to speed up the
-        calculations. Then we use the model and feature results to calculate
-        the mean, variance, and 5th and 95th percentile for the model and each
-        feature. Lastly, we calculate the Sobol indices using Saltellie's
-        approach.
+        calculations. Then we use ``nr_samples`` of the model and feature results
+        to calculate the mean, variance, and 5th and 95th percentile for the model
+        and each feature. Lastly, we use all calculated model and each feature
+        results to calculate the Sobol indices using Saltellie's approach.
 
         References
         ----------
@@ -1446,8 +1468,10 @@ class UncertaintyCalculations(ParameterBase):
             if feature == self.model.name and self.model.ignore:
                 continue
 
+            # Only use A to calculate the mean and variance
+            A, B, AB = self.separate_output_values(data[feature].evaluations, len(uncertain_parameters), nr_samples)
 
-            masked_evaluations, mask = self.create_masked_evaluations(data, feature)
+            masked_evaluations, mask = self.create_mask(A)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 data[feature].mean = np.mean(masked_evaluations, 0)
@@ -1460,6 +1484,7 @@ class UncertaintyCalculations(ParameterBase):
                     # Results cannot be removed when calculating the sensitivity.
                     # Instead NaN results are set to the mean.
                     # see https://github.com/SALib/SALib/issues/134
+                    _, mask = self.create_mask(data[feature].evaluations)
                     masked_mean_evaluations = data[feature].evaluations
 
                     # masked_mean_evaluations[~mask] = data[feature].mean

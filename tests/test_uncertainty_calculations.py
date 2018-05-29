@@ -252,6 +252,23 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(distribution, cp.Dist)
 
 
+
+    def test_create_mask(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        uncertain_parameters = ["a", "b"]
+
+        data = self.uncertainty_calculations.runmodel.run(nodes, uncertain_parameters)
+
+        masked_evaluations, mask = \
+            self.uncertainty_calculations.create_mask(data["TestingModel1d"].evaluations)
+
+        self.assertEqual(len(masked_evaluations), 3)
+        self.assertTrue(np.array_equal(masked_evaluations[0], np.arange(0, 10) + 1))
+        self.assertTrue(np.array_equal(masked_evaluations[1], np.arange(0, 10) + 3))
+        self.assertTrue(np.array_equal(masked_evaluations[2], np.arange(0, 10) + 5))
+        self.assertTrue(np.all(mask))
+
+
     def test_create_masked_evaluations(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
         uncertain_parameters = ["a", "b"]
@@ -1590,7 +1607,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertTrue(np.allclose(data["model"]["mean"],
                                     [1, 3, 2], atol=0.5))
         self.assertTrue(np.allclose(data["model"]["variance"],
-                                    [0, 0, 0], atol=0.1))
+                                    [0, 0, 0], atol=0.15))
         self.assertTrue(np.all(np.greater(data["model"]["percentile_5"],
                                           [0.75, 2.25, 1.5])))
         self.assertTrue(np.all(np.less(data["model"]["percentile_95"],
