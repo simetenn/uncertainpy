@@ -14,11 +14,11 @@ The implemented features are:
 
 1. ``mean_firing_rate`` -- Mean firing rate (for a single recorded neuron).
 2. ``instantaneous_rate`` -- Instantaneous firing rate (averaged over all recorded neurons within a small time window).
-3. ``mean_isi`` -- Mean interspike interval (averaged over all recorded neurons).
+3. ``mean_isi`` -- Average interspike interval (averaged over all recorded neurons).
 4. ``cv`` -- Coefficient of variation of the interspike interval (for a single recorded neuron).
-5. ``mean_cv`` -- Mean coefficient of variation of the interspike interval (averaged over all recorded neurons).
+5. ``average_cv`` -- average coefficient of variation of the interspike interval (averaged over all recorded neurons).
 6. ``local_variation`` -- Local variation (variability of interspike intervals for a single recorded neuron).
-7. ``mean_local_variation`` -- Mean local variation (variability of interspike intervals averaged over all recorded neurons).
+7. ``average_local_variation`` -- Mean local variation (variability of interspike intervals averaged over all recorded neurons).
 8. ``fanofactor`` -- Fanofactor (variability of spiketrains).
 9. ``victor_purpura_dist`` -- Victor purpura distance (spiketrain dissimilarity between two recorded neurons).
 10. ``van_rossum_dist`` -- Van rossum distance (spiketrain dissimilarity between two recorded neurons).
