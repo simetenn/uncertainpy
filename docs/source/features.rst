@@ -26,7 +26,7 @@ Uncertainpy takes this aspect of neural modeling into account,
 and is constructed so it can extract a set of features relevant for various
 common model types in neuroscience from the raw model output.
 Examples include the action potential shape in single neuron models,
-or the average interspike interval in network models.
+or the mean interspike interval in network models.
 If we give the ``features`` argument to
 :ref:`UncertaintyQuantification <UncertaintyQuantification>`,
 Uncertainpy will perform uncertainty quantification and sensitivity analysis

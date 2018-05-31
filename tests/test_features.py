@@ -611,11 +611,11 @@ class TestNetworkFeatures(unittest.TestCase):
         spiketrain = np.array([1, 3, 5, 6])
         self.values = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
-        self.implemented_features = ["cv", "average_cv", "binned_isi",
-                                     "average_isi", "local_variation", "mean_firing_rate",
+        self.implemented_features = ["cv", "mean_cv", "binned_isi",
+                                     "mean_isi", "local_variation", "mean_firing_rate",
                                      "fanofactor", "instantaneous_rate",
                                      "van_rossum_dist", "victor_purpura_dist",
-                                     "corrcoef", "covariance", "average_local_variation"]
+                                     "corrcoef", "covariance", "mean_local_variation"]
 
 
         self.features = NetworkFeatures(instantaneous_rate_nr_samples=2,
@@ -693,8 +693,8 @@ class TestNetworkFeatures(unittest.TestCase):
             self.assertIsNone(values)
 
 
-    def test_average_cv(self):
-        time, values = self.features.average_cv(self.time, self.spiketrains)
+    def test_mean_cv(self):
+        time, values = self.features.mean_cv(self.time, self.spiketrains)
 
         self.assertIsNone(time)
         self.assertEqual(0.38405728739343037, values)
@@ -712,8 +712,8 @@ class TestNetworkFeatures(unittest.TestCase):
                                            [0, 0, 0, 0, 0, 0, 0, 0]]))
 
 
-    def test_average_isi(self):
-        time, values = self.features.average_isi(self.time, self.spiketrains)
+    def test_mean_isi(self):
+        time, values = self.features.mean_isi(self.time, self.spiketrains)
 
         self.assertIsNone(time)
         self.assertEqual(1.66666666666666667, values)
@@ -730,7 +730,7 @@ class TestNetworkFeatures(unittest.TestCase):
                                        values))
 
     def test_mean_lv(self):
-        time, values = self.features.average_local_variation(self.time, self.spiketrains)
+        time, values = self.features.mean_local_variation(self.time, self.spiketrains)
 
         self.assertIsNone(time)
         mean = np.mean([0.16666666666666666, 0.16666666666666666, 0.16666666666666666])

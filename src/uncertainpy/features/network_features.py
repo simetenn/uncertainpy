@@ -104,7 +104,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
     Implemented features are:
 
     ======================= ======================= =======================
-    cv                      average_cv                 average_isi,
+    cv                      mean_cv                 mean_isi,
     local_variation mean    local_variation         mean_firing_rate
     instantaneous_rate      fanofactor              van_rossum_dist
     victor_purpura_dist     binned_isi              corrcoef
@@ -151,10 +151,10 @@ class NetworkFeatures(GeneralNetworkFeatures):
         unit_string = str(units).split()[1]
 
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
-                              "average_cv": ["average coefficient of variation"],
-                              "average_isi": ["Average interspike interval ({})".format(unit_string)],
+                              "mean_cv": ["Mean coefficient of variation"],
+                              "mean_isi": ["Mean interspike interval ({})".format(unit_string)],
                               "local_variation": ["Neuron nr", "Local variation"],
-                              "average_local_variation": ["Mean local variation"],
+                              "mean_local_variation": ["Mean local variation"],
                               "mean_firing_rate": ["Neuron nr", "Rate (Hz)"],
                               "instantaneous_rate": ["Time (ms)", "Neuron nr", "Rate (Hz)"],
                               "fanofactor": ["Fanofactor"],
@@ -207,9 +207,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return None, np.array(cv)
 
 
-    def average_cv(self, simulation_end, spiketrains):
+    def mean_cv(self, simulation_end, spiketrains):
         """
-        Calculate the average coefficient of variation.
+        Calculate the mean coefficient of variation.
 
         Parameters
         ----------
@@ -222,7 +222,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         -------
         time : None
         values : float
-            The average coefficient of variation of each spiketrain.
+            The mean coefficient of variation of each spiketrain.
         """
         if len(spiketrains) == 0:
             return None, None
@@ -271,9 +271,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return centers, binned_isi
 
 
-    def average_isi(self, simulation_end, spiketrains):
+    def mean_isi(self, simulation_end, spiketrains):
         """
-        Calculate the average interspike interval (isi) variation for each neuron.
+        Calculate the mean interspike interval (isi) variation for each neuron.
 
         Parameters
         ----------
@@ -285,8 +285,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
         Returns
         -------
         time : None
-        average_isi : float
-           The average interspike interval.
+        mean_isi : float
+           The mean interspike interval.
         """
         if len(spiketrains) == 0:
             return None, None
@@ -332,9 +332,9 @@ class NetworkFeatures(GeneralNetworkFeatures):
 
 
 
-    def average_local_variation(self, simulation_end, spiketrains):
+    def mean_local_variation(self, simulation_end, spiketrains):
         """
-        Calculate the average of the local variation.
+        Calculate the mean of the local variation.
 
         Parameters
         ----------
@@ -346,8 +346,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
         Returns
         -------
         time : None
-        average_local_variation : float
-            The average of the local variation for each spiketrain.
+        mean_local_variation : float
+            The mean of the local variation for each spiketrain.
         """
         if len(spiketrains) == 0:
             return None, None
