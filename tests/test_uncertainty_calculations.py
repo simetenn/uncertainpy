@@ -908,7 +908,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-    def test_calculate_sobol_first_sum(self):
+    def test_calculate_sobol_first_average(self):
         data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
@@ -916,15 +916,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sobol_first =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sobol_first")
+        data = self.uncertainty_calculations.average_sensitivity(data, sensitivity="sobol_first")
 
-        self.assertEqual(data["test2D"]["sobol_first_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sobol_first_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sobol_first_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sobol_first_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_first_average"][0], 5)
+        self.assertEqual(data["test2D"]["sobol_first_average"][1], 10)
+        self.assertEqual(data["test1D"]["sobol_first_average"][0], 1)
+        self.assertEqual(data["test1D"]["sobol_first_average"][1], 2)
 
 
-    def test_calculate_first_sum(self):
+    def test_calculate_first_average(self):
         data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
@@ -932,14 +932,14 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sobol_first =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="first")
+        data = self.uncertainty_calculations.average_sensitivity(data, sensitivity="first")
 
-        self.assertEqual(data["test2D"]["sobol_first_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sobol_first_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sobol_first_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sobol_first_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_first_average"][0], 5)
+        self.assertEqual(data["test2D"]["sobol_first_average"][1], 10)
+        self.assertEqual(data["test1D"]["sobol_first_average"][0], 1)
+        self.assertEqual(data["test1D"]["sobol_first_average"][1], 2)
 
-    def test_calculate_total_sum(self):
+    def test_calculate_total_average(self):
         data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
@@ -947,15 +947,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sobol_total =  [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="total")
+        data = self.uncertainty_calculations.average_sensitivity(data, sensitivity="total")
 
-        self.assertEqual(data["test2D"]["sobol_total_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sobol_total_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sobol_total_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sobol_total_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_total_average"][0], 5)
+        self.assertEqual(data["test2D"]["sobol_total_average"][1], 10)
+        self.assertEqual(data["test1D"]["sobol_total_average"][0], 1)
+        self.assertEqual(data["test1D"]["sobol_total_average"][1], 2)
 
 
-    def test_calculate_sensitivity_total_sum(self):
+    def test_calculate_sensitivity_total_average(self):
         data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
@@ -963,15 +963,15 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data["test1D"].sobol_total = [1, 2]
         data.uncertain_parameters = ["a", "b"]
 
-        data = self.uncertainty_calculations.sensitivity_sum(data, sensitivity="sobol_total")
+        data = self.uncertainty_calculations.average_sensitivity(data, sensitivity="sobol_total")
 
-        self.assertEqual(data["test2D"]["sobol_total_sum"][0], 1/3.)
-        self.assertEqual(data["test2D"]["sobol_total_sum"][1], 2/3.)
-        self.assertEqual(data["test1D"]["sobol_total_sum"][0], 1/3.)
-        self.assertEqual(data["test1D"]["sobol_total_sum"][1], 2/3.)
+        self.assertEqual(data["test2D"]["sobol_total_average"][0], 5)
+        self.assertEqual(data["test2D"]["sobol_total_average"][1], 10)
+        self.assertEqual(data["test1D"]["sobol_total_average"][0], 1)
+        self.assertEqual(data["test1D"]["sobol_total_average"][1], 2)
 
 
-    def test_sensitivity_sum_error(self):
+    def test_average_sensitivity_error(self):
         data = Data(logger_level="error")
 
         data.add_features(["test2D", "test1D"])
@@ -980,7 +980,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data.uncertain_parameters = ["a", "b"]
 
         with self.assertRaises(ValueError):
-            self.uncertainty_calculations.sensitivity_sum(data, sensitivity="not_existing")
+            self.uncertainty_calculations.average_sensitivity(data, sensitivity="not_existing")
 
 
     def test_analyse_PCE(self):
@@ -1022,8 +1022,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # Test if all calculated properties actually exists
         data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sobol_first", "sobol_first_sum",
-                      "sobol_total", "sobol_total_sum", "labels"]
+                      "sobol_first", "sobol_first_average",
+                      "sobol_total", "sobol_total_average", "labels"]
 
         for data_type in data_types:
             if data_type not in ["values", "time", "labels"]:
@@ -1324,8 +1324,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         # Test if all calculated properties actually exists
         data_types = ["values", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sobol_first", "sobol_first_sum",
-                      "sobol_total", "sobol_total_sum", "labels"]
+                      "sobol_first", "sobol_first_average",
+                      "sobol_total", "sobol_total_average", "labels"]
 
         for data_type in data_types:
             if data_type not in ["values", "time", "labels"]:
@@ -1421,8 +1421,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         # TODO: currently no tests for the values of the sobol indices
         self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first"]), (2, 10))
         self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total"]), (2, 10))
-        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first_sum"]), (2,))
-        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total_sum"]), (2,))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first_average"]), (2,))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total_average"]), (2,))
 
 
         # Compare to pregenerated data
@@ -1467,8 +1467,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertEqual(np.shape(data["feature0d"]["sobol_first"]), (2,))
         self.assertEqual(np.shape(data["feature0d"]["sobol_total"]), (2,))
-        self.assertEqual(np.shape(data["feature0d"]["sobol_first_sum"]), (2,))
-        self.assertEqual(np.shape(data["feature0d"]["sobol_total_sum"]), (2,))
+        self.assertEqual(np.shape(data["feature0d"]["sobol_first_average"]), (2,))
+        self.assertEqual(np.shape(data["feature0d"]["sobol_total_average"]), (2,))
 
 
     def test_monte_carlo_feature1d(self):
@@ -1501,8 +1501,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertEqual(np.shape(data["feature1d"]["sobol_first"]), (2, 10))
         self.assertEqual(np.shape(data["feature1d"]["sobol_total"]), (2, 10))
-        self.assertEqual(np.shape(data["feature1d"]["sobol_first_sum"]), (2,))
-        self.assertEqual(np.shape(data["feature1d"]["sobol_total_sum"]), (2,))
+        self.assertEqual(np.shape(data["feature1d"]["sobol_first_average"]), (2,))
+        self.assertEqual(np.shape(data["feature1d"]["sobol_total_average"]), (2,))
 
 
 
@@ -1536,8 +1536,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertEqual(np.shape(data["feature2d"]["sobol_first"]), (2, 2, 10))
         self.assertEqual(np.shape(data["feature2d"]["sobol_total"]), (2, 2, 10))
-        self.assertEqual(np.shape(data["feature2d"]["sobol_first_sum"]), (2,))
-        self.assertEqual(np.shape(data["feature2d"]["sobol_total_sum"]), (2,))
+        self.assertEqual(np.shape(data["feature2d"]["sobol_first_average"]), (2,))
+        self.assertEqual(np.shape(data["feature2d"]["sobol_total_average"]), (2,))
 
 
 
@@ -1570,8 +1570,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsNone(data["TestingModelIncomplete"].percentile_95)
         self.assertIsNone(data["TestingModelIncomplete"].sobol_first)
         self.assertIsNone(data["TestingModelIncomplete"].sobol_total)
-        self.assertIsNone(data["TestingModelIncomplete"].sobol_first_sum)
-        self.assertIsNone(data["TestingModelIncomplete"].sobol_total_sum)
+        self.assertIsNone(data["TestingModelIncomplete"].sobol_first_average)
+        self.assertIsNone(data["TestingModelIncomplete"].sobol_total_average)
 
 
 
@@ -1615,13 +1615,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertEqual(np.shape(data["model"]["sobol_first"]), (2, 3))
         self.assertEqual(np.shape(data["model"]["sobol_total"]), (2, 3))
-        self.assertEqual(np.shape(data["model"]["sobol_first_sum"]), (2,))
-        self.assertEqual(np.shape(data["model"]["sobol_total_sum"]), (2,))
+        self.assertEqual(np.shape(data["model"]["sobol_first_average"]), (2,))
+        self.assertEqual(np.shape(data["model"]["sobol_total_average"]), (2,))
 
         self.assertFalse(np.any(np.isnan(data["model"]["sobol_first"])))
         self.assertFalse(np.any(np.isnan(data["model"]["sobol_total"])))
-        self.assertFalse(np.any(np.isnan(data["model"]["sobol_first_sum"])))
-        self.assertFalse(np.any(np.isnan(data["model"]["sobol_total_sum"])))
+        self.assertFalse(np.any(np.isnan(data["model"]["sobol_first_average"])))
+        self.assertFalse(np.any(np.isnan(data["model"]["sobol_total_average"])))
 
 
 

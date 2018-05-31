@@ -971,8 +971,8 @@ class UncertaintyCalculations(ParameterBase):
             11. ``data["model/features"].percentile_95``
             12. ``data["model/features"].sobol_first``, if more than 1 parameter
             13. ``data["model/features"].sobol_total``, if more than 1 parameter
-            14. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            15. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_average``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_average``, if more than 1 parameter
 
         See also
         --------
@@ -998,8 +998,8 @@ class UncertaintyCalculations(ParameterBase):
 
                     data[feature].sobol_first = cp.Sens_m(U_hat[feature], distribution)
                     data[feature].sobol_total = cp.Sens_t(U_hat[feature], distribution)
-                    data = self.sensitivity_sum(data, sensitivity="sobol_first")
-                    data = self.sensitivity_sum(data, sensitivity="sobol_total")
+                    data = self.average_sensitivity(data, sensitivity="sobol_first")
+                    data = self.average_sensitivity(data, sensitivity="sobol_total")
 
                 else:
                     U_mc[feature] = U_hat[feature](samples)
@@ -1232,8 +1232,8 @@ class UncertaintyCalculations(ParameterBase):
             11. ``data["model/features"].percentile_95``
             12. ``data["model/features"].sobol_first``, if more than 1 parameter
             13. ``data["model/features"].sobol_total``, if more than 1 parameter
-            14. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            15. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_average``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_average``, if more than 1 parameter
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -1401,8 +1401,8 @@ class UncertaintyCalculations(ParameterBase):
             11. ``data["model/features"].percentile_95``
             12. ``data["model/features"].sobol_first``, if more than 1 parameter
             13. ``data["model/features"].sobol_total``, if more than 1 parameter
-            14. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            15. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_average``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_average``, if more than 1 parameter
 
 
         In the quasi-Monte Carlo method we quasi-randomly draw
@@ -1502,8 +1502,8 @@ class UncertaintyCalculations(ParameterBase):
                     sobol_first, sobol_total = self.mc_calculate_sobol(masked_mean_evaluations, len(uncertain_parameters), nr_samples)
                     data[feature].sobol_first = sobol_first
                     data[feature].sobol_total = sobol_total
-                    data = self.sensitivity_sum(data, sensitivity="sobol_first")
-                    data = self.sensitivity_sum(data, sensitivity="sobol_total")
+                    data = self.average_sensitivity(data, sensitivity="sobol_first")
+                    data = self.average_sensitivity(data, sensitivity="sobol_total")
 
             else:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
@@ -1597,9 +1597,9 @@ class UncertaintyCalculations(ParameterBase):
         return sobol_first, sobol_total
 
 
-    def sensitivity_sum(self, data, sensitivity="sobol_first"):
+    def average_sensitivity(self, data, sensitivity="sobol_first"):
         """
-        Calculate the normalized sum of the sensitivities for the model and all
+        Calculate the average of the sensitivities for the model and all
         features and add them to `data`.
 
         Parameters
@@ -1615,7 +1615,7 @@ class UncertaintyCalculations(ParameterBase):
         Returns
         ----------
         data : Data
-            The `data` object with the normalized sum of the sensitivities for
+            The `data` object with the average of the sensitivities for
             the model and all features added.
 
         See also
@@ -1632,18 +1632,11 @@ class UncertaintyCalculations(ParameterBase):
 
         for feature in data:
             if sensitivity in data[feature]:
-                total_sensitivity = 0
                 total_sense = []
                 for i in range(0, len(data.uncertain_parameters)):
-                    tmp_sum_sensitivity = np.sum(data[feature][sensitivity][i])
+                    total_sense.append(np.mean(data[feature][sensitivity][i]))
 
-                    total_sensitivity += tmp_sum_sensitivity
-                    total_sense.append(tmp_sum_sensitivity)
+                data[feature][sensitivity + "_average"] = np.array(total_sense)
 
-                for i in range(0, len(data.uncertain_parameters)):
-                    if total_sensitivity != 0:
-                        total_sense[i] /= float(total_sensitivity)
-
-                data[feature][sensitivity + "_sum"] = np.array(total_sense)
 
         return data

@@ -47,14 +47,14 @@ class DataFeature(collections.MutableMapping):
     sobol_first : {None, array_like}, optional.
         First order sensitivity of the feature or model results.
         Default is None.
-    sobol_first_sum : {None, array_like}, optional.
+    sobol_first_average : {None, array_like}, optional.
         First order sensitivity of the feature or model results.
         Default is None.
     sobol_total : {None, array_like}, optional.
         Total effect sensitivity of the feature or model results.
         Default is None.
-    sobol_total_sum : {None, array_like}, optional.
-        Normalized sum of total effect sensitivity of
+    sobol_total_average : {None, array_like}, optional.
+        Average of the total effect sensitivity of
         the feature or model results.
         Default is None.
     labels : list, optional.
@@ -78,14 +78,13 @@ class DataFeature(collections.MutableMapping):
     percentile_95 : {None, array_like}
         95 percentile of the feature or model results.
     sobol_first : {None, array_like}
-        First order sensitivity of the feature or model results.
-    sobol_first_sum : {None, array_like}
-        First order sensitivity of the feature or model results.
+        First order Sobol indices (sensitivity) of the feature or model results.
+    sobol_first_average : {None, array_like}
+        Average of the first order Sobol indices of the feature or model results.
     sobol_total : {None, array_like}
-        Total effect sensitivity of the feature or model results.
-    sobol_total_sum : {None, array_like}
-        Normalized sum of total effect sensitivity of
-        the feature or model results.
+        Total order Sobol indices (sensitivity) of the feature or model results.
+    sobol_total_average : {None, array_like}
+        Average of the total order Sobol indices of the feature or model results.
     labels : list
         A list of labels for plotting, ``[x-axis, y-axis, z-axis]``.
 
@@ -101,11 +100,11 @@ class DataFeature(collections.MutableMapping):
         * ``percentile_95`` - the 95th percentile of the model/feature.
         * ``sobol_first`` - the first order Sobol indices (sensitivity) of
           the model/feature.
-        * ``sobol_first_sum`` - the total order Sobol indices (sensitivity)
-          of the model/feature.
-        * ``sobol_total`` - the normalized sum of the first order Sobol
+        * ``sobol_first_average`` - the average of the first order Sobol
           indices (sensitivity) of the model/feature.
-        * ``sobol_total_sum`` - the normalized sum of the total order Sobol
+        * ``sobol_total`` - the total order Sobol indices (sensitivity)
+          of the model/feature.
+        * ``sobol_total_average`` - the average of the total order Sobol
           indices (sensitivity) of the model/feature.
     """
     def __init__(self,
@@ -117,9 +116,9 @@ class DataFeature(collections.MutableMapping):
                  percentile_5=None,
                  percentile_95=None,
                  sobol_first=None,
-                 sobol_first_sum=None,
+                 sobol_first_average=None,
                  sobol_total=None,
-                 sobol_total_sum=None,
+                 sobol_total_average=None,
                  labels=[]):
 
         self.name = name
@@ -130,15 +129,15 @@ class DataFeature(collections.MutableMapping):
         self.percentile_5 = percentile_5
         self.percentile_95 = percentile_95
         self.sobol_first = sobol_first
-        self.sobol_first_sum = sobol_first_sum
+        self.sobol_first_average = sobol_first_average
         self.sobol_total = sobol_total
-        self.sobol_total_sum = sobol_total_sum
+        self.sobol_total_average = sobol_total_average
         self.labels = labels
 
         self._statistical_metrics = ["evaluations", "time", "mean", "variance",
                                      "percentile_5", "percentile_95",
-                                     "sobol_first", "sobol_first_sum",
-                                     "sobol_total", "sobol_total_sum"]
+                                     "sobol_first", "sobol_first_average",
+                                     "sobol_total", "sobol_total_average"]
 
         self._information = ["name", "labels"]
 
@@ -352,11 +351,11 @@ class Data(collections.MutableMapping):
         * ``percentile_95`` - the 95th percentile of the model/feature.
         * ``sobol_first`` - the first order Sobol indices (sensitivity) of
           the model/feature.
-        * ``sobol_first_sum`` - the total order Sobol indices (sensitivity)
-          of the model/feature.
-        * ``sobol_total`` - the normalized sum of the first order Sobol
+        * ``sobol_first_average`` - the average of the first order Sobol
           indices (sensitivity) of the model/feature.
-        * ``sobol_total_sum`` - the normalized sum of the total order Sobol
+        * ``sobol_total`` - the total order Sobol indices (sensitivity)
+          of the model/feature.
+        * ``sobol_total_average`` - the average of the total order Sobol
           indices (sensitivity) of the model/feature.
 
     Raises

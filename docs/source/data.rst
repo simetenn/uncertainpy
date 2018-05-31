@@ -26,8 +26,8 @@ Variance                                          :math:`\mathbb{V}`          ``
 95th percentile                                   :math:`P_{95}`              ``percentile_95``
 First order Sobol indices                         :math:`S`                   ``sobol_first``
 Total order Sobol indices                         :math:`S_T`                 ``sobol_total``
-Normalized sum of first order Sobol indices       :math:`\widehat{S}`         ``sobol_first_sum``
-Normalized sum of total order Sobol indices       :math:`\widehat{S}_{T}`     ``sobol_total_sum``
+Average of the first order Sobol indices          :math:`\widehat{S}`         ``sobol_first_average``
+Average of the total order Sobol indices          :math:`\widehat{S}_{T}`     ``sobol_total_average``
 ================================================  ========================    ========================
 
 

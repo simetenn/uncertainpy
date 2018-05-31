@@ -281,8 +281,8 @@ def generate_data_monte_carlo_single():  # pragma: no cover
 def setup_mock_data():  # pragma: no cover
     data = un.Data()
     data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                  "sobol_first", "sobol_first_sum",
-                  "sobol_total", "sobol_total_sum"]
+                  "sobol_first", "sobol_first_average",
+                  "sobol_total", "sobol_total_average"]
 
     data.add_features(["feature1d", "TestingModel1d"])
 
@@ -323,8 +323,8 @@ def generate_data_data_missing():  # pragma: no cover
 def generate_data_data_irregular():  # pragma: no cover
     data = un.Data()
     data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                  "sobol_first", "sobol_first_sum",
-                  "sobol_total", "sobol_total_sum"]
+                  "sobol_first", "sobol_first_average",
+                  "sobol_total", "sobol_total_average"]
 
     data.add_features(["feature1d", "TestingModel1d"])
 

@@ -88,6 +88,6 @@ dimensions.
 In the case of a zero dimensional output the Sobol indices is a single number,
 while for a one dimensional output we get Sobol indices for each point in time.
 To better be able to compare the Sobol indices across such features,
-we therefore calculate the normalized sum of both the first order Sobol
+we therefore calculate the average of both the first order Sobol
 indices :math:`\widehat{S}`,
 and the total order Sobol indices :math:`\widehat{S}_{T}`.

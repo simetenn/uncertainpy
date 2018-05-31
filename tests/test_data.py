@@ -23,8 +23,8 @@ class TestDataFeature(unittest.TestCase):
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance",
                                     "percentile_5", "percentile_95",
-                                    "sobol_first", "sobol_first_sum",
-                                    "sobol_total", "sobol_total_sum"]
+                                    "sobol_first", "sobol_first_average",
+                                    "sobol_total", "sobol_total_average"]
 
 
     def tearDown(self):
@@ -148,8 +148,8 @@ class TestData(unittest.TestCase):
         self.data = Data(logger_level="error")
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                                    "sobol_first", "sobol_first_sum",
-                                    "sobol_total", "sobol_total_sum"]
+                                    "sobol_first", "sobol_first_average",
+                                    "sobol_total", "sobol_total_average"]
 
 
         self.data_information = ["uncertain_parameters", "model_name",
