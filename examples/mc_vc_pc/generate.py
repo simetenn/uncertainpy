@@ -35,38 +35,38 @@ UQ = un.UncertaintyQuantification(model,
 
 folder = "data/parameters_3/"
 
-# exact_data = UQ.quantify(method="mc", nr_mc_samples=exact_mc, plot=None, save=False)
+exact_data = UQ.quantify(method="mc", nr_mc_samples=exact_mc, plot=None, save=False)
 
-# # This is to not save all model evaluations,
-# # otherwise the filesize would be on the order of Gb
-# sobol_evaluations = len(exact_data["valderrama"].evaluations)
-# exact_data["valderrama"].evaluations = [exact_mc, sobol_evaluations]
-# exact_data.save(folder + "exact.h5")
-
-
-# for rerun in range(reruns):
-#     print("Rerun: ", rerun)
-#     for nr_evaluations in mc_evaluations:
-#         data = UQ.quantify(method="mc",
-#                            nr_mc_samples=nr_evaluations,
-#                            plot=None,
-#                            save=False)
-
-#         name = "mc_" + str(nr_evaluations) + "_rerun_" + str(rerun)
-#         sobol_evaluations = len(data["valderrama"].evaluations)
-#         data["valderrama"].evaluations = [nr_evaluations, sobol_evaluations]
-#         data.save(folder + name + ".h5")
+# This is to not save all model evaluations,
+# otherwise the filesize would be on the order of Gb
+sobol_evaluations = len(exact_data["valderrama"].evaluations)
+exact_data["valderrama"].evaluations = [exact_mc, sobol_evaluations]
+exact_data.save(folder + "exact.h5")
 
 
-# for polynomial_order in polynomial_orders_3:
-#     data = UQ.quantify(polynomial_order=polynomial_order,
-#                        plot=None,
-#                        save=False)
+for rerun in range(reruns):
+    print("Rerun: ", rerun)
+    for nr_evaluations in mc_evaluations:
+        data = UQ.quantify(method="mc",
+                           nr_mc_samples=nr_evaluations,
+                           plot=None,
+                           save=False)
 
-#     name = "pc_" + str(polynomial_order)
-#     sobol_evaluations = len(data["valderrama"].evaluations)
-#     data["valderrama"].evaluations = [sobol_evaluations, sobol_evaluations]
-#     data.save(folder + name + ".h5")
+        name = "mc_" + str(nr_evaluations) + "_rerun_" + str(rerun)
+        sobol_evaluations = len(data["valderrama"].evaluations)
+        data["valderrama"].evaluations = [nr_evaluations, sobol_evaluations]
+        data.save(folder + name + ".h5")
+
+
+for polynomial_order in polynomial_orders_3:
+    data = UQ.quantify(polynomial_order=polynomial_order,
+                       plot=None,
+                       save=False)
+
+    name = "pc_" + str(polynomial_order)
+    sobol_evaluations = len(data["valderrama"].evaluations)
+    data["valderrama"].evaluations = [sobol_evaluations, sobol_evaluations]
+    data.save(folder + name + ".h5")
 
 
 model = un.Model(run=valderrama,
@@ -99,13 +99,13 @@ UQ = un.UncertaintyQuantification(model,
 
 folder = "data/parameters_11/"
 
-# exact_data = UQ.quantify(method="mc", nr_mc_samples=exact_mc, plot=None, save=False)
+exact_data = UQ.quantify(method="mc", nr_mc_samples=exact_mc, plot=None, save=False)
 
-# # This is to not save all model evaluations,
-# # otherwise the filesize would be on the order of Gb
-# sobol_evaluations = len(exact_data["valderrama"].evaluations)
-# exact_data["valderrama"].evaluations = [exact_mc, sobol_evaluations]
-# exact_data.save(folder + "exact.h5")
+# This is to not save all model evaluations,
+# otherwise the filesize would be on the order of Gb
+sobol_evaluations = len(exact_data["valderrama"].evaluations)
+exact_data["valderrama"].evaluations = [exact_mc, sobol_evaluations]
+exact_data.save(folder + "exact.h5")
 
 for rerun in range(reruns):
     print("Rerun: ", rerun)
@@ -121,13 +121,13 @@ for rerun in range(reruns):
         data.save(folder + name + ".h5")
 
 
-# for polynomial_order in polynomial_orders_11:
-#     data = UQ.quantify(polynomial_order=polynomial_order,
-#                        plot=None,
-#                        save=False)
+for polynomial_order in polynomial_orders_11:
+    data = UQ.quantify(polynomial_order=polynomial_order,
+                       plot=None,
+                       save=False)
 
-#     name = "pc_" + str(polynomial_order)
-#     nr_evaluations = len(data["valderrama"].evaluations)
-#     sobol_evaluations = len(data["valderrama"].evaluations)
-#     data["valderrama"].evaluations = [sobol_evaluations, sobol_evaluations]
-#     data.save(folder + name + ".h5")
+    name = "pc_" + str(polynomial_order)
+    nr_evaluations = len(data["valderrama"].evaluations)
+    sobol_evaluations = len(data["valderrama"].evaluations)
+    data["valderrama"].evaluations = [sobol_evaluations, sobol_evaluations]
+    data.save(folder + name + ".h5")
