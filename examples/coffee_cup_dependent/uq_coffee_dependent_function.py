@@ -40,4 +40,5 @@ UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
 # Perform the uncertainty quantification,
 # which automatically use the Rosenblatt transformation
-data = UQ.quantify()
+# We set the seed to easier be able to reproduce the result
+data = UQ.quantify(seed=10)

@@ -27,4 +27,5 @@ model = un.NeuronModel(path="interneuron_model/", interpolate=True,
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features)
-data = UQ.quantify()
+# We set the seed to easier be able to reproduce the result
+data = UQ.quantify(seed=10)
