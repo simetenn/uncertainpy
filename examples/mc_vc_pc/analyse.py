@@ -28,9 +28,9 @@ def calculate_error(glob_pattern, exact_data, base="data/"):
         nr_evaluations = data["valderrama"].evaluations[0]
         sobol_evaluations = data["valderrama"].evaluations[1]
 
-        mean_error = dt*np.sum(np.abs((exact_mean - mean)/exact_mean))
-        variance_error = dt*np.sum(np.abs((exact_variance - variance)/exact_variance))
-        sobol_error = dt*np.sum(np.abs((exact_sobol - sobol)/exact_sobol), axis=1)
+        mean_error = dt*np.sum(np.abs((exact_mean - mean)))
+        variance_error = dt*np.sum(np.abs((exact_variance - variance)))
+        sobol_error = dt*np.sum(np.abs((exact_sobol - sobol)), axis=1)
         sobol_error = np.mean(sobol_error)
 
         if nr_evaluations not in mean_errors:
@@ -78,7 +78,6 @@ exact_data_3 =  un.Data("data/parameters_3/exact.h5")
 pc_evaluations_3, pc_mean_errors_3, pc_variance_errors_3, pc_sobol_evaluations_3, pc_sobol_errors_3 = calculate_error("parameters_3/pc_*",  exact_data_3)
 mc_evaluations_3, mc_mean_errors_3, mc_variance_errors_3, mc_sobol_evaluations_3, mc_sobol_errors_3 = calculate_error("parameters_3/mc_*",  exact_data_3)
 
-
 # 11 uncertain parameters
 exact_data_11 =  un.Data("data/parameters_11/exact.h5")
 
@@ -86,7 +85,7 @@ pc_evaluations_11, pc_mean_errors_11, pc_variance_errors_11, pc_sobol_evaluation
 mc_evaluations_11, mc_mean_errors_11, mc_variance_errors_11, mc_sobol_evaluations_11, mc_sobol_errors_11 = calculate_error("parameters_11/mc_*", exact_data_11)
 
 
-with h5py.File("analysed_data.h5", "w") as f:
+with h5py.File("pc_mc.h5", "w") as f:
     f.create_dataset("pc_evaluations_3", data=pc_evaluations_3)
     f.create_dataset("pc_mean_errors_3", data=pc_mean_errors_3)
     f.create_dataset("pc_variance_errors_3", data=pc_variance_errors_3)
