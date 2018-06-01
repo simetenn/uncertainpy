@@ -21,21 +21,21 @@ class NestModel(Model):
 
     Parameters
     ----------
+    run : {None, function}, optional
+        A function that implements the model. See Note for requirements of the
+        function. Default is None.
     interpolate : bool, optional
         True if the model is irregular, meaning it has a varying number of
         return values between different model evaluations, and
         an interpolation of the results is performed. Default is False.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. Default is False.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
         Default is ``["Time (ms)", "Neuron nr", "Spiking probability"]``.
-    run : {None, function}, optional
-        A function that implements the model. See Note for requirements of the
-        function. Default is None.
-    ignore : bool, optional
-        Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. Default is False.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed.
