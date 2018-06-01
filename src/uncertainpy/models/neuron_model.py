@@ -21,21 +21,32 @@ class NeuronModel(Model):
     path : {None, str}, optional
         Path to the Neuron model. If None, the file is considered to be in the
         current folder. Default is None.
-    name : {None, str}, optional
-        Name of the model, if None the model gets the name of the current class.
-        Default is None.
+    stimulus_start : {int, float, None}, optional
+        The start time of any stimulus given to the neuron model. This
+        is added to the info dictionary. If None, no stimulus_start is added to
+        the info dictionary. Default is None.
+    stimulus_end : {int, float, None}, optional
+        The end time of any stimulus given to the neuron model. This
+        is added to the info dictionary. If None, no stimulus_end is added to
+        the info dictionary. Default is None.
     interpolate : bool, optional
         True if the model is irregular, meaning it has a varying number of
         return values between different model evaluations, and
         an interpolation of the results is performed. Default is False.
+    name : {None, str}, optional
+        Name of the model, if None the model gets the name of the current class.
+        Default is None.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. Default is False.
+    run : {None, callable}, optional
+        A function that implements the model. See the ``run`` method for
+        requirements of the function. Default is None.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
-        Default is ``["time (ms)", "voltage (mv)"]``.
-    ignore : bool, optional
-        Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. Default is False.
+        Default is ``["Time (ms)", "Membrane potential (mv)"]``.
     suppress_graphics : bool, optional
         Suppress all graphics created by the Neuron model. Default is True.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
@@ -75,13 +86,13 @@ class NeuronModel(Model):
     def __init__(self,
                  file="mosinit.hoc",
                  path=None,
-                 name=None,
                  interpolate=True,
+                 stimulus_start=None,
+                 stimulus_end=None,
+                 name=None,
                  ignore=False,
                  run=None,
                  labels=["Time (ms)", "Membrane potential (mV)"],
-                 stimulus_start=None,
-                 stimulus_end=None,
                  suppress_graphics=True,
                  logger_level="info",
                  **kwargs):

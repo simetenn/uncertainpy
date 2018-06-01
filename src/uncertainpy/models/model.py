@@ -19,6 +19,9 @@ class Model(object):
 
     Parameters
     ----------
+    run : {None, callable}, optional
+        A function that implements the model. See the ``run`` method for
+        requirements of the function. Default is None.
     interpolate : bool, optional
         True if the model is irregular, meaning it has a varying number of
         return values between different model evaluations, and
@@ -27,9 +30,10 @@ class Model(object):
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output. Default is an empty list.
-    run : {None, callable}, optional
-        A function that implements the model. See the ``run`` method for
-        requirements of the function. Default is None.
+    postprocess : {None, callable}, optional
+        A function that implements the postprocessing of the model.
+        See the ``postprocess`` method for requirements of the function.
+        Default is None.
     ignore : bool, optional
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. Default is False.
