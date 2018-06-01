@@ -17,8 +17,7 @@ class NeuronModel(Model):
     Parameters
     ----------
     file : str, optional
-        Filename of the Neuron model.
-        Default is ``"mosinit.hoc"``.
+        Filename of the Neuron model. Default is ``"mosinit.hoc"``.
     path : {None, str}, optional
         Path to the Neuron model. If None, the file is considered to be in the
         current folder. Default is None.
@@ -34,13 +33,11 @@ class NeuronModel(Model):
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
         Default is ``["time (ms)", "voltage (mv)"]``.
-    suppress_graphics : bool, optional
-        Suppress all graphics created by the Neuron model.
-        Default is True.
     ignore : bool, optional
         Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. The model results are still
-        postprocessed if a postprocessing is implemented. Default is False.
+        uncertainty is not calculated for the model. Default is False.
+    suppress_graphics : bool, optional
+        Suppress all graphics created by the Neuron model. Default is True.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed

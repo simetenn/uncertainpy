@@ -35,8 +35,7 @@ class NestModel(Model):
         function. Default is None.
     ignore : bool, optional
         Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. The model results are still
-        postprocessed. Default is False.
+        uncertainty is not calculated for the model. Default is False.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed.
