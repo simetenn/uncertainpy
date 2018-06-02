@@ -1503,10 +1503,10 @@ class PlotUncertainty(object):
 
 
     def average_sensitivity(self,
-                        feature,
-                        sensitivity="first",
-                        hardcopy=True,
-                        show=False):
+                            feature,
+                            sensitivity="first",
+                            hardcopy=True,
+                            show=False):
         """
         Plot the average of the sensitivity for a specific model/feature.
 
@@ -1570,6 +1570,8 @@ class PlotUncertainty(object):
 
         save_name = feature + "_" + sensitivity + "_average" + self.figureformat
 
+        plt.tight_layout()
+
         if hardcopy:
             plt.savefig(os.path.join(self.folder, save_name))
 
@@ -1582,9 +1584,9 @@ class PlotUncertainty(object):
 
 
     def average_sensitivity_all(self,
-                            sensitivity="first",
-                            hardcopy=True,
-                            show=False):
+                                sensitivity="first",
+                                hardcopy=True,
+                                show=False):
         """
         Plot the average of the sensitivity for all model/features.
 
@@ -1619,9 +1621,9 @@ class PlotUncertainty(object):
         for feature in self.data:
             if sensitivity + "_average" in self.data[feature]:
                 self.average_sensitivity(feature=feature,
-                                     sensitivity=sensitivity,
-                                     hardcopy=hardcopy,
-                                     show=show)
+                                         sensitivity=sensitivity,
+                                         hardcopy=hardcopy,
+                                         show=show)
 
 
     def features_0d(self, sensitivity="first", hardcopy=True, show=False):
