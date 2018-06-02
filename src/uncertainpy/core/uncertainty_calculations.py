@@ -374,7 +374,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_spectral(self,
                             uncertain_parameters=None,
-                            polynomial_order=3,
+                            polynomial_order=4,
                             quadrature_order=None,
                             allow_incomplete=True):
         """
@@ -389,7 +389,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method. If None,
             ``quadrature_order = polynomial_order + 2``.
@@ -505,7 +505,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_collocation(self,
                                uncertain_parameters=None,
-                               polynomial_order=3,
+                               polynomial_order=4,
                                nr_collocation_nodes=None,
                                allow_incomplete=True):
         """
@@ -520,7 +520,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose. If None,
             `nr_collocation_nodes` = 2* number of expansion factors + 2.
@@ -630,7 +630,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_spectral_rosenblatt(self,
                                        uncertain_parameters=None,
-                                       polynomial_order=3,
+                                       polynomial_order=4,
                                        quadrature_order=None,
                                        allow_incomplete=True):
         """
@@ -646,7 +646,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method. If None,
             ``quadrature_order = polynomial_order + 2``.
@@ -792,7 +792,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_collocation_rosenblatt(self,
                                           uncertain_parameters=None,
-                                          polynomial_order=3,
+                                          polynomial_order=4,
                                           nr_collocation_nodes=None,
                                           allow_incomplete=True):
         """
@@ -808,7 +808,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose. If None,
             `nr_collocation_nodes` = 2* number of expansion factors + 2.
@@ -1152,7 +1152,7 @@ class UncertaintyCalculations(ParameterBase):
                          method="collocation",
                          rosenblatt="auto",
                          uncertain_parameters=None,
-                         polynomial_order=3,
+                         polynomial_order=4,
                          nr_collocation_nodes=None,
                          quadrature_order=None,
                          nr_pc_mc_samples=10**4,
@@ -1183,7 +1183,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if point collocation is
             used. If None, `nr_collocation_nodes` = 2* number of expansion factors + 2.
@@ -1607,7 +1607,7 @@ class UncertaintyCalculations(ParameterBase):
     def average_sensitivity(self, data, sensitivity="sobol_first"):
         """
         Calculate the average of the sensitivities for the model and all
-        features and add them to `data`.
+        features and add them to `data`. Ignores any occurences of numpy.NaN.
 
         Parameters
         ----------
@@ -1641,7 +1641,7 @@ class UncertaintyCalculations(ParameterBase):
             if sensitivity in data[feature]:
                 total_sense = []
                 for i in range(0, len(data.uncertain_parameters)):
-                    total_sense.append(np.mean(data[feature][sensitivity][i]))
+                    total_sense.append(np.nanmean(data[feature][sensitivity][i]))
 
                 data[feature][sensitivity + "_average"] = np.array(total_sense)
 

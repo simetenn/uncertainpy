@@ -7,7 +7,7 @@ class TestingUncertaintyCalculations(UncertaintyCalculations):
                          uncertain_parameters=None,
                          method="collocation",
                          rosenblatt=False,
-                         polynomial_order=3,
+                         polynomial_order=4,
                          nr_collocation_nodes=None,
                          quadrature_order=4,
                          nr_pc_mc_samples=10**4,

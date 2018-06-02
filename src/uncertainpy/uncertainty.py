@@ -204,7 +204,7 @@ class UncertaintyQuantification(ParameterBase):
                  pc_method="collocation",
                  rosenblatt="auto",
                  uncertain_parameters=None,
-                 polynomial_order=3,
+                 polynomial_order=4,
                  nr_collocation_nodes=None,
                  quadrature_order=None,
                  nr_pc_mc_samples=10**4,
@@ -248,7 +248,7 @@ class UncertaintyQuantification(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
@@ -493,7 +493,7 @@ class UncertaintyQuantification(ParameterBase):
                          method="collocation",
                          rosenblatt="auto",
                          uncertain_parameters=None,
-                         polynomial_order=3,
+                         polynomial_order=4,
                          nr_collocation_nodes=None,
                          quadrature_order=None,
                          nr_pc_mc_samples=10**4,
@@ -530,7 +530,7 @@ class UncertaintyQuantification(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
@@ -776,7 +776,7 @@ class UncertaintyQuantification(ParameterBase):
     def polynomial_chaos_single(self,
                                 method="collocation",
                                 rosenblatt="auto",
-                                polynomial_order=3,
+                                polynomial_order=4,
                                 uncertain_parameters=None,
                                 nr_collocation_nodes=None,
                                 quadrature_order=None,
@@ -813,7 +813,7 @@ class UncertaintyQuantification(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
