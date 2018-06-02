@@ -779,7 +779,7 @@ class PlotUncertainty(object):
                                  "right": colors[color_2], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
-        ax2.set_ylabel(ylabel.capitalize() + ", variance", color=colors[color_2], fontsize=labelsize)
+        ax2.set_ylabel(ylabel.capitalize() + r"$^2$, variance", color=colors[color_2], fontsize=labelsize)
 
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
