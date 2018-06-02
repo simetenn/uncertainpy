@@ -17,30 +17,38 @@ class NeuronModel(Model):
     Parameters
     ----------
     file : str, optional
-        Filename of the Neuron model.
-        Default is ``"mosinit.hoc"``.
+        Filename of the Neuron model. Default is ``"mosinit.hoc"``.
     path : {None, str}, optional
         Path to the Neuron model. If None, the file is considered to be in the
         current folder. Default is None.
-    name : {None, str}, optional
-        Name of the model, if None the model gets the name of the current class.
-        Default is None.
+    stimulus_start : {int, float, None}, optional
+        The start time of any stimulus given to the neuron model. This
+        is added to the info dictionary. If None, no stimulus_start is added to
+        the info dictionary. Default is None.
+    stimulus_end : {int, float, None}, optional
+        The end time of any stimulus given to the neuron model. This
+        is added to the info dictionary. If None, no stimulus_end is added to
+        the info dictionary. Default is None.
     interpolate : bool, optional
         True if the model is irregular, meaning it has a varying number of
         return values between different model evaluations, and
         an interpolation of the results is performed. Default is False.
+    name : {None, str}, optional
+        Name of the model, if None the model gets the name of the current class.
+        Default is None.
+    ignore : bool, optional
+        Ignore the model results when calculating uncertainties, which means the
+        uncertainty is not calculated for the model. Default is False.
+    run : {None, callable}, optional
+        A function that implements the model. See the ``run`` method for
+        requirements of the function. Default is None.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output.
-        Default is ``["time (ms)", "voltage (mv)"]``.
+        Default is ``["Time (ms)", "Membrane potential (mv)"]``.
     suppress_graphics : bool, optional
-        Suppress all graphics created by the Neuron model.
-        Default is True.
-    ignore : bool, optional
-        Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. The model results are still
-        postprocessed if a postprocessing is implemented. Default is False.
+        Suppress all graphics created by the Neuron model. Default is True.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
@@ -78,13 +86,13 @@ class NeuronModel(Model):
     def __init__(self,
                  file="mosinit.hoc",
                  path=None,
-                 name=None,
                  interpolate=True,
+                 stimulus_start=None,
+                 stimulus_end=None,
+                 name=None,
                  ignore=False,
                  run=None,
                  labels=["Time (ms)", "Membrane potential (mV)"],
-                 stimulus_start=None,
-                 stimulus_end=None,
                  suppress_graphics=True,
                  logger_level="info",
                  **kwargs):
@@ -113,6 +121,9 @@ class NeuronModel(Model):
         if name:
             self.name = name
 
+        self.time = None
+        self.V = None
+
         setup_module_logger(class_instance=self, level=logger_level)
 
 
@@ -130,7 +141,13 @@ class NeuronModel(Model):
             raise ImportError("NeuronModel requires: neuron")
 
         self.h = neuron.h
-        self.h.load_file(1, self.file.encode())
+
+        # self.h("forall delete_section()")
+        self.h.load_file(0, self.file.encode())
+        # self.h.xopen(self.file.encode())
+        # for section in self.h.allsec():
+        #     print(section)
+        # self.h.topology()
 
         os.chdir(current_dir)
 
@@ -175,22 +192,33 @@ class NeuronModel(Model):
         RuntimeError
             If no section with name ``soma`` is found in the Neuron model.
         """
-        self.V = None
-        for section in self.h.allsec():
-            if section.name().lower() == "soma":
-                self.V = self.h.Vector()
-                self.V.record(section(0.5)._ref_v)
-                break
+        # if not hasattr(self.h, "soma"):
+        #     raise RuntimeError("No section with name soma found in: {}. Unable to record from soma".format(self.name))
 
-        if self.V is None:
-            raise RuntimeError("Soma not found in Neuron model: {model_name}".format(self.name))
+        if not hasattr(self.h, "voltage_soma"):
+            # self.h("objref voltage_soma")
+            # self.h("voltage_soma = new Vector()")
+
+            # self.h.voltage_soma.record(self.h.soma(0.5)._ref_v)
+
+            for section in self.h.allsec():
+                if section.name().lower() == "soma":
+                    self.h("objref voltage_soma")
+                    self.h("voltage_soma = new Vector()")
+
+                    self.h.voltage_soma.record(section(0.5)._ref_v)
+                    break
+
+        if not hasattr(self.h, "voltage_soma"):
+            raise RuntimeError("No section with name soma found in: {}. Unable to record from soma".format(self.name))
 
 
     def _record_t(self):
         """
         Record time values
         """
-        self.time = self._record("_ref_t")
+        if self.time is None:
+            self.time = self._record("_ref_t")
 
 
 
@@ -231,8 +259,12 @@ class NeuronModel(Model):
 
         self.h.run()
 
-        values = self._to_array(self.V)
+        values = np.array(self.h.voltage_soma.to_python())
+        # values = self._to_array(self.V)
         time = self._to_array(self.time)
+
+        # self.V.resize(0)
+        # self.time.resize(0)
 
         return time, values, self.info
 

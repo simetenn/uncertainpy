@@ -779,7 +779,7 @@ class PlotUncertainty(object):
                                  "right": colors[color_2], "left": "None"})
         ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
                         color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
-        ax2.set_ylabel(ylabel.capitalize() + ", variance", color=colors[color_2], fontsize=labelsize)
+        ax2.set_ylabel(ylabel.capitalize() + r"$^2$, variance", color=colors[color_2], fontsize=labelsize)
 
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
@@ -1502,13 +1502,13 @@ class PlotUncertainty(object):
         # return ax
 
 
-    def sensitivity_sum(self,
-                        feature,
-                        sensitivity="first",
-                        hardcopy=True,
-                        show=False):
+    def average_sensitivity(self,
+                            feature,
+                            sensitivity="first",
+                            hardcopy=True,
+                            show=False):
         """
-        Plot the normalized sum of the sensitivity for a specific model/feature.
+        Plot the average of the sensitivity for a specific model/feature.
 
         Parameters
         ----------
@@ -1547,8 +1547,8 @@ class PlotUncertainty(object):
         if feature not in self.data:
             raise ValueError("{} is not a feature".format(feature))
 
-        if sensitivity + "_sum" not in self.data[feature]:
-            msg = "{sensitivity}_sum of {feature} does not exist. Unable to plot {sensitivity}_sum."
+        if sensitivity + "_average" not in self.data[feature]:
+            msg = "{sensitivity}_average of {feature} does not exist. Unable to plot {sensitivity}_average."
             logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
             return
 
@@ -1556,10 +1556,10 @@ class PlotUncertainty(object):
 
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
 
-        prettyBar(self.data[feature][sensitivity + "_sum"],
-                  title="Normalized sum of " + title + ", " + feature.replace("_", " "),
+        prettyBar(self.data[feature][sensitivity + "_average"],
+                  title="Average of " + title + ", " + feature.replace("_", " "),
                   xlabels=self.data.uncertain_parameters,
-                  ylabel="Normalized sum of " + title,
+                  ylabel="Average of " + title,
                   nr_colors=len(self.data.uncertain_parameters),
                   palette="husl",
                   index=index,
@@ -1568,7 +1568,9 @@ class PlotUncertainty(object):
 
         plt.ylim([0, 1])
 
-        save_name = feature + "_" + sensitivity + "_sum" + self.figureformat
+        save_name = feature + "_" + sensitivity + "_average" + self.figureformat
+
+        plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder, save_name))
@@ -1581,12 +1583,12 @@ class PlotUncertainty(object):
         reset_style()
 
 
-    def sensitivity_sum_all(self,
-                            sensitivity="first",
-                            hardcopy=True,
-                            show=False):
+    def average_sensitivity_all(self,
+                                sensitivity="first",
+                                hardcopy=True,
+                                show=False):
         """
-        Plot the normalized sum of the sensitivity for all model/features.
+        Plot the average of the sensitivity for all model/features.
 
         Parameters
         ----------
@@ -1617,11 +1619,11 @@ class PlotUncertainty(object):
         sensitivity, title = self.convert_sensitivity(sensitivity)
 
         for feature in self.data:
-            if sensitivity + "_sum" in self.data[feature]:
-                self.sensitivity_sum(feature=feature,
-                                     sensitivity=sensitivity,
-                                     hardcopy=hardcopy,
-                                     show=show)
+            if sensitivity + "_average" in self.data[feature]:
+                self.average_sensitivity(feature=feature,
+                                         sensitivity=sensitivity,
+                                         hardcopy=hardcopy,
+                                         show=show)
 
 
     def features_0d(self, sensitivity="first", hardcopy=True, show=False):
@@ -1703,8 +1705,8 @@ class PlotUncertainty(object):
         self.features_0d(sensitivity=sensitivity)
 
         if sensitivity is not None:
-            self.sensitivity_sum_all(sensitivity=sensitivity)
-            self.sensitivity_sum_grid(sensitivity=sensitivity)
+            self.average_sensitivity_all(sensitivity=sensitivity)
+            self.average_sensitivity_grid(sensitivity=sensitivity)
 
 
 
@@ -1731,8 +1733,8 @@ class PlotUncertainty(object):
 
         self.features_0d(sensitivity="total")
 
-        self.sensitivity_sum_all(sensitivity="total")
-        self.sensitivity_sum_grid(sensitivity="total")
+        self.average_sensitivity_all(sensitivity="total")
+        self.average_sensitivity_grid(sensitivity="total")
 
 
     def plot_condensed(self, sensitivity="first"):
@@ -1773,7 +1775,7 @@ class PlotUncertainty(object):
         self.features_2d()
 
         if sensitivity is not None:
-            self.sensitivity_sum_grid(sensitivity=sensitivity)
+            self.average_sensitivity_grid(sensitivity=sensitivity)
 
 
 
@@ -1811,13 +1813,13 @@ class PlotUncertainty(object):
                 self.plot_all(sensitivity)
 
 
-    def sensitivity_sum_grid(self,
+    def average_sensitivity_grid(self,
                              sensitivity="first",
                              hardcopy=True,
                              show=False,
                              **plot_kwargs):
         """
-        Plot the normalized sum of the sensitivity for all model/features in
+        Plot the average of the sensitivity for all model/features in
         their own plots in the same figure.
 
         Parameters
@@ -1853,11 +1855,11 @@ class PlotUncertainty(object):
 
         no_sensitivity = True
         for feature in self.data:
-            if sensitivity + "_sum" in self.data[feature]:
+            if sensitivity + "_average" in self.data[feature]:
                 no_sensitivity = False
 
         if no_sensitivity:
-            msg = "All {sensitivity}_sums are missing. Unable to plot {sensitivity}_sum_grid"
+            msg = "All {sensitivity}_averages are missing. Unable to plot {sensitivity}_average_grid"
             logger.warning(msg.format(sensitivity=sensitivity))
             return
 
@@ -1881,7 +1883,7 @@ class PlotUncertainty(object):
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
         ax.set_xlabel("Parameters")
-        ax.set_ylabel("Normalized sum of " + title)
+        ax.set_ylabel("Average of " + title)
 
         width = 0.2
         index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
@@ -1895,14 +1897,14 @@ class PlotUncertainty(object):
 
 
             if i < nr_plots:
-                if sensitivity + "_sum" not in self.data[features[i]]:
-                    msg = " Unable to plot {sensitivity}_sum_grid. {sensitivity}_sum of {feature} does not exist."
+                if sensitivity + "_average" not in self.data[features[i]]:
+                    msg = " Unable to plot {sensitivity}_average_grid. {sensitivity}_average of {feature} does not exist."
                     logger.warning(msg.format(sensitivity=sensitivity,
                                               feature=features[i]))
                     ax.axis("off")
                     continue
 
-                prettyBar(self.data[features[i]][sensitivity + "_sum"],
+                prettyBar(self.data[features[i]][sensitivity + "_average"],
                           title=features[i].replace("_", " "),
                           xlabels=self.data.uncertain_parameters,
                           nr_colors=len(self.data.uncertain_parameters),
@@ -1921,7 +1923,7 @@ class PlotUncertainty(object):
             else:
                 ax.axis("off")
 
-        title = "Normalized sum of " + title
+        title = "Average of " + title
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.88)
@@ -1929,7 +1931,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     sensitivity + "_sum_grid" + self.figureformat))
+                                     sensitivity + "_average_grid" + self.figureformat))
 
         if show:
             plt.show()

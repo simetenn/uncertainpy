@@ -202,13 +202,13 @@ class UncertaintyQuantification(ParameterBase):
     def quantify(self,
                  method="pc",
                  pc_method="collocation",
-                 rosenblatt=False,
+                 rosenblatt="auto",
                  uncertain_parameters=None,
-                 polynomial_order=3,
+                 polynomial_order=4,
                  nr_collocation_nodes=None,
                  quadrature_order=None,
                  nr_pc_mc_samples=10**4,
-                 nr_mc_samples=10**3,
+                 nr_mc_samples=10**4,
                  allow_incomplete=True,
                  seed=None,
                  plot="condensed_first",
@@ -236,18 +236,19 @@ class UncertaintyQuantification(ParameterBase):
             point collocation method "spectral" is pseudo-spectral projection,
             and "custom" is the custom polynomial method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when performing the uncertainty
             quantification. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
@@ -264,7 +265,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_mc_samples : int, optional
             Number of samples for the Monte Carlo sampling, if the quasi-Monte
             Carlo method is chosen.
-            Default is 10**3.
+            Default is 10**4.
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
@@ -490,9 +491,9 @@ class UncertaintyQuantification(ParameterBase):
 
     def polynomial_chaos(self,
                          method="collocation",
-                         rosenblatt=False,
+                         rosenblatt="auto",
                          uncertain_parameters=None,
-                         polynomial_order=3,
+                         polynomial_order=4,
                          nr_collocation_nodes=None,
                          quadrature_order=None,
                          nr_pc_mc_samples=10**4,
@@ -517,18 +518,19 @@ class UncertaintyQuantification(ParameterBase):
             point collocation method "spectral" is pseudo-spectral projection,
             and "custom" is the custom polynomial method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when performing the uncertainty
             quantification. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
@@ -665,7 +667,7 @@ class UncertaintyQuantification(ParameterBase):
 
     def monte_carlo(self,
                     uncertain_parameters=None,
-                    nr_samples=10**3,
+                    nr_samples=10**4,
                     seed=None,
                     plot="condensed_first",
                     figure_folder="figures",
@@ -685,7 +687,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling, if the quasi-Monte
             Carlo method is chosen.
-            Default is 10**3.
+            Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -773,8 +775,8 @@ class UncertaintyQuantification(ParameterBase):
 
     def polynomial_chaos_single(self,
                                 method="collocation",
-                                rosenblatt=False,
-                                polynomial_order=3,
+                                rosenblatt="auto",
+                                polynomial_order=4,
                                 uncertain_parameters=None,
                                 nr_collocation_nodes=None,
                                 quadrature_order=None,
@@ -799,18 +801,19 @@ class UncertaintyQuantification(ParameterBase):
             point collocation method "spectral" is pseudo-spectral projection,
             and "custom" is the custom polynomial method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to performing the uncertainty
             quantification for. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if polynomial chaos with
             point collocation is used. If None,
@@ -972,7 +975,7 @@ class UncertaintyQuantification(ParameterBase):
 
     def monte_carlo_single(self,
                            uncertain_parameters=None,
-                           nr_samples=10**3,
+                           nr_samples=10**4,
                            seed=None,
                            plot="condensed_first",
                            save=True,
@@ -993,7 +996,7 @@ class UncertaintyQuantification(ParameterBase):
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling, if the quasi-Monte
             Carlo method is chosen.
-            Default is 10**3.
+            Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.

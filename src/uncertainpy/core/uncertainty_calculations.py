@@ -6,6 +6,8 @@ import multiprocess as mp
 from tqdm import tqdm
 import chaospy as cp
 import types
+from SALib.sample import saltelli
+from SALib.analyze.sobol import first_order, total_order
 
 from .run_model import RunModel
 from .base import ParameterBase
@@ -31,10 +33,16 @@ class UncertaintyCalculations(ParameterBase):
         Model to perform uncertainty quantification on. For requirements see
         Model.run.
         Default is None.
-    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
-        Either None, a Parameters instance or a list of the parameters that should be created.
-        The two lists are similar to the arguments sent to Parameters.
-        Default is None.
+    parameters: {dict {name: parameter_object}, dict of {name: value or Chaospy distribution}, ...], list of Parameter instances, list [[name, value or Chaospy distribution], ...], list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...],}
+        List or dictionary of the parameters that should be created.
+        On the form ``parameters =``
+
+            * ``{name_1: parameter_object_1, name: parameter_object_2, ...}``
+            * ``{name_1:  value_1 or Chaospy distribution, name_2:  value_2 or Chaospy distribution, ...}``
+            * ``[parameter_object_1, parameter_object_2, ...]``,
+            * ``[[name_1, value_1 or Chaospy distribution], ...]``.
+            * ``[[name_1, value_1, Chaospy distribution or callable that returns a Chaospy distribution], ...]``
+
     features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
@@ -223,6 +231,35 @@ class UncertaintyCalculations(ParameterBase):
         return distribution
 
 
+    def create_mask(self, evaluations):
+        """
+        Mask evaluations that do not give results (anything but np.nan or None).
+
+        Parameters
+        ----------
+        evaluations : array_like
+            Evaluations for the model.
+
+        Returns
+        -------
+        masked_evaluations : list
+            The evaluations that have results (not numpy.nan or None).
+        mask : boolean array
+            The mask itself, used to create the masked arrays.
+        """
+        masked_evaluations = []
+        mask = np.ones(len(evaluations), dtype=bool)
+
+        for i, result in enumerate(evaluations):
+            # if np.any(np.isnan(result)):
+            if contains_nan(result):
+                mask[i] = False
+            else:
+                masked_evaluations.append(result)
+
+        return masked_evaluations, mask
+
+
     def create_masked_evaluations(self, data, feature):
         """
         Mask all model and feature evaluations that do not give results
@@ -239,28 +276,20 @@ class UncertaintyCalculations(ParameterBase):
         Returns
         -------
         masked_evaluations : list
-            The all evaluations that have results (not numpy.nan or None).
+            The evaluations that have results (not numpy.nan or None).
         mask : boolean array
             The mask itself, used to create the masked arrays.
         """
         if feature not in data:
             raise AttributeError("Error: {} is not a feature".format(feature))
 
-        masked_evaluations = []
-        mask = np.ones(len(data[feature].evaluations), dtype=bool)
-
-        for i, result in enumerate(data[feature].evaluations):
-            # if np.any(np.isnan(result)):
-            if contains_nan(result):
-                mask[i] = False
-            else:
-                masked_evaluations.append(result)
+        masked_evaluations, mask = self.create_mask(data[feature].evaluations)
 
         if not np.all(mask):
             logger = get_logger(self)
             logger.warning("{}: only yields ".format(feature) +
-                                "results for {}/{} ".format(sum(mask), len(mask)) +
-                                "parameter combinations.")
+                           "results for {}/{} ".format(sum(mask), len(mask)) +
+                           "parameter combinations.")
 
 
         return masked_evaluations, mask
@@ -345,7 +374,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_spectral(self,
                             uncertain_parameters=None,
-                            polynomial_order=3,
+                            polynomial_order=4,
                             quadrature_order=None,
                             allow_incomplete=True):
         """
@@ -360,7 +389,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method. If None,
             ``quadrature_order = polynomial_order + 2``.
@@ -397,6 +426,7 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -408,7 +438,8 @@ class UncertaintyCalculations(ParameterBase):
         uncertainty and sensitivity of the model.
 
         To create the polynomial chaos expansion we first find the polynomials
-        using the three-therm recurrence relation. Then we use the
+        using the three-therm recurrence relation if available,
+        otherwise the discretized Stieltjes method is used. Then we use the
         pseudo-spectral projection to find the expansion coefficients for the
         model and each feature of the model.
 
@@ -439,13 +470,6 @@ class UncertaintyCalculations(ParameterBase):
                                                 rule="J",
                                                 sparse=True)
 
-        # print(distribution)
-        # print(quadrature_order)
-        # print(nodes)
-        # print(weights)
-        # print(data)
-
-
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
 
@@ -470,7 +494,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -481,7 +505,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_collocation(self,
                                uncertain_parameters=None,
-                               polynomial_order=3,
+                               polynomial_order=4,
                                nr_collocation_nodes=None,
                                allow_incomplete=True):
         """
@@ -496,7 +520,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose. If None,
             `nr_collocation_nodes` = 2* number of expansion factors + 2.
@@ -533,6 +557,7 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -544,7 +569,8 @@ class UncertaintyCalculations(ParameterBase):
         uncertainty and sensitivity of the model.
 
         To create the polynomial chaos expansion we first find the polynomials
-        using the three-therm recurrence relation. Then we use point collocation
+        using the three-therm recurrence relation if available, otherwise the
+        discretized Stieltjes method is used. Then we use point collocation
         to find the expansion coefficients for the model and each feature of the
         model.
 
@@ -567,7 +593,6 @@ class UncertaintyCalculations(ParameterBase):
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         P = cp.orth_ttr(polynomial_order, distribution)
-
         if nr_collocation_nodes is None:
             nr_collocation_nodes = 2*len(P) + 2
 
@@ -594,7 +619,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -605,7 +630,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_spectral_rosenblatt(self,
                                        uncertain_parameters=None,
-                                       polynomial_order=3,
+                                       polynomial_order=4,
                                        quadrature_order=None,
                                        allow_incomplete=True):
         """
@@ -621,7 +646,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         quadrature_order : {int, None}, optional
             The order of the Leja quadrature method. If None,
             ``quadrature_order = polynomial_order + 2``.
@@ -659,6 +684,7 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         The model and feature do not necessarily give results for each
         node. The pseudo-spectral methods is sensitive to missing values, so
@@ -671,10 +697,11 @@ class UncertaintyCalculations(ParameterBase):
 
         We use the Rosenblatt transformation to transform from dependent to
         independent variables before we create the polynomial chaos expansion.
-        We first find the polynomials using the three-therm recurrence relation
-        from the independent distributions. Then we use the
-        pseudo-spectral projection with the Rosenblatt transformation to find
-        the expansion coefficients for the model and each feature of the model.
+        We first find the polynomials from the independent distributions
+        using the three-therm recurrence relation if available, otherwise the
+        discretized Stieltjes method is used. Then we use the pseudo-spectral
+        projection with the Rosenblatt transformation to find the expansion
+        coefficients for the model and each feature of the model.
 
         Pseudo-spectral projection is based on least squares
         minimization and finds the expansion coefficients through numerical
@@ -754,7 +781,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 ogger.warning("{}: not all parameter combinations give results.".format(feature) +
-                              " No uncertainty quantification are performed since allow_incomplete=False")
+                              " No uncertainty quantification is performed since allow_incomplete=False")
 
 
             if not np.all(mask):
@@ -765,7 +792,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def create_PCE_collocation_rosenblatt(self,
                                           uncertain_parameters=None,
-                                          polynomial_order=3,
+                                          polynomial_order=4,
                                           nr_collocation_nodes=None,
                                           allow_incomplete=True):
         """
@@ -781,7 +808,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose. If None,
             `nr_collocation_nodes` = 2* number of expansion factors + 2.
@@ -830,10 +857,11 @@ class UncertaintyCalculations(ParameterBase):
 
         We use the Rosenblatt transformation to transform from dependent to
         independent variables before we create the polynomial chaos expansion.
-        We first find the polynomials using the three-therm recurrence relation
-        from the independent distributions. Then we use the
-        point collocation with the Rosenblatt transformation to find
-        the expansion coefficients for the model and each feature of the model.
+        We first find the polynomials from the independent distributions using
+        the three-therm recurrence relation if available, otherwise the
+        discretized Stieltjes method is used. Then we use the point collocation
+        with the Rosenblatt transformation to find the expansion coefficients
+        for the model and each feature of the model.
 
         In point collocation we require the polynomial approximation to be equal
         the model at a set of collocation nodes. This results in a set of linear
@@ -894,7 +922,7 @@ class UncertaintyCalculations(ParameterBase):
             else:
                 logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -937,17 +965,18 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
+            7. ``data.errored``
 
         When returned `data` additionally contains:
 
-            7. ``data["model/features"].mean``
-            8. ``data["model/features"].variance``
-            9. ``data["model/features"].percentile_5``
-            10. ``data["model/features"].percentile_95``
-            11. ``data["model/features"].sobol_first``, if more than 1 parameter
-            12. ``data["model/features"].sobol_total``, if more than 1 parameter
-            13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            8. ``data["model/features"].mean``
+            9. ``data["model/features"].variance``
+            10. ``data["model/features"].percentile_5``
+            11. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_average``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_average``, if more than 1 parameter
 
         See also
         --------
@@ -966,15 +995,15 @@ class UncertaintyCalculations(ParameterBase):
                 data[feature].mean = cp.E(U_hat[feature], distribution)
                 data[feature].variance = cp.Var(U_hat[feature], distribution)
 
-                samples = distribution.sample(nr_samples, "H")
+                samples = distribution.sample(nr_samples, "M")
 
                 if len(data.uncertain_parameters) > 1:
                     U_mc[feature] = U_hat[feature](*samples)
 
                     data[feature].sobol_first = cp.Sens_m(U_hat[feature], distribution)
                     data[feature].sobol_total = cp.Sens_t(U_hat[feature], distribution)
-                    data = self.sensitivity_sum(data, sensitivity="sobol_first")
-                    data = self.sensitivity_sum(data, sensitivity="sobol_total")
+                    data = self.average_sensitivity(data, sensitivity="sobol_first")
+                    data = self.average_sensitivity(data, sensitivity="sobol_total")
 
                 else:
                     U_mc[feature] = U_hat[feature](samples)
@@ -1121,9 +1150,9 @@ class UncertaintyCalculations(ParameterBase):
 
     def polynomial_chaos(self,
                          method="collocation",
-                         rosenblatt=False,
+                         rosenblatt="auto",
                          uncertain_parameters=None,
-                         polynomial_order=3,
+                         polynomial_order=4,
                          nr_collocation_nodes=None,
                          quadrature_order=None,
                          nr_pc_mc_samples=10**4,
@@ -1142,18 +1171,19 @@ class UncertaintyCalculations(ParameterBase):
             pseudo-spectral projection, and "custom" is the custom polynomial
             method.
             Default is "collocation".
-        rosenblatt : bool, optional
+        rosenblatt : {"auto", bool}, optional
             If the Rosenblatt transformation should be used. The Rosenblatt
             transformation must be used if the uncertain parameters have
-            dependent variables.
-            Default is False.
+            dependent variables. If "auto" the Rosenblatt transformation is used
+            if there are dependent parameters, and it is not used of the
+            parameters have independent distributions. Default is "auto".
         uncertain_parameters : {None, str, list}, optional
             The uncertain parameter(s) to use when creating the polynomial
             approximation. If None, all uncertain parameters are used.
             Default is None.
         polynomial_order : int, optional
             The polynomial order of the polynomial approximation.
-            Default is 3.
+            Default is 4.
         nr_collocation_nodes : {int, None}, optional
             The number of collocation nodes to choose, if point collocation is
             used. If None, `nr_collocation_nodes` = 2* number of expansion factors + 2.
@@ -1191,7 +1221,7 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        The `data` parameter contains the following:
+        The returned `data` should contain the following:
 
             1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
@@ -1199,14 +1229,15 @@ class UncertaintyCalculations(ParameterBase):
             4. ``data.model_name``
             5. ``data.incomplete``
             6. ``data.method``
-            7. ``data["model/features"].mean``
-            8. ``data["model/features"].variance``
-            9. ``data["model/features"].percentile_5``
-            10. ``data["model/features"].percentile_95``
-            11. ``data["model/features"].sobol_first``, if more than 1 parameter
-            12. ``data["model/features"].sobol_total``, if more than 1 parameter
-            13. ``data["model/features"].sobol_first_sum``, if more than 1 parameter
-            14. ``data["model/features"].sobol_total_sum``, if more than 1 parameter
+            7. ``data.errored``
+            8. ``data["model/features"].mean``
+            9. ``data["model/features"].variance``
+            10. ``data["model/features"].percentile_5``
+            11. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_average``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_average``, if more than 1 parameter
 
         The model and feature do not necessarily give results for each
         node. The collocation method is robust towards missing values as long as
@@ -1220,7 +1251,8 @@ class UncertaintyCalculations(ParameterBase):
         uncertainty and sensitivity of the model.
 
         To create the polynomial chaos expansion we first find the polynomials
-        using the three-therm recurrence relation. Then we use point collocation
+        using the three-therm recurrence relation if available,
+        otherwise the discretized Stieltjes method is used. Then we use point collocation
         or pseudo-spectral projection to find the expansion coefficients for the
         model and each feature of the model.
 
@@ -1242,8 +1274,9 @@ class UncertaintyCalculations(ParameterBase):
         If we have dependent uncertain parameters we must use the Rosenblatt
         transformation. We use the Rosenblatt transformation to transform from
         dependent to independent variables before we create the polynomial chaos
-        expansion. We first find the polynomials using the three-term
-        recurrence relation from the independent distributions.
+        expansion. We first find the polynomials from the independent
+        distributions using the three-term recurrence relation if available,
+        otherwise the discretized Stieltjes method is used
 
         Both pseudo-spectral projection and point collocation is performed using
         the independent distribution, the only difference is that we use the
@@ -1259,6 +1292,18 @@ class UncertaintyCalculations(ParameterBase):
             np.random.seed(seed)
 
         uncertain_parameters = self.convert_uncertain_parameters(uncertain_parameters)
+        distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
+
+        if rosenblatt == "auto":
+            if distribution.dependent():
+                rosenblatt = True
+            else:
+                rosenblatt = False
+
+        elif rosenblatt == False:
+            if distribution.dependent():
+                raise ValueError('Dependent parameters require using the Rosenblatt transformation. Set rosenblatt="auto" or rosenblatt=True')
+
 
         if method == "collocation":
             if rosenblatt:
@@ -1310,7 +1355,7 @@ class UncertaintyCalculations(ParameterBase):
 
     def monte_carlo(self,
                     uncertain_parameters=None,
-                    nr_samples=10**3,
+                    nr_samples=10**4,
                     seed=None,
                     allow_incomplete=True):
         """
@@ -1324,7 +1369,7 @@ class UncertaintyCalculations(ParameterBase):
             Default is None.
         nr_samples : int, optional
             Number of samples for the Monte Carlo sampling.
-            Default is 10**3.
+            Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -1347,28 +1392,44 @@ class UncertaintyCalculations(ParameterBase):
 
         Notes
         -----
-        The `data` parameter contains the following:
+        The returned `data` should contain the following:
 
             1. ``data["model/features"].evaluations``
             2. ``data["model/features"].time``
             3. ``data["model/features"].labels``
             4. ``data.model_name``
-            5. ``data.method``
-            6. ``data["model/features"].mean``
-            7. ``data["model/features"].variance``
-            8. ``data["model/features"].percentile_5``
-            9. ``data["model/features"].percentile_95``
+            5. ``data.incomplete``
+            6. ``data.method``
+            7. ``data.errored``
+            8. ``data["model/features"].mean``
+            9. ``data["model/features"].variance``
+            10. ``data["model/features"].percentile_5``
+            11. ``data["model/features"].percentile_95``
+            12. ``data["model/features"].sobol_first``, if more than 1 parameter
+            13. ``data["model/features"].sobol_total``, if more than 1 parameter
+            14. ``data["model/features"].sobol_first_average``, if more than 1 parameter
+            15. ``data["model/features"].sobol_total_average``, if more than 1 parameter
 
-        In the quasi-Monte Carlo method we quasi-randomly draw 10**3 (by default)
-        parameter samples using the Hammersley sequence. We evaluate the model
-        for each of these parameter samples and calculate the features from each
-        of the model results. This step is performed in parallel to speed up the
-        calculations. Lastly we use the model and feature results to calculate
-        the mean, variance, and 5th and 95th percentile for the model and each
-        feature.
 
-        Sensitivity analysis is currently not yet available for the quasi-Monte
-        Carlo method.
+        In the quasi-Monte Carlo method we quasi-randomly draw
+        ``nr_samples*(nr_uncertain_parameters + 2)`` (nr_samples=10**4 by default)
+        parameter samples using Saltelli's sampling scheme ([1]_). We require
+        this number of samples to be able to calculate the Sobol indices. We
+        evaluate the model for each of these parameter samples and calculate the
+        features from each of the model results. This step is performed in
+        parallel to speed up the calculations. Then we use ``nr_samples`` of
+        the model and feature results to calculate the mean, variance, and 5th
+        and 95th percentile for the model and each feature. Lastly, we use all
+        calculated model and each feature results to calculate the Sobol indices
+        using Saltellie's approach.
+
+        References
+        ----------
+        .. [1] Saltelli, A., P. Annoni, I. Azzini, F. Campolongo, M. Ratto, and
+            S. Tarantola (2010).  "Variance based sensitivity analysis of model
+            output.  Design and estimator for the total sensitivity index."
+            Computer Physics Communications, 181(2):259-270,
+            doi:10.1016/j.cpc.2009.09.018.
 
         See also
         --------
@@ -1383,7 +1444,25 @@ class UncertaintyCalculations(ParameterBase):
 
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
-        nodes = distribution.sample(nr_samples, "M")
+        # nodes = distribution.sample(nr_samples, "M")
+
+        problem = {
+            "num_vars": len(uncertain_parameters),
+            "names": uncertain_parameters,
+            "bounds": [[0,1]]*len(uncertain_parameters)
+        }
+
+        # Create the Multivariate normal distribution
+        dist_R = []
+        for parameter in uncertain_parameters:
+            dist_R.append(cp.Uniform())
+
+        dist_R = cp.J(*dist_R)
+
+        nodes_R = saltelli.sample(problem, nr_samples, calc_second_order=False)
+
+        nodes = distribution.inv(dist_R.fwd(nodes_R.transpose()))
+
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
@@ -1391,12 +1470,15 @@ class UncertaintyCalculations(ParameterBase):
         data.seed = seed
 
 
+        logger = get_logger(self)
         for feature in data:
             if feature == self.model.name and self.model.ignore:
                 continue
 
+            # Only use A to calculate the mean and variance
+            A, B, AB = self.separate_output_values(data[feature].evaluations, len(uncertain_parameters), nr_samples)
 
-            masked_evaluations, mask = self.create_masked_evaluations(data, feature)
+            masked_evaluations, mask = self.create_mask(A)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 data[feature].mean = np.mean(masked_evaluations, 0)
@@ -1404,10 +1486,35 @@ class UncertaintyCalculations(ParameterBase):
 
                 data[feature].percentile_5 = np.percentile(masked_evaluations, 5, 0)
                 data[feature].percentile_95 = np.percentile(masked_evaluations, 95, 0)
+
+                if len(data.uncertain_parameters) > 1:
+                    # Results cannot be removed when calculating the sensitivity.
+                    # Instead NaN results are set to the mean.
+                    # see https://github.com/SALib/SALib/issues/134
+                    _, mask = self.create_mask(data[feature].evaluations)
+                    masked_mean_evaluations = data[feature].evaluations
+
+                    # masked_mean_evaluations[~mask] = data[feature].mean
+                    indices = np.where(mask == 0)[0]
+
+                    for i in indices:
+                        masked_mean_evaluations[i] = data[feature].mean
+
+                    if not np.all(mask):
+                        logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                                    " numpy.nan results are set to the mean when calculating the Sobol indices." +
+                                    " This might affect the Sobol indices.")
+
+
+                    sobol_first, sobol_total = self.mc_calculate_sobol(masked_mean_evaluations, len(uncertain_parameters), nr_samples)
+                    data[feature].sobol_first = sobol_first
+                    data[feature].sobol_total = sobol_total
+                    data = self.average_sensitivity(data, sensitivity="sobol_first")
+                    data = self.average_sensitivity(data, sensitivity="sobol_total")
+
             else:
-                logger = get_logger(self)
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                               " No uncertainty quantification are performed since allow_incomplete=False")
+                               " No uncertainty quantification is performed since allow_incomplete=False")
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -1416,10 +1523,91 @@ class UncertaintyCalculations(ParameterBase):
         return data
 
 
-    def sensitivity_sum(self, data, sensitivity="sobol_first"):
+    def separate_output_values(self, evaluations, nr_uncertain_parameters, nr_samples):
         """
-        Calculate the normalized sum of the sensitivities for the model and all
-        features and add them to `data`.
+        Notes
+        -----
+        Separate the output from the model evaluations, evaluated for the
+        samples created by SALIB.sample.saltelli.
+
+        Parameters
+        ----------
+        evaluations : array_like
+            The model evaluations, evaluated for the samples created by
+            SALIB.sample.saltelli.
+        nr_uncertain_parameters : int
+            Number of uncertain parameters.
+        nr_samples : int
+            Number of samples used in the Monte Carlo sampling.
+
+        Returns
+        ----------
+        A : array_like
+            The A sample matrix from saltellie et. al. 2010.
+        B : array_like
+            The B sample matrix from saltellie et. al. 2010.
+        AB : array_like
+            The AB sample matrix from saltellie et. al. 2010.
+
+        Notes
+        -----
+        Adapted from SALib/analyze/sobol.py:
+
+        https://github.com/SALib/SALib/blob/master/SALib/analyze/sobol.py
+        """
+
+        evaluations = np.array(evaluations)
+
+        shape = (nr_samples, nr_uncertain_parameters) + evaluations[0].shape
+        step = nr_uncertain_parameters + 2
+        AB = np.zeros(shape)
+
+        A = evaluations[0:evaluations.shape[0]:step]
+        B = evaluations[(step - 1):evaluations.shape[0]:step]
+
+        for i in range(nr_uncertain_parameters):
+            AB[:, i] = evaluations[(i + 1):evaluations.shape[0]:step]
+
+        return A, B, AB
+
+
+    def mc_calculate_sobol(self, evaluations, nr_uncertain_parameters, nr_samples):
+        """
+        Calculate the Sobol indices.
+
+        Parameters
+        ----------
+        evaluations : array_like
+            The model evaluations, evaluated for the samples created by
+            SALIB.sample.saltelli.
+        nr_uncertain_parameters : int
+            Number of uncertain parameters.
+        nr_samples : int
+            Number of samples used in the Monte Carlo sampling.
+
+        Returns
+        ----------
+        sobol_first : list
+            The first order Sobol indices for each uncertain parameter.
+        sobol_total : list
+            The total order Sobol indices for each uncertain parameter.
+        """
+        sobol_first = [0]*nr_uncertain_parameters
+        sobol_total = [0]*nr_uncertain_parameters
+
+        A, B, AB = self.separate_output_values(evaluations, nr_uncertain_parameters, nr_samples)
+
+        for i in range(nr_uncertain_parameters):
+            sobol_first[i] = first_order(A, AB[:, i], B)
+            sobol_total[i] = total_order(A, AB[:, i], B)
+
+        return sobol_first, sobol_total
+
+
+    def average_sensitivity(self, data, sensitivity="sobol_first"):
+        """
+        Calculate the average of the sensitivities for the model and all
+        features and add them to `data`. Ignores any occurences of numpy.NaN.
 
         Parameters
         ----------
@@ -1429,13 +1617,12 @@ class UncertaintyCalculations(ParameterBase):
         sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
             The sensitivity to normalize and sum. "sobol_first" and "1" are
             for the first order Sobol indice while "sobol_total" and "t" is
-            for the total order Sobol indices.
-            Default is "sobol_first".
+            for the total order Sobol indices. Default is "sobol_first".
 
         Returns
         ----------
         data : Data
-            The `data` object with the normalized sum of the sensitivities for
+            The `data` object with the average of the sensitivities for
             the model and all features added.
 
         See also
@@ -1452,18 +1639,11 @@ class UncertaintyCalculations(ParameterBase):
 
         for feature in data:
             if sensitivity in data[feature]:
-                total_sensitivity = 0
                 total_sense = []
                 for i in range(0, len(data.uncertain_parameters)):
-                    tmp_sum_sensitivity = np.sum(data[feature][sensitivity][i])
+                    total_sense.append(np.nanmean(data[feature][sensitivity][i]))
 
-                    total_sensitivity += tmp_sum_sensitivity
-                    total_sense.append(tmp_sum_sensitivity)
+                data[feature][sensitivity + "_average"] = np.array(total_sense)
 
-                for i in range(0, len(data.uncertain_parameters)):
-                    if total_sensitivity != 0:
-                        total_sense[i] /= float(total_sensitivity)
-
-                data[feature][sensitivity + "_sum"] = np.array(total_sense)
 
         return data

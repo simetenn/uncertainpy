@@ -19,6 +19,9 @@ class Model(object):
 
     Parameters
     ----------
+    run : {None, callable}, optional
+        A function that implements the model. See the ``run`` method for
+        requirements of the function. Default is None.
     interpolate : bool, optional
         True if the model is irregular, meaning it has a varying number of
         return values between different model evaluations, and
@@ -27,15 +30,15 @@ class Model(object):
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
         that is correct for the model output. Default is an empty list.
-    run : {None, callable}, optional
-        A function that implements the model. See the ``run`` method for
-        requirements of the function. Default is None.
-    suppress_graphics : bool, optional
-        Suppress all graphics created by the model. Default is False.
+    postprocess : {None, callable}, optional
+        A function that implements the postprocessing of the model.
+        See the ``postprocess`` method for requirements of the function.
+        Default is None.
     ignore : bool, optional
         Ignore the model results when calculating uncertainties, which means the
-        uncertainty is not calculated for the model. The model results are still
-        postprocessed if a postprocessing is implemented. Default is False.
+        uncertainty is not calculated for the model. Default is False.
+    suppress_graphics : bool, optional
+        Suppress all graphics created by the model. Default is False.
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed.
@@ -71,8 +74,8 @@ class Model(object):
                  interpolate=False,
                  labels=[],
                  postprocess=None,
-                 suppress_graphics=False,
                  ignore=False,
+                 suppress_graphics=False,
                  logger_level="info"):
 
         self.interpolate = interpolate

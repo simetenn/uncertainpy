@@ -23,8 +23,8 @@ class TestDataFeature(unittest.TestCase):
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance",
                                     "percentile_5", "percentile_95",
-                                    "sobol_first", "sobol_first_sum",
-                                    "sobol_total", "sobol_total_sum"]
+                                    "sobol_first", "sobol_first_average",
+                                    "sobol_total", "sobol_total_average"]
 
 
     def tearDown(self):
@@ -148,8 +148,8 @@ class TestData(unittest.TestCase):
         self.data = Data(logger_level="error")
 
         self.statistical_metrics = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                                    "sobol_first", "sobol_first_sum",
-                                    "sobol_total", "sobol_total_sum"]
+                                    "sobol_first", "sobol_first_average",
+                                    "sobol_total", "sobol_total_average"]
 
 
         self.data_information = ["uncertain_parameters", "model_name",
@@ -204,9 +204,6 @@ class TestData(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/test_save_mock")
         filename = os.path.join(self.output_test_dir, "test_save_mock")
-
-        print(filename)
-        print(type(filename))
 
         self.data.save(filename)
 
@@ -312,12 +309,12 @@ class TestData(unittest.TestCase):
 
 
 
-    # TODO add this check when changing to python 3
-    # def test_loadError(self):
-    #     compare_file = "this_file_should_not_exist"
-    #
-    #     with self.assertRaises(FileNotFoundError):
-    #         self.data.load(compare_file)
+    # # TODO add this check when changing to python 3
+    # # def test_loadError(self):
+    # #     compare_file = "this_file_should_not_exist"
+    # #
+    # #     with self.assertRaises(FileNotFoundError):
+    # #         self.data.load(compare_file)
 
     def test_seed(self):
         data = Data()

@@ -339,8 +339,8 @@ class TestUncertainty(TestCasePlot):
 
         # Test if all calculated properties actually exists
         data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sobol_first", "sobol_first_sum",
-                      "sobol_total", "sobol_total_sum", "labels"]
+                      "sobol_first", "sobol_first_average",
+                      "sobol_total", "sobol_total_average", "labels"]
 
         for data_type in data_types:
             if data_type not in ["evaluations", "time", "labels"]:
@@ -464,7 +464,7 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("feature0d_var_sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
 
     def test_polynomial_chaos_single_plot(self):
@@ -598,8 +598,8 @@ class TestUncertainty(TestCasePlot):
         self.uncertainty.load(os.path.join(folder, "data", "test_save_mock"))
 
         data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                      "sobol_first", "sobol_first_sum",
-                      "sobol_total", "sobol_total_sum"]
+                      "sobol_first", "sobol_first_average",
+                      "sobol_total", "sobol_total_average"]
 
         for data_type in data_types:
             self.assertTrue(np.array_equal(self.uncertainty.data["feature1d"][data_type], [1., 2.]))
@@ -641,12 +641,12 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("feature1d_var_sobol_first_b")
         self.compare_plot("feature1d_var_sobol_first")
         self.compare_plot("feature1d_var_sobol_first_grid")
-        self.compare_plot("feature0d_var_sobol_first_sum")
+        self.compare_plot("feature0d_var_sobol_first_average")
 
-        self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_var_sobol_first_sum")
-        self.compare_plot("feature1d_var_sobol_first_sum")
-        self.compare_plot("feature2d_var_sobol_first_sum")
+        self.compare_plot("TestingModel1d_sobol_first_average")
+        self.compare_plot("feature0d_var_sobol_first_average")
+        self.compare_plot("feature1d_var_sobol_first_average")
+        self.compare_plot("feature2d_var_sobol_first_average")
 
         self.compare_plot("feature1d_var_sobol_total_a")
         self.compare_plot("feature1d_var_sobol_total_b")
@@ -660,17 +660,17 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_sobol_total")
         self.compare_plot("TestingModel1d_sobol_total_grid")
 
-        self.compare_plot("feature0d_var_sobol_total_sum")
+        self.compare_plot("feature0d_var_sobol_total_average")
 
 
-        self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_var_sobol_total_sum")
-        self.compare_plot("feature1d_var_sobol_total_sum")
-        self.compare_plot("feature2d_var_sobol_total_sum")
+        self.compare_plot("TestingModel1d_sobol_total_average")
+        self.compare_plot("feature0d_var_sobol_total_average")
+        self.compare_plot("feature1d_var_sobol_total_average")
+        self.compare_plot("feature2d_var_sobol_total_average")
 
 
-        self.compare_plot("sobol_total_sum_grid")
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_total_average_grid")
+        self.compare_plot("sobol_first_average_grid")
 
 
     def test_plot_condensed(self):
@@ -690,7 +690,7 @@ class TestUncertainty(TestCasePlot):
 
         self.compare_plot("feature0d_var_sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
         self.compare_plot("feature2d_var_mean")
         self.compare_plot("feature2d_var_variance")
@@ -734,13 +734,13 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_var_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_var_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
 
@@ -944,7 +944,8 @@ class TestUncertainty(TestCasePlot):
                                             save=True,
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
-                                            seed=self.seed)
+                                            seed=self.seed,
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1012,7 +1013,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.h5")
+                                            filename="test.h5",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1077,7 +1079,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.exdir")
+                                            filename="test.exdir",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.exdir")
         self.assertTrue(os.path.exists(file_path))
@@ -1143,7 +1146,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test")
+                                            filename="test",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1209,7 +1213,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.test")
+                                            filename="test.test",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1276,7 +1281,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.test")
+                                            filename="test.test",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.exdir")
         self.assertTrue(os.path.exists(file_path))
@@ -1342,7 +1348,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.exdir")
+                                            filename="test.exdir",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-a.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1409,7 +1416,8 @@ class TestUncertainty(TestCasePlot):
                                             data_folder=self.output_test_dir,
                                             figure_folder=self.output_test_dir,
                                             seed=self.seed,
-                                            filename="test.h5")
+                                            filename="test.h5",
+                                            nr_samples=self.nr_mc_samples)
 
         file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-a.exdir")
         self.assertTrue(os.path.exists(file_path))

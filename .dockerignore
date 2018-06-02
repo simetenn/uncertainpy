@@ -4,3 +4,5 @@
 .eggs
 .X11-unix
 dist
+*.h5
+examples/mc_vc_pc/data

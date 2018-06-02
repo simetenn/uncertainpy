@@ -164,7 +164,7 @@ class TestHodgkinHuxleyModel(unittest.TestCase):
     def test_run(self):
         model = HodgkinHuxley()
 
-        parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_l": 0.3}
+        parameters = {"gbar_Na": 120, "gbar_K": 36, "gbar_L": 0.3}
         model.run(**parameters)
 
 

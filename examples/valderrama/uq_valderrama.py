@@ -12,7 +12,7 @@ parameters = {"V_0": -10,
               "C_m": 1,
               "gbar_Na": 120,
               "gbar_K": 36,
-              "gbar_l": 0.3,
+              "gbar_L": 0.3,
               "m_0": 0.0011,
               "n_0": 0.0003,
               "h_0": 0.9998,
@@ -30,4 +30,5 @@ parameters.set_all_distributions(un.uniform(0.2))
 # Perform the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters)
-data = UQ.quantify()
+# We set the seed to easier be able to reproduce the result
+data = UQ.quantify(seed=10)

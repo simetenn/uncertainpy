@@ -6,7 +6,7 @@ class NeuronModelBahl(un.NeuronModel):
     def __init__(self, stimulus_start=None, stimulus_end=None):
         # Hardcode the path of the Bahl neuron model
         super(NeuronModelBahl, self).__init__(interpolate=True,
-                                              path="bahl_neuron_model",
+                                              path="bahl_model",
                                               stimulus_start=stimulus_start,
                                               stimulus_end=stimulus_end)
 
@@ -25,8 +25,8 @@ class NeuronModelBahl(un.NeuronModel):
 model = NeuronModelBahl(stimulus_start=100, stimulus_end=600)
 
 # Define a parameter list and use it directly
-parameters = {"e_pas": -80, cp.Uniform(-60, -85),
-              "apical Ra": 261, cp.Uniform(150, 300)}
+parameters = {"e_pas": cp.Uniform(-60, -85),
+              "apical Ra": cp.Uniform(150, 300)}
 
 # Initialize the features
 features = un.SpikingFeatures()

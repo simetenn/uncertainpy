@@ -38,5 +38,7 @@ parameters = {"alpha": alpha_dist,
 # when we set up the uncertainty quantification
 UQ = un.UncertaintyQuantification(model=model, parameters=parameters)
 
-# Perform the uncertainty quantification using the Rosenblatt transformation
-data = UQ.quantify(rosenblatt=True)
+# Perform the uncertainty quantification,
+# which automatically use the Rosenblatt transformation
+# We set the seed to easier be able to reproduce the result
+data = UQ.quantify(seed=10)

@@ -34,10 +34,16 @@ class RunModel(ParameterBase):
         Model to perform uncertainty quantification on. For requirements see
         Model.run.
         Default is None.
-    parameters : {None, Parameters instance, list of Parameter instances, list with [[name, value, distribution], ...]}, optional
-        Either None, a Parameters instance or a list of the parameters that should be created.
-        The two lists are similar to the arguments sent to Parameters.
-        Default is None.
+       parameters: {dict {name: parameter_object}, dict of {name: value or Chaospy distribution}, ...], list of Parameter instances, list [[name, value or Chaospy distribution], ...], list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...],}
+        List or dictionary of the parameters that should be created.
+        On the form ``parameters =``
+
+            * ``{name_1: parameter_object_1, name: parameter_object_2, ...}``
+            * ``{name_1:  value_1 or Chaospy distribution, name_2:  value_2 or Chaospy distribution, ...}``
+            * ``[parameter_object_1, parameter_object_2, ...]``,
+            * ``[[name_1, value_1 or Chaospy distribution], ...]``.
+            * ``[[name_1, value_1, Chaospy distribution or callable that returns a Chaospy distribution], ...]``
+
     features : {None, Features or Features subclass instance, list of feature functions}, optional
         Features to calculate from the model result.
         If None, no features are calculated.
@@ -289,7 +295,7 @@ class RunModel(ParameterBase):
                     # raise NotImplementedError("Feature: {feature},".format(feature=feature)
                     #                           + " no support for >= 2D interpolation")
                     logger.error("{feature}:".format(feature=feature)
-                                      + " no support for >= 2D interpolation implemented")
+                                 + " no support for >= 2D interpolation implemented")
 
                     add_results(results, data, feature)
 
@@ -343,16 +349,6 @@ class RunModel(ParameterBase):
                     data[feature].evaluations = []
                     for result in results:
                         data[feature].evaluations.append(result[feature]["values"])
-
-
-        # # ensure all results are arrays
-        # for feature in data:
-        #     if "time" in data[feature]:
-        #         data[feature].time = np.array(data[feature].time)
-
-        #     data[feature].evaluations = np.array(data[feature].evaluations)
-
-        # data.remove_only_invalid_features()
 
         return data
 
@@ -414,7 +410,9 @@ class RunModel(ParameterBase):
 
 
         # pool.map(self._parallel.run, model_parameters)
-        for result in tqdm(pool.imap(self._parallel.run, model_parameters),
+        # chunksize = int(np.ceil(len(model_parameters)/self.CPUs))
+        chunksize = 1
+        for result in tqdm(pool.imap(self._parallel.run, model_parameters, chunksize),
                            desc="Running model",
                            total=len(nodes.T)):
 

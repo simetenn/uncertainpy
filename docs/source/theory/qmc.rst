@@ -60,11 +60,13 @@ and the variance by
 Prediction intervals are found by sorting the model evaluations
 :math:`\boldsymbol{Y}` in an increasing order,
 and then find the :math:`(100\cdot x/2)`-th and :math:`(100\cdot (1 - x/2))`-th percentiles.
-The sensitivity analysis in Uncertainpy is based on polynomial chaos expansions
-(see below),
-and Uncertainpy does currently not support calculation of Sobol indices from
-(quasi-)Monte Carlo methods,
-although methods for this are available in the literature (`Saltelli et al., 2010`_).
+The Sobol indices can be calculated using the method in
+(`Saltelli et al., 2010`_).
+The total number of samples :math:`N_t` required by this method is:
+
+.. math::
+
+    N_t = N(D + 2)
 
 
 .. _Saltelli et al., 2010: http://dx.doi.org/10.1016/j.cpc.2009.09.018

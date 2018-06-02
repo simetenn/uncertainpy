@@ -41,10 +41,15 @@ We implement the Brunel network as such a function
 
 And use it to create our model (example found in
 :download:`/examples/brunel/uq_brunel.py <../../../examples/brunel/uq_brunel.py>`):
+We set ``ignore=True`` since we are not interested in
+the model result itself.
+This is recommended for NEST models as long as you do not
+need the model results, since the uncertainty calculations for the
+for the model results require much time and memory.
 
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
     :language: python
-    :lines: 6-7
+    :lines: 6-12
 
 
 The Brunel model has four uncertain parameters:
@@ -81,7 +86,7 @@ We create two sets of parameters, one for each state:
 
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
     :language: python
-    :lines: 10-22
+    :lines: 14-26
 
 
 We use the features in :ref:`NetworkFeatures <network>` to
@@ -89,17 +94,18 @@ examine features of the Brunel network.
 
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
     :language: python
-    :lines: 24-25
+    :lines: 28-29
 
 We set up the problems with the SR parameter set and use polynomial chaos with
 point collocation to perform the uncertainty quantification and sensitivity
 analysis.
 We specify a filename for the data, and a folder where to save the figures, to
 keep the results from the AI and SR state separated.
+We also set the seed to easier be able to reproduce the result.
 
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
     :language: python
-    :lines: 27-35
+    :lines: 31-41
 
 We then change the parameters, and perform the uncertainty quantification and
 sensitivity analysis for the new set of parameters,
@@ -107,7 +113,7 @@ again specifying a filename and figure folder.
 
 .. literalinclude:: ../../../examples/brunel/uq_brunel.py
     :language: python
-    :lines: 37-43
+    :lines: 43-51
 
 The complete code is:
 

@@ -1,12 +1,8 @@
 import uncertainpy as un
 
 # Define a parameter list
-parameters= {"Epas": -67,
-             "Rm": 22000,
-             "gna": 0.09,
-             "nash": -52.6,
+parameters= {"gna": 0.09,
              "gkdr": 0.37,
-             "kdrsh": -51.2,
              "gcat": 1.17e-5,
              "gcal": 0.0009,
              "ghbar": 0.00011,
@@ -17,8 +13,8 @@ parameters= {"Epas": -67,
 parameters = un.Parameters(parameters)
 
 # Set all parameters to have a uniform distribution
-# within a 5% interval around their fixed value
-parameters.set_all_distributions(un.uniform(0.05))
+# within a 20% interval around their fixed value
+parameters.set_all_distributions(un.uniform(0.2))
 
 # Initialize the features
 features = un.SpikingFeatures(features_to_run="all")
@@ -31,4 +27,5 @@ model = un.NeuronModel(path="interneuron_model/", interpolate=True,
 UQ = un.UncertaintyQuantification(model,
                                   parameters=parameters,
                                   features=features)
-data = UQ.quantify()
+# We set the seed to easier be able to reproduce the result
+data = UQ.quantify(seed=10)

@@ -19,19 +19,15 @@ as well as the interneuron model saved in the folder ``/interneuron_model/``.
 .. _Halnes et al., 2011: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002160
 
 In the original modeling study,
-a set of 11 parameters were tuned manually through a series of trials and
+a set of 7 parameters were tuned manually through a series of trials and
 errors until the interneuron model obtained the desired response characteristics.
 The final parameter set is:
 
 ============================   ==========   ===================================     ================      =================================================================================================
 Parameter                      Value        Unit                                    Neuron variable       Meaning
 ============================   ==========   ===================================     ================      =================================================================================================
-:math:`E_\mathrm{pas}`         -67          mV                                      ``Epas``              Membrane reversal potential
-:math:`R_\mathrm{m}`           22           :math:`\text{k}\Omega/\text{cm}^2`      ``Rm``                Membrane Resistance
 :math:`g_{\mathrm{Na}}`        0.09         :math:`\text{S/cm}^2`                   ``gna``               Max :math:`\text{Na}^+`-conductance in soma
-:math:`Sh_\mathrm{Na}`         -52.6        mV                                      ``nash``              Shift in :math:`\text{Na}^+`-kinetics
 :math:`g_{\mathrm{Kdr}}`       0.37         :math:`\text{S/cm}^2`                   ``gkdr``              Max direct rectifying :math:`\text{K}^+`-conductance in soma
-:math:`Sh_{\mathrm{Kdr}}`      -51.2        mV                                      ``kdrsh``             Shift in :math:`\text{K}_{dr}`-kinetics.
 :math:`g_{\mathrm{CaT}}`       1.17e-5      :math:`\text{S/cm}^2`                   ``gcat``              Max T-type :math:`\text{Ca}^{2+}`-conductance in soma
 :math:`g_{\mathrm{CaL}}`       9e-4         :math:`\text{S/cm}^2`                   ``gcal``              Max L-type :math:`\text{Ca}^{2+}`-conductance in soma
 :math:`g_{\mathrm{h}}`         1.1e-4       :math:`\text{S/cm}^2`                   ``ghbar``             Max conductance of a non-specific hyperpolarization activated cation channel in soma
@@ -41,14 +37,14 @@ Parameter                      Value        Unit                                
 
 
 To perform an uncertainty quantification and sensitivity analysis of this model,
-we assume each of these 11 parameters have a uniform uncertainty distribution
-in the interval :math:`\pm 2.5\%` around their original value.
+we assume each of these 7 parameters have a uniform uncertainty distribution
+in the interval :math:`\pm 10\%` around their original value.
 We create these parameters similar to how we did in the :ref:`Hodgkin-Huxley example <hodgkin_huxley>`:
 
 
 .. literalinclude:: ../../../examples/interneuron/uq_interneuron.py
     :language: python
-    :lines: 3-21
+    :lines: 3-17
 
 
 A point-to-point comparison of voltage traces is often uninformative,
@@ -58,7 +54,7 @@ we choose the features in :ref:`SpikingFeatures <spiking>`:
 
 .. literalinclude:: ../../../examples/interneuron/uq_interneuron.py
     :language: python
-    :lines: 23-24
+    :lines: 19-20
 
 We study the response of the interneuron to a somatic current injection
 between :math:`1000 \text{ ms} < t < 1900 \text{ ms}`.
@@ -74,21 +70,23 @@ We also give the path to the folder where
 the neuron model is stored with ``path="interneuron_model/"``.
 ``NeuronModel`` loads the NEURON model from ``mosinit.hoc``,
 sets the parameters of the model,
-evaluates the model and returns the somatic membrane potential of the neuron.
+evaluates the model and returns the somatic membrane potential of the neuron,
+(the voltage of the section named ``"soma"``).
 ``NeuronModel`` therefore does not require a model function.
 
 
 .. literalinclude:: ../../../examples/interneuron/uq_interneuron.py
     :language: python
-    :lines: 26-28
+    :lines: 22-24
 
 We set up the problem, adding our features before we use polynomial chaos
 expansion with point collocation to compute the statistical metrics for
-the model output and all features:
+the model output and all features.
+We also set the seed to easier be able to reproduce the result.
 
 .. literalinclude:: ../../../examples/interneuron/uq_interneuron.py
     :language: python
-    :lines: 30-34
+    :lines: 26-31
 
 The complete code becomes:
 

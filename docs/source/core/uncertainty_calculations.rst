@@ -27,10 +27,10 @@ To use the quasi-Monte Carlo method, we call
 
     data = UQ.quantify(
         method="mc",
-        nr_mc_samples=10**3,
+        nr_mc_samples=10**4,
     )
 
-By default, the quasi-Monte Carlo method quasi-randomly draws `1000`
+By default, the quasi-Monte Carlo method quasi-randomly draws `10000`
 parameter samples from the joint multivariate probability distribution of the
 parameters :math:`\rho_{\boldsymbol{Q}}` using Hammersley sampling (`Hammersley, 1960`_).
 As the name indicates, the number of samples is specified by the
@@ -59,7 +59,7 @@ which takes a set of optional arguments (default are values specified)::
         method="pc",
         pc_method="collocation",
         rosenblatt=False,
-        polynomial_order=3,
+        polynomial_order=4,
         nr_collocation_nodes=None,
         quadrature_order=None,
         nr_pc_mc_samples=10**4,
@@ -71,8 +71,9 @@ and pseudo-spectral projections (``pc_method="spectral"``).
 The goal is to create separate polynomial chaos expansions `\hat{U}` for the
 model and each feature.
 In both methods,
-Uncertainpy creates the orthogonal polynomial :math:`\boldsymbol{\phi}_n` using the
-three-term recurrence relation and :math:`\rho_{\boldsymbol{Q}}`.
+Uncertainpy creates the orthogonal polynomial :math:`\boldsymbol{\phi}_n` using
+:math:`\rho_{\boldsymbol{Q}}` and the three-term recurrence relation if available,
+otherwise the discretized Stieltjes method (`Stieltjes, 1884`_) is used.
 Uncertainpy uses a third order polynomial expansion,
 changed with ``polynomial_order``.
 The polynomial :math:`\boldsymbol{\phi}_n` is shared between the model and all features,
@@ -99,6 +100,7 @@ results.
 .. _Rifkin and Lipert, 2007: http://cbcl.mit.edu/publications/ps/MIT-CSAIL-TR-2007-025.pdf
 .. _Narayan and Jakeman, 2014: http://epubs.siam.org/doi/pdf/10.1137/140966368
 .. _Smolyak, 1963: https://www.scopus.com/record/display.uri?eid=2-s2.0-0001048298&origin=inward&txGid=909fc4b912013bd67236ad5d9d593074
+.. _Stieltjes, 1884: http://eudml.org/doc/80911
 
 For the pseudo-spectral projection,
 Uncertainpy chooses nodes and weights using a quadrature scheme,

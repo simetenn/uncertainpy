@@ -15,7 +15,7 @@ class HodgkinHuxley(Model):
         self.Cm = 1         # uF/cm**2
         self.gbar_Na = 120  # mS/cm**2
         self.gbar_K = 36    # mS/cm**2
-        self.gbar_l = 0.3   # mS/cm**2
+        self.gbar_L = 0.3   # mS/cm**2
         self.E_Na = 50      # mV
         self.E_K = -77      # mV
         self.E_l = -54.4    # mV
@@ -79,7 +79,7 @@ class HodgkinHuxley(Model):
 
         g_Na = self.gbar_Na*(m**3)*h
         g_K = self.gbar_K*(n**4)
-        g_l = self.gbar_l
+        g_l = self.gbar_L
 
         dmdt = self.m_f(m, V)
         dhdt = self.h_f(h, V)

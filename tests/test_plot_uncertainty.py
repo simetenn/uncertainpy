@@ -34,8 +34,8 @@ class TestPlotUncertainpy(TestCasePlot):
                                     figureformat=self.figureformat)
 
         self.data_types = ["evaluations", "time", "mean", "variance", "percentile_5", "percentile_95",
-                           "sobol_first", "sobol_first_sum",
-                           "sobol_total", "sobol_total_sum"]
+                           "sobol_first", "sobol_first_average",
+                           "sobol_total", "sobol_total_average"]
 
 
     def tearDown(self):
@@ -44,62 +44,62 @@ class TestPlotUncertainpy(TestCasePlot):
 
 
 
-    def test_sensitivity_sum_grid_1(self):
+    def test_average_sensitivity_grid_1(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_sum_grid(hardcopy=True, sensitivity="sobol_first")
+        self.plot.average_sensitivity_grid(hardcopy=True, sensitivity="sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
 
-    def test_sensitivity_sum_grid_t(self):
+    def test_average_sensitivity_grid_t(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_sum_grid(hardcopy=True, sensitivity="sobol_total")
+        self.plot.average_sensitivity_grid(hardcopy=True, sensitivity="sobol_total")
 
-        self.compare_plot("sobol_total_sum_grid")
+        self.compare_plot("sobol_total_average_grid")
 
 
-    def test_sensitivity_1_sum(self):
+    def test_sensitivity_1_average(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_sum(feature="feature1d_var",
+        self.plot.average_sensitivity(feature="feature1d_var",
                                     sensitivity="sobol_first",
                                     hardcopy=True)
 
-        self.compare_plot("feature1d_var_sobol_first_sum")
+        self.compare_plot("feature1d_var_sobol_first_average")
 
 
-    def test_sobol_total_sum(self):
+    def test_sobol_total_average(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_sum(feature="feature1d_var",
+        self.plot.average_sensitivity(feature="feature1d_var",
                                     sensitivity="sobol_total",
                                     hardcopy=True)
 
-        self.compare_plot("feature1d_var_sobol_total_sum")
+        self.compare_plot("feature1d_var_sobol_total_average")
 
 
-    def test_sensitivity_sum_all_1(self):
+    def test_average_sensitivity_all_1(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_sum_all(hardcopy=True, sensitivity="sobol_first")
+        self.plot.average_sensitivity_all(hardcopy=True, sensitivity="sobol_first")
 
-        self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_var_sobol_first_sum")
-        self.compare_plot("feature1d_var_sobol_first_sum")
-        self.compare_plot("feature2d_var_sobol_first_sum")
+        self.compare_plot("TestingModel1d_sobol_first_average")
+        self.compare_plot("feature0d_var_sobol_first_average")
+        self.compare_plot("feature1d_var_sobol_first_average")
+        self.compare_plot("feature2d_var_sobol_first_average")
 
 
-    def test_sensitivity_sum_all_t(self):
+    def test_average_sensitivity_all_t(self):
         self.plot.load(self.data_file_path)
 
-        self.plot.sensitivity_sum_all(hardcopy=True, sensitivity="sobol_total")
+        self.plot.average_sensitivity_all(hardcopy=True, sensitivity="sobol_total")
 
-        self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_var_sobol_total_sum")
-        self.compare_plot("feature1d_var_sobol_total_sum")
-        self.compare_plot("feature2d_var_sobol_total_sum")
+        self.compare_plot("TestingModel1d_sobol_total_average")
+        self.compare_plot("feature0d_var_sobol_total_average")
+        self.compare_plot("feature1d_var_sobol_total_average")
+        self.compare_plot("feature2d_var_sobol_total_average")
 
 
     def test_evaluations_1d(self):
@@ -207,13 +207,13 @@ class TestPlotUncertainpy(TestCasePlot):
         self.assertEqual(plot_count, 1)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_var_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature2d_var_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/TestingModel1d_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_with_error_results(self):
@@ -228,7 +228,7 @@ class TestPlotUncertainpy(TestCasePlot):
         self.plot.all_evaluations()
 
         plot_count = len(glob.glob(os.path.join(self.output_test_dir, "evaluations/feature1d_var_evaluations/*.png")))
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_2d_feature(self):
@@ -240,7 +240,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_var_evaluations/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_feature_2d(self):
@@ -252,7 +252,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature2d_var_evaluations/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_0d_feature(self):
@@ -288,7 +288,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_var_evaluations/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_feature_1d(self):
@@ -300,7 +300,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "feature1d_var_evaluations/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_2d_model(self):
@@ -312,7 +312,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_evaluations/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
     def test_evaluations_2d(self):
@@ -324,7 +324,7 @@ class TestPlotUncertainpy(TestCasePlot):
         for plot in glob.glob(os.path.join(self.output_test_dir, "TestingModel2d_evaluations/*.png")):
             plot_count += 1
 
-        self.assertEqual(plot_count, 22)
+        self.assertEqual(plot_count, 32)
 
 
 
@@ -774,7 +774,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.compare_plot("feature0d_var_sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
         self.compare_plot("feature2d_var_mean")
         self.compare_plot("feature2d_var_variance")
@@ -807,16 +807,16 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_var_sobol_first_b")
         self.compare_plot("feature1d_var_sobol_first")
         self.compare_plot("feature1d_var_sobol_first_grid")
-        self.compare_plot("feature0d_var_sobol_first_sum")
+        self.compare_plot("feature0d_var_sobol_first_average")
 
 
-        self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_var_sobol_first_sum")
-        self.compare_plot("feature1d_var_sobol_first_sum")
-        self.compare_plot("feature2d_var_sobol_first_sum")
+        self.compare_plot("TestingModel1d_sobol_first_average")
+        self.compare_plot("feature0d_var_sobol_first_average")
+        self.compare_plot("feature1d_var_sobol_first_average")
+        self.compare_plot("feature2d_var_sobol_first_average")
 
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
 
         self.compare_plot("feature2d_var_mean")
@@ -841,16 +841,16 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_sobol_total")
         self.compare_plot("TestingModel1d_sobol_total_grid")
 
-        self.compare_plot("feature0d_var_sobol_total_sum")
+        self.compare_plot("feature0d_var_sobol_total_average")
 
 
-        self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_var_sobol_total_sum")
-        self.compare_plot("feature1d_var_sobol_total_sum")
-        self.compare_plot("feature2d_var_sobol_total_sum")
+        self.compare_plot("TestingModel1d_sobol_total_average")
+        self.compare_plot("feature0d_var_sobol_total_average")
+        self.compare_plot("feature1d_var_sobol_total_average")
+        self.compare_plot("feature2d_var_sobol_total_average")
 
 
-        self.compare_plot("sobol_total_sum_grid")
+        self.compare_plot("sobol_total_average_grid")
 
         self.compare_plot("feature2d_var_mean")
         self.compare_plot("feature2d_var_variance")
@@ -881,14 +881,14 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_var_sobol_first_b")
         self.compare_plot("feature1d_var_sobol_first")
         self.compare_plot("feature1d_var_sobol_first_grid")
-        self.compare_plot("feature0d_var_sobol_first_sum")
+        self.compare_plot("feature0d_var_sobol_first_average")
 
-        self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_var_sobol_first_sum")
-        self.compare_plot("feature1d_var_sobol_first_sum")
-        self.compare_plot("feature2d_var_sobol_first_sum")
+        self.compare_plot("TestingModel1d_sobol_first_average")
+        self.compare_plot("feature0d_var_sobol_first_average")
+        self.compare_plot("feature1d_var_sobol_first_average")
+        self.compare_plot("feature2d_var_sobol_first_average")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
 
         self.compare_plot("feature1d_var_sobol_total_a")
@@ -903,15 +903,15 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_sobol_total")
         self.compare_plot("TestingModel1d_sobol_total_grid")
 
-        self.compare_plot("feature0d_var_sobol_total_sum")
+        self.compare_plot("feature0d_var_sobol_total_average")
 
 
-        self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_var_sobol_total_sum")
-        self.compare_plot("feature1d_var_sobol_total_sum")
-        self.compare_plot("feature2d_var_sobol_total_sum")
+        self.compare_plot("TestingModel1d_sobol_total_average")
+        self.compare_plot("feature0d_var_sobol_total_average")
+        self.compare_plot("feature1d_var_sobol_total_average")
+        self.compare_plot("feature2d_var_sobol_total_average")
 
-        self.compare_plot("sobol_total_sum_grid")
+        self.compare_plot("sobol_total_average_grid")
 
         self.compare_plot("feature2d_var_mean")
         self.compare_plot("feature2d_var_variance")
@@ -932,7 +932,7 @@ class TestPlotUncertainpy(TestCasePlot):
 
         self.compare_plot("feature0d_var_sobol_first")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
         self.compare_plot("feature2d_var_mean")
         self.compare_plot("feature2d_var_variance")
@@ -1003,12 +1003,12 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("feature1d_var_sobol_first")
         self.compare_plot("feature1d_var_sobol_first_grid")
 
-        self.compare_plot("TestingModel1d_sobol_first_sum")
-        self.compare_plot("feature0d_var_sobol_first_sum")
-        self.compare_plot("feature1d_var_sobol_first_sum")
-        self.compare_plot("feature2d_var_sobol_first_sum")
+        self.compare_plot("TestingModel1d_sobol_first_average")
+        self.compare_plot("feature0d_var_sobol_first_average")
+        self.compare_plot("feature1d_var_sobol_first_average")
+        self.compare_plot("feature2d_var_sobol_first_average")
 
-        self.compare_plot("sobol_first_sum_grid")
+        self.compare_plot("sobol_first_average_grid")
 
 
         self.compare_plot("feature1d_var_sobol_total_a")
@@ -1023,15 +1023,15 @@ class TestPlotUncertainpy(TestCasePlot):
         self.compare_plot("TestingModel1d_sobol_total")
         self.compare_plot("TestingModel1d_sobol_total_grid")
 
-        self.compare_plot("feature0d_var_sobol_total_sum")
+        self.compare_plot("feature0d_var_sobol_total_average")
 
 
-        self.compare_plot("TestingModel1d_sobol_total_sum")
-        self.compare_plot("feature0d_var_sobol_total_sum")
-        self.compare_plot("feature1d_var_sobol_total_sum")
-        self.compare_plot("feature2d_var_sobol_total_sum")
+        self.compare_plot("TestingModel1d_sobol_total_average")
+        self.compare_plot("feature0d_var_sobol_total_average")
+        self.compare_plot("feature1d_var_sobol_total_average")
+        self.compare_plot("feature2d_var_sobol_total_average")
 
-        self.compare_plot("sobol_total_sum_grid")
+        self.compare_plot("sobol_total_average_grid")
 
         self.compare_plot("feature2d_var_mean")
         self.compare_plot("feature2d_var_variance")
@@ -1057,12 +1057,12 @@ class TestPlotUncertainpy(TestCasePlot):
             self.plot.features_2d()
             self.plot.features_0d()
             self.plot.feature_0d("not_existing")
-            self.plot.sensitivity_sum("not_existing")
-            self.plot.sensitivity_sum_all()
+            self.plot.average_sensitivity("not_existing")
+            self.plot.average_sensitivity_all()
             self.plot.features_0d()
             self.plot.plot_all()
             self.plot.plot_all_sensitivities()
-            self.plot.sensitivity_sum_grid()
+            self.plot.average_sensitivity_grid()
 
 
     def test_empty_data(self):
@@ -1087,8 +1087,8 @@ class TestPlotUncertainpy(TestCasePlot):
         self.assertIsNone(self.plot.sensitivity_1d_grid("1D"))
         self.assertIsNone(self.plot.sensitivity_1d_combined("1D"))
         self.assertIsNone(self.plot.feature_0d("0D"))
-        self.assertIsNone(self.plot.sensitivity_sum("1D"))
-        self.assertIsNone(self.plot.sensitivity_sum_grid())
+        self.assertIsNone(self.plot.average_sensitivity("1D"))
+        self.assertIsNone(self.plot.average_sensitivity_grid())
 
         with self.assertRaises(ValueError):
             self.plot.attribute_feature_1d(attribute="not_existing")
