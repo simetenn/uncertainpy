@@ -438,7 +438,8 @@ class UncertaintyCalculations(ParameterBase):
         uncertainty and sensitivity of the model.
 
         To create the polynomial chaos expansion we first find the polynomials
-        using the three-therm recurrence relation. Then we use the
+        using the three-therm recurrence relation if available,
+        otherwise the discretized Stieltjes method is used. Then we use the
         pseudo-spectral projection to find the expansion coefficients for the
         model and each feature of the model.
 
@@ -568,7 +569,8 @@ class UncertaintyCalculations(ParameterBase):
         uncertainty and sensitivity of the model.
 
         To create the polynomial chaos expansion we first find the polynomials
-        using the three-therm recurrence relation. Then we use point collocation
+        using the three-therm recurrence relation if available, otherwise the
+        discretized Stieltjes method is used. Then we use point collocation
         to find the expansion coefficients for the model and each feature of the
         model.
 
@@ -695,10 +697,11 @@ class UncertaintyCalculations(ParameterBase):
 
         We use the Rosenblatt transformation to transform from dependent to
         independent variables before we create the polynomial chaos expansion.
-        We first find the polynomials using the three-therm recurrence relation
-        from the independent distributions. Then we use the
-        pseudo-spectral projection with the Rosenblatt transformation to find
-        the expansion coefficients for the model and each feature of the model.
+        We first find the polynomials from the independent distributions
+        using the three-therm recurrence relation if available, otherwise the
+        discretized Stieltjes method is used. Then we use the pseudo-spectral
+        projection with the Rosenblatt transformation to find the expansion
+        coefficients for the model and each feature of the model.
 
         Pseudo-spectral projection is based on least squares
         minimization and finds the expansion coefficients through numerical
@@ -854,10 +857,11 @@ class UncertaintyCalculations(ParameterBase):
 
         We use the Rosenblatt transformation to transform from dependent to
         independent variables before we create the polynomial chaos expansion.
-        We first find the polynomials using the three-therm recurrence relation
-        from the independent distributions. Then we use the
-        point collocation with the Rosenblatt transformation to find
-        the expansion coefficients for the model and each feature of the model.
+        We first find the polynomials from the independent distributions using
+        the three-therm recurrence relation if available, otherwise the
+        discretized Stieltjes method is used. Then we use the point collocation
+        with the Rosenblatt transformation to find the expansion coefficients
+        for the model and each feature of the model.
 
         In point collocation we require the polynomial approximation to be equal
         the model at a set of collocation nodes. This results in a set of linear
@@ -1247,7 +1251,8 @@ class UncertaintyCalculations(ParameterBase):
         uncertainty and sensitivity of the model.
 
         To create the polynomial chaos expansion we first find the polynomials
-        using the three-therm recurrence relation. Then we use point collocation
+        using the three-therm recurrence relation if available,
+        otherwise the discretized Stieltjes method is used. Then we use point collocation
         or pseudo-spectral projection to find the expansion coefficients for the
         model and each feature of the model.
 
@@ -1269,8 +1274,9 @@ class UncertaintyCalculations(ParameterBase):
         If we have dependent uncertain parameters we must use the Rosenblatt
         transformation. We use the Rosenblatt transformation to transform from
         dependent to independent variables before we create the polynomial chaos
-        expansion. We first find the polynomials using the three-term
-        recurrence relation from the independent distributions.
+        expansion. We first find the polynomials from the independent
+        distributions using the three-term recurrence relation if available,
+        otherwise the discretized Stieltjes method is used
 
         Both pseudo-spectral projection and point collocation is performed using
         the independent distribution, the only difference is that we use the
