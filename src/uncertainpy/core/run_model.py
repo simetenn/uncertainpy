@@ -410,7 +410,9 @@ class RunModel(ParameterBase):
 
 
         # pool.map(self._parallel.run, model_parameters)
-        for result in tqdm(pool.imap(self._parallel.run, model_parameters),
+        # chunksize = int(np.ceil(len(model_parameters)/self.CPUs))
+        chunksize = 1
+        for result in tqdm(pool.imap(self._parallel.run, model_parameters, chunksize),
                            desc="Running model",
                            total=len(nodes.T)):
 
