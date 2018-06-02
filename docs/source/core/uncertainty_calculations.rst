@@ -59,7 +59,7 @@ which takes a set of optional arguments (default are values specified)::
         method="pc",
         pc_method="collocation",
         rosenblatt=False,
-        polynomial_order=3,
+        polynomial_order=4,
         nr_collocation_nodes=None,
         quadrature_order=None,
         nr_pc_mc_samples=10**4,
