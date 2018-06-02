@@ -4,10 +4,11 @@ import chaospy as cp
 from brunel import brunel_network
 
 # Create a Nest model from the brunel network function
-# We set ignore=True since we are not interested in
-# the model result itself. This is recommended as long as you do not
-# need the model results, since performing PCE for the model results
-# take much time
+# We set ``ignore=True`` since we are not interested in
+# the model result itself.
+# This is recommended for NEST models as long as you do not
+# need the model results, since the uncertainty calculations for the
+# for the model results require much time and memory.
 model = un.NestModel(run=brunel_network, ignore=True)
 
 # Parametes for the synchronous regular (SR) state
