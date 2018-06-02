@@ -8,7 +8,8 @@ exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
 # Mock packages
 uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
                        "matplotlib.pyplot", "scipy.interpolate", "scipy",
-                       "seaborn", "matplotlib", "xvfbwrapper"]
+                       "seaborn", "matplotlib", "xvfbwrapper", "SALib.sample",
+                       "SALib.analyse", "scipy.stats"]
 
 for mod_name in uncertainpy_require:
     sys.modules[mod_name] = mock.Mock()
