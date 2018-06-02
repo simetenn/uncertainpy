@@ -5,4 +5,4 @@
 .X11-unix
 dist
 *.h5
-examples/valderrama_mc_vc_pc/data
+examples/mc_vc_pc/data
