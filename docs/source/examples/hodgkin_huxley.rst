@@ -95,11 +95,12 @@ Ultimately the distribution of each parameter is set to `interval` around their
 
 
 We can now use polynomial chaos expansions with point collocation to calculate the
-uncertainty and sensitivity of the model:
+uncertainty and sensitivity of the model.
+We also set the seed to easier be able to reproduce the result.
 
 .. literalinclude:: ../../../examples/valderrama/uq_valderrama.py
     :language: python
-    :lines: 30-33
+    :lines: 30-34
 
 The complete code for the uncertainty quantification and sensitivity becomes:
 

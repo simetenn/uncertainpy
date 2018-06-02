@@ -1413,14 +1413,15 @@ class UncertaintyCalculations(ParameterBase):
 
         In the quasi-Monte Carlo method we quasi-randomly draw
         ``nr_samples*(nr_uncertain_parameters + 2)`` (nr_samples=10**4 by default)
-        parameter samples using Saltelli's sampling scheme. We require this number of samples
-        to be able to calculate the Sobol indices. We evaluate the model
-        for each of these parameter samples and calculate the features from each
-        of the model results. This step is performed in parallel to speed up the
-        calculations. Then we use ``nr_samples`` of the model and feature results
-        to calculate the mean, variance, and 5th and 95th percentile for the model
-        and each feature. Lastly, we use all calculated model and each feature
-        results to calculate the Sobol indices using Saltellie's approach.
+        parameter samples using Saltelli's sampling scheme ([1]_). We require
+        this number of samples to be able to calculate the Sobol indices. We
+        evaluate the model for each of these parameter samples and calculate the
+        features from each of the model results. This step is performed in
+        parallel to speed up the calculations. Then we use ``nr_samples`` of
+        the model and feature results to calculate the mean, variance, and 5th
+        and 95th percentile for the model and each feature. Lastly, we use all
+        calculated model and each feature results to calculate the Sobol indices
+        using Saltellie's approach.
 
         References
         ----------

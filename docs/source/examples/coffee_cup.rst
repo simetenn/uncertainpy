@@ -73,10 +73,11 @@ pass to ``Parameters``:
 We can now calculate the uncertainty and sensitivity using polynomial chaos
 expansions with point collocation,
 which is the default option of ``quantify``.
+We set the seed to easier be able to reproduce the result.
 
 .. literalinclude:: ../../../examples/coffee_cup/uq_coffee_function.py
     :language: python
-    :lines: 37-42
+    :lines: 37-43
 
 The complete code becomes:
 
@@ -116,4 +117,4 @@ While the rest is unchanged:
 
 .. literalinclude:: ../../../examples/coffee_cup/uq_coffee_class.py
     :language: python
-    :lines: 34-47
+    :lines: 34-50

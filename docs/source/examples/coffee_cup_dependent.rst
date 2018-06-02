@@ -59,10 +59,12 @@ when we set up the uncertainty quantification
     :lines: 37-39
 
 
-To be able to use polynomial chaos methods when we have dependent parameters
-we need to use the Rosenblatt transformation, which we enable by::
+The Rosenblatt transformation is by default automatically used we have the
+parameters that are dependent. We also set the seed to easier be able to reproduce the result.
 
-    data = UQ.quantify(rosenblatt=True)
+.. literalinclude:: ../../../examples/coffee_cup_dependent/uq_coffee_dependent_function.py
+    :language: python
+    :lines: 37-44
 
 The complete code example become:
 
