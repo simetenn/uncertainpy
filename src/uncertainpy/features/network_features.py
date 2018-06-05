@@ -151,7 +151,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         unit_string = str(units).split()[1]
 
         implemented_labels = {"cv": ["Neuron nr", "Coefficient of variation"],
-                              "average_cv": ["average coefficient of variation"],
+                              "average_cv": ["Average coefficient of variation"],
                               "average_isi": ["Average interspike interval ({})".format(unit_string)],
                               "local_variation": ["Neuron nr", "Local variation"],
                               "average_local_variation": ["Mean local variation"],
@@ -295,7 +295,6 @@ class NetworkFeatures(GeneralNetworkFeatures):
         for spiketrain in spiketrains:
             if len(spiketrain) > 1:
                 isi.append(np.mean(elephant.statistics.isi(spiketrain)))
-
 
         return None, np.mean(isi)
 
