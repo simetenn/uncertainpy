@@ -1,6 +1,6 @@
 import nest
 
-def brunel_network(eta, g, delay, J_E):
+def brunel_network(eta=2, g=2, delay=1.5, J_E=0.1):
     """
     A brunel network, from:
 
@@ -13,16 +13,15 @@ def brunel_network(eta, g, delay, J_E):
 
     Parameters
     ----------
-    g : {int, float}, optional
-        Ratio inhibitory weight/excitatory weight. Default is 5.
     eta : {int, float}, optional
         External rate relative to threshold rate. Default is 2.
+    g : {int, float}, optional
+        Ratio inhibitory weight/excitatory weight. Default is 5.
     delay : {int, float}, optional
         Synaptic delay in ms. Default is 1.5.
     J_E : {int, float}, optional
         Amplitude of excitatory postsynaptic current. Default is 0.1
     """
-
     # Network parameters
     N_rec = 20             # Record from 20 neurons
     simulation_end = 1000  # Simulation time
@@ -104,7 +103,11 @@ def brunel_network(eta, g, delay, J_E):
     spiketrains = []
     for sender in nodes_E[:N_rec]:
         spiketrain = events_E["times"][events_E["senders"] == sender]
-        spiketrain = spiketrain[spiketrain > cutoff]
+        spiketrain = spiketrain[spiketrain > cutoff] - cutoff
         spiketrains.append(spiketrain)
 
+    simulation_end -= cutoff
+
     return simulation_end, spiketrains
+
+
