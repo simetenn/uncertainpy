@@ -178,7 +178,6 @@ tornado==4.5.3
 tqdm==4.23.4
 traitlets==4.3.2
 typing==3.6.2
--e git+git@github.com:simetenn/uncertainpy.git@3f66890a616e4f5504463c2dddffc6428810b613#egg=uncertainpy
 unicodecsv==0.14.1
 urllib3==1.22
 wcwidth==0.1.7
