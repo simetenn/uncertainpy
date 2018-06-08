@@ -64,9 +64,11 @@ for polynomial_order in polynomial_orders_3:
                        save=False)
 
     name = "pc_" + str(polynomial_order)
-    sobol_evaluations = len(data["valderrama"].evaluations)
-    data["valderrama"].evaluations = [sobol_evaluations, sobol_evaluations]
+    nr_evaluations = len(data["valderrama"].evaluations)
+    data["valderrama"].evaluations = [nr_evaluations, nr_evaluations]
     data.save(folder + name + ".h5")
+
+
 
 
 model = un.Model(run=valderrama,
@@ -94,7 +96,7 @@ parameters.set_all_distributions(un.uniform(0.2))
 
 # Setup the uncertainty quantification
 UQ = un.UncertaintyQuantification(model,
-                                  parameters=parameters, CPUs=8)
+                                  parameters=parameters)
 
 
 folder = "data/parameters_11/"
@@ -128,6 +130,5 @@ for polynomial_order in polynomial_orders_11:
 
     name = "pc_" + str(polynomial_order)
     nr_evaluations = len(data["valderrama"].evaluations)
-    sobol_evaluations = len(data["valderrama"].evaluations)
-    data["valderrama"].evaluations = [sobol_evaluations, sobol_evaluations]
+    data["valderrama"].evaluations = [nr_evaluations, nr_evaluations]
     data.save(folder + name + ".h5")
