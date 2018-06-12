@@ -612,7 +612,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.values = [spiketrain, spiketrain, spiketrain, np.array([1])]
 
         self.implemented_features = ["cv", "average_cv", "binned_isi",
-                                     "average_isi", "local_variation", "mean_firing_rate",
+                                     "average_isi", "local_variation", "average_firing_rate",
                                      "fanofactor", "instantaneous_rate",
                                      "van_rossum_dist", "victor_purpura_dist",
                                      "corrcoef", "covariance", "average_local_variation"]
@@ -737,8 +737,8 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertEqual(mean, values)
 
 
-    def test_mean_firing_rate(self):
-        time, values = self.features.mean_firing_rate(self.time, self.spiketrains)
+    def test_average_firing_rate(self):
+        time, values = self.features.average_firing_rate(self.time, self.spiketrains)
 
         self.assertIsNone(time)
         self.assertTrue(np.array_equal([500, 500, 500, 125], values))

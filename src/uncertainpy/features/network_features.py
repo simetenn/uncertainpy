@@ -104,8 +104,8 @@ class NetworkFeatures(GeneralNetworkFeatures):
     Implemented features are:
 
     ======================= ======================= =======================
-    cv                      average_cv                 average_isi,
-    local_variation mean    local_variation         mean_firing_rate
+    cv                      average_cv              average_isi,
+    local_variation mean    local_variation         average_firing_rate
     instantaneous_rate      fanofactor              van_rossum_dist
     victor_purpura_dist     binned_isi              corrcoef
     covariance
@@ -155,7 +155,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
                               "average_isi": ["Average interspike interval ({})".format(unit_string)],
                               "local_variation": ["Neuron nr", "Local variation"],
                               "average_local_variation": ["Mean local variation"],
-                              "mean_firing_rate": ["Neuron nr", "Rate (Hz)"],
+                              "average_firing_rate": ["Neuron nr", "Rate (Hz)"],
                               "instantaneous_rate": ["Time (ms)", "Neuron nr", "Rate (Hz)"],
                               "fanofactor": ["Fanofactor"],
                               "van_rossum_dist": ["Neuron nr", "Neuron nr", ""],
@@ -360,7 +360,7 @@ class NetworkFeatures(GeneralNetworkFeatures):
         return None, np.mean(local_variation)
 
 
-    def mean_firing_rate(self, simulation_end, spiketrains):
+    def average_firing_rate(self, simulation_end, spiketrains):
         """
         Calculate the mean firing rate.
 
@@ -374,20 +374,20 @@ class NetworkFeatures(GeneralNetworkFeatures):
         Returns
         -------
         time : None
-        mean_firing_rate : float
+        average_firing_rate : float
             The mean firing rate of all neurons.
         """
-        mean_firing_rates = []
+        average_firing_rates = []
 
         if len(spiketrains) == 0:
             return None, None
 
         for spiketrain in spiketrains:
-            mean_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
-            mean_firing_rate.units = pq.Hz
-            mean_firing_rates.append(mean_firing_rate.magnitude)
+            average_firing_rate = elephant.statistics.mean_firing_rate(spiketrain)
+            average_firing_rate.units = pq.Hz
+            average_firing_rates.append(average_firing_rate.magnitude)
 
-        return None, mean_firing_rates
+        return None, average_firing_rates
 
 
     def instantaneous_rate(self, simulation_end, spiketrains):
