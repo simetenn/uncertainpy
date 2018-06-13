@@ -1,7 +1,7 @@
 import uncertainpy as un
-import chaospy as cp
-from scipy.integrate import odeint
-import numpy as np
+import chaospy as cp                       # To create distributions
+import numpy as np                         # For the time array
+from scipy.integrate import odeint         # To integrate our equation
 
 
 # Create the coffee cup model
