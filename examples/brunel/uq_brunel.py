@@ -11,22 +11,22 @@ from brunel import brunel_network
 # for the model results require much time and memory.
 model = un.NestModel(run=brunel_network, ignore=True)
 
+
+
 # Parametes for the synchronous regular (SR) state
 parameters = {"eta": cp.Uniform(1.5, 3.5),
               "g": cp.Uniform(1, 3),
-              "delay": cp.Uniform(1.5, 3),
-              "J_E": cp.Uniform(0.05, 0.15)}
+              "delay": cp.Uniform(1.5, 3)}
 parameters_SR = un.Parameters(parameters)
 
 # Parameter for the asynchronous irregular (AI) state
 parameters = {"eta": cp.Uniform(1.5, 2.2),
               "g": cp.Uniform(5, 8),
-              "delay": cp.Uniform(1.5, 3),
-              "J_E": cp.Uniform(0.05, 0.15)}
+              "delay": cp.Uniform(1.5, 3)}
 parameters_AI = un.Parameters(parameters)
 
 # Initialize network features
-features = un.NetworkFeatures(features_to_run=["mean_isi"])
+features = un.NetworkFeatures()
 
 # Set up the problem
 UQ = un.UncertaintyQuantification(model,
@@ -39,6 +39,7 @@ UQ = un.UncertaintyQuantification(model,
 UQ.quantify(figure_folder="figures_brunel_SR",
             filename="brunel_SR",
             seed=10)
+
 
 # Change the set of parameters
 UQ.parameters = parameters_AI
