@@ -504,7 +504,7 @@ class TestUncertainty(TestCasePlot):
         self.compare_plot("TestingModel1d_single-parameter-b/feature1d_var_prediction-interval")
 
 
-    def test_var_var_carlo_single(self):
+    def test_var_monte_carlo_single(self):
         parameter_list = [["a", 1, None],
                           ["b", 2, None]]
 
