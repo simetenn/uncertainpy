@@ -1368,7 +1368,7 @@ class UncertaintyCalculations(ParameterBase):
             approximation. If None, all uncertain parameters are used.
             Default is None.
         nr_samples : int, optional
-            Number of samples for the Monte Carlo sampling.
+            Number of samples for the quasi-Monte Carlo sampling.
             Default is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
@@ -1412,12 +1412,12 @@ class UncertaintyCalculations(ParameterBase):
 
 
         In the quasi-Monte Carlo method we quasi-randomly draw
-        ``nr_samples*(nr_uncertain_parameters + 2)`` (nr_samples=10**4 by default)
+        ``(nr_samples/2)*(nr_uncertain_parameters + 2)`` (nr_samples=10**4 by default)
         parameter samples using Saltelli's sampling scheme ([1]_). We require
         this number of samples to be able to calculate the Sobol indices. We
         evaluate the model for each of these parameter samples and calculate the
         features from each of the model results. This step is performed in
-        parallel to speed up the calculations. Then we use ``nr_samples`` of
+        parallel to speed up the calculations. Then we use nr_samples` of
         the model and feature results to calculate the mean, variance, and 5th
         and 95th percentile for the model and each feature. Lastly, we use all
         calculated model and each feature results to calculate the Sobol indices
@@ -1459,7 +1459,9 @@ class UncertaintyCalculations(ParameterBase):
 
         dist_R = cp.J(*dist_R)
 
-        nodes_R = saltelli.sample(problem, nr_samples, calc_second_order=False)
+        nr_sobol_samples = int(np.round(nr_samples/2.))
+
+        nodes_R = saltelli.sample(problem, nr_sobol_samples, calc_second_order=False)
 
         nodes = distribution.inv(dist_R.fwd(nodes_R.transpose()))
 
@@ -1469,16 +1471,19 @@ class UncertaintyCalculations(ParameterBase):
         data.method = "monte carlo method. nr_samples={}".format(nr_samples)
         data.seed = seed
 
-
         logger = get_logger(self)
         for feature in data:
             if feature == self.model.name and self.model.ignore:
                 continue
 
             # Only use A to calculate the mean and variance
-            A, B, AB = self.separate_output_values(data[feature].evaluations, len(uncertain_parameters), nr_samples)
+            A, B, AB = self.separate_output_values(data[feature].evaluations,
+                                                   len(uncertain_parameters),
+                                                   nr_sobol_samples)
 
-            masked_evaluations, mask = self.create_mask(A)
+            independent_evaluations = np.concatenate([A, B])
+
+            masked_evaluations, mask = self.create_mask(independent_evaluations)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 data[feature].mean = np.mean(masked_evaluations, 0)
@@ -1501,12 +1506,14 @@ class UncertaintyCalculations(ParameterBase):
                         masked_mean_evaluations[i] = data[feature].mean
 
                     if not np.all(mask):
-                        logger.warning("{}: not all parameter combinations give results.".format(feature) +
-                                    " numpy.nan results are set to the mean when calculating the Sobol indices." +
-                                    " This might affect the Sobol indices.")
+                        logger.warning("{}: not all parameter combinations give results. ".format(feature) +
+                                       "numpy.nan results are set to the mean when calculating the Sobol indices. " +
+                                       "This might affect the Sobol indices.")
 
 
-                    sobol_first, sobol_total = self.mc_calculate_sobol(masked_mean_evaluations, len(uncertain_parameters), nr_samples)
+                    sobol_first, sobol_total = self.mc_calculate_sobol(masked_mean_evaluations,
+                                                                       len(uncertain_parameters),
+                                                                       nr_sobol_samples)
                     data[feature].sobol_first = sobol_first
                     data[feature].sobol_total = sobol_total
                     data = self.average_sensitivity(data, sensitivity="sobol_first")

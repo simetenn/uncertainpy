@@ -1406,7 +1406,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 logger_level="error")
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=10)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=10, seed=10)
 
         # Rough tests
         self.assertTrue(np.allclose(data["TestingModel1d"]["mean"],
@@ -1455,7 +1455,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples, seed=10)
 
         self.assertTrue(np.array_equal(data["feature0d"]["mean"],
                                        features.feature0d(None, None)[1]))
@@ -1488,7 +1488,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
 
 
-        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples)
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples, seed=10)
 
         self.assertTrue(np.array_equal(data["feature1d"]["mean"],
                                        features.feature1d(None, None)[1]))
@@ -1561,7 +1561,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 logger_level="error")
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples,
-                                                         allow_incomplete=False)
+                                                         allow_incomplete=False,
+                                                         seed=10)
 
         self.assertEqual(data.incomplete, ["TestingModelIncomplete"])
         self.assertIsNone(data["TestingModelIncomplete"].mean)
@@ -1599,7 +1600,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                 logger_level="error")
 
         data = self.uncertainty_calculations.monte_carlo(nr_samples=self.nr_mc_samples,
-                                                         allow_incomplete=True)
+                                                         allow_incomplete=True,
+                                                         seed=10)
 
         self.assertEqual(data.incomplete, ["model"])
 

@@ -262,10 +262,13 @@ class UncertaintyQuantification(ParameterBase):
         nr_pc_mc_samples : int, optional
             Number of samples for the Monte Carlo sampling of the polynomial
             chaos approximation, if the polynomial chaos method is chosen.
-        nr_mc_samples : int, optional
-            Number of samples for the Monte Carlo sampling, if the quasi-Monte
-            Carlo method is chosen.
             Default is 10**4.
+        nr_mc_samples : int, optional
+            Number of samples for the quasi-Monte Carlo sampling, if the quasi-Monte
+            Carlo method is chosen. `nr_mc_samples` is used for the uncertainty
+            quantification and ``(nr_mc_samples/2)*(nr_uncertain_parameters + 2)``
+            samples is used for the sensitivity analysis. Default `nr_mc_samples`
+            is 10**4.
         allow_incomplete : bool, optional
             If the polynomial approximation should be performed for features or
             models with incomplete evaluations.
@@ -342,6 +345,18 @@ class UncertaintyQuantification(ParameterBase):
         high enough. The pseudo-spectral method on the other hand, is sensitive
         to missing values, so `allow_incomplete` should be used with care in
         that case.
+
+        In the quasi-Monte Carlo method we quasi-randomly draw
+        ``(nr_mc_samples/2)*(nr_uncertain_parameters + 2)``
+        (nr_mc_samples=10**4 by default) parameter samples using Saltelli's
+        sampling scheme. We require this number of samples to be able to calculate
+        the Sobol indices. We evaluate the model for each of these parameter
+        samples and calculate the features from each of the model results. This
+        step is performed in parallel to speed up the calculations. Then we use
+        `nr_mc_samples` of the model and feature results to calculate the
+        mean, variance, and 5th and 95th percentile for the model and each
+        feature. Lastly, we use all calculated model and each feature results to
+        calculate the Sobol indices using Saltellie's approach.
 
         The plots created are intended as quick way to get an overview of the
         results, and not to create publication ready plots. Custom plots of the
@@ -685,9 +700,11 @@ class UncertaintyQuantification(ParameterBase):
             quantification. If None, all uncertain parameters are used.
             Default is None.
         nr_samples : int, optional
-            Number of samples for the Monte Carlo sampling, if the quasi-Monte
-            Carlo method is chosen.
-            Default is 10**4.
+            Number of samples for the quasi-Monte Carlo sampling.
+            `nr_samples` is used for the uncertainty
+            quantification and ``(nr_samples/2)*(nr_uncertain_parameters + 2)``
+            samples is used for the sensitivity analysis. Default `nr_samples`
+            is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -736,6 +753,18 @@ class UncertaintyQuantification(ParameterBase):
         uncertain parameters is low (less than around 20 uncertain parameters)
         polynomial chaos methods are much faster than Monte Carlo methods.
         Above this Monte Carlo methods are the best.
+
+        In the quasi-Monte Carlo method we quasi-randomly draw
+        ``(nr_samples/2)*(nr_uncertain_parameters + 2)``
+        (nr_samples=10**4 by default) parameter samples using Saltelli's
+        sampling scheme. We require this number of samples to be able to calculate
+        the Sobol indices. We evaluate the model for each of these parameter
+        samples and calculate the features from each of the model results. This
+        step is performed in parallel to speed up the calculations. Then we use
+        `nr_samples` of the model and feature results to calculate the
+        mean, variance, and 5th and 95th percentile for the model and each
+        feature. Lastly, we use all calculated model and each feature results to
+        calculate the Sobol indices using Saltellie's approach.
 
         The plots created are intended as quick way to get an overview of the
         results, and not to create publication ready plots. Custom plots of the
@@ -994,9 +1023,11 @@ class UncertaintyQuantification(ParameterBase):
             quantification. If None, all uncertain parameters are used.
             Default is None.
         nr_samples : int, optional
-            Number of samples for the Monte Carlo sampling, if the quasi-Monte
-            Carlo method is chosen.
-            Default is 10**4.
+            Number of samples for the quasi-Monte Carlo sampling.
+            `nr_samples` is used for the uncertainty
+            quantification and ``(nr_samples/2)*(nr_uncertain_parameters + 2)``
+            samples is used for the sensitivity analysis. Default `nr_samples`
+            is 10**4.
         seed : int, optional
             Set a random seed. If None, no seed is set.
             Default is None.
@@ -1044,6 +1075,18 @@ class UncertaintyQuantification(ParameterBase):
         uncertain parameters is low (less than around 20 uncertain parameters)
         polynomial chaos methods are much faster than Monte Carlo methods.
         Above this Monte Carlo methods are the best.
+
+        In the quasi-Monte Carlo method we quasi-randomly draw
+        ``(nr_samples/2)*(nr_uncertain_parameters + 2)``
+        (nr_samples=10**4 by default) parameter samples using Saltelli's
+        sampling scheme. We require this number of samples to be able to calculate
+        the Sobol indices. We evaluate the model for each of these parameter
+        samples and calculate the features from each of the model results. This
+        step is performed in parallel to speed up the calculations. Then we use
+        `nr_samples` of the model and feature results to calculate the
+        mean, variance, and 5th and 95th percentile for the model and each
+        feature. Lastly, we use all calculated model and each feature results to
+        calculate the Sobol indices using Saltellie's approach.
 
         The plots created are intended as quick way to get an overview of the
         results, and not to create publication ready plots. Custom plots of the
