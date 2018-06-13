@@ -6,7 +6,7 @@ from valderrama import valderrama
 
 reruns = 50
 
-exact_mc = 100000
+exact_mc = 200000
 mc_evaluations = [10, 100, 200, 300, 400, 500, 1000, 1500, 2000, 10000]
 polynomial_orders_3 = np.arange(1, 8)
 polynomial_orders_11 = np.arange(1, 5)
