@@ -2,6 +2,7 @@
 [run]
 source = src/uncertainpy
 omit = tests/*
+       src/uncertainpy/plotting/prettyplot/*
 
 [report]
 # Regexes for lines to exclude from consideration
