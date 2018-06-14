@@ -2,5 +2,8 @@ coverage:
   precision: 2
   round: nearest
 
+ignore:
+  - "src/uncertainpy/plotting/prettyplot"
+
 codecov:
   branch: master
