@@ -62,11 +62,11 @@ prettyPlot(mc_evaluations_3, mc_variance_errors_3, nr_colors=nr_colors, color=1,
 prettyPlot(mc_sobol_evaluations_3, mc_sobol_errors_3, nr_colors=nr_colors, color=1, linestyle=":", ax=axes[0], label="quasi-Monte Carlo, Sobol first")
 
 axes[0].set_title("A) 3 uncertain parameters", fontsize=titlesize)
-axes[0].set_ylabel("Integrated error", fontsize=labelsize)
+axes[0].set_ylabel("Average absolute relative\nerror over time", fontsize=labelsize)
 axes[0].set_xlabel("Number of model evaluations", fontsize=labelsize)
 axes[0].set_yscale("log")
-axes[0].set_xlim([-20, 2000])
-axes[0].set_ylim([10**-4, 10**6])
+axes[0].set_xlim([0, 2000])
+axes[0].set_ylim([5*10**-7, 10**11])
 axes[0].legend(fontsize=fontsize)
 
 
@@ -82,11 +82,11 @@ prettyPlot(mc_sobol_evaluations_11, mc_sobol_errors_11, nr_colors=nr_colors, col
 
 
 axes[1].set_title("B) 11 uncertain parameters", fontsize=titlesize)
-axes[1].set_ylabel("Integrated error", fontsize=labelsize)
+axes[1].set_ylabel("Average absolute relative\nerror over time", fontsize=labelsize)
 axes[1].set_xlabel("Number of model evaluations", fontsize=labelsize)
 axes[1].set_yscale("log")
-axes[1].set_xlim([-20, 5000])
-axes[1].set_ylim([10**-4, 10**6])
+axes[1].set_xlim([0, 10000])
+axes[1].set_ylim([10**-6, 10**14])
 axes[1].legend(fontsize=fontsize)
 
 plt.tight_layout()

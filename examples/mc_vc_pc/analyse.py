@@ -25,12 +25,14 @@ def calculate_error(glob_pattern, exact_data, base="data/"):
         sobol = data["valderrama"].sobol_first
 
         dt = data["valderrama"].time[1] - data["valderrama"].time[0]
+        T = data["valderrama"].time[-1] - data["valderrama"].time[0]
         nr_evaluations = data["valderrama"].evaluations[0]
         sobol_evaluations = data["valderrama"].evaluations[1]
 
-        mean_error = dt*np.sum(np.abs((exact_mean - mean)))
-        variance_error = dt*np.sum(np.abs((exact_variance - variance)))
-        sobol_error = dt*np.sum(np.abs((exact_sobol - sobol)), axis=1)
+        mean_error = dt*np.sum(np.abs((exact_mean - mean)/exact_mean))/T
+        variance_error = dt*np.sum(np.abs((exact_variance - variance)/exact_variance))/T
+        sobol_error = dt*np.sum(np.abs((exact_sobol - sobol)/exact_sobol), axis=1)/T
+
         sobol_error = np.mean(sobol_error)
 
         if nr_evaluations not in mean_errors:
@@ -68,7 +70,6 @@ def calculate_error(glob_pattern, exact_data, base="data/"):
 
 
     return sorted_nr_evaluations, average_mean_errors, average_variance_errors, sorted_sobol_evaluations, average_sobol_errors
-
 
 
 
