@@ -376,7 +376,7 @@ class TestNestModel(unittest.TestCase):
     def test_run(self):
         model = NestModel(brunel_network)
 
-        time, values = model.run(eta=2, g=5, delay=1.5, J_E=0.1)
+        time, values = model.run(eta=2, g=5, delay=1.5, J=0.1)
         correct_values = np.array([39.4,  54.9,  68.5,  80.8,  90.9])
 
         self.assertEqual(time, 100)

@@ -5,7 +5,7 @@ try:
 except ImportError:
     nest_prerequisite = False
 
-def brunel_network(eta, g, delay, J_E):
+def brunel_network(eta, g, delay, J):
     """
     A brunel network, from:
 
@@ -24,7 +24,7 @@ def brunel_network(eta, g, delay, J_E):
         External rate relative to threshold rate. Default is 2.
     delay : {int, float}, optional
         Synaptic delay in ms. Default is 1.5.
-    J_E : {int, float}, optional
+    J : {int, float}, optional
         Amplitude of excitatory postsynaptic current. Default is 0.1
     """
 
@@ -43,9 +43,9 @@ def brunel_network(eta, g, delay, J_E):
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = int(N_E/10)      # Number of excitatory synapses per neuron
     C_I = int(N_I/10)      # Number of inhibitory synapses per neuron
-    J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
+    J_I = -g*J           # Amplitude of inhibitory postsynaptic current
 
-    nu_ex = eta*V_th/(J_E*C_E*tau_m)
+    nu_ex = eta*V_th/(J*C_E*tau_m)
     p_rate = 1000.0*nu_ex*C_E
 
     nest.ResetKernel()
@@ -78,7 +78,7 @@ def brunel_network(eta, g, delay, J_E):
 
     # Connect neurons to each other
     nest.CopyModel('static_synapse_hom_w', 'excitatory',
-                   {'weight':J_E, 'delay':delay})
+                   {'weight':J, 'delay':delay})
 
     nest.Connect(nodes_E, nodes,
                  {'rule': 'fixed_indegree', 'indegree': C_E},
