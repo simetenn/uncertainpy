@@ -1,15 +1,12 @@
 import nest
 
-def brunel_network(eta=2, g=2, delay=1.5, J_E=0.1):
+def brunel_network(eta=2, g=2, delay=1.5, J=0.1):
     """
-    A brunel network, from:
+    A sparsely connected recurrent network (Brunel).
 
     Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
     Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
     183-208 (2000).
-
-    Implementation adapted from:
-    http://www.nest-simulator.org/py_sample/random-balanced-network-exp-synapses-multiple-time-constants/
 
     Parameters
     ----------
@@ -19,8 +16,14 @@ def brunel_network(eta=2, g=2, delay=1.5, J_E=0.1):
         Ratio inhibitory weight/excitatory weight. Default is 5.
     delay : {int, float}, optional
         Synaptic delay in ms. Default is 1.5.
-    J_E : {int, float}, optional
+    J : {int, float}, optional
         Amplitude of excitatory postsynaptic current. Default is 0.1
+
+    Notes
+    -----
+    Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
+    Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
+    183-208 (2000).
     """
     # Network parameters
     N_rec = 20             # Record from 20 neurons
@@ -33,10 +36,10 @@ def brunel_network(eta=2, g=2, delay=1.5, J_E=0.1):
     N_neurons = N_E + N_I  # Number of neurons in total
     C_E = int(N_E/10)      # Number of excitatory synapses per neuron
     C_I = int(N_I/10)      # Number of inhibitory synapses per neuron
-    J_I = -g*J_E           # Amplitude of inhibitory postsynaptic current
+    J_I = -g*J             # Amplitude of inhibitory postsynaptic current
     cutoff = 100           # Cutoff to avoid transient effects, in ms
 
-    nu_ex = eta*V_th/(J_E*C_E*tau_m)
+    nu_ex = eta*V_th/(J*C_E*tau_m)
     p_rate = 1000.0*nu_ex*C_E
 
     nest.ResetKernel()
@@ -51,7 +54,6 @@ def brunel_network(eta=2, g=2, delay=1.5, J_E=0.1):
                       'E_L': 0.0,
                       'V_th': V_th,
                       'V_reset': 10.0})
-
 
     # Create neurons
     nodes   = nest.Create('iaf_psc_delta', N_neurons)
@@ -69,7 +71,7 @@ def brunel_network(eta=2, g=2, delay=1.5, J_E=0.1):
 
     # Connect neurons to each other
     nest.CopyModel('static_synapse_hom_w', 'excitatory',
-                   {'weight':J_E, 'delay':delay})
+                   {'weight':J, 'delay':delay})
     nest.Connect(nodes_E, nodes,
                  {'rule': 'fixed_indegree', 'indegree': C_E},
                  'excitatory')
