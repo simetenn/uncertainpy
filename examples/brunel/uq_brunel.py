@@ -12,7 +12,6 @@ from brunel import brunel_network
 model = un.NestModel(run=brunel_network, ignore=True)
 
 
-
 # Parametes for the synchronous regular (SR) state
 parameters = {"eta": cp.Uniform(1.5, 3.5),
               "g": cp.Uniform(1, 3),
