@@ -1,6 +1,9 @@
 # Folder for div tests
 random_tests/
 
+# Log files
+.log
+
 # Deprecated code
 deprecated
 
