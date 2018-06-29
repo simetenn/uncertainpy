@@ -14,7 +14,7 @@ def coffee_cup(kappa, T_env):
     def f(T, time, kappa, T_env):
         return -kappa*(T - T_env)
 
-    # Solving the equation by integration.
+    # Solving the equation by integration
     temperature = odeint(f, T_0, time, args=(kappa, T_env))[:, 0]
 
     # Return time and model output
@@ -28,11 +28,8 @@ model = un.Model(run=coffee_cup, labels=["Time (min)", "Temperature (C)"])
 kappa_dist = cp.Uniform(0.025, 0.075)
 T_env_dist = cp.Uniform(15, 25)
 
-# Define the parameters dictionary
+# Define the parameter dictionary
 parameters = {"kappa": kappa_dist, "T_env": T_env_dist}
-
-# and use it to create the parameters
-parameters = un.Parameters(parameters)
 
 # Set up the uncertainty quantification
 UQ = un.UncertaintyQuantification(model=model, parameters=parameters)

@@ -117,19 +117,15 @@ distributions:
 ![img](http://latex.codecogs.com/svg.latex?\begin{align*}%0D%0A\kappa%26%3D\mathrm{Uniform}(0.025%2C0.075)%2C\\\\%0D%0AT_{env}%26%3D\mathrm{Uniform}(15%2C25).%0D%0A\end{align*})
 
 
-We use Chaospy to create the distributions, and create a dictionary that we
-pass to `Parameters`:
+We use Chaospy to create the distributions, and create a parameter dictionary:
 
 ```python
 # Create the distributions
 kappa_dist = cp.Uniform(0.025, 0.075)
 T_env_dist = cp.Uniform(15, 25)
 
-# Define the parameters dictionary
+# Define the parameter dictionary
 parameters = {"kappa": kappa_dist, "T_env": T_env_dist}
-
-# and use it to create the parameters
-parameters = un.Parameters(parameters)
 ```
 
 We can now calculate the uncertainty and sensitivity using polynomial chaos
