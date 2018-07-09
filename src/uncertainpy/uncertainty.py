@@ -1252,7 +1252,7 @@ class UncertaintyQuantification(ParameterBase):
         else:
             self.plotting.data = self.data
             self.plotting.folder = folder
-            self.plotting.figureformat = ".png"
+            self.plotting.figureformat = figureformat
 
             if type.lower() == "condensed_first":
                 self.plotting.plot_condensed(sensitivity="sobol_first")
