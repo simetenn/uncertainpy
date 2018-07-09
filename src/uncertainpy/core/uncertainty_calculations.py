@@ -491,11 +491,12 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P, masked_nodes,
                                                    masked_weights, masked_evaluations)
-            else:
-                logger = get_logger(self)
+            elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
 
+            else:
+                logger.warning("{}: not all parameter combinations give results.".format(feature))
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -616,10 +617,12 @@ class UncertaintyCalculations(ParameterBase):
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P, masked_nodes,
                                                         masked_evaluations, rule="T")
-            else:
-                logger = get_logger(self)
+            elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
+
+            else:
+                logger.warning("{}: not all parameter combinations give results.".format(feature))
 
 
             if not np.all(mask):
@@ -778,10 +781,12 @@ class UncertaintyCalculations(ParameterBase):
                                                 masked_nodes,
                                                 masked_weights,
                                                 masked_evaluations)
+            elif not allow_incomplete:
+                logger.warning("{}: not all parameter combinations give results.".format(feature) +
+                               " No uncertainty quantification is performed since allow_incomplete=False")
+
             else:
-                logger = get_logger(self)
-                ogger.warning("{}: not all parameter combinations give results.".format(feature) +
-                              " No uncertainty quantification is performed since allow_incomplete=False")
+                logger.warning("{}: not all parameter combinations give results.".format(feature))
 
 
             if not np.all(mask):
@@ -919,10 +924,12 @@ class UncertaintyCalculations(ParameterBase):
                                                 masked_nodes,
                                                 masked_evaluations,
                                                 rule="T")
-            else:
-                logger = get_logger(self)
+            elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
+
+            else:
+                logger.warning("{}: not all parameter combinations give results.".format(feature))
 
             if not np.all(mask):
                 data.incomplete.append(feature)
@@ -1519,9 +1526,12 @@ class UncertaintyCalculations(ParameterBase):
                     data = self.average_sensitivity(data, sensitivity="sobol_first")
                     data = self.average_sensitivity(data, sensitivity="sobol_total")
 
-            else:
+            elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
+
+            else:
+                logger.warning("{}: not all parameter combinations give results.".format(feature))
 
             if not np.all(mask):
                 data.incomplete.append(feature)
