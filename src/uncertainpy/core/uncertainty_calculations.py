@@ -476,6 +476,8 @@ class UncertaintyCalculations(ParameterBase):
 
         data.method = "polynomial chaos expansion with the pseudo-spectral method. polynomial_order={}, quadrature_order={}".format(polynomial_order, quadrature_order)
 
+        logger = get_logger(self)
+
         U_hat = {}
         # Calculate PC for each feature
         for feature in tqdm(data,
@@ -603,6 +605,8 @@ class UncertaintyCalculations(ParameterBase):
         data = self.runmodel.run(nodes, uncertain_parameters)
 
         data.method = "polynomial chaos expansion with point collocation. polynomial_order={}, nr_collocation_nodes={}".format(polynomial_order, nr_collocation_nodes)
+
+        logger = get_logger(self)
 
         U_hat = {}
         # Calculate PC for each feature
@@ -753,6 +757,7 @@ class UncertaintyCalculations(ParameterBase):
 
         data.method = "polynomial chaos expansion with the pseudo-spectral method and the Rosenblatt transformation. polynomial_order={}, quadrature_order={}".format(polynomial_order, quadrature_order)
 
+        logger = get_logger(self)
 
         U_hat = {}
         # Calculate PC for each feature
@@ -908,6 +913,7 @@ class UncertaintyCalculations(ParameterBase):
 
         data.method = "polynomial chaos expansion with point collocation and the Rosenblatt transformation. polynomial_order={}, nr_collocation_nodes={}".format(polynomial_order, nr_collocation_nodes)
 
+        logger = get_logger(self)
 
         U_hat = {}
         # Calculate PC for each feature
@@ -1491,6 +1497,8 @@ class UncertaintyCalculations(ParameterBase):
             independent_evaluations = np.concatenate([A, B])
 
             masked_evaluations, mask = self.create_mask(independent_evaluations)
+
+            logger = get_logger(self)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 data[feature].mean = np.mean(masked_evaluations, 0)
