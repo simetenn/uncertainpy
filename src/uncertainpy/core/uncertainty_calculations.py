@@ -1624,7 +1624,7 @@ class UncertaintyCalculations(ParameterBase):
     def average_sensitivity(self, data, sensitivity="sobol_first"):
         """
         Calculate the average of the sensitivities for the model and all
-        features and add them to `data`. Ignores any occurences of numpy.NaN.
+        features and add them to `data`. Ignores any occurrences of numpy.NaN.
 
         Parameters
         ----------
