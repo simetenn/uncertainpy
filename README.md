@@ -170,9 +170,8 @@ and the uncertainty in T exclusively reflects the uncertainty of
 ## Documentation
 
 The documentation for Uncertainpy can be found at [http://uncertainpy.readthedocs.io](http://uncertainpy.readthedocs.io),
-and a preprint of an article for the Uncertainpy paper here:
-[Tennøe, S., Halnes, G. and Einevoll, G. T. (2018). bioRxiv 274779](https://www.biorxiv.org/content/early/2018/03/05/274779).
-
+and the Uncertainpy paper here:
+[Tennøe S, Halnes G and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049](https://www.frontiersin.org/articles/10.3389/fninf.2018.00049/full).
 ## Installation
 
 Uncertainpy works with both Python 2 and 3.
@@ -303,6 +302,4 @@ These can be installed with pip:
 ## Citation
 
 If you use Uncertainpy in your work, please cite:
-[
-Tennøe S, Halnes G and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049
-](https://www.frontiersin.org/articles/10.3389/fninf.2018.00049/full).
+[Tennøe S, Halnes G and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049](https://www.frontiersin.org/articles/10.3389/fninf.2018.00049/full).
