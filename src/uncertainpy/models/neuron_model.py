@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 
 import numpy as np
+import importlib
 
 from .model import Model
 from ..utils.logger import setup_module_logger, get_logger
@@ -153,6 +154,26 @@ class NeuronModel(Model):
 
 
 
+    def load_python(self):
+        """
+        Import a Python neuron simulation.
+        """
+        current_dir = os.getcwd()
+        os.chdir(self.path)
+
+        file = self.file.strip(".py")
+        module_path = os.path.join(self.path, file)
+        module_name = module_path.replace(os.sep, ".")
+
+        module = importlib.import_module(module_name)
+        model = getattr(module, self.name)
+
+        os.chdir(current_dir)
+
+        return model
+
+
+
     # Be really careful with these. Need to make sure that all references to
     # neuron are inside this class
     def _record(self, ref_data):
@@ -250,6 +271,16 @@ class NeuronModel(Model):
 
 
     def _run(self, **parameters):
+        if self.file.endswith(".hoc"):
+            result = self.run_neuron(**parameters)
+
+        elif self.file.endswith(".py"):
+            result = self.run_python(**parameters)
+
+        return result
+
+
+    def run_neuron(self, **parameters):
         self.load_neuron()
 
         self.set_parameters(parameters)
@@ -260,13 +291,29 @@ class NeuronModel(Model):
         self.h.run()
 
         values = np.array(self.h.voltage_soma.to_python())
-        # values = self._to_array(self.V)
         time = self._to_array(self.time)
 
-        # self.V.resize(0)
-        # self.time.resize(0)
-
         return time, values, self.info
+
+
+
+    def run_python(self, **parameters):
+
+        model = self.load_python()
+
+        result = model(**parameters)
+
+        result = list(result)
+        # Update info dict if it exists.
+        # Info from the model are prioritized
+        if len(result) == 3 and isinstance(result[2], dict):
+            tmp_info = self.info.copy()
+            tmp_info.update(result[2])
+
+            result[2] = tmp_info
+        print(result)
+
+        return result
 
 
     def set_parameters(self, parameters):
