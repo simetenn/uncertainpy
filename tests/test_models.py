@@ -322,6 +322,89 @@ class TestNeuronModel(unittest.TestCase):
         self.assertIn("interpolation", result["NeuronModel"].keys())
 
 
+    def test_load_neuron_model(self):
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            "models/interneuron_modelDB/")
+
+        model = NeuronModel(path=path,
+                            interpolate=True,
+                            logger_level="error")
+
+        model.load_neuron(path=path, file="mosinit.hoc")
+
+
+    def test_run_neuron_model(self):
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                            "models/interneuron_modelDB/")
+
+        model = NeuronModel(path=path,
+                            interpolate=True,
+                            logger_level="error",
+                            stimulus_start=100)
+
+        uncertain_parameters = {"cap": 1, "Rm": 22000}
+
+        time, values, info = model.run_neuron(**uncertain_parameters)
+
+        self.assertIsInstance(time, np.ndarray)
+        self.assertIsInstance(values, np.ndarray)
+        self.assertEqual(info, {"stimulus_start": 100})
+
+
+
+    def test_load_python(self):
+        path = os.path.join("tests", "testing_classes")
+        file="load_python_test"
+        name="testing"
+
+        model = NeuronModel(path=path,
+                            logger_level="error")
+
+        loaded_model = model.load_python(path=path, file=file, name=name)
+
+        time, values = loaded_model(a=1, b=2)
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+
+
+
+    def test_run_python_model(self):
+        path = os.path.join("tests", "testing_classes")
+
+        model = NeuronModel(path=path,
+                            file="load_python_test",
+                            name="testing",
+                            logger_level="error",
+                            stimulus_start=100)
+
+        uncertain_parameters = {"cap": 1, "Rm": 22000}
+
+        time, values, info = model.run_python(**uncertain_parameters)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+        self.assertEqual(info, {"stimulus_start": 100})
+
+
+    def test_run_python_model_update_info(self):
+        path = os.path.join("tests", "testing_classes")
+
+        model = NeuronModel(path=path,
+                            file="load_python_test",
+                            name="testing_info",
+                            logger_level="error",
+                            stimulus_start=100)
+
+        uncertain_parameters = {"cap": 1, "Rm": 22000}
+
+        time, values, info = model.run_python(**uncertain_parameters)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "values")
+        self.assertEqual(info["stimulus_start"], 100)
+        self.assertEqual(info["info"], True)
+
+
     def test_runmodel(self):
         path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                             "models/interneuron_modelDB/")
@@ -351,6 +434,8 @@ class TestNeuronModel(unittest.TestCase):
                          len(result["NeuronModel"].evaluations[2]))
 
         self.assertIsInstance(result["NeuronModel"].time, np.ndarray)
+
+
 
 
 class TestNestModel(unittest.TestCase):
