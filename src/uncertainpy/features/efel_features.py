@@ -87,6 +87,8 @@ class EfelFeatures(Features):
         missing from `info`.
     ValueError
         If stimulus_start >= stimulus_end.
+    ImportError
+        If Efel is not installed.
 
     Notes
     -----

@@ -95,6 +95,10 @@ class GeneralNetworkFeatures(Features):
         A list of spiketrains, each spiketrain is a list of the times when
         a given neuron spikes.
 
+    Raises
+    ------
+    ImportError
+        If neo or quantities is not installed.
 
     See also
     --------

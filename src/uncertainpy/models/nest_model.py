@@ -54,6 +54,12 @@ class NestModel(Model):
         Ignore the model results when calculating uncertainties, which means the
         uncertainty is not calculated for the model. The model results are still
         postprocessed. Default is False.
+
+    Raises
+    ------
+    ImportError
+        If nest is not installed.
+
     See Also
     --------
     uncertainpy.models.NestModel.run

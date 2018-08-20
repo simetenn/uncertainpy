@@ -625,6 +625,13 @@ class Data(collections.MutableMapping):
         ----------
         filename : str
             Name of the file to load data from.
+
+        Raises
+        ------
+        ImportError
+            If h5py is not installed.
+        ImportError
+            If Exdir is not installed.
         """
         logger = get_logger(self)
 
@@ -709,6 +716,13 @@ class Data(collections.MutableMapping):
         ----------
         filename : str
             Name of the file to load data from.
+
+        Raises
+        ------
+        ImportError
+            If h5py is not installed.
+        ImportError
+            If Exdir is not installed.
         """
         logger = get_logger(self)
 

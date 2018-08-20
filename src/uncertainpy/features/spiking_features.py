@@ -95,6 +95,11 @@ class SpikingFeatures(GeneralSpikingFeatures):
     strict : bool
         If missing info values should raise an error.
 
+    Raises
+    ------
+    ImportError
+        If scipy is not installed.
+
     Notes
     -----
     The implemented features are:

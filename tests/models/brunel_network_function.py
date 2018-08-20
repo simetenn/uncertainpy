@@ -26,6 +26,11 @@ def brunel_network(eta, g, delay, J):
         Synaptic delay in ms. Default is 1.5.
     J : {int, float}, optional
         Amplitude of excitatory postsynaptic current. Default is 0.1
+
+    Raises
+    ------
+    ImportError
+        If nest is not installed.
     """
 
     if not nest_prerequisite:

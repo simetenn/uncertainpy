@@ -394,6 +394,10 @@ class RunModel(ParameterBase):
 
                 results = [result 1, result 2, ..., result N]
 
+        Raises
+        ------
+        ImportError
+            If xvfbwrapper is not installed.
         """
         if self.model.suppress_graphics:
             if not prerequisites:

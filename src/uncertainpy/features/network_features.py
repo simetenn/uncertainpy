@@ -126,6 +126,11 @@ class NetworkFeatures(GeneralNetworkFeatures):
         A list of spiketrains, each spiketrain is a list of the times when
         a given neuron spikes.
 
+    Raises
+    ------
+    ImportError
+        If elephant or quantities is not installed.
+
     See also
     --------
     uncertainpy.features.Features.reference_feature : reference_feature showing the requirements of a feature function.
