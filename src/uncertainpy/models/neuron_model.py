@@ -129,44 +129,78 @@ class NeuronModel(Model):
 
 
 
-    def load_neuron(self):
+    def load_neuron(self, path, file):
         """
-        Import neuron and load neuron simulation file.
+        Import neuron and a neuron simulation file.
+
+        Parameters
+        ----------
+        file : str
+            Filename of the Neuron model. must be a ``.hoc`` file.
+        path : str
+            Path to the Neuron model.
+
+        Returns
+        -------
+        h : Neuron object
+            Neurons h object.
+
+        Raises
+        ------
+        ImportError
+            If neuron is not installed.
         """
         current_dir = os.getcwd()
-        os.chdir(self.path)
+        os.chdir(path)
 
         try:
             import neuron
         except ImportError:
             raise ImportError("NeuronModel requires: neuron")
 
-        self.h = neuron.h
+        h = neuron.h
 
-        # self.h("forall delete_section()")
-        self.h.load_file(0, self.file.encode())
-        # self.h.xopen(self.file.encode())
-        # for section in self.h.allsec():
-        #     print(section)
-        # self.h.topology()
+        h.load_file(0, file.encode())
 
         os.chdir(current_dir)
 
+        return h
 
 
-    def load_python(self):
+
+    def load_python(self, path, file, name):
         """
-        Import a Python neuron simulation.
+        Import a Python neuron simulation located in function in `path`/`file`
+        with name `name`.
+
+        Parameters
+        ----------
+        file : str
+            Filename of the Neuron model. must be a ``.hoc`` file.
+        path : str
+            Path to the Neuron model.
+        name : str
+            Name of the run function.
+
+        Returns
+        -------
+        model : a run function
+            A python function imported from `path`/`file` with name `name`.
+
+        See also
+        --------
+        uncertainpy.models.Model.run : Requirements for the model run function.
         """
         current_dir = os.getcwd()
-        os.chdir(self.path)
+        os.chdir(path)
 
-        file = self.file.strip(".py")
-        module_path = os.path.join(self.path, file)
+        file = file.strip(".py")
+        module_path = os.path.join(path, file)
+        module_path = module_path.strip(os.sep)
         module_name = module_path.replace(os.sep, ".")
 
         module = importlib.import_module(module_name)
-        model = getattr(module, self.name)
+        model = getattr(module, name)
 
         os.chdir(current_dir)
 
@@ -246,12 +280,14 @@ class NeuronModel(Model):
     @Model.run.setter
     def run(self, new_run):
         """
-        Load and run a Neuron simulation and return the model result.
+        Load, either from a NEURON or Python file, and run a Neuron simulation
+        and return the model result.
 
         Parameters
         ----------
         **parameters : A number of named arguments (name=value).
-            The parameters of the model which are set in Neuron.
+            The parameters of the model which are either set in Neuron or
+            given as arguments to the Python run function.
 
         Returns
         -------
@@ -259,12 +295,30 @@ class NeuronModel(Model):
             Time values of the model.
         values : array
             Voltage of the neuron. Note that `values` must either be regular
-            (have the same number of points for different paramaters) or be able
+            (have the same number of points for different parameters) or be able
             to be interpolated.
         info : dictionary
             A dictionary with information needed by features.
-            Efel features require ``"stimulus_start"`` and ``"stimulus_end"``
-            as keys, while spiking_features require ``stimulus_start"``.
+            ``"stimulus_start"`` and ``"stimulus_end"`` are returned in the info
+            dictionary if they are given as parameters to ``NeuronModel``.
+            If a info dictionary is returned by the model function it is updated
+            with ``"stimulus_start"`` and ``"stimulus_end"`` if they are given
+            as parameters to ``NeuronModel``.
+
+        Notes
+        -----
+        The Python neuron simulation is located in  a function in `path`/`file`
+        and name `name`. At least `file` and `name` must be given.
+
+        A NEURON simulation is located in a ``.hoc`` file and returns the
+        model voltage in soma.
+
+        Efel features require ``"stimulus_start"`` and ``"stimulus_end"``
+        as keys, while spiking_features require ``stimulus_start"``.
+
+        See also
+        --------
+        uncertainpy.models.Model.run : Requirements for the model run function.
         """
         Model.run.fset(self, new_run)
 
@@ -281,7 +335,43 @@ class NeuronModel(Model):
 
 
     def run_neuron(self, **parameters):
-        self.load_neuron()
+        """
+        Load and run a Neuron simulation from a ``.hoc`` file and return the
+        model voltage in soma.
+
+        Parameters
+        ----------
+        **parameters : A number of named arguments (name=value).
+            The parameters of the model which are set in Neuron.
+
+        Returns
+        -------
+        time : array
+            Time values of the model.
+        values : array
+            Voltage of the neuron. Note that `values` must either be regular
+            (have the same number of points for different parameters) or be able
+            to be interpolated.
+        info : dictionary
+            A dictionary with information needed by features. Efel features
+            require ``"stimulus_start"`` and ``"stimulus_end"``
+            as keys, while spiking_features require ``stimulus_start"``.
+        info : dictionary
+            A dictionary with information needed by features.
+            ``"stimulus_start"`` and ``"stimulus_end"`` are returned in the info
+            dictionary if they are given as parameters to ``NeuronModel``.
+
+        Notes
+        -----
+        Efel features require ``"stimulus_start"`` and ``"stimulus_end"``
+        as keys, while spiking_features require ``stimulus_start"``.
+
+        See also
+        --------
+        uncertainpy.models.Model.run : Requirements for the model run function.
+        """
+
+        self.h = self.load_neuron(self.path, self.file)
 
         self.set_parameters(parameters)
 
@@ -298,8 +388,42 @@ class NeuronModel(Model):
 
 
     def run_python(self, **parameters):
+        """
+        Load and run a Python function that contains a Neuron simulation and
+        return the model result. The Python neuron simulation is located in
+        a function in `path`/`file` and name `name`.
 
-        model = self.load_python()
+        Parameters
+        ----------
+        **parameters : A number of named arguments (name=value).
+            The parameters of the model which are sent to the Python function.
+
+        Returns
+        -------
+        time : array
+            Time values of the model.
+        values : array
+            Voltage of the neuron. Note that `values` must either be regular
+            (have the same number of points for different parameters) or be able
+            to be interpolated.
+        info : dictionary
+            A dictionary with information needed by features. If a info
+            dictionary is returned by the model function it is updated with
+            ``"stimulus_start"`` and ``"stimulus_end"`` if they are given as
+            parameters to ``NeuronModel``. If a info dictionary is not returned,
+            a info dictionary is added as the third return argument.
+
+        Notes
+        -----
+        Efel features require ``"stimulus_start"`` and ``"stimulus_end"``
+        as keys, while spiking_features require ``stimulus_start"``.
+
+        See also
+        --------
+        uncertainpy.models.Model.run : Requirements for the model run function.
+        """
+
+        model = self.load_python(self.path, self.file, self.name)
 
         result = model(**parameters)
 
@@ -311,7 +435,12 @@ class NeuronModel(Model):
             tmp_info.update(result[2])
 
             result[2] = tmp_info
-        print(result)
+
+        # Add info if no dict is present
+        elif len(result) == 2:
+            time, values = result
+            result = (time, values, self.info)
+
 
         return result
 
