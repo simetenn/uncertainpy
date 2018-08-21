@@ -66,8 +66,10 @@ class GeneralSpikingFeatures(Features):
     ----------
     spikes : Spikes object
         A Spikes object that contain all spikes.
-    threshold : {float, int}
+    threshold : {float, int, "auto"}, optional
         The threshold where the model result is considered to have a spike.
+        If "auto" the threshold is set to the standard variation of the
+        result. Default is -30.
     extended_spikes : bool
         If the found spikes should be extended further out than the threshold
         cuttoff.
