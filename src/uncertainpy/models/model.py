@@ -43,6 +43,8 @@ class Model(object):
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed.
         Default logger level is "info".
+    **model_kwargs
+        Any number of arguments passed to the model function when it is run.
 
     Attributes
     ----------
@@ -76,12 +78,15 @@ class Model(object):
                  postprocess=None,
                  ignore=False,
                  suppress_graphics=False,
-                 logger_level="info"):
+                 logger_level="info",
+                 **model_kwargs):
 
         self.interpolate = interpolate
         self.labels = labels
         self.ignore = ignore
         self.suppress_graphics = suppress_graphics
+
+        self.model_kwargs = model_kwargs
 
         if run is not None:
             self.run = run
@@ -213,6 +218,44 @@ class Model(object):
     def _run(self, **parameters):
         raise NotImplementedError("No run method implemented or set in {class_name}".format(class_name=__name__))
 
+
+    def evaluate(self, **parameters):
+        """
+        Run the model with parameters and default model_kwargs options,
+        and validate the result.
+
+        Parameters
+        ----------
+        **parameters : A number of named arguments (name=value).
+            The parameters of the model. These parameters must be assigned to
+            the model, either setting them with Python, or
+            assigning them to the simulator.
+
+        Returns
+        -------
+        time : {None, numpy.nan, array_like}
+            Time values of the model, if no time values returns None or
+            numpy.nan.
+        values : array_like
+            Result of the model. Note that `values` myst either be regular
+            (have the same number of points for different paramaters) or be able
+            to be interpolated.
+        info, optional
+            Any number of info objects that is passed on to feature calculations.
+            It is recommended to use a single dictionary with the information
+            stored as key-value pairs.
+            This is what the implemented features requires, as well as
+            require that specific keys to be present.
+
+        See also
+        --------
+        uncertainpy.models.Model.run : Requirements for the model run function.
+        """
+        model_result = self.run(**parameters, **self.model_kwargs)
+
+        self.validate_run(model_result)
+
+        return model_result
 
     @property
     def postprocess(self, *model_result):

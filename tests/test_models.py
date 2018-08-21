@@ -73,13 +73,16 @@ class TestModel(unittest.TestCase):
         model = Model(run=f,
                       interpolate=True,
                       labels=["test x", "text y"],
-                      logger_level="error")
+                      logger_level="error",
+                      test=12)
 
         self.assertEqual(model.run, f)
         self.assertEqual(model.labels, ["test x", "text y"])
         self.assertTrue(model.interpolate)
         self.assertEqual(model.name, "f")
         self.assertEqual(model.suppress_graphics, False)
+        self.assertEqual(model.model_kwargs, {"test": 12})
+
 
     def test_set_run(self):
         def f(x):
@@ -90,6 +93,32 @@ class TestModel(unittest.TestCase):
         model.run = f
         self.assertEqual(model.run, f)
         self.assertEqual(model.name, "f")
+
+
+    def test_evaluate(self):
+        def test_model(a=10, b=11, c=12):
+            return a + b, c
+
+        model = Model(test_model, c=22)
+
+        parameters = {"a": 0, "b": 1}
+        time, values = model.evaluate(**parameters)
+
+        self.assertEqual(time, 1)
+        self.assertEqual(values, 22)
+
+
+    def test_evaluate_validate_error(self):
+        def test_model(a=10, b=11, c=12):
+            return "123456"
+
+        model = Model(test_model, c=22)
+
+        parameters = {"a": 0, "b": 1}
+
+        with self.assertRaises(ValueError):
+            time, values = model.evaluate(**parameters)
+
 
 
     def test_validate_run(self):
@@ -159,6 +188,7 @@ class TestModel(unittest.TestCase):
 
         self.assertEqual(time, "time")
         self.assertEqual(values, "values")
+
 
 class TestHodgkinHuxleyModel(unittest.TestCase):
     def test_run(self):
@@ -259,7 +289,7 @@ class TestNeuronModel(unittest.TestCase):
                             name="interneuron",
                             stimulus_end=1000,
                             stimulus_start=1900,
-                            test=12,
+                            info={"test": 12},
                             logger_level="error")
 
         self.assertEqual(model.info["test"], 12)
@@ -354,7 +384,7 @@ class TestNeuronModel(unittest.TestCase):
 
     def test_load_python(self):
         path = os.path.join("tests", "testing_classes")
-        file="load_python_test"
+        file="load_python_test.py"
         name="testing"
 
         model = NeuronModel(path=path,
@@ -372,7 +402,7 @@ class TestNeuronModel(unittest.TestCase):
         path = os.path.join("tests", "testing_classes")
 
         model = NeuronModel(path=path,
-                            file="load_python_test",
+                            file="load_python_test.py",
                             name="testing",
                             logger_level="error",
                             stimulus_start=100)
@@ -386,11 +416,47 @@ class TestNeuronModel(unittest.TestCase):
         self.assertEqual(info, {"stimulus_start": 100})
 
 
-    def test_run_python_model_update_info(self):
+    def test_run_python_model(self):
         path = os.path.join("tests", "testing_classes")
 
         model = NeuronModel(path=path,
                             file="load_python_test",
+                            name="testing",
+                            logger_level="error",
+                            stimulus_start=100)
+
+        uncertain_parameters = {"cap": 1, "Rm": 22000}
+
+        with self.assertRaises(ValueError):
+            model.run(**uncertain_parameters)
+
+
+
+    def test_evaluate_python_model(self):
+        path = os.path.join("tests", "testing_classes")
+
+        model = NeuronModel(path=path,
+                            file="load_python_test.py",
+                            name="testing_default",
+                            logger_level="error",
+                            stimulus_start=100,
+                            test="test value")
+
+        uncertain_parameters = {"cap": 1, "Rm": 22000}
+
+        time, values, info = model.evaluate(**uncertain_parameters)
+
+        self.assertEqual(time, "time")
+        self.assertEqual(values, "test value")
+        self.assertEqual(info, {"stimulus_start": 100})
+
+
+
+    def test_run_python_model_update_info(self):
+        path = os.path.join("tests", "testing_classes")
+
+        model = NeuronModel(path=path,
+                            file="load_python_test.py",
                             name="testing_info",
                             logger_level="error",
                             stimulus_start=100)
@@ -466,6 +532,21 @@ class TestNestModel(unittest.TestCase):
 
         self.assertEqual(time, 100)
         self.assertTrue(np.allclose(values[0], correct_values, rtol=1e-5))
+
+
+    def test_evaluate(self):
+        def f(a, b):
+            return a, b
+
+        model = NestModel(run=f,
+                          b="test value")
+
+        uncertain_parameters = {"a": 1}
+
+        time, values = model.evaluate(**uncertain_parameters)
+
+        self.assertEqual(time, 1)
+        self.assertEqual(values, "test value")
 
 
     def test_postprocess(self):

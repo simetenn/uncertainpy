@@ -397,6 +397,23 @@ class TestParallel(unittest.TestCase):
                               scipy.interpolate.fitpack2.UnivariateSpline)
 
 
+    def test_run_kwargs(self):
+        def test_model(a=10, b=11, c=12):
+            return a + b, c
+
+        model = Model(test_model, c=22)
+
+        self.parallel.model = model
+        self.parallel.features = None
+
+        results = self.parallel.run(self.model_parameters)
+
+        self.assertEqual(results["test_model"]["time"], 1)
+        self.assertEqual(results["test_model"]["values"], 22)
+
+
+
+
     def test_run_interpolate(self):
         parallel = Parallel(model=TestingModelAdaptive(),
                             features=TestingFeatures(features_to_run="feature_interpolate"))

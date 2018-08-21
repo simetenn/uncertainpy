@@ -54,8 +54,10 @@ class NeuronModel(Model):
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
         Default logger level is "info".
-    **kwargs :
-        Additional key-value pairs added to info.
+    info : dict, optional
+        Dictionary added to info. Default is an empty dictionary.
+    **model_kwargs
+        Any number of arguments passed to the model function when it is run.
 
     Attributes
     ----------
@@ -96,25 +98,24 @@ class NeuronModel(Model):
                  labels=["Time (ms)", "Membrane potential (mV)"],
                  suppress_graphics=True,
                  logger_level="info",
-                 **kwargs):
+                 info={},
+                 **model_kwargs):
 
         super(NeuronModel, self).__init__(interpolate=interpolate,
                                           ignore=ignore,
                                           labels=labels,
-                                          suppress_graphics=suppress_graphics)
+                                          suppress_graphics=suppress_graphics,
+                                          **model_kwargs)
 
         self.file = file
         self.path = path
-        self.info = {}
+        self.info = info
 
         if stimulus_end:
             self.info["stimulus_end"] = stimulus_end
 
         if stimulus_start:
             self.info["stimulus_start"] = stimulus_start
-
-        for key in kwargs:
-            self.info[key] = kwargs[key]
 
         if run is not None:
             self.run = run
@@ -331,6 +332,8 @@ class NeuronModel(Model):
         elif self.file.endswith(".py"):
             result = self.run_python(**parameters)
 
+        else:
+            raise ValueError("Unknown fileformat on file: {}".format(self.file))
         return result
 
 

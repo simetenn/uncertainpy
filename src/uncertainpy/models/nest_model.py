@@ -40,6 +40,8 @@ class NestModel(Model):
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed.
         Default logger level is "info".
+    **model_kwargs
+        Any number of arguments passed to the model function when it is run.
 
     Attributes
     ----------
@@ -69,7 +71,8 @@ class NestModel(Model):
                  interpolate=False,
                  ignore=False,
                  labels=["Time (ms)", "Neuron nr", "Spiking probability"],
-                 logger_level="info"):
+                 logger_level="info",
+                 **model_kwargs):
 
 
         if not prerequisites:
@@ -78,7 +81,8 @@ class NestModel(Model):
         super(NestModel, self).__init__(run=run,
                                         interpolate=interpolate,
                                         ignore=ignore,
-                                        labels=labels)
+                                        labels=labels,
+                                        **model_kwargs)
 
         setup_module_logger(class_instance=self, level=logger_level)
 
