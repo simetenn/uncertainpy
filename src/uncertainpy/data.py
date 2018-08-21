@@ -661,7 +661,7 @@ class Data(collections.MutableMapping):
 
 
 
-        def add_evaluation(group, values, name="evaluation"):
+        def add_group(group, values, name="evaluation"):
             iteration = 0
 
             padding = len(str(len(values) + 1))
@@ -671,7 +671,11 @@ class Data(collections.MutableMapping):
                     group.create_dataset(name + "_{0:0{1}d}".format(iteration, padding), data=value)
                 except (TypeError, ValueError):
                     new_group = group.create_group(name + "_{0:0{1}d}".format(iteration, padding))
-                    add_evaluation(new_group, value, name="sub_evaluation")
+
+                    if not name.startswith("sub_"):
+                        new_name = "sub_" + name
+
+                    add_group(new_group, value, name=new_name)
 
                 iteration += 1
 
@@ -694,12 +698,12 @@ class Data(collections.MutableMapping):
             group = f.create_group(feature)
 
             for statistical_metric in self[feature]:
-                if statistical_metric == "evaluations":
+                if statistical_metric in ["evaluations", "time"]:
                     if is_regular(self[feature][statistical_metric]):
                         group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
                     else:
-                        evaluations_group = group.create_group("evaluations")
-                        add_evaluation(evaluations_group, self[feature][statistical_metric])
+                        evaluations_group = group.create_group(statistical_metric)
+                        add_group(evaluations_group, self[feature][statistical_metric], name=statistical_metric)
                 else:
                     group.create_dataset(statistical_metric, data=self[feature][statistical_metric])
 
@@ -802,7 +806,8 @@ class Data(collections.MutableMapping):
             self.add_features(str(feature))
             for statistical_metric in f[feature]:
 
-                if statistical_metric == "evaluations":
+
+                if statistical_metric in ["evaluations", "time"]:
                     values = f[feature][statistical_metric]
 
                     if isinstance(values, backend.Dataset):
