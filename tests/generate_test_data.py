@@ -333,9 +333,8 @@ def generate_data_data_irregular():  # pragma: no cover
         data["TestingModel1d"][data_type] = [3., 4.]
 
 
-    data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1],
-                                          3, [3, 4, 5], [1, 2], [], [3, 4, 5],
-                                          [], [3, 4, 5]]
+    data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
+    data["TestingModel1d"].time = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
 
     data["feature1d"]["labels"] = ["xlabel", "ylabel"]
     data["TestingModel1d"]["labels"] = ["xlabel", "ylabel"]

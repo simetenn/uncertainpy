@@ -255,6 +255,8 @@ class TestData(unittest.TestCase):
 
         self.data.model_ignore = True
         self.data["TestingModel1d"].evaluations = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
+        self.data["TestingModel1d"].time = [[1, 2], [np.nan], [1, [2, 3], 3], [1], 3, [3, 4, 5], [1, 2], [], [3, 4, 5], [], [3, 4, 5]]
+
 
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/test_save_mock_irregular")
@@ -275,8 +277,9 @@ class TestData(unittest.TestCase):
         self.data.load(compare_file)
 
         for statistical_metric in self.statistical_metrics:
-            if statistical_metric == "evaluations":
+            if statistical_metric in ["evaluations", "time"]:
                 self.assertTrue(np.array_equal(self.data["feature1d"][statistical_metric], [1., 2.]))
+
                 self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][0], [1., 2.]))
                 self.assertTrue(np.isnan(self.data["TestingModel1d"][statistical_metric][1]))
                 self.assertTrue(np.array_equal(self.data["TestingModel1d"][statistical_metric][2][0], 1))
