@@ -113,5 +113,19 @@ class TestSpikes(TestCasePlot):
         self.assertTrue(os.path.isfile(plot_file))
 
 
+    def test_bad_start(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        time = np.load(os.path.join(folder, "data/t_spike.npy"))
+        values = np.load(os.path.join(folder, "data/V_spike.npy"))
+
+        spikes = Spikes()
+        spikes.find_spikes(time, values)
+        self.assertEqual(len(spikes), 14)
+
+        # for spike in spikes:
+        #     print(spike.time)
+        #     print(spike.V)
+
 if __name__ == "__main__":
     unittest.main()

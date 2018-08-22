@@ -254,8 +254,8 @@ class Spikes:
                 continue
 
             elif V[i] < threshold and start_flag is True:
-                spike_end = i + 1
                 start_flag = False
+                spike_end = i + 1
 
                 time_spike = time[spike_start:spike_end]
                 V_spike = V[spike_start:spike_end]
@@ -264,6 +264,11 @@ class Spikes:
                 global_index = spike_index + spike_start
                 time_max = time[global_index]
                 V_max = V[global_index]
+
+                # Discard the first spike if the spike max is at the first
+                # point in the voltage trace
+                if global_index == 0:
+                    continue
 
                 if extended_spikes:
                     spike_start = gt_derivative[(gt_derivative > prev_spike_end) & (gt_derivative < global_index)][0]
