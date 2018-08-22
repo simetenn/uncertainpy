@@ -251,7 +251,10 @@ class Model(object):
         --------
         uncertainpy.models.Model.run : Requirements for the model run function.
         """
-        model_result = self.run(**parameters, **self.model_kwargs)
+        all_parameters = self.model_kwargs.copy()
+        all_parameters.update(parameters)
+
+        model_result = self.run(**all_parameters)
 
         self.validate_run(model_result)
 
