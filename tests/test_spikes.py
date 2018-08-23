@@ -94,17 +94,23 @@ class TestSpikes(TestCasePlot):
         self.assertIsInstance(result, Spike)
 
 
-    def test_plot(self):
+    def test_plot_spikes(self):
         self.spikes = Spikes(self.time, self.values, xlabel="xlabel", ylabel="ylabel")
 
-        self.spikes.plot(os.path.join(self.output_test_dir, "spikes.png"))
+        self.spikes.plot_spikes(os.path.join(self.output_test_dir, "spikes.png"))
         self.plot_exists("spikes")
 
+
+    def test_plot_voltage(self):
+        self.spikes = Spikes(self.time, self.values, xlabel="xlabel", ylabel="ylabel")
+
+        self.spikes.plot_spikes(os.path.join(self.output_test_dir, "voltage.png"))
+        self.plot_exists("voltage")
 
     def test_plot_extended(self):
         self.spikes = Spikes(self.time, self.values, xlabel="xlabel", ylabel="ylabel", extended_spikes=True)
 
-        self.spikes.plot(os.path.join(self.output_test_dir, "spikes_extended.png"))
+        self.spikes.plot_spikes(os.path.join(self.output_test_dir, "spikes_extended.png"))
         self.plot_exists("spikes_extended")
 
 
@@ -121,11 +127,26 @@ class TestSpikes(TestCasePlot):
 
         spikes = Spikes()
         spikes.find_spikes(time, values)
+
         self.assertEqual(len(spikes), 14)
 
-        # for spike in spikes:
-        #     print(spike.time)
-        #     print(spike.V)
+
+    def test_noisy(self):
+        folder = os.path.dirname(os.path.realpath(__file__))
+
+        time = np.load(os.path.join(folder, "data/t_noise.npy"))
+        values = np.load(os.path.join(folder, "data/V_noise.npy"))
+
+        spikes = Spikes()
+        spikes.find_spikes(time, values, allow_overlap=False, min_extent_from_peak=100)
+
+        spikes.plot_voltage("voltage.png")
+
+        self.assertEqual(len(spikes), 16)
+
+
+
+
 
 if __name__ == "__main__":
     unittest.main()

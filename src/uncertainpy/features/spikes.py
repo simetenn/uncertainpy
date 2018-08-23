@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ..plotting.prettyplot import prettyPlot, create_figure
+from ..plotting.prettyplot import prettyPlot, create_figure, get_current_colormap
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -84,7 +84,6 @@ class Spike:
 
 
 
-
 class Spikes:
     """
     Finds spikes in the given voltage trace and is a container for the resulting
@@ -103,8 +102,12 @@ class Spikes:
         Default is -30.
     extended_spikes : bool
         If the spikes should be extended past the threshold, until the
-        derivative of the voltage trace is below 0.5.
-        Default is False.
+        derivative of the voltage trace is below 0.5. Default is False.
+    min_extent_from_peak : int, optional
+        Minimum extent of the spike as the number of indices from the peak
+        of the spike. A new spike is only found if it lays outside the
+        extent of the previous spike. This is usefull to increase if the
+        voltage trace is noisy. Default is 1.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional
@@ -129,7 +132,7 @@ class Spikes:
 
     The spike can be extended. If `extended_spikes` is True, the spike is
     extended around the above area until the derivative of the voltage trace
-    falls below 0.5.
+    falls below 0.5. This works badly with noisy voltage traces.
 
     See also
     --------
@@ -141,6 +144,8 @@ class Spikes:
                  V=None,
                  threshold=-30,
                  extended_spikes=False,
+                 min_extent_from_peak=1,
+                 allow_overlap=False,
                  xlabel="",
                  ylabel=""):
         self.spikes = []
@@ -149,8 +154,14 @@ class Spikes:
         self.xlabel = xlabel
         self.ylabel = ylabel
 
+        self.V = None
+
         if time is not None and V is not None:
-            self.find_spikes(time, V, threshold=threshold, extended_spikes=extended_spikes)
+            self.find_spikes(time, V,
+                             threshold=threshold,
+                             extended_spikes=extended_spikes,
+                             min_extent_from_peak=min_extent_from_peak,
+                             allow_overlap=allow_overlap)
 
 
     def __iter__(self):
@@ -195,7 +206,7 @@ class Spikes:
         return self.spikes[i]
 
 
-    def find_spikes(self, time, V, threshold=-30, extended_spikes=False):
+    def find_spikes(self, time, V, threshold=-30, extended_spikes=False, min_extent_from_peak=1, allow_overlap=False):
         """
         Finds spikes in the given voltage trace.
 
@@ -210,10 +221,16 @@ class Spikes:
             above and then fall below this threshold it is considered a spike. If
             "auto" the threshold is set to the standard deviation of the voltage trace.
             Default is -30.
-        extended_spikes : bool
+        extended_spikes : bool, optional
             If the spikes should be extended past the threshold, until the
-            derivative of the voltage trace is below 0.5.
-            Default is False.
+            derivative of the voltage trace is below 0.5. Default is False.
+        min_extent_from_peak : int, optional
+            Minimum extent of the spike as the number of indices from the peak
+            of the spike. A new spike is only found if it lays outside the
+            extent of the previous spike. This is usefull to increase if the
+            voltage trace is noisy. Default is 1.
+        allow_overlap : bool, optional
+            If spikes are allowed to overlap.
 
         Notes
         -----
@@ -226,9 +243,11 @@ class Spikes:
 
         The spike can be extended. If `extended_spikes` is True, the spike is
         extended around the above area until the derivative of the voltage trace
-        falls below 0.5.
+        falls below 0.5. This works badly with noisy voltage traces.
         """
-        min_dist_from_peak = 1
+        self.time = time
+        self.V = V
+
         derivative_cutoff = 0.5
 
         self.spikes = []
@@ -270,22 +289,35 @@ class Spikes:
                 if global_index == 0:
                     continue
 
+
                 if extended_spikes:
                     spike_start = gt_derivative[(gt_derivative > prev_spike_end) & (gt_derivative < global_index)][0]
                     spike_end = self.consecutive(lt_derivative[lt_derivative > global_index])[-1] + 1
 
                 else:
-                    if global_index - min_dist_from_peak < spike_start:
-                        spike_start = global_index - min_dist_from_peak
+                    if global_index - min_extent_from_peak < spike_start:
+                        spike_start = global_index - min_extent_from_peak
 
-                    if global_index + min_dist_from_peak + 1 > spike_end:
-                        spike_end = global_index + min_dist_from_peak + 1
+                    if global_index + min_extent_from_peak + 1 > spike_end:
+                        spike_end = global_index + min_extent_from_peak + 1
+
 
                 time_spike = time[spike_start:spike_end]
                 V_spike = V[spike_start:spike_end]
 
 
-                self.spikes.append(Spike(time_spike, V_spike, time_max, V_max, global_index))
+                # Do only add a new spike if the start of this spike is
+                # within the extent of the previous spike
+                # Only add a new spike if either does not overlap the
+                # previous spike, or if the max V of this spike is greater than
+                # the max V of the previous spike
+                if len(self.spikes) >= 1 and not allow_overlap and time[spike_start] <= self.spikes[-1].time[-1]:
+                    # Replace old spike with new spike, else ignore the current spike
+                    if np.max(V_spike) > np.max(self.spikes[-1].V_spike):
+                        self.spikes[-1] = Spike(time_spike, V_spike, time_max, V_max, global_index)
+                else:
+                    self.spikes.append(Spike(time_spike, V_spike, time_max, V_max, global_index))
+
                 prev_spike_end = spike_end
 
         self.nr_spikes = len(self.spikes)
@@ -317,7 +349,7 @@ class Spikes:
         return result
 
 
-    def plot(self, save_name=None):
+    def plot_spikes(self, save_name=None):
         """
         Plot all spikes.
 
@@ -325,8 +357,7 @@ class Spikes:
         ----------
         save_name : {str, None}
             Name of the plot file. If None, the plot is shown instead of saved
-            to disk.
-            Default is None.
+            to disk. Default is None.
         """
         V_max = []
         V_min = []
@@ -359,6 +390,34 @@ class Spikes:
         plt.ylim([min(V_min), max(V_max)])
         plt.xlim([0, max(time_max)*1.2])
         plt.legend(labels)
+
+        if save_name is None:
+            plt.show()
+        else:
+            plt.savefig(save_name)
+            plt.close()
+
+
+    def plot_voltage(self, save_name):
+        """
+        Plot the voltage with the peak of each spike marked.
+
+        Parameters
+        ----------
+        save_name : {str, None}
+            Name of the plot file. If None, the plot is shown instead of saved
+            to disk. Default is None.
+        """
+        ax = prettyPlot(self.time, self.V,
+                        title=self.ylabel,
+                        ylabel=self.ylabel,
+                        xlabel="Time",
+                        palette="deep")
+
+        colors = get_current_colormap()
+
+        for spike in self.spikes:
+            ax.axvline(self.time[spike.global_index], color=colors[2])
 
         if save_name is None:
             plt.show()
