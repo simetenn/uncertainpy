@@ -47,3 +47,61 @@ class TestSpike(TestCasePlot):
 
         self.compare_plot("spike")
 
+
+    def test_str(self):
+        self.assertIsInstance(str(self.spike), str)
+
+    def test_add(self):
+
+        time = np.arange(5, 15)
+        V = np.arange(0, 10) - 10
+        time_spike = 10
+        V_spike = 5
+        global_index = 150
+
+        spike = Spike(time, V, time_spike, V_spike, global_index,
+                      xlabel="time", ylabel="voltage")
+
+
+        new_spike = self.spike + spike
+
+        self.assertTrue(np.array_equal(new_spike.time, np.arange(0, 15)))
+        self.assertTrue(np.array_equal(new_spike.V, np.concatenate([np.arange(0, 10) + 10, np.arange(5, 10) - 10])))
+        self.assertEqual(new_spike.V_spike, 10)
+        self.assertEqual(new_spike.time_spike, 5)
+        self.assertEqual(new_spike.global_index, 50)
+
+        new_spike = spike + self.spike
+
+        self.assertTrue(np.array_equal(new_spike.time, np.arange(0, 15)))
+        self.assertTrue(np.array_equal(new_spike.V, np.concatenate([np.arange(0, 10) + 10, np.arange(5, 10) - 10])))
+        self.assertEqual(new_spike.V_spike, 10)
+        self.assertEqual(new_spike.time_spike, 5)
+        self.assertEqual(new_spike.global_index, 50)
+
+
+        time = np.arange(0, 15)
+        V = np.arange(0, 15) - 10
+        time_spike = 10
+        V_spike = 5
+        global_index = 150
+
+        spike = Spike(time, V, time_spike, V_spike, global_index,
+                      xlabel="time", ylabel="voltage")
+
+
+        new_spike = spike + self.spike
+
+        self.assertTrue(np.array_equal(new_spike.time, time))
+        self.assertTrue(np.array_equal(new_spike.V, V))
+        self.assertEqual(new_spike.V_spike, V_spike)
+        self.assertEqual(new_spike.time_spike, time_spike)
+        self.assertEqual(new_spike.global_index, global_index)
+
+        new_spike = self.spike + spike
+
+        self.assertTrue(np.array_equal(new_spike.time, time))
+        self.assertTrue(np.array_equal(new_spike.V, V))
+        self.assertEqual(new_spike.V_spike, V_spike)
+        self.assertEqual(new_spike.time_spike, time_spike)
+        self.assertEqual(new_spike.global_index, global_index)

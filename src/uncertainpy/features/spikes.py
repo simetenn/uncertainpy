@@ -83,6 +83,66 @@ class Spike:
             plt.close()
 
 
+    def __str__(self):
+        """
+        Convert the spike to a readable string.
+
+        Returns
+        -------
+        str
+           A human readable string of the spike information.
+        """
+
+        output_str = "time: {}\nV: {}\ntime_spike: {}\nV_spike: {}\nglobal_index: {}".format(self.time, self.V, self.time_spike, self.V_spike, self.global_index)
+        return output_str
+
+
+    def __add__(self, other):
+        """
+        Join two spikes. Assumes spikes are found in the same voltage trace.
+        """
+
+
+        if np.all(np.isin(self.time, other.time)):
+            new_time = other.time
+            new_V = other.V
+            new_time_spike = other.time_spike
+            new_V_spike =  other.V_spike
+            new_global_index = other.global_index
+
+        elif np.all(np.isin(other.time, self.time)):
+            new_time = self.time
+            new_V = self.V
+            new_time_spike = self.time_spike
+            new_V_spike =  self.V_spike
+            new_global_index = self.global_index
+        else:
+            if self.V_spike < other.V_spike:
+                new_V_spike = other.V_spike
+                new_time_spike = other.time_spike
+                new_global_index = other.global_index
+            else:
+                new_V_spike = self.V_spike
+                new_time_spike = self.time_spike
+                new_global_index = self.global_index
+
+
+            if self.time[0] < other.time[0]:
+                first_spike = self
+                last_spike = other
+            else:
+                first_spike = other
+                last_spike = self
+
+            remaining_V = last_spike.V[last_spike.time > first_spike.time[-1]]
+            new_V = np.concatenate([first_spike.V, remaining_V])
+
+            remaining_time = last_spike.time[last_spike.time > first_spike.time[-1]]
+            new_time = np.concatenate([first_spike.time, remaining_time])
+
+        return Spike(new_time, new_V, new_time_spike, new_V_spike, new_global_index)
+
+
 
 class Spikes:
     """
@@ -123,6 +183,10 @@ class Spikes:
         Label for the x-axis.
     ylabel : str, optional
         Label for the y-axis.
+    time : array_like
+        The time of the voltage trace.
+    V : array_like
+        The voltage trace.
 
     Notes
     -----
@@ -155,6 +219,7 @@ class Spikes:
         self.ylabel = ylabel
 
         self.V = None
+        self.time = None
 
         if time is not None and V is not None:
             self.find_spikes(time, V,
@@ -287,6 +352,7 @@ class Spikes:
                 # Discard the first spike if the spike max is at the first
                 # point in the voltage trace
                 if global_index == 0:
+                    prev_spike_end = spike_end
                     continue
 
 
@@ -306,17 +372,31 @@ class Spikes:
                 V_spike = V[spike_start:spike_end]
 
 
-                # Do only add a new spike if the start of this spike is
-                # within the extent of the previous spike
+                print("dat")
+                if len(self.spikes) >= 1:
+                    print(self.spikes[-1].time)
+                    print(self.spikes[0])
+
+
+                # # Add two spikes if they are not allowed to overlapp and they
+                # # overlap
+                # spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
+                # if len(self.spikes) >= 1 and (not allow_overlap and time[spike_start] <= self.spikes[-1].time[-1]):
+                #     self.spikes[-1] = self.spikes[-1] + spike
+                # else:
+                #     self.spikes.append(spike)
+
+
                 # Only add a new spike if either does not overlap the
                 # previous spike, or if the max V of this spike is greater than
                 # the max V of the previous spike
+                spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
                 if len(self.spikes) >= 1 and not allow_overlap and time[spike_start] <= self.spikes[-1].time[-1]:
                     # Replace old spike with new spike, else ignore the current spike
                     if np.max(V_spike) > np.max(self.spikes[-1].V_spike):
-                        self.spikes[-1] = Spike(time_spike, V_spike, time_max, V_max, global_index)
+                        self.spikes[-1] = spike
                 else:
-                    self.spikes.append(Spike(time_spike, V_spike, time_max, V_max, global_index))
+                    self.spikes.append(spike)
 
                 prev_spike_end = spike_end
 
