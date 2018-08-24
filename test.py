@@ -135,7 +135,7 @@ def spikes(exact):
 @click.option('--exact', default=False, is_flag=True,
               help="Test if the plot files are exactly equal.")
 def all_spikes(exact):
-    run(parameter_test_cases=spikes, parameter=exact)
+    run(parameter_test_cases=testing_spikes, parameter=exact)
 
 
 @cli.command()
