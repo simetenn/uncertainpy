@@ -95,14 +95,8 @@ class Spike:
         """
         indices = np.where(self.V > threshold)[0]
 
-        if len(indices) < 2:
-            raise RuntimeError("To few occurrences of threshold values")
-
         self.time = self.time[indices[0]:indices[-1] + 1]
         self.V = self.V[indices[0]:indices[-1] + 1]
-
-
-
 
 
 
@@ -186,11 +180,6 @@ class Spikes:
     extended_spikes : bool
         If the spikes should be extended past the threshold, until the
         derivative of the voltage trace is below 0.5. Default is False.
-    min_extent_from_peak : int, optional
-        Minimum extent of the spike as the number of indices from the peak
-        of the spike. A new spike is only found if it lays outside the
-        extent of the previous spike. This is usefull to increase if the
-        voltage trace is noisy. Default is 1.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional
@@ -247,9 +236,7 @@ class Spikes:
         if time is not None and V is not None:
             self.find_spikes(time, V,
                              threshold=threshold,
-                             extended_spikes=extended_spikes,
-                             min_extent_from_peak=min_extent_from_peak,
-                             allow_overlap=allow_overlap)
+                             extended_spikes=extended_spikes)
 
 
     def __iter__(self):
@@ -297,9 +284,7 @@ class Spikes:
     def find_spikes(self, time, V,
                     threshold=-30,
                     end_threshold=-40,
-                    extended_spikes=False,
-                    min_extent_from_peak=1,
-                    allow_overlap=False):
+                    extended_spikes=False):
         """
         Finds spikes in the given voltage trace.
 
@@ -317,13 +302,6 @@ class Spikes:
         extended_spikes : bool, optional
             If the spikes should be extended past the threshold, until the
             derivative of the voltage trace is below 0.5. Default is False.
-        min_extent_from_peak : int, optional
-            Minimum extent of the spike as the number of indices from the peak
-            of the spike. A new spike is only found if it lays outside the
-            extent of the previous spike. This is usefull to increase if the
-            voltage trace is noisy. Default is 1.
-        allow_overlap : bool, optional
-            If spikes are allowed to overlap.
 
         Notes
         -----
@@ -341,12 +319,12 @@ class Spikes:
         self.time = time
         self.V = V
 
+        min_extent_from_peak = 1
         derivative_cutoff = 0.5
 
         self.spikes = []
         if threshold == "auto":
             threshold = np.sqrt(V.var())
-
 
         spike_start = 0
         start_flag = False
@@ -379,7 +357,7 @@ class Spikes:
 
                 # Discard the first spike if the spike max is at the first
                 # point in the voltage trace
-                if global_index == 0:
+                if global_index == 0 or spike_start == 0:
                     prev_spike_end = spike_end
                     continue
 
@@ -388,43 +366,34 @@ class Spikes:
                     spike_start = gt_derivative[(gt_derivative > prev_spike_end) & (gt_derivative < global_index)][0]
                     spike_end = self.consecutive(lt_derivative[lt_derivative > global_index])[-1] + 1
 
-                else:
-                    if global_index - min_extent_from_peak < spike_start:
-                        spike_start = global_index - min_extent_from_peak
+                # else:
+                #     if global_index - min_extent_from_peak < spike_start:
+                #         spike_start = global_index - min_extent_from_peak
 
-                    if global_index + min_extent_from_peak + 1 > spike_end:
-                        spike_end = global_index + min_extent_from_peak + 1
+                #     if global_index + min_extent_from_peak + 1 > spike_end:
+                #         spike_end = global_index + min_extent_from_peak + 1
 
 
                 time_spike = time[spike_start:spike_end]
                 V_spike = V[spike_start:spike_end]
 
 
-                # print("dat")
-                # if len(self.spikes) >= 1:
-                #     print(self.spikes[-1].time)
-                #     print(self.spikes[0])
+                spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
 
+                if not extended_spikes:
+                    spike.trim(threshold=threshold)
 
-                # # Add two spikes if they are not allowed to overlapp and they
-                # # overlap
-                # spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
-                # if len(self.spikes) >= 1 and (not allow_overlap and time[spike_start] <= self.spikes[-1].time[-1]):
-                #     self.spikes[-1] = self.spikes[-1] + spike
+                self.spikes.append(spike)
+
+                # # Only add a new spike if either does not overlap the
+                # # previous spike, or if the max V of this spike is greater than
+                # # the max V of the previous spike
+                # if len(self.spikes) >= 1 and time[spike_start] <= self.spikes[-1].time[-1]:
+                #     # Replace old spike with new spike, else ignore the current spike
+                #     if np.max(V_spike) > np.max(self.spikes[-1].V_spike):
+                #         self.spikes[-1] = spike
                 # else:
                 #     self.spikes.append(spike)
-
-
-                # Only add a new spike if either does not overlap the
-                # previous spike, or if the max V of this spike is greater than
-                # the max V of the previous spike
-                spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
-                if len(self.spikes) >= 1 and not allow_overlap and time[spike_start] <= self.spikes[-1].time[-1]:
-                    # Replace old spike with new spike, else ignore the current spike
-                    if np.max(V_spike) > np.max(self.spikes[-1].V_spike):
-                        self.spikes[-1] = spike
-                else:
-                    self.spikes.append(spike)
 
                 prev_spike_end = spike_end
 
