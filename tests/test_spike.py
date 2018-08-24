@@ -51,7 +51,60 @@ class TestSpike(TestCasePlot):
     def test_str(self):
         self.assertIsInstance(str(self.spike), str)
 
+
+    def test_trim(self):
+
+        V = np.concatenate([np.arange(0, 11), np.arange(0, 10)[::-1]])
+        time = np.arange(0, len(V))
+        time_spike = 5
+        V_spike = 10
+        global_index = 50
+
+        spike = Spike(time, V, time_spike, V_spike, global_index,
+                      xlabel="time", ylabel="voltage")
+
+        spike.trim(5)
+
+        self.assertTrue(np.array_equal(spike.time, np.arange(6, 15)))
+        self.assertTrue(np.array_equal(spike.V, [6, 7, 8, 9, 10, 9, 8, 7, 6]))
+        self.assertEqual(spike.V_spike, 10)
+        self.assertEqual(spike.time_spike, 5)
+        self.assertEqual(spike.global_index, 50)
+
+
+        V = np.concatenate([np.arange(0, 11), np.arange(0, 10)[::-1]])
+        time = np.arange(0, len(V))
+        time_spike = 5
+        V_spike = 10
+        global_index = 50
+
+        spike = Spike(time, V, time_spike, V_spike, global_index,
+                      xlabel="time", ylabel="voltage")
+
+        spike.trim(-5)
+
+        self.assertTrue(np.array_equal(spike.time, time))
+        self.assertTrue(np.array_equal(spike.V, V))
+        self.assertEqual(spike.V_spike, V_spike)
+        self.assertEqual(spike.time_spike, time_spike)
+        self.assertEqual(spike.global_index, global_index)
+
+
+        V = np.concatenate([np.arange(0, 11), np.arange(0, 10)[::-1]])
+        time = np.arange(0, len(V))
+        time_spike = 5
+        V_spike = 10
+        global_index = 50
+
+        spike = Spike(time, V, time_spike, V_spike, global_index,
+                      xlabel="time", ylabel="voltage")
+
+        with self.assertRaises(RuntimeError):
+            spike.trim(15)
+
+
     def test_add(self):
+
 
         time = np.arange(5, 15)
         V = np.arange(0, 10) - 10

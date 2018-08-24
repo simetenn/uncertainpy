@@ -83,6 +83,29 @@ class Spike:
             plt.close()
 
 
+    def trim(self, threshold):
+        """
+        Remove the first and last values of the spike that is below `threshold`.
+
+        Parameters
+        ----------
+        threshold : {float, int}
+            Remove all values from each side of the spike that is bellow this
+            value.
+        """
+        indices = np.where(self.V > threshold)[0]
+
+        if len(indices) < 2:
+            raise RuntimeError("To few occurrences of threshold values")
+
+        self.time = self.time[indices[0]:indices[-1] + 1]
+        self.V = self.V[indices[0]:indices[-1] + 1]
+
+
+
+
+
+
     def __str__(self):
         """
         Convert the spike to a readable string.
@@ -271,7 +294,12 @@ class Spikes:
         return self.spikes[i]
 
 
-    def find_spikes(self, time, V, threshold=-30, extended_spikes=False, min_extent_from_peak=1, allow_overlap=False):
+    def find_spikes(self, time, V,
+                    threshold=-30,
+                    end_threshold=-40,
+                    extended_spikes=False,
+                    min_extent_from_peak=1,
+                    allow_overlap=False):
         """
         Finds spikes in the given voltage trace.
 
@@ -337,7 +365,7 @@ class Spikes:
                 start_flag = True
                 continue
 
-            elif V[i] < threshold and start_flag is True:
+            elif V[i] < end_threshold and start_flag is True:
                 start_flag = False
                 spike_end = i + 1
 
@@ -372,10 +400,10 @@ class Spikes:
                 V_spike = V[spike_start:spike_end]
 
 
-                print("dat")
-                if len(self.spikes) >= 1:
-                    print(self.spikes[-1].time)
-                    print(self.spikes[0])
+                # print("dat")
+                # if len(self.spikes) >= 1:
+                #     print(self.spikes[-1].time)
+                #     print(self.spikes[0])
 
 
                 # # Add two spikes if they are not allowed to overlapp and they
@@ -401,6 +429,7 @@ class Spikes:
                 prev_spike_end = spike_end
 
         self.nr_spikes = len(self.spikes)
+
 
 
 
