@@ -83,7 +83,7 @@ class Spike:
             plt.close()
 
 
-    def trim(self, threshold):
+    def trim(self, threshold, min_extent_from_peak=1):
         """
         Remove the first and last values of the spike that is below `threshold`.
 
@@ -92,11 +92,37 @@ class Spike:
         threshold : {float, int}
             Remove all values from each side of the spike that is bellow this
             value.
+        min_extent_from_peak : int, optional
+            Minimum extent of the spike in each direction from the peak.
         """
         indices = np.where(self.V > threshold)[0]
 
-        self.time = self.time[indices[0]:indices[-1] + 1]
-        self.V = self.V[indices[0]:indices[-1] + 1]
+        # TODO make sure this is the best way of "deleting a spike"
+        if len(indices) == 0:
+            self.time = None
+            self.V = None
+            self.V_spike = None
+            self.time_spike = None
+            self.global_index = None
+
+
+        else:
+            peak_index =  np.where(self.V == self.V_spike)[0][0]
+
+            start_index = indices[0]
+            end_index = indices[-1] + 1
+
+            if start_index > peak_index - min_extent_from_peak:
+                start_index = peak_index - min_extent_from_peak
+
+            if end_index < peak_index + min_extent_from_peak + 1:
+                end_index = peak_index + min_extent_from_peak + 1
+
+            self.time = self.time[start_index:end_index]
+            self.V = self.V[start_index:end_index]
+
+            # self.time = self.time[indices[0]:indices[-1] + 1]
+            # self.V = self.V[indices[0]:indices[-1] + 1]
 
 
 
@@ -172,11 +198,14 @@ class Spikes:
         The time of the voltage trace.
     V : array_like
         The voltage trace.
-    threshold : {int, "auto"}
+    threshold : {int, float, "auto"}
         The threshold for what is considered a spike. If the voltage trace rise
-        above and then fall below this threshold it is considered a spike. If
-        "auto" the threshold is set to the standard deviation of the voltage trace.
-        Default is -30.
+        above and then fall below this `threshold` + `end_threshold` it is
+        considered a spike. If "auto" the threshold is set to the standard
+        deviation of the voltage trace. Default is -30.
+    end_threshold : {int, float}, optional
+        The end threshold for a spike relative to the threshold.
+        Default is -10.
     extended_spikes : bool
         If the spikes should be extended past the threshold, until the
         derivative of the voltage trace is below 0.5. Default is False.
@@ -203,8 +232,8 @@ class Spikes:
     Notes
     -----
     The spikes are found by finding where the voltage trace goes above the
-    threshold, and then later falls below this threshold. The spike is
-    considered to be everything within this interval.
+    `threshold`, and then later falls below this `threshold` + `end_threshold`.
+    The spike is considered to be everything within this interval.
 
     The spike can be extended. If `extended_spikes` is True, the spike is
     extended around the above area until the derivative of the voltage trace
@@ -219,9 +248,8 @@ class Spikes:
                  time=None,
                  V=None,
                  threshold=-30,
+                 end_threshold=-10,
                  extended_spikes=False,
-                 min_extent_from_peak=1,
-                 allow_overlap=False,
                  xlabel="",
                  ylabel=""):
         self.spikes = []
@@ -236,6 +264,7 @@ class Spikes:
         if time is not None and V is not None:
             self.find_spikes(time, V,
                              threshold=threshold,
+                             end_threshold=end_threshold,
                              extended_spikes=extended_spikes)
 
 
@@ -283,7 +312,7 @@ class Spikes:
 
     def find_spikes(self, time, V,
                     threshold=-30,
-                    end_threshold=-40,
+                    end_threshold=-10,
                     extended_spikes=False):
         """
         Finds spikes in the given voltage trace.
@@ -294,11 +323,14 @@ class Spikes:
             The time of the voltage trace.
         V : array_like
             The voltage trace.
-        threshold : {int, "auto"}
+        threshold : {int, float, "auto"}
             The threshold for what is considered a spike. If the voltage trace rise
-            above and then fall below this threshold it is considered a spike. If
-            "auto" the threshold is set to the standard deviation of the voltage trace.
-            Default is -30.
+            above and then fall below this `threshold` + `end_threshold` it is
+            considered a spike. If "auto" the threshold is set to the standard
+            deviation of the voltage trace. Default is -30.
+        end_threshold : {int, float}, optional
+            The end threshold for a spike relative to the threshold.
+            Default is -10.
         extended_spikes : bool, optional
             If the spikes should be extended past the threshold, until the
             derivative of the voltage trace is below 0.5. Default is False.
@@ -309,8 +341,8 @@ class Spikes:
         updated.
 
         The spikes are found by finding where the voltage trace goes above the
-        threshold, and then later falls below this threshold. The spike is
-        considered to be everything within this interval.
+        `threshold`, and then later falls below this `threshold` + `end_threshold`.
+        The spike is considered to be everything within this interval.
 
         The spike can be extended. If `extended_spikes` is True, the spike is
         extended around the above area until the derivative of the voltage trace
@@ -343,7 +375,7 @@ class Spikes:
                 start_flag = True
                 continue
 
-            elif V[i] < end_threshold and start_flag is True:
+            elif V[i] < (threshold + end_threshold) and start_flag is True:
                 start_flag = False
                 spike_end = i + 1
 
@@ -356,7 +388,8 @@ class Spikes:
                 V_max = V[global_index]
 
                 # Discard the first spike if the spike max is at the first
-                # point in the voltage trace
+                # point in the voltage trace, or the voltage trace starts above
+                # the threshold
                 if global_index == 0 or spike_start == 0:
                     prev_spike_end = spike_end
                     continue
