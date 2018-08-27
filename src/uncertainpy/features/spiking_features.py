@@ -428,12 +428,17 @@ class SpikingFeatures(GeneralSpikingFeatures):
             The average action potential width. Returns None if there are
             no spikes in the model result.
         """
+        logger = get_logger(self)
 
         if spikes.nr_spikes <= 0:
             return None, None
 
         sum_AP_width = 0
         for spike in spikes:
+            if len(spike.V) < 3:
+                logger.warning("Spike with no width found (only one or two time points in spike).")
+                continue
+
             V_width = (spike.V_spike + spike.V[0])/2.
 
             V_interpolation = scipy.interpolate.interp1d(spike.time, spike.V - V_width)
