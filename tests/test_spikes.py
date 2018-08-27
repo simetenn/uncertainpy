@@ -138,7 +138,7 @@ class TestSpikes(TestCasePlot):
         values = np.load(os.path.join(folder, "data/V_noise.npy"))
 
         spikes = Spikes()
-        spikes.find_spikes(time, values, allow_overlap=False, min_extent_from_peak=100)
+        spikes.find_spikes(time, values)
 
         spikes.plot_voltage("voltage.png")
 
