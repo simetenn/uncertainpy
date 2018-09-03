@@ -112,10 +112,10 @@ class Spike:
             start_index = indices[0]
             end_index = indices[-1] + 1
 
-            if start_index > peak_index - min_extent_from_peak:
+            if start_index > 0 and start_index > peak_index - min_extent_from_peak:
                 start_index = peak_index - min_extent_from_peak
 
-            if end_index < peak_index + min_extent_from_peak + 1:
+            if end_index < len(self.V) - 1 and end_index < peak_index + min_extent_from_peak + 1:
                 end_index = peak_index + min_extent_from_peak + 1
 
             self.time = self.time[start_index:end_index]
@@ -399,12 +399,12 @@ class Spikes:
                     spike_start = gt_derivative[(gt_derivative > prev_spike_end) & (gt_derivative < global_index)][0]
                     spike_end = self.consecutive(lt_derivative[lt_derivative > global_index])[-1] + 1
 
-                # else:
-                #     if global_index - min_extent_from_peak < spike_start:
-                #         spike_start = global_index - min_extent_from_peak
+                else:
+                    if global_index > 0 and global_index - min_extent_from_peak < spike_start:
+                        spike_start = global_index - min_extent_from_peak
 
-                #     if global_index + min_extent_from_peak + 1 > spike_end:
-                #         spike_end = global_index + min_extent_from_peak + 1
+                    if global_index < len(self.V) and global_index + min_extent_from_peak + 1 > spike_end:
+                        spike_end = global_index + min_extent_from_peak + 1
 
 
                 time_spike = time[spike_start:spike_end]
@@ -413,8 +413,18 @@ class Spikes:
 
                 spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
 
+
+                if spike.V[0] == spike.V_spike:
+                    import sys
+
+                    print("found it before trim")
+                    print(spike)
+                    sys.exit(1)
+
+
                 if not extended_spikes:
                     spike.trim(threshold=threshold)
+
 
                 self.spikes.append(spike)
 
