@@ -109,13 +109,14 @@ class Spike:
         else:
             peak_index =  np.where(self.V == self.V_spike)[0][0]
 
+
             start_index = indices[0]
             end_index = indices[-1] + 1
 
             if start_index > 0 and start_index > peak_index - min_extent_from_peak:
                 start_index = peak_index - min_extent_from_peak
 
-            if end_index < len(self.V) - 1 and end_index < peak_index + min_extent_from_peak + 1:
+            if end_index < len(self.V) and end_index < peak_index + min_extent_from_peak + 1:
                 end_index = peak_index + min_extent_from_peak + 1
 
             self.time = self.time[start_index:end_index]
@@ -422,7 +423,6 @@ class Spikes:
                     if global_index < len(self.V) and global_index + min_extent_from_peak + 1 > spike_end:
                         spike_end = global_index + min_extent_from_peak + 1
 
-
                 time_spike = time[spike_start:spike_end]
                 V_spike = V[spike_start:spike_end]
 
@@ -430,16 +430,9 @@ class Spikes:
                 spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
 
 
-                if spike.V[0] == spike.V_spike:
-                    import sys
-
-                    print("found it before trim")
-                    print(spike)
-                    sys.exit(1)
-
-
                 if not extended_spikes:
-                    spike.trim(threshold=threshold)
+                    spike.trim(threshold=threshold,
+                               min_extent_from_peak=min_extent_from_peak)
 
 
                 self.spikes.append(spike)
