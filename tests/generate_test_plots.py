@@ -122,12 +122,30 @@ def generate_spikes_plot():
 
     spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel")
 
-    spikes.plot(os.path.join(output_test_dir, "spikes.png"))
+    spikes.plot_spikes(os.path.join(output_test_dir, "spikes.png"))
+
+    spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel")
+    spikes.plot_voltage(os.path.join(output_test_dir, "U_test.png"))
+
 
     spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel", extended_spikes=True)
 
-    spikes.plot(os.path.join(output_test_dir, "spikes_extended.png"))
+    spikes.plot_spikes(os.path.join(output_test_dir, "spikes_extended.png"))
 
+
+
+    values = np.load(os.path.join(test_data_dir, "V_spike.npy"))
+    time = np.load(os.path.join(test_data_dir, "t_spike.npy"))
+
+    spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel")
+    spikes.plot_voltage(os.path.join(output_test_dir, "V_spike.png"))
+
+
+    values = np.load(os.path.join(test_data_dir, "V_noise.npy"))
+    time = np.load(os.path.join(test_data_dir, "t_noise.npy"))
+
+    spikes = Spikes(time, values, xlabel="xlabel", ylabel="ylabel")
+    spikes.plot_voltage(os.path.join(output_test_dir, "V_noise.png"))
 
 
 
