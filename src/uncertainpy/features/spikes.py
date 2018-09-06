@@ -281,6 +281,22 @@ class Spikes:
             yield spike
 
 
+    def __str__(self):
+        """
+        Convert the spike to a readable string.
+
+        Returns
+        -------
+        str
+           A human readable string of the spike information.
+        """
+        string = ""
+
+        for i, spike in enumerate(self):
+            string += "Spike {}\n---------------------------------------\n".format(i) + str(spike) + "\n\n"
+
+        return string.strip()
+
     def __len__(self):
         """
         Find the number of spikes.

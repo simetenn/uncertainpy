@@ -58,6 +58,11 @@ class TestSpikes(TestCasePlot):
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
+    def test_str(self):
+        self.spikes = Spikes(self.time, self.values)
+        self.assertIsInstance(str(self.spikes), str)
+
+
     def test_find_spikes_extended(self):
         self.spikes = Spikes()
 
