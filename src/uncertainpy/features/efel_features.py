@@ -179,11 +179,12 @@ class EfelFeatures(Features):
                                            new_utility_methods=[],
                                            labels=implemented_labels,
                                            logger_level=logger_level)
-        logger = get_logger(self)
 
         def efel_wrapper(feature_name):
             def feature_function(time, values, info):
                 disable = False
+                logger = get_logger(self)
+
 
                 if "stimulus_start" not in info:
                     if strict:
@@ -219,7 +220,6 @@ class EfelFeatures(Features):
                 trace["V"] = values
                 trace["stim_start"] = [info["stimulus_start"]]
                 trace["stim_end"] = [info["stimulus_end"]]
-
 
 
                 # Disable decay_time_constant_after_stim if no time points left
