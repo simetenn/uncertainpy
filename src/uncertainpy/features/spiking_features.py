@@ -446,8 +446,13 @@ class SpikingFeatures(GeneralSpikingFeatures):
             # root1 = scipy.optimize.fsolve(U_interpolation, (spike.t_spike - spike.t[0])/2. + spike.t[0])
             # root2 = scipy.optimize.fsolve(U_interpolation, (spike.t[-1] - spike.t_spike)/2. + spike.t_spike)
 
-            root1 = scipy.optimize.brentq(V_interpolation, spike.time[0], spike.time_spike)
-            root2 = scipy.optimize.brentq(V_interpolation, spike.time_spike, spike.time[-1])
+            try:
+                root1 = scipy.optimize.brentq(V_interpolation, spike.time[0], spike.time_spike)
+                root2 = scipy.optimize.brentq(V_interpolation, spike.time_spike, spike.time[-1])
+
+            except ValueError:
+                return None, None
+
 
             sum_AP_width += abs(root2 - root1)
 
