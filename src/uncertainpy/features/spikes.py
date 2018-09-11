@@ -210,6 +210,9 @@ class Spikes:
     extended_spikes : bool
         If the spikes should be extended past the threshold, until the
         derivative of the voltage trace is below 0.5. Default is False.
+    trim : bool, optional
+        If the spikes should be trimmed back from the termination threshold,
+        so each spike is equal the threshold at both ends. Default is True.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional
@@ -251,6 +254,7 @@ class Spikes:
                  threshold=-30,
                  end_threshold=-10,
                  extended_spikes=False,
+                 trim=True,
                  xlabel="",
                  ylabel=""):
         self.spikes = []
@@ -266,7 +270,8 @@ class Spikes:
             self.find_spikes(time, V,
                              threshold=threshold,
                              end_threshold=end_threshold,
-                             extended_spikes=extended_spikes)
+                             extended_spikes=extended_spikes,
+                             trim=trim)
 
 
     def __iter__(self):
@@ -330,7 +335,8 @@ class Spikes:
     def find_spikes(self, time, V,
                     threshold=-30,
                     end_threshold=-10,
-                    extended_spikes=False):
+                    extended_spikes=False,
+                    trim=True):
         """
         Finds spikes in the given voltage trace.
 
@@ -351,6 +357,10 @@ class Spikes:
         extended_spikes : bool, optional
             If the spikes should be extended past the threshold, until the
             derivative of the voltage trace is below 0.5. Default is False.
+        trim : bool, optional
+            If the spikes should be trimmed back from the termination threshold,
+            so each spike is equal the threshold at both ends. Default is True.
+
 
         Notes
         -----
@@ -430,7 +440,7 @@ class Spikes:
                 spike = Spike(time_spike, V_spike, time_max, V_max, global_index)
 
 
-                if not extended_spikes:
+                if not extended_spikes and trim:
                     spike.trim(threshold=threshold,
                                min_extent_from_peak=min_extent_from_peak)
 
