@@ -193,7 +193,9 @@ class NeuronModel(Model):
         uncertainpy.models.Model.run : Requirements for the model run function.
         """
         current_dir = os.getcwd()
-        os.chdir(path)
+
+        if path:
+            os.chdir(path)
 
         file = file.strip(".py")
         module_path = os.path.join(path, file)
