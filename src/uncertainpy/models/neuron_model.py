@@ -19,9 +19,9 @@ class NeuronModel(Model):
     ----------
     file : str, optional
         Filename of the Neuron model. Default is ``"mosinit.hoc"``.
-    path : {None, str}, optional
+    path : str, optional
         Path to the Neuron model. If None, the file is considered to be in the
-        current folder. Default is None.
+        current folder. Default is "".
     stimulus_start : {int, float, None}, optional
         The start time of any stimulus given to the neuron model. This
         is added to the info dictionary. If None, no stimulus_start is added to
@@ -88,7 +88,7 @@ class NeuronModel(Model):
     """
     def __init__(self,
                  file="mosinit.hoc",
-                 path=None,
+                 path="",
                  interpolate=True,
                  stimulus_start=None,
                  stimulus_end=None,
