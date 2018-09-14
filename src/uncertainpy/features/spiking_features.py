@@ -8,7 +8,10 @@ try:
 except ImportError:
     prerequisites = False
 
+import numpy as np
+
 from .general_spiking_features import GeneralSpikingFeatures
+from .spikes import Spikes
 from ..utils.logger import get_logger
 
 class SpikingFeatures(GeneralSpikingFeatures):
@@ -457,6 +460,53 @@ class SpikingFeatures(GeneralSpikingFeatures):
             sum_AP_width += abs(root2 - root1)
 
         return None, sum_AP_width/float(spikes.nr_spikes)
+
+
+    def average_duration(self, time, spikes, info):
+        """
+        The average action potential width.
+
+        The average of the width of every spike (action potential) at the
+        midpoint between the start and maximum of each spike.
+
+        Parameters
+        ----------
+        time : {None, numpy.nan, array_like}
+            Time values of the model. If no time values it is None or numpy.nan.
+        spikes : Spikes
+            Spikes found in the model result.
+        info : dictionary
+            Not used in this feature.
+
+        Returns
+        -------
+        time : None
+        average_AP_width : {float, None}
+            The average action potential width. Returns None if there are
+            no spikes in the model result.
+        """
+        # if spikes.nr_spikes <= 0:
+        #     return None, None
+
+        # sum_duration = 0
+        # for spike in spikes:
+        #     sum_duration += spike.time[-1] - spike.time[0]
+
+        # return None, sum_duration/float(spikes.nr_spikes)
+
+        voltage = spikes.V
+        normalized_voltage = voltage - voltage.min()
+        normalized_voltage /= normalized_voltage.max()
+
+        # Find spikes in the normalized voltage trace
+        spikes = Spikes(time, normalized_voltage, threshold=0.55, end_threshold=-0.1)
+
+        # Calculate the duration of each spike
+        duration = []
+        for spike in spikes:
+            duration.append(spike.time[-1] - spike.time[0])
+
+        return None, np.sum(duration)
 
 
     def accommodation_index(self, time, spikes, info):
