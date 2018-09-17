@@ -58,6 +58,13 @@ class SpikingFeatures(GeneralSpikingFeatures):
         If the found spikes should be extended further out than the threshold
         cuttoff. If True the spikes is considered to start and end where the
         derivative equals 0.5. Default is False.
+    trim : bool, optional
+        If the spikes should be trimmed back from the termination threshold,
+        so each spike is equal the threshold at both ends. Default is True.
+    normalize : bool, optional
+        If the voltage traceshould be normalized before the spikes are
+        found. If normalize is used threshold must be between [0, 1], and
+        the end_threshold a similar relative value. Default is False.
     labels : dictionary, optional
         A dictionary with key as the feature name and the value as a list of
         labels for each axis. The number of elements in the list corresponds
@@ -91,6 +98,13 @@ class SpikingFeatures(GeneralSpikingFeatures):
     extended_spikes : bool
         If the found spikes should be extended further out than the threshold
         cuttoff.
+    trim : bool, optional
+        If the spikes should be trimmed back from the termination threshold,
+        so each spike is equal the threshold at both ends.
+    normalize : bool, optional
+        If the voltage traceshould be normalized before the spikes are
+        found. If normalize is used threshold must be between [0, 1], and
+        the end_threshold a similar relative value.
     features_to_run : list
         Which features to calculate uncertainties for.
     interpolate : list
@@ -137,6 +151,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  threshold=-30,
                  end_threshold=-10,
                  extended_spikes=False,
+                 trim=True,
+                 normalize=False,
                  labels={},
                  strict=True,
                  logger_level="info"):
@@ -160,6 +176,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                               threshold=threshold,
                                               end_threshold=end_threshold,
                                               extended_spikes=extended_spikes,
+                                              trim=trim,
+                                              normalize=normalize,
                                               labels=implemented_labels,
                                               logger_level=logger_level)
         self.labels = labels
