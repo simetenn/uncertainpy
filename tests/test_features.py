@@ -270,12 +270,25 @@ class TestGeneralSpikingFeatures(unittest.TestCase):
         self.assertTrue(np.array_equal(self.time, time))
 
 
+    def test_preprocess_normalize(self):
+        self.features = GeneralSpikingFeatures(logger_level="error", normalize=True, threshold=0.4, end_threshold=-0.1)
+
+        time, spikes, info = self.features.preprocess(self.time, self.values, self.info)
+
+        self.assertEqual(spikes.nr_spikes, 12)
+
+        self.assertIsInstance(spikes, Spikes)
+        self.assertTrue(np.array_equal(self.time, time))
+        self.assertTrue(spikes[0].V_spike > 1)
+
+
     def test_reference_feature(self):
         self.features = GeneralSpikingFeatures(logger_level="error")
         time, values = self.features.reference_feature(1, 1, 1)
 
         self.assertIsNone(time)
         self.assertIsNone(values)
+
 
 
 class TestSpikingFeatures(unittest.TestCase):
@@ -288,7 +301,7 @@ class TestSpikingFeatures(unittest.TestCase):
         self.implemented_features = ["nr_spikes", "time_before_first_spike",
                                      "spike_rate", "average_AP_overshoot",
                                      "average_AHP_depth", "average_AP_width",
-                                     "accommodation_index"]
+                                     "accommodation_index", "average_duration"]
 
         self.implemented_labels = {"nr_spikes": ["Number of spikes"],
                                    "spike_rate": ["Spike rate (Hz)"],
@@ -296,7 +309,8 @@ class TestSpikingFeatures(unittest.TestCase):
                                    "accommodation_index": ["Accommodation index"],
                                    "average_AP_overshoot": ["Voltage (mV)"],
                                    "average_AHP_depth": ["Voltage (mV)"],
-                                   "average_AP_width": ["Time (ms)"]
+                                   "average_AP_width": ["Time (ms)"],
+                                   "average_duration": ["Time (ms)"]
                                    }
 
         self.features = SpikingFeatures(logger_level="error")
@@ -331,7 +345,8 @@ class TestSpikingFeatures(unittest.TestCase):
                   "accommodation_index": ["Accommodation index"],
                   "average_AP_overshoot": ["Voltage (mV)"],
                   "average_AHP_depth": ["Voltage (mV)"],
-                  "average_AP_width": ["Time (ms)"]
+                  "average_AP_width": ["Time (ms)"],
+                  "average_duration": ["Time (ms)"]
                   }
 
         self.assertEqual(features.labels, labels)
@@ -435,6 +450,11 @@ class TestSpikingFeatures(unittest.TestCase):
         self.assertLess(self.features.average_AP_width(self.time, self.spikes, self.info)[1], 5)
 
 
+    # TODO Find correct testime, this is a rough bound only
+    def test_average_duration(self):
+        self.assertLess(self.features.average_duration(self.time, self.spikes, self.info)[1], 5)
+
+
     def test_average_AP_widthNone(self):
         self.features.spikes.nr_spikes = 0
         self.assertEqual(self.features.average_AP_width(self.time, self.spikes, self.info), (None, None))
@@ -451,6 +471,18 @@ class TestSpikingFeatures(unittest.TestCase):
 
 
     def test_calculate_all_features(self):
+
+        result = self.features.calculate_all_features(self.t, self.V, self.info)
+        self.assertEqual(set(result.keys()),
+                         set(self.implemented_features))
+
+
+    def test_calculate_all_features_normalize(self):
+        self.features = SpikingFeatures(logger_level="error", threshold=0.4, end_threshold=-0.1)
+
+        self.info = {"stimulus_start": self.t[0], "stimulus_end": self.t[-1]}
+
+        self.time, self.spikes, info = self.features.preprocess(self.t, self.V, self.info)
 
         result = self.features.calculate_all_features(self.t, self.V, self.info)
         self.assertEqual(set(result.keys()),

@@ -77,12 +77,31 @@ class TestSpikes(TestCasePlot):
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
+    def test_find_spikes_normalize(self):
+        self.spikes = Spikes()
+
+        self.spikes.find_spikes(self.time, self.values, threshold=0.4, end_threshold=-0.1, normalize=True)
+        self.assertEqual(self.spikes.nr_spikes, 12)
+        self.assertTrue(self.spikes[0].V_spike > 1)
+
+
+    def test_find_spikes_normalize_error(self):
+        self.spikes = Spikes()
+
+        with self.assertRaises(ValueError):
+            self.spikes.find_spikes(self.time, self.values, threshold=12, end_threshold=-0.1, normalize=True)
+
+        with self.assertRaises(ValueError):
+            self.spikes.find_spikes(self.time, self.values, threshold=0.1, end_threshold=12, normalize=True)
+
+
     def test_iter(self):
         self.spikes = Spikes()
         self.spikes.find_spikes(self.time, self.values)
 
         for spike in self.spikes:
             self.assertIsInstance(spike, Spike)
+
 
     def test_len(self):
         self.spikes = Spikes()

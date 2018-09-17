@@ -41,10 +41,20 @@ class GeneralSpikingFeatures(Features):
         The threshold where the model result is considered to have a spike.
         If "auto" the threshold is set to the standard variation of the
         result. Default is -30.
+    end_threshold : {int, float}, optional
+        The end threshold for a spike relative to the threshold. Generally
+        negative values give the best results. Default is -10.
     extended_spikes : bool, optional
         If the found spikes should be extended further out than the threshold
         cuttoff. If True the spikes is considered to start and end where the
         derivative equals 0.5. Default is False.
+    trim : bool, optional
+        If the spikes should be trimmed back from the termination threshold,
+        so each spike is equal the threshold at both ends. Default is True.
+    normalize : bool, optional
+        If the voltage traceshould be normalized before the spikes are
+        found. If normalize is used threshold must be between [0, 1], and
+        the end_threshold a similar relative value. Default is False.
     labels : dictionary, optional
         A dictionary with key as the feature name and the value as a list of
         labels for each axis. The number of elements in the list corresponds
@@ -66,13 +76,22 @@ class GeneralSpikingFeatures(Features):
     ----------
     spikes : Spikes object
         A Spikes object that contain all spikes.
-    threshold : {float, int, "auto"}, optional
+    threshold : {float, int, "auto"}
         The threshold where the model result is considered to have a spike.
         If "auto" the threshold is set to the standard variation of the
-        result. Default is -30.
+        result.
+    end_threshold : {int, float}, optional
+        The end threshold for a spike relative to the threshold.
     extended_spikes : bool
         If the found spikes should be extended further out than the threshold
         cuttoff.
+    trim : bool
+        If the spikes should be trimmed back from the termination threshold,
+        so each spike is equal the threshold at both ends.
+    normalize : bool
+        If the voltage traceshould be normalized before the spikes are
+        found. If normalize is used threshold must be between [0, 1], and
+        the end_threshold a similar relative value.
     features_to_run : list
         Which features to calculate uncertainties for.
     interpolate : list
@@ -93,7 +112,10 @@ class GeneralSpikingFeatures(Features):
                  features_to_run="all",
                  interpolate=None,
                  threshold=-30,
+                 end_threshold=-10,
                  extended_spikes=False,
+                 trim=True,
+                 normalize=False,
                  labels={},
                  logger_level="info"):
 
@@ -109,7 +131,10 @@ class GeneralSpikingFeatures(Features):
         self.spikes = None
 
         self.threshold = threshold
+        self.end_threshold = end_threshold
         self.extended_spikes = extended_spikes
+        self.trim = trim
+        self.normalize = normalize
 
 
 
@@ -146,12 +171,25 @@ class GeneralSpikingFeatures(Features):
         """
         self.values = values
 
-        self.spikes = self.calculate_spikes(time, values, threshold=self.threshold, extended_spikes=self.extended_spikes)
+        self.spikes = self.calculate_spikes(time,
+                                            values,
+                                            threshold=self.threshold,
+                                            end_threshold=self.end_threshold,
+                                            extended_spikes=self.extended_spikes,
+                                            trim=self.trim,
+                                            normalize=self.normalize)
 
         return time, self.spikes, info
 
 
-    def calculate_spikes(self, time, values, threshold=-30, extended_spikes=False):
+    def calculate_spikes(self,
+                        time,
+                        values,
+                        threshold=-30,
+                        end_threshold=-10,
+                        extended_spikes=False,
+                        trim=True,
+                        normalize=False):
         """
         Calculating spikes of a model result, works with single neuron models and
         voltage traces.
@@ -166,10 +204,20 @@ class GeneralSpikingFeatures(Features):
             The threshold where the model result is considered to have a spike.
             If "auto" the threshold is set to the standard variation of the
             result. Default is -30.
+        end_threshold : {int, float}, optional
+            The end threshold for a spike relative to the threshold.
+            Default is -10.
         extended_spikes : bool, optional
             If the found spikes should be extended further out than the threshold
             cuttoff. If True the spikes is considered to start and end where the
             derivative equals 0.5. Default is False.
+        trim : bool, optional
+            If the spikes should be trimmed back from the termination threshold,
+            so each spike is equal the threshold at both ends. Default is True.
+        normalize : bool, optional
+            If the voltage traceshould be normalized before the spikes are
+            found. If normalize is used threshold must be between [0, 1], and
+            the end_threshold a similar relative value. Default is False.
 
         Returns
         ------
@@ -184,7 +232,13 @@ class GeneralSpikingFeatures(Features):
         uncertainpy.features.Spikes : Class for finding spikes in the model result.
         """
         spikes = Spikes()
-        spikes.find_spikes(time, values, threshold=threshold, extended_spikes=extended_spikes)
+        spikes.find_spikes(time,
+                           values,
+                           threshold=threshold,
+                           end_threshold=end_threshold,
+                           extended_spikes=extended_spikes,
+                           trim=trim,
+                           normalize=normalize)
 
         return spikes
 

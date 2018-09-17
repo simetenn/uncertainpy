@@ -51,6 +51,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
         The threshold where the model result is considered to have a spike.
         If "auto" the threshold is set to the standard variation of the
         result. Default is -30.
+    end_threshold : {int, float}, optional
+        The end threshold for a spike relative to the threshold. Generally
+        negative values give the best results. Default is -10.
     extended_spikes : bool, optional
         If the found spikes should be extended further out than the threshold
         cuttoff. If True the spikes is considered to start and end where the
@@ -83,6 +86,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
         A Spikes object that contain all spikes.
     threshold : {float, int}
         The threshold where the model result is considered to have a spike.
+    end_threshold : {int, float}, optional
+        The end threshold for a spike relative to the threshold.
     extended_spikes : bool
         If the found spikes should be extended further out than the threshold
         cuttoff.
@@ -111,10 +116,10 @@ class SpikingFeatures(GeneralSpikingFeatures):
     nr_spikes                   time_before_first_spike
     spike_rate                  average_AP_overshoot
     average_AHP_depth           average_AP_width
-    accommodation_index
+    accommodation_index         average_duration
     ==========================  ==========================
 
-    The features are from:
+    Most of the feature are from:
     Druckmann, S., Banitt, Y., Gidon, A. A., Schurmann, F., Markram, H., and Segev, I.
     (2007). A novel multiple objective optimization framework for constraining conductance-
     based neuron models by experimental data. Frontiers in Neuroscience 1, 7-18. doi:10.
@@ -130,6 +135,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  features_to_run="all",
                  interpolate=None,
                  threshold=-30,
+                 end_threshold=-10,
                  extended_spikes=False,
                  labels={},
                  strict=True,
@@ -144,13 +150,15 @@ class SpikingFeatures(GeneralSpikingFeatures):
                               "accommodation_index": ["Accommodation index"],
                               "average_AP_overshoot": ["Voltage (mV)"],
                               "average_AHP_depth": ["Voltage (mV)"],
-                              "average_AP_width": ["Time (ms)"]
+                              "average_AP_width": ["Time (ms)"],
+                              "average_duration": ["Time (ms)"]
                              }
 
         super(SpikingFeatures, self).__init__(new_features=new_features,
                                               features_to_run=features_to_run,
                                               interpolate=interpolate,
                                               threshold=threshold,
+                                              end_threshold=end_threshold,
                                               extended_spikes=extended_spikes,
                                               labels=implemented_labels,
                                               logger_level=logger_level)
@@ -464,10 +472,9 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
     def average_duration(self, time, spikes, info):
         """
-        The average action potential width.
+        The average duration of an action potential, from the action potential
+        onset to action potential termination.
 
-        The average of the width of every spike (action potential) at the
-        midpoint between the start and maximum of each spike.
 
         Parameters
         ----------
@@ -485,28 +492,28 @@ class SpikingFeatures(GeneralSpikingFeatures):
             The average action potential width. Returns None if there are
             no spikes in the model result.
         """
-        # if spikes.nr_spikes <= 0:
-        #     return None, None
+        if spikes.nr_spikes <= 0:
+            return None, None
 
-        # sum_duration = 0
-        # for spike in spikes:
-        #     sum_duration += spike.time[-1] - spike.time[0]
-
-        # return None, sum_duration/float(spikes.nr_spikes)
-
-        voltage = spikes.V
-        normalized_voltage = voltage - voltage.min()
-        normalized_voltage /= normalized_voltage.max()
-
-        # Find spikes in the normalized voltage trace
-        spikes = Spikes(time, normalized_voltage, threshold=0.55, end_threshold=-0.1)
-
-        # Calculate the duration of each spike
-        duration = []
+        sum_duration = 0
         for spike in spikes:
-            duration.append(spike.time[-1] - spike.time[0])
+            sum_duration += spike.time[-1] - spike.time[0]
 
-        return None, np.sum(duration)
+        return None, sum_duration/float(spikes.nr_spikes)
+
+        # voltage = spikes.V
+        # normalized_voltage = voltage - voltage.min()
+        # normalized_voltage /= normalized_voltage.max()
+
+        # # Find spikes in the normalized voltage trace
+        # spikes = Spikes(time, normalized_voltage, threshold=0.55, end_threshold=-0.1)
+
+        # # Calculate the duration of each spike
+        # duration = []
+        # for spike in spikes:
+        #     duration.append(spike.time[-1] - spike.time[0])
+
+        # return None, np.sum(duration)
 
 
     def accommodation_index(self, time, spikes, info):

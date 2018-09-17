@@ -205,14 +205,18 @@ class Spikes:
         considered a spike. If "auto" the threshold is set to the standard
         deviation of the voltage trace. Default is -30.
     end_threshold : {int, float}, optional
-        The end threshold for a spike relative to the threshold.
-        Default is -10.
+        The end threshold for a spike relative to the threshold. Generally
+        negative values give the best results. Default is -10.
     extended_spikes : bool
         If the spikes should be extended past the threshold, until the
         derivative of the voltage trace is below 0.5. Default is False.
     trim : bool, optional
         If the spikes should be trimmed back from the termination threshold,
         so each spike is equal the threshold at both ends. Default is True.
+    normalize : bool, optional
+        If the voltage traceshould be normalized before the spikes are
+        found. If normalize is used threshold must be between [0, 1], and
+        the end_threshold a similar relative value. Default is False.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional
@@ -255,8 +259,10 @@ class Spikes:
                  end_threshold=-10,
                  extended_spikes=False,
                  trim=True,
+                 normalize=False,
                  xlabel="",
                  ylabel=""):
+
         self.spikes = []
         self.nr_spikes = 0
 
@@ -271,7 +277,8 @@ class Spikes:
                              threshold=threshold,
                              end_threshold=end_threshold,
                              extended_spikes=extended_spikes,
-                             trim=trim)
+                             trim=trim,
+                             normalize=normalize)
 
 
     def __iter__(self):
@@ -332,11 +339,14 @@ class Spikes:
         return self.spikes[i]
 
 
-    def find_spikes(self, time, V,
+    def find_spikes(self,
+                    time,
+                    V,
                     threshold=-30,
                     end_threshold=-10,
                     extended_spikes=False,
-                    trim=True):
+                    trim=True,
+                    normalize=False):
         """
         Finds spikes in the given voltage trace.
 
@@ -352,15 +362,27 @@ class Spikes:
             considered a spike. If "auto" the threshold is set to the standard
             deviation of the voltage trace. Default is -30.
         end_threshold : {int, float}, optional
-            The end threshold for a spike relative to the threshold.
-            Default is -10.
+            The end threshold for a spike relative to the threshold. Generally
+            negative values give the best results. Default is -10.
         extended_spikes : bool, optional
             If the spikes should be extended past the threshold, until the
             derivative of the voltage trace is below 0.5. Default is False.
         trim : bool, optional
             If the spikes should be trimmed back from the termination threshold,
             so each spike is equal the threshold at both ends. Default is True.
+        normalize : bool, optional
+            If the voltage traceshould be normalized before the spikes are
+            found. If normalize is used threshold must be between [0, 1], and
+            the end_threshold must have a absolute value between [0, 1]. Default
+            is False.
 
+        Raises
+        ------
+        ValueError
+            If the threshold is outside the interval [0, 1] when normalize=True.
+        ValueError
+            If the absolute value of end_threshold is outside the
+            interval [0, 1] when normalize=True.
 
         Notes
         -----
@@ -378,18 +400,35 @@ class Spikes:
         self.time = time
         self.V = V
 
+
+        # Normalize the values
+        if normalize:
+            if threshold > 1 or threshold < 0:
+                raise ValueError("Threshold must be between [0, 1] when normalize=True")
+
+            if abs(end_threshold) > 1 or abs(end_threshold) < 0:
+                raise ValueError("Absolute value of end_threshold must be between [0, 1] when normalize=True")
+
+            voltage = V.copy()
+            voltage -= voltage.min()
+            voltage /= voltage.max()
+        else:
+            voltage = V
+
+
+
         min_extent_from_peak = 1
         derivative_cutoff = 0.5
 
         self.spikes = []
         if threshold == "auto":
-            threshold = np.sqrt(V.var())
+            threshold = np.sqrt(voltage.var())
 
         spike_start = 0
         start_flag = False
 
         if extended_spikes:
-            dVdt = np.gradient(V)
+            dVdt = np.gradient(voltage)
 
             gt_derivative = np.where(dVdt >= derivative_cutoff)[0]
             lt_derivative = np.where(dVdt <= -derivative_cutoff)[0]
@@ -397,12 +436,12 @@ class Spikes:
         prev_spike_end = 0
 
         for i in range(len(V)):
-            if V[i] > threshold and start_flag is False:
+            if voltage[i] > threshold and start_flag is False:
                 spike_start = i
                 start_flag = True
                 continue
 
-            elif V[i] < (threshold + end_threshold) and start_flag is True:
+            elif voltage[i] < (threshold + end_threshold) and start_flag is True:
                 start_flag = False
                 spike_end = i + 1
 
