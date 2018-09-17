@@ -211,6 +211,7 @@ class UncertaintyQuantification(ParameterBase):
                  nr_mc_samples=10**4,
                  allow_incomplete=True,
                  seed=None,
+                 single=False,
                  plot="condensed_first",
                  figure_folder="figures",
                  figureformat=".png",
@@ -379,33 +380,63 @@ class UncertaintyQuantification(ParameterBase):
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
 
         if method.lower() == "pc":
-            self.polynomial_chaos(uncertain_parameters=uncertain_parameters,
-                                  method=pc_method,
-                                  rosenblatt=rosenblatt,
-                                  polynomial_order=polynomial_order,
-                                  nr_collocation_nodes=nr_collocation_nodes,
-                                  quadrature_order=quadrature_order,
-                                  nr_pc_mc_samples=nr_pc_mc_samples,
-                                  allow_incomplete=allow_incomplete,
-                                  seed=seed,
-                                  plot=plot,
-                                  figure_folder=figure_folder,
-                                  figureformat=figureformat,
-                                  save=save,
-                                  data_folder=data_folder,
-                                  filename=filename,
-                                  **custom_kwargs)
+            if single:
+                self.polynomial_chaos_single(uncertain_parameters=uncertain_parameters,
+                                             method=pc_method,
+                                             rosenblatt=rosenblatt,
+                                             polynomial_order=polynomial_order,
+                                             nr_collocation_nodes=nr_collocation_nodes,
+                                             quadrature_order=quadrature_order,
+                                             nr_pc_mc_samples=nr_pc_mc_samples,
+                                             allow_incomplete=allow_incomplete,
+                                             seed=seed,
+                                             plot=plot,
+                                             figure_folder=figure_folder,
+                                             figureformat=figureformat,
+                                             save=save,
+                                             data_folder=data_folder,
+                                             filename=filename,
+                                             **custom_kwargs)
+
+            else:
+                self.polynomial_chaos(uncertain_parameters=uncertain_parameters,
+                                      method=pc_method,
+                                      rosenblatt=rosenblatt,
+                                      polynomial_order=polynomial_order,
+                                      nr_collocation_nodes=nr_collocation_nodes,
+                                      quadrature_order=quadrature_order,
+                                      nr_pc_mc_samples=nr_pc_mc_samples,
+                                      allow_incomplete=allow_incomplete,
+                                      seed=seed,
+                                      plot=plot,
+                                      figure_folder=figure_folder,
+                                      figureformat=figureformat,
+                                      save=save,
+                                      data_folder=data_folder,
+                                      filename=filename,
+                                      **custom_kwargs)
 
         elif method.lower() == "mc":
-            self.monte_carlo(uncertain_parameters=uncertain_parameters,
-                             nr_samples=nr_mc_samples,
-                             plot=plot,
-                             figure_folder=figure_folder,
-                             figureformat=figureformat,
-                             save=save,
-                             data_folder=data_folder,
-                             filename=filename,
-                             seed=seed)
+            if single:
+                self.monte_carlo(uncertain_parameters=uncertain_parameters,
+                                 nr_samples=nr_mc_samples,
+                                 plot=plot,
+                                 figure_folder=figure_folder,
+                                 figureformat=figureformat,
+                                 save=save,
+                                 data_folder=data_folder,
+                                 filename=filename,
+                                 seed=seed)
+            else:
+                self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
+                                        nr_samples=nr_mc_samples,
+                                        plot=plot,
+                                        figure_folder=figure_folder,
+                                        figureformat=figureformat,
+                                        save=save,
+                                        data_folder=data_folder,
+                                        filename=filename,
+                                        seed=seed)
 
         elif method.lower() == "custom":
             self.custom_uncertainty_quantification(plot=plot,
