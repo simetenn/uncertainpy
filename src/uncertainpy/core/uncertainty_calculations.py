@@ -1213,8 +1213,7 @@ class UncertaintyCalculations(ParameterBase):
             models with incomplete evaluations.
             Default is True.
         seed : int, optional
-            Set a random seed. If None, no seed is set.
-            Default is None.
+            Set a random seed. If None, no seed is set. Default is None.
 
         Returns
         -------
