@@ -311,7 +311,7 @@ class UncertaintyQuantification(ParameterBase):
 
         Returns
         -------
-        data : Data
+        data : Data, dict containing data objects
             A data object that contains the results from the uncertainty quantification.
             Contains all model and feature evaluations, as well as all calculated
             statistical metrics. If `single` = True, then returns a dictionary
@@ -990,15 +990,6 @@ class UncertaintyQuantification(ParameterBase):
 
         data_dict = {}
 
-        fileextension = ""
-        if filename.endswith(".h5") and (self.backend == "hdf5" or self.backend == "auto"):
-            fileextension = ".h5"
-            filename = filename.strip(".h5")
-        elif filename.endswith(".exdir") and (self.backend == "exdir" or self.backend == "auto"):
-            fileextension = ".exdir"
-            filename = filename.strip(".exdir")
-
-
         for uncertain_parameter in uncertain_parameters:
             logger.info("Running for " + uncertain_parameter)
 
@@ -1014,27 +1005,19 @@ class UncertaintyQuantification(ParameterBase):
             )
 
             data.backend = self.backend
-
             data.seed = seed
-
-            tmp_filename = "{}_single-parameter-{}".format(
-                filename,
-                uncertain_parameter
-            )
-
-            tmp_filename += fileextension
-
-            if save:
-                self.save(tmp_filename, folder=data_folder)
-
-            tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
-            self.plot(type=plot,
-                      folder=tmp_figure_folder,
-                      figureformat=figureformat)
+            self.data = data
 
             data_dict[uncertain_parameter] = data
 
         self.data = data_dict
+
+        if save:
+            self.save(filename, folder=data_folder)
+
+        self.plot(type=plot,
+                  folder=figure_folder,
+                  figureformat=figureformat)
 
         return data_dict
 
@@ -1149,15 +1132,6 @@ class UncertaintyQuantification(ParameterBase):
         if seed is not None:
             np.random.seed(seed)
 
-        fileextension = ""
-        if filename.endswith(".h5") and (self.backend == "hdf5" or self.backend == "auto"):
-            fileextension = ".h5"
-            filename = filename.strip(".h5")
-        elif filename.endswith(".exdir") and (self.backend == "exdir" or self.backend == "auto"):
-            fileextension = ".exdir"
-            filename = filename.strip(".exdir")
-
-
         data_dict = {}
         for uncertain_parameter in uncertain_parameters:
             logger.info("Running MC for " + uncertain_parameter)
@@ -1165,30 +1139,19 @@ class UncertaintyQuantification(ParameterBase):
             data = self.uncertainty_calculations.monte_carlo(uncertain_parameters=uncertain_parameter,
                                                                   nr_samples=nr_samples)
 
-
             data.backend = self.backend
-
-            tmp_filename = "{}_single-parameter-{}".format(
-                filename,
-                uncertain_parameter
-            )
-
-            tmp_filename += fileextension
-
             data.seed = seed
-
-            if save:
-                self.save(tmp_filename, folder=data_folder)
-
-            tmp_figure_folder = os.path.join(figure_folder, tmp_filename)
-
-            self.plot(type=plot,
-                      folder=tmp_figure_folder,
-                      figureformat=figureformat)
 
             data_dict[uncertain_parameter] = data
 
         self.data = data_dict
+
+        if save:
+            self.save(filename, folder=data_folder)
+
+        self.plot(type=plot,
+                  folder=figure_folder,
+                  figureformat=figureformat)
 
         return data_dict
 
@@ -1216,19 +1179,44 @@ class UncertaintyQuantification(ParameterBase):
 
         fileextension = ""
         if self.backend == "auto":
-            if not filename.endswith(".h5") and not filename.endswith(".exdir"):
+            if filename.endswith(".h5"):
                 fileextension =  ".h5"
-        elif self.backend == "hdf5" and not filename.endswith(".h5"):
+                filename = filename.strip(".h5")
+            elif filename.endswith(".exdir"):
+                fileextension =  ".exdir"
+                filename = filename.strip(".exdir")
+            else:
+                fileextension =  ".h5"
+
+        elif self.backend == "hdf5":
             fileextension =  ".h5"
-        elif self.backend == "exdir" and not filename.endswith(".exdir"):
+            filename = filename.strip(".h5")
+        elif self.backend == "exdir":
             fileextension =  ".exdir"
+            filename = filename.strip(".exdir")
 
-        save_path = os.path.join(folder, filename + fileextension)
+        # To save dict of single parameter runs
+        if isinstance(self.data, dict):
+            for uncertain_parameter in self.data:
+                tmp_filename = "{}_{}".format(
+                    filename,
+                    uncertain_parameter
+                )
 
-        logger = get_logger(self)
-        logger.info("Saving data as: {}".format(save_path))
+                save_path = os.path.join(folder, tmp_filename + fileextension)
 
-        self.data.save(save_path)
+                logger.info("Saving data as: {}".format(save_path))
+
+                self.data[uncertain_parameter].save(save_path)
+
+        else:
+            save_path = os.path.join(folder, filename + fileextension)
+
+            logger.info("Saving data as: {}".format(save_path))
+
+            self.data.save(save_path)
+
+
 
 
     def load(self, filename):
@@ -1257,6 +1245,8 @@ class UncertaintyQuantification(ParameterBase):
 
         Parameters
         ----------
+        data : Data
+            A data object that contains the results from the uncertainty quantification.
         type : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
             "condensed_first" is a subset of the most important plots and
@@ -1265,15 +1255,12 @@ class UncertaintyQuantification(ParameterBase):
             total order Sobol indices, and "condensed_no_sensitivity" is the
             same without any Sobol indices plotted. "all" creates every plot.
             "evaluations" plots the model and feature evaluations. None plots
-            nothing.
-            Default is "condensed_first".
+            nothing. Default is "condensed_first".
         folder : str
-            Name of the folder where to save all figures.
-            Default is "figures".
+            Name of the folder where to save all figures. Default is "figures".
         figureformat : str
             The figure format to save the plots in. Supports all formats in
-            matplolib.
-            Default is ".png".
+            matplolib. Default is ".png".
 
         Notes
         -----
@@ -1286,13 +1273,8 @@ class UncertaintyQuantification(ParameterBase):
         uncertainpy.Data
         uncertainpy.plotting.PlotUncertainty
         """
-        if type is None:
-            return
-        else:
-            self.plotting.data = self.data
-            self.plotting.folder = folder
-            self.plotting.figureformat = figureformat
 
+        def plot(type):
             if type.lower() == "condensed_first":
                 self.plotting.plot_condensed(sensitivity="sobol_first")
 
@@ -1313,3 +1295,26 @@ class UncertaintyQuantification(ParameterBase):
                 raise ValueError('type must one of: "condensed_first", '
                                 '"condensed_total", "condensed_no_sensitivity" '
                                 '"all", "evaluations", None, not {}'.format(type))
+
+
+        if type is None:
+            return
+        else:
+            self.plotting.figureformat = figureformat
+
+            # To plot dict of single parameter runs
+            if isinstance(self.data, dict):
+                for uncertain_parameter in self.data:
+                    tmp_folder = os.path.join(folder, uncertain_parameter)
+
+                    self.plotting.folder = tmp_folder
+                    self.plotting.data = self.data[uncertain_parameter]
+
+                    plot(type)
+
+            else:
+                self.plotting.folder = folder
+                self.plotting.data = self.data
+
+                plot(type)
+

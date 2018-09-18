@@ -378,16 +378,16 @@ class TestUncertainty(TestCasePlot):
         self.assertIsInstance(data_dict["b"], Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        compare_file = os.path.join(folder, "data/TestingModel1d_a.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_a.h5")
         result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
 
         self.assertEqual(result, 0)
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-b.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+        compare_file = os.path.join(folder, "data/TestingModel1d_b.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_b.h5")
         result = subprocess.call(["h5diff", "-d", str(self.difference_treshold), filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -491,17 +491,14 @@ class TestUncertainty(TestCasePlot):
                                                  figure_folder=self.output_test_dir,
                                                  seed=self.seed)
 
-        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/TestingModel1d_prediction-interval")
-
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_var_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-a/feature1d_var_prediction-interval")
-
-        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/TestingModel1d_prediction-interval")
-
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_var_mean-variance")
-        self.compare_plot("TestingModel1d_single-parameter-b/feature1d_var_prediction-interval")
+        self.compare_plot("a/TestingModel1d_mean-variance")
+        self.compare_plot("a/TestingModel1d_prediction-interval")
+        self.compare_plot("a/feature1d_var_mean-variance")
+        self.compare_plot("a/feature1d_var_prediction-interval")
+        self.compare_plot("b/TestingModel1d_mean-variance")
+        self.compare_plot("b/TestingModel1d_prediction-interval")
+        self.compare_plot("b/feature1d_var_mean-variance")
+        self.compare_plot("b/feature1d_var_prediction-interval")
 
 
     def test_var_monte_carlo_single(self):
@@ -534,8 +531,8 @@ class TestUncertainty(TestCasePlot):
         self.assertIsInstance(data_dict["b"], Data)
 
         folder = os.path.dirname(os.path.realpath(__file__))
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-a.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-a.h5")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC_a.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_a.h5")
 
         self.assertTrue(os.path.isfile(filename))
 
@@ -544,8 +541,8 @@ class TestUncertainty(TestCasePlot):
         self.assertEqual(result, 0)
 
 
-        compare_file = os.path.join(folder, "data/TestingModel1d_MC_single-parameter-b.h5")
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_single-parameter-b.h5")
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC_b.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC_b.h5")
 
         self.assertTrue(os.path.isfile(filename))
 
@@ -916,10 +913,10 @@ class TestUncertainty(TestCasePlot):
                                                  figure_folder=self.output_test_dir,
                                                  seed=self.seed)
 
-        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -947,10 +944,10 @@ class TestUncertainty(TestCasePlot):
                                             seed=self.seed,
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "TestingModel1d_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -983,10 +980,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test.h5")
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -994,12 +991,12 @@ class TestUncertainty(TestCasePlot):
 
 
         self.uncertainty.quantify(method="mc",
-                            plot=None,
-                            save=True,
-                            data_folder=self.output_test_dir,
-                            figure_folder=self.output_test_dir,
-                            seed=self.seed,
-                            filename="test.h5")
+                                  plot=None,
+                                  save=True,
+                                  data_folder=self.output_test_dir,
+                                  figure_folder=self.output_test_dir,
+                                  seed=self.seed,
+                                  filename="test.h5")
 
         file_path = os.path.join(self.output_test_dir, "test.h5")
         self.assertTrue(os.path.exists(file_path))
@@ -1016,10 +1013,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test.h5",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1049,10 +1046,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test.exdir")
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.exdir")
+        file_path = os.path.join(self.output_test_dir, "test_a.exdir")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.exdir")
+        file_path = os.path.join(self.output_test_dir, "test_b.exdir")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -1082,10 +1079,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test.exdir",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.exdir")
+        file_path = os.path.join(self.output_test_dir, "test_a.exdir")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.exdir")
+        file_path = os.path.join(self.output_test_dir, "test_b.exdir")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1116,10 +1113,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test")
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -1149,10 +1146,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1183,10 +1180,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test.test")
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test.test_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test.test_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -1216,10 +1213,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test.test",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test.test_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test.test_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1251,10 +1248,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test.test")
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.test_a.exdir")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.test_b.exdir")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -1284,10 +1281,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test.test",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-a.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.test_a.exdir")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.test_single-parameter-b.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.test_b.exdir")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1318,10 +1315,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test.exdir")
 
-        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test.exdir_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test.exdir_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -1351,10 +1348,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test.exdir",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-a.h5")
+        file_path = os.path.join(self.output_test_dir, "test.exdir_a.h5")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.exdir_single-parameter-b.h5")
+        file_path = os.path.join(self.output_test_dir, "test.exdir_b.h5")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1386,10 +1383,10 @@ class TestUncertainty(TestCasePlot):
                                                  seed=self.seed,
                                                  filename="test.h5")
 
-        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-a.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.h5_a.exdir")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-b.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.h5_b.exdir")
         self.assertTrue(os.path.exists(file_path))
 
         if os.path.isdir(self.output_test_dir):
@@ -1419,10 +1416,10 @@ class TestUncertainty(TestCasePlot):
                                             filename="test.h5",
                                             nr_samples=self.nr_mc_samples)
 
-        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-a.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.h5_a.exdir")
         self.assertTrue(os.path.exists(file_path))
 
-        file_path = os.path.join(self.output_test_dir, "test.h5_single-parameter-b.exdir")
+        file_path = os.path.join(self.output_test_dir, "test.h5_b.exdir")
         self.assertTrue(os.path.exists(file_path))
 
 
@@ -1436,10 +1433,15 @@ class TestUncertainty(TestCasePlot):
                                                  figure_folder=self.output_test_dir,
                                                  seed=self.seed)
 
-        self.assertEqual(self.uncertainty.data.arguments["function"], "PC")
-        self.assertEqual(self.uncertainty.data.arguments["uncertain_parameters"], "b")
-        self.assertEqual(self.uncertainty.data.arguments["method"], "collocation")
-        self.assertEqual(self.uncertainty.data.arguments["rosenblatt"], True)
+        self.assertEqual(self.uncertainty.data["a"].arguments["function"], "PC")
+        self.assertEqual(self.uncertainty.data["a"].arguments["uncertain_parameters"], "a")
+        self.assertEqual(self.uncertainty.data["a"].arguments["method"], "collocation")
+        self.assertEqual(self.uncertainty.data["a"].arguments["rosenblatt"], True)
+
+        self.assertEqual(self.uncertainty.data["b"].arguments["function"], "PC")
+        self.assertEqual(self.uncertainty.data["b"].arguments["uncertain_parameters"], "b")
+        self.assertEqual(self.uncertainty.data["b"].arguments["method"], "collocation")
+        self.assertEqual(self.uncertainty.data["b"].arguments["rosenblatt"], True)
 
 
     def test_quantify_monte_carlo(self):

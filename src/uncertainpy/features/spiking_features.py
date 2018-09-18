@@ -513,11 +513,19 @@ class SpikingFeatures(GeneralSpikingFeatures):
         if spikes.nr_spikes <= 0:
             return None, None
 
-        sum_duration = 0
-        for spike in spikes:
-            sum_duration += spike.time[-1] - spike.time[0]
+        # sum_duration = 0
+        # for spike in spikes:
+        #     sum_duration += spike.time[-1] - spike.time[0]
 
-        return None, sum_duration/float(spikes.nr_spikes)
+        # return None, sum_duration/float(spikes.nr_spikes)
+
+        durations = []
+        for spike in spikes:
+            durations.append(spike.time[-1] - spike.time[0])
+
+        return None, np.mean(durations)
+
+        # return None, sum_duration/float(spikes.nr_spikes)
 
         # voltage = spikes.V
         # normalized_voltage = voltage - voltage.min()
@@ -573,7 +581,6 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
             k = \min \left\{4, \frac{\text{Number of ISIs}}{5}\right\}.
         """
-
         N = spikes.nr_spikes
         if N <= 1:
             return None, None
