@@ -314,7 +314,9 @@ class UncertaintyQuantification(ParameterBase):
         data : Data
             A data object that contains the results from the uncertainty quantification.
             Contains all model and feature evaluations, as well as all calculated
-            statistical metrics.
+            statistical metrics. If `single` = True, then returns a dictionary
+            that contains the data objects for each single parameter
+            calculation.
 
         Raises
         ------
@@ -418,16 +420,6 @@ class UncertaintyQuantification(ParameterBase):
 
         elif method.lower() == "mc":
             if single:
-                self.monte_carlo(uncertain_parameters=uncertain_parameters,
-                                 nr_samples=nr_mc_samples,
-                                 plot=plot,
-                                 figure_folder=figure_folder,
-                                 figureformat=figureformat,
-                                 save=save,
-                                 data_folder=data_folder,
-                                 filename=filename,
-                                 seed=seed)
-            else:
                 self.monte_carlo_single(uncertain_parameters=uncertain_parameters,
                                         nr_samples=nr_mc_samples,
                                         plot=plot,
@@ -437,6 +429,19 @@ class UncertaintyQuantification(ParameterBase):
                                         data_folder=data_folder,
                                         filename=filename,
                                         seed=seed)
+
+
+            else:
+                self.monte_carlo(uncertain_parameters=uncertain_parameters,
+                                 nr_samples=nr_mc_samples,
+                                 plot=plot,
+                                 figure_folder=figure_folder,
+                                 figureformat=figureformat,
+                                 save=save,
+                                 data_folder=data_folder,
+                                 filename=filename,
+                                 seed=seed)
+
 
         elif method.lower() == "custom":
             self.custom_uncertainty_quantification(plot=plot,
@@ -1091,7 +1096,7 @@ class UncertaintyQuantification(ParameterBase):
         Returns
         -------
         data_dict : dict
-            A dictionary that contains the data for each single parameter
+            A dictionary that contains the data objects for each single parameter
             calculation.
 
         Raises
