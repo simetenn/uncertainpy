@@ -401,6 +401,8 @@ class Spikes:
         self.V = V
 
 
+
+
         # Normalize the values
         if normalize:
             if threshold > 1 or threshold < 0:
@@ -409,11 +411,23 @@ class Spikes:
             if abs(end_threshold) > 1 or abs(end_threshold) < 0:
                 raise ValueError("Absolute value of end_threshold must be between [0, 1] when normalize=True")
 
+
             voltage = V.copy()
             voltage -= voltage.min()
             voltage /= voltage.max()
+
+
+            if threshold == "auto":
+                threshold = np.sqrt(voltage.var())
+
+            rescaled_threshold = threshold*(V.max() - V.min()) + V.min()
         else:
             voltage = V
+
+            if threshold == "auto":
+                threshold = np.sqrt(voltage.var())
+
+            rescaled_threshold = threshold
 
 
 
@@ -421,8 +435,6 @@ class Spikes:
         derivative_cutoff = 0.5
 
         self.spikes = []
-        if threshold == "auto":
-            threshold = np.sqrt(voltage.var())
 
         spike_start = 0
         start_flag = False
@@ -480,11 +492,12 @@ class Spikes:
 
 
                 if not extended_spikes and trim:
-                    spike.trim(threshold=threshold,
+                    spike.trim(threshold=rescaled_threshold,
                                min_extent_from_peak=min_extent_from_peak)
 
-
-                self.spikes.append(spike)
+                # Do not add if the spike is empty
+                if spike.V is not None:
+                    self.spikes.append(spike)
 
                 # # Only add a new spike if either does not overlap the
                 # # previous spike, or if the max V of this spike is greater than
