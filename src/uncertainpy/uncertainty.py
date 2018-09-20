@@ -279,7 +279,8 @@ class UncertaintyQuantification(ParameterBase):
             Default is None.
         single : bool
             If an uncertainty quantification should be performed with only one
-            uncertain parameter at the time.
+            uncertain parameter at the time. Requires that the values of
+            each parameter is set. Default is False.
         plot : {"condensed_first", "condensed_total", "condensed_no_sensitivity", "all", "evaluations", None}, optional
             Type of plots to be created.
             "condensed_first" is a subset of the most important plots and
@@ -981,6 +982,10 @@ class UncertaintyQuantification(ParameterBase):
         logger = get_logger(self)
 
         uncertain_parameters = self.uncertainty_calculations.convert_uncertain_parameters(uncertain_parameters)
+
+        for parameter in self.parameters:
+            if parameter.value is None:
+                raise ValueError
 
         if filename is None:
             filename = self.model.name
