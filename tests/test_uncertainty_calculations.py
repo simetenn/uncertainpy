@@ -1348,12 +1348,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data = self.uncertainty_calculations.polynomial_chaos(uncertain_parameters="a",
                                                               seed=self.seed)
 
-        filename = os.path.join(self.output_test_dir, "TestingModel1d_single-parameter-a.h5")
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_a.h5")
         data.save(filename)
 
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        compare_file = os.path.join(folder, "data/TestingModel1d_single-parameter-a.h5")
+        compare_file = os.path.join(folder, "data/TestingModel1d_a.h5")
         result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
@@ -1368,12 +1368,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data = self.uncertainty_calculations.polynomial_chaos(uncertain_parameters="b",
                                                               seed=self.seed)
 
-        filename = os.path.join(self.output_test_dir, "UncertaintyCalculations_single-parameter-b.h5")
+        filename = os.path.join(self.output_test_dir, "UncertaintyCalculations_b.h5")
         data.save(filename)
 
         folder = os.path.dirname(os.path.realpath(__file__))
 
-        compare_file = os.path.join(folder, "data/UncertaintyCalculations_single-parameter-b.h5")
+        compare_file = os.path.join(folder, "data/UncertaintyCalculations_b.h5")
         result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
