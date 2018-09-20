@@ -255,6 +255,7 @@ class RunModel(ParameterBase):
                 data[feature]["labels"] = self.features.labels[feature]
 
         data.model_name = self.model.name
+        data.model_ignore = self.model.ignore
 
         def add_results(results, data, feature):
             data[feature].time = []

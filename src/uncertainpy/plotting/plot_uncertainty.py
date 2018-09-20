@@ -285,14 +285,22 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
-            time = np.arange(0, len(self.data[feature].evaluations[0]))
-        else:
-            time = self.data[feature].time
+        if not self.data.model_ignore:
+            if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+                time = np.arange(0, len(self.data[feature].evaluations[0]))
+            else:
+                time = self.data[feature].time
 
 
         padding = len(str(len(self.data[feature].evaluations[0]) + 1))
         for i, evaluation in enumerate(self.data[feature].evaluations):
+
+            if self.data.model_ignore:
+                if self.data[feature].time[i] is None or np.all(np.isnan(self.data[feature].time[i])):
+                    time = np.arange(0, len(self.data[feature].evaluations[i]))
+                else:
+                    time = self.data[feature].time[i]
+
             ax = prettyPlot(time, evaluation,
                             xlabel=xlabel.capitalize(),
                             ylabel=ylabel.capitalize(),
