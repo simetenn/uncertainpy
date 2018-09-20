@@ -175,8 +175,14 @@ class Parameters(collections.MutableMapping):
         A dictionary of parameters with ``name`` as key and Parameter object as value.
     distribution: {None, multivariate Chaospy distribution}, optional
         A multivariate distribution of all parameters, if it exists, it is used
-        instead of individual distributions.
-        Defaults to None.
+        instead of individual distributions. Defaults to None.
+
+    Notes
+    -----
+    Both parameter values and parameter distributions must be set if
+    uncertainpy.UncertaintyQuantification.quantify is run with single=True,
+    meaning the uncertainty quantification should be performed with only one
+    uncertain parameter at the time.
 
     See Also
     --------
