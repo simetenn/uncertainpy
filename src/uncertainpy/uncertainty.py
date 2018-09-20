@@ -985,7 +985,7 @@ class UncertaintyQuantification(ParameterBase):
 
         for parameter in self.parameters:
             if parameter.value is None:
-                raise ValueError
+                raise ValueError("Parameter.value must be set for each parameter when using single=True.")
 
         if filename is None:
             filename = self.model.name
