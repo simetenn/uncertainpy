@@ -1520,7 +1520,9 @@ class UncertaintyCalculations(ParameterBase):
                         masked_mean_evaluations[i] = data[feature].mean
 
                     if not np.all(mask):
-                        logger.warning("{}: not all parameter combinations give results. ".format(feature) +
+                        logger.warning("{}: only yields ".format(feature) +
+                                       "results for {}/{} ".format(sum(mask), len(mask)) +
+                                       "parameter combinations." +
                                        "numpy.nan results are set to the mean when calculating the Sobol indices. " +
                                        "This might affect the Sobol indices.")
 
