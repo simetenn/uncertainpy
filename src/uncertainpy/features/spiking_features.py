@@ -161,7 +161,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
             raise ImportError("Spiking features require: scipy")
 
         implemented_labels = {"nr_spikes": ["Number of spikes"],
-                              "spike_rate": ["Spike rate (Hz)"],
+                              "spike_rate": ["Spike rate (1/ms)"],
                               "time_before_first_spike": ["Time (ms)"],
                               "accommodation_index": ["Accommodation index"],
                               "average_AP_overshoot": ["Voltage (mV)"],
@@ -216,26 +216,26 @@ class SpikingFeatures(GeneralSpikingFeatures):
 
         if "stimulus_start" not in info:
             if self.strict:
-                raise ValueError("spike_rate require info['stimulus_start']. "
+                raise ValueError("nr_spikes require info['stimulus_start']. "
                                  "No 'stimulus_start' found in info, "
                                  "Set 'stimulus_start', or set strict to "
                                  "False to use initial time as stimulus start")
             else:
                 info["stimulus_start"] = time[0]
-                logger.warning("spike_rate features require info['stimulus_start']. "
+                logger.warning("nr_spikes features require info['stimulus_start']. "
                                "No 'stimulus_start' found in info, "
                                "setting stimulus start as initial time")
 
 
         if "stimulus_end" not in info:
             if self.strict:
-                raise ValueError("spike_rate require info['stimulus_end']. "
+                raise ValueError("nr_spikes require info['stimulus_end']. "
                                  "No 'stimulus_end' found in info, "
                                  "Set 'stimulus_start', or set strict to "
                                  "False to use end time as stimulus end")
             else:
                 info["stimulus_end"] = time[-1]
-                logger.warning("spike_rate require info['stimulus_start']. "
+                logger.warning("nr_spikes require info['stimulus_start']. "
                                "No 'stimulus_end' found in info, "
                                "setting stimulus end as end time")
 
@@ -424,7 +424,7 @@ class SpikingFeatures(GeneralSpikingFeatures):
         """
 
 
-        if spikes.nr_spikes <= 0:
+        if spikes.nr_spikes <= 2:
             return None, None
 
         sum_AHP_depth = 0

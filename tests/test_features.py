@@ -304,7 +304,7 @@ class TestSpikingFeatures(unittest.TestCase):
                                      "accommodation_index", "average_duration"]
 
         self.implemented_labels = {"nr_spikes": ["Number of spikes"],
-                                   "spike_rate": ["Spike rate (Hz)"],
+                                   "spike_rate": ["Spike rate (1/ms)"],
                                    "time_before_first_spike": ["Time (ms)"],
                                    "accommodation_index": ["Accommodation index"],
                                    "average_AP_overshoot": ["Voltage (mV)"],
@@ -340,7 +340,7 @@ class TestSpikingFeatures(unittest.TestCase):
 
         labels = {"nr_spikes": ["changed"],
                   "new": ["new"],
-                  "spike_rate": ["Spike rate (Hz)"],
+                  "spike_rate": ["Spike rate (1/ms)"],
                   "time_before_first_spike": ["Time (ms)"],
                   "accommodation_index": ["Accommodation index"],
                   "average_AP_overshoot": ["Voltage (mV)"],
