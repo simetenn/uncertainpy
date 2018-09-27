@@ -15,15 +15,16 @@ ENV VENV=$HOME/simulators
 RUN mkdir $HOME; mkdir $HOME/packages; mkdir $VENV
 ENV PATH=$PATH:$VENV/bin
 
-ENV NEST_VER=2.14.0 NRN_VER=7.5
+ENV NEST_VER=2.16.0 NRN_VER=7.6
 ENV NEST=nest-$NEST_VER NRN=nrn-$NRN_VER
 
 WORKDIR $HOME/packages
 # Once neurons certificate is properly set up use add again
 ADD http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz .
-RUN wget http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz --no-check-certificate
-ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz .
-RUN tar xzf $NEST.tar.gz; tar xzf $NRN.tar.gz; rm $NEST.tar.gz $NRN.tar.gz
+# RUN wget http://www.neuron.yale.edu/ftp/neuron/versions/v$NRN_VER/$NRN.tar.gz --no-check-certificate
+# ADD https://github.com/nest/nest-simulator/releases/download/v$NEST_VER/nest-$NEST_VER.tar.gz .
+ADD https://github.com/nest/nest-simulator/archive/v$NEST_VER.tar.gz .
+RUN tar xzf v$NEST_VER.tar.gz; tar xzf $NRN.tar.gz; rm v$NEST_VER.tar.gz $NRN.tar.gz
 
 
 RUN mkdir $VENV/build; mkdir $VENV/build/$NRN; mkdir $VENV/build/$NEST; mkdir $VENV/bin
@@ -37,7 +38,7 @@ RUN cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl; ln -s ../x86_64/bin/nrngui; ln 
 
 
 WORKDIR $VENV/build/$NEST
-RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV -Dwith-mpi=ON -Dwith-python=3 $HOME/packages/$NEST > /dev/null
+RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV -Dwith-mpi=ON -Dwith-python=3 $HOME/packages/nest-simulator-$NEST_VER > /dev/null
 RUN make
 RUN make install > /dev/null
 
@@ -73,13 +74,13 @@ RUN mkdir .config/matplotlib
 RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
 
 # Temporary fix to chaospy
-RUN git clone https://github.com/jonathf/chaospy.git
-RUN cd chaospy; python setup.py install
+#RUN git clone https://github.com/jonathf/chaospy.git
+#RUN cd chaospy; python setup.py install
 
 # get exdir
 RUN conda install exdir -c cinpla -c conda-forge
 
 
 # Ensure newest version of exdir, only temporary
-RUN git clone https://github.com/CINPLA/exdir.git
-RUN cd exdir; python setup.py install
+#RUN git clone https://github.com/CINPLA/exdir.git
+#RUN cd exdir; python setup.py install

@@ -1,4 +1,4 @@
-FROM uncertainpy3
+FROM python3
 
 COPY . uncertainpy/
 RUN cd uncertainpy; python setup.py develop --tests

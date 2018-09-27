@@ -641,6 +641,7 @@ def prettyBar(x, error=None,
               xlabels=[],
               xticks=None,
               ylabel="",
+              custom_style=True,
               width=0.2,
               linewidth=0,
               ax=None,
@@ -686,6 +687,9 @@ xticks : list | array
 ylabel : str
     ylabel of the plot.
     Default is ""
+custom_style : bool
+    If custom style should be used in addition to the standard style.
+    Default is True
 width : int
     width of each bar.
     Default is 0.2
@@ -734,7 +738,7 @@ Returns
 ax : matplotlib ax Object
     """
 
-    set_style(style, nr_colors=nr_colors, palette=palette)
+    set_style(style, nr_colors=nr_colors, palette=palette, custom=custom_style)
 
     if ax is None:
         if new_figure:
