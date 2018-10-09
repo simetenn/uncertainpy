@@ -310,6 +310,7 @@ class Spikes:
 
         return string.strip()
 
+
     def __len__(self):
         """
         Find the number of spikes.
@@ -400,9 +401,6 @@ class Spikes:
         self.time = time
         self.V = V
 
-
-
-
         # Normalize the values
         if normalize:
             if threshold > 1 or threshold < 0:
@@ -428,7 +426,6 @@ class Spikes:
                 threshold = np.sqrt(voltage.var())
 
             rescaled_threshold = threshold
-
 
 
         min_extent_from_peak = 1
