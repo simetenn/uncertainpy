@@ -2,8 +2,8 @@ sudo: required
 services: docker
 language: python
 python:
-  - "2.7"
-  - "3.7"
+  - "2.7" # Placeholder only
+  - "3.6" # Placeholder only
 install:
   - pip install codecov
 before_script:
