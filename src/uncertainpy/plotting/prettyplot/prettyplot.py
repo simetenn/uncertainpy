@@ -672,7 +672,6 @@ error : list | array
     error for each x value
 index : list | array
     x position of each bar
-
 color : int
     Color of the line, given as a int.
     Uses #color from the current colormap
@@ -715,18 +714,17 @@ style : str
     Default is "seaborn-dark"
 palette : hls | husl | matplotlib colormap | seaborn color palette
     Set the matplotlib color cycle using a seaborn palette.
-    Availible seaborn palette names:
+    Available seaborn palette names:
         deep, muted, bright, pastel, dark, colorblind
     Other options:
         hls, husl, any named matplotlib palette, list of colors
-    Matplotlib paletes can be specified as reversed palettes by appending "_r"
+    Matplotlib palettes can be specified as reversed palettes by appending "_r"
     to the name or as dark palettes by appending "_d" to the name.
     (These options are mutually exclusive, but the resulting list of colors
     can also be reversed).
     Default is "hsl"
 nr_colors : int
-    the number of colors to be used with the seaborn color palette
-    #colors different colors
+    The number of colors to be used with the seaborn color palette
 error_kw : dict
     Dictionary of kwargs to be passed to errorbar method.
     ecolor and capsize may be specified here rather than as independent kwargs.
