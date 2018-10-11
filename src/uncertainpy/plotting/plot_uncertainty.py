@@ -785,7 +785,7 @@ class PlotUncertainty(object):
 
         spines_color(ax2, edges={"top": "None", "bottom": "None",
                                  "right": colors[color_2], "left": "None"})
-        ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+        ax2.tick_params(axis="y", which="both", right=False, left=False, labelright=True,
                         color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
         ax2.set_ylabel(ylabel.capitalize() + r"$^2$, variance", color=colors[color_2], fontsize=labelsize)
 
@@ -1088,7 +1088,7 @@ class PlotUncertainty(object):
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
-        ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
+        ax.tick_params(labelcolor="w", top=False, bottom=False, left=False, right=False)
         ax.set_xlabel(xlabel.capitalize(), labelpad=8)
         ax.set_ylabel(title.capitalize())
 
@@ -1115,7 +1115,7 @@ class PlotUncertainty(object):
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
                 ax.tick_params(labelsize=10)
             else:
-                ax.axis("off")
+                ax.axis(False)
 
         title = title.capitalize() + ", " + feature.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
@@ -1439,7 +1439,7 @@ class PlotUncertainty(object):
 
             spines_color(ax2, edges={"top": "None", "bottom": "None",
                                      "right": axis_grey, "left": "None"})
-            ax2.tick_params(axis="y", which="both", right="on", left="off", labelright="on",
+            ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
                             color=axis_grey, labelcolor="black", labelsize=labelsize)
             ax2.set_ylabel(label.capitalize(), fontsize=labelsize)
             ax2.set_ylim([0, 1.05])
@@ -1889,7 +1889,7 @@ class PlotUncertainty(object):
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
-        ax.tick_params(labelcolor="w", top="off", bottom="off", left="off", right="off")
+        ax.tick_params(labelcolor="w", top=False, bottom=False, left=False, right=False)
         ax.set_xlabel("Parameters")
         ax.set_ylabel("Average of " + title)
 
@@ -1909,7 +1909,7 @@ class PlotUncertainty(object):
                     msg = " Unable to plot {sensitivity}_average_grid. {sensitivity}_average of {feature} does not exist."
                     logger.warning(msg.format(sensitivity=sensitivity,
                                               feature=features[i]))
-                    ax.axis("off")
+                    ax.axis(False)
                     continue
 
                 prettyBar(self.data[features[i]][sensitivity + "_average"],
@@ -1929,7 +1929,7 @@ class PlotUncertainty(object):
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
                 ax.tick_params(labelsize=fontsize)
             else:
-                ax.axis("off")
+                ax.axis(False)
 
         title = "Average of " + title
         plt.suptitle(title, fontsize=titlesize)

@@ -180,12 +180,12 @@ Required arguments
 ax : matplotlib.axis
     axis object where the ticks are removed
     """
-    ax.tick_params(axis="x", which="both", bottom="on", top="off",
-                   labelbottom="on", color=axis_grey, labelcolor="black",
+    ax.tick_params(axis="x", which="both", bottom=False, top=False,
+                   labelbottom=False, color=axis_grey, labelcolor="black",
                    labelsize=labelsize)
 
-    ax.tick_params(axis="y", which="both", right="off", left="on",
-                   labelleft="on", color=axis_grey, labelcolor="black",
+    ax.tick_params(axis="y", which="both", right=False, left=False,
+                   labelleft=False, color=axis_grey, labelcolor="black",
                    labelsize=labelsize)
 
 
