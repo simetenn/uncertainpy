@@ -34,7 +34,6 @@ RUN cd src/nrnpython; python setup.py install > /dev/null
 RUN cd $VENV/bin; ln -s ../x86_64/bin/nrnivmodl; ln -s ../x86_64/bin/nrngui; ln -s ../x86_64/bin/nrnoc; ln -s ../x86_64/bin/nrniv
 
 
-RUN python -V
 WORKDIR $VENV/build/$NEST
 RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV -Dwith-mpi=ON -Dwith-python=3 $HOME/packages/nest-simulator-$NEST_VER > /dev/null
 RUN make
