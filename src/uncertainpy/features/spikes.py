@@ -296,7 +296,7 @@ class Spikes:
 
     def __str__(self):
         """
-        Convert the spike to a readable string.
+        Convert the spikes to a readable string.
 
         Returns
         -------
