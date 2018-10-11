@@ -147,7 +147,7 @@ linewidth : float
     Default is 1.3
     """
     ax.set_axis_bgcolor(bgcolor)
-    ax.set_axisbelow("True")
+    ax.set_axisbelow(True)
     ax.grid(True, color=linecolor, linestyle=linestyle, linewidth=linewidth,
             zorder=-10)
 

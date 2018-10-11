@@ -1115,7 +1115,7 @@ class PlotUncertainty(object):
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
                 ax.tick_params(labelsize=10)
             else:
-                ax.axis(False)
+                ax.set_axis_off()
 
         title = title.capitalize() + ", " + feature.replace("_", " ")
         plt.suptitle(title, fontsize=titlesize)
@@ -1909,7 +1909,7 @@ class PlotUncertainty(object):
                     msg = " Unable to plot {sensitivity}_average_grid. {sensitivity}_average of {feature} does not exist."
                     logger.warning(msg.format(sensitivity=sensitivity,
                                               feature=features[i]))
-                    ax.axis(False)
+                    ax.set_axis_off()
                     continue
 
                 prettyBar(self.data[features[i]][sensitivity + "_average"],
@@ -1929,7 +1929,7 @@ class PlotUncertainty(object):
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
                 ax.tick_params(labelsize=fontsize)
             else:
-                ax.axis(False)
+                ax.set_axis_off()
 
         title = "Average of " + title
         plt.suptitle(title, fontsize=titlesize)
