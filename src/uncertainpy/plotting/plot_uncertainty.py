@@ -292,7 +292,7 @@ class PlotUncertainty(object):
                 time = self.data[feature].time
 
 
-        padding = len(str(len(self.data[feature].evaluations[0]) + 1))
+        padding = len(str(len(self.data[feature].evaluations) + 1))
         for i, evaluation in enumerate(self.data[feature].evaluations):
 
             if self.data.model_ignore:
