@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
+import platform
 import types
 import multiprocess as mp
 import numpy as np
@@ -115,6 +116,12 @@ class UncertaintyQuantification(ParameterBase):
         if backend not in ["auto", "hdf5", "exdir"]:
             raise ValueError("backend {} not supported. Supported backends are: auto, hdf5, and exdir".format(backend))
 
+
+        logger = get_logger(self)
+
+        if platform.system().lower() == "windows":
+            logger.warning("On Windows machines everything in your script must be"
+                           "inside of an if __name__ == '__main__': block in order for multiprocess to work" )
 
         if uncertainty_calculations is None:
             self._uncertainty_calculations = UncertaintyCalculations(
