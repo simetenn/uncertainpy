@@ -18,6 +18,8 @@ Welcome to Uncertainpy's documentation!
 
     examples
 
+    faq
+
     uncertainty_estimation
 
     models
@@ -38,7 +40,7 @@ Welcome to Uncertainpy's documentation!
 Uncertainpy paper
 =================
 
-The Uncertainpy paper can be found here: `Tennøe S, Halnes G and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049 <paper>`_.
+The Uncertainpy paper can be found here: `Tennøe S, Halnes G, and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049 <paper>`_.
 
 .. _paper: https://www.frontiersin.org/articles/10.3389/fninf.2018.00049/full
 
@@ -62,6 +64,13 @@ different case studies.
 * :ref:`A sparsely connected recurrent network <brunel>`
 
 
+Frequently asked questions
+==========================
+
+* :ref:`A simple cooling coffee cup <coffee_cup>`
+
+
+
 Content of Uncertainpy
 ======================
 
@@ -73,6 +82,7 @@ all classes and functions, along with their API.
     * :ref:`General models <model>`
     * :ref:`Nest models <nest_model>`
     * :ref:`Neuron models <neuron_model>`
+    * :ref:`Multiple model outputs <multiple_outputs>`
 * :ref:`Parameters <parameters>`
 * :ref:`Features <features>`
     * :ref:`General features <main_features>`

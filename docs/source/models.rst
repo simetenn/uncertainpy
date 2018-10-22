@@ -13,6 +13,8 @@ custom models.
 Uncertainpy has built-in support for NEURON and NEST models,
 found in the :ref:`NeuronModel <neuron_model>`  and :ref:`NestModel <nest_model>` classes
 respectively.
+Uncertainpy also has support for multiple model outputs through the use of
+additional features.
 It should be noted that while Uncertainpy is tailored towards neuroscience,
 it is not restricted to only neuroscience models.
 Uncertainpy can be used on any model that meets the criteria in
@@ -26,3 +28,6 @@ this section.
     models/main_model
     models/neuron_model
     models/nest_model
+    models/multiple_outputs
+
+
