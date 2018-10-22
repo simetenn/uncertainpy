@@ -61,10 +61,10 @@ def set_latex_font():
 Set font options. Note, uses latex.
     """
     params = {"text.usetex": True,
-              "text.latex.preamble": "\\usepackage{lmodern}, \\usepackage{amsmath}, \\usepackage{amssymb}",
+              "text.latex.preamble": "\\usepackage{amsmath}, \\usepackage{amssymb}",
               "text.antialiased": True,
-              "font.family": "lmodern",
-              "font.weight": "normal"
+            #   "font.family": "lmodern",
+            #   "font.weight": "normal"
               }
 
     plt.rcParams.update(params)
