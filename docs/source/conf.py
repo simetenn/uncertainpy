@@ -1,6 +1,6 @@
 import os
 import sys
-import mock
+# import mock
 
 # Get version
 exec(open(os.path.join("..", "..", "src", "uncertainpy", "_version.py")).read())
@@ -11,8 +11,10 @@ uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
                        "seaborn", "matplotlib", "xvfbwrapper", "SALib.sample",
                        "SALib.analyse", "scipy.stats"]
 
-for mod_name in uncertainpy_require:
-    sys.modules[mod_name] = mock.Mock()
+# for mod_name in uncertainpy_require:
+#     sys.modules[mod_name] = mock.Mock()
+
+autodoc_mock_imports = uncertainpy_require
 
 # -*- coding: utf-8 -*-
 #
