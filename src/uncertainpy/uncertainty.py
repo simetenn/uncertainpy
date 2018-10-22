@@ -120,8 +120,9 @@ class UncertaintyQuantification(ParameterBase):
         logger = get_logger(self)
 
         if platform.system().lower() == "windows":
-            logger.warning("On Windows machines everything in your script must be"
-                           "inside of an if __name__ == '__main__': block in order for multiprocess to work" )
+            logger.info("On Windows machines everything in your script must be "
+                        "inside of an if __name__ == '__main__': block in order "
+                        "for multiprocess to work." )
 
         if uncertainty_calculations is None:
             self._uncertainty_calculations = UncertaintyCalculations(
