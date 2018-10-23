@@ -67,7 +67,7 @@ different case studies.
 Frequently asked questions
 ==========================
 
-* :ref:`A simple cooling coffee cup <coffee_cup>`
+*  :ref:`Multiple model outputs <multiple_outputs>`.
 
 
 
