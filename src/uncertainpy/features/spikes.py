@@ -109,8 +109,11 @@ class Spike:
         else:
             peak_index =  np.where(self.V == self.V_spike)[0][0]
 
+            if indices[0] > 0:
+                start_index = indices[0] - 1
+            else:
+                start_index = indices[0]
 
-            start_index = indices[0]
             end_index = indices[-1] + 1
 
             if start_index > 0 and start_index > peak_index - min_extent_from_peak:
@@ -403,11 +406,12 @@ class Spikes:
 
         # Normalize the values
         if normalize:
-            if threshold > 1 or threshold < 0:
-                raise ValueError("Threshold must be between [0, 1] when normalize=True")
+            if threshold != "auto":
+                if threshold > 1 or threshold < 0:
+                    raise ValueError("Threshold must be between [0, 1] when normalize=True")
 
-            if abs(end_threshold) > 1 or abs(end_threshold) < 0:
-                raise ValueError("Absolute value of end_threshold must be between [0, 1] when normalize=True")
+                if abs(end_threshold) > 1 or abs(end_threshold) < 0:
+                    raise ValueError("Absolute value of end_threshold must be between [0, 1] when normalize=True")
 
 
             voltage = V.copy()
@@ -446,7 +450,11 @@ class Spikes:
 
         for i in range(len(V)):
             if voltage[i] > threshold and start_flag is False:
-                spike_start = i
+                if i > 0:
+                    spike_start = i - 1
+                else:
+                    spike_start = i
+
                 start_flag = True
                 continue
 
