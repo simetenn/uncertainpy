@@ -38,25 +38,39 @@ be used for many other types of models and features within other fields.
 uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
                        "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six",
                        "SALib"]
+
 efel_features = ["efel"]
 network_features = ["elephant", "neo", "quantities"]
-all_requires = uncertainpy_require + efel_features + network_features
-tests_require = all_requires + ["click"]
+
+all_uncertainpy_requires = uncertainpy_require + efel_features + network_features
+
+test_dependencies = ["click"]
+tests_require = all_uncertainpy_requires + test_dependencies
+
+docs_dependencies = ["sphinx", "sphinx_rtd_theme"]
+docs_require = all_uncertainpy_requires + docs_dependencies
+
+all_requires = docs_require + test_dependencies + docs_dependencies
 
 extras_require = {"efel_features":  efel_features,
                   "network_features": network_features,
-                  "all": all_requires,
+                  "all": all_uncertainpy_requires,
+                  "docs": docs_require,
+                  "all_extras": all_requires,
                   "tests": tests_require}
 
 # To install on read the docs
 if os.environ.get('READTHEDOCS') == 'True':
-    uncertainpy_require = ["mock"]
+    # uncertainpy_require = ["mock"]
+    uncertainpy_require = []
 
 
 help_text = """
 Custom options:
+  --all_extras        Install with all dependencies, along with extra dependencies.
   --all               Install with all dependencies required by Uncertainpy
-  --tests             Install with dependencies required by tests
+  --tests             Install with dependencies required to run tests
+  --docs              Install with dependencies required to build the docs
   --network_features  Install with dependencies required by NetworkFeatures
   --efel_features     Install with dependencies required by EfelFeatures
     """
@@ -65,10 +79,14 @@ if "--help" in sys.argv or "-h" in sys.argv:
     print(help_text)
 
 
-if "--all" in sys.argv:
+if "--all_extras" in sys.argv:
     uncertainpy_require = all_requires
-    sys.argv.remove("--all")
+    sys.argv.remove("--all_extras")
 
+
+if "--all" in sys.argv:
+    uncertainpy_require = all_uncertainpy_requires
+    sys.argv.remove("--all")
 
 if "--tests" in sys.argv:
     uncertainpy_require = tests_require

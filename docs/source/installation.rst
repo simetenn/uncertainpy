@@ -55,14 +55,14 @@ These are installed with the minimum install.
 
 Two different fileformats (backends)  can be chosen to save the results in.
 `HDF5` is chosen (and installed) by default, but the ``Exdir`` format can be
-chosen as well. If you want to use ``Exdir`` it can be installed by:
+chosen as well. If you want to use ``Exdir`` it can be installed by::
 
     conda install -c cinpla exdir
 
 Currently ``Exdir`` only supports Python 2.7 in an experimental branch.
 To get the  Python 2.7 version of exdir,
 run the above command to install all dependencies. Then clone the Exdir Github
-repository, change to the python 2.7 branch and then install from the source:
+repository, change to the python 2.7 branch and then install from the source::
 
     git clone https://github.com/CINPLA/exdir.git
     cd exdir
@@ -87,6 +87,12 @@ or::
 
     pip install efel
 
+or through::
+
+    python setup.py install --efel_features
+
+
+
 NetworkFeatures
 ^^^^^^^^^^^^^^^
 
@@ -103,6 +109,10 @@ which can be installed with::
 or::
 
     pip install elephant, neo, quantities
+
+or through::
+
+    python setup.py install --network_features
 
 
 NeuronModel
@@ -137,6 +147,51 @@ For how to use ``test.py`` run::
 ``test.py`` has all the above dependencies in addition to:
 
 * ``click``
+
+These dependencies can be installed with::
+
+    pip install uncertainpy[tests]
+
+or::
+
+    pip install click
+
+or through::
+
+    python setup.py install --tests
+
+
+
+
+
+
+Documentation
+-------------
+
+The documentation is generated through ``sphinx``, and has the following
+dependencies:
+
+* ``sphinx``
+* ``sphinx_rtd_theme``
+
+
+These dependencies can be installed with::
+
+    pip install uncertainpy[docs]
+
+or::
+
+    pip install sphinx, sphinx_rtd_theme
+
+or through::
+
+    python setup.py install --docs
+
+
+The documentation is build by::
+
+    cd docs
+    make html
 
 
 
