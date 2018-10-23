@@ -53,7 +53,6 @@ class TestSpike(TestCasePlot):
 
 
     def test_trim(self):
-
         V = np.concatenate([np.arange(0, 11), np.arange(0, 10)[::-1]])
         time = np.arange(0, len(V))
         time_spike = 5
@@ -65,8 +64,8 @@ class TestSpike(TestCasePlot):
 
         spike.trim(5)
 
-        self.assertTrue(np.array_equal(spike.time, np.arange(6, 15)))
-        self.assertTrue(np.array_equal(spike.V, [6, 7, 8, 9, 10, 9, 8, 7, 6]))
+        self.assertTrue(np.array_equal(spike.time, np.arange(5, 16)))
+        self.assertTrue(np.array_equal(spike.V, [5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5]))
         self.assertEqual(spike.V_spike, 10)
         self.assertEqual(spike.time_spike, 5)
         self.assertEqual(spike.global_index, 50)
@@ -115,7 +114,7 @@ class TestSpike(TestCasePlot):
         spike = Spike(time, V, time_spike, V_spike, global_index,
                       xlabel="time", ylabel="voltage")
 
-        spike.trim(5, min_extent_from_peak=5)
+        spike.trim(7, min_extent_from_peak=5)
 
         self.assertTrue(np.array_equal(spike.time, np.arange(5, 16)))
         self.assertTrue(np.array_equal(spike.V, [5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5]))

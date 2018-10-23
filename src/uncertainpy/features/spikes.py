@@ -114,7 +114,7 @@ class Spike:
             else:
                 start_index = indices[0]
 
-            end_index = indices[-1] + 1
+            end_index = indices[-1] + 2
 
             if start_index > 0 and start_index > peak_index - min_extent_from_peak:
                 start_index = peak_index - min_extent_from_peak
