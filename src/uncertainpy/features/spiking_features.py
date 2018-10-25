@@ -65,6 +65,10 @@ class SpikingFeatures(GeneralSpikingFeatures):
         If the voltage traceshould be normalized before the spikes are
         found. If normalize is used threshold must be between [0, 1], and
         the end_threshold a similar relative value. Default is False.
+    min_amplitude : {int, float}, optional
+        Minimum height for what should be considered a spike. Default is 0.
+    min_duration : {int, float}, optional
+        Minimum duration for what should be considered a spike. Default is 0.
     labels : dictionary, optional
         A dictionary with key as the feature name and the value as a list of
         labels for each axis. The number of elements in the list corresponds
@@ -93,18 +97,22 @@ class SpikingFeatures(GeneralSpikingFeatures):
         A Spikes object that contain all spikes.
     threshold : {float, int}
         The threshold where the model result is considered to have a spike.
-    end_threshold : {int, float}, optional
+    end_threshold : {int, float}
         The end threshold for a spike relative to the threshold.
     extended_spikes : bool
         If the found spikes should be extended further out than the threshold
         cuttoff.
-    trim : bool, optional
+    trim : bool
         If the spikes should be trimmed back from the termination threshold,
         so each spike is equal the threshold at both ends.
-    normalize : bool, optional
+    normalize : bool
         If the voltage traceshould be normalized before the spikes are
         found. If normalize is used threshold must be between [0, 1], and
         the end_threshold a similar relative value.
+    min_amplitude : {int, float}
+        Minimum height for what should be considered a spike.
+    min_duration : {int, float}
+        Minimum duration for what should be considered a spike.
     features_to_run : list
         Which features to calculate uncertainties for.
     interpolate : list
@@ -153,6 +161,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                  extended_spikes=False,
                  trim=True,
                  normalize=False,
+                 min_amplitude=0,
+                 min_duration=0,
                  labels={},
                  strict=True,
                  logger_level="info"):
@@ -178,6 +188,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
                                               extended_spikes=extended_spikes,
                                               trim=trim,
                                               normalize=normalize,
+                                              min_amplitude=min_amplitude,
+                                              min_duration=min_duration,
                                               labels=implemented_labels,
                                               logger_level=logger_level)
         self.labels = labels

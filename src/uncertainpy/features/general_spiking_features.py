@@ -55,6 +55,10 @@ class GeneralSpikingFeatures(Features):
         If the voltage traceshould be normalized before the spikes are
         found. If normalize is used threshold must be between [0, 1], and
         the end_threshold a similar relative value. Default is False.
+    min_amplitude : {int, float}, optional
+        Minimum height for what should be considered a spike. Default is 0.
+    min_duration : {int, float}, optional
+        Minimum duration for what should be considered a spike. Default is 0.
     labels : dictionary, optional
         A dictionary with key as the feature name and the value as a list of
         labels for each axis. The number of elements in the list corresponds
@@ -92,6 +96,10 @@ class GeneralSpikingFeatures(Features):
         If the voltage traceshould be normalized before the spikes are
         found. If normalize is used threshold must be between [0, 1], and
         the end_threshold a similar relative value.
+    min_amplitude : {int, float}, optional
+        Minimum height for what should be considered a spike. Default is 0.
+    min_duration : {int, float}, optional
+        Minimum duration for what should be considered a spike. Default is 0.
     features_to_run : list
         Which features to calculate uncertainties for.
     interpolate : list
@@ -116,6 +124,8 @@ class GeneralSpikingFeatures(Features):
                  extended_spikes=False,
                  trim=True,
                  normalize=False,
+                 min_amplitude=0,
+                 min_duration=0,
                  labels={},
                  logger_level="info"):
 
@@ -135,7 +145,8 @@ class GeneralSpikingFeatures(Features):
         self.extended_spikes = extended_spikes
         self.trim = trim
         self.normalize = normalize
-
+        self.min_amplitude = min_amplitude
+        self.min_duration = min_duration
 
 
     def preprocess(self, time, values, info):
@@ -177,7 +188,9 @@ class GeneralSpikingFeatures(Features):
                                             end_threshold=self.end_threshold,
                                             extended_spikes=self.extended_spikes,
                                             trim=self.trim,
-                                            normalize=self.normalize)
+                                            normalize=self.normalize,
+                                            min_amplitude=self.min_amplitude,
+                                            min_duration=self.min_duration)
 
         return time, self.spikes, info
 
@@ -189,7 +202,9 @@ class GeneralSpikingFeatures(Features):
                         end_threshold=-10,
                         extended_spikes=False,
                         trim=True,
-                        normalize=False):
+                        normalize=False,
+                        min_amplitude=0,
+                        min_duration=0):
         """
         Calculating spikes of a model result, works with single neuron models and
         voltage traces.
@@ -218,6 +233,10 @@ class GeneralSpikingFeatures(Features):
             If the voltage traceshould be normalized before the spikes are
             found. If normalize is used threshold must be between [0, 1], and
             the end_threshold a similar relative value. Default is False.
+        min_amplitude : {int, float}, optional
+            Minimum height for what should be considered a spike. Default is 0.
+        min_duration : {int, float}, optional
+            Minimum duration for what should be considered a spike. Default is 0.
 
         Returns
         ------
@@ -232,13 +251,16 @@ class GeneralSpikingFeatures(Features):
         uncertainpy.features.Spikes : Class for finding spikes in the model result.
         """
         spikes = Spikes()
+
         spikes.find_spikes(time,
                            values,
                            threshold=threshold,
                            end_threshold=end_threshold,
                            extended_spikes=extended_spikes,
                            trim=trim,
-                           normalize=normalize)
+                           normalize=normalize,
+                           min_amplitude=min_amplitude,
+                           min_duration=min_duration)
 
         return spikes
 

@@ -58,6 +58,20 @@ class TestSpikes(TestCasePlot):
         self.assertEqual(self.spikes.nr_spikes, 12)
 
 
+    def test_find_spikes_min_amplitude(self):
+        self.spikes = Spikes()
+
+        self.spikes.find_spikes(self.time, self.values, min_amplitude=1000)
+        self.assertEqual(self.spikes.nr_spikes, 0)
+
+
+    def test_find_spikes_min_duration(self):
+        self.spikes = Spikes()
+
+        self.spikes.find_spikes(self.time, self.values, min_duration=1000)
+        self.assertEqual(self.spikes.nr_spikes, 0)
+
+
     def test_str(self):
         self.spikes = Spikes(self.time, self.values)
         self.assertIsInstance(str(self.spikes), str)

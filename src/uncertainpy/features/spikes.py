@@ -220,6 +220,10 @@ class Spikes:
         If the voltage traceshould be normalized before the spikes are
         found. If normalize is used threshold must be between [0, 1], and
         the end_threshold a similar relative value. Default is False.
+    min_amplitude : {int, float}, optional
+        Minimum height for what should be considered a spike. Default is 0.
+    min_duration : {int, float}, optional
+        Minimum duration for what should be considered a spike. Default is 0.
     xlabel : str, optional
         Label for the x-axis.
     ylabel : str, optional
@@ -263,6 +267,8 @@ class Spikes:
                  extended_spikes=False,
                  trim=True,
                  normalize=False,
+                 min_amplitude=0,
+                 min_duration=0,
                  xlabel="",
                  ylabel=""):
 
@@ -281,7 +287,9 @@ class Spikes:
                              end_threshold=end_threshold,
                              extended_spikes=extended_spikes,
                              trim=trim,
-                             normalize=normalize)
+                             normalize=normalize,
+                             min_amplitude=min_amplitude,
+                             min_duration=min_duration)
 
 
     def __iter__(self):
@@ -350,7 +358,9 @@ class Spikes:
                     end_threshold=-10,
                     extended_spikes=False,
                     trim=True,
-                    normalize=False):
+                    normalize=False,
+                    min_amplitude=0,
+                    min_duration=0):
         """
         Finds spikes in the given voltage trace.
 
@@ -379,6 +389,10 @@ class Spikes:
             found. If normalize is used threshold must be between [0, 1], and
             the end_threshold must have a absolute value between [0, 1]. Default
             is False.
+        min_amplitude : {int, float}, optional
+            Minimum height for what should be considered a spike. Default is 0.
+        min_duration : {int, float}, optional
+            Minimum duration for what should be considered a spike. Default is 0.
 
         Raises
         ------
@@ -483,6 +497,9 @@ class Spikes:
                     spike_end = self.consecutive(lt_derivative[lt_derivative > global_index])[-1] + 1
 
                 else:
+                    # Check if the spike has the minimum required extent,
+                    # if not extend the spike
+                    # Should never be required with min_extent_from_peak = 1
                     if global_index > 0 and global_index - min_extent_from_peak < spike_start:
                         spike_start = global_index - min_extent_from_peak
 
@@ -500,21 +517,17 @@ class Spikes:
                     spike.trim(threshold=rescaled_threshold,
                                min_extent_from_peak=min_extent_from_peak)
 
-                # Do not add if the spike is empty
-                if spike.V is not None:
+                # Do not add if the spike is empty or less than minimum height
+                # or less than minimum duration
+                if spike.V is not None \
+                        and (abs(spike.V_spike - spike.V.min()) >= min_amplitude) \
+                        and ((spike.time[-1] - spike.time[0]) >= min_duration):
+
                     self.spikes.append(spike)
 
-                # # Only add a new spike if either does not overlap the
-                # # previous spike, or if the max V of this spike is greater than
-                # # the max V of the previous spike
-                # if len(self.spikes) >= 1 and time[spike_start] <= self.spikes[-1].time[-1]:
-                #     # Replace old spike with new spike, else ignore the current spike
-                #     if np.max(V_spike) > np.max(self.spikes[-1].V_spike):
-                #         self.spikes[-1] = spike
-                # else:
-                #     self.spikes.append(spike)
 
                 prev_spike_end = spike_end
+
 
         self.nr_spikes = len(self.spikes)
 
