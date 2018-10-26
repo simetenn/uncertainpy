@@ -266,7 +266,7 @@ class Parameters(collections.MutableMapping):
            A readable string of all parameter objects.
         """
         result = ""
-        for name in sorted(self.parameters.keys()):
+        for name in self.parameters.keys():
             result += str(self.parameters[name]) + "\n"
 
         return result.strip()
@@ -364,6 +364,7 @@ class Parameters(collections.MutableMapping):
         for parameter in self.parameters.values():
             if parameter.distribution is not None:
                 items.append(getattr(parameter, attribute))
+
         return items
 
 

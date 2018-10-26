@@ -608,7 +608,7 @@ class TestParameters(unittest.TestCase):
 
         result = str(parameters)
 
-        self.assertEqual(result, "gbar_K: 36\ngbar_L: 0.3 - Uncertain\ngbar_Na: 120")
+        self.assertEqual(result, "gbar_Na: 120\ngbar_K: 36\ngbar_L: 0.3 - Uncertain")
 
 if __name__ == "__main__":
     unittest.main()
