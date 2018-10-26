@@ -46,8 +46,6 @@ ENV PYTHONPATH $PYTHONPATH:/home/docker/simulators/lib/python2.7/site-packages/
 
 RUN conda install libgcc
 
-
-
 # Get X working
 
 RUN touch /home/docker/.Xauthority
@@ -77,7 +75,7 @@ RUN git clone https://github.com/jonathf/chaospy.git
 RUN cd chaospy; python setup.py install
 
 # get exdir
-RUN conda install exdir -c cinpla -c conda-forge
+# RUN conda install exdir -c cinpla -c conda-forge
 
 RUN pip install pathlib
 

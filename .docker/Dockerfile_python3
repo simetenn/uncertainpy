@@ -75,7 +75,7 @@ RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
 #RUN cd chaospy; python setup.py install
 
 # get exdir
-RUN conda install exdir -c cinpla -c conda-forge
+# RUN conda install exdir -c cinpla -c conda-forge
 
 
 # Ensure newest version of exdir, only temporary
