@@ -79,5 +79,5 @@ RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
 
 
 # Ensure newest version of exdir, only temporary
-#RUN git clone https://github.com/CINPLA/exdir.git
-#RUN cd exdir; python setup.py install
+RUN git clone https://github.com/CINPLA/exdir.git
+RUN cd exdir; python setup.py install
