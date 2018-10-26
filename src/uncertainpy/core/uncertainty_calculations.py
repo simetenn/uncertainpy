@@ -169,7 +169,11 @@ class UncertaintyCalculations(ParameterBase):
         if isinstance(uncertain_parameters, six.string_types):
             uncertain_parameters = [uncertain_parameters]
 
-        if self.parameters.distribution is not None:
+        if self.parameters.distribution is None:
+            if uncertain_parameters is None:
+                uncertain_parameters = self.parameters.get_from_uncertain("name")
+
+        else:
             if uncertain_parameters is None:
                 uncertain_parameters = self.parameters.get("name")
             elif sorted(uncertain_parameters) != sorted(self.parameters.get("name")):
@@ -177,9 +181,6 @@ class UncertaintyCalculations(ParameterBase):
                                   "and all uncertain parameters must be used. " +
                                   "Set uncertain_parameters to None or a list of all " +
                                   "uncertain parameters.")
-        else:
-            if uncertain_parameters is None:
-                uncertain_parameters = self.parameters.get_from_uncertain("name")
 
         return uncertain_parameters
 
