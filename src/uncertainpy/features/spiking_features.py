@@ -525,33 +525,12 @@ class SpikingFeatures(GeneralSpikingFeatures):
         if spikes.nr_spikes <= 0:
             return None, None
 
-        # sum_duration = 0
-        # for spike in spikes:
-        #     sum_duration += spike.time[-1] - spike.time[0]
-
-        # return None, sum_duration/float(spikes.nr_spikes)
-
         durations = []
         for spike in spikes:
             durations.append(spike.time[-1] - spike.time[0])
 
         return None, np.mean(durations)
 
-        # return None, sum_duration/float(spikes.nr_spikes)
-
-        # voltage = spikes.V
-        # normalized_voltage = voltage - voltage.min()
-        # normalized_voltage /= normalized_voltage.max()
-
-        # # Find spikes in the normalized voltage trace
-        # spikes = Spikes(time, normalized_voltage, threshold=0.55, end_threshold=-0.1)
-
-        # # Calculate the duration of each spike
-        # duration = []
-        # for spike in spikes:
-        #     duration.append(spike.time[-1] - spike.time[0])
-
-        # return None, np.sum(duration)
 
 
     def accommodation_index(self, time, spikes, info):
