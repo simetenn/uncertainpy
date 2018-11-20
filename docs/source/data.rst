@@ -18,7 +18,7 @@ Results can be saved and loaded through
 ================================================  ========================    ========================
 Calculated statistical metric                     Symbol                      Variable
 ================================================  ========================    ========================
-Model and feature evaluations                     :math:`U`                   ``values``
+Model and feature evaluations                     :math:`U`                   ``evaluations``
 Model and feature times                           :math:`t`                   ``time``
 Mean                                              :math:`\mathbb{E}`          ``mean``
 Variance                                          :math:`\mathbb{V}`          ``variance``
