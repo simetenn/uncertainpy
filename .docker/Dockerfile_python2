@@ -79,8 +79,9 @@ RUN cd chaospy; python setup.py install
 
 RUN pip install pathlib
 
-# Ensure newest version of exdir, the python 2.7 branch, only temporary
+# Ensure newest version of exdir
 RUN git clone https://github.com/CINPLA/exdir.git
-RUN cd exdir; git checkout python27; python setup.py install
+RUN cd exdir; python setup.py install
+
 
 RUN pip install multiprocess
