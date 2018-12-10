@@ -4,6 +4,7 @@ import shutil
 import scipy.interpolate
 
 import numpy as np
+import multiprocess as mp
 
 from uncertainpy import Parameters
 from uncertainpy.core import RunModel
@@ -49,9 +50,35 @@ class TestRunModel(unittest.TestCase):
 
     def test_init(self):
         RunModel(model=TestingModel1d(),
-                parameters=self.parameters,
-                logger_level="error")
+                 parameters=self.parameters,
+                 logger_level="error")
 
+
+    def test_init_cpus_max(self):
+        runmodel = RunModel(model=TestingModel1d(),
+                            parameters=self.parameters,
+                            logger_level="error",
+                            CPUs="max")
+
+        self.assertEqual(runmodel.CPUs, mp.cpu_count())
+
+
+    def test_init_cpus_int(self):
+        runmodel = RunModel(model=TestingModel1d(),
+                            parameters=self.parameters,
+                            logger_level="error",
+                            CPUs=34)
+
+        self.assertEqual(runmodel.CPUs, 34)
+
+
+    def test_init_cpus_none(self):
+        runmodel = RunModel(model=TestingModel1d(),
+                            parameters=self.parameters,
+                            logger_level="error",
+                            CPUs=None)
+
+        self.assertIsNone(runmodel.CPUs)
 
     def test_set_feature(self):
         self.runmodel.features = Features(logger_level="error")
@@ -243,6 +270,28 @@ class TestRunModel(unittest.TestCase):
                               "TestingModel0d", "feature_invalid"]))
 
 
+    def test_evaluate_nodes_no_multiprocess_model_0d(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "feature_invalid"])
+
+        self.runmodel = RunModel(model=TestingModel0d(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 CPUs=None,
+                                 logger_level="error")
+
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "TestingModel0d", "feature_invalid"]))
+
+
     def test_evaluate_nodes_parallel_model_0d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
 
@@ -286,6 +335,19 @@ class TestRunModel(unittest.TestCase):
                          set(["feature0d", "feature1d", "feature2d",
                               "TestingModel1d", "feature_invalid", "feature_interpolate"]))
 
+
+
+    def test_evaluate_nodes_no_multiproccess_model_1d(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+        self.runmodel.CPUs = None
+
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "TestingModel1d", "feature_invalid", "feature_interpolate"]))
+
+
     def test_evaluate_nodes_sequential_model_2d(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])
 
@@ -326,6 +388,29 @@ class TestRunModel(unittest.TestCase):
         self.assertEqual(set(results[0].keys()),
                          set(["feature0d", "feature1d", "feature2d",
                               "TestingModel2d", "feature_invalid"]))
+
+
+    def test_evaluate_nodes_no_parallel_model_2d(self):
+        nodes = np.array([[0, 1, 2], [1, 2, 3]])
+
+        features = TestingFeatures(features_to_run=["feature0d",
+                                                    "feature1d",
+                                                    "feature2d",
+                                                    "feature_invalid"])
+
+        self.runmodel = RunModel(model=TestingModel2d(),
+                                 parameters=self.parameters,
+                                 features=features,
+                                 CPUs=None,
+                                 logger_level="error")
+
+        results = self.runmodel.evaluate_nodes(nodes, ["a", "b"])
+
+        self.assertEqual(set(results[0].keys()),
+                         set(["feature0d", "feature1d", "feature2d",
+                              "TestingModel2d", "feature_invalid"]))
+
+
 
     def test_evaluate_nodes_not_supress_graphics(self):
         nodes = np.array([[0, 1, 2], [1, 2, 3]])

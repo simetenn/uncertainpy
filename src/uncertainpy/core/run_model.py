@@ -12,8 +12,12 @@ from tqdm import tqdm
 import six
 import warnings
 import numpy as np
-import multiprocess as mp
 import logging
+
+try:
+    from itertools import imap
+except ImportError:
+    imap = map
 
 from ..data import Data
 from ..utils.utility import lengths, contains_nan
@@ -53,9 +57,13 @@ class RunModel(ParameterBase):
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed.
         Default logger level is "info".
-    CPUs : int, optional
+    CPUs : {int, None, "max"}, optional
         The number of CPUs to use when calculating the model and features.
-        Default is number of CPUs on the computer (multiprocess.cpu_count()).
+        If None, no multiprocessing is used.
+        If "max", the maximum number of CPUs on the computer
+        (multiprocess.cpu_count()) is used.
+        Default is "max".
+
 
     Attributes
     ----------
@@ -82,7 +90,13 @@ class RunModel(ParameterBase):
                  parameters,
                  features=None,
                  logger_level="info",
-                 CPUs=mp.cpu_count()):
+                 CPUs="max"):
+
+        if CPUs == "max":
+            import multiprocess
+
+            CPUs = multiprocess.cpu_count()
+
 
         self._parallel = Parallel(model=model,
                                   features=features,
@@ -409,21 +423,32 @@ class RunModel(ParameterBase):
 
         results = []
 
-        pool = mp.Pool(processes=self.CPUs)
-
         model_parameters = self.create_model_parameters(nodes, uncertain_parameters)
 
+        if self.CPUs:
+            import multiprocess as mp
 
-        # pool.map(self._parallel.run, model_parameters)
-        # chunksize = int(np.ceil(len(model_parameters)/self.CPUs))
-        chunksize = 1
-        for result in tqdm(pool.imap(self._parallel.run, model_parameters, chunksize),
-                           desc="Running model",
-                           total=len(nodes.T)):
+            pool = mp.Pool(processes=self.CPUs)
 
-            results.append(result)
+            # pool.map(self._parallel.run, model_parameters)
+            # chunksize = int(np.ceil(len(model_parameters)/self.CPUs))
+            chunksize = 1
+            for result in tqdm(pool.imap(self._parallel.run, model_parameters, chunksize),
+                               desc="Running model",
+                               total=len(nodes.T)):
 
-        pool.close()
+                results.append(result)
+
+            pool.close()
+
+        else:
+            for result in tqdm(imap(self._parallel.run, model_parameters),
+                               desc="Running model",
+                               total=len(nodes.T)):
+
+                results.append(result)
+
+
 
         if self.model.suppress_graphics:
             vdisplay.stop()

@@ -7,6 +7,7 @@ import time
 import logging
 import numpy as np
 import chaospy as cp
+import multiprocess as mp
 
 from uncertainpy.core import UncertaintyCalculations
 from uncertainpy.parameters import Parameters
@@ -44,13 +45,13 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.model = TestingModel1d()
 
-        features = TestingFeatures(features_to_run=["feature0d",
-                                                    "feature1d",
-                                                    "feature2d"])
+        self.features = TestingFeatures(features_to_run=["feature0d",
+                                                         "feature1d",
+                                                         "feature2d"])
 
         self.uncertainty_calculations = UncertaintyCalculations(model=self.model,
                                                                 parameters=self.parameters,
-                                                                features=features,
+                                                                features=self.features,
                                                                 logger_level="error")
 
     def tearDown(self):
@@ -67,6 +68,31 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(uncertainty_calculations.features, Features)
 
 
+    def test_init_cpus_max(self):
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                            parameters=self.parameters,
+                                                            logger_level="error",
+                                                            CPUs="max")
+
+        self.assertEqual(uncertainty_calculations.runmodel.CPUs, mp.cpu_count())
+
+
+    def test_init_cpus_int(self):
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                            parameters=self.parameters,
+                                                            logger_level="error",
+                                                            CPUs=34)
+
+        self.assertEqual(uncertainty_calculations.runmodel.CPUs, 34)
+
+
+    def test_init_cpus_none(self):
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                            parameters=self.parameters,
+                                                            logger_level="error",
+                                                            CPUs=None)
+
+        self.assertIsNone(uncertainty_calculations.runmodel.CPUs)
 
     def test_intit_features(self):
         uncertainty_calculations = UncertaintyCalculations(model=self.model,
@@ -759,6 +785,26 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
 
 
+    def test_create_PCE_collocation_all_no_multiprocessing(self):
+        uncertainty_calculations = UncertaintyCalculations(model=self.model,
+                                                           parameters=self.parameters,
+                                                           features=self.features,
+                                                           logger_level="error",
+                                                           CPUs=None)
+
+
+        U_hat, distribution, data = uncertainty_calculations.create_PCE_collocation()
+
+        self.assertIsNone(uncertainty_calculations.runmodel.CPUs)
+
+        self.assertEqual(data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+
+
+
     def test_create_PCE_collocation_all_parameters(self):
         U_hat, distribution, data = \
             self.uncertainty_calculations.create_PCE_collocation(polynomial_order=5,
@@ -1436,6 +1482,54 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertEqual(result, 0)
 
 
+
+
+    def test_monte_carlo_no_multiprocess(self):
+        parameter_list = [["a", 1, None],
+                          ["b", 2, None]]
+
+        parameters = Parameters(parameter_list)
+        parameters.set_all_distributions(uniform(0.5))
+
+        model = TestingModel1d()
+
+        features = TestingFeatures(features_to_run=["feature0d_var", "feature1d_var", "feature2d_var"])
+
+        self.uncertainty_calculations = UncertaintyCalculations(model,
+                                                                parameters=parameters,
+                                                                features=features,
+                                                                logger_level="error",
+                                                                CPUs=None)
+
+
+        data = self.uncertainty_calculations.monte_carlo(nr_samples=10, seed=10)
+
+        # Rough tests
+        self.assertTrue(np.allclose(data["TestingModel1d"]["mean"],
+                                    np.arange(0, 10) + 3, atol=0.1))
+        self.assertTrue(np.allclose(data["TestingModel1d"]["variance"],
+                                    np.zeros(10), atol=0.2))
+        self.assertTrue(np.all(np.less(data["TestingModel1d"]["percentile_5"],
+                                       np.arange(0, 10) + 3)))
+        self.assertTrue(np.all(np.greater(data["TestingModel1d"]["percentile_95"],
+                                          np.arange(0, 10) + 3)))
+
+        # TODO: currently no tests for the values of the sobol indices
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first"]), (2, 10))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total"]), (2, 10))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_first_average"]), (2,))
+        self.assertEqual(np.shape(data["TestingModel1d"]["sobol_total_average"]), (2,))
+
+
+        # Compare to pregenerated data
+        filename = os.path.join(self.output_test_dir, "TestingModel1d_MC.h5")
+        data.save(filename)
+
+        folder = os.path.dirname(os.path.realpath(__file__))
+        compare_file = os.path.join(folder, "data/TestingModel1d_MC.h5")
+        result = subprocess.call(["h5diff", filename, compare_file])
+
+        self.assertEqual(result, 0)
 
 
     def test_monte_carlo_feature0d(self):

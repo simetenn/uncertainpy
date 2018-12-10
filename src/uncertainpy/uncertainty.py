@@ -3,7 +3,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import platform
 import types
-import multiprocess as mp
 import numpy as np
 
 from .core.uncertainty_calculations import UncertaintyCalculations
@@ -53,9 +52,12 @@ class UncertaintyQuantification(ParameterBase):
         ``UncertaintyCalculations.custom_uncertainty_quantification``.
         Overwrites existing ``custom_uncertainty_quantification`` method.
         Default is None.
-    CPUs : int, optional
-        The number of CPUs used when calculating the model and features.
-        By default all CPUs are used.
+    CPUs : {int, None, "max"}, optional
+        The number of CPUs to use when calculating the model and features.
+        If None, no multiprocessing is used.
+        If "max", the maximum number of CPUs on the computer
+        (multiprocess.cpu_count()) is used.
+        Default is "max".
     logger_level : {"info", "debug", "warning", "error", "critical", None}, optional
         Set the threshold for the logging level. Logging messages less severe
         than this level is ignored. If None, no logging to file is performed
@@ -108,10 +110,11 @@ class UncertaintyQuantification(ParameterBase):
                  uncertainty_calculations=None,
                  create_PCE_custom=None,
                  custom_uncertainty_quantification=None,
-                 CPUs=mp.cpu_count(),
+                 CPUs="max",
                  logger_level="info",
                  logger_filename="uncertainpy.log",
                  backend="auto"):
+
 
         if backend not in ["auto", "hdf5", "exdir"]:
             raise ValueError("backend {} not supported. Supported backends are: auto, hdf5, and exdir".format(backend))

@@ -74,6 +74,15 @@ class TestUncertainty(TestCasePlot):
         self.assertIsInstance(uncertainty.parameters, Parameters)
 
 
+    def test_init_cpus_int(self):
+        uncertainty = UncertaintyQuantification(model=self.model,
+                                                parameters=self.parameters,
+                                                logger_level="error",
+                                                CPUs=34)
+
+        self.assertEqual(uncertainty.uncertainty_calculations.runmodel.CPUs, 34)
+
+
     def test_init_parameter_list(self):
         uncertainty = UncertaintyQuantification(self.model,
                                                 self.parameter_list,
