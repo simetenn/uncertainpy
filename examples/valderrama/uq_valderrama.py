@@ -7,7 +7,7 @@ from valderrama import valderrama
 model = un.Model(run=valderrama,
                  labels=["Time (ms)", "Membrane potential (mV)"])
 
-# Define a parameter list
+# Define a parameter dictionary
 parameters = {"V_0": -10,
               "C_m": 1,
               "gbar_Na": 120,
