@@ -11,7 +11,7 @@
 <img src="https://github.com/simetenn/uncertainpy/blob/master/logo/uncertainpy.png" width="700">
 
 
-# A python toolbox for uncertainty quantification and sensitivity analysis, tailored towards computational neuroscience.
+# A python toolbox for uncertainty quantification and sensitivity analysis tailored towards computational neuroscience.
 
 Uncertainpy is a python toolbox for uncertainty quantification and sensitivity
 analysis of computational models and features of the models.
