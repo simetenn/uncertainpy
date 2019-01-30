@@ -11,11 +11,9 @@ import sys
 
 name = "uncertainpy"
 
-description = "Uncertainty quantification and sensitivity analysis of computational models and features of the models."
-long_description = """A python toolbox for uncertainty quantification and sensitivity analysis
-
-Uncertainpy is a python toolbox for uncertainty quantification and sensitivity
-analysis of computational models and features of the models.
+description = "A python toolbox for uncertainty quantification and sensitivity analysis tailored towards neuroscience models."
+long_description = """Uncertainpy is a python toolbox for uncertainty quantification and sensitivity
+analysis tailored towards computational neuroscience.
 
 Uncertainpy is model independent and treats the model as a black box where the
 model can be left unchanged. Uncertainpy implements both quasi-Monte Carlo
