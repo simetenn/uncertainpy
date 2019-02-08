@@ -217,7 +217,7 @@ class Spikes:
         If the spikes should be trimmed back from the termination threshold,
         so each spike is equal the threshold at both ends. Default is True.
     normalize : bool, optional
-        If the voltage traceshould be normalized before the spikes are
+        If the voltage trace should be normalized before the spikes are
         found. If normalize is used threshold must be between [0, 1], and
         the end_threshold a similar relative value. Default is False.
     min_amplitude : {int, float}, optional
