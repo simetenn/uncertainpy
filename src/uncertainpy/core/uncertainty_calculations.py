@@ -235,6 +235,26 @@ class UncertaintyCalculations(ParameterBase):
         return distribution
 
 
+    def dependent(self, distribution):
+        """
+        Check if a distribution is dependent or not.
+
+        Parameters
+        ----------
+        distribution : chaospy.Dist
+            A Chaospy probability distribution.
+
+        Returns
+        -------
+        dependent : bool
+            True if the distribution is dependent, False if is independent.
+        """
+        if len(distribution) > 1 and cp.get_dependencies(*distribution):
+            return True
+        else:
+            return False
+
+
     def create_mask(self, evaluations):
         """
         Mask evaluations that do not give results (anything but np.nan or None).
@@ -1311,13 +1331,13 @@ class UncertaintyCalculations(ParameterBase):
         distribution = self.create_distribution(uncertain_parameters=uncertain_parameters)
 
         if rosenblatt == "auto":
-            if distribution.dependent():
+            if self.dependent(distribution):
                 rosenblatt = True
             else:
                 rosenblatt = False
 
         elif rosenblatt == False:
-            if distribution.dependent():
+            if self.dependent(distribution):
                 raise ValueError('Dependent parameters require using the Rosenblatt transformation. Set rosenblatt="auto" or rosenblatt=True')
 
 

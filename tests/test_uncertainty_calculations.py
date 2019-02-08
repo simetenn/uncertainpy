@@ -1129,9 +1129,8 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         self.assertNotIn("Rosenblatt", data.method)
 
-
         a = cp.Uniform(1, 2)
-        b = cp.Uniform(1, 2)/a
+        b = cp.Uniform(1, 2) + a
 
         parameter_dict = {"a": a, "b": b}
 
@@ -1144,7 +1143,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIn("Rosenblatt", data.method)
 
 
-        self.uncertainty_calculations.parameters.distribution = cp.J(cp.uniform(), cp.Uniform())
+        self.uncertainty_calculations.parameters.distribution = cp.J(cp.Uniform(), cp.Uniform())
 
         data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
                                                               rosenblatt="auto",
@@ -1167,6 +1166,27 @@ class TestUncertaintyCalculations(unittest.TestCase):
             data = self.uncertainty_calculations.polynomial_chaos(method="collocation",
                                                                 rosenblatt=False,
                                                                 seed=self.seed)
+
+
+
+    def test_create_PCE_collocation_rosenblatt_dependent(self):
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2) + a
+
+        parameter_dict = {"a": a, "b": b}
+
+        self.uncertainty_calculations.parameters = Parameters(parameter_dict)
+
+
+        U_hat, distribution, data = \
+            self.uncertainty_calculations.create_PCE_collocation_rosenblatt()
+
+        self.assertEqual(data.uncertain_parameters, ["a", "b"])
+        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+
 
 
     def test_polynomial_chaos_spectral(self):
@@ -1205,7 +1225,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
 
-        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -2051,3 +2071,36 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         for test_array in test_arrays:
             self.mc_calculate_sobol_use_case(test_array)
+
+
+    def test_dependent(self):
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2) + a
+
+        distribution = cp.J(a, b)
+
+        result = self.uncertainty_calculations.dependent(distribution)
+        self.assertTrue(result)
+
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2) * a
+
+        distribution = cp.J(a, b)
+
+        result = self.uncertainty_calculations.dependent(distribution)
+        self.assertTrue(result)
+
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2)
+
+        distribution = cp.J(a, b)
+
+        result = self.uncertainty_calculations.dependent(distribution)
+        self.assertFalse(result)
+
+        a = cp.Gamma(1)
+        b = cp.Normal(a**2, a+1)
+        distribution = cp.J(a, b)
+
+        result = self.uncertainty_calculations.dependent(distribution)
+        self.assertTrue(result)
