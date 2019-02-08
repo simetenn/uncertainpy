@@ -764,7 +764,7 @@ ax : matplotlib ax Object
 
     if color is None:
         colors = sns.color_palette()
-    else:
+    elif isinstance(color, int):
         colors = sns.color_palette()[color]
 
     ax.bar(index, x, yerr=error, color=colors, width=width,
