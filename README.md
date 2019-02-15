@@ -306,3 +306,24 @@ These can be installed with pip:
 
 If you use Uncertainpy in your work, please cite:
 [Tennøe S, Halnes G and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049](https://www.frontiersin.org/articles/10.3389/fninf.2018.00049/full).
+
+
+
+## Commit messages
+
+The style mostly used:
+
+    API:         an (incompatible) API change
+    Benchmark:   changes to the benchmark suite
+    Build:       related to building (numpy)
+    Bug:         bug fix
+    Deprecate:   deprecate something, or remove a deprecated object
+    Doc:         documentation
+    [ blank ]:   enhancement
+    Refactor:    maintenance commit (refactoring, typos, etc.)
+    Revert:      revert an earlier commit
+    Style:       fix (whitespace, PEP8)
+    Test:        addition or modification of tests
+    Release:     related to releasing
+    Tool:        development tool or utility
+    WIP:         Work-in-progress
