@@ -2104,3 +2104,12 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         result = self.uncertainty_calculations.dependent(distribution)
         self.assertTrue(result)
+
+
+    def test_copulas(self):
+
+        dist = cp.Iid(cp.Uniform(), 2)
+        copula = cp.Gumbel(dist, theta=1.5)
+
+        self.uncertainty_calculations.polynomial_chaos(method="collocation")
+        self.uncertainty_calculations.polynomial_chaos(method="spectral")
