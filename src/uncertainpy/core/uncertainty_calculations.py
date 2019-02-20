@@ -249,10 +249,15 @@ class UncertaintyCalculations(ParameterBase):
         dependent : bool
             True if the distribution is dependent, False if is independent.
         """
-        if len(distribution) > 1 and cp.get_dependencies(*distribution):
-            return True
+        # Support for Chaospy version 2 and older
+        if int(cp.__version__.split(".")[0]) <= 2:
+            return distribution.dependent()
         else:
-            return False
+            # For Chaospy 3 and newer
+            if len(distribution) > 1 and cp.get_dependencies(*distribution):
+                return True
+            else:
+                return False
 
 
     def create_mask(self, evaluations):
@@ -625,6 +630,7 @@ class UncertaintyCalculations(ParameterBase):
 
         nodes = distribution.sample(nr_collocation_nodes, "M")
 
+
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
 
@@ -807,9 +813,9 @@ class UncertaintyCalculations(ParameterBase):
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_quadrature(P,
-                                                masked_nodes,
-                                                masked_weights,
-                                                masked_evaluations)
+                                                   masked_nodes,
+                                                   masked_weights,
+                                                   masked_evaluations)
             elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
@@ -1339,7 +1345,6 @@ class UncertaintyCalculations(ParameterBase):
         elif rosenblatt == False:
             if self.dependent(distribution):
                 raise ValueError('Dependent parameters require using the Rosenblatt transformation. Set rosenblatt="auto" or rosenblatt=True')
-
 
         if method == "collocation":
             if rosenblatt:

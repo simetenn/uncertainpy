@@ -1225,7 +1225,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         folder = os.path.dirname(os.path.realpath(__file__))
         compare_file = os.path.join(folder, "data/TestingModel1d_Rosenblatt_spectral.h5")
 
-        result = subprocess.call(["h5diff", "-v", "-d", str(self.threshold), filename, compare_file])
+        result = subprocess.call(["h5diff", "-d", str(self.threshold), filename, compare_file])
 
         self.assertEqual(result, 0)
 
@@ -2085,7 +2085,28 @@ class TestUncertaintyCalculations(unittest.TestCase):
         a = cp.Uniform(1, 2)
         b = cp.Uniform(1, 2) * a
 
+
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2) / a
+
         distribution = cp.J(a, b)
+
+        result = self.uncertainty_calculations.dependent(distribution)
+        self.assertTrue(result)
+
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2) * a
+
+        distribution = cp.J(a, b)
+
+        result = self.uncertainty_calculations.dependent(distribution)
+        self.assertTrue(result)
+
+        a = cp.Uniform(1, 2)
+        b = cp.Uniform(1, 2) * a
+        c = cp.Uniform(3, 5)
+
+        distribution = cp.J(a, b, c)
 
         result = self.uncertainty_calculations.dependent(distribution)
         self.assertTrue(result)

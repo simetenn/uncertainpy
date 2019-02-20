@@ -71,8 +71,8 @@ RUN mkdir .config/matplotlib
 RUN echo "backend : Agg" >> .config/matplotlib/matplotlibrc
 
 # Temporary fix to chaospy
-#RUN git clone https://github.com/jonathf/chaospy.git
-#RUN cd chaospy; python setup.py install
+RUN git clone https://github.com/jonathf/chaospy.git
+RUN cd chaospy; python setup.py install
 
 # get exdir
 # RUN conda install exdir -c cinpla -c conda-forge
