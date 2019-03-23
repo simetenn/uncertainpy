@@ -1,23 +1,22 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import warnings
+import six
+
+try:
+    from itertools import imap
+except ImportError:
+    imap = map
+
+from tqdm import tqdm
+import numpy as np
+
 try:
     from xvfbwrapper import Xvfb
 
     prerequisites = True
 except ImportError:
     prerequisites = False
-
-from tqdm import tqdm
-
-import six
-import warnings
-import numpy as np
-import logging
-
-try:
-    from itertools import imap
-except ImportError:
-    imap = map
 
 from ..data import Data
 from ..utils.utility import lengths, contains_nan
@@ -38,7 +37,7 @@ class RunModel(ParameterBase):
         Model to perform uncertainty quantification on. For requirements see
         Model.run.
         Default is None.
-       parameters: {dict {name: parameter_object}, dict of {name: value or Chaospy distribution}, ...], list of Parameter instances, list [[name, value or Chaospy distribution], ...], list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...],}
+    parameters: {dict {name: parameter_object}, dict of {name: value or Chaospy distribution}, ...], list of Parameter instances, list [[name, value or Chaospy distribution], ...], list [[name, value, Chaospy distribution or callable that returns a Chaospy distribution],...],}
         List or dictionary of the parameters that should be created.
         On the form ``parameters =``
 
@@ -316,17 +315,17 @@ class RunModel(ParameterBase):
 
 
                 elif np.ndim(results[0][feature]["values"]) == 1:
-                     data[feature].time, data[feature].evaluations = self.apply_interpolation(results, feature)
+                    data[feature].time, data[feature].evaluations = self.apply_interpolation(results, feature)
 
                 # Interpolating a 0D result makes no sense, so if a 0D feature
                 # is supposed to be interpolated store it as normal
                 elif np.ndim(results[0][feature]["values"]) == 0:
                     logger.warning("{feature}: ".format(feature=feature) +
-                                        "returns a 0D result. No interpolation is performed.")
+                                   "returns a 0D result. No interpolation is performed.")
 
                     data[feature].time = results[0][feature]["time"]
 
-                    data[feature].evaluations  = []
+                    data[feature].evaluations = []
                     for result in results:
                         data[feature].evaluations.append(result[feature]["values"])
 

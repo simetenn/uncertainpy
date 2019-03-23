@@ -52,8 +52,8 @@ class SpikingFeatures(GeneralSpikingFeatures):
         If "auto" the threshold is set to the standard variation of the
         result. Default is -30.
     end_threshold : {int, float}, optional
-        The end threshold for a spike relative to the threshold. Generally
-        negative values give the best results. Default is -10.
+        The end threshold for a spike relative to the threshold.
+        Default is -10.
     extended_spikes : bool, optional
         If the found spikes should be extended further out than the threshold
         cuttoff. If True the spikes is considered to start and end where the

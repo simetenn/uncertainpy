@@ -224,10 +224,6 @@ class TestData(unittest.TestCase):
         new_data.error = ["feature1d"]
 
 
-    #     # data
-
-
-
     def setup_mock_data(self, data):
         data.add_features(["feature1d", "TestingModel1d"])
 

@@ -2,7 +2,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 import platform
-import types
 import numpy as np
 
 from .core.uncertainty_calculations import UncertaintyCalculations
@@ -1196,19 +1195,19 @@ class UncertaintyQuantification(ParameterBase):
         fileextension = ""
         if self.backend == "auto":
             if filename.endswith(".h5"):
-                fileextension =  ".h5"
+                fileextension = ".h5"
                 filename = filename.strip(".h5")
             elif filename.endswith(".exdir"):
-                fileextension =  ".exdir"
+                fileextension = ".exdir"
                 filename = filename.strip(".exdir")
             else:
-                fileextension =  ".h5"
+                fileextension = ".h5"
 
         elif self.backend == "hdf5":
             fileextension =  ".h5"
             filename = filename.strip(".h5")
         elif self.backend == "exdir":
-            fileextension =  ".exdir"
+            fileextension = ".exdir"
             filename = filename.strip(".exdir")
 
         # To save dict of single parameter runs
@@ -1309,8 +1308,8 @@ class UncertaintyQuantification(ParameterBase):
 
             else:
                 raise ValueError('type must one of: "condensed_first", '
-                                '"condensed_total", "condensed_no_sensitivity" '
-                                '"all", "evaluations", None, not {}'.format(type))
+                                 '"condensed_total", "condensed_no_sensitivity" '
+                                 '"all", "evaluations", None, not {}'.format(type))
 
 
         if type is None:
