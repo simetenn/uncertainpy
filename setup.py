@@ -33,9 +33,15 @@ towards neuroscience, the implemented methods are general, and Uncertainpy can
 be used for many other types of models and features within other fields.
 """
 
+
+
 uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six",
-                       "SALib"]
+                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six"]
+
+if sys.version_info[0] < 3:
+    uncertainpy_require += ["salib==1.2"]
+else:
+    uncertainpy_require += ["salib"]
 
 efel_features = ["efel"]
 network_features = ["elephant", "neo", "quantities"]
