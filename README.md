@@ -315,7 +315,7 @@ The style mostly used:
 
     API:         an (incompatible) API change
     Benchmark:   changes to the benchmark suite
-    Build:       related to building (numpy)
+    Build:       related to building
     Bug:         bug fix
     Deprecate:   deprecate something, or remove a deprecated object
     Doc:         documentation
