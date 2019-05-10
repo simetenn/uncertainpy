@@ -34,7 +34,7 @@ using conda-forge channel::
 
     $ conda install -c conda-forge uncertainpy
     
-The above installation within a conda environment is only compatible with Python 3.x. 
+The above installation, within a conda environment, is only compatible with Python 3.x. 
 
 
 Dependencies
