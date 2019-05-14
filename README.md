@@ -198,6 +198,14 @@ Uncertainpy can also be installed by cloning the Github repository:
 For all options run::
 
     $ python setup.py --help
+    
+Alternatively, Uncertainpy can be easily installed (minimum install) with conda 
+using conda-forge channel::
+
+    $ conda install -c conda-forge uncertainpy
+    
+The above installation within a conda environment is only compatible with Python 3.x.
+By using conda, the installation will solves compatibility issues automatically.
 
 ### Dependencies
 
