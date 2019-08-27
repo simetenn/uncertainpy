@@ -142,6 +142,10 @@ class PlotUncertainty(object):
         foldername : str, optional
             Name of folder where to save all plots. The folder is created
             if it does not exist. Default folder is named "featurename_evaluations".
+        xscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for x axis.
+        yscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for y axis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -241,7 +245,7 @@ class PlotUncertainty(object):
         reset_style()
 
 
-    def evaluations_1d(self, feature=None, foldername="", **plot_kwargs):
+    def evaluations_1d(self, feature=None, foldername="", xscale='linear', yscale='linear', **plot_kwargs):
         """
         Plot all 1D evaluations for a specific model/feature.
 
@@ -309,6 +313,8 @@ class PlotUncertainty(object):
                             palette="husl",
                             **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
+            ax.set_xscale(xscale)
+            ax.set_yscale(yscale)
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
                                      "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
@@ -403,6 +409,8 @@ class PlotUncertainty(object):
                              attribute_name="mean",
                              hardcopy=True,
                              show=False,
+                             xscale="linear",
+                             yscale="linear",
                              **plot_kwargs):
         """
         Plot a 1 dimensional attribute for a specific model/feature.
@@ -421,6 +429,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for x axis.
+        yscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for y axis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -468,6 +480,8 @@ class PlotUncertainty(object):
                         nr_colors=3,
                         palette="husl",
                         **plot_kwargs)
+        ax.set_xscale(xscale)
+        ax.set_yscale(yscale)
 
         ax.set_xlim([min(time), max(time)])
 
@@ -591,7 +605,7 @@ class PlotUncertainty(object):
 
 
 
-    def mean_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+    def mean_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', **plot_kwargs):
         """
         Plot the mean for a specific 1 dimensional model/feature.
 
@@ -603,6 +617,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for x axis.
+        yscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for y axis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -618,11 +636,13 @@ class PlotUncertainty(object):
                                   attribute_name="mean",
                                   hardcopy=hardcopy,
                                   show=show,
+                                  xscale=xscale,
+                                  yscale=yscale,
                                   color=0,
                                   **plot_kwargs)
 
 
-    def variance_1d(self, feature, hardcopy=True, show=False, **plot_kwargs):
+    def variance_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', **plot_kwargs):
         """
         Plot the variance for a specific 1 dimensional model/feature.
 
@@ -634,6 +654,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for x axis.
+        yscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for y axis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -649,6 +673,8 @@ class PlotUncertainty(object):
                                   attribute_name="variance",
                                   hardcopy=hardcopy,
                                   show=show,
+                                  xscale=xscale,
+                                  yscale=yscale,
                                   color=2,
                                   **plot_kwargs)
 
@@ -717,6 +743,8 @@ class PlotUncertainty(object):
                          new_figure=True,
                          hardcopy=True,
                          show=False,
+                         xscale='linear',
+                         yscale='linear',
                          **plot_kwargs):
         """
         Plot the mean and variance for a specific 1 dimensional model/feature.
@@ -730,6 +758,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for x axis.
+        yscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for y axis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -776,7 +808,8 @@ class PlotUncertainty(object):
                         palette="husl",
                         **plot_kwargs)
 
-
+        ax.set_yscale(yscale)
+        ax.set_xscale(xscale)
         colors = get_current_colormap()
 
         ax2 = ax.twinx()
@@ -806,7 +839,8 @@ class PlotUncertainty(object):
 
         ax2.set_xlim([min(time), max(time)])
         ax.set_xlim([min(time), max(time)])
-
+        ax2.set_yscale(yscale)
+        ax2.set_xscale(xscale)
 
         plt.tight_layout()
 
@@ -830,6 +864,8 @@ class PlotUncertainty(object):
                                feature=None,
                                hardcopy=True,
                                show=False,
+                               xscale='linear',
+                               yscale='linear',
                                **plot_kwargs):
         """
         Plot the prediction interval for a specific 1 dimensional model/feature.
@@ -843,6 +879,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: string, optional
+            Choose the axis scale for the xaxis.
+        yscale: string, optional
+            Choose the axis scale for the yaxis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -897,6 +937,8 @@ class PlotUncertainty(object):
                          linewidth=0)
 
         ax.set_xlim([min(time), max(time)])
+        ax.set_xscale(xscale)
+        ax.set_yscale(yscale)
         plt.legend(["Mean", "90% prediction interval"], loc="best")
 
         plt.tight_layout()
@@ -918,6 +960,8 @@ class PlotUncertainty(object):
                        sensitivity="first",
                        hardcopy=True,
                        show=False,
+                       xscale='linear',
+                       yscale='linear',
                        **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -936,6 +980,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: string, optional
+            Choose the axis scale for the xaxis.
+        yscale: string, optional
+            Choose the axis scale for the yaxis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -988,6 +1036,8 @@ class PlotUncertainty(object):
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
             ax.set_xlim([min(time), max(time)])
+            ax.set_xscale(xscale)
+            ax.set_yscale(yscale)
 
             plt.tight_layout()
 
@@ -1010,6 +1060,8 @@ class PlotUncertainty(object):
                             sensitivity="first",
                             hardcopy=True,
                             show=False,
+                            xscale="linear",
+                            yscale="linear",
                             **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -1029,6 +1081,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: string, optional
+            Choose the axis scale for the xaxis.
+        yscale: string, optional
+            Choose the axis scale for the yaxis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -1091,6 +1147,8 @@ class PlotUncertainty(object):
         ax.tick_params(labelcolor="w", top=False, bottom=False, left=False, right=False)
         ax.set_xlabel(xlabel.capitalize(), labelpad=8)
         ax.set_ylabel(title.capitalize())
+        ax.set_xscale(xscale)
+        ax.set_yscale(yscale)
 
         for i in range(0, grid_x_size*grid_y_size):
             nx = i % grid_x_size
@@ -1141,6 +1199,8 @@ class PlotUncertainty(object):
                                 sensitivity="first",
                                 hardcopy=True,
                                 show=False,
+                                xscale="linear",
+                                yscale="linear",
                                 **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -1159,6 +1219,10 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        xscale: string, optional
+            Choose the axis scale for the xaxis.
+        yscale: string, optional
+            Choose the axis scale for the yaxis.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -1217,6 +1281,8 @@ class PlotUncertainty(object):
 
         plt.ylim([0, 1.05])
         plt.xlim([min(time), max(time)])
+        plt.xscale(xscale)
+        plt.yscale(yscale)
         if len(self.data[feature][sensitivity]) > 4:
             plt.xlim([time[0], 1.3*time[-1]])
 
@@ -1235,7 +1301,7 @@ class PlotUncertainty(object):
         reset_style()
 
 
-    def features_1d(self, sensitivity="first"):
+    def features_1d(self, sensitivity="first", xscale='linear', yscale='linear'):
         """
         Plot all data for all 1 dimensional model/features.
 
@@ -1251,6 +1317,10 @@ class PlotUncertainty(object):
             order Sobol indices, while "sobol_total" and "total" are the total
             order Sobol indices. If None, no sensitivity is plotted. Default is
             "first".
+        xscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for x axis.
+        yscale: {"linear", "log", "symlog", "logit", ...}, optional
+            Choose scale for y axis.
 
         Raises
         ------
@@ -1282,16 +1352,15 @@ class PlotUncertainty(object):
 
         for feature in self.data:
             if self.data.ndim(feature) == 1:
-                self.mean_1d(feature=feature)
-                self.variance_1d(feature=feature)
-                self.mean_variance_1d(feature=feature)
-                self.prediction_interval_1d(feature=feature)
+                self.mean_1d(feature=feature, xscale=xscale, yscale=yscale)
+                self.variance_1d(feature=feature, xscale=xscale, yscale=yscale)
+                self.mean_variance_1d(feature=feature, xscale=xscale, yscale=yscale)
+                self.prediction_interval_1d(feature=feature, xscale=xscale, yscale=yscale)
 
                 if sensitivity in self.data[feature]:
-                    self.sensitivity_1d(feature=feature, sensitivity=sensitivity)
-                    self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity)
-                    self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
-
+                    self.sensitivity_1d(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale)
+                    self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale)
+                    self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale)
 
 
     def convert_sensitivity(self, sensitivity):
