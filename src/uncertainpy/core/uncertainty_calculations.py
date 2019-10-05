@@ -1051,6 +1051,7 @@ class UncertaintyCalculations(ParameterBase):
                 else:
                     U_mc[feature] = U_hat[feature](samples)
 
+                data[feature].samples = U_mc[feature]
                 data[feature].percentile_5 = np.percentile(U_mc[feature], 5, -1)
                 data[feature].percentile_95 = np.percentile(U_mc[feature], 95, -1)
 
@@ -1529,6 +1530,7 @@ class UncertaintyCalculations(ParameterBase):
             logger = get_logger(self)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
+                data[feature].samples = masked_evaluations
                 data[feature].mean = np.mean(masked_evaluations, 0)
                 data[feature].variance = np.var(masked_evaluations, 0)
 
