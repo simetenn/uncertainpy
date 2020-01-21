@@ -7,7 +7,7 @@ ENV LANG=C.UTF-8
 
 # Python prerequisites
 RUN apt-get update --fix-missing
-RUN apt-get -y install python3-pip software-properties-common
+RUN apt-get -y install python3-pip software-properties-common > /dev/null
 
 # Install Nest
 RUN add-apt-repository ppa:nest-simulator/nest
