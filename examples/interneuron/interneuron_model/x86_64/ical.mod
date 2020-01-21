@@ -1,1 +1,1 @@
-../ical.mod
+.././ical.mod

@@ -1,4 +1,4 @@
-/* Created by Language version: 7.5.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -82,6 +82,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -141,7 +150,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "7.5.0",
+ "7.7.0",
 "Cad",
  "taur_Cad",
  "Cainf_Cad",
@@ -197,6 +206,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 10, 4);
   hoc_register_dparam_semantics(_mechtype, 0, "Ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "Ca_ion");
@@ -440,4 +453,70 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/docker/uncertainpy/tests/models/interneuron_modelDB/Cad.mod";
+static const char* nmodl_file_text = 
+  "TITLE decay of internal calcium concentration\n"
+  ":\n"
+  ": Simple extrusion mechanism for internal calium dynamics\n"
+  ":\n"
+  ": Written by Alain Destexhe, Salk Institute, Nov 12, 1992\n"
+  ": Modified by Geir Halnes, Norwegian Life Science University of Life Sciences, June 2011\n"
+  "\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX Cad\n"
+  "	USEION Ca READ iCa, Cai WRITE Cai VALENCE 2\n"
+  "	RANGE Cainf,taur,k\n"
+  "}\n"
+  "\n"
+  "UNITS {\n"
+  "	(molar) = (1/liter)			: moles do not appear in units\n"
+  "	(mM)	= (millimolar)\n"
+  "	(um)	= (micron)\n"
+  "	(mA)	= (milliamp)\n"
+  "	(msM)	= (ms mM)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "PARAMETER {\n"
+  "	depth	= .1(um)		: depth of shell\n"
+  "	taur	= 50	(ms)		: Zhu et al. used 2 decay terms w/ taus 80ms and 150ms. 1 term 50 ms gives similar decay. \n"
+  "	Cainf	= 5e-5	(mM)  : Basal Ca-level\n"
+  "	Cainit  = 5e-5 (mM)	: Initial Ca-level\n"
+  "      k       = 0.0155458135   (mmol/C cm)  : Phenomenological constant, estimated to give reasonable intracellular calcium concentration\n"
+  "}\n"
+  "\n"
+  "\n"
+  "STATE {\n"
+  "	Cai		(mM) <1e-8> : to have tolerance of .01nM\n"
+  "}\n"
+  "\n"
+  "\n"
+  "INITIAL {\n"
+  "	Cai = Cainit\n"
+  "}\n"
+  "\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	iCa		(mA/cm2)\n"
+  "	drive_channel	(mM/ms)\n"
+  "	drive_pump	(mM/ms)\n"
+  "}\n"
+  "\n"
+  "	\n"
+  "BREAKPOINT {\n"
+  "	SOLVE state METHOD cnexp\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE state { \n"
+  "	drive_channel =  - k * iCa\n"
+  "	if (drive_channel<=0.) { drive_channel = 0. }: cannot pump inward\n"
+  "	Cai' = drive_channel +(Cainf-Cai)/taur\n"
+  "}\n"
+  ;
 #endif

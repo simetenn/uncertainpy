@@ -27,6 +27,7 @@ x86_64/
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -127,3 +128,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+

@@ -779,7 +779,7 @@ class TestNetworkFeatures(unittest.TestCase):
     def test_instantaneous_rate(self):
         time, values = self.features.instantaneous_rate(self.time, self.spiketrains)
 
-        rates = [938.762478, 938.7583322]
+        rates = [345.49198943, 303.02788156]
 
         correct_t = np.linspace(0, 8, 3)[:-1]
 

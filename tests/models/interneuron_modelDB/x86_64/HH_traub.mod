@@ -1,1 +1,1 @@
-../HH_traub.mod
+.././HH_traub.mod

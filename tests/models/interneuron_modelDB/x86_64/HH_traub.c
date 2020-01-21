@@ -1,4 +1,4 @@
-/* Created by Language version: 7.5.0 */
+/* Created by Language version: 7.7.0 */
 /* VECTORIZED */
 #define NRN_VECTORIZED 1
 #include <stdio.h>
@@ -107,6 +107,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _extcall_prop = _prop;
@@ -168,7 +177,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "7.5.0",
+ "7.7.0",
 "hh2",
  "gnabar_hh2",
  "gkbar_hh2",
@@ -245,6 +254,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 27, 7);
   hoc_register_dparam_semantics(_mechtype, 0, "na_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "na_ion");
@@ -590,4 +603,154 @@ _first = 0;
 
 #if defined(__cplusplus)
 } /* extern "C" */
+#endif
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/docker/uncertainpy/tests/models/interneuron_modelDB/HH_traub.mod";
+static const char* nmodl_file_text = 
+  "TITLE Hippocampal HH channels\n"
+  ":\n"
+  ": Fast Na+ and K+ currents responsible for action potentials\n"
+  ": Iterative equations\n"
+  ":\n"
+  ": Equations modified by Traub, for Hippocampal Pyramidal cells, in:\n"
+  ": Traub & Miles, Neuronal Networks of the Hippocampus, Cambridge, 1991\n"
+  ":\n"
+  ": range variable vtraub adjust threshold\n"
+  ":\n"
+  ": Written by Alain Destexhe, Salk Institute, Aug 1992\n"
+  ":\n"
+  ": Modified Oct 96 for compatibility with Windows: trap low values of arguments\n"
+  ":\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX hh2\n"
+  "	USEION na READ ena WRITE ina\n"
+  "	USEION k READ ek WRITE ik\n"
+  "	RANGE gnabar, gkbar, vtraubNa, vtraubK\n"
+  "	RANGE m_inf, h_inf, n_inf\n"
+  "	RANGE tau_m, tau_h, tau_n\n"
+  "	RANGE m_exp, h_exp, n_exp\n"
+  ":	RANGE dt\n"
+  "}\n"
+  "\n"
+  "\n"
+  "UNITS {\n"
+  "	(mA) = (milliamp)\n"
+  "	(mV) = (millivolt)\n"
+  "}\n"
+  "\n"
+  "PARAMETER {\n"
+  "	gnabar  = .003  (mho/cm2)\n"
+  "	gkbar   = .005  (mho/cm2)\n"
+  "	ena     = 50    (mV)\n"
+  "	ek      = -90   (mV)\n"
+  "	celsius = 36    (degC)\n"
+  ":	dt              (ms)\n"
+  "	v               (mV)\n"
+  "	vtraubNa  = -63   (mV)\n"
+  "	vtraubK   = -63   (mV)\n"
+  "}\n"
+  "\n"
+  "STATE {\n"
+  "	m h n\n"
+  "}\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	ina     (mA/cm2)\n"
+  "	ik      (mA/cm2)\n"
+  "	il      (mA/cm2)\n"
+  "	m_inf\n"
+  "	h_inf\n"
+  "	n_inf\n"
+  "	tau_m\n"
+  "	tau_h\n"
+  "	tau_n\n"
+  "	m_exp\n"
+  "	h_exp\n"
+  "	n_exp\n"
+  "	tadj\n"
+  "}\n"
+  "\n"
+  "\n"
+  "BREAKPOINT {\n"
+  "	SOLVE states METHOD cnexp\n"
+  "	ina = gnabar * m*m*m*h * (v - ena)\n"
+  "	ik  = gkbar * n*n*n*n * (v - ek)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "DERIVATIVE states {   : exact Hodgkin-Huxley equations\n"
+  "       evaluate_fct(v)\n"
+  "       m' = (m_inf - m) / tau_m\n"
+  "       h' = (h_inf - h) / tau_h\n"
+  "       n' = (n_inf - n) / tau_n\n"
+  "}\n"
+  "\n"
+  ":PROCEDURE states() {    : exact when v held constant\n"
+  ":	evaluate_fct(v)\n"
+  ":	m = m + m_exp * (m_inf - m)\n"
+  ":	h = h + h_exp * (h_inf - h)\n"
+  ":	n = n + n_exp * (n_inf - n)\n"
+  ":	VERBATIM\n"
+  ":	return 0;\n"
+  ":	ENDVERBATIM\n"
+  ":}\n"
+  "\n"
+  "UNITSOFF\n"
+  "INITIAL {\n"
+  ":	evaluate_fct(v)\n"
+  "	m = 0\n"
+  "	h = 0\n"
+  "	n = 0\n"
+  "	tadj = 3.0 ^ ((celsius-36)/ 10 )\n"
+  "}\n"
+  "\n"
+  "\n"
+  "\n"
+  "PROCEDURE evaluate_fct(v(mV)) { LOCAL a,b,vNa, vK\n"
+  "\n"
+  "	vNa = v - vtraubNa : convert to traub convention\n"
+  "	vK = v - vtraubK : convert to traub convention\n"
+  ":       a = 0.32 * (13-vNa) / ( Exp((13-vNa)/4) - 1)\n"
+  "	a = 0.32 * vtrap(13-vNa, 4)\n"
+  ":       b = 0.28 * (vNa-40) / ( Exp((vNa-40)/5) - 1)\n"
+  "	b = 0.28 * vtrap(vNa-40, 5)\n"
+  "	tau_m = 1 / (a + b) / tadj\n"
+  "	m_inf = a / (a + b)\n"
+  "\n"
+  "	a = 0.128 * Exp((17-vNa)/18)\n"
+  "	b = 4 / ( 1 + Exp((40-vNa)/5) )\n"
+  "	tau_h = 1 / (a + b) / tadj\n"
+  "	h_inf = a / (a + b)\n"
+  "\n"
+  ":       a = 0.032 * (15-vK) / ( Exp((15-vK)/5) - 1)\n"
+  "	a = 0.032 * vtrap(15-vK, 5)\n"
+  "	b = 0.5 * Exp((10-vK)/40)\n"
+  "	tau_n = 1 / (a + b) / tadj\n"
+  "	n_inf = a / (a + b)\n"
+  "\n"
+  ":	m_exp = 1 - Exp(-dt/tau_m)\n"
+  ":	h_exp = 1 - Exp(-dt/tau_h)\n"
+  ":	n_exp = 1 - Exp(-dt/tau_n)\n"
+  "}\n"
+  "\n"
+  "FUNCTION vtrap(x,y) {\n"
+  "	if (fabs(x/y) < 1e-6) {\n"
+  "		vtrap = y*(1 - x/y/2)\n"
+  "	}else{\n"
+  "		vtrap = x/(Exp(x/y)-1)\n"
+  "	}\n"
+  "}\n"
+  "\n"
+  "FUNCTION Exp(x) {\n"
+  "	if (x < -100) {\n"
+  "		Exp = 0\n"
+  "	}else{\n"
+  "		Exp = exp(x)\n"
+  "	}\n"
+  "} \n"
+  ;
 #endif

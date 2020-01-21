@@ -1,1 +1,1 @@
-../Ican.mod
+.././Ican.mod

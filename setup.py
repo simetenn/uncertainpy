@@ -35,13 +35,10 @@ be used for many other types of models and features within other fields.
 
 
 
-uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six"]
+uncertainpy_require = ["chaospy<=3.0.11", "tqdm", "h5py", "multiprocess", "numpy",
+                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six",
+                       "exdir", "ruamel.yaml", "salib"]
 
-if sys.version_info[0] < 3:
-    uncertainpy_require += ["salib==1.2"]
-else:
-    uncertainpy_require += ["salib"]
 
 efel_features = ["efel"]
 network_features = ["elephant", "neo", "quantities"]
@@ -118,7 +115,7 @@ setup(name=name,
       license="GNU GPLv3",
       keywords="uncertainty quantification sensitivity analysis neuroscience",
       long_description=long_description,
-      python_requires=">=2.7,>=3",
+      python_requires=">=3",
       packages=find_packages("src"),
       package_dir={"": "src"},
       install_requires=uncertainpy_require,
