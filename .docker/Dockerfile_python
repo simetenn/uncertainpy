@@ -12,11 +12,11 @@ RUN apt-get -y install python3-pip software-properties-common
 # Install Nest
 RUN add-apt-repository ppa:nest-simulator/nest
 RUN apt-get update
-RUN apt-get -y install nest
+RUN apt-get -y install nest > /dev/null
 
 # Neuron dependencies
 RUN apt-get install -y libx11-dev git bison flex automake libtool libxext-dev \
-    libncurses-dev python3-dev xfonts-100dpi cython3 libopenmpi-dev make zlib1g-dev
+    libncurses-dev python3-dev xfonts-100dpi cython3 libopenmpi-dev make zlib1g-dev > /dev/null
 
 # Install Neuron
 ENV HOME=/home/docker
