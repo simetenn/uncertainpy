@@ -35,8 +35,8 @@ be used for many other types of models and features within other fields.
 
 
 
-uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy>=1.0.1", "seaborn", "matplotlib>=2", "xvfbwrapper", "six",
+uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy>=1.16",
+                       "scipy>=1.0.1", "seaborn", "matplotlib>=3", "xvfbwrapper", "six",
                        "exdir", "ruamel.yaml", "salib"]
 
 
