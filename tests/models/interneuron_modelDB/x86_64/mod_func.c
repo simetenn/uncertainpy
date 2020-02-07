@@ -15,13 +15,13 @@ void modl_reg(){
   if (!nrn_nobanner_) if (nrnmpi_myid < 1) {
     fprintf(stderr, "Additional mechanisms from files\n");
 
-    fprintf(stderr," Cad.mod");
-    fprintf(stderr," HH_traub.mod");
-    fprintf(stderr," Ican.mod");
-    fprintf(stderr," iahp.mod");
-    fprintf(stderr," iar.mod");
-    fprintf(stderr," ical.mod");
-    fprintf(stderr," it2.mod");
+    fprintf(stderr," ./Cad.mod");
+    fprintf(stderr," ./HH_traub.mod");
+    fprintf(stderr," ./Ican.mod");
+    fprintf(stderr," ./iahp.mod");
+    fprintf(stderr," ./iar.mod");
+    fprintf(stderr," ./ical.mod");
+    fprintf(stderr," ./it2.mod");
     fprintf(stderr, "\n");
   }
   _Cad_reg();

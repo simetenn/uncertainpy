@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* NOT VECTORIZED */
 #define NRN_VECTORIZED 0
 #include <stdio.h>
@@ -79,6 +79,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _p = _prop->param; _ppvar = _prop->dparam;
@@ -164,7 +173,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "iar",
  "ghbar_iar",
  0,
@@ -215,6 +224,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 7, 3);
   hoc_register_dparam_semantics(_mechtype, 0, "other_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "other_ion");
@@ -251,7 +264,7 @@ static int _ode_spec1(_threadargsproto_);
  static int _ode_matsol1 () {
  evaluate_fct ( _threadargscomma_ v ) ;
  Dh = Dh  / (1. - dt*( ( ( ( - 1.0 ) ) ) / tauh )) ;
- return 0;
+  return 0;
 }
  /*END CVODE*/
  static int state () {_reset=0;
@@ -452,3 +465,95 @@ static void _initlists() {
  _slist1[0] = &(h) - _p;  _dlist1[0] = &(Dh) - _p;
 _first = 0;
 }
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/docker/uncertainpy/examples/interneuron/interneuron_model/iar.mod";
+static const char* nmodl_file_text = 
+  "TITLE anomalous rectifier channel\n"
+  ":\n"
+  ": Anomalous Rectifier Ih - cation (Na/K) channel for geniculate interneurons\n"
+  ": Differential equations\n"
+  ":\n"
+  ": Written by Jun Zhu, Univ. Wisconsin, Jan 1996\n"
+  ": Modified by Geir Halnes, Norwegian University of Life Sciences, June 2011\n"
+  ": Fitted to data from mice dLGN interneurons.\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX iar\n"
+  "	USEION other WRITE iother VALENCE 1\n"
+  "        RANGE ghbar,  iother\n"
+  "	GLOBAL h_inf, tauh, erev, stp,  shift\n"
+  "}\n"
+  "\n"
+  "\n"
+  "UNITS {\n"
+  "	(molar)	= (1/liter)\n"
+  "	(mM)	= (millimolar)\n"
+  "	(mA) 	= (milliamp)\n"
+  "	(mV) 	= (millivolt)\n"
+  "	(msM)	= (ms mM)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "PARAMETER {\n"
+  "      v               (mV)\n"
+  "	erev	= -44	(mV)\n"
+  "	celsius = 36	(degC)\n"
+  "	ghbar	= 1.1e-5 (mho/cm2) : Set from hoc-file\n"
+  "	shift   =  0    (mV)\n"
+  "\n"
+  "	: Kinetics fitted to new data from mice dLGN interneurons.\n"
+  "	: Halnes et al. 2011\n"
+  "      stp     = 10	\n"
+  "	a0 = 96\n"
+  "	a1 = 250\n"
+  "	a2 = 30.7\n"
+  "	a3 = 78.8\n"
+  "	a4 = 5.78\n"
+  "}\n"
+  "\n"
+  "\n"
+  "STATE {\n"
+  "        h\n"
+  "}\n"
+  "\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	i	(mA/cm2)\n"
+  "	iother 	(mA/cm2)\n"
+  "	h_inf\n"
+  "	tauh	(ms)\n"
+  "	tadj\n"
+  "}\n"
+  "\n"
+  "\n"
+  "BREAKPOINT {\n"
+  "	SOLVE state METHOD cnexp\n"
+  "	iother = ghbar * h * (v - erev)\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE state  {\n"
+  "	evaluate_fct(v)\n"
+  "      h' = (h_inf - h) / tauh\n"
+  "}\n"
+  "UNITSOFF\n"
+  "\n"
+  "INITIAL {\n"
+  "	evaluate_fct(v)\n"
+  "      h = h_inf\n"
+  "}\n"
+  "\n"
+  "\n"
+  "PROCEDURE evaluate_fct(v (mV)) {\n"
+  "	h_inf = 1 / ( 1 + exp((v+shift+a0)/stp) )\n"
+  "	tauh = exp((v+shift+a1)/a2) / ( 1 + exp((v+shift+a3)/a4))\n"
+  "}\n"
+  "\n"
+  "\n"
+  "\n"
+  "UNITSON\n"
+  "\n"
+  ;
+#endif

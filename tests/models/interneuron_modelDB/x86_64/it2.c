@@ -1,4 +1,4 @@
-/* Created by Language version: 7.5.0 */
+/* Created by Language version: 7.7.0 */
 /* NOT VECTORIZED */
 #define NRN_VECTORIZED 0
 #include <stdio.h>
@@ -87,6 +87,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _p = _prop->param; _ppvar = _prop->dparam;
@@ -222,7 +231,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "7.5.0",
+ "7.7.0",
 "it2",
  "gcabar_it2",
  0,
@@ -277,6 +286,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 11, 5);
   hoc_register_dparam_semantics(_mechtype, 0, "Ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "Ca_ion");
@@ -580,3 +593,137 @@ static void _initlists() {
  _slist1[1] = &(h) - _p;  _dlist1[1] = &(Dh) - _p;
 _first = 0;
 }
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/docker/uncertainpy/tests/models/interneuron_modelDB/it2.mod";
+static const char* nmodl_file_text = 
+  "TITLE Low threshold calcium current\n"
+  ":\n"
+  ":   Ca++ current responsible for low threshold spikes (LTS)\n"
+  ":\n"
+  ":   Written by Alain Destexhe, Salk Institute, Sept 18, 1992\n"
+  ":   Modified by Geir Halnes, Norwegian University of Life Sciences, June 2011:\n"
+  ":\n"
+  ":     - Kinetics adapted to LGN interneuron data from Broicher et al.: Mol Cell Neurosci 36: 132-145, 2007.\n"
+  ":         using Q10 values of 3 and 1.5 for activation/inactivation.\n"
+  ":     - Activation variable shifted 8mV to account for dLGN interneuron data in Halnes et al. 2011\n"
+  "\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX it2\n"
+  "	USEION Ca READ Cai, Cao WRITE iCa VALENCE 2\n"
+  "	RANGE gcabar, g\n"
+  "	GLOBAL m_inf, tau_m, h_inf, tau_h, shift2, sm, sh, phi_m, phi_h, hx, mx, shift1\n"
+  "}\n"
+  "\n"
+  "UNITS {\n"
+  "	(molar) = (1/liter)\n"
+  "	(mV) =	(millivolt)\n"
+  "	(mA) =	(milliamp)\n"
+  "	(mM) =	(millimolar)\n"
+  "	FARADAY = (faraday) (coulomb)\n"
+  "	R = (k-mole) (joule/degC)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "PARAMETER {\n"
+  "	v		(mV)\n"
+  "	celsius	= 36	(degC)\n"
+  "	gcabar	= 8.5e-6	(mho/cm2)\n"
+  "      hx      = 1.5\n"
+  "      mx      = 3.0\n"
+  "	Cai	= 5e-5 (mM) : Initial Ca concentration\n"
+  "	Cao	= 2	(mM) : External Ca concentration\n"
+  "\n"
+  ": GH, parameters fitted to Broicher et al. 07 - data\n"
+  "	minf1 = 46.2\n"
+  "	hinf1 = 69.7\n"
+  "	taum1 = 5.4\n"
+  "	taum2 = 125.7\n"
+  "	taum3 = -19.7\n"
+  "	taum4 = -0.54\n"
+  "	taum5 = 13\n"
+  "	tauh1 = 21\n"
+  "	tauh2 = 22.2\n"
+  "	tauh3 = 9.1\n"
+  "	tauh4 = 362.9\n"
+  "	tauh5 = 46.9\n"
+  "      sm = 8.7\n"
+  "      sh = 6.4\n"
+  "	shift1 = -8 	(mV) : Halnes et al. 2011\n"
+  "      shift2  = 0    	(mV) : Halnes et al. 2011\n"
+  "}\n"
+  "\n"
+  "\n"
+  "STATE {\n"
+  "	m h\n"
+  "}\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	iCa	(mA/cm2)\n"
+  "	g       (mho/cm2)\n"
+  "	carev	(mV)\n"
+  "	m_inf\n"
+  "	tau_m	(ms)\n"
+  "	h_inf\n"
+  "	tau_h	(ms)\n"
+  "	phi_m\n"
+  "	phi_h\n"
+  "}\n"
+  "\n"
+  "BREAKPOINT {\n"
+  "	SOLVE castate METHOD cnexp\n"
+  "	g = gcabar * m*m*h\n"
+  "	iCa = g * ghk(v, Cai, Cao)\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE castate {\n"
+  "	evaluate_fct(v)\n"
+  "	m' = (m_inf - m) / tau_m\n"
+  "	h' = (h_inf - h) / tau_h\n"
+  "}\n"
+  "\n"
+  "UNITSOFF\n"
+  "INITIAL {\n"
+  "	VERBATIM\n"
+  "	Cai = _ion_Cai;\n"
+  "	Cao = _ion_Cao;\n"
+  "	ENDVERBATIM\n"
+  ":\n"
+  "	phi_m = mx ^ ((celsius-23.5)/10)\n"
+  "	phi_h = hx ^ ((celsius-23.5)/10)\n"
+  "\n"
+  "	evaluate_fct(v)\n"
+  "	m = m_inf\n"
+  "	h = h_inf\n"
+  "}\n"
+  "\n"
+  "PROCEDURE evaluate_fct(v(mV)) { \n"
+  "	m_inf = 1.0 / ( 1 + exp(-(v+shift1+minf1)/sm) )\n"
+  "	h_inf = 1.0 / ( 1 + exp((v+shift2+hinf1)/sh) )\n"
+  "	tau_m = (taum1+1.0/(exp((v+shift1+taum2)/(taum3))+exp((v+shift1+taum4)/taum5)))/ phi_m\n"
+  "	tau_h = (tauh1+1/(exp((v+shift2+tauh2)/tauh3)+exp(-(v+shift2+tauh4)/tauh5)))/phi_h\n"
+  "}\n"
+  "\n"
+  "FUNCTION ghk(v(mV), Ci(mM), Co(mM)) (.001 coul/cm3) {\n"
+  "	LOCAL z, eci, eco\n"
+  "	z = (1e-3)*2*FARADAY*v/(R*(celsius+273.15))\n"
+  "	eco = Co*efun(z)\n"
+  "	eci = Ci*efun(-z)\n"
+  "	:high Cao charge moves inward\n"
+  "	:negative potential charge moves inward\n"
+  "	ghk = (.001)*2*FARADAY*(eci - eco)\n"
+  "}\n"
+  "\n"
+  "FUNCTION efun(z) {\n"
+  "	if (fabs(z) < 1e-4) {\n"
+  "		efun = 1 - z/2\n"
+  "	}else{\n"
+  "		efun = z/(exp(z) - 1)\n"
+  "	}\n"
+  "}\n"
+  "UNITSON\n"
+  ;
+#endif

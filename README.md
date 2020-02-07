@@ -177,7 +177,7 @@ and the Uncertainpy paper here:
 [Tennøe S, Halnes G and Einevoll GT (2018) Uncertainpy: A Python Toolbox for Uncertainty Quantification and Sensitivity Analysis in Computational Neuroscience. Front. Neuroinform. 12:49. doi: 10.3389/fninf.2018.00049](https://www.frontiersin.org/articles/10.3389/fninf.2018.00049/full).
 ## Installation
 
-Uncertainpy works with both Python 2 and 3.
+Uncertainpy works with Python 3.
 Uncertainpy can easily be installed using pip. The minimum install is:
 
     pip install uncertainpy
@@ -214,28 +214,13 @@ Uncertainpy has the following dependencies:
 * `xvfbwrapper`
 * `six`
 * `SALib`
+* `exdir`
 
 These are installed with the minimum install.
 
 `xvfbwrapper` requires `xvfb`, which can be installed with:
 
     sudo apt-get install xvfb
-
-Two different fileformats (backends)  can be chosen to save the results in.
-`HDF5` is chosen (and installed) by default, but the `Exdir` format can be
-chosen as well. If you want to use `Exdir` it can be installed by:
-
-    conda install -c cinpla exdir
-
-Currently `Exdir` only supports Python 2.7 in an experimental branch.
-To get the  Python 2.7 version of exdir,
-run the above command to install all dependencies. Then clone the Exdir Github
-repository, change to the python 2.7 branch and then install from the source:
-
-    git clone https://github.com/CINPLA/exdir.git
-    cd exdir
-    git checkout python27
-    python setup.py install
 
 Additionally Uncertainpy has a few optional dependencies for specific classes
 of models and for features of the models.
@@ -300,6 +285,10 @@ For how to use test.py run:
 These can be installed with pip:
 
     pip install uncertainpy[tests]
+
+In addition, the following program must be installed:
+
+* `hdf5-tools`
 
 
 ## Citation

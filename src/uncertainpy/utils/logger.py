@@ -8,13 +8,7 @@ import sys
 import threading
 import multiprocess
 import traceback
-
-
-try:
-    import queue
-except ImportError:
-    # Python 2
-    import Queue as queue
+import queue
 
 
 class MyFormatter(logging.Formatter):

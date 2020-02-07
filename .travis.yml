@@ -2,15 +2,12 @@ sudo: required
 services: docker
 language: python
 python:
-  - "2.7" # Placeholder only
   - "3.6" # Placeholder only
 install:
   - pip install codecov
 before_script:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then PYTHON_VERSION=2 ; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then PYTHON_VERSION=3 ; fi
-  - docker build -t python$PYTHON_VERSION -f .docker/Dockerfile_python$PYTHON_VERSION .
-  - docker build -t uncertainpy -f .docker/Dockerfile_uncertainpy$PYTHON_VERSION .
+  - docker build -t python -f .docker/Dockerfile_python .
+  - docker build -t uncertainpy -f .docker/Dockerfile_uncertainpy .
   - ci_env=`bash <(curl -s https://codecov.io/env)`
 script:
   - docker run $ci_env -t uncertainpy uncertainpy/run_tests.sh

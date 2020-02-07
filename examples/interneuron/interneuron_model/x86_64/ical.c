@@ -1,4 +1,4 @@
-/* Created by Language version: 6.2.0 */
+/* Created by Language version: 7.7.0 */
 /* NOT VECTORIZED */
 #define NRN_VECTORIZED 0
 #include <stdio.h>
@@ -85,6 +85,15 @@ extern void hoc_register_limits(int, HocParmLimits*);
 extern void hoc_register_units(int, HocParmUnits*);
 extern void nrn_promote(Prop*, int, int);
 extern Memb_func* memb_func;
+ 
+#define NMODL_TEXT 1
+#if NMODL_TEXT
+static const char* nmodl_file_text;
+static const char* nmodl_filename;
+extern void hoc_reg_nmodl_text(int, const char*);
+extern void hoc_reg_nmodl_filename(int, const char*);
+#endif
+
  extern void _nrn_setdata_reg(int, void(*)(Prop*));
  static void _setdata(Prop* _prop) {
  _p = _prop->param; _ppvar = _prop->dparam;
@@ -160,7 +169,7 @@ static void _ode_matsol(_NrnThread*, _Memb_list*, int);
  static void _ode_matsol_instance1(_threadargsproto_);
  /* connect range variables in _p that hoc is supposed to know about */
  static const char *_mechanism[] = {
- "6.2.0",
+ "7.7.0",
 "ical",
  "pcabar_ical",
  0,
@@ -214,6 +223,10 @@ extern void _cvode_abstol( Symbol**, double*, int);
  _mechtype = nrn_get_mechtype(_mechanism[1]);
      _nrn_setdata_reg(_mechtype, _setdata);
      _nrn_thread_reg(_mechtype, 2, _update_ion_pointer);
+ #if NMODL_TEXT
+  hoc_reg_nmodl_text(_mechtype, nmodl_file_text);
+  hoc_reg_nmodl_filename(_mechtype, nmodl_filename);
+#endif
   hoc_register_prop_size(_mechtype, 9, 5);
   hoc_register_dparam_semantics(_mechtype, 0, "Ca_ion");
   hoc_register_dparam_semantics(_mechtype, 1, "Ca_ion");
@@ -228,7 +241,7 @@ extern void _cvode_abstol( Symbol**, double*, int);
  hoc_register_units(_mechtype, _hoc_parm_units);
  }
  static double FARADAY = 96485.3;
- static double R = 8.31342;
+ static double R = 8.3145;
 static int _reset;
 static char *modelname = "High threshold calcium current";
 
@@ -254,7 +267,7 @@ static int _ode_spec1(_threadargsproto_);
  static int _ode_matsol1 () {
  evaluate_fct ( _threadargscomma_ v ) ;
  Dm = Dm  / (1. - dt*( ( ( ( - 1.0 ) ) ) / taum )) ;
- return 0;
+  return 0;
 }
  /*END CVODE*/
  static int states () {_reset=0;
@@ -507,3 +520,117 @@ static void _initlists() {
  _slist1[0] = &(m) - _p;  _dlist1[0] = &(Dm) - _p;
 _first = 0;
 }
+
+#if NMODL_TEXT
+static const char* nmodl_filename = "/home/docker/uncertainpy/examples/interneuron/interneuron_model/ical.mod";
+static const char* nmodl_file_text = 
+  "TITLE High threshold calcium current\n"
+  ":\n"
+  ":   Ca++ current, L type channels, responsible for calcium spikes\n"
+  ":   Differential equations\n"
+  ":\n"
+  ":   Model of Huguenard & McCormick, J Neurophysiol, 1992\n"
+  ":   Formalism of Goldman-Hodgkin-Katz\n"
+  ":\n"
+  ":   Kinetic functions were fitted from data of hippocampal pyr cells\n"
+  ":   (Kay & Wong, J. Physiol. 392: 603, 1987)\n"
+  ":\n"
+  ":   Written by Alain Destexhe, Salk Institute, Sept 18, 1992\n"
+  ":   Modified by Zhu et al, 1999: Neuroscience 91, 1445-1460 (1999).\n"
+  ":   Modified by Geir Halnes, Norwegian University of Life Sciences, June 2011\n"
+  "\n"
+  "\n"
+  "INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}\n"
+  "\n"
+  "NEURON {\n"
+  "	SUFFIX ical\n"
+  "	USEION Ca READ Cai, Cao WRITE iCa VALENCE 2\n"
+  "      RANGE pcabar, g\n"
+  "	GLOBAL 	m_inf, taum, sh1, sh2\n"
+  "}\n"
+  "\n"
+  "\n"
+  "UNITS {\n"
+  "	(mA) = (milliamp)\n"
+  "	(mV) = (millivolt)\n"
+  "	(molar) = (1/liter)\n"
+  "	(mM) = (millimolar)\n"
+  "	FARADAY = (faraday) (coulomb)\n"
+  "	R = (k-mole) (joule/degC)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "PARAMETER {\n"
+  "	v		(mV)\n"
+  "	celsius	= 36	(degC)\n"
+  "	eCa     = 120		(mV)\n"
+  "	Cai 	= .00005	(mM)	: initial [Ca]i = 50 nM\n"
+  "	Cao 	= 2		(mM)	: [Ca]o = 2 mM\n"
+  "	pcabar	= 9e-4	(mho/cm2)\n"
+  "	sh1 	= -17		 : Modified (-10 in Zhu et al. 99a)\n"
+  "	sh2	= -7		 : Modified (0 in Zhu et al. 99a)\n"
+  "}\n"
+  "\n"
+  "\n"
+  "STATE {\n"
+  "	m\n"
+  "}\n"
+  "\n"
+  "INITIAL {\n"
+  "	tadj = 3 ^ ((celsius-21.0)/10)\n"
+  "	evaluate_fct(v)\n"
+  "	m = m_inf\n"
+  "}\n"
+  "\n"
+  "\n"
+  "ASSIGNED {\n"
+  "	iCa	(mA/cm2)\n"
+  "	g       (mho/cm2)\n"
+  "	m_inf\n"
+  "	taum	(ms)\n"
+  "      tadj\n"
+  "}\n"
+  "\n"
+  "BREAKPOINT { \n"
+  "	SOLVE states METHOD cnexp\n"
+  "	g = pcabar * m * m\n"
+  "	iCa = g * ghk(v, Cai, Cao)\n"
+  "}\n"
+  "\n"
+  "DERIVATIVE states { \n"
+  "	evaluate_fct(v)\n"
+  "	m' = (m_inf - m) / taum\n"
+  "}\n"
+  "\n"
+  "\n"
+  "UNITSOFF\n"
+  "PROCEDURE evaluate_fct(v(mV)) {  LOCAL a,b\n"
+  ":  activation kinetics of Kay-Wong were at 20-22 deg. C\n"
+  ":  transformation to 36 deg assuming Q10=3\n"
+  "\n"
+  "	a = 1.6 / (1 + exp(-0.072*(v+sh1+5)) )\n"
+  "	b = 0.02 * (v+sh2-1.31) / ( exp((v+sh2-1.31)/5.36) - 1)\n"
+  "	taum = 1.0 / (a + b) / tadj\n"
+  "	m_inf = a / (a + b)\n"
+  "}\n"
+  "\n"
+  "FUNCTION ghk(v(mV), ci(mM), co(mM)) (.001 coul/cm3) {\n"
+  "	LOCAL z, eci, eco\n"
+  "	z = (1e-3)*2*FARADAY*v/(R*(celsius+273.15))\n"
+  "	eco = co*efun(z)\n"
+  "	eci = ci*efun(-z)\n"
+  "	:high co charge moves inward\n"
+  "	:negative potential charge moves inward\n"
+  "	ghk = (.001)*2*FARADAY*(eci - eco)\n"
+  "}\n"
+  "\n"
+  "FUNCTION efun(z) {\n"
+  "	if (fabs(z) < 1e-4) {\n"
+  "		efun = 1 - z/2\n"
+  "	}else{\n"
+  "		efun = z/(exp(z) - 1)\n"
+  "	}\n"
+  "}\n"
+  "UNITSON\n"
+  ;
+#endif
