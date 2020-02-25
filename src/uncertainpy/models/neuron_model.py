@@ -99,6 +99,7 @@ class NeuronModel(Model):
                  suppress_graphics=True,
                  logger_level="info",
                  info={},
+                 compartment="soma",
                  **model_kwargs):
 
         super(NeuronModel, self).__init__(interpolate=interpolate,
@@ -125,6 +126,7 @@ class NeuronModel(Model):
 
         self.time = None
         self.V = None
+        self.compartment = compartment
 
         setup_module_logger(class_instance=self, level=logger_level)
 
@@ -250,17 +252,18 @@ class NeuronModel(Model):
         RuntimeError
             If no section with name ``soma`` is found in the Neuron model.
         """
-        # if not hasattr(self.h, "soma"):
-        #     raise RuntimeError("No section with name soma found in: {}. Unable to record from soma".format(self.name))
 
+        logger = get_logger(self)
         if not hasattr(self.h, "voltage_soma"):
-            # self.h("objref voltage_soma")
-            # self.h("voltage_soma = new Vector()")
 
-            # self.h.voltage_soma.record(self.h.soma(0.5)._ref_v)
-
+            logger.info("The following sections with 'soma' in them are available: {c}".format(
+                c=[s.name() for s in list(self.h.allsec()) if 'soma' in s.name().lower()]))
+            # print('SECTIONS')
+            # print('looking for: ' + self.compartment)
             for section in self.h.allsec():
-                if section.name().lower() == "soma":
+                # print(section.name())
+                if section.name() == self.compartment:
+                    print('FOUND IT')
                     self.h("objref voltage_soma")
                     self.h("voltage_soma = new Vector()")
 
@@ -268,7 +271,7 @@ class NeuronModel(Model):
                     break
 
         if not hasattr(self.h, "voltage_soma"):
-            raise RuntimeError("No section with name soma found in: {}. Unable to record from soma".format(self.name))
+            raise RuntimeError("No section with name {c} found in {n}. Unable to record.".format(c=self.compartment, n=self.name))
 
 
     def _record_t(self):
