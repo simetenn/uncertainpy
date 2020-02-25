@@ -942,10 +942,18 @@ class TestRunModel(unittest.TestCase):
         self.assertTrue(self.runmodel.is_regular(results, "test"))
 
 
-    def test_is_regular_empty_list(self):
+    def test_is_regular_irregular_empty_list(self):
         results = [{"test": {"values": [0, [], 2, 3, 4, 5, 6, 7, 8, 9]}},
                    {"test": {"values": np.arange(0, 10)}},
                    {"test": {"values": np.arange(0, 10)}}]
+
+        self.assertFalse(self.runmodel.is_regular(results, "test"))
+
+
+    def test_is_regular_regular_list(self):
+        results = [{"test": {"values": [0, [1, 2], 2, 3, 4, 5, 6, 7, 8, 9]}},
+                   {"test": {"values": [0, [1, 2], 2, 3, 4, 5, 6, 7, 8, 9]}},
+                   {"test": {"values": [0, [1, 2], 2, 3, 4, 5, 6, 7, 8, 9]}}]
 
         self.assertFalse(self.runmodel.is_regular(results, "test"))
 

@@ -7,6 +7,7 @@ import time
 import logging
 import numpy as np
 import chaospy as cp
+import numpoly
 import multiprocess as mp
 
 from uncertainpy.core import UncertaintyCalculations
@@ -779,10 +780,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_collocation()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
     def test_create_PCE_collocation_all_no_multiprocessing(self):
@@ -798,10 +799,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.assertIsNone(uncertainty_calculations.runmodel.CPUs)
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -811,10 +812,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                                  nr_collocation_nodes=22)
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -822,10 +823,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_collocation("a")
 
         self.assertEqual(data.uncertain_parameters, ["a"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -856,10 +857,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.create_PCE_collocation_rosenblatt()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -869,20 +870,20 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.create_PCE_collocation_rosenblatt("a")
 
         self.assertEqual(data.uncertain_parameters, ["a"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
     def test_create_PCE_spectral_all(self):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_spectral()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
     def test_create_PCE_spectral_all_parameters(self):
@@ -891,10 +892,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
                                                               quadrature_order=6)
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -903,10 +904,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_spectral("a")
 
         self.assertEqual(data.uncertain_parameters, ["a"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
     def test_create_PCE_collocation_interpolate_error(self):
@@ -934,10 +935,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.create_PCE_spectral_rosenblatt()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -947,10 +948,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.create_PCE_spectral_rosenblatt("a")
 
         self.assertEqual(data.uncertain_parameters, ["a"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -1059,10 +1060,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
         data.add_features(["TestingModel1d", "feature0d", "feature1d", "feature2d"])
 
         U_hat = {}
-        U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
-        U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
-        U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
-        U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+        U_hat["TestingModel1d"] = numpoly.polynomial([q0, q1*q0, q1])
+        U_hat["feature0d"] = numpoly.polynomial([q0, q1*q0, q1])
+        U_hat["feature1d"] = numpoly.polynomial([q0, q1*q0, q1])
+        U_hat["feature2d"] = numpoly.polynomial([q0, q1*q0, q1])
 
         data = self.uncertainty_calculations.analyse_PCE(U_hat, distribution, data)
 
@@ -1182,10 +1183,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             self.uncertainty_calculations.create_PCE_collocation_rosenblatt()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
-        self.assertIsInstance(U_hat["TestingModel1d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["TestingModel1d"], numpoly.ndpoly)
 
 
 
@@ -1276,9 +1277,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_spectral()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
         self.assertNotIn("TestingModel1d", U_hat)
 
         self.assertIn("TestingModel1d", data)
@@ -1292,9 +1293,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_spectral_rosenblatt()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
         self.assertNotIn("TestingModel1d", U_hat)
 
         self.assertIn("TestingModel1d", data)
@@ -1309,9 +1310,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_collocation()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
         self.assertNotIn("TestingModel1d", U_hat)
 
         self.assertIn("TestingModel1d", data)
@@ -1325,9 +1326,9 @@ class TestUncertaintyCalculations(unittest.TestCase):
         U_hat, distribution, data = self.uncertainty_calculations.create_PCE_collocation_rosenblatt()
 
         self.assertEqual(data.uncertain_parameters, ["a", "b"])
-        self.assertIsInstance(U_hat["feature0d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature1d"], cp.Poly)
-        self.assertIsInstance(U_hat["feature2d"], cp.Poly)
+        self.assertIsInstance(U_hat["feature0d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature1d"], numpoly.ndpoly)
+        self.assertIsInstance(U_hat["feature2d"], numpoly.ndpoly)
         self.assertNotIn("TestingModel1d", U_hat)
 
         self.assertIn("TestingModel1d", data)
@@ -1371,10 +1372,10 @@ class TestUncertaintyCalculations(unittest.TestCase):
             data.add_features(["TestingModel1d", "feature0d", "feature1d", "feature2d"])
 
             U_hat = {}
-            U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature0d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature1d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature2d"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["TestingModel1d"] = numpoly.polynomial([q0, q1*q0, q1])
+            U_hat["feature0d"] = numpoly.polynomial([q0, q1*q0, q1])
+            U_hat["feature1d"] = numpoly.polynomial([q0, q1*q0, q1])
+            U_hat["feature2d"] = numpoly.polynomial([q0, q1*q0, q1])
 
             return U_hat, distribution, data
 

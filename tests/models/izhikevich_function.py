@@ -6,7 +6,7 @@ def izhikevich(a=0.02, b=0.2, c=-50, d=2):
     dt = 0.25
     v0 = -70
 
-    time = np.linspace(0, time_end, time_end/dt)
+    time = np.linspace(0, time_end, int(time_end/dt))
 
     def I(time):
         if time >= 10:

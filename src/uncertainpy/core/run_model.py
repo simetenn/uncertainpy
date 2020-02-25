@@ -548,10 +548,30 @@ class RunModel(ParameterBase):
             i += 1
             if not contains_nan(result[feature]["values"]):
                 values_prev = result[feature]["values"]
+
+                # If object array it is not regular
+                if isinstance(values_prev, np.ndarray):
+                    tmp_array = values_prev
+                else:
+                    tmp_array = np.array(values_prev)
+
+                if tmp_array.dtype is np.dtype("object"):
+                    return False
+
                 break
 
         for result in results[i:]:
             values = result[feature]["values"]
+
+            # If object array it is not regular
+            if isinstance(values, np.ndarray):
+                tmp_array = values
+            else:
+                tmp_array = np.array(values)
+
+            if tmp_array.dtype is np.dtype("object"):
+                return False
+
 
             if not contains_nan(values):
                 try:
@@ -565,7 +585,6 @@ class RunModel(ParameterBase):
                 values_prev = values
 
         return True
-
 
 
     def run(self, nodes, uncertain_parameters):
