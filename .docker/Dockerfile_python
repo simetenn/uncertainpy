@@ -48,7 +48,7 @@ RUN make install > /dev/null
 WORKDIR /home/docker/
 RUN echo "source $VENV/bin/nest_vars.sh" >> .bashrc
 # Add nest to python path
-# ENV PYTHONPATH $PYTHONPATH:/home/docker/simulators/lib/python3.6/site-packages/
+ENV PYTHONPATH $PYTHONPATH:/home/docker/simulators/lib/python3.6/site-packages/
 
 # Neuron dependencies
 RUN apt-get install -y libx11-dev git bison flex automake libtool libxext-dev \
