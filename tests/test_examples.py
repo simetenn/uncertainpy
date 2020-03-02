@@ -16,7 +16,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "bahl")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_bahl.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_bahl.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -24,7 +24,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "brunel")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_brunel.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_brunel.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -32,7 +32,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "coffee_cup")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_coffee_function.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_coffee_function.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -40,7 +40,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "coffee_cup")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_coffee_class.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_coffee_class.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -48,7 +48,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "coffee_cup_dependent")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_coffee_dependent_function.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_coffee_dependent_function.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -56,7 +56,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "coffee_cup_dependent")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_coffee_dependent_class.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_coffee_dependent_class.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -64,7 +64,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "hodgkin_huxley")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_hodgkin_huxley.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_hodgkin_huxley.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -72,7 +72,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "izhikevich")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_izhikevich_function.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_izhikevich_function.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -80,7 +80,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "izhikevich")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_izhikevich_class.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_izhikevich_class.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -88,7 +88,7 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "interneuron")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_interneuron.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_interneuron.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 
 
@@ -96,6 +96,6 @@ class TestExamples(unittest.TestCase):
         folder = os.path.join(self.example_folder, "valderrama")
         os.chdir(folder)
 
-        result = subprocess.call(["python", "uq_valderrama.py"], env=os.environ.copy())
+        result = subprocess.call(["python3", "uq_valderrama.py"], env=os.environ.copy())
         self.assertEqual(result, 0)
 

@@ -2,7 +2,9 @@
 try:
     from setuptools import setup, find_packages
 except ImportError:
-    raise ImportError("Setuptools is needed to install all dependencies: https://pypi.python.org/pypi/setuptools")
+    raise ImportError(
+        "Setuptools is needed to install all dependencies: https://pypi.python.org/pypi/setuptools"
+    )
 
 
 import platform
@@ -34,14 +36,22 @@ be used for many other types of models and features within other fields.
 """
 
 
+uncertainpy_require = [
+    "chaospy>=3.2.3",
+    "tqdm",
+    "h5py",
+    "multiprocess",
+    "numpy>=1.16",
+    "scipy>=1.0.1,<=1.3",
+    "seaborn",
+    "matplotlib>=3,<3.2",
+    "xvfbwrapper",
+    "six",
+    "exdir",
+    "ruamel.yaml",
+    "salib",
+]
 
-uncertainpy_require = ["chaospy", "tqdm", "h5py", "multiprocess", "numpy",
-                       "scipy", "seaborn", "matplotlib>=2", "xvfbwrapper", "six"]
-
-if sys.version_info[0] < 3:
-    uncertainpy_require += ["salib==1.2"]
-else:
-    uncertainpy_require += ["salib"]
 
 efel_features = ["efel"]
 network_features = ["elephant", "neo", "quantities"]
@@ -56,15 +66,17 @@ docs_require = all_uncertainpy_requires + docs_dependencies
 
 all_requires = docs_require + test_dependencies + docs_dependencies
 
-extras_require = {"efel_features":  efel_features,
-                  "network_features": network_features,
-                  "all": all_uncertainpy_requires,
-                  "docs": docs_require,
-                  "all_extras": all_requires,
-                  "tests": tests_require}
+extras_require = {
+    "efel_features": efel_features,
+    "network_features": network_features,
+    "all": all_uncertainpy_requires,
+    "docs": docs_require,
+    "all_extras": all_requires,
+    "tests": tests_require,
+}
 
 # To install on read the docs
-if os.environ.get('READTHEDOCS') == 'True':
+if os.environ.get("READTHEDOCS") == "True":
     # uncertainpy_require = ["mock"]
     uncertainpy_require = []
 
@@ -110,17 +122,18 @@ if "--efel_features" in sys.argv:
 # Get version
 exec(open(os.path.join("src", "uncertainpy", "_version.py")).read())
 
-setup(name=name,
-      version=__version__,
-      url="https://github.com/simetenn/uncertainpy",
-      author="Simen Tennøe",
-      description=description,
-      license="GNU GPLv3",
-      keywords="uncertainty quantification sensitivity analysis neuroscience",
-      long_description=long_description,
-      python_requires=">=2.7",
-      packages=find_packages("src"),
-      package_dir={"": "src"},
-      install_requires=uncertainpy_require,
-      extras_require=extras_require,
+setup(
+    name=name,
+    version=__version__,
+    url="https://github.com/simetenn/uncertainpy",
+    author="Simen Tennøe",
+    description=description,
+    license="GNU GPLv3",
+    keywords="uncertainty quantification sensitivity analysis neuroscience",
+    long_description=long_description,
+    python_requires=">=3",
+    packages=find_packages("src"),
+    package_dir={"": "src"},
+    install_requires=uncertainpy_require,
+    extras_require=extras_require,
 )

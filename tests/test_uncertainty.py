@@ -5,6 +5,7 @@ import subprocess
 import glob
 import numpy as np
 import chaospy as cp
+import numpoly
 import logging
 
 # import matplotlib
@@ -323,10 +324,10 @@ class TestUncertainty(TestCasePlot):
             data.add_features(["TestingModel1d", "feature0d_var", "feature1d_var", "feature2d_var"])
 
             U_hat = {}
-            U_hat["TestingModel1d"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature0d_var"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature1d_var"] = cp.Poly([q0, q1*q0, q1])
-            U_hat["feature2d_var"] = cp.Poly([q0, q1*q0, q1])
+            U_hat["TestingModel1d"] = numpoly.polynomial([q0, q1*q0, q1])
+            U_hat["feature0d_var"] = numpoly.polynomial([q0, q1*q0, q1])
+            U_hat["feature1d_var"] = numpoly.polynomial([q0, q1*q0, q1])
+            U_hat["feature2d_var"] = numpoly.polynomial([q0, q1*q0, q1])
 
             return U_hat, distribution, data
 
