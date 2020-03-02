@@ -59,7 +59,8 @@ class PlotUncertainty(object):
                  filename=None,
                  folder="figures/",
                  figureformat=".png",
-                 logger_level="info"):
+                 logger_level="info",
+                 uncertain_names=[]):
 
         self._folder = None
 
@@ -69,11 +70,15 @@ class PlotUncertainty(object):
         self.features_in_combined_plot = 3
 
         self.data = None
+        self.uncertain_names = []
 
         self._logger_level = logger_level
 
         if filename is not None:
             self.load(filename)
+            if self.uncertain_names == []:
+                self.uncertain_names = [i for i in self.data.uncertain_parameters]
+            assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
 
         setup_module_logger(class_instance=self, level=logger_level)
 
@@ -1028,7 +1033,7 @@ class PlotUncertainty(object):
 
         for i in range(len(self.data[feature][sensitivity])):
             ax = prettyPlot(time, self.data[feature][sensitivity][i],
-                            title=title.capitalize() + ", " + feature.replace("_", " ") + " - " + self.data.uncertain_parameters[i],
+                            title=title.capitalize() + ", " + feature.replace("_", " ") + " - " + self.uncertain_names[i],
                             xlabel=xlabel.capitalize(),
                             ylabel=title.capitalize(),
                             color=i,
@@ -1125,7 +1130,7 @@ class PlotUncertainty(object):
         else:
             time = self.data[feature].time
 
-        parameter_names = self.data.uncertain_parameters
+        parameter_names = self.uncertain_names
 
         # get size of the grid in x and y directions
         nr_plots = len(parameter_names)
@@ -1276,7 +1281,7 @@ class PlotUncertainty(object):
                        color=i,
                        palette="husl",
                        nr_colors=len(self.data.uncertain_parameters),
-                       label=self.data.uncertain_parameters[i],
+                       label=self.uncertain_names[i],
                        **plot_kwargs)
 
         plt.ylim([0, 1.05])
@@ -1537,7 +1542,7 @@ class PlotUncertainty(object):
 
             location = (0.5, 1.01 + legend_width*0.095)
             plt.legend(legend_bars,
-                       self.data.uncertain_parameters,
+                       self.uncertain_names,
                        loc="upper center",
                        bbox_to_anchor=location,
                        ncol=legend_size)
@@ -1635,7 +1640,7 @@ class PlotUncertainty(object):
 
         prettyBar(self.data[feature][sensitivity + "_average"],
                   title="Average of " + title + ", " + feature.replace("_", " "),
-                  xlabels=self.data.uncertain_parameters,
+                  xlabels=self.uncertain_names,
                   ylabel="Average of " + title,
                   nr_colors=len(self.data.uncertain_parameters),
                   palette="husl",
@@ -1983,7 +1988,7 @@ class PlotUncertainty(object):
 
                 prettyBar(self.data[features[i]][sensitivity + "_average"],
                           title=features[i].replace("_", " "),
-                          xlabels=self.data.uncertain_parameters,
+                          xlabels=self.uncertain_names,
                           nr_colors=len(self.data.uncertain_parameters),
                           index=index,
                           palette="husl",
