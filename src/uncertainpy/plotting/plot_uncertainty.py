@@ -108,16 +108,12 @@ class PlotUncertainty(object):
         """
         return self._folder
 
-
     @folder.setter
     def folder(self, new_folder):
         self._folder = new_folder
 
         if new_folder is not None and not os.path.isdir(new_folder):
             os.makedirs(new_folder)
-
-
-
 
     def all_evaluations(self, foldername="evaluations"):
         """
@@ -131,7 +127,6 @@ class PlotUncertainty(object):
         """
         for feature in self.data.data:
             self.evaluations(feature=feature, foldername=foldername)
-
 
     def evaluations(self, feature=None, foldername="", **plot_kwargs):
         """
@@ -190,8 +185,6 @@ class PlotUncertainty(object):
         else:
             raise AttributeError("Dimension of evaluations is not valid: dim {}".format(dimension))
 
-
-
     def evaluations_0d(self, feature=None, foldername="", **plot_kwargs):
         """
         Plot all 0D evaluations for a specific model/feature.
@@ -247,7 +240,6 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
     def evaluations_1d(self, feature=None, foldername="", xscale='linear', yscale='linear', **plot_kwargs):
         """
         Plot all 1D evaluations for a specific model/feature.
@@ -278,7 +270,7 @@ class PlotUncertainty(object):
         if feature is None:
             feature = self.data.model_name
 
-        if feature not in self.data or "evaluations"  not in self.data[feature]:
+        if feature not in self.data or "evaluations" not in self.data[feature]:
             logger.warning("No model evaluations to plot.")
             return
 
@@ -297,7 +289,6 @@ class PlotUncertainty(object):
                 time = np.arange(0, len(self.data[feature].evaluations[0]))
             else:
                 time = self.data[feature].time
-
 
         padding = len(str(len(self.data[feature].evaluations) + 1))
         for i, evaluation in enumerate(self.data[feature].evaluations):
@@ -324,8 +315,6 @@ class PlotUncertainty(object):
             plt.close()
 
         reset_style()
-
-
 
     def evaluations_2d(self, feature=None, foldername="", **plot_kwargs):
         """
@@ -403,9 +392,6 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
-
-
     def attribute_feature_1d(self,
                              feature=None,
                              attribute="mean",
@@ -414,6 +400,7 @@ class PlotUncertainty(object):
                              show=False,
                              xscale="linear",
                              yscale="linear",
+                             title=None,
                              **plot_kwargs):
         """
         Plot a 1 dimensional attribute for a specific model/feature.
@@ -436,6 +423,8 @@ class PlotUncertainty(object):
             Choose scale for x axis.
         yscale: {"linear", "log", "symlog", "logit", ...}, optional
             Choose scale for y axis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -473,11 +462,11 @@ class PlotUncertainty(object):
         else:
             time = self.data[feature].time
 
-
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        title = feature + ", " + attribute_name
+        if title is None:
+            title = feature + ", " + attribute_name
         ax = prettyPlot(time, self.data[feature][attribute],
                         title.replace("_", " "), xlabel, ylabel,
                         nr_colors=3,
@@ -501,8 +490,6 @@ class PlotUncertainty(object):
             plt.close()
 
         reset_style()
-
-
 
     def attribute_feature_2d(self,
                              feature=None,
@@ -555,7 +542,6 @@ class PlotUncertainty(object):
         if attribute not in ["mean", "variance"]:
             raise ValueError("{} is not a supported attribute".format(attribute))
 
-
         if attribute not in self.data[feature]:
             msg = " Unable to plot {attribute_name}. {attribute_name} of {feature} does not exist."
             logger.warning(msg.format(attribute_name=attribute, feature=feature))
@@ -564,10 +550,8 @@ class PlotUncertainty(object):
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
             extent = None
         else:
-            extent=[self.data[feature].time[0], self.data[feature].time[-1],
-                    0, self.data[feature][attribute].shape[0]]
-
-
+            extent = [self.data[feature].time[0], self.data[feature].time[-1],
+                      0, self.data[feature][attribute].shape[0]]
 
         title = feature + ", " + attribute_name
         labels = self.data.get_labels(feature)
@@ -578,7 +562,6 @@ class PlotUncertainty(object):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.set_title(title.replace("_", " "))
-
 
         iax = ax.imshow(self.data[feature][attribute], cmap="viridis", aspect="auto",
                         extent=extent,
@@ -606,9 +589,7 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
-
-    def mean_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', **plot_kwargs):
+    def mean_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', title=None, **plot_kwargs):
         """
         Plot the mean for a specific 1 dimensional model/feature.
 
@@ -624,6 +605,8 @@ class PlotUncertainty(object):
             Choose scale for x axis.
         yscale: {"linear", "log", "symlog", "logit", ...}, optional
             Choose scale for y axis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -641,11 +624,11 @@ class PlotUncertainty(object):
                                   show=show,
                                   xscale=xscale,
                                   yscale=yscale,
+                                  title=title,
                                   color=0,
                                   **plot_kwargs)
 
-
-    def variance_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', **plot_kwargs):
+    def variance_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', title=None, **plot_kwargs):
         """
         Plot the variance for a specific 1 dimensional model/feature.
 
@@ -661,6 +644,8 @@ class PlotUncertainty(object):
             Choose scale for x axis.
         yscale: {"linear", "log", "symlog", "logit", ...}, optional
             Choose scale for y axis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -678,6 +663,7 @@ class PlotUncertainty(object):
                                   show=show,
                                   xscale=xscale,
                                   yscale=yscale,
+                                  title=title,
                                   color=2,
                                   **plot_kwargs)
 
@@ -710,7 +696,6 @@ class PlotUncertainty(object):
                                   show=show,
                                   **plot_kwargs)
 
-
     def variance_2d(self, feature, hardcopy=True, show=False, **plot_kwargs):
         """
         Plot the variance for a specific 2 dimensional model/feature.
@@ -740,7 +725,6 @@ class PlotUncertainty(object):
                                   show=show,
                                   **plot_kwargs)
 
-
     def mean_variance_1d(self,
                          feature=None,
                          new_figure=True,
@@ -748,6 +732,7 @@ class PlotUncertainty(object):
                          show=False,
                          xscale='linear',
                          yscale='linear',
+                         title=None,
                          **plot_kwargs):
         """
         Plot the mean and variance for a specific 1 dimensional model/feature.
@@ -765,6 +750,8 @@ class PlotUncertainty(object):
             Choose scale for x axis.
         yscale: {"linear", "log", "symlog", "logit", ...}, optional
             Choose scale for y axis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -788,7 +775,7 @@ class PlotUncertainty(object):
 
         if "mean" not in self.data[feature] or "variance" not in self.data[feature]:
             msg = "Mean and/or variance of {feature} does not exist. ".format(feature=feature) \
-                    + "Unable to plot mean and variance"
+                  + "Unable to plot mean and variance"
             logger.warning(msg)
             return
 
@@ -797,13 +784,12 @@ class PlotUncertainty(object):
         else:
             time = self.data[feature].time
 
-
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-
-        style="seaborn-white"
-        title = feature + ", mean and variance"
+        style = "seaborn-white"
+        if title is None:
+            title = feature + ", mean and variance"
         ax = prettyPlot(time, self.data[feature].mean,
                         title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style,
@@ -823,7 +809,7 @@ class PlotUncertainty(object):
                                  "right": colors[color_2], "left": "None"})
         ax2.tick_params(axis="y", which="both", right=False, left=False, labelright=True,
                         color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
-        ax2.set_ylabel(ylabel + r"$^2$, variance", color=colors[color_2], fontsize=labelsize)
+        ax2.set_ylabel("(" + ylabel + r")$^2$, variance", color=colors[color_2], fontsize=labelsize)
 
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
@@ -861,12 +847,11 @@ class PlotUncertainty(object):
         # if not show or not hardcopy:
         #     return ax, ax2
 
-
-
     def prediction_interval_1d(self,
                                feature=None,
                                hardcopy=True,
                                show=False,
+                               title=None,
                                xscale='linear',
                                yscale='linear',
                                **plot_kwargs):
@@ -882,6 +867,8 @@ class PlotUncertainty(object):
             If the plot should be saved to file. Default is True.
         show : bool, optional
             If the plot should be shown on screen. Default is False.
+        title: string, optional
+            Choose a customized title
         xscale: string, optional
             Choose the axis scale for the xaxis.
         yscale: string, optional
@@ -914,17 +901,16 @@ class PlotUncertainty(object):
             logger.warning(msg.format(feature=feature))
             return
 
-
         if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
             time = np.arange(0, len(self.data[feature].mean))
         else:
             time = self.data[feature].time
 
-
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        title = feature.replace("_", " ") + ", 90% prediction interval"
+        if title is None:
+            title = feature.replace("_", " ") + ", 90% prediction interval"
         ax = prettyPlot(time, self.data[feature].mean, title=title,
                         xlabel=xlabel, ylabel=ylabel,
                         color=0,
@@ -934,10 +920,10 @@ class PlotUncertainty(object):
 
         colors = get_current_colormap()
         ax.fill_between(time,
-                         self.data[feature].percentile_5,
-                         self.data[feature].percentile_95,
-                         alpha=0.5, color=colors[0],
-                         linewidth=0)
+                        self.data[feature].percentile_5,
+                        self.data[feature].percentile_95,
+                        alpha=0.5, color=colors[0],
+                        linewidth=0)
 
         ax.set_xlim([min(time), max(time)])
         ax.set_xscale(xscale)
@@ -957,7 +943,6 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
     def sensitivity_1d(self,
                        feature=None,
                        sensitivity="first",
@@ -965,6 +950,7 @@ class PlotUncertainty(object):
                        show=False,
                        xscale='linear',
                        yscale='linear',
+                       title=None,
                        **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -987,6 +973,8 @@ class PlotUncertainty(object):
             Choose the axis scale for the xaxis.
         yscale: string, optional
             Choose the axis scale for the yaxis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -1005,7 +993,7 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        sensitivity, title = self.convert_sensitivity(sensitivity)
+        sensitivity, title_tmp = self.convert_sensitivity(sensitivity)
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -1030,8 +1018,10 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
         for i in range(len(self.data[feature][sensitivity])):
+            if title is None:
+                title = title_tmp + ", " + feature.replace("_", " ") + " - " + self.uncertain_names[i]
             ax = prettyPlot(time, self.data[feature][sensitivity][i],
-                            title=title + ", " + feature.replace("_", " ") + " - " + self.uncertain_names[i],
+                            title=title,
                             xlabel=xlabel,
                             ylabel=title,
                             color=i,
@@ -1056,8 +1046,6 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
-
     def sensitivity_1d_grid(self,
                             feature=None,
                             sensitivity="first",
@@ -1065,6 +1053,7 @@ class PlotUncertainty(object):
                             show=False,
                             xscale="linear",
                             yscale="linear",
+                            title=None,
                             **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -1088,6 +1077,8 @@ class PlotUncertainty(object):
             Choose the axis scale for the xaxis.
         yscale: string, optional
             Choose the axis scale for the yaxis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -1106,8 +1097,7 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        sensitivity, title = self.convert_sensitivity(sensitivity)
-
+        sensitivity, title_tmp = self.convert_sensitivity(sensitivity)
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -1134,13 +1124,16 @@ class PlotUncertainty(object):
         nr_plots = len(parameter_names)
         grid_size = np.ceil(np.sqrt(nr_plots))
         grid_x_size = int(grid_size)
-        grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
+        grid_y_size = int(np.ceil(nr_plots / float(grid_x_size)))
 
         set_style("seaborn-darkgrid")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
 
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
+
+        if title is None:
+            title = title_tmp
 
         # Add a larger subplot to use to set a common xlabel and ylabel
         set_style("seaborn-white")
@@ -1153,9 +1146,9 @@ class PlotUncertainty(object):
         ax.set_xscale(xscale)
         ax.set_yscale(yscale)
 
-        for i in range(0, grid_x_size*grid_y_size):
+        for i in range(0, grid_x_size * grid_y_size):
             nx = i % grid_x_size
-            ny = int(np.floor(i/float(grid_x_size)))
+            ny = int(np.floor(i / float(grid_x_size)))
 
             ax = axes[ny][nx]
 
@@ -1183,7 +1176,6 @@ class PlotUncertainty(object):
         plt.tight_layout()
         plt.subplots_adjust(top=0.9)
 
-
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
                                      feature + "_" + sensitivity + "_grid" + self.figureformat))
@@ -1195,8 +1187,6 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
-
     def sensitivity_1d_combined(self,
                                 feature=None,
                                 sensitivity="first",
@@ -1204,6 +1194,7 @@ class PlotUncertainty(object):
                                 show=False,
                                 xscale="linear",
                                 yscale="linear",
+                                title=None,
                                 **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -1226,6 +1217,8 @@ class PlotUncertainty(object):
             Choose the axis scale for the xaxis.
         yscale: string, optional
             Choose the axis scale for the yaxis.
+        title: string, optional
+            Choose a customized title
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -1244,7 +1237,7 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        sensitivity, title = self.convert_sensitivity(sensitivity)
+        sensitivity, title_tmp = self.convert_sensitivity(sensitivity)
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
@@ -1265,14 +1258,15 @@ class PlotUncertainty(object):
         else:
             time = self.data[feature].time
 
-
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
         for i in range(len(self.data[feature][sensitivity])):
+            if title is None:
+                title = title_tmp + ", " + feature.replace("_", " ")
             prettyPlot(time,
                        self.data[feature][sensitivity][i],
-                       title=title + ", " + feature.replace("_", " "),
+                       title=title,
                        xlabel=xlabel,
                        ylabel=title,
                        new_figure=False,
@@ -1287,7 +1281,7 @@ class PlotUncertainty(object):
         plt.xscale(xscale)
         plt.yscale(yscale)
         if len(self.data[feature][sensitivity]) > 4:
-            plt.xlim([time[0], 1.3*time[-1]])
+            plt.xlim([time[0], 1.3 * time[-1]])
 
         plt.legend()
         plt.tight_layout()
@@ -1303,8 +1297,7 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
-    def features_1d(self, sensitivity="first", xscale='linear', yscale='linear'):
+    def features_1d(self, sensitivity="first", xscale='linear', yscale='linear', title=None):
         """
         Plot all data for all 1 dimensional model/features.
 
@@ -1324,6 +1317,8 @@ class PlotUncertainty(object):
             Choose scale for x axis.
         yscale: {"linear", "log", "symlog", "logit", ...}, optional
             Choose scale for y axis.
+        title: string, optional
+            Choose a customized title
 
         Raises
         ------
@@ -1355,16 +1350,15 @@ class PlotUncertainty(object):
 
         for feature in self.data:
             if self.data.ndim(feature) == 1:
-                self.mean_1d(feature=feature, xscale=xscale, yscale=yscale)
-                self.variance_1d(feature=feature, xscale=xscale, yscale=yscale)
-                self.mean_variance_1d(feature=feature, xscale=xscale, yscale=yscale)
-                self.prediction_interval_1d(feature=feature, xscale=xscale, yscale=yscale)
+                self.mean_1d(feature=feature, xscale=xscale, yscale=yscale, title=title)
+                self.variance_1d(feature=feature, xscale=xscale, yscale=yscale, title=title)
+                self.mean_variance_1d(feature=feature, xscale=xscale, yscale=yscale, title=title)
+                self.prediction_interval_1d(feature=feature, xscale=xscale, yscale=yscale, title=title)
 
                 if sensitivity in self.data[feature]:
-                    self.sensitivity_1d(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale)
-                    self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale)
-                    self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale)
-
+                    self.sensitivity_1d(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale, title=title)
+                    self.sensitivity_1d_combined(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale, title=title)
+                    self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity, xscale=xscale, yscale=yscale, title=title)
 
     def convert_sensitivity(self, sensitivity):
         """
@@ -1400,7 +1394,6 @@ class PlotUncertainty(object):
 
         return sensitivity, full_text
 
-
     def features_2d(self):
         """
         Plot all implemented plots for all 2 dimensional model/features.
@@ -1418,7 +1411,6 @@ class PlotUncertainty(object):
             if self.data.ndim(feature) == 2:
                 self.mean_2d(feature=feature)
                 self.variance_2d(feature=feature)
-
 
     # TODO not finished, missing correct label placement
     # TODO test that plotting with no sensitivity works
@@ -1464,7 +1456,6 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total", None]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total or None, not {}".format(sensitivity))
 
-
         sensitivity, label = self.convert_sensitivity(sensitivity)
 
         if self.data is None:
@@ -1476,7 +1467,7 @@ class PlotUncertainty(object):
         for data_type in ["mean", "variance", "percentile_5", "percentile_95"]:
             if data_type not in self.data[feature]:
                 msg = "{data_type} for {feature} does not exist. Unable to plot."
-                logger.warning(msg.format(data_type=data_type,feature=feature))
+                logger.warning(msg.format(data_type=data_type, feature=feature))
                 return
 
         if len(self.data.uncertain_parameters) > max_legend_size:
@@ -1484,13 +1475,13 @@ class PlotUncertainty(object):
         else:
             legend_size = len(self.data.uncertain_parameters)
 
-        legend_width = np.ceil(len(self.data.uncertain_parameters)/float(max_legend_size))
+        legend_width = np.ceil(len(self.data.uncertain_parameters) / float(max_legend_size))
 
         width = 0.2
         distance = 0.5
 
         xlabels = ["Mean", "Variance", "$P_5$", "$P_{95}$"]
-        xticks = [0, width, distance + width, distance + 2*width]
+        xticks = [0, width, distance + width, distance + 2 * width]
 
         values = [self.data[feature].mean, self.data[feature].variance,
                   self.data[feature].percentile_5, self.data[feature].percentile_95]
@@ -1505,7 +1496,7 @@ class PlotUncertainty(object):
                        style="seaborn-white")
 
         if sensitivity in self.data[feature]:
-            pos = 2*distance + 2*width
+            pos = 2 * distance + 2 * width
 
             ax2 = ax.twinx()
 
@@ -1516,29 +1507,25 @@ class PlotUncertainty(object):
             ax2.set_ylabel(label, fontsize=labelsize)
             ax2.set_ylim([0, 1.05])
 
-
             ax2.spines["right"].set_visible(True)
             ax2.spines["right"].set_edgecolor(axis_grey)
-
 
             i = 0
             legend_bars = []
             colors = get_colormap(palette="husl", nr_colors=len(self.data.uncertain_parameters))
 
             for parameter in self.data.uncertain_parameters:
-
-                l = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
-                            align="center", color=colors[i], linewidth=0)
-
-                legend_bars.append(l)
+                ll = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
+                             align="center", color=colors[i], linewidth=0)
+                legend_bars.append(ll)
 
                 i += 1
                 pos += width
 
-            xticks.append(pos - (i/2. + 0.5)*width)
+            xticks.append(pos - (i / 2. + 0.5) * width)
             xlabels.append(sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
 
-            location = (0.5, 1.01 + legend_width*0.095)
+            location = (0.5, 1.01 + legend_width * 0.095)
             plt.legend(legend_bars,
                        self.uncertain_names,
                        loc="upper center",
@@ -1548,8 +1535,7 @@ class PlotUncertainty(object):
             # lgd.get_frame().set_edgecolor(axis_grey)
 
             fig = plt.gcf()
-            fig.subplots_adjust(top=(0.91 - legend_width*0.053))
-
+            fig.subplots_adjust(top=(0.91 - legend_width * 0.053))
 
         ax.set_xticks(xticks)
         ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
@@ -1557,7 +1543,6 @@ class PlotUncertainty(object):
         if len(self.data.uncertain_parameters) > 3:
             for tick in ax.get_xticklabels()[:2]:
                 tick.set_rotation(-25)
-
 
         plt.suptitle(feature.replace("_", " "), fontsize=titlesize)
 
@@ -1580,7 +1565,6 @@ class PlotUncertainty(object):
         reset_style()
 
         # return ax
-
 
     def average_sensitivity(self,
                             feature,
@@ -1634,7 +1618,7 @@ class PlotUncertainty(object):
 
         width = 0.2
 
-        index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
+        index = np.arange(1, len(self.data.uncertain_parameters) + 1) * width
 
         prettyBar(self.data[feature][sensitivity + "_average"],
                   title="Average of " + title + ", " + feature.replace("_", " "),
@@ -1644,7 +1628,6 @@ class PlotUncertainty(object):
                   palette="husl",
                   index=index,
                   style="seaborn-darkgrid")
-
 
         plt.ylim([0, 1])
 
@@ -1662,10 +1645,10 @@ class PlotUncertainty(object):
 
         reset_style()
 
-
     def average_sensitivity_all(self,
                                 sensitivity="first",
                                 hardcopy=True,
+                                title=None,
                                 show=False):
         """
         Plot the average of the sensitivity for all model/features.
@@ -1678,6 +1661,8 @@ class PlotUncertainty(object):
             order Sobol indices. Default is "first".
         hardcopy : bool, optional
             If the plot should be saved to file. Default is True.
+        title: string, optional
+            Choose a customized title
         show : bool, optional
             If the plot should be shown on screen. Default is False.
 
@@ -1695,16 +1680,15 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-
-        sensitivity, title = self.convert_sensitivity(sensitivity)
+        sensitivity, _ = self.convert_sensitivity(sensitivity)
 
         for feature in self.data:
             if sensitivity + "_average" in self.data[feature]:
                 self.average_sensitivity(feature=feature,
                                          sensitivity=sensitivity,
                                          hardcopy=hardcopy,
+                                         title=title,
                                          show=show)
-
 
     def features_0d(self, sensitivity="first", hardcopy=True, show=False):
         """
@@ -1736,8 +1720,6 @@ class PlotUncertainty(object):
             if self.data.ndim(feature) == 0:
                 self.feature_0d(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
 
-
-
     # # TODO Not Tested
     # def plot_folder(self, data_dir):
     #     self.logger.info("Plotting all data in folder")
@@ -1747,7 +1729,6 @@ class PlotUncertainty(object):
 
     #         self.plot_all()
 
-
     # def plot_allNoSensitivity(self, sensitivity="first"):
     #     if self.data is None:
     #         raise ValueError("Datafile must be loaded.")
@@ -1755,7 +1736,6 @@ class PlotUncertainty(object):
     #
     #     self.features_1d(sensitivity=sensitivity)
     #     self.features_0d(sensitivity=sensitivity)
-
 
     def plot_all(self, sensitivity="first"):
         """
@@ -1788,8 +1768,6 @@ class PlotUncertainty(object):
             self.average_sensitivity_all(sensitivity=sensitivity)
             self.average_sensitivity_grid(sensitivity=sensitivity)
 
-
-
     # TODO find a more descriptive name
     def plot_all_sensitivities(self):
         """
@@ -1815,7 +1793,6 @@ class PlotUncertainty(object):
 
         self.average_sensitivity_all(sensitivity="total")
         self.average_sensitivity_grid(sensitivity="total")
-
 
     def plot_condensed(self, sensitivity="first"):
         """
@@ -1857,9 +1834,6 @@ class PlotUncertainty(object):
         if sensitivity is not None:
             self.average_sensitivity_grid(sensitivity=sensitivity)
 
-
-
-
     def plot(self, condensed=True, sensitivity="first"):
         """
         Plot the subset of data that shows all information in the most concise
@@ -1892,12 +1866,12 @@ class PlotUncertainty(object):
             else:
                 self.plot_all(sensitivity)
 
-
     def average_sensitivity_grid(self,
-                             sensitivity="first",
-                             hardcopy=True,
-                             show=False,
-                             **plot_kwargs):
+                                 sensitivity="first",
+                                 hardcopy=True,
+                                 title=None,
+                                 show=False,
+                                 **plot_kwargs):
         """
         Plot the average of the sensitivity for all model/features in
         their own plots in the same figure.
@@ -1931,7 +1905,7 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        sensitivity, title = self.convert_sensitivity(sensitivity)
+        sensitivity, title_tmp = self.convert_sensitivity(sensitivity)
 
         no_sensitivity = True
         for feature in self.data:
@@ -1947,14 +1921,13 @@ class PlotUncertainty(object):
         nr_plots = len(self.data)
         grid_size = np.ceil(np.sqrt(nr_plots))
         grid_x_size = int(grid_size)
-        grid_y_size = int(np.ceil(nr_plots/float(grid_x_size)))
+        grid_y_size = int(np.ceil(nr_plots / float(grid_x_size)))
 
         # plt.close("all")
 
         set_style("seaborn-dark")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
         set_style("seaborn-white")
-
 
         # Add a larger subplot to use to set a common xlabel and ylabel
 
@@ -1963,18 +1936,17 @@ class PlotUncertainty(object):
                                 "right": "None", "left": "None"})
         ax.tick_params(labelcolor="w", top=False, bottom=False, left=False, right=False)
         ax.set_xlabel("Parameters")
-        ax.set_ylabel("Average of " + title)
+        ax.set_ylabel("Average of " + title_tmp)
 
         width = 0.2
-        index = np.arange(1, len(self.data.uncertain_parameters)+1)*width
+        index = np.arange(1, len(self.data.uncertain_parameters) + 1) * width
 
         features = list(self.data.keys())
-        for i in range(0, grid_x_size*grid_y_size):
+        for i in range(0, grid_x_size * grid_y_size):
             nx = i % grid_x_size
-            ny = int(np.floor(i/float(grid_x_size)))
+            ny = int(np.floor(i / float(grid_x_size)))
 
             ax = axes[ny][nx]
-
 
             if i < nr_plots:
                 if sensitivity + "_average" not in self.data[features[i]]:
@@ -1993,7 +1965,6 @@ class PlotUncertainty(object):
                           ax=ax,
                           **plot_kwargs)
 
-
                 for tick in ax.get_xticklabels():
                     tick.set_rotation(-30)
 
@@ -2003,11 +1974,11 @@ class PlotUncertainty(object):
             else:
                 ax.set_axis_off()
 
-        title = "Average of " + title
+        if title is None:
+            title = "Average of " + title_tmp
         plt.suptitle(title, fontsize=titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.88)
-
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
