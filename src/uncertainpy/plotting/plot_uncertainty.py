@@ -73,14 +73,15 @@ class PlotUncertainty(object):
 
         if filename is not None:
             self.load(filename)
+            if not self.uncertain_names:
+                logger.warning("no uncertain names passed for labels - will use parameter names")
+                self.uncertain_names = [i for i in self.data.uncertain_parameters]
+            assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
+ 
 
         setup_module_logger(class_instance=self, level=logger_level)
         logger = get_logger(self)
 
-        if not self.uncertain_names:
-            logger.warning("no uncertain names passed for labels - will use parameter names")
-            self.uncertain_names = [i for i in self.data.uncertain_parameters]
-        assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
         logger.info("uncertain names are: {}".format(" ".join(self.uncertain_names)))
 
     def load(self, filename):
