@@ -1268,7 +1268,7 @@ class PlotUncertainty(object):
                        self.data[feature][sensitivity][i],
                        title=title,
                        xlabel=xlabel,
-                       ylabel=title,
+                       ylabel=title_tmp,
                        new_figure=False,
                        color=i,
                        palette="husl",
@@ -1567,9 +1567,10 @@ class PlotUncertainty(object):
         # return ax
 
     def average_sensitivity(self,
-                            feature,
+                            feature=None,
                             sensitivity="first",
                             hardcopy=True,
+                            title=None,
                             show=False):
         """
         Plot the average of the sensitivity for a specific model/feature.
@@ -1585,6 +1586,8 @@ class PlotUncertainty(object):
             order Sobol indices. Default is "first".
         hardcopy : bool, optional
             If the plot should be saved to file. Default is True.
+        title: string, optional
+            Choose a customized title
         show : bool, optional
             If the plot should be shown on screen. Default is False.
 
@@ -1603,10 +1606,13 @@ class PlotUncertainty(object):
         if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
             raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
 
-        sensitivity, title = self.convert_sensitivity(sensitivity)
+        sensitivity, title_tmp = self.convert_sensitivity(sensitivity)
 
         if self.data is None:
             raise ValueError("Datafile must be loaded.")
+
+        if feature is None:
+            feature = self.data.model_name
 
         if feature not in self.data:
             raise ValueError("{} is not a feature".format(feature))
@@ -1620,10 +1626,12 @@ class PlotUncertainty(object):
 
         index = np.arange(1, len(self.data.uncertain_parameters) + 1) * width
 
+        if title is None:
+            title = "Average of " + title + ", " + feature.replace("_", " ")
         prettyBar(self.data[feature][sensitivity + "_average"],
-                  title="Average of " + title + ", " + feature.replace("_", " "),
+                  title=title,
                   xlabels=self.uncertain_names,
-                  ylabel="Average of " + title,
+                  ylabel="Average of " + title_tmp,
                   nr_colors=len(self.data.uncertain_parameters),
                   palette="husl",
                   index=index,
