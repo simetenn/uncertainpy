@@ -5,6 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+import seaborn as sns
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
 from .prettyplot import set_style, get_colormap, reset_style
@@ -1999,6 +2000,146 @@ class PlotUncertainty(object):
             plt.close()
 
         reset_style()
+
+    def prediction_interval_sensitivity_1d(self,
+                               feature=None,
+                               hardcopy=True,
+                               show=False,
+                               sensitivity="first",
+                               title=None,
+                               xscale='linear',
+                               yscale='linear',
+                               **plot_kwargs):
+        """
+        Plot the prediction interval for a specific 1 dimensional model/feature.
+
+        Parameters
+        ----------
+        feature : {None, str}, optional
+            The name of the model/feature. If None, the name of the model is
+            used. Default is None.
+        hardcopy : bool, optional
+            If the plot should be saved to file. Default is True.
+        show : bool, optional
+            If the plot should be shown on screen. Default is False.
+        title: string, optional
+            Choose a customized title
+        xscale: string, optional
+            Choose the axis scale for the xaxis.
+        yscale: string, optional
+            Choose the axis scale for the yaxis.
+        **plot_kwargs, optional
+            Matplotlib plotting arguments.
+
+        Raises
+        ------
+        ValueError
+            If a Datafile is not loaded.
+        ValueError
+            If the model/feature is not 1 dimensional.
+        """
+        logger = get_logger(self)
+
+        if self.data is None:
+            raise ValueError("Datafile must be loaded.")
+
+        if feature is None:
+            feature = self.data.model_name
+
+        if self.data.ndim(feature) != 1:
+            raise ValueError("{} is not a 1D feature".format(feature))
+
+        if "mean" not in self.data[feature] \
+            or "percentile_5" not in self.data[feature] \
+                or "percentile_95" not in self.data[feature]:
+            msg = "E, percentile_5  and/or percentile_95 of {feature} does not exist. Unable to plot prediction interval"
+            logger.warning(msg.format(feature=feature))
+            return
+
+        if sensitivity not in ["sobol_first", "first", "sobol_total", "total"]:
+            raise ValueError("Sensitivity must be either: sobol_first, first, sobol_total, total, not {}".format(sensitivity))
+
+        sensitivity, title_tmp = self.convert_sensitivity(sensitivity)
+
+        if sensitivity not in self.data[feature]:
+            msg = "{sensitivity} of {feature} does not exist. Unable to plot {sensitivity}"
+            logger.warning(msg.format(sensitivity=sensitivity, feature=feature))
+            return
+
+        if self.data[feature].time is None or np.all(np.isnan(self.data[feature].time)):
+            time = np.arange(0, len(self.data[feature].mean))
+        else:
+            time = self.data[feature].time
+
+        labels = self.data.get_labels(feature)
+        xlabel, ylabel = labels
+
+        # plot predicition interval
+        if title is None:
+            title = feature.replace("_", " ") + ", 90% prediction interval and sensitivities"
+        ax = prettyPlot(time, self.data[feature].mean, title=title,
+                        xlabel=xlabel, ylabel=ylabel,
+                        color=0,
+                        nr_colors=3,
+                        palette="husl",
+                        **plot_kwargs)
+
+        colors = get_current_colormap()
+        ax.fill_between(time,
+                        self.data[feature].percentile_5,
+                        self.data[feature].percentile_95,
+                        alpha=0.5, color=colors[0],
+                        linewidth=0)
+
+        ax.set_xlim([min(time), max(time)])
+        ax.set_xscale(xscale)
+        ax.set_yscale(yscale)
+
+        # plot sensitivity
+        ax2 = ax.twinx()
+        colors = sns.color_palette("husl", n_colors=len(self.data[feature][sensitivity]) + 2)
+        color = 0
+        color_2 = 2 
+
+        spines_color(ax2, edges={"top": "None", "bottom": "None",
+                                 "right": colors[color_2], "left": "None"})
+        ax2.grid(False)
+        ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
+                        color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
+        ax2.set_ylabel(title_tmp, color=colors[color_2], fontsize=labelsize)
+        for i in range(len(self.data[feature][sensitivity])):
+            ax2.plot(time, self.data[feature][sensitivity][i], color=colors[i+2],
+                            linewidth=linewidth, antialiased=True, label=self.uncertain_names[i])
+        ax2.legend(loc="lower right") 
+        ax2.yaxis.offsetText.set_fontsize(fontsize)
+        ax2.yaxis.offsetText.set_color(colors[color_2])
+
+        ax2.spines["right"].set_visible(True)
+        ax2.spines["right"].set_edgecolor(colors[color_2])
+
+        #plt.ylim([0, 1.05])
+        ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
+        ax.spines["left"].set_edgecolor(colors[color])
+        ax.set_ylabel(ylabel + ", mean", color=colors[color], fontsize=labelsize)
+
+        ax2.set_xlim([min(time), max(time)])
+        ax.set_xlim([min(time), max(time)])
+
+        ax.legend(["Mean", "90% prediction interval"], loc="best")
+        plt.tight_layout()
+
+        if hardcopy:
+            plt.savefig(os.path.join(self.folder,
+                                     feature + "_prediction-interval_sensitivity" + self.figureformat))
+
+        if show:
+            plt.show()
+        else:
+            plt.close()
+
+        reset_style()
+
+
 
 
 # if __name__ == "__main__":
