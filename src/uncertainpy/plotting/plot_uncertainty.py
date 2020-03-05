@@ -72,16 +72,15 @@ class PlotUncertainty(object):
 
         self._logger_level = logger_level
 
+        logger = get_logger(self)
         if filename is not None:
             self.load(filename)
             if not self.uncertain_names:
                 logger.warning("no uncertain names passed for labels - will use parameter names")
                 self.uncertain_names = [i for i in self.data.uncertain_parameters]
             assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
- 
 
         setup_module_logger(class_instance=self, level=logger_level)
-        logger = get_logger(self)
 
         logger.info("uncertain names are: {}".format(" ".join(self.uncertain_names)))
 
@@ -94,6 +93,7 @@ class PlotUncertainty(object):
         filename : str
             Name of the file to load data from.
         """
+        logger = get_logger(self)
         self.data = Data(filename,
                          logger_level=self._logger_level)
         if not self.uncertain_names:
@@ -102,6 +102,15 @@ class PlotUncertainty(object):
         assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
 
     def set_data(self, data):
+        """
+        Set data from dictionary.
+
+        Parameters
+        ----------
+        data : dict
+            Data dictionary
+        """
+        logger = get_logger(self)
         self.data = data
         if not self.uncertain_names:
             logger.warning("no uncertain names passed for labels - will use parameter names")
@@ -2013,14 +2022,14 @@ class PlotUncertainty(object):
         reset_style()
 
     def prediction_interval_sensitivity_1d(self,
-                               feature=None,
-                               hardcopy=True,
-                               show=False,
-                               sensitivity="first",
-                               title=None,
-                               xscale='linear',
-                               yscale='linear',
-                               **plot_kwargs):
+                                           feature=None,
+                                           hardcopy=True,
+                                           show=False,
+                                           sensitivity="first",
+                                           title=None,
+                                           xscale='linear',
+                                           yscale='linear',
+                                           **plot_kwargs):
         """
         Plot the prediction interval for a specific 1 dimensional model/feature.
 
@@ -2110,7 +2119,7 @@ class PlotUncertainty(object):
         ax2 = ax.twinx()
         colors = sns.color_palette("husl", n_colors=len(self.data[feature][sensitivity]) + 2)
         color = 0
-        color_2 = 2 
+        color_2 = 2
 
         spines_color(ax2, edges={"top": "None", "bottom": "None",
                                  "right": colors[color_2], "left": "None"})
@@ -2119,16 +2128,16 @@ class PlotUncertainty(object):
                         color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
         ax2.set_ylabel(title_tmp, color=colors[color_2], fontsize=labelsize)
         for i in range(len(self.data[feature][sensitivity])):
-            ax2.plot(time, self.data[feature][sensitivity][i], color=colors[i+2],
-                            linewidth=linewidth, antialiased=True, label=self.uncertain_names[i])
-        ax2.legend(loc="lower right") 
+            ax2.plot(time, self.data[feature][sensitivity][i], color=colors[i + 2],
+                     linewidth=linewidth, antialiased=True, label=self.uncertain_names[i])
+        ax2.legend(loc="lower right")
         ax2.yaxis.offsetText.set_fontsize(fontsize)
         ax2.yaxis.offsetText.set_color(colors[color_2])
 
         ax2.spines["right"].set_visible(True)
         ax2.spines["right"].set_edgecolor(colors[color_2])
 
-        #plt.ylim([0, 1.05])
+        # plt.ylim([0, 1.05])
         ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
         ax.spines["left"].set_edgecolor(colors[color])
         ax.set_ylabel(ylabel + ", mean", color=colors[color], fontsize=labelsize)
@@ -2149,9 +2158,6 @@ class PlotUncertainty(object):
             plt.close()
 
         reset_style()
-
-
-
 
 # if __name__ == "__main__":
 #     parser = argparse.ArgumentParser(description="Plot data")
