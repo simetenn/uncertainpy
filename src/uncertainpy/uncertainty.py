@@ -1323,13 +1323,13 @@ class UncertaintyQuantification(ParameterBase):
                     tmp_folder = os.path.join(folder, uncertain_parameter)
 
                     self.plotting.folder = tmp_folder
-                    self.plotting.data = self.data[uncertain_parameter]
+                    self.plotting.set_data(self.data[uncertain_parameter])
 
                     plot(type)
 
             else:
                 self.plotting.folder = folder
-                self.plotting.data = self.data
+                self.plotting.set_data(self.data)
 
                 plot(type)
 

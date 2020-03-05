@@ -96,6 +96,17 @@ class PlotUncertainty(object):
         """
         self.data = Data(filename,
                          logger_level=self._logger_level)
+        if not self.uncertain_names:
+            logger.warning("no uncertain names passed for labels - will use parameter names")
+            self.uncertain_names = [i for i in self.data.uncertain_parameters]
+        assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
+
+    def set_data(self, data):
+        self.data = data
+        if not self.uncertain_names:
+            logger.warning("no uncertain names passed for labels - will use parameter names")
+            self.uncertain_names = [i for i in self.data.uncertain_parameters]
+        assert (len(self.uncertain_names) == len(self.data.uncertain_parameters)), print("You must provide a name for each parameter")
 
     @property
     def folder(self):
