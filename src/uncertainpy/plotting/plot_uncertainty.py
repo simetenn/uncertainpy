@@ -2150,7 +2150,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_prediction-interval_sensitivity" + self.figureformat))
+                                     feature + "_prediction-interval_sensitivity_" + sensitivity + self.figureformat))
 
         if show:
             plt.show()
