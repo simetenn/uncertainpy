@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
+import itertools
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -2029,6 +2030,8 @@ class PlotUncertainty(object):
                                            title=None,
                                            xscale='linear',
                                            yscale='linear',
+                                           use_markers=False,
+                                           legend_locs=None,
                                            **plot_kwargs):
         """
         Plot the prediction interval for a specific 1 dimensional model/feature.
@@ -2048,6 +2051,8 @@ class PlotUncertainty(object):
             Choose the axis scale for the xaxis.
         yscale: string, optional
             Choose the axis scale for the yaxis.
+        use_markers: bool, optional
+            Use markers for the sensitivity data.
         **plot_kwargs, optional
             Matplotlib plotting arguments.
 
@@ -2127,10 +2132,29 @@ class PlotUncertainty(object):
         ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
                         color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
         ax2.set_ylabel(title_tmp, color=colors[color_2], fontsize=labelsize)
+
+        # use markers for secondary axis
+        marker_list = itertools.cycle(('+', 'o', '*', 'v', '<', '>', 's', 'x')) 
+
         for i in range(len(self.data[feature][sensitivity])):
+            if use_markers is False:
+                marker = None
+            else:
+                marker = next(marker_list)
+
             ax2.plot(time, self.data[feature][sensitivity][i], color=colors[i + 2],
-                     linewidth=linewidth, antialiased=True, label=self.uncertain_names[i])
-        ax2.legend(loc="lower right")
+                     linewidth=linewidth, antialiased=True, label=self.uncertain_names[i],
+                     marker=marker, **plot_kwargs)
+
+        if legend_locs is not None:
+            assert (len(legend_locs) == 2, "you must provide two legend locations")
+            loc1 = legend_locs[0]
+            loc2 = legend_locs[1]
+        else:
+            loc1 = "best"
+            loc2 = "lower right"
+
+        ax2.legend(loc=loc2)
         ax2.yaxis.offsetText.set_fontsize(fontsize)
         ax2.yaxis.offsetText.set_color(colors[color_2])
 
@@ -2145,7 +2169,7 @@ class PlotUncertainty(object):
         ax2.set_xlim([min(time), max(time)])
         ax.set_xlim([min(time), max(time)])
 
-        ax.legend(["Mean", "90% prediction interval"], loc="best")
+        ax.legend(["Mean", "90% prediction interval"], loc=loc1)
         plt.tight_layout()
 
         if hardcopy:
