@@ -1650,7 +1650,7 @@ class PlotUncertainty(object):
         index = np.arange(1, len(self.data.uncertain_parameters) + 1) * width
 
         if title is None:
-            title = "Average of " + title + ", " + feature.replace("_", " ")
+            title = "Average of " + title_tmp + ", " + feature.replace("_", " ")
         prettyBar(self.data[feature][sensitivity + "_average"],
                   title=title,
                   xlabels=self.uncertain_names,
