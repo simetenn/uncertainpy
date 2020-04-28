@@ -59,7 +59,8 @@ class PlotUncertainty(object):
                  folder="figures/",
                  figureformat=".png",
                  logger_level="info",
-                 uncertain_names=[]):
+                 uncertain_names=[],
+                 **kwargs):
 
         self._folder = None
 
@@ -83,7 +84,21 @@ class PlotUncertainty(object):
 
         setup_module_logger(class_instance=self, level=logger_level)
 
-        logger.info("uncertain names are: {}".format(" ".join(self.uncertain_names)))
+        font_settings = ["fontsize", "linewidth", "titlesize", "labelsize", "dpi"] 
+        for k in font_settings:
+            if k in kwargs:
+                setattr(self, k, kwargs[k])
+            else:
+                if k == "linewidth":
+                    self.linewidth = linewidth
+                elif k == "titlesize":
+                    self.titlesize = titlesize
+                elif k == "fontsize":
+                    self.fontsize = fontsize
+                elif k == "labelsize":
+                    self.labelsize = labelsize
+                elif k == "dpi":
+                    self.dpi = None
 
     def load(self, filename):
         """
@@ -258,7 +273,7 @@ class PlotUncertainty(object):
                    **plot_kwargs)
 
         plt.tight_layout()
-        plt.savefig(os.path.join(save_folder, "evaluations" + self.figureformat))
+        plt.savefig(os.path.join(save_folder, "evaluations" + self.figureformat), dpi=self.dpi)
         plt.close()
 
         reset_style()
@@ -334,7 +349,7 @@ class PlotUncertainty(object):
             ax.set_yscale(yscale)
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat), dpi=self.dpi)
             plt.close()
 
         reset_style()
@@ -377,7 +392,7 @@ class PlotUncertainty(object):
         if self.data.ndim(feature) != 2:
             raise ValueError("{} is not a 2 dimensional feature.".format(feature))
 
-        set_style("seaborn-dark")
+        set_style("classic")
 
         save_folder = os.path.join(self.folder, foldername, feature + "_evaluations")
         if not os.path.isdir(save_folder):
@@ -410,7 +425,7 @@ class PlotUncertainty(object):
             ax.set_ylabel(ylabel)
             plt.tight_layout()
             plt.savefig(os.path.join(save_folder,
-                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat))
+                                     "evaluation_{0:0{1}d}".format(i, padding) + self.figureformat), dpi=self.dpi)
             plt.close()
 
         reset_style()
@@ -505,7 +520,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     save_name + self.figureformat))
+                                     save_name + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -580,7 +595,7 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel, zlabel = labels
 
-        set_style("seaborn-dark")
+        set_style("classic")
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -594,8 +609,8 @@ class PlotUncertainty(object):
         # cbar.ax.set_title(zlabel)
         cbar.ax.set_ylabel(zlabel)
 
-        ax.set_xlabel(xlabel, fontsize=labelsize)
-        ax.set_ylabel(ylabel, fontsize=labelsize)
+        ax.set_xlabel(xlabel, fontsize=self.labelsize)
+        ax.set_ylabel(ylabel, fontsize=self.labelsize)
 
         save_name = feature + "_" + attribute_name
 
@@ -603,7 +618,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     save_name + self.figureformat))
+                                     save_name + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -755,6 +770,7 @@ class PlotUncertainty(object):
                          show=False,
                          xscale='linear',
                          yscale='linear',
+                         color_axes=True,
                          title=None,
                          **plot_kwargs):
         """
@@ -810,7 +826,7 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
-        style = "seaborn-white"
+        style = "classic"
         if title is None:
             title = feature + ", mean and variance"
         ax = prettyPlot(time, self.data[feature].mean,
@@ -818,6 +834,8 @@ class PlotUncertainty(object):
                         style=style,
                         nr_colors=3,
                         palette="husl",
+                        labelfontsize=self.labelsize,
+                        ffontsize=self.fontsize,
                         **plot_kwargs)
 
         ax.set_yscale(yscale)
@@ -828,26 +846,31 @@ class PlotUncertainty(object):
         color = 0
         color_2 = 2
 
-        spines_color(ax2, edges={"top": "None", "bottom": "None",
+        axescolor = "black"
+        if color_axes:
+            spines_color(ax2, edges={"top": "None", "bottom": "None",
                                  "right": colors[color_2], "left": "None"})
+            axescolor = colors[color_2]
         ax2.tick_params(axis="y", which="both", right=False, left=False, labelright=True,
-                        color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
-        ax2.set_ylabel("(" + ylabel + r")$^2$, variance", color=colors[color_2], fontsize=labelsize)
+                        color=axescolor, labelcolor=axescolor, labelsize=self.labelsize)
+        ax2.set_ylabel("(" + ylabel + r")$^2$, variance", color=colors[color_2], fontsize=self.labelsize)
 
         # ax2.set_ylim([min(self.data.variance[feature]), max(self.data.variance[feature])])
 
         ax2.plot(time, self.data[feature].variance,
-                 color=colors[color_2], linewidth=linewidth, antialiased=True)
+                 color=colors[color_2], linewidth=self.linewidth, antialiased=True)
 
-        ax2.yaxis.offsetText.set_fontsize(fontsize)
-        ax2.yaxis.offsetText.set_color(colors[color_2])
+        ax2.yaxis.offsetText.set_fontsize(self.fontsize)
+        ax2.yaxis.offsetText.set_color(axescolor)
 
         ax2.spines["right"].set_visible(True)
-        ax2.spines["right"].set_edgecolor(colors[color_2])
-
-        ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
-        ax.spines["left"].set_edgecolor(colors[color])
-        ax.set_ylabel(ylabel + ", mean", color=colors[color], fontsize=labelsize)
+        ax2.spines["right"].set_edgecolor(axescolor)
+        
+        if color_axes:
+            axescolor = colors[color]
+        ax.tick_params(axis="y", color=axescolor, labelcolor=axescolor)
+        ax.spines["left"].set_edgecolor(axescolor)
+        ax.set_ylabel(ylabel + ", mean", color=axescolor, fontsize=self.labelsize)
 
         ax2.set_xlim([min(time), max(time)])
         ax.set_xlim([min(time), max(time)])
@@ -858,7 +881,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_mean-variance" + self.figureformat))
+                                     feature + "_mean-variance" + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -877,6 +900,10 @@ class PlotUncertainty(object):
                                title=None,
                                xscale='linear',
                                yscale='linear',
+                               xmin=None,
+                               xmax=None,
+                               ymin=None,
+                               ymax=None,
                                **plot_kwargs):
         """
         Plot the prediction interval for a specific 1 dimensional model/feature.
@@ -932,10 +959,13 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
+        plot_kwargs["label"] = "Mean"
         if title is None:
             title = feature.replace("_", " ") + ", 90% prediction interval"
         ax = prettyPlot(time, self.data[feature].mean, title=title,
                         xlabel=xlabel, ylabel=ylabel,
+                        labelfontsize=self.labelsize,
+                        ffontsize=self.fontsize,
                         color=0,
                         nr_colors=3,
                         palette="husl",
@@ -946,9 +976,21 @@ class PlotUncertainty(object):
                         self.data[feature].percentile_5,
                         self.data[feature].percentile_95,
                         alpha=0.5, color=colors[0],
-                        linewidth=0)
+                        linewidth=0, label="90% prediction interval")
 
-        ax.set_xlim([min(time), max(time)])
+        if xmin is None:
+            ax.set_xlim(min(time))
+        else:
+            ax.set_xlim(xmin)
+        if xmax is None:
+            ax.set_xlim(right=max(time))
+        else:
+            ax.set_xlim(right=xmax)
+        if ymin is not None:
+            ax.set_ylim(ymin)
+        if ymax is not None:
+            ax.set_ylim(top=ymax)
+
         ax.set_xscale(xscale)
         ax.set_yscale(yscale)
         plt.legend(["Mean", "90% prediction interval"], loc="best")
@@ -957,7 +999,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_prediction-interval" + self.figureformat))
+                                     feature + "_prediction-interval" + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -1049,6 +1091,8 @@ class PlotUncertainty(object):
                             ylabel=title,
                             color=i,
                             palette="husl",
+                            labelfontsize=self.labelsize,
+                            ffontsize=self.fontsize,
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
             # plt.ylim([0, 1.05])
             ax.set_xlim([min(time), max(time)])
@@ -1060,7 +1104,7 @@ class PlotUncertainty(object):
             if hardcopy:
                 plt.savefig(os.path.join(self.folder,
                                          feature + "_" + sensitivity + "_"
-                                         + self.data.uncertain_parameters[i] + self.figureformat))
+                                         + self.data.uncertain_parameters[i] + self.figureformat), dpi=self.dpi)
 
             if show:
                 plt.show()
@@ -1149,7 +1193,7 @@ class PlotUncertainty(object):
         grid_x_size = int(grid_size)
         grid_y_size = int(np.ceil(nr_plots / float(grid_x_size)))
 
-        set_style("seaborn-darkgrid")
+        set_style("classic")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
 
         labels = self.data.get_labels(feature)
@@ -1159,7 +1203,7 @@ class PlotUncertainty(object):
             title = title_tmp
 
         # Add a larger subplot to use to set a common xlabel and ylabel
-        set_style("seaborn-white")
+        set_style("classic")
         ax = fig.add_subplot(111, zorder=-10)
         spines_color(ax, edges={"top": "None", "bottom": "None",
                                 "right": "None", "left": "None"})
@@ -1182,6 +1226,9 @@ class PlotUncertainty(object):
                            nr_colors=nr_plots,
                            ax=ax,
                            palette="husl",
+                           labelfontsize=self.labelsize,
+                           ffontsize=self.fontsize,
+
                            **plot_kwargs)
 
                 # for tick in ax.get_xticklabels():
@@ -1190,18 +1237,18 @@ class PlotUncertainty(object):
                 ax.set_ylim([0, 1.05])
                 ax.set_xlim([min(time), max(time)])
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
-                ax.tick_params(labelsize=10)
+                ax.tick_params(labelsize=self.labelsize)
             else:
                 ax.set_axis_off()
 
         title = title + ", " + feature.replace("_", " ")
-        plt.suptitle(title, fontsize=titlesize)
+        plt.suptitle(title, fontsize=self.titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.9)
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_" + sensitivity + "_grid" + self.figureformat))
+                                     feature + "_" + sensitivity + "_grid" + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -1218,6 +1265,7 @@ class PlotUncertainty(object):
                                 xscale="linear",
                                 yscale="linear",
                                 title=None,
+                                sobol_limit=.0,
                                 **plot_kwargs):
         """
         Plot the sensitivity for a specific 1 dimensional model/feature. The
@@ -1284,7 +1332,22 @@ class PlotUncertainty(object):
         labels = self.data.get_labels(feature)
         xlabel, ylabel = labels
 
+        # plot sensitivity
+        number_colors = 0
+        if not np.isclose(sobol_limit, 0.0):
+            for i in self.data[feature][sensitivity]:
+                if not np.any(i > sobol_limit):
+                    continue
+                number_colors += 1 
+        else:
+            number_colors = len(self.data.uncertain_parameters) 
+  
+
+        color_idx = 0
         for i in range(len(self.data[feature][sensitivity])):
+            if not np.any(self.data[feature][sensitivity][i] > sobol_limit):
+                continue
+ 
             if title is None:
                 title = title_tmp + ", " + feature.replace("_", " ")
             prettyPlot(time,
@@ -1293,11 +1356,14 @@ class PlotUncertainty(object):
                        xlabel=xlabel,
                        ylabel=title_tmp,
                        new_figure=False,
-                       color=i,
+                       color=color_idx,
                        palette="husl",
-                       nr_colors=len(self.data.uncertain_parameters),
+                       nr_colors=number_colors,
                        label=self.uncertain_names[i],
+                       labelfontsize=self.labelsize,
+                       ffontsize=self.fontsize,
                        **plot_kwargs)
+            color_idx += 1
 
         plt.ylim([0, 1.05])
         plt.xlim([min(time), max(time)])
@@ -1311,7 +1377,7 @@ class PlotUncertainty(object):
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_" + sensitivity + self.figureformat))
+                                     feature + "_" + sensitivity + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -1513,10 +1579,11 @@ class PlotUncertainty(object):
 
         ax = prettyBar(values,
                        index=xticks,
+                       labelfontsize=self.labelsize,
                        xlabels=xlabels,
                        ylabel=ylabel,
                        palette="Paired",
-                       style="seaborn-white")
+                       style="classic")
 
         if sensitivity in self.data[feature]:
             pos = 2 * distance + 2 * width
@@ -1526,8 +1593,8 @@ class PlotUncertainty(object):
             spines_color(ax2, edges={"top": "None", "bottom": "None",
                                      "right": axis_grey, "left": "None"})
             ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
-                            color=axis_grey, labelcolor="black", labelsize=labelsize)
-            ax2.set_ylabel(label, fontsize=labelsize)
+                            color=axis_grey, labelcolor="black", labelsize=self.labelsize)
+            ax2.set_ylabel(label, fontsize=self.labelsize)
             ax2.set_ylim([0, 1.05])
 
             ax2.spines["right"].set_visible(True)
@@ -1561,13 +1628,13 @@ class PlotUncertainty(object):
             fig.subplots_adjust(top=(0.91 - legend_width * 0.053))
 
         ax.set_xticks(xticks)
-        ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
+        ax.set_xticklabels(xlabels, fontsize=self.labelsize, rotation=0)
 
         if len(self.data.uncertain_parameters) > 3:
             for tick in ax.get_xticklabels()[:2]:
                 tick.set_rotation(-25)
 
-        plt.suptitle(feature.replace("_", " "), fontsize=titlesize)
+        plt.suptitle(feature.replace("_", " "), fontsize=self.titlesize)
 
         if sensitivity is None or sensitivity not in self.data[feature]:
             plt.subplots_adjust(top=0.93)
@@ -1578,7 +1645,7 @@ class PlotUncertainty(object):
             save_name = feature + "_" + sensitivity + self.figureformat
 
         if hardcopy:
-            plt.savefig(os.path.join(self.folder, save_name))
+            plt.savefig(os.path.join(self.folder, save_name), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -1656,9 +1723,10 @@ class PlotUncertainty(object):
                   xlabels=self.uncertain_names,
                   ylabel="Average of " + title_tmp,
                   nr_colors=len(self.data.uncertain_parameters),
+                  labelfontsize=self.labelsize,
                   palette="husl",
                   index=index,
-                  style="seaborn-darkgrid")
+                  style="classic")
 
         plt.ylim([0, 1])
 
@@ -1667,7 +1735,7 @@ class PlotUncertainty(object):
         plt.tight_layout()
 
         if hardcopy:
-            plt.savefig(os.path.join(self.folder, save_name))
+            plt.savefig(os.path.join(self.folder, save_name), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -1956,9 +2024,9 @@ class PlotUncertainty(object):
 
         # plt.close("all")
 
-        set_style("seaborn-dark")
+        set_style("classic")
         fig, axes = plt.subplots(nrows=grid_y_size, ncols=grid_x_size, squeeze=False, sharex="col", sharey="row")
-        set_style("seaborn-white")
+        set_style("classic")
 
         # Add a larger subplot to use to set a common xlabel and ylabel
 
@@ -1991,6 +2059,7 @@ class PlotUncertainty(object):
                           title=features[i].replace("_", " "),
                           xlabels=self.uncertain_names,
                           nr_colors=len(self.data.uncertain_parameters),
+                          labelfontsize=self.labelsize,
                           index=index,
                           palette="husl",
                           ax=ax,
@@ -2001,19 +2070,19 @@ class PlotUncertainty(object):
 
                 ax.set_ylim([0, 1.05])
                 # ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)
-                ax.tick_params(labelsize=fontsize)
+                ax.tick_params(labelsize=self.fontsize)
             else:
                 ax.set_axis_off()
 
         if title is None:
             title = "Average of " + title_tmp
-        plt.suptitle(title, fontsize=titlesize)
+        plt.suptitle(title, fontsize=self.titlesize)
         plt.tight_layout()
         plt.subplots_adjust(top=0.88)
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     sensitivity + "_average_grid" + self.figureformat))
+                                     sensitivity + "_average_grid" + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()
@@ -2032,6 +2101,8 @@ class PlotUncertainty(object):
                                            yscale='linear',
                                            use_markers=False,
                                            legend_locs=None,
+                                           sobol_limit=.0,
+                                           color_axes=True,
                                            **plot_kwargs):
         """
         Plot the prediction interval for a specific 1 dimensional model/feature.
@@ -2107,6 +2178,8 @@ class PlotUncertainty(object):
                         color=0,
                         nr_colors=3,
                         palette="husl",
+                        labelfontsize=self.labelsize,
+                        ffontsize=self.fontsize,
                         **plot_kwargs)
 
         colors = get_current_colormap()
@@ -2121,33 +2194,53 @@ class PlotUncertainty(object):
         ax.set_yscale(yscale)
 
         # plot sensitivity
+        number_colors = 0
+        if not np.isclose(sobol_limit, 0.0):
+            for i in self.data[feature][sensitivity]:
+                if not np.any(i > sobol_limit):
+                    continue
+                number_colors += 1 
+        else:
+            number_colors = len(self.data[feature][sensitivity]) 
+        number_colors += 2 
         ax2 = ax.twinx()
-        colors = sns.color_palette("husl", n_colors=len(self.data[feature][sensitivity]) + 2)
+        colors = sns.color_palette("husl", n_colors=number_colors)
         color = 0
         color_2 = 2
 
-        spines_color(ax2, edges={"top": "None", "bottom": "None",
+        axescolor = "black"
+        if color_axes:
+            spines_color(ax2, edges={"top": "None", "bottom": "None",
                                  "right": colors[color_2], "left": "None"})
+            axescolor = colors[color_2]
+        
         ax2.grid(False)
         ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
-                        color=colors[color_2], labelcolor=colors[color_2], labelsize=labelsize)
-        ax2.set_ylabel(title_tmp, color=colors[color_2], fontsize=labelsize)
+                        color=axescolor, labelcolor=axescolor, labelsize=self.labelsize)
+        ax2.set_ylabel(title_tmp, color=axescolor, fontsize=self.labelsize)
 
         # use markers for secondary axis
         marker_list = itertools.cycle(('+', 'o', '*', 'v', '<', '>', 's', 'x')) 
 
-        for i in range(len(self.data[feature][sensitivity])):
+        i = 0
+        color_idx = 0
+        for sens_data in self.data[feature][sensitivity]:
+            if not np.any(sens_data > sobol_limit):
+                i += 1
+                continue
             if use_markers is False:
                 marker = None
             else:
                 marker = next(marker_list)
 
-            ax2.plot(time, self.data[feature][sensitivity][i], color=colors[i + 2],
-                     linewidth=linewidth, antialiased=True, label=self.uncertain_names[i],
+            ax2.plot(time, sens_data, color=colors[color_idx + 2],
+                     linewidth=self.linewidth, antialiased=True, label=self.uncertain_names[i],
                      marker=marker, **plot_kwargs)
+            i += 1
+            color_idx += 1
 
         if legend_locs is not None:
-            assert (len(legend_locs) == 2, "you must provide two legend locations")
+            assert len(legend_locs) == 2, "you must provide two legend locations"
             loc1 = legend_locs[0]
             loc2 = legend_locs[1]
         else:
@@ -2155,26 +2248,27 @@ class PlotUncertainty(object):
             loc2 = "lower right"
 
         ax2.legend(loc=loc2)
-        ax2.yaxis.offsetText.set_fontsize(fontsize)
-        ax2.yaxis.offsetText.set_color(colors[color_2])
+        ax2.yaxis.offsetText.set_fontsize(self.fontsize)
+        ax2.yaxis.offsetText.set_color(axescolor)
 
         ax2.spines["right"].set_visible(True)
-        ax2.spines["right"].set_edgecolor(colors[color_2])
-
-        # plt.ylim([0, 1.05])
-        ax.tick_params(axis="y", color=colors[color], labelcolor=colors[color])
-        ax.spines["left"].set_edgecolor(colors[color])
-        ax.set_ylabel(ylabel + ", mean", color=colors[color], fontsize=labelsize)
+        ax2.spines["right"].set_edgecolor(axescolor)
+        if color_axes:
+            axescolor=colors[color]
+        ax.tick_params(axis="y", color=axescolor, labelcolor=axescolor)
+        ax.spines["left"].set_edgecolor(axescolor)
+        ax.set_ylabel(ylabel + ", mean", color=axescolor, fontsize=self.labelsize)
 
         ax2.set_xlim([min(time), max(time)])
         ax.set_xlim([min(time), max(time)])
+        ax2.set_ylim(0.0, 1.05)
 
         ax.legend(["Mean", "90% prediction interval"], loc=loc1)
         plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder,
-                                     feature + "_prediction-interval_sensitivity_" + sensitivity + self.figureformat))
+                                     feature + "_prediction-interval_sensitivity_" + sensitivity + self.figureformat), dpi=self.dpi)
 
         if show:
             plt.show()

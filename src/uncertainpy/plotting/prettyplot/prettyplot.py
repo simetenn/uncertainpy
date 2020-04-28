@@ -1,6 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import seaborn as sns
 
@@ -39,7 +40,7 @@ Set legend options.
         "legend.fontsize": fontsize,
         "legend.handlelength": 2.2,
         "legend.borderpad": 0.5,
-        "legend.framealpha": 2,
+        "legend.framealpha": 1,
         "legend.fancybox": True
     }
     plt.rcParams.update(params)
@@ -286,7 +287,7 @@ ax : matplotlib.axis object
         ax.set_title(title, fontsize=titlesize, **kwargs)
 
 
-def set_xlabel(xlabel, ax=None, color="black", **kwargs):
+def set_xlabel(xlabel, ax=None, color="black", lblsize=labelsize, **kwargs):
     """
 Set the x label
 
@@ -308,12 +309,12 @@ color : matplotlib accepted color
     Matplotlib xlabel() and set_xlabel() arguments
     """
     if ax is None:
-        plt.xlabel(xlabel, fontsize=labelsize, color=color, **kwargs)
+        plt.xlabel(xlabel, fontsize=lblsize, color=color, **kwargs)
     else:
-        ax.set_xlabel(xlabel, fontsize=labelsize, color=color, **kwargs)
+        ax.set_xlabel(xlabel, fontsize=lblsize, color=color, **kwargs)
 
 
-def set_ylabel(ylabel, ax=None, color="black", **kwargs):
+def set_ylabel(ylabel, ax=None, color="black", lblsize=labelsize, **kwargs):
     """
 Set the y label
 
@@ -335,9 +336,9 @@ color : matplotlib accepted color
     Matplotlib ylabel() and set_ylabel() arguments
     """
     if ax is None:
-        plt.ylabel(ylabel, fontsize=labelsize, color=color, **kwargs)
+        plt.ylabel(ylabel, fontsize=lblsize, color=color, **kwargs)
     else:
-        ax.set_ylabel(ylabel, fontsize=labelsize, color=color, **kwargs)
+        ax.set_ylabel(ylabel, fontsize=lblsize, color=color, **kwargs)
 
 
 def set_style(style="seaborn-darkgrid", nr_colors=6, palette="hls", custom=True):
@@ -454,7 +455,7 @@ def prettyPlot(x=[], y=None,
                xlabel="",
                ylabel="",
                color=None,
-               style="seaborn-darkgrid",
+               style="classic",
                custom_style=True,
                palette="hls",
                nr_colors=6,
@@ -464,6 +465,8 @@ def prettyPlot(x=[], y=None,
                yerr=None,
                xerr=None,
                ecolor=None,
+               labelfontsize=labelsize,
+               ffontsize=fontsize,
                capsize=5,
                capthick=2,
                **kwargs):
@@ -563,6 +566,13 @@ Returns
 ----------
 ax : matplotlib.axis object
     """
+    global labelsize
+    global fontsize
+    if labelfontsize != labelsize:
+        labelsize = labelfontsize
+    if ffontsize != fontsize:
+        fontsize = ffontsize
+
     set_style(style, nr_colors=nr_colors, palette=palette, custom=custom_style)
 
     if ax is None:
@@ -583,8 +593,8 @@ ax : matplotlib.axis object
         remove_ticks(ax)
 
     set_title(title, ax)
-    set_xlabel(xlabel, ax)
-    set_ylabel(ylabel, ax)
+    set_xlabel(xlabel, ax, lblsize=labelfontsize)
+    set_ylabel(ylabel, ax, lblsize=labelfontsize)
 
     if y is None:
         y = x
@@ -606,6 +616,7 @@ ax : matplotlib.axis object
             ecolor = ecolors[ecolor]
         else:
             ecolor = color
+        print("E-Color {} with type {}".format(ecolor, type(ecolor)))
 
         ax.errorbar(x, y,
                     color=color,
@@ -620,7 +631,7 @@ ax : matplotlib.axis object
 
 
     if custom_style:
-        ax.yaxis.offsetText.set_fontsize(labelsize)
+        ax.yaxis.offsetText.set_fontsize(labelfontsize)
         ax.yaxis.offsetText.set_color("black")
         # ax.ticklabel_format(useOffset=False)
 
@@ -650,6 +661,8 @@ def prettyBar(x, error=None,
               palette="hls",
               nr_colors=6,
               align="center",
+              labelfontsize=labelsize,
+              ffontsize=fontsize,
               error_kw={"ecolor": axis_grey,
                         "lw": 2,
                         "capsize": 10,
@@ -736,6 +749,12 @@ Returns
 ax : matplotlib ax Object
     """
 
+    global labelsize
+    if labelfontsize != labelsize: 
+        labelsize = labelfontsize
+    global fontsize
+    if ffontsize != fontsize:
+        fontsize = ffontsize
     set_style(style, nr_colors=nr_colors, palette=palette, custom=custom_style)
 
     if ax is None:
@@ -778,7 +797,7 @@ ax : matplotlib ax Object
     # ax.set_ylim([min(y), max(y)])
 
     set_title(title, ax)
-    set_ylabel(ylabel, ax)
+    set_ylabel(ylabel, ax, lblsize=labelsize)
 
 
     return ax
