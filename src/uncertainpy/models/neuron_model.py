@@ -43,6 +43,10 @@ class NeuronModel(Model):
     run : {None, callable}, optional
         A function that implements the model. See the ``run`` method for
         requirements of the function. Default is None.
+    record_from : {str}, optional
+        Name of the section in the NEURON model where voltage should
+        be recorded.
+        Default is ``"soma"``.
     labels : list, optional
         A list of label names for the axes when plotting the model.
         On the form ``["x-axis", "y-axis", "z-axis"]``, with the number of axes
@@ -95,6 +99,7 @@ class NeuronModel(Model):
                  name=None,
                  ignore=False,
                  run=None,
+                 record_from="soma",
                  labels=["Time (ms)", "Membrane potential (mV)"],
                  suppress_graphics=True,
                  logger_level="info",
@@ -125,6 +130,7 @@ class NeuronModel(Model):
 
         self.time = None
         self.V = None
+        self.rec_section = record_from
 
         setup_module_logger(class_instance=self, level=logger_level)
 
@@ -243,32 +249,34 @@ class NeuronModel(Model):
 
     def _record_v(self):
         """
-        Record voltage in the soma.
+        Record voltage in the requested compartment.
 
         Raises
         ------
         RuntimeError
-            If no section with name ``soma`` is found in the Neuron model.
+            If no section with name ``self.compartment`` is found in the Neuron model.
         """
-        # if not hasattr(self.h, "soma"):
-        #     raise RuntimeError("No section with name soma found in: {}. Unable to record from soma".format(self.name))
 
+        # Check if the requested compartment is defined in the model and proceed
+        # only if it is found. All this processing is case insensitive.
+        section_names = [s.name().lower() for s in self.h.allsec()]
+        if self.rec_section.lower() not in section_names:
+            raise RuntimeError(
+                "No section with name {c} found in {n}. Unable to record.".format(
+                    c=self.rec_section, n=self.name))
+
+        compartment_ind = section_names.index(self.rec_section.lower())
+        section = list(self.h.allsec())[compartment_ind]
+
+        self.h("objref voltage_soma")
+        self.h("voltage_soma = new Vector()")
+        self.h.voltage_soma.record(section(0.5)._ref_v)
+
+        # Final check to make sure NEURON accepted the commands.
         if not hasattr(self.h, "voltage_soma"):
-            # self.h("objref voltage_soma")
-            # self.h("voltage_soma = new Vector()")
-
-            # self.h.voltage_soma.record(self.h.soma(0.5)._ref_v)
-
-            for section in self.h.allsec():
-                if section.name().lower() == "soma":
-                    self.h("objref voltage_soma")
-                    self.h("voltage_soma = new Vector()")
-
-                    self.h.voltage_soma.record(section(0.5)._ref_v)
-                    break
-
-        if not hasattr(self.h, "voltage_soma"):
-            raise RuntimeError("No section with name soma found in: {}. Unable to record from soma".format(self.name))
+            raise RuntimeError(
+                "No section with name {c} found in {n}. Unable to record.".format(
+                    c=self.rec_section, n=self.name))
 
 
     def _record_t(self):
