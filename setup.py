@@ -42,7 +42,7 @@ uncertainpy_require = [
     "h5py",
     "multiprocess",
     "numpy>=1.16",
-    "scipy>=1.0.1,<=1.3",
+    "scipy>=1.4.1",
     "seaborn",
     "matplotlib>=3,<3.2",
     "xvfbwrapper",
