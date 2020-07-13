@@ -6,17 +6,17 @@ import numpy as np
 import seaborn as sns
 
 
-axis_grey = (0.6, 0.6, 0.6)
 ticksize = 5
-markersize = 8
-markeredgewidth = 1.4
+markersize = 6 
+markeredgewidth = 1.
 figure_width = 7.08
 labelsize = 10
 titlesize = 12
-fontsize = 8
+fontsize = 10 
 ticklabelsize = 8
-linewidth = 1.4
-figsize = (figure_width, figure_width*0.75)
+linewidth = 1.5
+#figsize = (figure_width, figure_width*0.75)
+figsize = [6.85039, 5.1375]
 
 def set_figuresize():
     """
@@ -34,14 +34,10 @@ def set_legendstyle():
 Set legend options.
     """
     params = {
-        "legend.frameon": True,
         "legend.numpoints": 1,
-        "legend.scatterpoints": 1,
         "legend.fontsize": fontsize,
-        "legend.handlelength": 2.2,
-        "legend.borderpad": 0.5,
-        "legend.framealpha": 1,
-        "legend.fancybox": True
+        "legend.edgecolor":  '0.8',
+        "legend.fancybox": True,
     }
     plt.rcParams.update(params)
 
@@ -92,8 +88,8 @@ def set_tickstyle():
 Set tick style options
     """
 
-    params = {"xtick.color": axis_grey,
-              "ytick.color": axis_grey,
+    params = {'xtick.direction': 'out',
+              'ytick.direction': 'out',
               "xtick.major.size": ticksize,
               "ytick.major.size": ticksize,
               "xtick.labelsize": ticklabelsize,
@@ -110,7 +106,6 @@ Set tick style options
 
     params = {"axes.titlesize": titlesize,
               "axes.labelsize": labelsize,
-              "axes.edgecolor": axis_grey,
               "axes.labelcolor": "black",
               "axes.linewidth": 1,
               "axes.spines.right": False,
@@ -153,8 +148,8 @@ linewidth : float
             zorder=-10)
 
 
-def spines_color(ax, edges={"top": "None", "bottom": axis_grey,
-                            "right": "None", "left": axis_grey}):
+def spines_color(ax, edges={"top": "None", 
+                            "right": "None"}):
     """
 Set spines color
 
@@ -182,11 +177,11 @@ ax : matplotlib.axis
     axis object where the ticks are removed
     """
     ax.tick_params(axis="x", which="both", bottom=True, top=False,
-                   labelbottom=True, color=axis_grey, labelcolor="black",
+                   labelbottom=True, labelcolor="black",
                    labelsize=labelsize)
 
     ax.tick_params(axis="y", which="both", right=False, left=True,
-                   labelleft=True, color=axis_grey, labelcolor="black",
+                   labelleft=True, labelcolor="black",
                    labelsize=labelsize)
 
 
@@ -446,8 +441,8 @@ def set_legend(labels, ax=None):
 
     legend = plt.legend(labels)
 
-    frame = legend.get_frame()
-    frame.set_facecolor(color)
+    #frame = legend.get_frame()
+    #frame.set_facecolor(color)
 
 
 def prettyPlot(x=[], y=None,
@@ -663,8 +658,7 @@ def prettyBar(x, error=None,
               align="center",
               labelfontsize=labelsize,
               ffontsize=fontsize,
-              error_kw={"ecolor": axis_grey,
-                        "lw": 2,
+              error_kw={"lw": 2,
                         "capsize": 10,
                         "capthick": 2},
               **kwargs):
@@ -779,7 +773,7 @@ ax : matplotlib ax Object
 
 
     if error_kw is None:
-        error_kw = dict(ecolor=axis_grey, lw=2, capsize=10, capthick=2)
+        error_kw = dict(lw=2, capsize=10, capthick=2)
 
     if color is None:
         colors = sns.color_palette()
@@ -788,7 +782,7 @@ ax : matplotlib ax Object
 
     ax.bar(index, x, yerr=error, color=colors, width=width,
            align=align, linewidth=linewidth, error_kw=error_kw,
-           edgecolor=axis_grey, **kwargs)
+           **kwargs)
 
     ax.set_xticks(xticks)
     ax.set_xticklabels(xlabels, fontsize=labelsize, rotation=0)

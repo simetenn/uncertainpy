@@ -10,7 +10,7 @@ import seaborn as sns
 from .prettyplot import prettyPlot, prettyBar
 from .prettyplot import spines_color, get_current_colormap
 from .prettyplot import set_style, get_colormap, reset_style
-from .prettyplot import axis_grey, labelsize, fontsize, titlesize, linewidth
+from .prettyplot import labelsize, fontsize, titlesize, linewidth
 
 from ..data import Data
 from ..utils.logger import setup_module_logger, get_logger
@@ -223,7 +223,7 @@ class PlotUncertainty(object):
         else:
             raise AttributeError("Dimension of evaluations is not valid: dim {}".format(dimension))
 
-    def evaluations_0d(self, feature=None, foldername="", **plot_kwargs):
+    def evaluations_0d(self, feature=None, foldername="", palette="colorblind", **plot_kwargs):
         """
         Plot all 0D evaluations for a specific model/feature.
 
@@ -269,7 +269,7 @@ class PlotUncertainty(object):
                    ylabel=self.data.get_labels(feature)[0],
                    title="{}, evaluations".format(feature.replace("_", " ")),
                    new_figure=True,
-                   palette="husl",
+                   palette=palette,
                    **plot_kwargs)
 
         plt.tight_layout()
@@ -278,7 +278,7 @@ class PlotUncertainty(object):
 
         reset_style()
 
-    def evaluations_1d(self, feature=None, foldername="", xscale='linear', yscale='linear', **plot_kwargs):
+    def evaluations_1d(self, feature=None, foldername="", palette="colorblind", xscale='linear', yscale='linear', **plot_kwargs):
         """
         Plot all 1D evaluations for a specific model/feature.
 
@@ -342,7 +342,7 @@ class PlotUncertainty(object):
                             ylabel=ylabel,
                             title="{}, evaluation {:d}".format(feature.replace("_", " "), i),
                             new_figure=True,
-                            palette="husl",
+                            palette=palette,
                             **plot_kwargs)
             ax.set_xlim([min(time), max(time)])
             ax.set_xscale(xscale)
@@ -436,6 +436,7 @@ class PlotUncertainty(object):
                              attribute_name="mean",
                              hardcopy=True,
                              show=False,
+                             palette="colorblind",
                              xscale="linear",
                              yscale="linear",
                              title=None,
@@ -508,7 +509,7 @@ class PlotUncertainty(object):
         ax = prettyPlot(time, self.data[feature][attribute],
                         title.replace("_", " "), xlabel, ylabel,
                         nr_colors=3,
-                        palette="husl",
+                        palette=palette,
                         **plot_kwargs)
         ax.set_xscale(xscale)
         ax.set_yscale(yscale)
@@ -627,7 +628,7 @@ class PlotUncertainty(object):
 
         reset_style()
 
-    def mean_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', title=None, **plot_kwargs):
+    def mean_1d(self, feature, hardcopy=True, show=False, palette="colorblind", xscale='linear', yscale='linear', title=None, **plot_kwargs):
         """
         Plot the mean for a specific 1 dimensional model/feature.
 
@@ -666,7 +667,7 @@ class PlotUncertainty(object):
                                   color=0,
                                   **plot_kwargs)
 
-    def variance_1d(self, feature, hardcopy=True, show=False, xscale='linear', yscale='linear', title=None, **plot_kwargs):
+    def variance_1d(self, feature, hardcopy=True, show=False, palette="colorblind", xscale='linear', yscale='linear', title=None, **plot_kwargs):
         """
         Plot the variance for a specific 1 dimensional model/feature.
 
@@ -770,6 +771,7 @@ class PlotUncertainty(object):
                          show=False,
                          xscale='linear',
                          yscale='linear',
+                         palette="colorblind",
                          color_axes=True,
                          title=None,
                          **plot_kwargs):
@@ -833,7 +835,7 @@ class PlotUncertainty(object):
                         title.replace("_", " "), xlabel, ylabel + ", mean",
                         style=style,
                         nr_colors=3,
-                        palette="husl",
+                        palette=palette,
                         labelfontsize=self.labelsize,
                         ffontsize=self.fontsize,
                         **plot_kwargs)
@@ -900,10 +902,12 @@ class PlotUncertainty(object):
                                title=None,
                                xscale='linear',
                                yscale='linear',
+                               palette="colorblind",
                                xmin=None,
                                xmax=None,
                                ymin=None,
                                ymax=None,
+                               legend_loc="best",
                                **plot_kwargs):
         """
         Plot the prediction interval for a specific 1 dimensional model/feature.
@@ -968,7 +972,7 @@ class PlotUncertainty(object):
                         ffontsize=self.fontsize,
                         color=0,
                         nr_colors=3,
-                        palette="husl",
+                        palette=palette,
                         **plot_kwargs)
 
         colors = get_current_colormap()
@@ -993,7 +997,7 @@ class PlotUncertainty(object):
 
         ax.set_xscale(xscale)
         ax.set_yscale(yscale)
-        plt.legend(["Mean", "90% prediction interval"], loc="best")
+        plt.legend(["Mean", "90% prediction interval"], loc=legend_loc)
 
         plt.tight_layout()
 
@@ -1015,6 +1019,7 @@ class PlotUncertainty(object):
                        show=False,
                        xscale='linear',
                        yscale='linear',
+                       palette="colorblind",
                        title=None,
                        **plot_kwargs):
         """
@@ -1090,7 +1095,7 @@ class PlotUncertainty(object):
                             xlabel=xlabel,
                             ylabel=title,
                             color=i,
-                            palette="husl",
+                            palette=palette,
                             labelfontsize=self.labelsize,
                             ffontsize=self.fontsize,
                             nr_colors=len(self.data.uncertain_parameters), **plot_kwargs)
@@ -1120,6 +1125,7 @@ class PlotUncertainty(object):
                             show=False,
                             xscale="linear",
                             yscale="linear",
+                            palette="colorblind", 
                             title=None,
                             **plot_kwargs):
         """
@@ -1225,7 +1231,7 @@ class PlotUncertainty(object):
                            color=i,
                            nr_colors=nr_plots,
                            ax=ax,
-                           palette="husl",
+                           palette=palette,
                            labelfontsize=self.labelsize,
                            ffontsize=self.fontsize,
 
@@ -1265,6 +1271,7 @@ class PlotUncertainty(object):
                                 xscale="linear",
                                 yscale="linear",
                                 title=None,
+                                palette="colorblind", 
                                 sobol_limit=.0,
                                 **plot_kwargs):
         """
@@ -1333,19 +1340,13 @@ class PlotUncertainty(object):
         xlabel, ylabel = labels
 
         # plot sensitivity
-        number_colors = 0
-        if not np.isclose(sobol_limit, 0.0):
-            for i in self.data[feature][sensitivity]:
-                if not np.any(i > sobol_limit):
-                    continue
-                number_colors += 1 
-        else:
-            number_colors = len(self.data.uncertain_parameters) 
+        number_colors = len(self.data.uncertain_parameters) 
   
 
         color_idx = 0
         for i in range(len(self.data[feature][sensitivity])):
             if not np.any(self.data[feature][sensitivity][i] > sobol_limit):
+                color_idx += 1
                 continue
  
             if title is None:
@@ -1357,7 +1358,7 @@ class PlotUncertainty(object):
                        ylabel=title_tmp,
                        new_figure=False,
                        color=color_idx,
-                       palette="husl",
+                       palette=palette,
                        nr_colors=number_colors,
                        label=self.uncertain_names[i],
                        labelfontsize=self.labelsize,
@@ -1386,7 +1387,7 @@ class PlotUncertainty(object):
 
         reset_style()
 
-    def features_1d(self, sensitivity="first", xscale='linear', yscale='linear', title=None):
+    def features_1d(self, sensitivity="first", xscale='linear', yscale='linear', palette="colorblind", title=None):
         """
         Plot all data for all 1 dimensional model/features.
 
@@ -1591,18 +1592,17 @@ class PlotUncertainty(object):
             ax2 = ax.twinx()
 
             spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                     "right": axis_grey, "left": "None"})
+                                     "left": "None"})
             ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
-                            color=axis_grey, labelcolor="black", labelsize=self.labelsize)
+                            labelcolor="black", labelsize=self.labelsize)
             ax2.set_ylabel(label, fontsize=self.labelsize)
             ax2.set_ylim([0, 1.05])
 
             ax2.spines["right"].set_visible(True)
-            ax2.spines["right"].set_edgecolor(axis_grey)
 
             i = 0
             legend_bars = []
-            colors = get_colormap(palette="husl", nr_colors=len(self.data.uncertain_parameters))
+            colors = get_colormap(palette=palette, nr_colors=len(self.data.uncertain_parameters))
 
             for parameter in self.data.uncertain_parameters:
                 ll = ax2.bar(pos, self.data[feature][sensitivity][i], width=width,
@@ -1622,7 +1622,6 @@ class PlotUncertainty(object):
                        bbox_to_anchor=location,
                        ncol=legend_size)
 
-            # lgd.get_frame().set_edgecolor(axis_grey)
 
             fig = plt.gcf()
             fig.subplots_adjust(top=(0.91 - legend_width * 0.053))
@@ -1661,6 +1660,7 @@ class PlotUncertainty(object):
                             sensitivity="first",
                             hardcopy=True,
                             title=None,
+                            palette="colorblind", 
                             show=False):
         """
         Plot the average of the sensitivity for a specific model/feature.
@@ -1724,7 +1724,7 @@ class PlotUncertainty(object):
                   ylabel="Average of " + title_tmp,
                   nr_colors=len(self.data.uncertain_parameters),
                   labelfontsize=self.labelsize,
-                  palette="husl",
+                  palette=palette,
                   index=index,
                   style="classic")
 
@@ -1748,6 +1748,7 @@ class PlotUncertainty(object):
                                 sensitivity="first",
                                 hardcopy=True,
                                 title=None,
+                                palette="colorblind", 
                                 show=False):
         """
         Plot the average of the sensitivity for all model/features.
@@ -1970,6 +1971,7 @@ class PlotUncertainty(object):
                                  hardcopy=True,
                                  title=None,
                                  show=False,
+                                 palette="colorblind",
                                  **plot_kwargs):
         """
         Plot the average of the sensitivity for all model/features in
@@ -2061,7 +2063,7 @@ class PlotUncertainty(object):
                           nr_colors=len(self.data.uncertain_parameters),
                           labelfontsize=self.labelsize,
                           index=index,
-                          palette="husl",
+                          palette=palette,
                           ax=ax,
                           **plot_kwargs)
 
@@ -2101,7 +2103,9 @@ class PlotUncertainty(object):
                                            yscale='linear',
                                            use_markers=False,
                                            legend_locs=None,
+                                           legend_cols=1,
                                            sobol_limit=.0,
+                                           palette="colorblind", 
                                            color_axes=True,
                                            **plot_kwargs):
         """
@@ -2177,7 +2181,7 @@ class PlotUncertainty(object):
                         xlabel=xlabel, ylabel=ylabel,
                         color=0,
                         nr_colors=3,
-                        palette="husl",
+                        palette=palette,
                         labelfontsize=self.labelsize,
                         ffontsize=self.fontsize,
                         **plot_kwargs)
@@ -2194,17 +2198,10 @@ class PlotUncertainty(object):
         ax.set_yscale(yscale)
 
         # plot sensitivity
-        number_colors = 0
-        if not np.isclose(sobol_limit, 0.0):
-            for i in self.data[feature][sensitivity]:
-                if not np.any(i > sobol_limit):
-                    continue
-                number_colors += 1 
-        else:
-            number_colors = len(self.data[feature][sensitivity]) 
+        number_colors = len(self.data[feature][sensitivity]) 
         number_colors += 2 
         ax2 = ax.twinx()
-        colors = sns.color_palette("husl", n_colors=number_colors)
+        colors = sns.color_palette(palette, n_colors=number_colors)
         color = 0
         color_2 = 2
 
@@ -2226,7 +2223,9 @@ class PlotUncertainty(object):
         color_idx = 0
         for sens_data in self.data[feature][sensitivity]:
             if not np.any(sens_data > sobol_limit):
+                marker = next(marker_list)
                 i += 1
+                color_idx += 1
                 continue
             if use_markers is False:
                 marker = None
@@ -2235,7 +2234,7 @@ class PlotUncertainty(object):
 
             ax2.plot(time, sens_data, color=colors[color_idx + 2],
                      linewidth=self.linewidth, antialiased=True, label=self.uncertain_names[i],
-                     marker=marker, **plot_kwargs)
+                     marker=marker, markeredgecolor=colors[color_idx + 2], **plot_kwargs)
             i += 1
             color_idx += 1
 
@@ -2247,7 +2246,7 @@ class PlotUncertainty(object):
             loc1 = "best"
             loc2 = "lower right"
 
-        ax2.legend(loc=loc2)
+        ax2.legend(loc=loc2, ncol=legend_cols)
         ax2.yaxis.offsetText.set_fontsize(self.fontsize)
         ax2.yaxis.offsetText.set_color(axescolor)
 
