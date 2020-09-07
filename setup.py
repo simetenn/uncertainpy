@@ -37,7 +37,7 @@ be used for many other types of models and features within other fields.
 
 
 uncertainpy_require = [
-    "chaospy>=3.2.3",
+    "chaospy>=3.3.0",
     "tqdm",
     "h5py",
     "multiprocess",

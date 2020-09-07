@@ -645,7 +645,7 @@ class UncertaintyCalculations(ParameterBase):
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P, masked_nodes,
-                                                   masked_evaluations, rule="T")
+                                                   masked_evaluations)
             elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
@@ -952,9 +952,8 @@ class UncertaintyCalculations(ParameterBase):
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
                 U_hat[feature] = cp.fit_regression(P,
-                                                masked_nodes,
-                                                masked_evaluations,
-                                                rule="T")
+                                                   masked_nodes,
+                                                   masked_evaluations)
             elif not allow_incomplete:
                 logger.warning("{}: not all parameter combinations give results.".format(feature) +
                                " No uncertainty quantification is performed since allow_incomplete=False")
