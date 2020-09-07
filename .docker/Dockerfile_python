@@ -40,7 +40,7 @@ RUN mkdir $VENV/build; mkdir $VENV/build/$NEST; mkdir $VENV/bin
 
 WORKDIR $VENV/build/$NEST
 RUN cmake -DCMAKE_INSTALL_PREFIX=$VENV \
-          -Dwith-mpi=ON -Dwith-python=3 \
+          -Dwith-mpi=ON -Dwith-python=3 -Dwith-readline=OFF \
           $HOME/packages/nest-simulator-$NEST_VER > /dev/null
 RUN make
 RUN make install > /dev/null
