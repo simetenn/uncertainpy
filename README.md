@@ -46,24 +46,24 @@ be used for many other types of models and features within other fields.
 
 Examples for how to use Uncertainpy can be found in the
 [examples](https://github.com/simetenn/uncertainpy/tree/master/examples) folder
-as well as in the [documentation]().
+as well as in the [documentation](https://uncertainpy.readthedocs.io/en/latest/).
 Here we show an example,
 found in [examples/coffee_cup](https://github.com/simetenn/uncertainpy/tree/master/examples/coffee_cup),
 where we examine the changes in temperature of a cooling coffee cup that
 follows Newton’s law of cooling:
 
 <!-- \frac{dT(t)}{dt} = -\kappa(T(t) - T_{env}) -->
-![img](http://latex.codecogs.com/svg.latex?\frac{dT(t)}{dt}%3D-\kappa(T(t)-T_{env}))
+![img](https://latex.codecogs.com/svg.latex?\frac{dT(t)}{dt}&space;=&space;-\kappa(T(t)&space;-&space;T_{env}))
 
 This equation tells how the temperature ![img](http://latex.codecogs.com/svg.latex?T)
 of the coffee cup changes with time ![img](http://latex.codecogs.com/svg.latex?t),
 when it is in an environment with temperature
 ![img](http://latex.codecogs.com/svg.latex?T_{env}).
-![img](http://latex.codecogs.com/svg.latex?\kappa}) is a proportionality
+![img](http://latex.codecogs.com/svg.latex?\kappa) is a proportionality
 constant that is characteristic of the system and regulates how fast the coffee
 cup radiates heat to the environment.
-For simplicity we set the initial temperature to a fixed value, ![img](http://latex.codecogs.com/svg.latex?%24T_0%3D95^\circ\text{C}%24),
-and let ![img](http://latex.codecogs.com/svg.latex?\kappa}) and ![img](http://latex.codecogs.com/svg.latex?T_{env}) be uncertain input parameters.
+For simplicity we set the initial temperature to a fixed value, ![img](http://latex.codecogs.com/svg.latex?95^\circ\text{C}&space;),
+and let ![img](http://latex.codecogs.com/svg.latex?\kappa) and ![img](http://latex.codecogs.com/svg.latex?T_{env}) be uncertain input parameters.
 
 We start by importing the packages we use:
 
@@ -158,10 +158,10 @@ As the mean (blue line) in A shows,
 the cooling gives rise to an exponential decay in the temperature,
 towards the temperature of the environment ![img](http://latex.codecogs.com/svg.latex?T_{env}).
 From the sensitivity analysis (B) we see that T is most
-sensitive to ![img](http://latex.codecogs.com/svg.latex?\kappa})
+sensitive to ![img](http://latex.codecogs.com/svg.latex?\kappa)
 early in the simulation,
 and to ![img](http://latex.codecogs.com/svg.latex?T_{env}) towards the end of the simulation.
-This is as expected, since ![img](http://latex.codecogs.com/svg.latex?\kappa})
+This is as expected, since ![img](http://latex.codecogs.com/svg.latex?\kappa)
 determines the rate of the cooling,
 while ![img](http://latex.codecogs.com/svg.latex?T_{env}) determines the final temperature.
 After about 150 minutes,
@@ -198,12 +198,12 @@ Uncertainpy can also be installed by cloning the Github repository:
 For all options run::
 
     $ python setup.py --help
-    
-Alternatively, Uncertainpy can be easily installed (minimum install) with conda 
+
+Alternatively, Uncertainpy can be easily installed (minimum install) with conda
 using conda-forge channel::
 
     $ conda install -c conda-forge uncertainpy
-    
+
 The above installation within a conda environment is only compatible with Python 3.x.
 By using conda, the installation will solves compatibility issues automatically.
 
