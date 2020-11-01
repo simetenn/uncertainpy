@@ -249,10 +249,9 @@ class UncertaintyCalculations(ParameterBase):
         dependent : bool
             True if the distribution is dependent, False if is independent.
         """
-        if len(distribution) > 1 and cp.get_dependencies(*distribution):
-            return True
-        else:
-            return False
+        # New property added in Chaospy, so the dependent method is
+        # kept for legacy
+        return distribution.stochastic_dependent
 
 
     def create_mask(self, evaluations):
