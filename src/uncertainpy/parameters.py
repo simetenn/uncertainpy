@@ -74,14 +74,14 @@ class Parameter(object):
     def distribution(self, new_distribution):
         if new_distribution is None:
             self._distribution = None
-        elif isinstance(new_distribution, cp.Dist):
+        elif isinstance(new_distribution, cp.Distribution):
             self._distribution = new_distribution
         elif hasattr(new_distribution, '__call__'):
             if self.value is None:
                 raise ValueError("The value of this parameter is None. A function cannot be created with new_distribution(self.value).")
 
             self._distribution = new_distribution(self.value)
-            if not isinstance(self._distribution, cp.Dist):
+            if not isinstance(self._distribution, cp.Distribution):
                 raise TypeError("Function new_distribution does not return a Chaospy distribution")
         else:
             raise TypeError("new_distribution is neither a function nor a Chaospy distribution")
@@ -201,7 +201,7 @@ class Parameters(collections.MutableMapping):
                     if isinstance(parameters[parameter], Parameter):
                         self.parameters[parameter] = parameters[parameter]
                     else:
-                        if isinstance(parameters[parameter], cp.Dist):
+                        if isinstance(parameters[parameter], cp.Distribution):
                             self.parameters[parameter] = Parameter(parameter, distribution=parameters[parameter])
                         else:
                                 self.parameters[parameter] = Parameter(parameter, value=parameters[parameter])
@@ -213,7 +213,7 @@ class Parameters(collections.MutableMapping):
                         self.parameters[parameter.name] = parameter
                     else:
                         if len(parameter) == 2:
-                            if isinstance(parameter[1], cp.Dist):
+                            if isinstance(parameter[1], cp.Distribution):
                                 self.parameters[parameter[0]] = Parameter(parameter[0], distribution=parameter[1])
                             else:
                                 self.parameters[parameter[0]] = Parameter(parameter[0], value=parameter[1])
