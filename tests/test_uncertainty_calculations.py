@@ -248,7 +248,7 @@ class TestUncertaintyCalculations(unittest.TestCase):
         self.uncertainty_calculations.parameters.distribution = dist
         distribution = self.uncertainty_calculations.create_distribution()
 
-        self.assertIsInstance(distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Distribution)
         self.assertEqual(distribution, dist)
 
     def test_create_distribution_dist_error(self):
@@ -264,19 +264,19 @@ class TestUncertaintyCalculations(unittest.TestCase):
 
         distribution = self.uncertainty_calculations.create_distribution()
 
-        self.assertIsInstance(distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Distribution)
 
     def test_create_distribution_string(self):
 
         distribution = self.uncertainty_calculations.create_distribution("a")
 
-        self.assertIsInstance(distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Distribution)
 
     def test_create_distribution_list(self):
 
         distribution = self.uncertainty_calculations.create_distribution(["a"])
 
-        self.assertIsInstance(distribution, cp.Dist)
+        self.assertIsInstance(distribution, cp.Distribution)
 
 
 
