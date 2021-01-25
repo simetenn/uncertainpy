@@ -968,7 +968,7 @@ class UncertaintyCalculations(ParameterBase):
         return U_hat, dist_R, data
 
 
-    def analyse_PCE(self, U_hat, distribution, data, nr_samples=10**4):
+    def analyse_PCE(self, U_hat, distribution, data, nr_samples=10**4, save_samples=False):
         """
         Calculate the statistical metrics from the polynomial chaos
         approximation.
@@ -987,6 +987,8 @@ class UncertaintyCalculations(ParameterBase):
             Number of samples for the Monte Carlo sampling of the polynomial
             chaos approximation.
             Default is 10**4.
+        save_samples: bool, optional
+            Save samples in feature data to, for example, plot PDFs later.
 
         Returns
         -------
@@ -1046,7 +1048,8 @@ class UncertaintyCalculations(ParameterBase):
                 else:
                     U_mc[feature] = U_hat[feature](samples)
 
-                data[feature].samples = U_mc[feature]
+                if save_samples:
+                    data[feature].samples = U_mc[feature]
                 data[feature].percentile_5 = np.percentile(U_mc[feature], 5, -1)
                 data[feature].percentile_95 = np.percentile(U_mc[feature], 95, -1)
 
@@ -1197,6 +1200,7 @@ class UncertaintyCalculations(ParameterBase):
                          nr_pc_mc_samples=10**4,
                          allow_incomplete=True,
                          seed=None,
+                         save_samples=False,
                          **custom_kwargs):
         """
         Perform an uncertainty quantification and sensitivity analysis
@@ -1383,18 +1387,20 @@ class UncertaintyCalculations(ParameterBase):
         else:
             raise ValueError("No polynomial chaos method with name {}".format(method))
 
-        data = self.analyse_PCE(U_hat, distribution, data, nr_samples=nr_pc_mc_samples)
+        data = self.analyse_PCE(U_hat, distribution, data,
+                                nr_samples=nr_pc_mc_samples,
+                                save_samples=save_samples)
 
         data.seed = seed
 
         return data
 
-
     def monte_carlo(self,
                     uncertain_parameters=None,
                     nr_samples=10**4,
                     seed=None,
-                    allow_incomplete=True):
+                    allow_incomplete=True,
+                    save_samples=False):
         """
         Perform an uncertainty quantification using the quasi-Monte Carlo method.
 
@@ -1414,6 +1420,8 @@ class UncertaintyCalculations(ParameterBase):
             If the uncertainty quantification should be performed for features
             or models with incomplete evaluations.
             Default is True.
+        save_samples: bool, optional
+            Save samples in feature data to, for example, plot PDFs later.
 
         Returns
         -------
@@ -1525,7 +1533,8 @@ class UncertaintyCalculations(ParameterBase):
             logger = get_logger(self)
 
             if (np.all(mask) or allow_incomplete) and sum(mask) > 0:
-                data[feature].samples = masked_evaluations
+                if save_samples:
+                    data[feature].samples = masked_evaluations
                 data[feature].mean = np.mean(masked_evaluations, 0)
                 data[feature].variance = np.var(masked_evaluations, 0)
 
