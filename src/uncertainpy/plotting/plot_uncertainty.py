@@ -1508,6 +1508,7 @@ class PlotUncertainty(object):
                    feature,
                    sensitivity="first",
                    hardcopy=True,
+                   palette="colorblind",
                    show=False,
                    max_legend_size=5):
         """
@@ -1961,7 +1962,7 @@ class PlotUncertainty(object):
         if condensed:
             self.plot_condensed(sensitivity=sensitivity)
         else:
-            if sensitivity is "all":
+            if sensitivity == "all":
                 self.plot_all_sensitivities()
             else:
                 self.plot_all(sensitivity)

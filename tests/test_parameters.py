@@ -45,7 +45,7 @@ class TestParameter(unittest.TestCase):
 
         self.assertEqual(parameter.name, "gbar_Na")
         self.assertEqual(parameter.value, 120)
-        self.assertIsInstance(parameter.distribution, cp.Dist)
+        self.assertIsInstance(parameter.distribution, cp.Distribution)
 
 
     def test_init_chaospy(self):
@@ -53,7 +53,7 @@ class TestParameter(unittest.TestCase):
 
         self.assertTrue(parameter.name, "gbar_Na")
         self.assertTrue(parameter.value, 120)
-        self.assertIsInstance(parameter.distribution, cp.Dist)
+        self.assertIsInstance(parameter.distribution, cp.Distribution)
 
 
     def test_set_distribution_none(self):
@@ -70,7 +70,7 @@ class TestParameter(unittest.TestCase):
         self.parameter.distribution = distribution_function
 
         # self.assertEqual(self.parameter.distribution, cp.Uniform(110, 130))
-        self.assertIsInstance(self.parameter.distribution, cp.Dist)
+        self.assertIsInstance(self.parameter.distribution, cp.Distribution)
 
     def test_set_distribution_function_not_return_dist(self):
         def distribution_function(x):
@@ -91,7 +91,7 @@ class TestParameter(unittest.TestCase):
         self.parameter.distribution = distribution
 
         # self.assertEqual(self.parameter.distribution, cp.Uniform(110, 130))
-        self.assertIsInstance(self.parameter.distribution, cp.Dist)
+        self.assertIsInstance(self.parameter.distribution, cp.Distribution)
 
 
     def test_set_parameters_file(self):
@@ -200,9 +200,9 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(parameters["gbar_K"].value, 36)
         self.assertEqual(parameters["gbar_L"].value, 0.3)
 
-        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Dist)
-        self.assertIsInstance(parameters["gbar_K"].distribution, cp.Dist)
-        self.assertIsInstance(parameters["gbar_L"].distribution, cp.Dist)
+        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Distribution)
+        self.assertIsInstance(parameters["gbar_K"].distribution, cp.Distribution)
+        self.assertIsInstance(parameters["gbar_L"].distribution, cp.Distribution)
 
 
     def test_init_object(self):
@@ -230,7 +230,7 @@ class TestParameters(unittest.TestCase):
         self.assertIsInstance(parameters["gbar_Na"], Parameter)
         self.assertIsInstance(parameters["gbar_K"], Parameter)
         self.assertIsInstance(parameters["gbar_L"], Parameter)
-        self.assertIsInstance(parameters.distribution, cp.Dist)
+        self.assertIsInstance(parameters.distribution, cp.Distribution)
 
 
     def test_init_list_only_chaospy(self):
@@ -250,9 +250,9 @@ class TestParameters(unittest.TestCase):
         self.assertIsNone(parameters["gbar_K"].value)
         self.assertIsNone(parameters["gbar_L"].value)
 
-        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Dist)
-        self.assertIsInstance(parameters["gbar_K"].distribution, cp.Dist)
-        self.assertIsInstance(parameters["gbar_L"].distribution, cp.Dist)
+        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Distribution)
+        self.assertIsInstance(parameters["gbar_K"].distribution, cp.Distribution)
+        self.assertIsInstance(parameters["gbar_L"].distribution, cp.Distribution)
 
 
     def test_init_list_only_values(self):
@@ -295,7 +295,7 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(parameters["gbar_L"].value, 0.3)
 
 
-        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Dist)
+        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Distribution)
         self.assertIsNone(parameters["gbar_K"].distribution)
         self.assertIsNone(parameters["gbar_L"].distribution)
 
@@ -319,7 +319,7 @@ class TestParameters(unittest.TestCase):
         self.assertEqual(parameters["gbar_L"].value, 0.3)
 
 
-        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Dist)
+        self.assertIsInstance(parameters["gbar_Na"].distribution, cp.Distribution)
         self.assertIsNone(parameters["gbar_K"].distribution)
         self.assertIsNone(parameters["gbar_L"].distribution)
 
@@ -429,7 +429,7 @@ class TestParameters(unittest.TestCase):
 
         self.parameters.set_distribution("gbar_Na", distribution_function)
 
-        self.assertIsInstance(self.parameters["gbar_Na"].distribution, cp.Dist)
+        self.assertIsInstance(self.parameters["gbar_Na"].distribution, cp.Distribution)
 
 
     def set_all_distributions(self):
@@ -445,9 +445,9 @@ class TestParameters(unittest.TestCase):
 
         self.parameters.set_all_distributions(distribution_function)
 
-        self.assertIsInstance(self.parameters["gbar_Na"].distribution, cp.Dist)
-        self.assertIsInstance(self.parameters["gbar_K"].distribution, cp.Dist)
-        self.assertIsInstance(self.parameters["gbar_L"].distribution, cp.Dist)
+        self.assertIsInstance(self.parameters["gbar_Na"].distribution, cp.Distribution)
+        self.assertIsInstance(self.parameters["gbar_K"].distribution, cp.Distribution)
+        self.assertIsInstance(self.parameters["gbar_L"].distribution, cp.Distribution)
 
 
     def test_get_from_uncertain_name(self):
@@ -486,8 +486,8 @@ class TestParameters(unittest.TestCase):
         result = self.parameters.get_from_uncertain("distribution")
 
         self.assertEqual(len(result), 2)
-        self.assertIsInstance(result[0], cp.Dist)
-        self.assertIsInstance(result[1], cp.Dist)
+        self.assertIsInstance(result[0], cp.Distribution)
+        self.assertIsInstance(result[1], cp.Distribution)
 
 
     def test_get_name(self):
@@ -551,9 +551,9 @@ class TestParameters(unittest.TestCase):
         result = self.parameters.get("distribution")
 
         self.assertEqual(len(result), 3)
-        self.assertIsInstance(result[0], cp.Dist)
-        self.assertIsInstance(result[1], cp.Dist)
-        self.assertIsInstance(result[2], cp.Dist)
+        self.assertIsInstance(result[0], cp.Distribution)
+        self.assertIsInstance(result[1], cp.Distribution)
+        self.assertIsInstance(result[2], cp.Distribution)
 
 
 

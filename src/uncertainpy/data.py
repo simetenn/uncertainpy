@@ -777,16 +777,25 @@ class Data(collections.MutableMapping):
         f = backend.File(filename, "r")
 
         if "uncertain parameters" in f.attrs:
-            self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
+            try:
+                self.uncertain_parameters = [parameter.decode("utf8") for parameter in f.attrs["uncertain parameters"]]
+            except (UnicodeDecodeError, AttributeError):
+                self.uncertain_parameters = [parameter for parameter in f.attrs["uncertain parameters"]]
 
         if "model name" in f.attrs:
             self.model_name = str(f.attrs["model name"])
 
         if "incomplete results" in f.attrs:
-            self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
+            try:
+                self.incomplete = [incomplete.decode("utf8") for incomplete in f.attrs["incomplete results"]]
+            except (UnicodeDecodeError, AttributeError):
+                self.incomplete = [incomplete for incomplete in f.attrs["incomplete results"]]
 
         if "error" in f.attrs:
-            self.error =  [irregular.decode("utf8") for irregular in f.attrs["error"]]
+            try:
+                self.error =  [irregular.decode("utf8") for irregular in f.attrs["error"]]
+            except (UnicodeDecodeError, AttributeError):
+                self.error =  [irregular for irregular in f.attrs["error"]]
 
         if "method" in f.attrs:
             self.method = str(f.attrs["method"])
