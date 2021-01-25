@@ -829,7 +829,7 @@ class TestNetworkFeatures(unittest.TestCase):
         self.assertIsNone(time)
         self.assertEqual(values.shape, (4, 4))
         diag = np.diag_indices(4)
-        self.assertTrue(np.all(values[diag] == 1))
+        self.assertTrue(np.allclose(values[diag], [1]*4, rtol=1e-14, atol=1e-14,))
 
     def test_covariance(self):
         time, values = self.features.covariance(self.time, self.spiketrains)

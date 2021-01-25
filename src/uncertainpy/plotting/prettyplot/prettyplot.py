@@ -36,8 +36,10 @@ Set legend options.
     params = {
         "legend.numpoints": 1,
         "legend.fontsize": fontsize,
-        "legend.edgecolor":  '0.8',
-        "legend.fancybox": True,
+        "legend.handlelength": 2.2,
+        "legend.borderpad": 0.5,
+        "legend.framealpha": 1,
+        "legend.fancybox": True
     }
     plt.rcParams.update(params)
 
