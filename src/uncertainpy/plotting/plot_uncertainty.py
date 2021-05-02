@@ -84,7 +84,7 @@ class PlotUncertainty(object):
 
         setup_module_logger(class_instance=self, level=logger_level)
 
-        font_settings = ["fontsize", "linewidth", "titlesize", "labelsize", "dpi"] 
+        font_settings = ["fontsize", "linewidth", "titlesize", "labelsize", "dpi"]
         for k in font_settings:
             if k in kwargs:
                 setattr(self, k, kwargs[k])
@@ -1478,9 +1478,9 @@ class PlotUncertainty(object):
 
         full_text = ""
         if sensitivity == "sobol_first":
-            full_text = "first order Sobol indices"
+            full_text = "First order Sobol indices"
         elif sensitivity == "sobol_total":
-            full_text = "total order Sobol indices"
+            full_text = "Total order Sobol indices"
 
         return sensitivity, full_text
 
@@ -1510,7 +1510,8 @@ class PlotUncertainty(object):
                    hardcopy=True,
                    palette="colorblind",
                    show=False,
-                   max_legend_size=5):
+                   max_legend_size=5,
+                   title=None):
         """
         Plot all attributes (mean, variance, p_05, p_95 and sensitivity of it
         exists) for a 0 dimensional model/feature.
@@ -1614,7 +1615,7 @@ class PlotUncertainty(object):
                 pos += width
 
             xticks.append(pos - (i / 2. + 0.5) * width)
-            xlabels.append(sensitivity.split("_")[0] + " " + sensitivity.split("_")[1])
+            xlabels.append(sensitivity.split("_")[0].capitalize() + " " + sensitivity.split("_")[1])
 
             location = (0.5, 1.01 + legend_width * 0.095)
             plt.legend(legend_bars,
@@ -1622,7 +1623,6 @@ class PlotUncertainty(object):
                        loc="upper center",
                        bbox_to_anchor=location,
                        ncol=legend_size)
-
 
             fig = plt.gcf()
             fig.subplots_adjust(top=(0.91 - legend_width * 0.053))
@@ -1634,7 +1634,8 @@ class PlotUncertainty(object):
             for tick in ax.get_xticklabels()[:2]:
                 tick.set_rotation(-25)
 
-        plt.suptitle(feature.replace("_", " "), fontsize=self.titlesize)
+        if title is not None:
+            plt.suptitle(feature.replace("_", " "), fontsize=self.titlesize)
 
         if sensitivity is None or sensitivity not in self.data[feature]:
             plt.subplots_adjust(top=0.93)
@@ -1643,6 +1644,8 @@ class PlotUncertainty(object):
             save_name = feature + self.figureformat
         else:
             save_name = feature + "_" + sensitivity + self.figureformat
+
+        plt.tight_layout()
 
         if hardcopy:
             plt.savefig(os.path.join(self.folder, save_name), dpi=self.dpi)
@@ -1661,7 +1664,7 @@ class PlotUncertainty(object):
                             sensitivity="first",
                             hardcopy=True,
                             title=None,
-                            palette="colorblind", 
+                            palette="colorblind",
                             show=False):
         """
         Plot the average of the sensitivity for a specific model/feature.
@@ -1718,11 +1721,13 @@ class PlotUncertainty(object):
         index = np.arange(1, len(self.data.uncertain_parameters) + 1) * width
 
         if title is None:
-            title = "Average of " + title_tmp + ", " + feature.replace("_", " ")
+            title = "Average of " + title_tmp[0].lower() + title_tmp[1:] + ", " + feature.replace("_", " ")
+        elif title is False:
+            title = ""
         prettyBar(self.data[feature][sensitivity + "_average"],
                   title=title,
                   xlabels=self.uncertain_names,
-                  ylabel="Average of " + title_tmp,
+                  ylabel="Average of " + title_tmp[0].lower() + title_tmp[1:],
                   nr_colors=len(self.data.uncertain_parameters),
                   labelfontsize=self.labelsize,
                   palette=palette,
@@ -1749,7 +1754,7 @@ class PlotUncertainty(object):
                                 sensitivity="first",
                                 hardcopy=True,
                                 title=None,
-                                palette="colorblind", 
+                                palette="colorblind",
                                 show=False):
         """
         Plot the average of the sensitivity for all model/features.

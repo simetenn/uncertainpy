@@ -7,16 +7,17 @@ import seaborn as sns
 
 
 ticksize = 5
-markersize = 6 
+markersize = 6
 markeredgewidth = 1.
 figure_width = 7.08
 labelsize = 10
 titlesize = 12
-fontsize = 10 
+fontsize = 10
 ticklabelsize = 8
 linewidth = 1.5
-#figsize = (figure_width, figure_width*0.75)
+# figsize = (figure_width, figure_width*0.75)
 figsize = [6.85039, 5.1375]
+
 
 def set_figuresize():
     """
@@ -44,11 +45,11 @@ Set legend options.
     plt.rcParams.update(params)
 
 
-
 def set_font():
     """Set font options."""
     params = {"text.antialiased": True,
-              "font.family": "serif",
+              "font.family": "sans-serif",
+              "font.sans-serif": "Arial",
               "font.weight": "normal",
               }
 
@@ -62,8 +63,8 @@ Set font options. Note, uses latex.
     params = {"text.usetex": True,
               "text.latex.preamble": "\\usepackage{amsmath}, \\usepackage{amssymb}",
               "text.antialiased": True,
-            #   "font.family": "lmodern",
-            #   "font.weight": "normal"
+              #   "font.family": "lmodern",
+              #   "font.weight": "normal"
               }
 
     plt.rcParams.update(params)
