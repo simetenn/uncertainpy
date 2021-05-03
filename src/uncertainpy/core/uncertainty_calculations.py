@@ -412,9 +412,9 @@ class UncertaintyCalculations(ParameterBase):
             P = cp.orth_ttr(polynomial_order, distribution)
             nr_collocation_nodes = quadrature_order
             if nr_collocation_nodes is None:
-                nr_collocation_nodes = 2*len(P) + 2
+                nr_collocation_nodes = 2 * len(P) + 2
             nodes = distribution.sample(nr_collocation_nodes, "M")
-            return uncertain_parameters, distribution, P, nodes
+            return uncertain_parameters, distribution, P, nodes, None
         elif method == "MC":
             nr_samples = polynomial_order
             if nr_samples is None:
@@ -441,7 +441,7 @@ class UncertaintyCalculations(ParameterBase):
             nodes_R = saltelli.sample(problem, nr_sobol_samples, calc_second_order=False)
 
             nodes = distribution.inv(dist_R.fwd(nodes_R.transpose()))
-            return uncertain_parameters, distribution, nodes, nr_sobol_samples
+            return uncertain_parameters, distribution, None, nodes, nr_sobol_samples
 
 
     def create_PCE_spectral(self,
@@ -653,7 +653,7 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.Parameters
         """
 
-        uncertain_parameters, distribution, P, nodes = self.get_UQ_samples("collocation", uncertain_parameters, polynomial_order, quadrature_order=nr_collocation_nodes) 
+        uncertain_parameters, distribution, P, nodes, _ = self.get_UQ_samples("collocation", uncertain_parameters, polynomial_order, quadrature_order=nr_collocation_nodes) 
 
         # Running the model
         data = self.runmodel.run(nodes, uncertain_parameters)
@@ -1512,7 +1512,7 @@ class UncertaintyCalculations(ParameterBase):
         uncertainpy.Parameters
         """
 
-        uncertain_parameters, distribution, nodes, nr_sobol_samples = self.get_UQ_samples("MC", uncertain_parameters, nr_samples)
+        uncertain_parameters, distribution, _, nodes, nr_sobol_samples = self.get_UQ_samples("MC", uncertain_parameters, nr_samples)
 
         data = self.runmodel.run(nodes, uncertain_parameters)
 
