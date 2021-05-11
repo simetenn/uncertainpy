@@ -1507,6 +1507,7 @@ class PlotUncertainty(object):
     def feature_0d(self,
                    feature,
                    sensitivity="first",
+                   error="variance",
                    hardcopy=True,
                    palette="colorblind",
                    show=False,
@@ -1526,6 +1527,8 @@ class PlotUncertainty(object):
             order Sobol indices, while "sobol_total" and "total" are the total
             order Sobol indices. If None, no sensitivity is plotted. Default is
             "first".
+        error: {"variance", "stddev"}, optional
+            Plot either variance or standard deviation (square root of variance).
         hardcopy : bool, optional
             If the plot should be saved to file. Default is True.
         show : bool, optional
@@ -1572,10 +1575,16 @@ class PlotUncertainty(object):
         width = 0.2
         distance = 0.5
 
-        xlabels = ["Mean", "Variance", "$P_5$", "$P_{95}$"]
+        error_label = "Variance"
+        if error == "stddev":
+            error_label = "SD"
+        xlabels = ["Mean", error_label, "$P_5$", "$P_{95}$"]
         xticks = [0, width, distance + width, distance + 2 * width]
 
-        values = [self.data[feature].mean, self.data[feature].variance,
+        error_value = self.data[feature].variance
+        if error == "stddev":
+            error_value = np.sqrt(error_value)
+        values = [self.data[feature].mean, error_value,
                   self.data[feature].percentile_5, self.data[feature].percentile_95]
 
         ylabel = self.data.get_labels(feature)[0]
@@ -1796,7 +1805,7 @@ class PlotUncertainty(object):
                                          title=title,
                                          show=show)
 
-    def features_0d(self, sensitivity="first", hardcopy=True, show=False):
+    def features_0d(self, sensitivity="first", error="variance", hardcopy=True, show=False):
         """
         Plot the results for all 0 dimensional model/features.
 
@@ -1806,6 +1815,8 @@ class PlotUncertainty(object):
             Which Sobol indices to plot. "sobol_first" and "first" is the first
             order Sobol indices, while "sobol_total" and "total" are the total
             order Sobol indices. Default is "first".
+        error: {"variance", "stddev"}, optional
+            Plot either variance or standard deviation (square root of variance).
         hardcopy : bool, optional
             If the plot should be saved to file. Default is True.
         show : bool, optional
@@ -1824,7 +1835,7 @@ class PlotUncertainty(object):
 
         for feature in self.data:
             if self.data.ndim(feature) == 0:
-                self.feature_0d(feature, sensitivity=sensitivity, hardcopy=hardcopy, show=show)
+                self.feature_0d(feature, sensitivity=sensitivity, error=error, hardcopy=hardcopy, show=show)
 
     # # TODO Not Tested
     # def plot_folder(self, data_dir):
@@ -1900,13 +1911,15 @@ class PlotUncertainty(object):
         self.average_sensitivity_all(sensitivity="total")
         self.average_sensitivity_grid(sensitivity="total")
 
-    def plot_condensed(self, sensitivity="first"):
+    def plot_condensed(self, error="variance", sensitivity="first"):
         """
         Plot the subset of data that shows all information in the most concise
         way, with the chosen sensitivity.
 
         Parameters
         ----------
+        error: {"variance", "stddev"}, optional
+            Plot either variance or standard deviation (square root of variance).
         sensitivity : {"sobol_first", "first", "sobol_total", "total"}, optional
             Which Sobol indices to plot. "sobol_first" and "first" is the first
             order Sobol indices, while "sobol_total" and "total" are the total
@@ -1928,13 +1941,15 @@ class PlotUncertainty(object):
 
         for feature in self.data:
             if self.data.ndim(feature) == 1:
+                if error != "variance":
+                    raise NotImplementedError("For 1D features, the standard deviation plot has not yet been implemented.")
                 self.mean_variance_1d(feature=feature)
                 self.prediction_interval_1d(feature=feature)
 
                 if sensitivity in self.data[feature]:
                     self.sensitivity_1d_grid(feature=feature, sensitivity=sensitivity)
 
-        self.features_0d(sensitivity=sensitivity)
+        self.features_0d(sensitivity=sensitivity, error=error)
         self.features_2d()
 
         if sensitivity is not None:
