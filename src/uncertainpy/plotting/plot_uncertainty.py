@@ -84,7 +84,7 @@ class PlotUncertainty(object):
 
         setup_module_logger(class_instance=self, level=logger_level)
 
-        font_settings = ["fontsize", "linewidth", "titlesize", "labelsize", "dpi"]
+        font_settings = ["fontsize", "linewidth", "titlesize", "labelsize", "dpi", "max_legend_size"]
         for k in font_settings:
             if k in kwargs:
                 setattr(self, k, kwargs[k])
@@ -99,6 +99,8 @@ class PlotUncertainty(object):
                     self.labelsize = labelsize
                 elif k == "dpi":
                     self.dpi = None
+                elif k == "max_legend_size":
+                    self.max_legend_size = None
 
     def load(self, filename):
         """
@@ -1565,6 +1567,10 @@ class PlotUncertainty(object):
                 logger.warning(msg.format(data_type=data_type, feature=feature))
                 return
 
+        if self.max_legend_size is not None and isinstance(self.max_legend_size, int):
+            max_legend_size = self.max_legend_size
+            
+
         if len(self.data.uncertain_parameters) > max_legend_size:
             legend_size = max_legend_size
         else:
@@ -1631,7 +1637,8 @@ class PlotUncertainty(object):
                        self.uncertain_names,
                        loc="upper center",
                        bbox_to_anchor=location,
-                       ncol=legend_size)
+                       ncol=legend_size,
+                       fontsize=self.fontsize)
 
             fig = plt.gcf()
             fig.subplots_adjust(top=(0.91 - legend_width * 0.053))
