@@ -47,7 +47,7 @@ parameter has on the variance of the model:
 
 .. math::
 
-    S_i = \frac{\mathbb{V}[\mathbb{E}[Y | Q_i]}{\mathbb{V}[Y]}.
+    S_i = \frac{\mathbb{V}[\mathbb{E}[Y | Q_i]]}{\mathbb{V}[Y]}.
 
 Here, :math:`\mathbb{E}[{Y | Q_i}]` denotes the expected value of the output :math:`Y` when parameter
 :math:`Q_i` is fixed.
