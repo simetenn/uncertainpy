@@ -44,7 +44,7 @@ uncertainpy_require = [
     "numpy>=1.16",
     "scipy>=1.4.1",
     "seaborn",
-    "matplotlib>=3,<3.2",
+    "matplotlib>=3",
     "xvfbwrapper",
     "six",
     "exdir",
