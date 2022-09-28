@@ -2226,8 +2226,8 @@ class PlotUncertainty(object):
         ax.set_yscale(yscale)
 
         # plot sensitivity
-        number_colors = len(self.data[feature][sensitivity]) 
-        number_colors += 2 
+        number_colors = len(self.data[feature][sensitivity])
+        number_colors += 2
         ax2 = ax.twinx()
         colors = sns.color_palette(palette, n_colors=number_colors)
         color = 0
@@ -2236,16 +2236,16 @@ class PlotUncertainty(object):
         axescolor = "black"
         if color_axes:
             spines_color(ax2, edges={"top": "None", "bottom": "None",
-                                 "right": colors[color_2], "left": "None"})
+                                     "right": colors[color_2], "left": "None"})
             axescolor = colors[color_2]
-        
+
         ax2.grid(False)
         ax2.tick_params(axis="y", which="both", right=True, left=False, labelright=True,
                         color=axescolor, labelcolor=axescolor, labelsize=self.labelsize)
         ax2.set_ylabel(title_tmp, color=axescolor, fontsize=self.labelsize)
 
         # use markers for secondary axis
-        marker_list = itertools.cycle(('+', 'o', '*', 'v', '<', '>', 's', 'x')) 
+        marker_list = itertools.cycle(('+', 'o', '*', 'v', '<', '>', 's', 'x'))
 
         i = 0
         color_idx = 0
@@ -2281,10 +2281,10 @@ class PlotUncertainty(object):
         ax2.spines["right"].set_visible(True)
         ax2.spines["right"].set_edgecolor(axescolor)
         if color_axes:
-            axescolor=colors[color]
+            axescolor = colors[color]
         ax.tick_params(axis="y", color=axescolor, labelcolor=axescolor)
         ax.spines["left"].set_edgecolor(axescolor)
-        ax.set_ylabel(ylabel + ", mean", color=axescolor, fontsize=self.labelsize)
+        ax.set_ylabel(ylabel, color=axescolor, fontsize=self.labelsize)
 
         ax2.set_xlim([min(time), max(time)])
         ax.set_xlim([min(time), max(time)])
