@@ -113,7 +113,8 @@ Set tick style options
               "axes.linewidth": 1,
               "axes.spines.right": False,
               "axes.spines.top": False,
-              "axes.unicode_minus": True
+              "axes.unicode_minus": True,
+              "axes.formatter.useoffset": False
             }
 
     plt.rcParams.update(params)

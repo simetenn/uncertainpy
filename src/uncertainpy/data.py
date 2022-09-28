@@ -2,7 +2,10 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import six
 import os
-import collections
+try:
+    from collections import MutableMapping
+except ImportError:
+    from collections.abc import MutableMapping
 
 import numpy as np
 
@@ -11,7 +14,7 @@ from .utils.logger import setup_module_logger, get_logger
 from ._version import __version__
 
 
-class DataFeature(collections.MutableMapping):
+class DataFeature(MutableMapping):
     """
     Store the results of each statistical metric calculated from the uncertainty
     quantification and sensitivity analysis for a single model/feature.
@@ -291,7 +294,7 @@ class DataFeature(collections.MutableMapping):
         return None
 
 
-class Data(collections.MutableMapping):
+class Data(MutableMapping):
     """
     Store the results of each statistical metric calculated from the uncertainty
     quantification and sensitivity analysis for each model/features.

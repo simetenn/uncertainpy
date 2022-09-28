@@ -5,6 +5,10 @@ import re
 import fileinput
 import sys
 import collections
+try:
+    from collections import MutableMapping
+except ImportError:
+    from collections.abc import MutableMapping
 
 import chaospy as cp
 
@@ -145,7 +149,7 @@ class Parameter(object):
 
 
 
-class Parameters(collections.MutableMapping):
+class Parameters(MutableMapping):
     """
     A collection of parameters.
 
