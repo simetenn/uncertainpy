@@ -1,7 +1,11 @@
 import unittest
 import sys
 import click
-import collections
+try:
+    from collections import Iterable
+except ImportError:
+    from collections.abc import Iterable
+
 
 import matplotlib
 matplotlib.use('Agg')
@@ -26,7 +30,7 @@ class, passing them a parameter.
 
 
 def to_iterable(iterable):
-    if not isinstance(iterable, collections.Iterable):
+    if not isinstance(iterable, Iterable):
         iterable = [iterable]
     return iterable
 
